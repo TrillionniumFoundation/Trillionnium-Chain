@@ -2,8 +2,9 @@
 //! Every original transcript word remains; this separate research producer owns
 //! no current-parent admission or verification authority and changes no default.
 use super::{
-    expand_with_progress, integer_paired, validate, Hash, VerificationError, VerificationProgress,
-    WorkError, N, PROOF_BYTES, R,
+    expand_with_progress, hash, integer_paired,
+    legal_attempt::{Attempt, Materialization},
+    validate, Hash, VerificationError, VerificationProgress, WorkError, N, PROOF_BYTES, R,
 };
 use sha2::{Digest, Sha256};
 
@@ -46,6 +47,17 @@ pub enum GenerationError<E> {
     Cancelled(E),
 }
 
+/// Local target-aware attempt observations. The original generation enum and
+/// `prove_with_progress` sequence remain unchanged. Replay contains the same
+/// noise, arithmetic and transcript boundaries, followed by explicit ticket and
+/// optional proof-materialization observations. A hit grants no work authority.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum AttemptProgress {
+    Replay(GenerationProgress),
+    BeforeTicket,
+    BeforeProof,
+}
+
 /// Exact A=B=0 preparation. Both complete canonical operands are checked inside
 /// the constructor. Unsupported material returns None without a generic fallback.
 pub struct BlockedZeroPairedPreparedTask {
@@ -67,6 +79,99 @@ impl BlockedZeroPairedPreparedTask {
 
     pub fn method(&self) -> &'static str {
         "blocked-zero-integer-paired-full-prefix-transcript"
+    }
+
+    /// Immutable canonical mathematical bytes for separately charged evidence
+    /// reconstruction. This is not task eligibility or a verified work value.
+    pub fn proof_prefix(&self) -> &[u8] {
+        &self.prefix
+    }
+
+    /// Evaluate the complete original transcript and ticket. Every hit has the
+    /// exact original proof bytes; a TargetHit miss never copies the prefix.
+    /// Both policies retain the same challenge arithmetic and canonical input
+    /// checks. Only the challenge-independent zero prefix survives this call.
+    pub fn attempt(
+        &self,
+        challenge: Hash,
+        target: Hash,
+        materialization: Materialization,
+    ) -> Result<Attempt, WorkError> {
+        match self.attempt_with_progress(challenge, target, materialization, |_| {
+            Ok::<_, std::convert::Infallible>(())
+        }) {
+            Ok(attempt) => Ok(attempt),
+            Err(GenerationError::Relation(error)) => Err(error),
+            Err(GenerationError::Cancelled(impossible)) => match impossible {},
+        }
+    }
+
+    /// Complete target-aware generation with local cancellation. Reject the
+    /// invalid zero target before starting replay. Eager materialization occurs
+    /// before ticket evaluation; lazy materialization occurs only after a hit.
+    /// These observations neither bypass the native verifier nor establish a
+    /// wall-time cancellation bound or a minimum attacker cost.
+    pub fn attempt_with_progress<E>(
+        &self,
+        challenge: Hash,
+        target: Hash,
+        materialization: Materialization,
+        mut progress: impl FnMut(AttemptProgress) -> Result<(), E>,
+    ) -> Result<Attempt, GenerationError<E>> {
+        if target == [0; 32] {
+            return Err(GenerationError::Relation(WorkError::Target));
+        }
+        // Preserve the original proof entry's callback and object-lifetime
+        // behavior. Only this new entry composes its mathematical kernel with
+        // target-aware materialization; the existing entry below is unchanged.
+        let mut replay = |point| progress(AttemptProgress::Replay(point));
+        replay(GenerationProgress::BeforeReplay).map_err(GenerationError::Cancelled)?;
+        let mut noise = |label| {
+            expand_with_progress(challenge, label, N * R, &mut |point| {
+                let VerificationProgress::Noise { label, counter } = point else {
+                    unreachable!("noise expansion emits only noise observations")
+                };
+                replay(GenerationProgress::Noise { label, counter })
+            })
+            .map_err(|error| match error {
+                VerificationError::Relation(error) => GenerationError::Relation(error),
+                VerificationError::Cancelled(error) => GenerationError::Cancelled(error),
+            })
+        };
+        let el = noise(0)?;
+        let er = noise(1)?;
+        let fl = noise(2)?;
+        let fr = noise(3)?;
+        let mut transcript = Sha256::new();
+        transcript.update(b"TRNM-PON-TRACE1\0");
+        transcript.update(challenge);
+        transcript_tiles(&el, &er, &fl, &fr, &mut replay, |bytes| {
+            transcript.update(bytes)
+        })?;
+        let trace: Hash = transcript.finalize().into();
+        let mut proof = None;
+        if materialization == Materialization::EveryAttempt {
+            progress(AttemptProgress::BeforeProof).map_err(GenerationError::Cancelled)?;
+            let mut bytes = self.prefix.clone();
+            bytes.extend_from_slice(&trace);
+            proof = Some(bytes);
+        }
+        progress(AttemptProgress::BeforeTicket).map_err(GenerationError::Cancelled)?;
+        let ticket = hash(b"ticket", &[&challenge, &trace]);
+        let target_hit = ticket <= target;
+        if materialization == Materialization::TargetHit && target_hit {
+            progress(AttemptProgress::BeforeProof).map_err(GenerationError::Cancelled)?;
+            let mut bytes = self.prefix.clone();
+            bytes.extend_from_slice(&trace);
+            proof = Some(bytes);
+        }
+        Ok(Attempt {
+            challenge,
+            trace,
+            ticket,
+            target_hit,
+            proof,
+        })
     }
 
     pub fn prove(&self, challenge: Hash) -> Result<Vec<u8>, WorkError> {
@@ -552,5 +657,172 @@ mod tests {
             prove([255; 32], &zero, &zero).unwrap()
         );
         assert_eq!(task.prove([7; 32]).unwrap(), proof);
+    }
+
+    #[test]
+    fn target_aware_attempts_match_reference_bytes_at_exact_hit_and_miss_boundaries() {
+        let zero = vec![0; CELLS];
+        let candidate = BlockedZeroPairedPreparedTask::new(&zero, &zero)
+            .unwrap()
+            .unwrap();
+        let task = task_id(&zero, &zero).unwrap();
+        for challenge in [[0; 32], [7; 32], [255; 32]] {
+            let expected = prove(challenge, &zero, &zero).unwrap();
+            let trace: Hash = expected[PROOF_BYTES - 32..].try_into().unwrap();
+            let ticket = hash(b"ticket", &[&challenge, &trace]);
+            let mut below = ticket;
+            for byte in below.iter_mut().rev() {
+                let (value, borrow) = byte.overflowing_sub(1);
+                *byte = value;
+                if !borrow {
+                    break;
+                }
+            }
+            // These are deterministic correctness controls, not a strategy
+            // that is allowed to choose its network target after seeing a hit.
+            assert!(below != [0; 32] && below < ticket);
+            assert_eq!(candidate.proof_prefix(), &expected[..PROOF_BYTES - 32]);
+            for target in [below, ticket, [255; 32]] {
+                let hit = ticket <= target;
+                for mode in [Materialization::EveryAttempt, Materialization::TargetHit] {
+                    let attempt = candidate.attempt(challenge, target, mode).unwrap();
+                    assert_eq!(attempt.challenge, challenge);
+                    assert_eq!(attempt.trace, trace);
+                    assert_eq!(attempt.ticket, ticket);
+                    assert_eq!(attempt.target_hit, hit);
+                    assert_eq!(
+                        attempt.proof.is_some(),
+                        mode == Materialization::EveryAttempt || hit
+                    );
+                    if let Some(proof) = attempt.proof {
+                        assert_eq!(proof, expected);
+                        for checker in [verify, verify_reference] {
+                            if hit {
+                                let work = checker(challenge, task, target, &proof).unwrap();
+                                assert_eq!(work.ticket(), ticket);
+                                assert_eq!(work.product(), zero);
+                            } else {
+                                assert_eq!(
+                                    checker(challenge, task, target, &proof).unwrap_err(),
+                                    WorkError::Target
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+            assert_eq!(candidate.prove(challenge).unwrap(), expected);
+        }
+    }
+
+    #[test]
+    fn target_aware_checkpoints_keep_every_original_replay_and_cancel_before_effect() {
+        let zero = vec![0; CELLS];
+        let task = BlockedZeroPairedPreparedTask::new(&zero, &zero)
+            .unwrap()
+            .unwrap();
+        let challenge = [7; 32];
+        let mut original = Vec::new();
+        let proof = task
+            .prove_with_progress(challenge, |point| {
+                original.push(point);
+                Ok::<_, ()>(())
+            })
+            .unwrap();
+        assert_eq!(original.pop(), Some(GenerationProgress::BeforeProof));
+        let replay: Vec<_> = original.into_iter().map(AttemptProgress::Replay).collect();
+        let mut minimum = [0; 32];
+        minimum[31] = 1;
+        for (target, hit) in [(minimum, false), ([255; 32], true)] {
+            for mode in [Materialization::EveryAttempt, Materialization::TargetHit] {
+                let mut observed = Vec::new();
+                let actual = task
+                    .attempt_with_progress(challenge, target, mode, |point| {
+                        observed.push(point);
+                        Ok::<_, ()>(())
+                    })
+                    .unwrap();
+                assert_eq!(actual.target_hit, hit);
+                let mut expected = replay.clone();
+                if mode == Materialization::EveryAttempt {
+                    expected.push(AttemptProgress::BeforeProof);
+                }
+                expected.push(AttemptProgress::BeforeTicket);
+                if mode == Materialization::TargetHit && hit {
+                    expected.push(AttemptProgress::BeforeProof);
+                }
+                assert_eq!(observed, expected);
+                assert_eq!(
+                    observed
+                        .iter()
+                        .filter(|point| matches!(
+                            point,
+                            AttemptProgress::Replay(GenerationProgress::TranscriptTile { .. })
+                        ))
+                        .count(),
+                    512
+                );
+                for refusal in [
+                    AttemptProgress::Replay(GenerationProgress::BeforeReplay),
+                    AttemptProgress::Replay(GenerationProgress::Noise {
+                        label: 0,
+                        counter: 0,
+                    }),
+                    AttemptProgress::Replay(GenerationProgress::MiddleBlock { inner: 7 }),
+                    AttemptProgress::Replay(GenerationProgress::OuterFactor {
+                        operand: 1,
+                        row: 63,
+                    }),
+                    AttemptProgress::Replay(GenerationProgress::LeftTile { row: 7, inner: 7 }),
+                    AttemptProgress::Replay(GenerationProgress::TranscriptTile {
+                        row: 7,
+                        column: 7,
+                        inner: 7,
+                    }),
+                    AttemptProgress::BeforeTicket,
+                    AttemptProgress::BeforeProof,
+                ] {
+                    if !expected.contains(&refusal) {
+                        assert_eq!(refusal, AttemptProgress::BeforeProof);
+                        assert_eq!(mode, Materialization::TargetHit);
+                        assert!(!hit);
+                        continue;
+                    }
+                    let mut called = Vec::new();
+                    let cancelled = task.attempt_with_progress(challenge, target, mode, |point| {
+                        called.push(point);
+                        if point == refusal {
+                            Err(refusal)
+                        } else {
+                            Ok(())
+                        }
+                    });
+                    assert_eq!(cancelled, Err(GenerationError::Cancelled(refusal)));
+                    assert_eq!(called.last(), Some(&refusal));
+                    assert_eq!(called, expected[..called.len()]);
+                    // No partial trace, hit or proof survives cancellation.
+                    assert_eq!(task.attempt(challenge, target, mode).unwrap(), actual);
+                }
+            }
+        }
+        assert_eq!(task.prove(challenge).unwrap(), proof);
+    }
+
+    #[test]
+    fn target_aware_zero_target_refuses_before_replay_or_materialization() {
+        let zero = vec![0; CELLS];
+        let task = BlockedZeroPairedPreparedTask::new(&zero, &zero)
+            .unwrap()
+            .unwrap();
+        for mode in [Materialization::EveryAttempt, Materialization::TargetHit] {
+            let mut called = false;
+            let result = task.attempt_with_progress([7; 32], [0; 32], mode, |_| {
+                called = true;
+                Ok::<_, ()>(())
+            });
+            assert_eq!(result, Err(GenerationError::Relation(WorkError::Target)));
+            assert!(!called);
+            assert_eq!(task.attempt([7; 32], [0; 32], mode), Err(WorkError::Target));
+        }
     }
 }

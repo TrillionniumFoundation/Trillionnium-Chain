@@ -1,0 +1,41 @@
+{
+  "build_env": {
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_HOME": "/workspace/scratch/a6fe7c2e72c7/pq-validation/cargo",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/workspace/scratch/a0d4983b1065/validation/mvcc-target",
+    "RUSTUP_HOME": "/workspace/scratch/a6fe7c2e72c7/pq-validation/rustup"
+  },
+  "cargo_profile": "release; manifest/default opt-level, overflow checks and debug assertions unchanged",
+  "cpu_count": 9,
+  "end_to_end_throughput": false,
+  "kernel": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "original_025_cpu_profile_qualified": false,
+  "original_cpu_limit": null,
+  "original_memory_limit": null,
+  "original_parent_cgroup_available": false,
+  "original_pid_limit": null,
+  "public_confirmation": false,
+  "repeated_sender_plan": {
+    "expected_records": 84,
+    "measured_pairs_per_group": 12,
+    "order": "alternating AB/BA, original complete native test",
+    "senders": [
+      2,
+      64,
+      256
+    ],
+    "warmup_pairs_per_group": 2,
+    "workers": 4
+  },
+  "resource_profile": "shared-cloud-development-diagnostic",
+  "root_encoding_plan": [
+    "original",
+    "streamed",
+    "streamed",
+    "original"
+  ],
+  "rust_toolchain_bin": "/workspace/scratch/a6fe7c2e72c7/pq-validation/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin",
+  "schema": "pon-shared-cloud-native-diagnostic-profile-v1",
+  "source_head": "f2d14f9ebd25e054fe17c880331ae0d0c7df46e3"
+}

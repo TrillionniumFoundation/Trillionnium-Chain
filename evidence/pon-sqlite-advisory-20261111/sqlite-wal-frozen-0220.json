@@ -1,0 +1,35 @@
+{
+  "argv": [
+    "python3",
+    "/home/qq/work/chain-sqlite-advisory-20261110-checks/run-wal-frozen-0220.py"
+  ],
+  "cwd": "/home/qq/work/chain-sqlite-advisory-20261110",
+  "elapsed_ns": 11063081,
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/home/qq/work/chain-sqlite-advisory-20261110-checks/native-target",
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_STATIC": null,
+    "RUNNER_ARCH": null,
+    "RUSTC": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": null,
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "error": "index hides tracked worktree entries",
+  "exit_code": null,
+  "log_file": "sqlite-wal-frozen-0220.log",
+  "log_sha256": null,
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-11T02:14:24.107122+00:00",
+  "status": "record_failed",
+  "whole_chain_quantum_security_qualified": false
+}

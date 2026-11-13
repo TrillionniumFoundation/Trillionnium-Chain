@@ -1,0 +1,32 @@
+{
+  "head": "52cf278e4c3d08931b3e890c26b2b1af5653d32d",
+  "argv": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-data-availability",
+    "--lib",
+    "sqlite_",
+    "--",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "exit_code": 101,
+  "elapsed_seconds": 842.8726019859314,
+  "source_scope": "local partial checkout; full physical-source gate not qualified",
+  "command_environment": {
+    "CARGO_HOME": "/workspace/scratch/3069292387f3/sqlite-cargo-home",
+    "CARGO_TARGET_DIR": "/workspace/scratch/3069292387f3/sqlite-target",
+    "CARGO_BUILD_JOBS": "2"
+  },
+  "stdout": {
+    "bytes": 1059,
+    "sha256": "c0c4fb30efce9b41801f3029ef3a566ddf73a1208c4be1375c71a053b1d21e8e"
+  },
+  "stderr": {
+    "bytes": 21093,
+    "sha256": "0b6c9dde72f35a4c554552039cfe2897a73f322bbd0249bd0b99118886eda9f2"
+  }
+}

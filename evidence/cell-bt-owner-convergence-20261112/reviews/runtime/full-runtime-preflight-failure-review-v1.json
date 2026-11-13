@@ -1,0 +1,172 @@
+{
+  "actual_resource_observations": {
+    "end": {
+      "cgroup": {
+        "cpu.max": "400000 100000",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.max": "max",
+        "memory.peak": "45441024"
+      },
+      "cgroup_path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1cf1dd1e5-2564-199a.service",
+      "nice": 10
+    },
+    "start": {
+      "cgroup": {
+        "cpu.max": "400000 100000",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.max": "max",
+        "memory.peak": "35450880"
+      },
+      "cgroup_path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1cf1dd1e5-2564-199a.service",
+      "nice": 10
+    },
+    "whole_job_model_memory_qualified": false
+  },
+  "authority": {
+    "cancelled": false,
+    "exit_code": 1,
+    "job_id": "1a1cf1dd1e5-2564-199a",
+    "output_complete": true,
+    "output_durable": true,
+    "state": "failed",
+    "terminal_publication_confirmed": true,
+    "timed_out": false
+  },
+  "commands": [
+    {
+      "argv": [
+        "/home/qq/work/chain-bt-4a0b-runtime02/python/bin/python3.12",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "031d442dd0acb693afcfaf42f9cc4db446ba52cb"
+      ],
+      "cwd": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b",
+      "elapsed_seconds": 0.1138994109351188,
+      "environment_override": null,
+      "exit_code": 1,
+      "name": "source-before",
+      "started_unix_ns": 1794476202096721414,
+      "status": "completed",
+      "stderr": {
+        "bytes": 815,
+        "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-runtime-admission/source-before.stderr",
+        "sha256": "21d0eb6a0413c817414e69105551949e48a7955a8e348794538e13f01becb67e"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-runtime-admission/source-before.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 300
+    },
+    {
+      "argv": [
+        "/home/qq/work/chain-bt-4a0b-runtime02/python/bin/python3.12",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "031d442dd0acb693afcfaf42f9cc4db446ba52cb"
+      ],
+      "cwd": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b",
+      "elapsed_seconds": 0.11421777005307376,
+      "environment_override": null,
+      "exit_code": 1,
+      "name": "source-after",
+      "started_unix_ns": 1794476202227868746,
+      "status": "completed",
+      "stderr": {
+        "bytes": 815,
+        "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-runtime-admission/source-after.stderr",
+        "sha256": "21d0eb6a0413c817414e69105551949e48a7955a8e348794538e13f01becb67e"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-runtime-admission/source-after.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false,
+      "timeout_seconds": 300
+    }
+  ],
+  "diagnostic2_stdout": {
+    "all_hidden_bytes_match_head": false,
+    "all_tracked_bytes_match_head": false,
+    "hidden_entries": 102,
+    "index_and_flags_unchanged": true,
+    "native_operation_started": false,
+    "relevant_config_text": "",
+    "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+    "tag_counts": {
+      "H": 27584,
+      "S": 102
+    },
+    "tracked_entries": 27686,
+    "tracked_nonmatch_count": 102,
+    "tracked_payload_bytes": 2552660560
+  },
+  "findings": [
+    "Both original verify_ci_source source-before/source-after invocations failed with ValueError: index hides tracked worktree entries. The full-runtime child command was never reached; this is not an observed rejection by prepare_runtime/runtime_import/verify_runtime_ready.",
+    "The first read-only tracked-blob diagnostic then raised FileNotFoundError for the tracked evidence/cell-storage-convergence-f2568-20261109/preparations01.tar.gz. Its authoritative exit 1 and complete 779-byte stderr remain retained.",
+    "The second read-only diagnostic completed successfully and reported 102 hidden S entries, 102 tracked nonmatches, and unchanged index/flags across that diagnostic. Its successful diagnostic execution is not source admission. The 385-byte stdout alone does not enumerate or prove the individual cause of all 102 nonmatches.",
+    "Old checkout currently fails the original full physical-source gate. Neither ordinary git status being empty nor the pinned HEAD/tree suffices. No purely-flags explanation or correction is inferred; the old repository/index/missing-file scene is preserved.",
+    "The earlier private runtime projection and physical Python probe have separate actual byte-equality/exit-zero evidence. Old repository archive loss does not itself show private runtime byte corruption, nor does its projection PASS substitute for the full dependency-import gate.",
+    "The failed preflight observed nice 10 and cpu.max 400000 100000; memory.max was max. This preparation observation is not the later model operation 8-GiB aggregate-memory qualification.",
+    "Parent authorized a separate ordinary complete frozen-B clone, a new source/audit/operation identity with unchanged payload SHA values/private snapshot, and a byte-identical accepted normal ELF at a new locator. That recovery remains prospective until its actual original preflight/full physical-source readbacks and fresh runtime/model operations pass."
+  ],
+  "full_runtime_admission_passed": false,
+  "model_execution_observed": false,
+  "review_only": true,
+  "reviewer": "release_acceptance",
+  "schema": "trnm.independent-full-runtime-preflight-failure-review.v1",
+  "source_commit": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "source_failure_evidence": [
+    {
+      "bytes": 7963,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/full-preflight-env2-01/summary.json",
+      "sha256": "b95f1063f8d4cb755372d8ca85aa1816e6e003c60e05a456990a88c619d08781"
+    },
+    {
+      "bytes": 815,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/full-preflight-env2-01/source-before.stderr",
+      "sha256": "21d0eb6a0413c817414e69105551949e48a7955a8e348794538e13f01becb67e"
+    },
+    {
+      "bytes": 1545,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/full-preflight-env2-01/source-before.stderr.native-sdk.json",
+      "sha256": "2d3d10a1bc72f7ba7b7e62f71deb15a35bf64b3f576030263e1e778d9ff1e6e2"
+    },
+    {
+      "bytes": 949,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/full-preflight-env2-01/status.response.json",
+      "sha256": "fea9e7650eb758afa49cfb33be7275fc17104a58534f4c3dee3b4afded2ac4a3"
+    }
+  ],
+  "subsequent_read_only_diagnostic_evidence": [
+    {
+      "bytes": 727,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/source-index-diagnostic-01-authoritative/status.json",
+      "sha256": "e036ee57678984ca579c991bc55c99fccd3506fb3c1e6d177e2ca9b8f987f37d"
+    },
+    {
+      "bytes": 779,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/source-index-diagnostic-01-authoritative/diagnostic.stderr",
+      "sha256": "68844951223df05cc87331906aef91da0d592b4b641044401c4ed920f3b4236f"
+    },
+    {
+      "bytes": 730,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/source-index-diagnostic-02-authoritative/status.json",
+      "sha256": "f8ee896972d9b665d05287d259fc5c7f67b8c0095a1d1b3f0e7f23af462aba0f"
+    },
+    {
+      "bytes": 385,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/source-index-diagnostic-02-authoritative/diagnostic.stdout",
+      "sha256": "1a45a10031cb209bdb9d376feda7cf6bf1c35251228fd70e9cef4da6ecb9f7ec"
+    }
+  ]
+}

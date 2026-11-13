@@ -24,6 +24,7 @@ use trnm_protocol::content_commitment::{
 
 use super::{CellContextV1, CellErrorV1, MAX_CELL_BYTES};
 
+mod cached;
 mod closure;
 pub use closure::{
     CellContentClosureReadbackV2, CellContentClosureV2, CellContentDependencyV2,

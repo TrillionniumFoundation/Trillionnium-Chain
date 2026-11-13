@@ -1,0 +1,451 @@
+[
+  {
+    "name": "preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "source_head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "timeout_seconds": 30,
+    "exit_code": 0,
+    "elapsed_seconds": 0.11525380099192262,
+    "stdout": {
+      "bytes": 172,
+      "sha256": "4c58882a4134d8adc21e7bcf4a095a3d15d31c83a068667459aa26e612434295"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "source-before",
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+      "--output",
+      "/data/chain-abg-70ae-20261108/evidence/r3-native-and-clippy/source-before.json"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "source_head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "timeout_seconds": 180,
+    "exit_code": 0,
+    "elapsed_seconds": 7.184607297182083,
+    "stdout": {
+      "bytes": 423,
+      "sha256": "982120301643534abec9b8fb3f051e8871ec5eb28e44a1dc293f47cccb538c35"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "fmt",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "source_head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "timeout_seconds": 180,
+    "exit_code": 0,
+    "elapsed_seconds": 20.41862355498597,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "test-roster",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--",
+      "--list"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "source_head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "timeout_seconds": 1800,
+    "exit_code": 0,
+    "elapsed_seconds": 38.0283048779238,
+    "stdout": {
+      "bytes": 147373,
+      "sha256": "f860f2d1c60e1a1569e4368bb89c525fa33ce20f0bbf4a1f6052c7abbef9e449"
+    },
+    "stderr": {
+      "bytes": 302,
+      "sha256": "a4cff6a770e2af7e7a3b8da663cf66a4895f9a5f8af4a4525a7af6e3ed84b5e0"
+    }
+  },
+  {
+    "name": "native-completion-six",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "ingress::public_v3::scalar_cpu::native_completion_tests::",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "source_head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "timeout_seconds": 600,
+    "exit_code": 0,
+    "elapsed_seconds": 9.939760172041133,
+    "stdout": {
+      "bytes": 2337,
+      "sha256": "f110e44dfda7fffe2ba0d6fed09100619376eac9a7c30284c604f6d163461794"
+    },
+    "stderr": {
+      "bytes": 194,
+      "sha256": "d7bf0294dfb5af7428db652de46b367469131556855953be9743e2fc800cd8f3"
+    }
+  },
+  {
+    "name": "scalar-budget",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "ingress::public_v3::scalar_cpu::tests::",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "source_head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "timeout_seconds": 600,
+    "exit_code": 0,
+    "elapsed_seconds": 0.21542851091362536,
+    "stdout": {
+      "bytes": 1644,
+      "sha256": "fccf6a614dbfb5a422e6b7cf929b9e0295d6afbf32f2de5b9e5e8e90115bf69f"
+    },
+    "stderr": {
+      "bytes": 416,
+      "sha256": "80ac58d3d0b6e1fb0f110f890c01a46bd71526bf011b7ff1dd8c379f37ff70c0"
+    }
+  },
+  {
+    "name": "scalar-completion",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "ingress::public_v3::scalar_cpu::completion_tests::",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "source_head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "timeout_seconds": 600,
+    "exit_code": 0,
+    "elapsed_seconds": 3.122992269927636,
+    "stdout": {
+      "bytes": 3082,
+      "sha256": "60a28c2565f63459d812755b9d10745d4d369698381a36ef8ab174204263afe4"
+    },
+    "stderr": {
+      "bytes": 194,
+      "sha256": "d7bf0294dfb5af7428db652de46b367469131556855953be9743e2fc800cd8f3"
+    }
+  },
+  {
+    "name": "metered-facts",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "ingress::public_v3::scalar_cpu::metered_fact_tests::",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "source_head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "timeout_seconds": 600,
+    "exit_code": 0,
+    "elapsed_seconds": 1.4186243538279086,
+    "stdout": {
+      "bytes": 1681,
+      "sha256": "29e89195fb31ebc03a448fe0ed2bad963dddc0b05952e9f247204492d9675de2"
+    },
+    "stderr": {
+      "bytes": 582,
+      "sha256": "29e3e15c36daa2c17c3e9b87a576f825ced9531b73965499601e86fd154ea879"
+    }
+  },
+  {
+    "name": "metered-network",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "ingress::public_v3::scalar_cpu::metered_fact_network_tests::",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "source_head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "timeout_seconds": 600,
+    "exit_code": 0,
+    "elapsed_seconds": 1.0172042718622833,
+    "stdout": {
+      "bytes": 472,
+      "sha256": "4d69c92f367596effaebff0f934cf3797bf2fedcc5f1cbf357998a15ed3755fd"
+    },
+    "stderr": {
+      "bytes": 194,
+      "sha256": "d7bf0294dfb5af7428db652de46b367469131556855953be9743e2fc800cd8f3"
+    }
+  },
+  {
+    "name": "history",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "ingress::history_import::tests::",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "source_head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "timeout_seconds": 900,
+    "exit_code": 0,
+    "elapsed_seconds": 27.740352564956993,
+    "stdout": {
+      "bytes": 15042,
+      "sha256": "2d7d409f09089c76fc3b516412ef3f32a1b0299339e335cfeb25b36b2a1cc2b5"
+    },
+    "stderr": {
+      "bytes": 194,
+      "sha256": "d7bf0294dfb5af7428db652de46b367469131556855953be9743e2fc800cd8f3"
+    }
+  },
+  {
+    "name": "detached",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "store::detached_admission::tests::",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "source_head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "timeout_seconds": 900,
+    "exit_code": 0,
+    "elapsed_seconds": 102.28886347287335,
+    "stdout": {
+      "bytes": 108908,
+      "sha256": "6adb966b555d12b05982fd2fe0b644ecfa55836b3617ffd54c8b47576adf55ee"
+    },
+    "stderr": {
+      "bytes": 194,
+      "sha256": "781f9c8e068c2589e9c469eb47f4492378e0db16ba8513337fdda8c10acb5345"
+    }
+  },
+  {
+    "name": "signed-profile",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "paid_envelope_resource_profile_has_fresh_exact_signed_commitment",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "source_head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "timeout_seconds": 120,
+    "exit_code": 0,
+    "elapsed_seconds": 0.21542441681958735,
+    "stdout": {
+      "bytes": 219,
+      "sha256": "eef43f54bcdf4f981f4af49b4a0992ea88228f74f1ef53e24a9016419a599393"
+    },
+    "stderr": {
+      "bytes": 194,
+      "sha256": "4c62d18967118aebcb0766d9727c787a02683900fffce27b962145cc2941b93b"
+    }
+  },
+  {
+    "name": "old-signed-profiles",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "resource_revision_r18_rejects_signed_old_cookies_and_preserves_control_output_reserve",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "source_head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "timeout_seconds": 120,
+    "exit_code": 0,
+    "elapsed_seconds": 0.21547797578386962,
+    "stdout": {
+      "bytes": 240,
+      "sha256": "034db6de5f59bb90255dcb280be8649959137a4f0337b1f7e51ee60877ab281a"
+    },
+    "stderr": {
+      "bytes": 194,
+      "sha256": "781f9c8e068c2589e9c469eb47f4492378e0db16ba8513337fdda8c10acb5345"
+    }
+  },
+  {
+    "name": "strict-clippy",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "clippy",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--workspace",
+      "--all-targets",
+      "--all-features",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "source_head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "timeout_seconds": 1800,
+    "exit_code": 0,
+    "elapsed_seconds": 34.146706313826144,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 180,
+      "sha256": "577bbc6c8ebec54a0658f50f33481c5d4845935aa355fc6bd267ef4e7c90f6a9"
+    }
+  },
+  {
+    "name": "source-after",
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+      "--output",
+      "/data/chain-abg-70ae-20261108/evidence/r3-native-and-clippy/source-after.json"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "source_head": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "timeout_seconds": 90,
+    "exit_code": 0,
+    "elapsed_seconds": 6.231861056992784,
+    "stdout": {
+      "bytes": 423,
+      "sha256": "982120301643534abec9b8fb3f051e8871ec5eb28e44a1dc293f47cccb538c35"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+]

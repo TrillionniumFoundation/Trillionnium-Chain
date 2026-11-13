@@ -13,6 +13,13 @@ from check_cross_arch_cost import (COST_JOB_TIMEOUT_MINUTES, COST_JOB_OVERHEAD_S
                                    cost_job_budget_seconds)
 
 ROOT = Path(__file__).resolve().parents[2]
+NATIVE_CONSENSUS_ORACLE_BLOCK = '''    python3 scripts/ci/test_repository.py
+    python3 formal/pon-nakamoto-v1/test_reference.py
+    python3 formal/pon-nakamoto-v1/test_native_consensus_reference_v1.py
+    python3 formal/pon-nakamoto-v1/test_honest_rate_model.py -v
+    cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives fixed_hash_text -- --nocapture
+    python3 scripts/ci/run_fuzz_smoke.py
+'''
 WORKFLOW = '.github/workflows/trnm-required-baseline.yml'
 CHECKOUT = 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262'
 UPLOAD = 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02'
@@ -174,6 +181,20 @@ WORK_NATIVE_MODEL_COMMANDS = (
     'python3 formal/pon-nakamoto-v1/certificate_event_coverage_tests.py -v',
 )
 
+# Qualification checks retain unknown native security premises. Their successful
+# execution must not be confused with CP, CG, CQ or a confirmation-risk proof.
+JOINT_CONSENSUS_QUALIFICATION_COMMANDS = (
+    'python3 formal/pon-nakamoto-v1/joint_consensus_qualification.py --check',
+    'python3 formal/pon-nakamoto-v1/test_joint_consensus_qualification.py',
+    'python3 formal/pon-nakamoto-v1/test_dynamic_participation_v1.py',
+    'python3 formal/pon-nakamoto-v1/test_joint_production_tail_v1.py',
+)
+
+JOINT_RESOURCE_COMPETITION_COMMANDS = (
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_probability_sampling.py' -v",
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_joint_resource_competition_campaign.py' -v",
+)
+
 # Anchor these controls at the start of the lane. Presence/count alone accepts
 # a false branch or an if-condition that suppresses Bash's errexit behavior.
 # The outer lane dispatch is checked independently below.
@@ -201,6 +222,7 @@ COST_BOUNDARY_READERS = ('    python3 scripts/ci/test_pon_w1_budget_readers.py -
                          '    python3 scripts/ci/test_run_pon_w1_native_campaign.py\n')
 CURRENT_READER_COMMANDS = (
     'python3 scripts/ci/test_read_validated_business_goodput.py',
+    'python3 scripts/ci/test_read_failed_native_campaign_zip.py',
     'python3 scripts/ci/test_pon_w1_cost_matrix_reader.py',
     'python3 scripts/ci/test_pon_w1_reused_cost_reader_v3.py',
     'python3 scripts/ci/test_run_w1_reused_cost_v3.py',
@@ -294,6 +316,9 @@ MODEL_OBSERVATION_BLOCK = '''    (
       export TRNM_JOINT_DAA_EVIDENCE_DIR="$trnm_model_receipt_root/joint-daa"
       test ! -e "$TRNM_JOINT_DAA_EVIDENCE_DIR"
       test ! -L "$TRNM_JOINT_DAA_EVIDENCE_DIR"
+      export TRNM_MONOTONE_DAA_EVIDENCE_DIR="$trnm_model_receipt_root/monotone-daa"
+      test ! -e "$TRNM_MONOTONE_DAA_EVIDENCE_DIR"
+      test ! -L "$TRNM_MONOTONE_DAA_EVIDENCE_DIR"
       export TRNM_WORK_SCHEDULE_RESEARCH_DIR="$trnm_model_receipt_root/branch-work-schedule"
       test ! -e "$TRNM_WORK_SCHEDULE_RESEARCH_DIR"
       test ! -L "$TRNM_WORK_SCHEDULE_RESEARCH_DIR"
@@ -316,6 +341,11 @@ MODEL_OBSERVATION_BLOCK = '''    (
       python3 scripts/pon_joint_daa_reader.py --raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR/pgh2-growth" --expected-report-sha256 "$(sha256sum "$TRNM_JOINT_DAA_EVIDENCE_DIR/pgh2-growth/joint-daa.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/joint-daa-pgh2-python.json"
       python3 scripts/ci/test_pon_joint_daa_reader.py --raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR/pgh2-growth"
       unset TRNM_JOINT_DAA_EVIDENCE_DIR
+      python3 scripts/pon_monotone_daa_reader.py --raw-dir "$TRNM_MONOTONE_DAA_EVIDENCE_DIR/pnh1-authenticated" --expected-report-sha256 "$(sha256sum "$TRNM_MONOTONE_DAA_EVIDENCE_DIR/pnh1-authenticated/monotone-daa.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/monotone-daa-pnh1-python.json"
+      python3 scripts/ci/test_pon_monotone_daa_reader.py --raw-dir "$TRNM_MONOTONE_DAA_EVIDENCE_DIR/pnh1-authenticated"
+      python3 scripts/pon_monotone_daa_reader.py --raw-dir "$TRNM_MONOTONE_DAA_EVIDENCE_DIR/pgh2-growth" --expected-report-sha256 "$(sha256sum "$TRNM_MONOTONE_DAA_EVIDENCE_DIR/pgh2-growth/monotone-daa.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/monotone-daa-pgh2-python.json"
+      python3 scripts/ci/test_pon_monotone_daa_reader.py --raw-dir "$TRNM_MONOTONE_DAA_EVIDENCE_DIR/pgh2-growth"
+      unset TRNM_MONOTONE_DAA_EVIDENCE_DIR
       python3 formal/pon-nakamoto-v1/test_zero_work.py --verify-prefix-export "$trnm_model_receipt_root/zero-paired-prefix" --output "$trnm_model_receipt_root/zero-paired-prefix-python"
       python3 formal/pon-nakamoto-v1/test_model_composition_oracle.py -v
       python3 formal/pon-nakamoto-v1/test_model_composition.py -v
@@ -362,6 +392,8 @@ ROOT_RECOVERY_STRUCTURE_BLOCK = """    python3 -m unittest discover -s formal/po
     python3 scripts/ci/test_pq_root_migration_review_v1.py
     python3 scripts/ci/pq_root_migration_review_v1.py
     python3 scripts/ci/test_run_pq_root_continuation_v4.py
+    python3 scripts/ci/test_run_pq_root_witness_v5.py
+    python3 scripts/ci/test_ci_observation_process.py
     python3 scripts/ci/test_authenticated_suite_count.py
 """
 ROOT_RECOVERY_TRUTH_PREFIX = CREDIT_MODEL_PREFIX + '''    python3 scripts/ci/test_project_boundary.py
@@ -380,6 +412,7 @@ ROOT_RECOVERY_NATIVE_BLOCK = '''    # Execute root components before the retaine
     python3 formal/pon-nakamoto-v1/test_pq_root_recovery_journal_native_v2.py -v
     python3 scripts/ci/run_pq_root_native_v3.py
     python3 scripts/ci/run_pq_root_continuation_v4.py
+    python3 scripts/ci/run_pq_root_witness_v5.py
 '''
 ROOT_RECOVERY_TEST_FILES = (
     'formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_v2.py',
@@ -392,6 +425,11 @@ ROOT_RECOVERY_TEST_FILES = (
     'scripts/ci/test_pq_root_dependency_register.py',
     'scripts/ci/run_pq_root_continuation_v4.py',
     'scripts/ci/test_run_pq_root_continuation_v4.py',
+    'scripts/ci/run_pq_root_witness_v5.py',
+    'scripts/ci/test_run_pq_root_witness_v5.py',
+    'scripts/ci/ci_observation.py',
+    'scripts/ci/test_ci_observation_process.py',
+    'formal/pon-nakamoto-v1/bounded_process.py',
     'scripts/ci/test_authenticated_suite_count.py',
     'scripts/ci/test_pq_root_custody_review_v1.py',
     'scripts/ci/pq_root_custody_review_v1.py',
@@ -400,6 +438,8 @@ ROOT_RECOVERY_TEST_FILES = (
     'scripts/ci/test_pq_root_migration_review_v1.py',
     'scripts/ci/pq_root_migration_review_v1.py',
     'trillionnium/crates/trnm-pon-node/tests/recovery_floor_v4_native.rs',
+    'trillionnium/crates/trnm-pon-node/tests/root_witness_v5_native.rs',
+    'trillionnium/crates/trnm-pon-node/tests/root_witness_v5_durable_native.rs',
     'trillionnium/crates/trnm-pon-node/tests/root_effect_readback_v4_native.rs',
     'trillionnium/crates/trnm-pon-node/tests/root_budget_v4_native.rs',
     'trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs',
@@ -476,6 +516,8 @@ PROTOCOL_CONTRACT_BLOCK = PQ_MIGRATION_CONFORMANCE_PREFIX + ROOT_RECOVERY_NATIVE
     python3 formal/pon-nakamoto-v1/test_model_evolution_oracle.py -v
     python3 formal/pon-nakamoto-v1/test_model_task_windows_oracle.py -v
     python3 formal/pon-nakamoto-v1/test_work_utility.py
+    python3 formal/pon-nakamoto-v1/test_four_propositions_v1.py -v
+    python3 formal/pon-nakamoto-v1/test_four_propositions_w1_v2.py -v
     python3 formal/pon-nakamoto-v1/test_shared_cell_operator_v1.py
     python3 scripts/ci/test_shared_material_cost_v2.py
     python3 scripts/ci/test_shared_material_security_v1.py
@@ -701,13 +743,34 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
     python3 scripts/ci/test_pq_root_migration_review_v1.py
     python3 scripts/ci/pq_root_migration_review_v1.py
     python3 scripts/ci/test_run_pq_root_continuation_v4.py
+    python3 scripts/ci/test_run_pq_root_witness_v5.py
+    python3 scripts/ci/test_ci_observation_process.py
     python3 scripts/ci/test_authenticated_suite_count.py
     python3 scripts/ci/test_pq_chain_claim_guard.py
     # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.
     python3 scripts/ci/test_w1_qrom_current_implementation_audit.py
     python3 scripts/w1_qrom_current_implementation_audit.py
+    python3 scripts/ci/test_w1_upstream_security.py
+    python3 scripts/ci/w1_upstream_security.py
+    python3 scripts/ci/test_pq_proof_profile_binding.py
+    python3 scripts/ci/pq_proof_profile_binding.py
+    python3 scripts/ci/test_w1_qrom_current_ci.py
+    # Exact field/source correspondence does not discharge STARK/QROM obligations.
+    python3 scripts/ci/test_w1_stark_field_certificates.py
+    python3 scripts/w1_stark_field_certificates.py
+    python3 scripts/ci/test_w1_stark_route_audit.py
+    python3 scripts/w1_stark_route_audit.py
+    # Conditional iid counting does not establish the actual transcript distribution.
+    python3 scripts/ci/test_w1_fri_ideal_sampler.py
+    python3 scripts/w1_fri_query_replay.py --ideal-sampler-law
+    # Current lifetime source observation is separate from historical positive replay.
+    python3 scripts/ci/test_w1_lifetime_current_observation.py
+    python3 scripts/w1_lifetime_current_observation.py
+    python3 scripts/ci/test_w1_qrom_closure_current_controls.py
     python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
     python3 scripts/ci/pq_authority_surface_scan.py --summary-only
+    python3 scripts/ci/test_hash_use_contract.py
+    python3 scripts/ci/hash_use_contract.py
     python3 -m unittest discover -s scripts/ci -p 'test_pq_external_rollback_oracle.py' -v
     python3 -m unittest discover -s scripts/ci -p 'test_pq_quantum_daa_scenarios.py' -v
     # Public-input framing only: no seed proof or signature qualification.
@@ -730,11 +793,18 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
     python3 formal/pon-nakamoto-v1/lifecycle_query_tests.py -v
     python3 formal/pon-nakamoto-v1/finite_joint_state_tests.py -v
     python3 formal/pon-nakamoto-v1/test_joint_consensus_boundaries.py -v
+    python3 formal/pon-nakamoto-v1/joint_consensus_qualification.py --check
+    python3 formal/pon-nakamoto-v1/test_joint_consensus_qualification.py
+    python3 formal/pon-nakamoto-v1/test_dynamic_participation_v1.py
+    python3 formal/pon-nakamoto-v1/test_joint_production_tail_v1.py
     python3 formal/pon-nakamoto-v1/certificate_event_coverage_tests.py -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_oracle_resources.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_network_sim.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_probability_sampling.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_joint_resource_competition_campaign.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_candidate_check_clock.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_adversarial_search.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_posterior_policy.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_resource_clock.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_oracle.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_marked_domain.py' -v
@@ -756,6 +826,9 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
     python3 scripts/ci/test_capture_chain_hepta_identity.py
     python3 scripts/ci/test_chain_hepta_qualification.py
     python3 scripts/ci/test_chain_hepta_command_binding.py
+    python3 scripts/test_cell_learning_business_economics.py
+    python3 scripts/test_cell_learning_business_join.py
+    python3 scripts/test_cell_learning_training_no_update_join.py
     python3 scripts/ci/test_pon_daa_head_binding.py
     python3 -B scripts/ci/test_llm_hosted_once.py
     "${TRNM_RUNTIME_RELEASE_PYTHON:-python3}" scripts/test_llm_runtime_release.py
@@ -814,6 +887,7 @@ PY
     python3 scripts/ci/test_pon_w1_preparation_strategy_reader_v4.py
     python3 scripts/ci/test_pon_w1_rank_batch_reader_v5.py
     python3 scripts/ci/test_run_w1_rank_batch_v5.py
+    python3 scripts/ci/test_pon_w1_zero_paired_lazy_v1.py
     python3 scripts/ci/test_run_legacy_reorg_root_abba.py
     # These in-memory counterexamples use unchanged retained inputs, not a new hardware observation.
     python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54
@@ -822,6 +896,7 @@ PY
     python3 scripts/ci/test_pon_v3_cookie_cpu_study.py
     python3 scripts/ci/test_run_pon_w1_native_campaign.py
     python3 scripts/ci/test_read_validated_business_goodput.py
+    python3 scripts/ci/test_read_failed_native_campaign_zip.py
     python3 scripts/ci/test_pon_w1_cost_matrix_reader.py
     python3 scripts/ci/test_pon_w1_reused_cost_reader_v3.py
     python3 scripts/ci/test_run_w1_reused_cost_v3.py
@@ -836,6 +911,23 @@ PY
     python3 scripts/ci/test_run_account_execution_conformance.py
     python3 scripts/ci/report_current_implementation.py --check
     python3 scripts/ci/test_work_cost_report.py
+    # Retained source and arithmetic controls remain mandatory research-only gates.
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_evidence_scope.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_native_bridge.py' -v
+    python3 scripts/ci/test_w1_risc0_deep_event_audit.py
+    python3 scripts/w1_risc0_deep_event_audit.py --repo-root .
+    python3 scripts/ci/test_w1_p3_sampling_audit.py
+    python3 scripts/w1_p3_sampling_audit.py
+    python3 scripts/ci/test_pq_lifetime_composition.py
+    python3 scripts/ci/pq_lifetime_composition.py
+    python3 scripts/ci/test_pq_content_chain_review.py
+    python3 scripts/ci/pq_content_chain_review.py
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fixed_success_query_frontier.py' -v
+    python3 formal/pon-nakamoto-v1/fixed_success_query_frontier.py --check
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_cost_tail_transfer.py' -v
+    python3 formal/pon-nakamoto-v1/cost_tail_transfer.py --check
+    python3 formal/pon-nakamoto-v1/test_quantum_bernoulli_source_audit.py -v
+    python3 scripts/ci/test_retained_research_ci.py
     python3 scripts/test_qualification_runtime.py
 '''
 
@@ -1283,6 +1375,24 @@ W1_POSTWIN_REQUIRED_TEST_FILES = (
     "scripts/test_w1_owned_process_collector_v1.py",
 )
 
+RESIDUAL_RESEARCH_COMMANDS = ("python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_evidence_scope.py' -v",
+ "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_native_bridge.py' -v",
+ 'python3 scripts/ci/test_w1_risc0_deep_event_audit.py',
+ 'python3 scripts/w1_risc0_deep_event_audit.py --repo-root .',
+ 'python3 scripts/ci/test_w1_p3_sampling_audit.py',
+ 'python3 scripts/w1_p3_sampling_audit.py',
+ 'python3 scripts/ci/test_pq_lifetime_composition.py',
+ 'python3 scripts/ci/pq_lifetime_composition.py',
+ 'python3 scripts/ci/test_pq_content_chain_review.py',
+ 'python3 scripts/ci/pq_content_chain_review.py',
+ "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fixed_success_query_frontier.py' "
+ '-v',
+ 'python3 formal/pon-nakamoto-v1/fixed_success_query_frontier.py --check',
+ "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_cost_tail_transfer.py' -v",
+ 'python3 formal/pon-nakamoto-v1/cost_tail_transfer.py --check',
+ 'python3 formal/pon-nakamoto-v1/test_quantum_bernoulli_source_audit.py -v',
+ 'python3 scripts/ci/test_retained_research_ci.py')
+
 def check_w1_postwin_workflow(text: str) -> None:
     """Require the real saved-v2 verifier controls after their successful build."""
     require(text.startswith(W1_POSTWIN_WORKFLOW_PREFIX),
@@ -1351,6 +1461,12 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
                 'current cost, policy and cell deadline reader controls must execute exactly once in repository-truth')
+    for command in ('python3 scripts/test_cell_learning_business_economics.py',
+                    'python3 scripts/test_cell_learning_business_join.py',
+                    'python3 scripts/test_cell_learning_training_no_update_join.py'):
+        require(code_lines(lanes['repository-truth']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'learning business readback controls must execute exactly once in repository-truth')
     for command in PROOF_LATENCY_READER_COMMANDS:
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
@@ -1402,6 +1518,14 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
                 'work/native model controls must execute exactly once in repository-truth')
+    for command in JOINT_CONSENSUS_QUALIFICATION_COMMANDS:
+        require(code_lines(lanes['repository-truth']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'joint consensus qualification controls must execute exactly once in repository-truth')
+    for command in JOINT_RESOURCE_COMPETITION_COMMANDS:
+        require(code_lines(lanes['repository-truth']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'joint resource competition controls must execute exactly once in repository-truth')
     require(code_lines(lanes['protocol-contract']).count(W1_LIFECYCLE_NATIVE_CONTROLS) == 1
             and code_lines(script).count(W1_LIFECYCLE_NATIVE_CONTROLS) == 1,
             'native lifecycle cost controls must execute exactly once in protocol-contract')
@@ -1453,7 +1577,8 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
     require(script.count(RUST_ALL_TARGETS) == 1, 'the full workspace observation suite must execute exactly once')
     for selector in ['TRNM_MODEL_COMPOSITION_VECTORS', 'TRNM_MODEL_COMPOSITION_RUN_ID',
                      'TRNM_OBLIGATION_RANGE_VECTORS', 'TRNM_ZERO_PAIRED_PREFIX_OUTPUT',
-                     'TRNM_DAA_EVIDENCE_DIR', 'TRNM_JOINT_DAA_EVIDENCE_DIR']:
+                     'TRNM_DAA_EVIDENCE_DIR', 'TRNM_JOINT_DAA_EVIDENCE_DIR',
+                     'TRNM_MONOTONE_DAA_EVIDENCE_DIR']:
         require(script.count(selector) == MODEL_OBSERVATION_BLOCK.count(selector),
                 'native observation selectors must remain inside the single test/oracle subshell')
     require(script.count(NATIVE_RELEASE_BLOCK) == 1,
@@ -1462,15 +1587,37 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
                 'credit model controls must execute exactly once in repository-truth')
+    for command in ('python3 scripts/ci/test_hash_use_contract.py',
+                    'python3 scripts/ci/hash_use_contract.py'):
+        require(code_lines(lanes['repository-truth']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'hash-purpose controls must execute exactly once in repository-truth')
     for command in ('python3 scripts/ci/test_w1_qrom_current_implementation_audit.py',
-                    'python3 scripts/w1_qrom_current_implementation_audit.py'):
+                    'python3 scripts/w1_qrom_current_implementation_audit.py',
+                    'python3 scripts/ci/test_w1_qrom_current_ci.py',
+                    'python3 scripts/ci/test_w1_lifetime_current_observation.py',
+                    'python3 scripts/w1_lifetime_current_observation.py',
+                    'python3 scripts/ci/test_w1_qrom_closure_current_controls.py'):
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
                 'current W1 source mapping controls must execute exactly once in repository-truth')
+    for command in ('python3 scripts/ci/test_w1_stark_field_certificates.py',
+                    'python3 scripts/w1_stark_field_certificates.py',
+                    'python3 scripts/ci/test_w1_stark_route_audit.py',
+                    'python3 scripts/w1_stark_route_audit.py',
+                    'python3 scripts/ci/test_w1_fri_ideal_sampler.py',
+                    'python3 scripts/w1_fri_query_replay.py --ideal-sampler-law'):
+        require(code_lines(lanes['repository-truth']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'STARK route and field controls must execute exactly once in repository-truth')
     # Preserve the preceding specific refusal diagnostics when an unrelated
     # required command is moved into this prefix.
     require(code_lines(lanes['repository-truth'])[:3] == code_lines(CREDIT_MODEL_PREFIX),
             'credit model prefix must execute immediately after preflight without shell control flow')
+    for command in RESIDUAL_RESEARCH_COMMANDS:
+        require(code_lines(lanes['repository-truth']).count(command) == 1
+                and sum(code_lines(body).count(command) for body in lanes.values()) == 1,
+                'retained research controls must execute exactly once in repository-truth')
     repository_commands = code_lines(re.sub(r'\\\n[ \t]*', ' ', lanes['repository-truth']))
     expected_repository_commands = code_lines(
         re.sub(r'\\\n[ \t]*', ' ', REPOSITORY_TRUTH_BLOCK))
@@ -1493,6 +1640,10 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
             'W1 post-win controls and all retained repository-truth commands require one straight-line lane without skipped or swallowed failures')
     require(code_lines(lanes['external-evidence-contract']) == code_lines(EXTERNAL_EVIDENCE_CONTRACT_BLOCK),
             'external-evidence-contract must retain its complete straight-line command sequence without skipped or swallowed failures')
+    require(code_lines(lanes['fuzz-smoke']) == code_lines(NATIVE_CONSENSUS_ORACLE_BLOCK),
+            'native-domain and historical oracles must retain the complete fuzz-smoke sequence without skipped or swallowed failures')
+    require(script.count('python3 formal/pon-nakamoto-v1/test_native_consensus_reference_v1.py') == 1,
+            'native-domain oracle must execute exactly once in fuzz-smoke')
     for command in ('python3 scripts/ci/check_completion_evidence.py --historical',
                     'python3 scripts/ci/test_completion_evidence.py'):
         require(code_lines(lanes['external-evidence-contract']).count(command) == 1
@@ -1689,6 +1840,168 @@ def check_inline_source_pins(root: Path) -> int:
     return count
 
 
+
+# Keep the original 52-control roster and the first seven supplemental names.
+# Four additional PQ account-scope controls extend the source-reviewed
+# supplement without reinterpreting any prior execution.
+PQ_SYSTEM_REQUIRED_MANIFEST = 'config/pon/pq-system-required-tests-v1.json'
+PQ_SYSTEM_SUPPLEMENTAL_MANIFEST = 'config/pon/pq-system-supplemental-tests-v1.json'
+PQ_SYSTEM_REQUIRED_NAMES_SHA256 = '98eb15dbccb48e365771ce98dd611d1a6786bbd53af5d120fbe2c92a53ffbbed'
+PQ_SYSTEM_SUPPLEMENTAL_NAMES = (
+    "ingress::account_scope_tests::invalid_account_scope_refuses_classical_session_and_signed_request",
+    "ingress::account_scope_tests::current_local_scope_refuses_previously_valid_classical_request",
+    "ingress::account_scope_tests::invalid_account_scope_never_connects_or_advances_classical_clients",
+    "ingress::account_scope_tests::valid_development_scope_retains_classical_signature_and_socket_path",
+    "ingress::account_scope_tests::explicit_pq_selector_retains_classical_route_refusal_precedence",
+    "pq_rollback_witness::tests::live_retry_refuses_changed_durable_predecessor_at_the_same_head",
+    "pq_rollback_witness::tests::cold_reopen_refuses_database_retry_history_and_accepts_new_successors",
+    "ingress::account_scope_tests::invalid_account_scope_refuses_pq_network_policy",
+    "ingress::account_scope_tests::invalid_account_scope_never_connects_pq_history_client",
+    "ingress::account_scope_tests::changed_native_pq_configuration_refuses_network_entry",
+    "ingress::account_scope_tests::valid_account_scope_retains_pq_policy_and_history_socket_path",
+)
+PQ_SYSTEM_JOB_HEADER = r'''    name: PQ network and witness (${{ matrix.runner }}, ${{ matrix.source }})
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        source: [head, prospective-merge]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    env:
+      CARGO_BUILD_JOBS: "2"
+      CARGO_INCREMENTAL: "0"
+      RUST_TEST_THREADS: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      SOURCE_KIND: ${{ matrix.source }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+      EXPECTED_TESTED: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+    steps:
+'''
+PQ_SYSTEM_BUILD_STEP = r'''      - name: Record compiler, exact locked graph and formatting
+        id: pq_build
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash "$PQ_OUT/run-command.sh" compiler rustc +1.95.0 -Vv
+          bash "$PQ_OUT/run-command.sh" locked-graph cargo +1.95.0 metadata --locked --manifest-path trillionnium/Cargo.toml --format-version 1
+          bash "$PQ_OUT/run-command.sh" format cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          bash "$PQ_OUT/run-command.sh" build cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features --no-run --message-format=json
+'''
+PQ_SYSTEM_REQUIRED_STEP = r'''      - name: Execute every required native effect and rejection control
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - "$PQ_OUT/required-tests.tsv" <<'PY'
+          import json, re, sys
+          from pathlib import Path
+          value = json.loads(Path('config/pon/pq-system-required-tests-v1.json').read_text())
+          assert value['schema'] == 'trnm-pq-system-required-tests-v1'
+          assert value['whole_chain_quantum_security_qualified'] is False
+          tests = value['tests']
+          assert len(tests) == value['expected_meaningful_controls'] and len(set(tests)) == len(tests)
+          assert len(tests) == 52
+          assert all(re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*', x) for x in tests)
+          assert not set(tests) & set(value['child_process_harnesses_not_counted'])
+          Path(sys.argv[1]).write_text(''.join(f'native-{i:02d}\t{name}\n' for i, name in enumerate(tests)))
+          PY
+          failed=0
+          while IFS=$'\t' read -r label selector; do
+            if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features "$selector" -- --exact --show-output --test-threads=1; then
+              failed=1
+            elif ! python3 scripts/ci/check_required_native_test.py "$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then
+              failed=1
+            fi
+          done < "$PQ_OUT/required-tests.tsv"
+          test "$failed" = 0
+'''
+PQ_SYSTEM_SUPPLEMENTAL_STEP = r'''      - name: Execute supplemental account scope and witness retry controls
+        if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - "$PQ_OUT/supplemental-tests.tsv" <<'PY'
+          import json, re, sys
+          from pathlib import Path
+          retained_path = 'config/pon/pq-system-required-tests-v1.json'
+          retained = json.loads(Path(retained_path).read_text())
+          value = json.loads(Path('config/pon/pq-system-supplemental-tests-v1.json').read_text())
+          assert value['schema'] == 'trnm-pq-system-supplemental-tests-v1'
+          assert value['scope'] == 'account-scope-and-witness-retry-provenance-only'
+          assert value['whole_chain_quantum_security_qualified'] is False
+          assert value['original_business_budgets_changed'] is False
+          assert value['retained_roster'] == retained_path
+          assert type(value['retained_meaningful_controls']) is int and value['retained_meaningful_controls'] == 52
+          assert retained['schema'] == 'trnm-pq-system-required-tests-v1'
+          assert retained['expected_meaningful_controls'] == len(retained['tests']) == 52
+          tests = value['tests']
+          assert type(value['expected_meaningful_controls']) is int and value['expected_meaningful_controls'] == 11
+          assert isinstance(tests, list) and len(tests) == len(set(tests)) == 11
+          assert all(isinstance(x, str) and re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*', x) for x in tests)
+          assert not set(tests) & (set(retained['tests']) | set(retained['child_process_harnesses_not_counted']))
+          Path(sys.argv[1]).write_text(''.join(f'native-supplemental-{i:02d}\t{name}\n' for i, name in enumerate(tests)))
+          PY
+          failed=0
+          while IFS=$'\t' read -r label selector; do
+            if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features "$selector" -- --exact --show-output --test-threads=1; then
+              failed=1
+            elif ! python3 scripts/ci/check_required_native_test.py "$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then
+              failed=1
+            fi
+          done < "$PQ_OUT/supplemental-tests.tsv"
+          test "$failed" = 0
+'''
+
+# Pin live-owner continuity, complete-request fencing and bounded probe policy.
+# This source contract does not qualify any native execution or security bound.
+PQ_CHECKPOINT_OWNERSHIP_STEP = r'''      - name: Require admitted migration handoff and checkpoint endpoint ownership
+        if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          failed=0
+          for selector in \
+            store::pq_migration_inventory::handoff_tests::admitted_restricted_source_handoff_preserves_nonce_liability_and_claim_on_cold_open \
+            store::pq_migration_inventory::handoff_tests::admitted_source_handoff_refuses_wrong_registry_pins_and_unsupported_source_rows; do
+            label="migration-${selector##*::}"
+            if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features "$selector" -- --exact --show-output --test-threads=1; then
+              failed=1
+            elif ! python3 scripts/ci/check_required_native_test.py "$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then
+              failed=1
+            fi
+          done
+          for selector in \
+            rejected_nonprivate_socket_parent_does_not_unlink_existing_listener \
+            different_admitted_journal_cannot_replace_a_live_checkpoint_endpoint \
+            copied_lease_record_cannot_replace_a_live_checkpoint_endpoint \
+            connect_only_probe_preserves_live_owner_and_journal \
+            complete_checkpoint_request_rejects_a_copied_lease_replacement; do
+            label="checkpoint-$selector"
+            if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-checkpoint-store --test socket_ownership "$selector" -- --exact --show-output --test-threads=1; then
+              failed=1
+            elif ! python3 scripts/ci/check_required_native_test.py "$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then
+              failed=1
+            fi
+          done
+          for selector in \
+            socket_owner_v1::tests::saturated_copied_lease_refuses_without_unlink_and_allows_dead_recovery \
+            socket_owner_v1::tests::endpoint_lease_prevents_live_socket_replacement_and_permits_owner_restart \
+            socket_owner_v1::probe_policy_tests::connected_listener_is_not_stale \
+            socket_owner_v1::probe_policy_tests::explicit_refusal_is_only_recovery_case \
+            socket_owner_v1::probe_policy_tests::every_other_error_stays_refused \
+            socket_owner_v1::probe_policy_tests::linux_eagain_and_einprogress_are_not_dead_listener \
+            socket_owner_v1::unsupported_probe_tests::other_unix_policy_never_probes_or_authorizes_replacement; do
+            label="checkpoint-probe-${selector##*::}"
+            if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-checkpoint-store --lib "$selector" -- --exact --show-output --test-threads=1; then
+              failed=1
+            elif ! python3 scripts/ci/check_required_native_test.py "$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then
+              failed=1
+            fi
+          done
+          test "$failed" = 0
+'''
+
 def check_pq_release_authority_controls(root: Path) -> dict:
     """Pin the complete release roster and its actual hosted execution wiring.
 
@@ -1769,6 +2082,87 @@ def check_pq_release_authority_controls(root: Path) -> dict:
             'python_test_doubles': 18, 'tests_executed': False}
 
 
+
+def check_pq_system_required_controls(root: Path) -> dict:
+    """Keep 52 retained controls and eleven supplemental exact runs mandatory.
+
+    This inspects source selection and failure propagation only. Each hosted
+    native run still needs the existing per-command source recorder and the
+    named-libtest transcript reader; this function does not execute Rust tests.
+    """
+    for relative in (PQ_RELEASE_WORKFLOW, PQ_SYSTEM_REQUIRED_MANIFEST,
+                     PQ_SYSTEM_SUPPLEMENTAL_MANIFEST):
+        source = root / relative
+        require(source.is_file() and not source.is_symlink(),
+                'PQ system controls require a regular source: ' + relative)
+    retained = json.loads((root / PQ_SYSTEM_REQUIRED_MANIFEST).read_text())
+    require(isinstance(retained, dict)
+            and retained.get('schema') == 'trnm-pq-system-required-tests-v1'
+            and retained.get('scope') ==
+            'explicit PNQ2/PqWitnessV4 component controls; no whole-system qualification'
+            and type(retained.get('expected_meaningful_controls')) is int
+            and retained['expected_meaningful_controls'] == 52
+            and all(retained.get(key) is False for key in (
+                'whole_chain_quantum_security_qualified', 'original_business_budgets_changed'))
+            and retained.get('child_process_harnesses_not_counted') == [
+                'store::pq_rollback_witness::combined_tests::independent_witness_process_child'],
+            'PQ system controls must retain the original 52-control scope and counters')
+    names = retained.get('tests')
+    require(isinstance(names, list) and len(names) == 52
+            and all(isinstance(name, str) and re.fullmatch(
+                r'[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*', name) for name in names)
+            and len(set(names)) == 52
+            and hashlib.sha256(('\n'.join(names) + '\n').encode()).hexdigest()
+            == PQ_SYSTEM_REQUIRED_NAMES_SHA256,
+            'PQ system original 52 reviewed test names changed')
+
+    supplement = json.loads((root / PQ_SYSTEM_SUPPLEMENTAL_MANIFEST).read_text())
+    require(isinstance(supplement, dict)
+            and supplement.get('schema') == 'trnm-pq-system-supplemental-tests-v1'
+            and supplement.get('scope') == 'account-scope-and-witness-retry-provenance-only'
+            and supplement.get('retained_roster') == PQ_SYSTEM_REQUIRED_MANIFEST
+            and type(supplement.get('retained_meaningful_controls')) is int
+            and supplement['retained_meaningful_controls'] == 52
+            and type(supplement.get('expected_meaningful_controls')) is int
+            and supplement['expected_meaningful_controls'] == 11
+            and supplement.get('tests') == list(PQ_SYSTEM_SUPPLEMENTAL_NAMES)
+            and not set(PQ_SYSTEM_SUPPLEMENTAL_NAMES) & (
+                set(names) | set(retained['child_process_harnesses_not_counted']))
+            and all(supplement.get(key) is False for key in (
+                'whole_chain_quantum_security_qualified', 'original_business_budgets_changed')),
+            'PQ system supplement must require all eleven distinct reviewed full-name controls')
+
+    text = (root / PQ_RELEASE_WORKFLOW).read_text()
+    header, separator, body = text.partition('\njobs:\n')
+    require(bool(separator), 'PQ system workflow requires an explicit jobs mapping')
+    paths = re.findall(r'^      - ([A-Za-z0-9_./*-]+)$', header, re.M)
+    for relative in ('trillionnium/**', PQ_SYSTEM_REQUIRED_MANIFEST,
+                     PQ_SYSTEM_SUPPLEMENTAL_MANIFEST, PQ_RELEASE_WORKFLOW,
+                     'scripts/ci/check_ci_contract.py', 'scripts/ci/test_ci_contract.py',
+                     'scripts/ci/check_required_native_test.py',
+                     'scripts/ci/record_pq_native_command.py', 'scripts/ci/pinned_native_process.py'):
+        require(paths.count(relative) == 1,
+                'PQ workflow must trigger for each system control source: ' + relative)
+    pairs = re.findall(r'(?ms)^  ([a-z][a-z0-9-]*):\n(.*?)(?=^  [a-z][a-z0-9-]*:\n|\Z)', body)
+    jobs = dict(pairs)
+    job = jobs.get('native', '')
+    require(len(jobs) == len(pairs) and job.startswith(PQ_SYSTEM_JOB_HEADER)
+            and 'continue-on-error' not in job and not re.search(r'^    if:', job, re.M),
+            'PQ system controls retain both native runners, head/merge sources and original budgets')
+    for step in (PQ_SYSTEM_BUILD_STEP, PQ_SYSTEM_REQUIRED_STEP, PQ_SYSTEM_SUPPLEMENTAL_STEP):
+        require(job.count(step) == text.count(step) == 1,
+                'PQ system build and both exact execution/readback steps must remain complete')
+    require(PQ_SYSTEM_BUILD_STEP + PQ_SYSTEM_REQUIRED_STEP + PQ_SYSTEM_SUPPLEMENTAL_STEP in job,
+            'PQ system build must precede the retained 52 and separate eleven exact control runs')
+    require(job.count(PQ_CHECKPOINT_OWNERSHIP_STEP)
+            == text.count(PQ_CHECKPOINT_OWNERSHIP_STEP) == 1,
+            'PQ checkpoint controls require all four exact runs and failure readback')
+    require(PQ_SYSTEM_SUPPLEMENTAL_STEP + PQ_CHECKPOINT_OWNERSHIP_STEP in job,
+            'PQ checkpoint controls must follow the unchanged 52-plus-eleven runs')
+    return {'retained_meaningful_controls': 52, 'supplemental_meaningful_controls': 11,
+            'selected_meaningful_controls': 63, 'tests_executed': False}
+
+
 def validate(root: Path = ROOT) -> dict:
     # Discovery can exit successfully with zero tests when a pattern disappears.
     # These mandatory files are executed explicitly and must also exist at review.
@@ -1778,12 +2172,14 @@ def validate(root: Path = ROOT) -> dict:
                  'test_useful_cell_multimodal_execution_v3.py',
                  'test_useful_cell_multimodal_relation_v3.py',
                  'test_lifecycle_cost_v1.py', 'test_cell_lottery_cost_audit_v1.py',
-                 'test_service_work_settlement_v1.py'):
+                 'test_service_work_settlement_v1.py', 'test_four_propositions_v1.py',
+                 'test_four_propositions_w1_v2.py'):
         source = root / 'formal/pon-nakamoto-v1' / name
         require(source.is_file() and not source.is_symlink(),
                 'required useful Cell test source is missing: ' + name)
     inline_source_pins = check_inline_source_pins(root)
     pq_release_authority_controls = check_pq_release_authority_controls(root)
+    pq_system_controls = check_pq_system_required_controls(root)
     check_from_zero_host_callsites(root)
     check_w1_postwin_workflow((root / '.github/workflows/pon-w1-transparent-profile.yml').read_text())
     text = (root / WORKFLOW).read_text()
@@ -2061,6 +2457,7 @@ def validate(root: Path = ROOT) -> dict:
             'native_cost_architectures': 2, 'artifact_comparison_jobs': 1,
             'w1_actual_reuse_v3_cells': 4, 'inline_source_pins': inline_source_pins,
             'pq_release_authority_controls': pq_release_authority_controls,
+            'pq_system_controls': pq_system_controls,
             'tests_executed': False}
 
 

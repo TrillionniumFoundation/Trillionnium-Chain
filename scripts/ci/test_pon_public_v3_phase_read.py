@@ -74,6 +74,34 @@ def lifecycle_record(*, accepted=10, connection=40, task=90, created=True, faile
     return row
 
 
+def profiled_record():
+    """Synthetic extension shape only; no native rejection or I/O evidence."""
+    row = lifecycle_record()
+    row['error_timing'] = dict(schema=reader.REQUEST_ERROR_TIMING_SCHEMA,
+        first_dispatch_error=None, first_terminal_error=None, observation_failed=False,
+        clock_is_observer_local=True, has_control_authority=False)
+    row['reactor_io'] = dict(schema=reader.REACTOR_IO_SCHEMA, observation_failed=False,
+        calls_are_wrapper_returns=True, includes_read_buffer_preparation=True,
+        cpu_is_reactor_thread_only=True, includes_wait_between_calls=False,
+        has_control_authority=False, frames=[dict(phase=phase, calls_returned=0,
+            progressed_calls=0, no_progress_calls=0, failed_calls=0, wall_ns=None,
+            wall_ns_known_sum=0, wall_unknown_calls=0, thread_cpu_ns=None,
+            thread_cpu_ns_known_sum=0, thread_cpu_unknown_calls=0) for phase in reader.FRAME_PHASES])
+    return row
+
+
+def cancellation_record():
+    """Synthetic signal and worker clocks; never a native stopping experiment."""
+    row = lifecycle_record()
+    row['cancellation'] = dict(schema=reader.REQUEST_CANCELLATION_SCHEMA,
+        observed_signal_calls=2, first_flag_transition=dict(before_ns=25, after_ns=30,
+            source='peer_write_closed', phase='work'),
+        worker_entered=True, worker_entered_ns=15, worker_returned=True, worker_returned_ns=100,
+        observation_failed=False, clock_is_observer_local=True,
+        signals_are_request_flag_writes=True, has_control_authority=False)
+    return row
+
+
 def attribution_phase(submissions, history, attacks, records):
     """Only role-matching fields vary; this is not a measured native campaign."""
     return {
@@ -186,6 +214,284 @@ def diagnostic_record():
 
 
 class ReaderTests(unittest.TestCase):
+    def test_cancellation_keeps_signal_bracket_worker_return_and_all_owners_distinct(self):
+        row = cancellation_record()
+        value = reader.request_cancellation_summary([row])
+        sample = value['records'][0]
+        self.assertEqual(sample['worker_return'], dict(status='bracketed', lower_ns=70, upper_ns=75))
+        self.assertEqual(sample['all_request_owners_closed'], sample['worker_return'])
+        row['lifecycle']['task_closed_ns'] = 130
+        sample = reader.request_cancellation_summary([row])['records'][0]
+        self.assertEqual(sample['worker_return']['upper_ns'], 75)
+        self.assertEqual(sample['all_request_owners_closed']['upper_ns'], 105)
+        self.assertFalse(value['scope']['closed_owners_prove_durable_effect_rollback'])
+        self.assertFalse(value['scope']['worker_return_is_process_exit'])
+
+    def test_cancellation_closed_output_does_not_claim_a_live_worker_has_stopped(self):
+        row = cancellation_record()
+        row['cancellation'].update(worker_returned=False, worker_returned_ns=None)
+        value = reader.request_cancellation_summary([row])['records'][0]
+        self.assertEqual(value['worker_return']['status'], 'worker_unfinished')
+        self.assertEqual(value['all_request_owners_closed']['status'], 'owners_or_worker_unfinished')
+        self.assertIsNone(value['worker_return']['lower_ns'])
+        self.assertIsNone(value['all_request_owners_closed']['upper_ns'])
+
+    def test_cancellation_earlier_unobserved_signal_and_missing_historical_data_stay_unknown(self):
+        row = cancellation_record()
+        row['cancellation']['first_flag_transition'] = None
+        value = reader.request_cancellation_summary([row, lifecycle_record()])
+        self.assertEqual(value['signal_calls_without_first_transition_records'], 1)
+        self.assertEqual(value['historical_records_without_extension'], 1)
+        self.assertEqual(value['records'][0]['worker_return']['status'], 'first_flag_transition_unknown')
+        self.assertEqual(value['records'][1]['worker_return']['status'], 'historical_extension_missing')
+        self.assertTrue(all(record['all_request_owners_closed']['upper_ns'] is None
+                            for record in value['records']))
+        self.assertIsNone(reader.request_cancellation_summary([lifecycle_record()]))
+
+    def test_cancellation_cleanup_and_already_returned_worker_are_not_zero_latency_success(self):
+        row = cancellation_record()
+        row['cancellation']['first_flag_transition'].update(source='connection_cleanup', phase='cleanup')
+        row['cancellation']['worker_returned_ns'] = 20
+        value = reader.request_cancellation_summary([row])
+        self.assertEqual(value['first_transition_source_counts'], {'connection_cleanup': 1})
+        sample = value['records'][0]
+        self.assertEqual(sample['worker_return']['status'], 'already_returned_before_signal_bracket')
+        self.assertIsNone(sample['worker_return']['upper_ns'])
+        self.assertFalse(value['scope']['connection_cleanup_is_cancellation_success'])
+
+    def test_cancellation_overlapping_signal_bracket_preserves_unknown_event_order(self):
+        row = cancellation_record()
+        row['cancellation']['worker_returned_ns'] = 28
+        value = reader.request_cancellation_summary([row])
+        self.assertEqual(value['records'][0]['worker_return'],
+                         dict(status='signal_and_terminal_order_unknown', lower_ns=None, upper_ns=None))
+        self.assertTrue(value['scope']['overlapping_signal_and_terminal_order_is_unknown'])
+        row['cancellation']['worker_returned_ns'] = 30
+        value = reader.request_cancellation_summary([row])
+        self.assertEqual(value['records'][0]['worker_return'],
+                         dict(status='bracketed', lower_ns=0, upper_ns=5))
+        self.assertFalse(value['scope']['zero_lower_bound_is_an_exact_zero_latency'])
+
+    def test_cancellation_unentered_task_unknown_signal_clock_and_capture_failure(self):
+        row = cancellation_record()
+        row['cancellation'].update(worker_entered=False, worker_entered_ns=None,
+                                   worker_returned=False, worker_returned_ns=None)
+        value = reader.request_cancellation_summary([row])['records'][0]
+        self.assertEqual(value['worker_return']['status'], 'worker_not_entered')
+        self.assertEqual(value['all_request_owners_closed']['upper_ns'], 65)
+        row['cancellation']['first_flag_transition']['after_ns'] = None
+        value = reader.request_cancellation_summary([row])['records'][0]
+        self.assertEqual(value['all_request_owners_closed']['status'], 'signal_clock_unknown')
+        row.update(observation_failed=True, complete=False)
+        row['cancellation']['observation_failed'] = True
+        value = reader.request_cancellation_summary([row])['records'][0]
+        self.assertEqual(value['worker_return']['status'], 'capture_failed')
+        self.assertIsNone(value['all_request_owners_closed']['upper_ns'])
+
+    def test_cancellation_rejects_wrong_epoch_flag_clock_and_scope_claims(self):
+        mutations = [
+            lambda row: row['cancellation'].update(has_control_authority=True),
+            lambda row: row['cancellation'].update(clock_is_observer_local=False),
+            lambda row: row['cancellation'].update(signals_are_request_flag_writes=False),
+            lambda row: row['cancellation'].update(observation_failed=True),
+            lambda row: row['cancellation'].update(observed_signal_calls=0),
+            lambda row: row['cancellation'].update(observed_signal_calls=True),
+            lambda row: row['cancellation'].update(observed_signal_calls=-1),
+            lambda row: row['cancellation'].update(worker_entered=False),
+            lambda row: row['cancellation'].update(worker_returned_ns=None),
+            lambda row: row['cancellation'].update(worker_returned=False),
+            lambda row: row['cancellation'].update(worker_returned_ns=14),
+            lambda row: row['cancellation'].update(worker_entered_ns=9),
+            lambda row: row['cancellation'].update(worker_entered_ns=True),
+            lambda row: row['cancellation']['first_flag_transition'].update(source=[]),
+            lambda row: row['cancellation']['first_flag_transition'].update(source='peer text'),
+            lambda row: row['cancellation']['first_flag_transition'].update(phase='cleanup'),
+            lambda row: row['cancellation']['first_flag_transition'].update(before_ns=9),
+            lambda row: row['cancellation']['first_flag_transition'].update(before_ns=31),
+            lambda row: row['cancellation']['first_flag_transition'].update(after_ns=41),
+            lambda row: row['cancellation']['first_flag_transition'].update(after_ns=True),
+            lambda row: row['cancellation']['first_flag_transition'].pop('phase'),
+        ]
+        for change in mutations:
+            row = cancellation_record()
+            change(row)
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                reader.validate_request_cancellation(row)
+
+    def test_cancellation_extension_leaves_original_fields_and_historical_output_exact(self):
+        old = reader.execution_summary([lifecycle_record()], True, observer_v4=True)
+        current = reader.execution_summary([cancellation_record()], True, observer_v4=True)
+        self.assertEqual(current.pop('request_cancellation')['observed_records'], 1)
+        self.assertEqual(current, old)
+        self.assertNotIn('request_cancellation', old)
+        with self.assertRaises(ValueError):
+            reader.execution_summary([cancellation_record()], True, observer_v4=False)
+
+    def test_error_timing_uses_first_bound_event_not_last_error_or_owner_close(self):
+        row = profiled_record()
+        row['error_timing']['first_dispatch_error'] = dict(observed_ns=25, phase='dispatch',
+            error_code='PUBLIC_REQUEST_CANCELLED')
+        row['error_timing']['first_terminal_error'] = dict(observed_ns=30, phase='body',
+            error_code='PUBLIC_REQUEST_DEADLINE')
+        row.update(dispatch_error_code=None, terminal_error_code='PUBLIC_EOF', terminal_phase='output')
+        before = copy.deepcopy(row)
+        result = reader.request_error_timing_summary([row])
+        self.assertEqual(row, before)
+        dispatch, terminal = (result[key] for key in ('first_dispatch_error', 'first_terminal_error'))
+        self.assertEqual(dispatch['accept_to_first_error_wall_ns']['max_ns'], 15)
+        self.assertEqual(terminal['accept_to_first_error_wall_ns']['max_ns'], 20)
+        self.assertEqual(dispatch['first_error_code_counts'], {'PUBLIC_REQUEST_CANCELLED': 1})
+        self.assertEqual(terminal['phase_counts'], {'body': 1})
+        self.assertEqual(dispatch['max_all_captured_error_events_ns'], 15)
+        self.assertFalse(result['scope']['error_time_is_owner_close_or_response_delivery_time'])
+        self.assertIsNone(result['scope']['whole_request_population_p99_ns'])
+
+    def test_error_timing_keeps_unknown_failed_and_historical_coverage(self):
+        rows = [profiled_record() for _ in range(3)]
+        for row, stamp in zip(rows, (30, None, 35)):
+            row['error_timing']['first_dispatch_error'] = dict(observed_ns=stamp,
+                phase='dispatch', error_code=None)
+        rows[2].update(observation_failed=True, complete=False)
+        rows[2]['error_timing']['observation_failed'] = True
+        rows[2]['reactor_io']['observation_failed'] = True
+        rows.append(lifecycle_record())
+        value = reader.request_error_timing_summary(rows)
+        self.assertEqual(value['historical_records_without_extension'], 1)
+        self.assertEqual(value['measurement_failed_records'], 1)
+        event = value['first_dispatch_error']
+        self.assertEqual((event['events_observed'], event['events_with_unknown_clock'],
+                          event['events_with_failed_coverage']), (3, 1, 1))
+        self.assertEqual((event['accept_to_first_error_wall_ns']['known_count'],
+                          event['accept_to_first_error_wall_ns']['unknown_count']), (1, 2))
+        self.assertEqual(event['unknown_error_code_events'], 3)
+        self.assertIsNone(event['max_all_captured_error_events_ns'])
+        self.assertIsNone(event['p99_all_captured_error_events_ns'])
+
+    def test_error_timing_quantile_is_per_event_and_lost_event_disables_population_claim(self):
+        rows = []
+        for elapsed in range(100, 0, -1):
+            row = profiled_record()
+            row['lifecycle'].update(connection_closed_ns=120, task_closed_ns=120)
+            row['error_timing']['first_dispatch_error'] = dict(observed_ns=10 + elapsed,
+                phase='dispatch', error_code='PUBLIC_REQUEST_DEADLINE')
+            rows.append(row)
+        value = reader.request_error_timing_summary(rows)['first_dispatch_error']
+        self.assertEqual(value['max_all_captured_error_events_ns'], 100)
+        self.assertEqual(value['p99_all_captured_error_events_ns'], 99)
+        lost = profiled_record()
+        lost.update(observation_failed=True, complete=False)
+        lost['error_timing']['observation_failed'] = True
+        rows.append(lost)
+        value = reader.request_error_timing_summary(rows)['first_dispatch_error']
+        self.assertEqual(value['events_observed'], 100)
+        self.assertEqual(value['no_event_captured'], 1)
+        self.assertIsNone(value['max_all_captured_error_events_ns'])
+
+    def test_error_timing_does_not_call_an_open_owner_population_final(self):
+        row = profiled_record()
+        row.update(connection_closed=False, task_closed=False, complete=False)
+        row['lifecycle'].update(connection_closed_ns=None, task_closed_ns=None)
+        row['error_timing']['first_dispatch_error'] = dict(observed_ns=25,
+            phase='dispatch', error_code='PUBLIC_REQUEST_CANCELLED')
+        value = reader.request_error_timing_summary([row])
+        self.assertEqual(value['incomplete_owner_records'], 1)
+        event = value['first_dispatch_error']
+        self.assertEqual(event['accept_to_first_error_wall_ns']['max_ns'], 15)
+        self.assertIsNone(event['max_all_captured_error_events_ns'])
+        self.assertIsNone(event['p99_all_captured_error_events_ns'])
+
+    def test_error_timing_rejects_bad_epoch_scope_and_first_event_shape(self):
+        base = profiled_record()
+        base['error_timing']['first_dispatch_error'] = dict(observed_ns=25,
+            phase='dispatch', error_code='PUBLIC_REQUEST_CANCELLED')
+        mutations = [
+            lambda row: row['error_timing'].update(has_control_authority=True),
+            lambda row: row['error_timing'].update(clock_is_observer_local=False),
+            lambda row: row['error_timing'].update(observation_failed=True),
+            lambda row: row['error_timing']['first_dispatch_error'].update(observed_ns=True),
+            lambda row: row['error_timing']['first_dispatch_error'].update(observed_ns=9),
+            lambda row: row['error_timing']['first_dispatch_error'].update(observed_ns=91),
+            lambda row: row['error_timing']['first_dispatch_error'].update(phase='shutdown'),
+            lambda row: row['error_timing']['first_dispatch_error'].update(error_code='peer text'),
+            lambda row: row['error_timing']['first_dispatch_error'].update(error_code='ROOT'),
+            lambda row: row['error_timing']['first_dispatch_error'].pop('error_code'),
+            lambda row: row['lifecycle'].update(schema='foreign-clock-v1'),
+            lambda row: row.pop('lifecycle'),
+        ]
+        for change in mutations:
+            row = copy.deepcopy(base)
+            change(row)
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                reader.validate_request_error_timing(row)
+
+    def test_reactor_io_keeps_returned_errors_and_partial_clock_subtotals(self):
+        row = profiled_record()
+        row['reactor_io']['frames'][0].update(calls_returned=3, progressed_calls=1,
+            no_progress_calls=1, failed_calls=1, wall_ns_known_sum=30, wall_unknown_calls=1,
+            thread_cpu_ns_known_sum=9, thread_cpu_unknown_calls=1)
+        result = reader.reactor_io_summary([row, profiled_record(), lifecycle_record()])
+        self.assertEqual(result['historical_records_without_extension'], 1)
+        frame = result['frames'][0]
+        self.assertEqual((frame['calls_returned'], frame['progressed_calls'],
+                          frame['no_progress_calls'], frame['failed_calls']), (3, 1, 1, 1))
+        self.assertEqual((frame['wall_ns_known_sum'], frame['wall_unknown_calls']), (30, 1))
+        self.assertEqual((frame['thread_cpu_ns_known_sum'], frame['thread_cpu_unknown_calls']), (9, 1))
+        self.assertEqual((frame['per_record_wall_ns']['known_count'],
+                          frame['per_record_wall_ns']['unknown_count']), (0, 1))
+        self.assertEqual(frame['records_without_calls'], 1)
+        self.assertEqual(result['frames'][5]['per_record_wall_ns']['known_count'], 0)
+
+    def test_reactor_io_capture_failure_cannot_promote_known_partial_cost_to_total(self):
+        row = profiled_record()
+        row.update(observation_failed=True, complete=False)
+        row['reactor_io']['observation_failed'] = True
+        row['reactor_io']['frames'][5].update(calls_returned=1, failed_calls=1,
+            wall_ns=10, wall_ns_known_sum=10, thread_cpu_ns=3, thread_cpu_ns_known_sum=3)
+        result = reader.reactor_io_summary([row])
+        self.assertEqual(result['measurement_failed_records'], 1)
+        frame = result['frames'][5]
+        self.assertEqual(frame['wall_ns_known_sum'], 10)
+        self.assertEqual(frame['per_record_wall_ns']['unknown_count'], 1)
+        self.assertEqual(frame['per_record_wall_ns']['known_count'], 0)
+
+    def test_reactor_io_rejects_fabricated_zero_or_mismatched_call_coverage(self):
+        mutations = [
+            lambda value: value.update(has_control_authority=True),
+            lambda value: value.update(includes_wait_between_calls=True),
+            lambda value: value.update(calls_are_wrapper_returns=False),
+            lambda value: value.update(observation_failed=True),
+            lambda value: value['frames'].pop(),
+            lambda value: value['frames'].reverse(),
+            lambda value: value['frames'][0].update(wall_ns=0),
+            lambda value: value['frames'][0].update(calls_returned=True),
+            lambda value: value['frames'][0].update(calls_returned=-1),
+            lambda value: value['frames'][0].update(calls_returned=1),
+            lambda value: value['frames'][0].update(wall_unknown_calls=1),
+            lambda value: value['frames'][0].update(wall_ns_known_sum=1),
+            lambda value: value['frames'][0].update(calls_returned=1, failed_calls=1,
+                wall_unknown_calls=1, wall_ns=0, thread_cpu_unknown_calls=1),
+        ]
+        for change in mutations:
+            row = profiled_record()
+            change(row['reactor_io'])
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                reader.validate_reactor_io(row)
+
+    def test_new_diagnostic_extensions_leave_historical_derivation_fields_exact(self):
+        historical = lifecycle_record()
+        self.assertIsNone(reader.request_error_timing_summary([historical]))
+        self.assertIsNone(reader.reactor_io_summary([historical]))
+        old = reader.execution_summary([historical], True, observer_v4=True)
+        row = profiled_record()
+        current = reader.execution_summary([row], True, observer_v4=True)
+        self.assertEqual(current.pop('error_timing')['first_dispatch_error']['events_observed'], 0)
+        current.pop('reactor_io')
+        self.assertEqual(current, old)
+        self.assertNotIn('error_timing', old)
+        self.assertNotIn('reactor_io', old)
+        with self.assertRaises(ValueError):
+            reader.execution_summary([row], True, observer_v4=False)
+
     @staticmethod
     def wait_slot(duration, *, accepted=True, completed=True, code=None):
         return dict(started_ns=0, ended_ns=duration, wall_ns=duration,
@@ -820,6 +1126,47 @@ class ReaderTests(unittest.TestCase):
         self.assertEqual([p['public_resource_policy']['resource_revision']
                           for p in raw_result['phases']], ['r14'] * 3)
         self.assertEqual([p['confirmed_rounds'] for p in raw_result['phases']], [0, 0, 0])
+        del report['phases'][0]['completion_work_observation']
+        with self.assertRaisesRegex(ValueError, 'completion-work observation'):
+            reader.analyze(report)
+
+    def test_r15_policy_preserves_failures_and_cannot_relabel_predecessor_phases(self):
+        for predecessor in ('r13', 'r14'):
+            report = arithmetic_report()
+            report['public_resource_policy'] = arithmetic_policy('r15')
+            for phase in report['phases']:
+                phase['public_resource_policy'] = arithmetic_policy(predecessor)
+            with self.subTest(predecessor=predecessor), self.assertRaisesRegex(
+                    ValueError, 'mixed or missing phase resource policies'):
+                reader.analyze(report)
+        for phase in report['phases']:
+            phase['public_resource_policy'] = arithmetic_policy('r15')
+        result = reader.analyze(report)
+        self.assertEqual(result['public_resource_policy']['resource_revision'],
+                         'r15-arithmetic-facts-v1')
+        self.assertEqual([p['confirmed_rounds'] for p in result['phases']], [0, 0, 0])
+        self.assertFalse(result['native_finite_experiment_criteria_met'])
+        self.assertFalse(result['scope']['original_r13_campaign_qualified'])
+        self.assertFalse(result['scope']['adversarial_key_churn_service_qualified'])
+        for phase in report['phases']:
+            phase['public_resource_policy'] = observation('r15')
+            del phase['work_profile']
+            del phase['work_arithmetic_owner']
+            for row in phase['receiver_observation']['records']:
+                row.pop('work_arithmetic', None)
+        report['schema'] = 'native-public-v3-separate-process-campaign-v2'
+        report['public_resource_policy'] = observation('r15')
+        del report['work_profile']
+        raw_result = reader.analyze(report)
+        self.assertEqual([p['public_resource_policy']['resource_revision']
+                          for p in raw_result['phases']], ['r15'] * 3)
+        self.assertEqual([p['confirmed_rounds'] for p in raw_result['phases']], [0, 0, 0])
+        self.assertFalse(raw_result['native_finite_experiment_criteria_met'])
+        wrong_scope = copy.deepcopy(report)
+        wrong_scope['phases'][0]['receiver_observation']['schema'] = \
+            'public-v3-local-request-resource-observation-v2'
+        with self.assertRaisesRegex(ValueError, 'public policy and observed CPU scope disagree'):
+            reader.analyze(wrong_scope)
         del report['phases'][0]['completion_work_observation']
         with self.assertRaisesRegex(ValueError, 'completion-work observation'):
             reader.analyze(report)

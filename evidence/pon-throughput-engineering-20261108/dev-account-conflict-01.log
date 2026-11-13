@@ -1,0 +1,11 @@
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/chain-throughput-engineering-20261108-86a09d93/trillionnium/crates/trnm-mvcc-fee)
+error[E0560]: struct `pon_executor::StateInputs<'_>` has no field named `force_repeated_sender_speculation`
+   --> crates/trnm-mvcc-fee/src/pon_executor/growth.rs:287:13
+    |
+287 |             force_repeated_sender_speculation: false,
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `pon_executor::StateInputs<'_>` does not have this field
+    |
+    = note: available fields are: `force_account_conflict_speculation`
+
+For more information about this error, try `rustc --explain E0560`.
+error: could not compile `trnm-mvcc-fee` (lib test) due to 1 previous error

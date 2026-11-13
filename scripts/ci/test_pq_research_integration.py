@@ -136,6 +136,45 @@ class CorpusGateTests(unittest.TestCase):
         self.assertFalse(result["cryptographic_acceptance"])
         self.assertFalse(result["node_activated"])
 
+    def test_deep_event_and_sampler_inputs_cannot_omit_pins_or_change_bytes(self):
+        # Independent literals: neither helper declarations nor the checker's
+        # required roster supply this source-integrity regression inventory.
+        dependencies = (
+            "scripts/w1_risc0_deep_event_audit.py",
+            "scripts/w1_p3_sampling_audit.py",
+            "scripts/ci/test_w1_risc0_deep_event_audit.py",
+            "scripts/ci/test_w1_p3_sampling_audit.py",
+            "docs/security/W1_RISC0_DEEP_NAMED_EVENTS.md",
+            "docs/security/W1_P3_SAMPLING_CONDITIONAL_ACCOUNTING.md",
+            "formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.lock",
+            "formal/pon-nakamoto-v1/w1_public_stark_research/security_model_audit/vendor_primary/p3-challenger-0.8.0.crate",
+            "formal/pon-nakamoto-v1/w1_public_stark_research/security_model_audit/vendor_primary/p3-fri-0.8.0.crate",
+        )
+        self.assertFalse(check(self.root)["cryptographic_acceptance"])
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+            self.manifest = copy.deepcopy(original)
+            self.save()
+            source = self.root / name
+            retained = source.read_bytes()
+            try:
+                source.write_bytes(retained + b"changed selected conditional-audit input")
+                with self.subTest(path=name, mutation="bytes"), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(retained)
+        self.assertFalse(check(self.root)["node_activated"])
+
     def test_changed_signature_or_source_refuses(self):
         self.put("formal/pon-nakamoto-v1/pq_cell_custody.py", b"altered")
         with self.assertRaisesRegex(IntegrityError, "changed source"):
@@ -404,6 +443,54 @@ class CorpusGateTests(unittest.TestCase):
                 with self.assertRaisesRegex(IntegrityError, "PNQ2 bounded-profile"):
                     check(self.root)
 
+    def test_model_source_composition_v6_sources_cannot_be_dropped_and_repinned(self):
+        original = copy.deepcopy(self.manifest)
+        self.assertFalse(check(self.root)['cryptographic_acceptance'])
+        # Independent names include the V3 policy supplying sources and payees.
+        # These tests cover selected source integrity, not dependency closure.
+        for path in (
+            'config/pon/model-source-composition-v6.json',
+            'config/pon/public-evaluation-model-source-composition-v6.json',
+            'config/pon/model-evidence-v3.json',
+            'trillionnium/crates/trnm-mvcc-fee/src/model_source_composition_v6.rs',
+            'trillionnium/crates/trnm-mvcc-fee/src/model_evidence_v3.rs',
+            'trillionnium/crates/trnm-pon-node/tests/model_source_composition_v6.rs',
+        ):
+            with self.subTest(path=path):
+                self.manifest = copy.deepcopy(original)
+                self.manifest['required_paths'].remove(path)
+                del self.manifest['pinned_blobs'][path]
+                self.save()
+                with self.assertRaisesRegex(IntegrityError, 'PNQ2 bounded-profile'):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        self.assertFalse(check(self.root)['cryptographic_acceptance'])
+
+
+    def test_upstream_withdrawal_and_posterior_sources_cannot_be_dropped_and_repinned(self):
+        original = copy.deepcopy(self.manifest)
+        self.assertFalse(check(self.root)['cryptographic_acceptance'])
+        # Independent literal names prevent removal from both inventories from
+        # silently turning a security-lifecycle check into optional evidence.
+        for path in (
+            'config/pon/w1-upstream-security-v1.json',
+            'scripts/ci/w1_upstream_security.py',
+            'scripts/ci/test_w1_upstream_security.py',
+            'formal/pon-nakamoto-v1/quantum_posterior_policy.py',
+            'evidence/pon-quantum-lifetime-20261111-e464/upstream-security-report.json',
+        ):
+            with self.subTest(path=path):
+                self.manifest = copy.deepcopy(original)
+                self.manifest['required_paths'].remove(path)
+                del self.manifest['pinned_blobs'][path]
+                self.save()
+                with self.assertRaises(IntegrityError):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        self.assertFalse(check(self.root)['cryptographic_acceptance'])
+
     def test_native_wire_numeric_claims_refuse_bool_or_wrong_version(self):
         original = copy.deepcopy(self.manifest["native_network_owner_slice_v2"])
         for field, value in (("tpq1_peer_purpose", True), ("tpq1_peer_purpose", 1),
@@ -435,6 +522,44 @@ class CorpusGateTests(unittest.TestCase):
         self.manifest = original
         self.save()
         self.assertFalse(check(self.root)['cryptographic_acceptance'])
+
+    def test_witness_v5_component_sources_cannot_be_omitted_or_changed(self):
+        # Independent names ensure these newly introduced sources remain
+        # mandatory even if both a manifest requirement and its pin disappear.
+        paths = (
+            "scripts/ci/run_pq_root_witness_v5.py",
+            "scripts/ci/test_run_pq_root_witness_v5.py",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5/durable.rs",
+            "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5/provider_readback.rs",
+            "trillionnium/crates/trnm-pon-node/tests/root_witness_provider_v5_native.rs",
+            "trillionnium/crates/trnm-pon-node/tests/root_witness_v5_native.rs",
+            "trillionnium/crates/trnm-pon-node/tests/root_witness_v5_durable_native.rs",
+        )
+        original = copy.deepcopy(self.manifest)
+        for name in paths:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+            self.manifest = copy.deepcopy(original)
+            self.save()
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b" changed witness component")
+                with self.subTest(path=name, mutation=True), self.assertRaisesRegex(
+                        IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        self.assertFalse(check(self.root)["cryptographic_acceptance"])
 
     def test_runtime_verifier_dependency_file_and_pin_cannot_both_be_dropped(self):
         # Keep this real dependency named independently of the checker's set.

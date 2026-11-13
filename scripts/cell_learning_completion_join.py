@@ -15,11 +15,13 @@ import cell_adoption_readback as native
 import cell_learning_iteration_join as iteration
 
 REPORT_SCHEMA = "trnm-cell-learning-completed-use-review-v1"
+TRAINER_NO_UPDATE_REPORT_SCHEMA = "trnm-cell-learning-completed-use-review-v2"
 
 
 def review_native_learning_completion(
         selection_raw, completed_raw, readback_raw, *, expected_selection_sha256,
-        expected_completed_sha256, expected_readback_sha256, frozen, expected):
+        expected_completed_sha256, expected_readback_sha256, frozen, expected,
+        root_profile_raw=None, expected_root_profile_sha256=None):
     """Check the exact continuation, with no synthesized final receipt or grant.
 
     ACK completion is required for this review profile. Model STOP is separately
@@ -32,7 +34,8 @@ def review_native_learning_completion(
                    "COMPLETION_CHECKPOINT_PIN")
     prior = iteration.review_native_learning_iteration(
         selection_raw, readback_raw, expected_checkpoint_sha256=expected_selection_sha256,
-        expected_readback_sha256=expected_readback_sha256, frozen=frozen, expected=expected)
+        expected_readback_sha256=expected_readback_sha256, frozen=frozen, expected=expected,
+        root_profile_raw=root_profile_raw, expected_root_profile_sha256=expected_root_profile_sha256)
     selection, selection_replay = iteration.decode_native_learning_checkpoint(selection_raw)
     completed, replay = iteration.decode_native_learning_checkpoint(completed_raw)
     native.require(completed["request"] == selection["request"] and
@@ -69,7 +72,8 @@ def review_native_learning_completion(
     native.require(final["observation"] == observed, "COMPLETION_ORIGINAL_NEXT_USE")
 
     return dict(
-        schema=REPORT_SCHEMA, scope="pinned-native-completed-receipt-chain-and-acknowledged-use-only",
+        schema=TRAINER_NO_UPDATE_REPORT_SCHEMA if "training_no_update" in replay else REPORT_SCHEMA,
+        scope="pinned-native-completed-receipt-chain-and-acknowledged-use-only",
         selection_checkpoint_sha256=expected_selection_sha256,
         completed_checkpoint_sha256=expected_completed_sha256,
         native_readback_sha256=expected_readback_sha256,
@@ -97,7 +101,11 @@ def main():
     for name in ("selection-checkpoint", "completed-checkpoint", "readback", "freeze", "expected"):
         parser.add_argument("--" + name, type=Path, required=True)
         parser.add_argument("--" + name + "-sha256", required=True)
+    parser.add_argument("--root-profile", type=Path)
+    parser.add_argument("--root-profile-sha256")
     args = parser.parse_args()
+    if (args.root_profile is None) != (args.root_profile_sha256 is None):
+        parser.error("--root-profile and --root-profile-sha256 must be supplied together")
     frozen_raw = native.read_bounded(args.freeze, iteration.MAX_FREEZE)
     expected_raw = native.read_bounded(args.expected, native.MAX_EXPECTED)
     native.require(native.sha(frozen_raw) == native.hex_digest(args.freeze_sha256), "LEARNING_FREEZE_PIN")
@@ -109,6 +117,8 @@ def main():
         expected_selection_sha256=args.selection_checkpoint_sha256,
         expected_completed_sha256=args.completed_checkpoint_sha256,
         expected_readback_sha256=args.readback_sha256,
+        root_profile_raw=None if args.root_profile is None else native.read_bounded(args.root_profile, 16384),
+        expected_root_profile_sha256=args.root_profile_sha256,
         frozen=native.decode(frozen_raw, iteration.MAX_FREEZE),
         expected=native.decode(expected_raw, native.MAX_EXPECTED))
     print(json.dumps(result, sort_keys=True, separators=(",", ":"), allow_nan=False))

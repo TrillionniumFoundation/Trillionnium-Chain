@@ -17,15 +17,18 @@ pub(crate) struct PacketCodecContext {
 }
 
 impl PacketCodecContext {
+    #[cfg(test)]
     pub(crate) fn network(&self) -> crate::Hash {
         self.app.network
     }
+    #[cfg(test)]
     pub(crate) fn parameters(&self) -> crate::Hash {
         self.app.parameters
     }
     pub(crate) fn is_pq(&self) -> bool {
         pq::enabled(&self.app)
     }
+    #[cfg(test)]
     pub(crate) fn encode(&self, packet: &Packet) -> Result<Vec<u8>> {
         encode_packet_for_config(packet, &self.app)
     }
@@ -195,6 +198,7 @@ pub(crate) fn decode_packet_for_profile(
     )?;
     let mut transactions = Vec::with_capacity(count);
     let mut total = 0_usize;
+    let mut verifications = 0_usize;
     for _ in 0..count {
         let n = raw.get(pos..pos + 2).ok_or("PQ2_PACKET_LENGTH")?;
         pos += 2;
@@ -209,19 +213,116 @@ pub(crate) fn decode_packet_for_profile(
             "PQ2_TRANSACTION_LIMIT",
         )?;
         let tx = raw.get(pos..pos + len).ok_or("PQ2_PACKET_LENGTH")?;
-        UnverifiedEnvelope::decode_for_profile(tx, profile).map_err(|_| "PQ2_TRANSACTION_CODEC")?;
+        let decoded = UnverifiedEnvelope::decode_for_profile(tx, profile)
+            .map_err(|_| "PQ2_TRANSACTION_CODEC")?;
+        // Retain each exact witness/evidence budget while its fully checked
+        // envelope is available. Do not preflight the same frame a second time.
+        verifications = verifications
+            .checked_add(decoded.verification_count())
+            .ok_or("PQ_VERIFY_BUDGET")?;
         transactions.push(tx.to_vec());
         pos += len;
     }
+    // Check the entire framed input and original proof suffix BEFORE the
+    // verification quota, retaining the original decode error precedence.
     ensure(
         raw.len().checked_sub(pos) == Some(pon_work::PROOF_BYTES),
         "PQ2_PACKET_LENGTH",
     )?;
-    let packet = Packet {
+    ensure(
+        verifications <= profile.maximum_verifications(),
+        "PQ_VERIFY_BUDGET",
+    )?;
+    // Count, per-command lengths, total bytes and framing were already checked
+    // while decoding. Their exact sum equals raw.len(); do not re-run the full
+    // envelope parser through checked_length_for_profile (encoding retains it).
+    Ok(Packet {
         header,
         transactions,
         proof: raw[pos..].to_vec(),
-    };
-    checked_length_for_profile(&packet, profile)?;
-    Ok(packet)
+    })
+}
+
+#[cfg(test)]
+mod decode_budget_tests {
+    use super::*;
+
+    fn empty_packet() -> Packet {
+        Packet {
+            header: Header {
+                network: [1; 32],
+                parameters: [2; 32],
+                parent: [3; 32],
+                height: 1,
+                timestamp: 2,
+                target: [4; 32],
+                miner: [5; 32],
+                transactions: [6; 32],
+                state: [7; 32],
+                receipts: [8; 32],
+                work_task: [9; 32],
+                nonce: 3,
+            },
+            transactions: Vec::new(),
+            proof: vec![0; pon_work::PROOF_BYTES],
+        }
+    }
+
+    #[test]
+    fn all_pq_profiles_keep_exact_framing_and_error_identities() {
+        let packet = empty_packet();
+        for profile in [
+            wire::AccountProfile::AccountsV2,
+            wire::AccountProfile::QuotaV3,
+            wire::AccountProfile::TasksV4,
+            wire::AccountProfile::TasksV5,
+            wire::AccountProfile::ApplicationV6,
+        ] {
+            let raw = encode_packet_for_profile(&packet, profile).unwrap();
+            let decoded = decode_packet_for_profile(&raw, profile).unwrap();
+            assert_eq!(decoded.header, packet.header);
+            assert!(decoded.transactions.is_empty());
+            assert_eq!(decoded.proof, packet.proof);
+            assert_eq!(encode_packet_for_profile(&decoded, profile).unwrap(), raw);
+
+            let mut wrong_profile = raw.clone();
+            wrong_profile[0] ^= 1;
+            assert_eq!(
+                decode_packet_for_profile(&wrong_profile, profile)
+                    .unwrap_err()
+                    .to_string(),
+                "PQ2_PACKET_PROFILE"
+            );
+
+            let mut over_count = raw.clone();
+            let offset = 8 + HEADER_BYTES;
+            over_count[offset..offset + 2]
+                .copy_from_slice(&((profile.maximum_transactions() + 1) as u16).to_le_bytes());
+            assert_eq!(
+                decode_packet_for_profile(&over_count, profile)
+                    .unwrap_err()
+                    .to_string(),
+                "PQ2_TRANSACTION_LIMIT"
+            );
+
+            let mut empty_transaction = raw.clone();
+            empty_transaction[offset..offset + 2].copy_from_slice(&1u16.to_le_bytes());
+            empty_transaction.splice(offset + 2..offset + 2, [0u8, 0u8]);
+            assert_eq!(
+                decode_packet_for_profile(&empty_transaction, profile)
+                    .unwrap_err()
+                    .to_string(),
+                "PQ2_TRANSACTION_LIMIT"
+            );
+
+            let mut trailing = raw.clone();
+            trailing.push(0);
+            assert_eq!(
+                decode_packet_for_profile(&trailing, profile)
+                    .unwrap_err()
+                    .to_string(),
+                "PQ2_PACKET_LENGTH"
+            );
+        }
+    }
 }

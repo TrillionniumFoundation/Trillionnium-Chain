@@ -1,0 +1,147 @@
+{
+  "changed_source_files": [],
+  "completed_at_utc": "2026-11-09T15:06:21.188461+00:00",
+  "gates": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "completed_at_utc": "2026-11-09T15:03:04.946392+00:00",
+      "elapsed_seconds": 0.03190645691938698,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "9fd3f0124aa0e7b3ea64e038fca295de8061d0548664a36d48df396e9b33bc55",
+      "name": "preflight",
+      "started_at_utc": "2026-11-09T15:03:04.914472+00:00"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "6ea3bf3fe13d66333bba3a8c7b97e14b4319b39f"
+      ],
+      "completed_at_utc": "2026-11-09T15:03:09.975798+00:00",
+      "elapsed_seconds": 5.000406964914873,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "823721f3c5ace4b57d6dd33d20f50ba1a7c88070db157e1d820e488578bb3166",
+      "name": "exact-source",
+      "started_at_utc": "2026-11-09T15:03:04.975397+00:00"
+    },
+    {
+      "command": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--features",
+        "trnm-pon-node/pq-native-openssl"
+      ],
+      "completed_at_utc": "2026-11-09T15:03:10.072617+00:00",
+      "elapsed_seconds": 0.06440338399261236,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "8d78341d870e4f1cdd94be2350585c8497daee0f8865a740d89b28cc079c57f4",
+      "name": "cargo-graph",
+      "started_at_utc": "2026-11-09T15:03:10.008223+00:00"
+    },
+    {
+      "command": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--jobs",
+        "2",
+        "-p",
+        "trnm-data-availability",
+        "--",
+        "--test-threads=1"
+      ],
+      "completed_at_utc": "2026-11-09T15:05:37.240472+00:00",
+      "elapsed_seconds": 147.13327768980525,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "400fdea256684814fb1fd18d61106891ab069cafd6cae2ca783c6cf6ddc803d5",
+      "name": "da-crate",
+      "started_at_utc": "2026-11-09T15:03:10.107207+00:00"
+    },
+    {
+      "command": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--jobs",
+        "2",
+        "--all-targets",
+        "-p",
+        "trnm-data-availability",
+        "-p",
+        "trnm-pon-node",
+        "--features",
+        "trnm-pon-node/pq-native-openssl",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "completed_at_utc": "2026-11-09T15:06:09.621063+00:00",
+      "elapsed_seconds": 32.34790327609517,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "04e48c5823eb8c6f82ed4b6ea7e8eae3ee4cb71e77303145bd00e70a2ee8fdc9",
+      "name": "strict-clippy",
+      "started_at_utc": "2026-11-09T15:05:37.273164+00:00"
+    },
+    {
+      "command": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "completed_at_utc": "2026-11-09T15:06:16.586928+00:00",
+      "elapsed_seconds": 6.932403757004067,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "fmt",
+      "started_at_utc": "2026-11-09T15:06:09.654517+00:00"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "6ea3bf3fe13d66333bba3a8c7b97e14b4319b39f"
+      ],
+      "completed_at_utc": "2026-11-09T15:06:21.065001+00:00",
+      "elapsed_seconds": 4.448825191007927,
+      "exit_code": 0,
+      "failure": null,
+      "log_sha256": "823721f3c5ace4b57d6dd33d20f50ba1a7c88070db157e1d820e488578bb3166",
+      "name": "exact-source-end",
+      "started_at_utc": "2026-11-09T15:06:16.616176+00:00"
+    }
+  ],
+  "identity": {
+    "commit": "6ea3bf3fe13d66333bba3a8c7b97e14b4319b39f",
+    "status": "",
+    "tree": "6c4401a94defeecb9696c2da1442dcbd27b56352"
+  },
+  "passed": true,
+  "phase": "cargo",
+  "source_end_manifest_sha256": "52a6750eec05243306a2a1af84ed63f157d6a143d0d152e322a075a9ea4afc41",
+  "source_start_manifest_sha256": "52a6750eec05243306a2a1af84ed63f157d6a143d0d152e322a075a9ea4afc41",
+  "sources_unchanged": true,
+  "started_at_utc": "2026-11-09T15:03:04.882962+00:00"
+}

@@ -1,0 +1,5 @@
+{"result": "PASS", "mode": "--dev", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-cell-capacity-release-dc0357-20261109", "remote_policy_mutated": false}
+error: failed to create directory `/workspace/scratch/dc0357cf2d6c/target/debug/.fingerprint/trnm-data-availability-13fd9739c23ef8cc`
+
+Caused by:
+  No space left on device (os error 28)

@@ -1,0 +1,75 @@
+{
+  "allowed_corpus_pin_paths": [
+    "scripts/ci/run_pq_root_native_v3.py",
+    "scripts/ci/run_pq_root_continuation_v4.py",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+  ],
+  "base": "8970e2c81abbf48e2a4d3f0802d79624ab20fadd",
+  "branch": "fix/chain-root-operation-owned-20261112-df05-v4",
+  "four_path_delta": [
+    {
+      "new_blob": "18cdf0a7c191c0ecb744ebf2433a6a370fb4d2c9",
+      "new_bytes": 9455,
+      "new_mode": "100644",
+      "new_sha256": "78e010a638c359763d5e8a6344991ae8925ef394b02392f2d10f40415a7834dc",
+      "old_blob": "3487ecb548d5f5e0b9406eb581d19ef92d1b2f0a",
+      "old_bytes": 9390,
+      "old_mode": "100644",
+      "old_sha256": "3519a070b9d4b9a87c409f176b0b5c53993af34da01be4df055ca5c28895819a",
+      "path": "scripts/ci/run_pq_root_native_v3.py"
+    },
+    {
+      "new_blob": "6b9bee9a1cf722ab98b5ff0e530c194ed039b105",
+      "new_bytes": 6431,
+      "new_mode": "100644",
+      "new_sha256": "4de391532cc5ae361d2820f3c378d7a4dca2cca4d30b439a10ba53eac5236763",
+      "old_blob": "43c449954fd11ede0aec3fec050a4547aef27fac",
+      "old_bytes": 6366,
+      "old_mode": "100644",
+      "old_sha256": "5487c9904110ffe3662bbeb4b802ee26c56bc6ccad698902d61512404839dfb6",
+      "path": "scripts/ci/run_pq_root_continuation_v4.py"
+    },
+    {
+      "new_blob": "7e12937de3491256d7cbe747ba253ed0544f17b5",
+      "new_bytes": 322682,
+      "new_mode": "100644",
+      "new_sha256": "bf3aaa1adfb990d69017f342323cdc1038257d6666a30abc515fdf639c2c3040",
+      "old_blob": "563189f9b995a0acc37cbc59cda3d81a3ba49b8b",
+      "old_bytes": 322682,
+      "old_mode": "100644",
+      "old_sha256": "40805a1a0b8c71f1e1c496e584ec5e581dd7c1ed8f49ebd911a406c8703bbe1c",
+      "path": "config/pon/pq-cross-branch-corpus-v1.json"
+    },
+    {
+      "new_blob": "92fbaafdd7fc64c3cd65c0c917cdb9bddd7224ca",
+      "new_bytes": 890832,
+      "new_mode": "100644",
+      "new_sha256": "8d7687955b0a8afba1f0ecfdbcc28671a4df41e68d2a0b4db2f6955fe7d5cc62",
+      "old_blob": "6abcbdb70764356b610ebe7ffc1b2379d709cdcf",
+      "old_bytes": 888837,
+      "old_mode": "100644",
+      "old_sha256": "689cda634dc95c55ded4020e456c3713735f5680b91c7fd17c6a470570af8b43",
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    }
+  ],
+  "head": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "native_tests_executed": false,
+  "old_source_head_unchanged": true,
+  "operation_key": "chain-root-owned-runner-source-prep-df05-v4",
+  "parent": "92934b64f80ee9b20bcc070a08ca0966b7c5741d",
+  "previous_source": "92934b64f80ee9b20bcc070a08ca0966b7c5741d",
+  "previous_tree": "b1882c2e46827abfd1db5f8744be043d5776df6d",
+  "prior_source_preparation_manifest_sha256": "c0249ded715e17c0840ea8fc9ae2a28fbedeb09f54243685cc716e0dba012330",
+  "prior_v4_evidence_manifest_sha256": "529e51806633f01858850b66d50f8c361521f0f37dd97610a5c1caf8b4354198",
+  "production_activation": false,
+  "publication_performed": false,
+  "same_previous_product_source": true,
+  "schema": "root-owned-runner-source-v3",
+  "shared_config_unchanged": true,
+  "source_clean": true,
+  "source_verification_sha256": "052ef6d0ddf240462214a7ad0205bf2928c8ed9a04ed42b08237fe9b682ccf54",
+  "status": "HOLD",
+  "storage_admission_sha256": "450199e258fcc2bf15333ccac4e9659d57b67d8e909625fab4727bac5a3ccb6b",
+  "tree": "5d2538f404e32319ea1084a6c79f37c52503546f",
+  "worktree": "/data/chain-root-operation-owned-20261112-df05-v4"
+}

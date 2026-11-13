@@ -1,0 +1,42 @@
+{
+  "bytes": 739411,
+  "command": [
+    "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "metadata",
+    "--locked",
+    "--offline",
+    "--format-version",
+    "1",
+    "--manifest-path",
+    "tests/fuzz/Cargo.toml"
+  ],
+  "cwd": "/data/chain-checkpoint-probe-format-20261112-df05",
+  "elapsed_ns": 13573419172,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+  "log": "metadata-fuzz.log",
+  "name": "metadata-fuzz",
+  "process_exit_code": 0,
+  "sha256": "7f5a9b132bcb31430650ed7997515aaa384c30b574c867e3ab49ae4b52d519c4",
+  "source": "00b3a848009460e425d58b62f9edc9abe9603b78",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "target_after_identity": {
+    "device": 2067,
+    "gid": 1000,
+    "inode": 26345745,
+    "mode": 448,
+    "uid": 1000
+  },
+  "target_before_identity": {
+    "device": 2067,
+    "gid": 1000,
+    "inode": 26345745,
+    "mode": 448,
+    "uid": 1000
+  },
+  "target_identity_error": null,
+  "timed_out": false
+}

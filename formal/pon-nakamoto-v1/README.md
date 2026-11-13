@@ -1,5 +1,27 @@
 # PoN executable contracts and bounded experiments
 
+## Joint difficulty, time, credit and participation qualification
+
+The [joint qualification contract](../../docs/protocol/pon-nakamoto-v1/details/JOINT_CONSENSUS_QUALIFICATION_V1.md)
+binds 23 reviewed source files, both native owner profiles, the actual development
+parameters and the original unproved MU1 cost contract. It reports 18 unknown
+environment inputs and 13 open obligations for one joint CP/CG/CQ argument.
+`--check` verifies this research contract; `--require-qualified` deliberately
+refuses with exit 3. Both keep native failure probabilities null and production
+activation false. No successful finite report calibrates six confirmations.
+
+The [dynamic participation continuation](../../docs/protocol/pon-nakamoto-v1/details/DYNAMIC_PARTICIPATION_V1.md)
+checks declared cohort eligibility, inherited delivery deadlines and retained
+task/resource debt across joins, departures and rejoining. It supplies no native
+membership authority, authenticated clock, positive production-rate law or
+all-algorithm work lower bound.
+
+```bash
+python3 formal/pon-nakamoto-v1/joint_consensus_qualification.py --check
+python3 formal/pon-nakamoto-v1/test_joint_consensus_qualification.py
+python3 formal/pon-nakamoto-v1/test_dynamic_participation_v1.py
+```
+
 The Python ledger is the existing modules' executable design and persistence reference,
 not a second production owner. Native M01 work/strict crypto, M00 wire and M06 twelve-command
 execution are composed explicitly. A selected missing/failed backend never silently falls
@@ -324,3 +346,14 @@ This is declared local expenditure and raw-history reconciliation. Conditional
 failure probabilities, world-wide start coverage, physical time, hidden inventory
 and a common native failure law remain uncertified. The report retains a null
 native failure bound and false probability qualification flags.
+
+## Conditional joint production tails
+
+The [joint tail interface](../../docs/protocol/pon-nakamoto-v1/details/JOINT_PRODUCTION_TAIL_V1.md)
+composes ready credit, entry debt and honest pacer progress under one conditional
+history. Exact finite-state controls compare direct joint moments, conditional
+Cauchy-Schwarz and adaptive Bellman first-passage probabilities. Initial residual
+potential is retained; supplied scope labels do not authenticate an actual law.
+The [calibration distortion proof](../../docs/protocol/pon-nakamoto-v1/details/CREDIT_CALIBRATION_DISTORTION_V1.md)
+quantifies the mismatch of ideal classical and quantum cost scaling. Both results
+retain HOLD and null native security bounds.

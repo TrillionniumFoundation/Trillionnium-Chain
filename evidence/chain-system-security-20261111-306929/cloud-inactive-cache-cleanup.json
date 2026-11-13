@@ -1,0 +1,33 @@
+{
+  "schema": "task-inactive-build-cache-cleanup-v1",
+  "utc_unix_ns": 1794448123985150479,
+  "confirmed_owned_prior_runners": {
+    "49458": 130,
+    "98491": 130
+  },
+  "third_cloud_attempt_started": false,
+  "basis": "task owner confirmed observed terminal runners and no subsequent cloud build; nonblocking cache lock checks also succeeded",
+  "removed_only_rebuildable_cache": [
+    {
+      "path": "/workspace/scratch/3069292387f3/root-target/debug/incremental",
+      "file_count": 165,
+      "logical_bytes": 92341194
+    },
+    {
+      "path": "/workspace/scratch/3069292387f3/root-target/debug/deps",
+      "file_count": 324,
+      "logical_bytes": 541925591
+    }
+  ],
+  "preserved": [
+    "debug/build",
+    "all source and Git objects",
+    "root-observations",
+    "root-build-setup and PQ provider",
+    "all raw native/source receipts and archives"
+  ],
+  "root_cloud_libtest_cases": 0,
+  "no_other_task_cache_touched": true,
+  "free_bytes_before": 32673792,
+  "free_bytes_after": 667897856
+}

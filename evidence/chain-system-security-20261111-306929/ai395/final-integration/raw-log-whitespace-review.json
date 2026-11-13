@@ -1,0 +1,472 @@
+{
+  "authored_file_whitespace_check": "git diff --cached --check -- <all staged paths except these exact 23 hash-bound raw logs>",
+  "classified_diagnostics": 71,
+  "entire_staged_set_reconciled_with_completed_failed_operation": true,
+  "index_equals_physical_bytes": true,
+  "initial_diagnostic_bytes": 32217,
+  "initial_diagnostic_sha256": "6dbddb8dad837703e61f818b8b24fb423c94d7f652a0e639ed1eb64d3a363d25",
+  "initial_driver_sha256": "7c17ee42a33e1c3c90d0a3a85a7c938f0bd386b5ce6f983164cd0647d377b056",
+  "initial_operation": "/home/qq/chain-system-security-final-integration-20261112-306929/integrate-native-F-v1",
+  "initial_staged_whitespace_exit": 2,
+  "native_eof_blank_diagnostics": 19,
+  "native_eof_blank_files": 19,
+  "native_source": "bac6b7659bd7e2d633e25c2da0add60f6a10c7fb",
+  "native_tests_repeated": false,
+  "precommit_head": "98cb32df65d11cf6124e47b5246ab4854f137bb1",
+  "pty_crlf_diagnostics": 52,
+  "pty_crlf_files": 4,
+  "raw_bytes_preserved": true,
+  "raw_files": [
+    {
+      "bytes": 1666,
+      "diagnostics": [
+        {
+          "kind": "trailing whitespace.",
+          "line": 1
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 2
+        }
+      ],
+      "path": "evidence/chain-system-security-20261111-306929/ai395/incentives/exporter-pty.log",
+      "sha256": "82027ab7408d0e4ff8e8a69072c3f1e5aac880ff577a5a4d1671d97214d7a8ef"
+    },
+    {
+      "bytes": 5490,
+      "diagnostics": [
+        {
+          "kind": "trailing whitespace.",
+          "line": 1
+        }
+      ],
+      "path": "evidence/chain-system-security-20261111-306929/ai395/root-native/full-v4-native-owner-output.log",
+      "sha256": "83ed8c3c18cfe2800dd08f6eeb409647735fd15fe7d88329332c97582632f904"
+    },
+    {
+      "bytes": 9572,
+      "diagnostics": [
+        {
+          "kind": "trailing whitespace.",
+          "line": 1
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 2
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 3
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 4
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 5
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 6
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 7
+        }
+      ],
+      "path": "evidence/chain-system-security-20261111-306929/ai395/root-native/initial-native-owner-output.log",
+      "sha256": "76143b41dc6e436fec09a74307113b70bdd80d3b6b17fd8243911902f8941a65"
+    },
+    {
+      "bytes": 7425,
+      "diagnostics": [
+        {
+          "kind": "trailing whitespace.",
+          "line": 1
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 2
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 3
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 4
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 5
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 6
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 7
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 8
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 9
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 10
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 11
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 12
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 13
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 14
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 15
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 16
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 17
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 18
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 19
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 20
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 21
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 22
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 23
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 24
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 25
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 26
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 27
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 28
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 29
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 30
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 31
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 32
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 33
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 34
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 35
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 36
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 37
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 38
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 39
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 40
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 41
+        },
+        {
+          "kind": "trailing whitespace.",
+          "line": 42
+        }
+      ],
+      "path": "evidence/chain-system-security-20261111-306929/ai395/sqlite/owner-output.log",
+      "sha256": "691e8cb64315e537eaa4d3b5542674d9c2d33681ee74359b69e64a7c9f89777a"
+    },
+    {
+      "bytes": 1537,
+      "diagnostics": [
+        {
+          "kind": "new blank line at EOF.",
+          "line": 24
+        }
+      ],
+      "path": "evidence/chain-system-security-20261111-306929/ai395/sqlite/records/sqlite-focused-trnm-data-availability.log",
+      "sha256": "17fff50ba55e5fa9f18dcab1660105a132dc33d26db71721edc0c69ccdd348b2"
+    },
+    {
+      "bytes": 567,
+      "diagnostics": [
+        {
+          "kind": "new blank line at EOF.",
+          "line": 10
+        }
+      ],
+      "path": "evidence/chain-system-security-20261111-306929/ai395/sqlite/records/sqlite-focused-trnm-mvcc-fee.log",
+      "sha256": "70aa6e74b8fad7569cd955ef9344679a7869a41a3fa062c94d2016b00509c172"
+    },
+    {
+      "bytes": 1141,
+      "diagnostics": [
+        {
+          "kind": "new blank line at EOF.",
+          "line": 24
+        }
+      ],
+      "path": "evidence/chain-system-security-20261111-306929/ai395/sqlite/records/sqlite-focused-trnm-service-settlement.log",
+      "sha256": "2dbfff0061057783a46e03bbcf37043702bd1ca7219694cfaec36ae98cd90a14"
+    },
+    {
+      "bytes": 790,
+      "diagnostics": [
+        {
+          "kind": "new blank line at EOF.",
+          "line": 12
+        }
+      ],
+      "path": "evidence/chain-system-security-20261111-306929/ai395/sqlite/records/sqlite-focused-trnm-task-kernel.log",
+      "sha256": "27625b3e6d927445853c9674a4c8841dd95d444155884e1751027159455d17a3"
+    },
+    {
+      "bytes": 192,
+      "diagnostics": [
+        {
+          "kind": "new blank line at EOF.",
+          "line": 6
+        }
+      ],
+      "path": "evidence/chain-system-security-20261111-306929/ai395/sqlite/records/sqlite-retained-trnm-data-availability-1.log",
+      "sha256": "bb661d365f4b9a59306e43beb0e16f5badd8790e56fec5835556e0bd191881c9"
+    },
+    {
+      "bytes": 166,
+      "diagnostics": [
+        {
+          "kind": "new blank line at EOF.",
+          "line": 6
+        }
+      ],
+      "path": "evidence/chain-system-security-20261111-306929/ai395/sqlite/records/sqlite-retained-trnm-data-availability-2.log",
+      "sha256": "30478d0a123c1b28a1913c4b92e53477eb0abce94dfcbe95be928c55ca6c84a2"
+    },
+    {
+      "bytes": 192,
+      "diagnostics": [
+        {
+          "kind": "new blank line at EOF.",
+          "line": 6
+        }
+      ],
+      "path": "evidence/chain-system-security-20261111-306929/ai395/sqlite/records/sqlite-retained-trnm-data-availability-3.log",
+      "sha256": "8f3c9834da72cf1f9669d14b9c61519623aae56624364d85e10a672912e3d092"
+    },
+    {
+      "bytes": 191,
+      "diagnostics": [
+        {
+          "kind": "new blank line at EOF.",
+          "line": 6
+        }
+      ],
+      "path": "evidence/chain-system-security-20261111-306929/ai395/sqlite/records/sqlite-retained-trnm-mvcc-fee-1.log",
+      "sha256": "68722f7659c45eea779c996de4d917d33250f91fae1e1ed4e3e2a87a62770697"
+    },
+    {
+      "bytes": 192,
+      "diagnostics": [
+        {
+          "kind": "new blank line at EOF.",
+          "line": 6
+        }
+      ],
+      "path": "evidence/chain-system-security-20261111-306929/ai395/sqlite/records/sqlite-retained-trnm-mvcc-fee-2.log",
+      "sha256": "91b95e998df72f23727f0e9ecc956dc9699cfb9cff0ae4b7fe06499243632465"
+    },
+    {
+      "bytes": 187,
+      "diagnostics": [
+        {
+          "kind": "new blank line at EOF.",
+          "line": 6
+        }
+      ],
+      "path": "evidence/chain-system-security-20261111-306929/ai395/sqlite/records/sqlite-retained-trnm-mvcc-fee-3.log",
+      "sha256": "e0aa3d051cf49486f2fb152e4a46480890c265af1cbfb14ef709e666c50df162"
+    },
+    {
+      "bytes": 202,
+      "diagnostics": [
+        {
+          "kind": "new blank line at EOF.",
+          "line": 6
+        }
+      ],
+      "path": "evidence/chain-system-security-20261111-306929/ai395/sqlite/records/sqlite-retained-trnm-service-settlement-1.log",
+      "sha256": "d0848ee2b2a2e9a4a8bc051c8db748ac9aa91ef5007f96bb1d8c5abb685a7d82"
+    },
+    {
+      "bytes": 191,
+      "diagnostics": [
+        {
+          "kind": "new blank line at EOF.",
+          "line": 6
+        }
+      ],
+      "path": "evidence/chain-system-security-20261111-306929/ai395/sqlite/records/sqlite-retained-trnm-service-settlement-2.log",
+      "sha256": "1cddd88dc52ea7c60f1d37ea5902d0b746c3069d1e72659b2e1a9d173f4d109e"
+    },
+    {
+      "bytes": 201,
+      "diagnostics": [
+        {
+          "kind": "new blank line at EOF.",
+          "line": 6
+        }
+      ],
+      "path": "evidence/chain-system-security-20261111-306929/ai395/sqlite/records/sqlite-retained-trnm-service-settlement-3.log",
+      "sha256": "ff5b843d4b18d5ff0711c8e16074d79849c20769a338790aceebb068acad170a"
+    },
+    {
+      "bytes": 200,
+      "diagnostics": [
+        {
+          "kind": "new blank line at EOF.",
+          "line": 6
+        }
+      ],
+      "path": "evidence/chain-system-security-20261111-306929/ai395/sqlite/records/sqlite-retained-trnm-task-kernel-1.log",
+      "sha256": "d622c580b7cd565b552bfd3aa842331ecc12ba7502bdc0181253a717c6cd3d76"
+    },
+    {
+      "bytes": 191,
+      "diagnostics": [
+        {
+          "kind": "new blank line at EOF.",
+          "line": 6
+        }
+      ],
+      "path": "evidence/chain-system-security-20261111-306929/ai395/sqlite/records/sqlite-retained-trnm-task-kernel-2.log",
+      "sha256": "db08b01c1ef24d6488cea7ab6c88475c9eed9c27453baf736ed6fcadeca987a4"
+    },
+    {
+      "bytes": 195,
+      "diagnostics": [
+        {
+          "kind": "new blank line at EOF.",
+          "line": 6
+        }
+      ],
+      "path": "evidence/chain-system-security-20261111-306929/ai395/sqlite/records/sqlite-retained-trnm-task-kernel-3.log",
+      "sha256": "af72545829ac0ac1e2b4a50bee06350c396985638087f67735ce428d2993ee89"
+    },
+    {
+      "bytes": 213,
+      "diagnostics": [
+        {
+          "kind": "new blank line at EOF.",
+          "line": 6
+        }
+      ],
+      "path": "evidence/chain-system-security-20261111-306929/ai395/sqlite/records/sqlite-retained-trnm-task-kernel-4.log",
+      "sha256": "91ee71be5d5128f8ef8751d1df72e36dde2a5153296c7979152dfd84513538e7"
+    },
+    {
+      "bytes": 200,
+      "diagnostics": [
+        {
+          "kind": "new blank line at EOF.",
+          "line": 6
+        }
+      ],
+      "path": "evidence/chain-system-security-20261111-306929/ai395/sqlite/records/sqlite-retained-trnm-task-kernel-5.log",
+      "sha256": "3468549d0f6cb0745a923b97898e116f6230ecd71909ef4c9ce90fd75aa66656"
+    },
+    {
+      "bytes": 212,
+      "diagnostics": [
+        {
+          "kind": "new blank line at EOF.",
+          "line": 6
+        }
+      ],
+      "path": "evidence/chain-system-security-20261111-306929/ai395/sqlite/records/sqlite-retained-trnm-task-kernel-6.log",
+      "sha256": "10ec6cdfe8891a7e9eb57d70900627a45c64c257b5cbcd201822a22fbccc5392"
+    }
+  ],
+  "reason": "The parent-added generic whitespace check flags CRLF emitted by PTYs and original Rust output final blank lines. These are immutable observations, not authored source. Keep raw bytes and the initial failure, hash-check each payload, and apply the unmodified whitespace checker to every other staged path.",
+  "repository_git_configuration_unchanged": true,
+  "repository_precommit_prepush_hooks_preserved": true,
+  "schema": "trnm-raw-evidence-whitespace-review-v1",
+  "unclassified_paths": 0,
+  "utc": "2026-11-12T03:17:27.116344+00:00"
+}

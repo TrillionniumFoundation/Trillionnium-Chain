@@ -1,0 +1,110 @@
+{
+  "schema": "provider-original-artifact-readback-v2",
+  "archive": {
+    "path": "provider-observation-artifacts.tar.gz",
+    "bytes": 42711,
+    "sha256": "aaa772604c518247aceaead25b62601b6c6cff213d51d5569f11d80468e2b963"
+  },
+  "payload_root": "unpacked",
+  "payloads": [
+    {
+      "path": "executed-prepare_pq_provider.sh",
+      "bytes": 8110,
+      "sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa",
+      "matches_prior_pin": null,
+      "prior_pin_present": false,
+      "prior_pin_comparison": "not_applicable"
+    },
+    {
+      "path": "preflight.stdout.log",
+      "bytes": 172,
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127",
+      "matches_prior_pin": null,
+      "prior_pin_present": false,
+      "prior_pin_comparison": "not_applicable"
+    },
+    {
+      "path": "preflight.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches_prior_pin": null,
+      "prior_pin_present": false,
+      "prior_pin_comparison": "not_applicable"
+    },
+    {
+      "path": "preparation-source.json",
+      "bytes": 1914,
+      "sha256": "b8beab95f832aa628e90141fdcb5a36db43cbae91c6e872c6966c2dd53021e87",
+      "matches_prior_pin": true,
+      "prior_pin_present": true,
+      "prior_pin_comparison": "matched"
+    },
+    {
+      "path": "preparation-result.json",
+      "bytes": 4398,
+      "sha256": "0d0e54d30afaa7f9a0a7b6c1af0f7ae895393d36ed546b6556790fa56c1f8bf1",
+      "matches_prior_pin": true,
+      "prior_pin_present": true,
+      "prior_pin_comparison": "matched"
+    },
+    {
+      "path": "provider.env",
+      "bytes": 534,
+      "sha256": "6de317bdd1826065aefeae7335a552dfae7b87e421a8f1aa66d32aa31adab2ed",
+      "matches_prior_pin": true,
+      "prior_pin_present": true,
+      "prior_pin_comparison": "matched"
+    },
+    {
+      "path": "prepare.stdout.log",
+      "bytes": 208,
+      "sha256": "f1855e6c46a5e79a5bd37c67f22c471378abc38fe177db81cbba142dbe422e89",
+      "matches_prior_pin": null,
+      "prior_pin_present": false,
+      "prior_pin_comparison": "not_applicable"
+    },
+    {
+      "path": "prepare.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches_prior_pin": null,
+      "prior_pin_present": false,
+      "prior_pin_comparison": "not_applicable"
+    },
+    {
+      "path": "observations/pq-provider/provider.json",
+      "bytes": 3022,
+      "sha256": "509219f0ebd60c563342a509a9751a98222b44890a28552c8003e751924a9eeb",
+      "matches_prior_pin": true,
+      "prior_pin_present": true,
+      "prior_pin_comparison": "matched"
+    },
+    {
+      "path": "observations/pq-provider/build-and-smoke.log",
+      "bytes": 1323704,
+      "sha256": "68513cdf163bc2e56094ea68050a7e6549d5d39437417dc104ca4a07516613ef",
+      "matches_prior_pin": true,
+      "prior_pin_present": true,
+      "prior_pin_comparison": "matched"
+    }
+  ],
+  "independently_read_receipts": [
+    "preparation-result.json",
+    "observations/pq-provider/provider.json"
+  ],
+  "raw_log_complete": true,
+  "raw_log_sha256": "68513cdf163bc2e56094ea68050a7e6549d5d39437417dc104ca4a07516613ef",
+  "provider_cli_sha256": "09362cd9a4f5ef29e9cdd9fe26092a706ffe589f1e52c8c5572bd74df7ccdc1d",
+  "claim_scope": "PREPARED_AND_SMOKE_VERIFIED",
+  "new_provider_build": false,
+  "new_root_native_execution": false,
+  "remote_repository_modified": false,
+  "acceptance_granted": false,
+  "production_activation": false,
+  "prior_pin_semantics": "Prior pins are the five byte-count/SHA256 pairs supplied before archive extraction. Absence of a prior pin is not a mismatch; receipt/script bindings are separately checked in verification.json.",
+  "supersedes_manifest": {
+    "path": "manifest.json",
+    "sha256": "60e8f6805aea7b4cc41689b82f75edd883c7549a5ac060e02c76fe1358fd8207",
+    "original_preserved": true
+  }
+}

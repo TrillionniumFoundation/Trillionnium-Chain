@@ -2,8 +2,11 @@
 from __future__ import annotations
 from pathlib import Path
 import json
+import os
 import re
+import subprocess
 import sys
+import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -51,8 +54,9 @@ NODE_RUN_BODY = """\
             store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies
           )
           for selector in "${required[@]}"; do
-            bash "$OUT/run-command.sh" "native-storage-$selector" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --test-threads=1 || status=1
-            python3 -B scripts/ci/check_required_native_test.py "$OUT/native-storage-$selector.log" --test "$selector" || status=1
+            label="$(python3 -B "$OUT/native-selector-label.py" native-storage "$selector" "$OUT")"
+            bash "$OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --test-threads=1 || status=1
+            python3 -B scripts/ci/check_required_native_test.py "$OUT/$label.log" --test "$selector" || status=1
           done
           exit "$status"
 """
@@ -102,8 +106,9 @@ COMPONENT_RUN_BODY = """\
             cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_keeps_original_two_mib_wire_and_file_ceiling
           )
           for selector in "${required[@]}"; do
-            bash "$OUT/run-command.sh" "native-storage-component-$selector" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --lib "$selector" -- --exact --test-threads=1 || status=1
-            python3 -B scripts/ci/check_required_native_test.py "$OUT/native-storage-component-$selector.log" --test "$selector" || status=1
+            label="$(python3 -B "$OUT/native-selector-label.py" native-storage-component "$selector" "$OUT")"
+            bash "$OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --lib "$selector" -- --exact --test-threads=1 || status=1
+            python3 -B scripts/ci/check_required_native_test.py "$OUT/$label.log" --test "$selector" || status=1
           done
           exit "$status"
 """
@@ -170,7 +175,21 @@ def run_body(block: str) -> str:
     return block.split(marker, 1)[1]
 
 
+def generated_helper(text: str, name: str, delimiter: str) -> str:
+    """Read the actual helper emitted by the workflow, including indentation."""
+    reserve = step(text, "Reserve isolated logs without changing source")
+    marker = f'          cat > "$out/{name}" <<{delimiter!r}\n'
+    require(reserve.count(marker) == 1, "generated helper missing/duplicate: " + name)
+    body, separator, _ = reserve.split(marker, 1)[1].partition(f"          {delimiter}\n")
+    require(bool(separator), "generated helper boundary missing: " + name)
+    require(all(line.startswith("          ") for line in body.splitlines()),
+            "generated helper indentation changed")
+    return "\n".join(line[10:] for line in body.splitlines()) + "\n"
+
+
 def validate(text: str) -> None:
+    generated_helper(text, "native-selector-label.py", "PY")
+    generated_helper(text, "run-command.sh", "SH")
     triggers = text.split("\npermissions:", 1)[0]
     for path in TRIGGERS:
         exact_line(triggers, "      - " + path)
@@ -349,7 +368,7 @@ class CellStorageConvergenceCiControls(unittest.TestCase):
                  if ("version-retention-vector" in line or "storage-descriptor-vector" in line
                      or "storage-convergence-workflow-controls" in line
                      or 'native-storage-owner cargo' in line
-                     or '"native-storage-$selector" cargo' in line
+                     or '"$label" cargo' in line
                      or "check_required_native_test.py" in line)]
         self.assertEqual(len(lines), 6)
         for line in lines:
@@ -378,7 +397,7 @@ class CellStorageConvergenceCiControls(unittest.TestCase):
                 with self.subTest(name=name, change=change):
                     self.rejected(self.text.replace(line, change, 1))
         self.rejected(self.text.replace('for selector in "${required[@]}";', 'for selector in "${required[0]}";', 1))
-        self.rejected(self.text.replace('"$OUT/native-storage-$selector.log" --test', '"$OUT/native-storage-owner.log" --test', 1))
+        self.rejected(self.text.replace('"$OUT/$label.log" --test', '"$OUT/native-storage-owner.log" --test', 1))
         self.rejected(self.text.replace('"$selector" -- --exact --test-threads=1', '"$selector" -- --test-threads=1', 1))
 
     def test_native_and_python_failure_exits_and_source_guards_cannot_be_skipped(self) -> None:
@@ -475,7 +494,7 @@ class CellStorageConvergenceCiControls(unittest.TestCase):
             ('"$selector" -- --exact --test-threads=1', '"$selector" -- --ignored --exact --test-threads=1'),
             ('"$selector" -- --exact --test-threads=1', '"$selector" -- --skip omitted --exact --test-threads=1'),
             ('"$selector" -- --exact --test-threads=1', '"$selector" -- --test-threads=1'),
-            ('"$OUT/native-storage-component-$selector.log"', '"$OUT/p2p-complete.log"'),
+            ('"$OUT/$label.log"', '"$OUT/p2p-complete.log"'),
         ):
             changed = original.replace(old, new, 1)
             self.rejected(self.text.replace(original.rstrip("\n"), changed.rstrip("\n"), 1))
@@ -595,6 +614,120 @@ class CellStorageConvergenceCiControls(unittest.TestCase):
                 missing = good.replace(line, "", 1).replace("Ran 24 tests", "Ran 23 tests", 1)
                 with self.assertRaises(ValueError):
                     exact_sealed_python_execution(missing)
+
+
+class NativeSelectorArtifactControls(unittest.TestCase):
+    """Execute actual workflow helpers on fixture bytes; no native execution."""
+
+    def setUp(self) -> None:
+        temp = tempfile.TemporaryDirectory()
+        self.addCleanup(temp.cleanup)
+        self.output = Path(temp.name)
+        self.text = WORKFLOW.read_text()
+        self.helper = self.output / "native-selector-label.py"
+        self.helper.write_text(generated_helper(self.text, self.helper.name, "PY"))
+        self.runner = self.output / "run-command.sh"
+        self.runner.write_text(generated_helper(self.text, self.runner.name, "SH"))
+
+    def encode(self, prefix: str, selector: str) -> subprocess.CompletedProcess:
+        return subprocess.run(
+            [sys.executable, "-B", str(self.helper), prefix, selector, str(self.output)],
+            capture_output=True, text=True, timeout=10,
+        )
+
+    def label(self, prefix: str, selector: str) -> str:
+        result = self.encode(prefix, selector)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        label = result.stdout.removesuffix("\n")
+        self.assertNotIn("\n", label)
+        self.assertRegex(label, r"^[A-Za-z0-9_-]+$")
+        encoded_prefix, encoded_selector = label.split("--", 1)
+        self.assertEqual(encoded_prefix, prefix)
+        self.assertEqual(encoded_selector.replace("-", "::"), selector)
+        record = json.loads((self.output / (label + ".selector.json")).read_text())
+        self.assertEqual(record, {"schema": "trnm-native-selector-artifact-v1",
+                                  "prefix": prefix, "selector": selector, "label": label})
+        return label
+
+    def capture(self, label: str, payload: bytes, exit_code: int) -> subprocess.CompletedProcess:
+        command = "import os,sys; os.write(1, bytes.fromhex(sys.argv[1])); sys.exit(int(sys.argv[2]))"
+        return subprocess.run(
+            ["bash", str(self.runner), label, sys.executable, "-c", command,
+             payload.hex(), str(exit_code)],
+            env={**os.environ, "OUT": str(self.output)}, capture_output=True, timeout=10,
+        )
+
+    def test_all_frozen_selectors_roundtrip_to_unique_upload_safe_names(self) -> None:
+        cases = [("native-storage", name) for name in NODE_REQUIRED_NAMES]
+        cases += [("native-storage-component", name) for name in COMPONENT_REQUIRED_NAMES]
+        # A single prefix delimiter would alias these otherwise valid identities.
+        cases += [("native-storage", "component::a"), ("native-storage-component", "a")]
+        labels = [self.label(prefix, name) for prefix, name in cases]
+        self.assertEqual(len(labels), len(set(labels)))
+        for path in self.output.iterdir():
+            self.assertNotRegex(path.name, r'["<>:|*?\\\r\n/]')
+            self.assertLessEqual(len(path.name.encode("utf-8")), 255)
+
+    def test_aliases_traversal_and_unknown_prefixes_are_refused_before_writes(self) -> None:
+        original = self.label("native-storage", "a::b")
+        before = {path.name: path.read_bytes() for path in self.output.iterdir()}
+        for selector in ("a-b", "a:b", "a:::b", "::a", "a::", "a/b", "a\\b",
+                         "../a", "a\nb", "a;b", "9a", ""):
+            with self.subTest(selector=selector):
+                self.assertNotEqual(self.encode("native-storage", selector).returncode, 0)
+        for prefix in ("../native-storage", "native--storage", "unknown"):
+            with self.subTest(prefix=prefix):
+                self.assertNotEqual(self.encode(prefix, "a::b").returncode, 0)
+        self.assertEqual(before, {path.name: path.read_bytes() for path in self.output.iterdir()})
+        self.assertEqual(json.loads(before[original + ".selector.json"])["selector"], "a::b")
+
+    def test_duplicate_mapping_does_not_overwrite_retained_identity(self) -> None:
+        label = self.label("native-storage", "store::unchanged")
+        path = self.output / (label + ".selector.json")
+        original = path.read_bytes()
+        self.assertNotEqual(self.encode("native-storage", "store::unchanged").returncode, 0)
+        self.assertEqual(path.read_bytes(), original)
+
+    def test_failure_capture_preserves_original_bytes_and_nonzero_exit(self) -> None:
+        label = self.label("native-storage-component", COMPONENT_REQUIRED_NAMES[0])
+        payload = b"\x00fixture::output\n\xffraw bytes and trailing whitespace \n\n"
+        result = self.capture(label, payload, 7)
+        self.assertEqual(result.returncode, 7)
+        self.assertEqual(result.stdout, payload)
+        self.assertEqual((self.output / (label + ".log")).read_bytes(), payload)
+        self.assertEqual((self.output / (label + ".exit")).read_bytes(), b"7\n")
+
+    def test_existing_reader_uses_original_selector_after_filename_encoding(self) -> None:
+        selector = COMPONENT_REQUIRED_NAMES[0]
+        label = self.label("native-storage-component", selector)
+        # Parser fixture only: the named-test reader does not authenticate stdout.
+        payload = ("running 1 test\ntest " + selector + " ... ok\n"
+                   "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; "
+                   "0 filtered out; finished in 0.01s\n").encode()
+        self.assertEqual(self.capture(label, payload, 0).returncode, 0)
+        log = self.output / (label + ".log")
+        args = [sys.executable, "-B", str(ROOT / "scripts/ci/check_required_native_test.py"), str(log), "--test"]
+        accepted = subprocess.run(args + [selector], capture_output=True, text=True, timeout=10)
+        self.assertEqual(accepted.returncode, 0, accepted.stderr)
+        self.assertEqual(json.loads(accepted.stdout)["test"], selector)
+        encoded_identity = subprocess.run(args + [label], capture_output=True, text=True, timeout=10)
+        self.assertNotEqual(encoded_identity.returncode, 0)
+        self.assertEqual(log.read_bytes(), payload)
+
+    def test_mapping_and_shared_writer_reader_label_cannot_be_bypassed(self) -> None:
+        for name in (NODE_STEP, COMPONENT_STEP):
+            original = step(self.text, name)
+            label_line = next(line + "\n" for line in original.splitlines()
+                              if 'label="$(python3 -B "$OUT/native-selector-label.py"' in line)
+            for changed in (original.replace(label_line, "", 1),
+                            original.replace('"$OUT/$label.log"', '"$OUT/$selector.log"', 1),
+                            original.replace('--test "$selector"', '--test "$label"', 1),
+                            original.replace('"$label" cargo', '"$selector" cargo', 1)):
+                with self.subTest(step=name):
+                    with self.assertRaises(ValueError):
+                        validate(self.text.replace(original.rstrip("\n"), changed.rstrip("\n"), 1))
+        with self.assertRaises(ValueError):
+            validate(self.text.replace('cat > "$out/native-selector-label.py"', 'cat > "$out/omitted.py"', 1))
 
 
 if __name__ == "__main__":

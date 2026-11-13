@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "python3",
+    "evidence/pon-joint-production-tail-20261110/workspace-cpu-341b/verify.py"
+  ],
+  "exit_code": 1,
+  "base_head": "e2ac004fbd523a4c4f4d9c3f7f88d7a25258fef8",
+  "scope": "evidence-only working tree; no new native execution"
+}

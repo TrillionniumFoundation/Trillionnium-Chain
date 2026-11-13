@@ -883,3 +883,61 @@ fn cache_commit_requires_full_write_read_budget_and_never_refreshes_repair_deadl
     assert_eq!(expired.usage(), CellRs46RepairUsageV1::default());
     assert_eq!(store.cache_usage().unwrap().chunk_rows, 0);
 }
+
+#[test]
+fn verified_chunk_pair_preserves_all_shard_wires_padding_and_bounds() {
+    for length in [
+        1_usize,
+        2,
+        3,
+        4,
+        5,
+        17,
+        16_383,
+        16_384,
+        16_385,
+        MAX_CHUNK_BYTES as usize,
+    ] {
+        let source: Vec<u8> = (0..length).map(|index| (index % 251) as u8).collect();
+        let pin = binding(&source, context());
+        let expected = pin.encode_chunk(&source).unwrap();
+        let (codeword, actual) =
+            CellRs46CodewordV1::from_verified_chunk_with_shards(&pin, &source).unwrap();
+        for (slot, (actual, expected)) in actual.iter().zip(&expected).enumerate() {
+            assert_eq!(actual.index() as usize, slot);
+            assert_eq!(
+                actual.encode(),
+                expected.encode(),
+                "source length {length}, slot {slot}"
+            );
+            assert_eq!(actual.id(), expected.id());
+            assert_eq!(actual.id(), codeword.shard_ids()[slot]);
+        }
+        assert_eq!(
+            CellRs46CodewordV1::decode_pinned(&codeword.encode(), &pin, codeword.id(),).unwrap(),
+            codeword
+        );
+    }
+}
+
+#[test]
+fn verified_chunk_pair_rejects_wrong_length_and_same_length_wrong_hash() {
+    let source: Vec<u8> = (0..257).map(|index| (index % 251) as u8).collect();
+    let pin = binding(&source, context());
+    let mut extended = source.clone();
+    extended.push(0);
+    let mut damaged = source.clone();
+    damaged[128] ^= 1;
+    assert_eq!(damaged.len(), source.len());
+    for (label, bad) in [
+        ("empty", Vec::new()),
+        ("short", source[..source.len() - 1].to_vec()),
+        ("long", extended),
+        ("wrong hash", damaged),
+    ] {
+        assert!(
+            CellRs46CodewordV1::from_verified_chunk_with_shards(&pin, &bad).is_err(),
+            "{label}"
+        );
+    }
+}

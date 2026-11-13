@@ -1,0 +1,24 @@
+   Compiling libc v0.2.184
+   Compiling rustix v1.1.6
+   Compiling serde_json v1.0.149
+   Compiling getrandom v0.4.2
+   Compiling tempfile v3.27.0
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qq/chain-system-security-20261112-306929/trillionnium/crates/trnm-crypto-primitives)
+   Compiling fs2 v0.4.3
+   Compiling getrandom v0.2.17
+   Compiling trnm-data-availability v0.1.0 (/home/qq/chain-system-security-20261112-306929/trillionnium/crates/trnm-data-availability)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 20s
+     Running unittests src/lib.rs (trillionnium/target/debug/deps/trnm_data_availability-8a3d1b05ab724693)
+
+running 8 tests
+test cell::discovery::pq::epoch_directory::tests::sqlite_writer_and_commit_contention_preserve_deadline_clock_high_water_and_epoch_retirement ... ok
+test cell::retention::tests::repair_intent_and_charge_must_survive_sqlite_suppression_before_payload ... ok
+test cell::retention::tests::sqlite_like_wildcard_cannot_hide_a_user_trigger_at_repair_or_reopen ... ok
+test tests::certified_batch_and_da_head_share_one_fresh_sqlite_snapshot ... ok
+test tests::sqlite_dangling_sidecars_refuse_creation_before_database_exists ... ok
+test tests::sqlite_dangling_sidecars_refuse_existing_store_without_touching_files ... ok
+test tests::sqlite_sidecar_inspection_error_refuses_before_database_creation ... ok
+test tests::sqlite_sidecar_names_preserve_non_utf8_database_bytes ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 711 filtered out; finished in 0.62s
+

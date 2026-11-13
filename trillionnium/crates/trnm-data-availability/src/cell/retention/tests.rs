@@ -59,6 +59,82 @@ fn contract(id: u8, manifest: &CellManifestV1) -> CellRetentionContractV1 {
     }
 }
 
+#[test]
+fn reservation_preflight_preserves_original_timeout_and_obligation_state() {
+    let dir = tempfile::tempdir().unwrap();
+    let (_, manifest, _) = material(dir.path(), 5000);
+    let mut retention =
+        CellRetentionStoreV1::create(&dir.path().join("retained"), config(1, 16_384)).unwrap();
+    retention
+        .connection
+        .busy_timeout(Duration::from_secs(3))
+        .unwrap();
+    let first = contract(1, &manifest);
+    let second = contract(2, &manifest);
+    retention.reserve(first.clone()).unwrap();
+    let before = retention.required_row(first.operation).unwrap();
+    retention
+        .check_reservations(
+            &[first.clone(), second.clone()],
+            Instant::now() + Duration::from_secs(1),
+        )
+        .unwrap();
+    let restored_ms: u64 = retention
+        .connection
+        .pragma_query_value(None, "busy_timeout", |row| row.get(0))
+        .unwrap();
+    assert_eq!(restored_ms, 3000);
+    assert_eq!(
+        row_checksum(&retention.required_row(first.operation).unwrap()),
+        row_checksum(&before)
+    );
+    assert!(retention.row(second.operation).unwrap().is_none());
+    // The admission check did not spend the proposed extent or operation.
+    retention.reserve(second.clone()).unwrap();
+    assert_eq!(
+        retention.required_row(second.operation).unwrap().contract,
+        second
+    );
+}
+
+#[test]
+fn repair_preflight_preserves_original_timeout_and_acknowledged_duty() {
+    let dir = tempfile::tempdir().unwrap();
+    let (source, manifest, _) = material(dir.path(), 5000);
+    let mut retention =
+        CellRetentionStoreV1::create(&dir.path().join("retained"), config(1, 8192)).unwrap();
+    let original = contract(1, &manifest);
+    retention.reserve(original.clone()).unwrap();
+    let acknowledged = retention
+        .acknowledge(original.operation, &source, deadline())
+        .unwrap();
+    retention
+        .connection
+        .busy_timeout(Duration::from_secs(3))
+        .unwrap();
+    let repair_operation = [101; 32];
+    retention
+        .check_repair_reservations(
+            &[(original.clone(), repair_operation, true)],
+            Instant::now() + Duration::from_secs(1),
+        )
+        .unwrap();
+    let restored_ms: u64 = retention
+        .connection
+        .pragma_query_value(None, "busy_timeout", |row| row.get(0))
+        .unwrap();
+    assert_eq!(restored_ms, 3000);
+    assert!(
+        CellRetentionStoreV1::repair_row_from(&retention.connection, repair_operation)
+            .unwrap()
+            .is_none()
+    );
+    assert_eq!(
+        retention.verify(original.operation, deadline()).unwrap(),
+        acknowledged
+    );
+}
+
 fn damage(store: &mut CellRetentionStoreV1) {
     store.arena.seek(SeekFrom::Start(0)).unwrap();
     store.arena.write_all(&[0xff]).unwrap();
@@ -1808,4 +1884,175 @@ fn repair_post_commit_zero_byte_reconciliation_keeps_exact_identity() {
 #[test]
 fn repair_post_commit_completion_refusal_reopens_without_copy_or_charge() {
     repair_post_commit_refusal(RepairPostCommitCase::Completion);
+}
+
+#[test]
+fn retention_population_batch_boundaries_preserve_complete_cold_bytes_and_duty() {
+    for count in [8_usize, 9, 17] {
+        let dir = tempfile::tempdir().unwrap();
+        let (source, manifest, bytes) = material(dir.path(), count * 16_384);
+        assert_eq!(manifest.chunks().len(), count);
+        let capacity = (bytes.len() as u64).div_ceil(4096) * 4096;
+        let mut retention =
+            CellRetentionStoreV1::create(&dir.path().join("retained"), config(1, capacity))
+                .unwrap();
+        retention.reserve(contract(1, &manifest)).unwrap();
+        let original = retention.acknowledge([1; 32], &source, deadline()).unwrap();
+        let target_path = dir.path().join("target.sqlite");
+        let target = CellStoreV1::open(&target_path, cache_config()).unwrap();
+        assert_eq!(
+            retention
+                .populate_cache([1; 32], &target, deadline())
+                .unwrap(),
+            original
+        );
+        drop(target);
+        let cold = CellStoreV1::open_read_only(&target_path).unwrap();
+        cold.verify_complete(&manifest).unwrap();
+        for (chunk, expected) in manifest.chunks().iter().zip(bytes.chunks(16_384)) {
+            let actual = cold.chunk(chunk.sha256).unwrap().unwrap();
+            assert_eq!(actual.as_slice(), expected);
+        }
+        assert_eq!(retention.verify([1; 32], deadline()).unwrap(), original);
+    }
+}
+
+#[test]
+fn retention_population_tail_quota_rolls_back_current_batch_and_keeps_cold_prefix() {
+    let dir = tempfile::tempdir().unwrap();
+    let (source, manifest, bytes) = material(dir.path(), 10 * 16_384);
+    assert_eq!(manifest.chunks().len(), 10);
+    assert_eq!(
+        manifest
+            .chunks()
+            .iter()
+            .map(|chunk| chunk.sha256)
+            .collect::<BTreeSet<_>>()
+            .len(),
+        10
+    );
+    let capacity = (bytes.len() as u64).div_ceil(4096) * 4096;
+    let mut retention =
+        CellRetentionStoreV1::create(&dir.path().join("retained"), config(1, capacity)).unwrap();
+    retention.reserve(contract(1, &manifest)).unwrap();
+    let original = retention.acknowledge([1; 32], &source, deadline()).unwrap();
+    let target_path = dir.path().join("limited.sqlite");
+    let mut limited = cache_config();
+    limited.max_chunk_rows = 9;
+    let target = CellStoreV1::open(&target_path, limited).unwrap();
+    assert!(matches!(
+        retention.populate_cache([1; 32], &target, deadline()),
+        Err(CellErrorV1::CacheQuotaExceeded)
+    ));
+    assert_eq!(target.cache_usage().unwrap().manifest_rows, 1);
+    assert_eq!(target.cache_usage().unwrap().chunk_rows, 8);
+    assert!(target.verify_complete(&manifest).is_err());
+    drop(target);
+    let cold = CellStoreV1::open_read_only(&target_path).unwrap();
+    assert_eq!(
+        cold.manifest(manifest.id()).unwrap(),
+        Some(manifest.clone())
+    );
+    for (index, (chunk, expected)) in manifest
+        .chunks()
+        .iter()
+        .zip(bytes.chunks(16_384))
+        .enumerate()
+    {
+        let actual = cold.chunk(chunk.sha256).unwrap();
+        if index < 8 {
+            assert_eq!(actual.as_deref(), Some(expected));
+        } else {
+            assert!(actual.is_none(), "failed tail member {index} was committed");
+        }
+    }
+    drop(cold);
+    let retry = CellStoreV1::open(&target_path, limited).unwrap();
+    assert!(matches!(
+        retention.populate_cache([1; 32], &retry, deadline()),
+        Err(CellErrorV1::CacheQuotaExceeded)
+    ));
+    assert_eq!(retry.cache_usage().unwrap().chunk_rows, 8);
+    assert_eq!(retention.verify([1; 32], deadline()).unwrap(), original);
+}
+
+#[test]
+fn retention_population_expiry_or_late_arena_corruption_keeps_cache_empty() {
+    for corrupt in [false, true] {
+        let dir = tempfile::tempdir().unwrap();
+        let (source, manifest, bytes) = material(dir.path(), 10 * 16_384);
+        let capacity = (bytes.len() as u64).div_ceil(4096) * 4096;
+        let mut retention =
+            CellRetentionStoreV1::create(&dir.path().join("retained"), config(1, capacity))
+                .unwrap();
+        let duty = contract(1, &manifest);
+        retention.reserve(duty.clone()).unwrap();
+        let original = retention.acknowledge([1; 32], &source, deadline()).unwrap();
+        if corrupt {
+            let offset = retention.required_row([1; 32]).unwrap().offset;
+            retention
+                .arena
+                .seek(SeekFrom::Start(offset + manifest.size() - 1))
+                .unwrap();
+            retention.arena.write_all(&[0xff]).unwrap();
+            retention.arena.sync_all().unwrap();
+        }
+        let target = CellStoreV1::open(&dir.path().join("empty.sqlite"), cache_config()).unwrap();
+        let before = target.cache_usage().unwrap();
+        let end = if corrupt {
+            deadline()
+        } else {
+            Instant::now() - Duration::from_millis(1)
+        };
+        assert!(retention.populate_cache([1; 32], &target, end).is_err());
+        assert_eq!(target.cache_usage().unwrap(), before);
+        let row = retention.required_row([1; 32]).unwrap();
+        assert_eq!(row.contract, duty);
+        assert_eq!(row.status, 1);
+        assert_eq!(row.initial_bytes, original.initial_copy_bytes_committed);
+        assert_eq!(row.repair_bytes, original.repair_bytes_committed);
+    }
+}
+
+#[test]
+fn reservation_preflight_composes_live_capacity_without_changing_original_rows() {
+    let dir = tempfile::tempdir().unwrap();
+    let (_, manifest, _) = material(dir.path(), 1234);
+    let mut store =
+        CellRetentionStoreV1::create(&dir.path().join("arena"), config(91, 8192)).unwrap();
+    let first = contract(11, &manifest);
+    let second = contract(12, &manifest);
+    let third = contract(13, &manifest);
+    let count = |owner: &CellRetentionStoreV1| -> u64 {
+        owner
+            .connection
+            .query_row("SELECT count(*) FROM obligations", [], |row| row.get(0))
+            .unwrap()
+    };
+    store
+        .check_reservations(&[first.clone(), second.clone()], deadline())
+        .unwrap();
+    assert_eq!(count(&store), 0);
+    assert!(store
+        .check_reservations(&[first.clone(), second.clone(), third.clone()], deadline())
+        .is_err());
+    assert_eq!(count(&store), 0);
+    let retained = store.reserve(first.clone()).unwrap();
+    assert!(!retained.acknowledged);
+    store
+        .check_reservations(&[first.clone(), second.clone()], deadline())
+        .unwrap();
+    assert!(store
+        .check_reservations(&[second.clone(), third], deadline())
+        .is_err());
+    let mut alias = second.clone();
+    alias.funding_operation = first.funding_operation;
+    assert!(store.check_reservations(&[alias], deadline()).is_err());
+    assert!(store
+        .check_reservations(&[first.clone(), first.clone()], deadline())
+        .is_err());
+    assert_eq!(count(&store), 1);
+    assert_eq!(store.reserve(first).unwrap(), retained);
+    store.reserve(second).unwrap();
+    assert_eq!(count(&store), 2);
 }

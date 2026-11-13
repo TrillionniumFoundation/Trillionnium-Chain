@@ -65,25 +65,99 @@ fn fixture(
     (dir, path, manifest, binding)
 }
 
-fn peer_with(
-    task: impl FnOnce(TcpStream) + Send + 'static,
-) -> (SocketAddr, thread::JoinHandle<()>) {
+#[derive(Debug, Eq, PartialEq)]
+enum PeerOutcome {
+    Connected,
+    NoConnection,
+}
+
+struct PeerServer {
+    cancelled: Arc<AtomicBool>,
+    worker: Option<thread::JoinHandle<PeerOutcome>>,
+}
+
+impl PeerServer {
+    fn stop_and_join(&mut self) -> thread::Result<PeerOutcome> {
+        self.cancelled.store(true, Ordering::Release);
+        self.worker.take().unwrap().join()
+    }
+
+    fn join(mut self) -> thread::Result<()> {
+        assert_eq!(self.stop_and_join()?, PeerOutcome::Connected);
+        Ok(())
+    }
+
+    // Only controls that explicitly permit pre-dial refusal use this outcome.
+    fn finish_allowing_no_connection(mut self) -> thread::Result<PeerOutcome> {
+        self.stop_and_join()
+    }
+}
+
+impl Drop for PeerServer {
+    fn drop(&mut self) {
+        if self.worker.is_some() {
+            let outcome = self.stop_and_join();
+            // Always collect the peer on unwind, without causing a second panic.
+            // A normally dropped positive fixture still requires its callback.
+            if !thread::panicking() {
+                assert_eq!(outcome.unwrap(), PeerOutcome::Connected);
+            }
+        }
+    }
+}
+
+fn peer_with(task: impl FnOnce(TcpStream) + Send + 'static) -> (SocketAddr, PeerServer) {
     let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    listener.set_nonblocking(true).unwrap();
     let address = listener.local_addr().unwrap();
-    let handle = thread::spawn(move || {
-        let (stream, _) = listener.accept().unwrap();
+    let cancelled = Arc::new(AtomicBool::new(false));
+    let worker_cancelled = Arc::clone(&cancelled);
+    let accept_deadline = Instant::now() + Duration::from_secs(5);
+    let worker = thread::spawn(move || {
+        let stream = loop {
+            // Drain an already queued connection before honoring cleanup.
+            match listener.accept() {
+                Ok((stream, _)) => break stream,
+                Err(error) if error.kind() == io::ErrorKind::Interrupted => {
+                    // An interrupted accept does not establish an empty queue.
+                    assert!(
+                        Instant::now() < accept_deadline,
+                        "test peer accept deadline exhausted"
+                    );
+                }
+                Err(error) if error.kind() == io::ErrorKind::WouldBlock => {
+                    if worker_cancelled.load(Ordering::Acquire) {
+                        return PeerOutcome::NoConnection;
+                    }
+                    assert!(
+                        Instant::now() < accept_deadline,
+                        "test peer accept deadline exhausted"
+                    );
+                    thread::sleep(Duration::from_millis(1));
+                }
+                Err(error) => panic!("test peer accept failed: {error}"),
+            }
+        };
+        stream.set_nonblocking(false).unwrap();
         stream
             .set_read_timeout(Some(Duration::from_secs(2)))
             .unwrap();
         stream
             .set_write_timeout(Some(Duration::from_secs(2)))
             .unwrap();
-        task(stream)
+        task(stream);
+        PeerOutcome::Connected
     });
-    (address, handle)
+    (
+        address,
+        PeerServer {
+            cancelled,
+            worker: Some(worker),
+        },
+    )
 }
 
-fn start_seed(path: &Path, binding: &CellBep52BindingV1) -> (SocketAddr, thread::JoinHandle<()>) {
+fn start_seed(path: &Path, binding: &CellBep52BindingV1) -> (SocketAddr, PeerServer) {
     let path = path.to_owned();
     let binding = binding.clone();
     peer_with(move |stream| {
@@ -592,7 +666,106 @@ fn tcp_slow_fragmented_handshake_does_not_renew_original_deadline() {
     assert!(started.elapsed() < Duration::from_millis(600));
     assert_eq!(budget.deadline(), bounds.deadline);
     assert!(budget.usage().received_bytes < 68);
+    match server.finish_allowing_no_connection().unwrap() {
+        PeerOutcome::Connected => assert_eq!(budget.usage().sent_bytes, 68),
+        PeerOutcome::NoConnection => {
+            // Full-entry cache work can consume the original budget before
+            // dialing. This outcome does not claim a fragmented handshake ran.
+            assert_eq!(budget.usage().sent_bytes, 0);
+            assert_eq!(budget.usage().received_bytes, 0);
+        }
+    }
+}
+
+#[test]
+fn tcp_slow_fragmented_fetch_peer_preserves_original_deadline() {
+    let (dir, _, _, binding) = fixture(b"slow peer transport");
+    let store = CellStoreV1::open(&dir.path().join("consumer"), config()).unwrap();
+    store
+        .put_manifest(binding.manifest_id(), &binding.manifest().encode())
+        .unwrap();
+    let mut missing = binding
+        .manifest()
+        .chunks()
+        .iter()
+        .map(|chunk| chunk.sha256)
+        .collect();
+    let mut report = CellBep52FetchReportV1 {
+        manifest_id: binding.manifest_id(),
+        info_hash: binding.info_hash(),
+        payload_sha256: binding.manifest().payload_sha256(),
+        payload_bytes: binding.manifest().size(),
+        cached_chunks: 0,
+        downloaded_chunks: 0,
+        downloaded_bytes: 0,
+        supplying_peers: BTreeSet::new(),
+    };
+    let (address, server) = peer_with(move |mut stream| {
+        let mut header = [0; 68];
+        stream.read_exact(&mut header).unwrap();
+        for byte in header {
+            if stream.write_all(&[byte]).is_err() {
+                break;
+            }
+            thread::sleep(Duration::from_millis(10));
+        }
+    });
+    // Select the real transport phase after fixture/cache preparation. The
+    // original deadline is created once and still covers connect/write/read.
+    let mut bounds = limits();
+    bounds.deadline = Instant::now() + Duration::from_millis(120);
+    let mut budget = CellBep52PeerSessionV1::new([9; 32], bounds).unwrap();
+    let started = Instant::now();
+    budget.connection().unwrap();
+    assert!(fetch_peer(
+        &store,
+        FetchPlan {
+            binding: &binding,
+            content: None,
+        },
+        address,
+        [7; 20],
+        &mut budget,
+        &mut missing,
+        &mut report,
+    )
+    .is_err());
+    assert!(started.elapsed() < Duration::from_millis(600));
+    assert!(Instant::now() >= bounds.deadline);
+    assert_eq!(budget.deadline(), bounds.deadline);
+    assert_eq!(budget.usage().connection_attempts, 1);
+    assert_eq!(budget.usage().sent_bytes, 68);
+    assert!((1..68).contains(&budget.usage().received_bytes));
+    assert_eq!(budget.usage().completed_fetches, 0);
     server.join().unwrap();
+}
+
+#[test]
+fn tcp_peer_without_connection_has_bounded_cleanup() {
+    let (dir, _, _, binding) = fixture(b"no peer connection");
+    let store = CellStoreV1::open(&dir.path().join("consumer"), config()).unwrap();
+    let called = Arc::new(AtomicBool::new(false));
+    let peer_called = Arc::clone(&called);
+    let (address, server) = peer_with(move |_| {
+        peer_called.store(true, Ordering::Release);
+    });
+    let mut bounds = limits();
+    bounds.deadline = Instant::now() + Duration::from_millis(120);
+    let mut budget = CellBep52PeerSessionV1::new([9; 32], bounds).unwrap();
+    thread::sleep(bounds.deadline.saturating_duration_since(Instant::now()));
+    assert!(Instant::now() >= bounds.deadline);
+    assert!(fetch_cell_bep52(&store, &binding, &[address], [7; 20], &mut budget).is_err());
+    assert_eq!(budget.deadline(), bounds.deadline);
+    assert_eq!(budget.usage().connection_attempts, 0);
+    assert_eq!(budget.usage().sent_bytes, 0);
+    assert_eq!(budget.usage().received_bytes, 0);
+    let cleanup_started = Instant::now();
+    assert_eq!(
+        server.finish_allowing_no_connection().unwrap(),
+        PeerOutcome::NoConnection
+    );
+    assert!(cleanup_started.elapsed() < Duration::from_millis(600));
+    assert!(!called.load(Ordering::Acquire));
 }
 
 #[test]

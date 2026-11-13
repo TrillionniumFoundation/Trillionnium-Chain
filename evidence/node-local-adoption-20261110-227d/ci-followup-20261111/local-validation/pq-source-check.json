@@ -1,0 +1,23 @@
+{
+  "name": "pq-source-check",
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "started_utc": "2026-11-11T04:11:39.797567+00:00",
+  "elapsed_seconds": 0.6474070760014001,
+  "exit_code": 0,
+  "source_before": {
+    "head": "eb32162449eab623f69bbd7016b694600cb382c5",
+    "tree": "c15f37e3f64456c9817019e8aec5d723a29549f0",
+    "status": ""
+  },
+  "source_after": {
+    "head": "eb32162449eab623f69bbd7016b694600cb382c5",
+    "tree": "c15f37e3f64456c9817019e8aec5d723a29549f0",
+    "status": ""
+  },
+  "log_bytes": 558,
+  "log_sha256": "8793fbe30b01dd62830c3bef5face6c018474777c94b60e900dc5a075e6c4d6e"
+}

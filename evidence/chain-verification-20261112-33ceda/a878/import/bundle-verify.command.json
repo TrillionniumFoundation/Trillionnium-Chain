@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "git",
+    "bundle",
+    "verify",
+    "/home/qq/chain-verification-validation-33ceda-20261112/import-a878-v1/candidate-v2.bundle"
+  ],
+  "exit_code": 0
+}

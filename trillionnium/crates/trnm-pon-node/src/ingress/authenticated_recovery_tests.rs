@@ -447,6 +447,279 @@ fn signed_socket_local_queue_busy_keeps_exact_nonce_for_retry_and_invalid_work_t
 }
 
 #[test]
+fn authenticated_context_retry_requires_exact_local_identity_and_kind() {
+    for code in [
+        ErrorCode::UnknownParent,
+        ErrorCode::TimeDeferred,
+        ErrorCode::AdmissionHeaderEpochChanged,
+    ] {
+        assert!(authenticated_dispatch_needs_retry(&Error::new(code)));
+        assert!(!authenticated_dispatch_needs_retry(
+            &Error::new(code).local_integrity()
+        ));
+        assert!(!authenticated_dispatch_needs_retry(&Error::remote(
+            code.as_str()
+        )));
+        assert!(!authenticated_dispatch_needs_retry(
+            &Error::authenticated_remote(true, code.as_str())
+        ));
+        assert!(!authenticated_dispatch_needs_retry(
+            &Error::authenticated_remote(false, code.as_str())
+        ));
+        assert!(!authenticated_dispatch_needs_retry(&Error::from(format!(
+            "{}:unclassified context",
+            code.as_str()
+        ))));
+    }
+    for code in [
+        ErrorCode::Cursor,
+        ErrorCode::AuthReplayContext,
+        ErrorCode::AuthReplayRetired,
+        ErrorCode::PublicCookieExpired,
+        ErrorCode::StateCapacity,
+        ErrorCode::PublicMutationCpuUnavailable,
+    ] {
+        assert!(!authenticated_dispatch_needs_retry(&Error::new(code)));
+    }
+}
+
+#[test]
+fn signed_socket_missing_parent_preserves_exact_nonce_until_parent_arrives() {
+    struct StopOnDrop(Arc<AtomicBool>);
+    impl Drop for StopOnDrop {
+        fn drop(&mut self) {
+            self.0.store(true, Ordering::Release);
+        }
+    }
+
+    let producer_directory = tempfile::tempdir().unwrap();
+    let receiver_directory = tempfile::tempdir().unwrap();
+    let settings = Settings::development(Some(now().unwrap() - 100)).unwrap();
+    let mut producer = Node::open(producer_directory.path(), settings.clone(), 1).unwrap();
+    let parent = producer
+        .make(
+            settings.genesis(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 10,
+            4096,
+        )
+        .unwrap();
+    let parent_id = producer.admit(&parent, now().unwrap()).unwrap();
+    producer
+        .activate_observed(parent_id, now().unwrap())
+        .unwrap();
+    let child = producer
+        .make(
+            parent_id,
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 20,
+            4096,
+        )
+        .unwrap();
+    let child_id = child.id().unwrap();
+    let mut invalid = producer
+        .make(
+            parent_id,
+            vec![],
+            crate::development_public(1).unwrap(),
+            settings.genesis_time() + 21,
+            4096,
+        )
+        .unwrap();
+    // This separate real target-hitting packet reaches full verification,
+    // where one incorrect product claim is a terminal mathematical error.
+    let offset = 4 + 2 * trnm_crypto_primitives::pon_work::CELLS * 4;
+    let word = u32::from_le_bytes(invalid.proof[offset..offset + 4].try_into().unwrap());
+    let changed = ((u128::from(word) + 1) % trnm_crypto_primitives::pon_work::Q) as u32;
+    invalid.proof[offset..offset + 4].copy_from_slice(&changed.to_le_bytes());
+    drop(producer);
+
+    let (mut authentication, child_client) = authentication_fixture(&settings);
+    let parent_client =
+        AuthenticatedClient::new(test_identity(3), authentication.public_key().to_owned(), 1)
+            .unwrap();
+    authentication
+        .peers
+        .insert(parent_client.public_key().to_owned());
+    let child_wire = authenticated_request_bytes(
+        &settings,
+        &child_client,
+        1,
+        Request::Submit {
+            packet: hex::encode(child.encode().unwrap()),
+        },
+    )
+    .unwrap();
+    let envelope: AuthenticatedRequest = serde_json::from_slice(&child_wire).unwrap();
+    let session = digest(&envelope.session.session).unwrap();
+    let node = Node::open(receiver_directory.path(), settings.clone(), 1).unwrap();
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    let stop = Arc::new(AtomicBool::new(false));
+    let call = |bytes: &[u8]| {
+        let envelope: AuthenticatedRequest = serde_json::from_slice(bytes).unwrap();
+        let digest =
+            request_authority_digest(&envelope.session, envelope.replay_nonce, &envelope.request)
+                .unwrap();
+        let mut stream = TcpStream::connect(address).unwrap();
+        stream
+            .set_read_timeout(Some(Duration::from_secs(15)))
+            .unwrap();
+        stream
+            .set_write_timeout(Some(Duration::from_secs(5)))
+            .unwrap();
+        write_frame(&mut stream, bytes).unwrap();
+        let reply = read_frame_budget(&mut stream, Duration::from_secs(15)).unwrap();
+        let (terminal, ok, value) =
+            verify_authenticated_response(&reply, &envelope.session, envelope.replay_nonce, digest)
+                .unwrap();
+        (reply, terminal, ok, value)
+    };
+    let durable = |nonce: u64| {
+        let db = rusqlite::Connection::open_with_flags(
+            receiver_directory.path().join("native.sqlite"),
+            rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
+        )
+        .unwrap();
+        let (ack, pending): (u64, Option<u64>) = db
+            .query_row(
+                "SELECT highest_ack,pending_nonce FROM peer_replay WHERE session_id=?",
+                [session.as_slice()],
+                |row| Ok((row.get(0)?, row.get(1)?)),
+            )
+            .unwrap();
+        let (status, payload, response): (u64, Option<Vec<u8>>, Option<Vec<u8>>) = db
+            .query_row(
+                "SELECT status,payload,response FROM peer_request_audit WHERE session_id=? AND nonce=?",
+                rusqlite::params![session.as_slice(), nonce],
+                |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
+            )
+            .unwrap();
+        let blocks: u64 = db
+            .query_row("SELECT COUNT(*) FROM blocks", [], |row| row.get(0))
+            .unwrap();
+        let tip: Vec<u8> = db
+            .query_row("SELECT tip FROM active WHERE singleton=1", [], |row| {
+                row.get(0)
+            })
+            .unwrap();
+        json!({"highest_ack":ack,"pending_nonce":pending,"audit_status":status,
+            "payload":payload.map(hex::encode),"response":response.map(hex::encode),
+            "stored_blocks":blocks,"active":hex::encode(tip)})
+    };
+    thread::scope(|scope| {
+        let worker_stop = stop.clone();
+        let worker = scope.spawn(move || {
+            serve_authenticated(
+                listener,
+                node,
+                Duration::from_secs(30),
+                worker_stop,
+                authentication,
+            )
+        });
+        let _shutdown = StopOnDrop(stop.clone());
+        // The receiver has only genesis. This is a real missing-parent
+        // admission refusal, before full Work, not an injected error or clock.
+        let (_, terminal, ok, value) = call(&child_wire);
+        assert!(
+            !terminal && !ok,
+            "missing parent ended exact retry: {value}"
+        );
+        assert_eq!(value["error"], "UNKNOWN_PARENT");
+        let pending = durable(1);
+        assert_eq!(pending["highest_ack"], 0);
+        assert_eq!(pending["pending_nonce"], 1);
+        assert_eq!(pending["audit_status"], 0);
+        assert!(pending["payload"].is_string() && pending["response"].is_null());
+        assert_eq!(pending["stored_blocks"], 1);
+        assert_eq!(pending["active"], hex::encode(settings.genesis()));
+
+        let changed =
+            authenticated_request_bytes(&settings, &child_client, 1, Request::Head).unwrap();
+        let (_, terminal, ok, value) = call(&changed);
+        assert!(!terminal && !ok);
+        assert!(value["error"]
+            .as_str()
+            .unwrap()
+            .contains("changed its payload"));
+        assert_eq!(durable(1), pending);
+
+        // A distinct authenticated session supplies the missing parent while
+        // the original child operation keeps its exact signed bytes and nonce.
+        let parent_wire = authenticated_request_bytes(
+            &settings,
+            &parent_client,
+            1,
+            Request::Submit {
+                packet: hex::encode(parent.encode().unwrap()),
+            },
+        )
+        .unwrap();
+        let (_, terminal, ok, value) = call(&parent_wire);
+        assert!(
+            terminal && ok,
+            "independent parent delivery failed: {value}"
+        );
+        assert_eq!(value["block"], hex::encode(parent_id));
+        let after_parent = durable(1);
+        assert_eq!(after_parent["highest_ack"], 0);
+        assert_eq!(after_parent["pending_nonce"], 1);
+        assert_eq!(after_parent["payload"], pending["payload"]);
+        assert!(after_parent["response"].is_null());
+        assert_eq!(after_parent["stored_blocks"], 2);
+
+        let (completed, terminal, ok, value) = call(&child_wire);
+        assert!(terminal && ok, "exact child retry failed: {value}");
+        assert_eq!(value["block"], hex::encode(child_id));
+        assert_eq!(value["active"], value["block"]);
+        let finished = durable(1);
+        assert_eq!(finished["highest_ack"], 1);
+        assert!(finished["pending_nonce"].is_null() && finished["payload"].is_null());
+        assert_eq!(finished["audit_status"], 1);
+        assert_eq!(finished["stored_blocks"], 3);
+        let (cached, terminal, ok, _) = call(&child_wire);
+        assert!(terminal && ok);
+        assert_eq!(cached, completed);
+        assert_eq!(durable(1), finished);
+
+        let invalid_wire = authenticated_request_bytes(
+            &settings,
+            &child_client,
+            2,
+            Request::Submit {
+                packet: hex::encode(invalid.encode().unwrap()),
+            },
+        )
+        .unwrap();
+        let (invalid_reply, terminal, ok, value) = call(&invalid_wire);
+        assert!(terminal && !ok);
+        assert_eq!(value["error"], "WORK:Product");
+        let invalid_finished = durable(2);
+        assert_eq!(invalid_finished["highest_ack"], 2);
+        assert!(invalid_finished["pending_nonce"].is_null());
+        assert_eq!(invalid_finished["audit_status"], 1);
+        assert_eq!(invalid_finished["stored_blocks"], 3);
+        let (cached, terminal, ok, _) = call(&invalid_wire);
+        assert!(terminal && !ok);
+        assert_eq!(cached, invalid_reply);
+        assert_eq!(durable(2), invalid_finished);
+
+        stop.store(true, Ordering::Release);
+        let metrics = worker.join().unwrap().unwrap();
+        assert_eq!(metrics.work_verifications, 3);
+        assert_eq!(metrics.replayed_responses, 2);
+        println!("AUTH_MISSING_PARENT_RETRY actual_unknown_parent=true separate_parent_session=true same_signed_bytes=true same_session_nonce=true changed_payload_refused=true complete_invalid_work_terminal=true work_verifications=3 cached_responses=2 budget_changed=false");
+    });
+    let reopened = Node::open(receiver_directory.path(), settings, 1).unwrap();
+    assert_eq!(reopened.read_active().unwrap().0, child_id);
+    assert_eq!(reopened.stats().unwrap()["authenticated_pending"], 0);
+    assert_eq!(reopened.stats().unwrap()["authenticated_audit_rows"], 3);
+}
+
+#[test]
 fn signed_socket_exact_pending_frame_resumes_only_its_original_committed_intent() {
     let mut running = Running::new();
     running.interrupted();

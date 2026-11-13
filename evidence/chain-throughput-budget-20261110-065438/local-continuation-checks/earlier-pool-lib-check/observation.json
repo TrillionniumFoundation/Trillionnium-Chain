@@ -1,0 +1,59 @@
+{
+  "schema": "pool-run-production-lib-typecheck-v1",
+  "scope": "dirty candidate based on GitHub head 7d6567b92575d1d84766afd49d0720b6f197b0e0; production library typecheck only, not libtest/native execution",
+  "head": "7d6567b92575d1d84766afd49d0720b6f197b0e0",
+  "argv": [
+    "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/cargo",
+    "check",
+    "--offline",
+    "--locked",
+    "-j",
+    "1",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "-p",
+    "trnm-pon-node",
+    "--lib"
+  ],
+  "env": {
+    "RUSTC": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/rustc",
+    "LD_LIBRARY_PATH": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/lib",
+    "CARGO_TARGET_DIR": "/workspace/scratch/0654386882cd/target",
+    "CARGO_INCREMENTAL": "0"
+  },
+  "source_before": {
+    "trillionnium/crates/trnm-pon-node/src/mining.rs": "19089811d45517936e4528067a9a3c9c4c0afbfcd8192a92da63fdc6fffc3272",
+    "trillionnium/crates/trnm-pon-node/src/store.rs": "7b761d3441e8c0a44a2ff80bfa66c4fb4ffc1c50bfe3759b4e341526ed4c17b3",
+    "trillionnium/crates/trnm-pon-node/src/store/mempool.rs": "e126deef458d2e2ffa455e5d6c83856b2c2bcf72f97ac56810ee67735716bdcb",
+    "trillionnium/crates/trnm-pon-node/src/error.rs": "93ef0890476f9fb75d865c3d9d2613eea7c40606505692ac4c599a0589aa9f67",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+    "trillionnium/Cargo.lock": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
+    "rust-toolchain.toml": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+  },
+  "native_tests_executed": false,
+  "complete_business_liveness_qualified": false,
+  "started": true,
+  "pid": 12,
+  "exit_code": 0,
+  "elapsed_seconds": 110.01045920399974,
+  "source_after": {
+    "trillionnium/crates/trnm-pon-node/src/mining.rs": "19089811d45517936e4528067a9a3c9c4c0afbfcd8192a92da63fdc6fffc3272",
+    "trillionnium/crates/trnm-pon-node/src/store.rs": "7b761d3441e8c0a44a2ff80bfa66c4fb4ffc1c50bfe3759b4e341526ed4c17b3",
+    "trillionnium/crates/trnm-pon-node/src/store/mempool.rs": "e126deef458d2e2ffa455e5d6c83856b2c2bcf72f97ac56810ee67735716bdcb",
+    "trillionnium/crates/trnm-pon-node/src/error.rs": "93ef0890476f9fb75d865c3d9d2613eea7c40606505692ac4c599a0589aa9f67",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
+    "trillionnium/Cargo.lock": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
+    "rust-toolchain.toml": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+  },
+  "source_unchanged": true,
+  "output": {
+    "stdout.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr.txt": {
+      "bytes": 4172,
+      "sha256": "3437400c9548868f28c81fa8e1fcc169f9d52a2fc48f945e80374ec5efc3be16"
+    }
+  }
+}

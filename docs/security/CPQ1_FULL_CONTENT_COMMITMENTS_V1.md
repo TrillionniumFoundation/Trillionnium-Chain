@@ -207,6 +207,13 @@ authorization is required; the new digest cannot establish the old provenance.
 
 ## 6. Verification and remaining gates
 
+The [TCG3/CMH2 continuation](CONTENT_GRAPH_AND_HISTORY_READBACK_V1.md) adds a
+separate typed declared graph traversal and a bounded genesis-to-checkpoint
+full-State ancestry observation, including a read-only native Node caller.
+All CCH1/TCM2/TCC2/CST1/CMG1 encodings above remain byte-compatible. The new
+interfaces do not turn the older direct-content results into stronger readback
+types, discover unknown loader dependencies, or restore old historical authority.
+
 The five Python framing vectors are independent of Rust and are also consumed
 by native Rust tests. Synthetic vector profile IDs test encoding only and are
 not selectable profiles. Native tests cover exact byte framing, every context

@@ -196,9 +196,17 @@ fn assert_refused_before_effects(
     let before_root = exec::root(parent).unwrap();
     assert_eq!(cfg.check_account_profile(), Err(expected_error));
     assert_eq!(exec::root_for_config(parent, cfg), Err(expected_error));
+    // Preserve the existing read-only classical API's routing error for any
+    // selected PQ owner. Actual execution and root computation still use the
+    // precise shared configuration refusal before every state effect.
+    let envelope_error = if cfg.is_pq_account_profile() {
+        "PQ_ACCOUNT_NATIVE_API_REQUIRED"
+    } else {
+        expected_error
+    };
     assert_eq!(
         exec::validate_main_envelope(raw, 1, cfg).unwrap_err(),
-        expected_error
+        envelope_error
     );
     let signed = [raw.to_vec()];
     for transactions in [&[][..], &signed[..]] {

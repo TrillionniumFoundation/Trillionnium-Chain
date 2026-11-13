@@ -2,8 +2,8 @@
 //! reinterpreted as CPV3. Current views still come from the real authority owner.
 
 use super::{
-    CellPqKeyPinV2, CellPqReleaseExpectationV2, PqInput, PqNativeSigningKey, PqNativeVerifier,
-    ML_DSA_65_SIGNATURE_BYTES,
+    verify_publisher_message, CellPqKeyPinV2, CellPqKeyPinsV2, CellPqReleaseExpectationV2, PqInput,
+    PqNativeSigningKey, ML_DSA_65_SIGNATURE_BYTES,
 };
 use crate::cell::{
     require, CellDigestV1, CellErrorV1, CellResultV1, CellVersionCommitmentV1,
@@ -132,6 +132,24 @@ impl CellPqVersionAuthorizationV3 {
         version: &'a CellVersionManifestV1,
         expected: &CellPqVersionExpectationV3<'_>,
     ) -> CellResultV1<VerifiedCellPqVersionV3<'a>> {
+        self.verify_with_key_source(version, expected, None)
+    }
+    /// Reuses only public-key expansion from an independently pinned roster.
+    /// A changed expected pin is refused, and each exact signature is rechecked.
+    pub fn verify_at_with_pins<'a>(
+        &self,
+        version: &'a CellVersionManifestV1,
+        expected: &CellPqVersionExpectationV3<'_>,
+        pins: &CellPqKeyPinsV2,
+    ) -> CellResultV1<VerifiedCellPqVersionV3<'a>> {
+        self.verify_with_key_source(version, expected, Some(pins))
+    }
+    fn verify_with_key_source<'a>(
+        &self,
+        version: &'a CellVersionManifestV1,
+        expected: &CellPqVersionExpectationV3<'_>,
+        pins: Option<&CellPqKeyPinsV2>,
+    ) -> CellResultV1<VerifiedCellPqVersionV3<'a>> {
         version.verify_for_loader(&expected.loader)?;
         let authority = &expected.authority;
         authority.key.validate()?;
@@ -150,12 +168,14 @@ impl CellPqVersionAuthorizationV3 {
             s.issued_at <= authority.now && authority.now < s.expires_at,
             "PQ version lifetime",
         )?;
-        let verifier =
-            PqNativeVerifier::from_pinned_spki(&authority.key.spki, authority.key.key_id)
-                .map_err(|_| CellErrorV1::Invalid("PQ version key"))?;
-        verifier
-            .verify_exact_message(&s.message()?, &self.signature)
-            .map_err(|_| CellErrorV1::Invalid("PQ version signature"))?;
+        verify_publisher_message(
+            authority.key,
+            pins,
+            &s.message()?,
+            &self.signature,
+            "PQ version key",
+            "PQ version signature",
+        )?;
         require(!s.withdrawn, "PQ version withdrawn")?;
         Ok(VerifiedCellPqVersionV3 {
             version,

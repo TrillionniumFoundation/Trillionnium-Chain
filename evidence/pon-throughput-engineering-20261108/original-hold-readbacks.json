@@ -1,0 +1,14 @@
+[
+  {
+    "label": "frozen-host-prerequisites",
+    "recorder_exit": 1,
+    "expected_exit": 1,
+    "interpretation": "original prerequisite HOLD"
+  },
+  {
+    "label": "frozen-historical-campaign-readback",
+    "recorder_exit": 1,
+    "expected_exit": 1,
+    "interpretation": "valid historical HOLD readback; not current native execution"
+  }
+]

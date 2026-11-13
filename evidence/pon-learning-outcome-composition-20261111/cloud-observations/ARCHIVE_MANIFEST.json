@@ -1,0 +1,168 @@
+{
+  "archived_utc": "2026-11-12T00:15:10.395008+00:00",
+  "checksum_list": "SHA256SUMS",
+  "checksum_scope": "SHA256SUMS covers the 12 original files and this manifest; the checksum list does not recursively hash itself.",
+  "compilation_attempts": [
+    {
+      "exit_code": 101,
+      "log": "outcome-role-separation-no-run.log",
+      "outcome": "offline-cache-missing-rustix-1.1.4"
+    },
+    {
+      "exit_code": 130,
+      "log": "outcome-role-separation-no-run-c1.log",
+      "outcome": "interrupted-owned-build-at-low-disk-threshold"
+    }
+  ],
+  "complete_checkout": false,
+  "files": [
+    {
+      "bytes": 120,
+      "copied_without_byte_changes": true,
+      "original_path": "/workspace/scratch/761295b7d149/outcome-role-separation-no-run.log",
+      "path": "outcome-role-separation-no-run.log",
+      "sha256": "48b2fcf5fe3849318c495cfc3e2e231e3b4d441335025e266510592772720b50"
+    },
+    {
+      "bytes": 3664,
+      "copied_without_byte_changes": true,
+      "original_path": "/workspace/scratch/761295b7d149/outcome-role-separation-no-run-c1.log",
+      "path": "outcome-role-separation-no-run-c1.log",
+      "sha256": "70017c1c51fdb52b3356c7515e9340f04f57900c3b4bfc28976238c21a422c35"
+    },
+    {
+      "bytes": 1693,
+      "copied_without_byte_changes": true,
+      "original_path": "/workspace/scratch/761295b7d149/outcome-role-separation-sqlite-build-output-0.log",
+      "path": "outcome-role-separation-sqlite-build-output-0.log",
+      "sha256": "6450522b6c67fdc62b3f00dbe38657f20fccc1d33a07cd2658c3c72c364e435e"
+    },
+    {
+      "bytes": 2961,
+      "copied_without_byte_changes": true,
+      "original_path": "/workspace/scratch/761295b7d149/outcome-role-separation-cloud-qualification-c1.json",
+      "path": "outcome-role-separation-cloud-qualification-c1.json",
+      "sha256": "f3d45b6c351fd4b0ae64782a0b6997b23cf9f3100e73555ca40f5fd7c08d3e55"
+    },
+    {
+      "bytes": 3531,
+      "copied_without_byte_changes": true,
+      "original_path": "/workspace/scratch/761295b7d149/c1-low-space-gates.json",
+      "path": "c1-low-space-gates.json",
+      "sha256": "e323fb89239262dcd8e0dd223376329648a5fbfb09a457b6ab3ed2a9fc039e35"
+    },
+    {
+      "bytes": 187,
+      "copied_without_byte_changes": true,
+      "original_path": "/workspace/scratch/761295b7d149/c1-project-preflight-low-space.log",
+      "path": "c1-project-preflight-low-space.log",
+      "sha256": "83dcff667b9e4be937ae5cc0a8df2bebd5dcd2a38c3c423e0e528ec58e8b2678"
+    },
+    {
+      "bytes": 6899,
+      "copied_without_byte_changes": true,
+      "original_path": "/workspace/scratch/761295b7d149/c1-source-negative-controls.log",
+      "path": "c1-source-negative-controls.log",
+      "sha256": "b114a20bd5163edc342d394739bfdf54769cb73ea4bb3e6a80c274c4bd25ba58"
+    },
+    {
+      "bytes": 2426,
+      "copied_without_byte_changes": true,
+      "original_path": "/workspace/scratch/761295b7d149/c1-boundary-negative-controls.log",
+      "path": "c1-boundary-negative-controls.log",
+      "sha256": "56dbc3c9399f5644987132ef479cff0754fe80ab1125e1500a96c96ea8da01cd"
+    },
+    {
+      "bytes": 0,
+      "copied_without_byte_changes": true,
+      "original_path": "/workspace/scratch/761295b7d149/c1-workspace-fmt.log",
+      "path": "c1-workspace-fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 869535,
+      "copied_without_byte_changes": true,
+      "original_path": "/workspace/scratch/761295b7d149/c1-cargo-metadata.json",
+      "path": "c1-cargo-metadata.json",
+      "sha256": "34c5311ab220c9d682a418523764b907c8355e6092ea298ce813a4a441b6d2ae"
+    },
+    {
+      "bytes": 0,
+      "copied_without_byte_changes": true,
+      "original_path": "/workspace/scratch/761295b7d149/c1-cargo-metadata.log",
+      "path": "c1-cargo-metadata.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 84,
+      "copied_without_byte_changes": true,
+      "original_path": "/workspace/scratch/761295b7d149/c1-check-repository.log",
+      "path": "c1-check-repository.log",
+      "sha256": "e9d6779920685ac8631f9cfe3fc344fa5a64886cd36ed304305284c108a90361"
+    }
+  ],
+  "lock_sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
+  "low_space_gates": [
+    {
+      "exit_code": 0,
+      "label": "original-preflight",
+      "result": "PASS"
+    },
+    {
+      "exit_code": 0,
+      "label": "source-integrity-negative-controls",
+      "result": "PASS",
+      "tests": 43
+    },
+    {
+      "exit_code": 0,
+      "label": "project-boundary-negative-controls",
+      "result": "PASS",
+      "tests": 16
+    },
+    {
+      "exit_code": 0,
+      "label": "workspace-rust-format",
+      "result": "PASS"
+    },
+    {
+      "exit_code": 0,
+      "label": "locked-offline-full-metadata",
+      "resolved_nodes": 177,
+      "result": "PASS",
+      "workspace_packages": 26
+    },
+    {
+      "exit_code": 2,
+      "label": "repository-and-markdown-links",
+      "limitation": "Source-only sparse checkout omits historical evidence target. Original gate preserved unchanged; a full checkout must pass separately.",
+      "reason": "broken link docs/README.md -> ../evidence/pon-v1/README.md",
+      "result": "FAIL",
+      "sparse_target_index": {
+        "blob": "8ac809b6977e986b9d1f1324fa4715847911e314",
+        "git_ls_files_flag": "S",
+        "mode": "100644",
+        "path": "evidence/pon-v1/README.md",
+        "stage": 0
+      }
+    }
+  ],
+  "model_efficacy_certified": false,
+  "native_io_boundary_qualified": false,
+  "native_no_run_passed": false,
+  "native_role_test_executed": false,
+  "production_activation": false,
+  "role_test_sha256": "040b7940bf5105e771ded911bc6387615ad6be4f3ae6fad27e28b5df9b25f25d",
+  "rust_toolchain_observed": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2",
+  "schema": "pon-learning-outcome-cloud-observation-archive-v1",
+  "scope_notes": [
+    "These are raw observations from the cloud scratch checkout, not the later desktop qualification.",
+    "The first compile attempt exited 101 because the offline cache lacked rustix 1.1.4. A checksum-verified existing local archive was subsequently reused without network or lock changes.",
+    "The second compile attempt was interrupted as its owned target approached the low-space threshold; exit 130 and the original absolute-RUSTC qualification warning are preserved.",
+    "The 43 source-integrity and 16 project-boundary negative tests passed in isolated fixtures. They do not certify this sparse checkout as a complete tested tree.",
+    "Workspace formatting and locked offline metadata passed. The original repository/Markdown gate failed on an indexed skip-worktree evidence target; it was not changed or waived.",
+    "Original JSON files retain their original absolute scratch paths and raw bytes; this manifest maps those files into the repository archive.",
+    "Only logs, observation JSON and the necessary locked Cargo graph are archived. No target directory, dependency cache or unexecuted runner is included."
+  ],
+  "source_head": "c2d67c5cf1ebb4caac525802362d5746b8fd957d"
+}

@@ -1,0 +1,149 @@
+{
+  "base_tree": "072de14fdef5acb4b7da3c566181d273a845b4f5",
+  "branch": "fix/chain-throughput-identity-20261109-48c53a",
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "elapsed_ns": 47735000,
+      "exit_code": 0,
+      "name": "preflight",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "2ea684000392dc42040fb211378f571967cb8c2a2573c060069481c1101d6ccf"
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/throughput-v1",
+        "-p",
+        "test_component_observations.py",
+        "-v"
+      ],
+      "elapsed_ns": 67771000,
+      "exit_code": 1,
+      "name": "component",
+      "stderr_sha256": "b7671c16c562ccf1ccc4a8aff6d11c495fdcd59d8ee92a152e38a55fc9a08c72",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/throughput-v1",
+        "-p",
+        "test_execution_report.py",
+        "-v"
+      ],
+      "elapsed_ns": 79172000,
+      "exit_code": 1,
+      "name": "execution",
+      "stderr_sha256": "b734b69b0c74f122e968418c5b38acc6f8fe800eed53db835768e72340411b78",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "formal/throughput-v1",
+        "-p",
+        "test_whole_block_cost_metrics.py",
+        "-v"
+      ],
+      "elapsed_ns": 61778000,
+      "exit_code": 0,
+      "name": "whole-block",
+      "stderr_sha256": "54789b4de9069b0a4beb4d086d486609245dcf422a19c02a906545abea7b97d9",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_ci_source_integrity.py",
+        "-v"
+      ],
+      "elapsed_ns": 8396477000,
+      "exit_code": 0,
+      "name": "source-negative",
+      "stderr_sha256": "a00b4defe315c1438839b3f332d141d23eec13986665dccbf26f60f38326691e",
+      "stdout_sha256": "bf02c8fc9ef823a0acee59d734da2d0445c2a847183a394edc1bc64ae231535c"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "elapsed_ns": 40759000,
+      "exit_code": 1,
+      "name": "ci-contract",
+      "stderr_sha256": "cedf7cc1082a68a79700a90a9b43bf96e3edb0ca9a6d71d818fde080c3f350e4",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "python3",
+        "evidence/pon-throughput-selector-20261109/recheck_original_ci.py"
+      ],
+      "elapsed_ns": 66609000,
+      "exit_code": 1,
+      "name": "original-ci-recheck",
+      "stderr_sha256": "4b00f2b48308be6357b14c085ec5e5822995b1956112074b5e31f8f9ae42cb43",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "elapsed_ns": 15419000,
+      "exit_code": 2,
+      "name": "whitespace",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "67349eae457cc3acac62c42281d5b363bc2e371996f4d9319984c55ba296bbee"
+    }
+  ],
+  "head": "24bd150a2683b5a375171d062af8256852db5321",
+  "schema": "trnm-throughput-mac-precommit-validation-v1",
+  "scope": "sparse required manifests and targeted Python controls; full native source/build and historical artifact validation not run",
+  "source_sha256": {
+    ".github/workflows/pon-throughput-evidence.yml": "dc2e58b148804dd668b9798d5c3bddd722b775bff9614d76d799f164d8e5cb3b",
+    "config/pon/pq-cross-branch-corpus-v1.json": "0e968d69b534c068abd289089ff95b6a373053ccfab369de1b3f76d6fafa7d66",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "08fcdb452923cdd443381abd968ea8537282357d64ae73e7eac723e6f95da722",
+    "evidence/pon-throughput-selector-20261109/README.md": "a71114a31fd90c5f2ace4b380725736a312976dc2ce0f45d3ace552455580129",
+    "evidence/pon-throughput-selector-20261109/SHA256SUMS": "f6910a7d5345f36dfc0133478febd09565c1f2081e8fa4d53940269f95edb421",
+    "evidence/pon-throughput-selector-20261109/original-ci-components.zip": "a21332e0ff41d47d133bada5048face5142ea9e3bd458ea543404aab6649cd84",
+    "evidence/pon-throughput-selector-20261109/original-ci-recheck.json": "35f41cb10909c2813c475b79d555646e3fe3aa5884fa63350b8463c63c2fe456",
+    "evidence/pon-throughput-selector-20261109/prepared-controls.json": "eeabfc4e20f61fac26fcfce7767cabc11fc102b4663587477d8b343cfdb9d29d",
+    "evidence/pon-throughput-selector-20261109/recheck_original_ci.py": "83d5acfe649f0aa0268fe90b843ba06ce42f05e571b7acf7d4ea0dc965f02e4c",
+    "evidence/pon-throughput-selector-20261109/selector-baseline.stderr": "1cf14a221bcc72fc2eb5811ea922812d913b82b9202e3466742d3d475544fa22",
+    "evidence/pon-throughput-selector-20261109/test_component_observations.stderr": "eb4b99b9ef09eba2b6bbcf72c860ee4196361457443cd52af88bf6bd0c059a9e",
+    "evidence/pon-throughput-selector-20261109/test_component_observations.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "evidence/pon-throughput-selector-20261109/test_execution_report.stderr": "f20a246cc7e52176f8dfd643b38822bc5ba1472f4f655dd105e94a5c3bfceb43",
+    "evidence/pon-throughput-selector-20261109/test_execution_report.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "evidence/pon-throughput-selector-20261109/test_whole_block_cost_metrics.stderr": "c0f114ae5577eb32c89ee1dacb3e4d2828adbfcb14984fb28cae384ac714f861",
+    "evidence/pon-throughput-selector-20261109/test_whole_block_cost_metrics.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "formal/throughput-v1/execution_report.py": "f88ade62886eb76d1e41706ecee40495303bb63a1fd5967aed79ed54067f8ed2",
+    "formal/throughput-v1/run_component_observations.py": "caabe97b8d4c63edfdec84bb4ce515f43dcc642123f606d58ccc0ad3bacde688",
+    "formal/throughput-v1/test_component_observations.py": "7e760699122ff919cf84cca1c0662b2f35531ba6365f9972d575f69e5785145d",
+    "formal/throughput-v1/test_execution_report.py": "0077217ca0b33a2d21dda50f5baa3828192087199eea6afc04425aed136bb125"
+  },
+  "status_porcelain": "M .github/workflows/pon-throughput-evidence.yml\n M config/pon/pq-cross-branch-corpus-v1.json\n M docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md\n M formal/throughput-v1/execution_report.py\n M formal/throughput-v1/run_component_observations.py\n M formal/throughput-v1/test_execution_report.py\n?? evidence/pon-throughput-selector-20261109/\n?? formal/throughput-v1/test_component_observations.py"
+}

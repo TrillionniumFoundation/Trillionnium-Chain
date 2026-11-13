@@ -1,0 +1,44 @@
+{
+  "label": "pq-pinned-source",
+  "argv": [
+    "python3",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "command": "python3 scripts/ci/check_pq_research_integration.py",
+  "cwd": "/data/chain-abg-70ae-20261108/source",
+  "expected_head": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+  "expected_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+  "before": {
+    "head": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+    "tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+    "clean": true,
+    "status": "",
+    "matches_frozen_source": true
+  },
+  "started_utc": "2026-11-09T03:47:33.956735+00:00",
+  "timeout_seconds": 300,
+  "timeout_scope": "source/graph command wall-time supervisor only; no product deadline changed",
+  "stdout": "/data/chain-abg-70ae-20261108/evidence/r2-contract-gates/06-pq-pinned-source.stdout",
+  "stderr": "/data/chain-abg-70ae-20261108/evidence/r2-contract-gates/06-pq-pinned-source.stderr",
+  "expected_tests": null,
+  "tests_run": null,
+  "skipped": null,
+  "failures": null,
+  "errors": null,
+  "timed_out": false,
+  "exit_code": 0,
+  "passed": true,
+  "elapsed_seconds": 0.86719,
+  "after": {
+    "head": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+    "tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+    "clean": true,
+    "status": "",
+    "matches_frozen_source": true
+  },
+  "finished_utc": "2026-11-09T03:47:34.918129+00:00",
+  "stdout_bytes": 557,
+  "stderr_bytes": 0,
+  "stdout_sha256": "37c15adee3c6e9ad6c48882f218be1ba1c1a82d628226beaed23130981c150c4",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

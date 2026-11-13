@@ -1735,3 +1735,300 @@ fn signed_executor_rejects_unrelated_weak_zero_marginal_and_precommitted_false_w
     }
     assert_eq!(node.read_active().unwrap(), initial);
 }
+
+#[test]
+fn same_full_bundle_admits_split_reward_redistribution_with_known_aliases() {
+    use std::collections::BTreeMap;
+    // This preserves an economic counterexample to decomposition-invariant
+    // attribution. It is not a forgery, a source-cap bypass, public reward
+    // qualification or evidence that an unwilling publisher can be charged.
+    fn run_case(
+        initial: &State,
+        c: &Config,
+        label: &str,
+        authors: &[u64],
+        parts: &[Vec<i16>],
+        bundle_model: &[i16],
+        weights: &[u64],
+    ) -> Value {
+        let components = parts
+            .iter()
+            .zip(authors)
+            .map(|(delta, &who)| witness(initial, c, who, 0, delta, [8; 32]))
+            .collect::<Vec<_>>();
+        let mut allocations = components
+            .iter()
+            .zip(authors)
+            .zip(weights)
+            .map(|((component, &who), &weight)| Allocation {
+                cid: component.contribution_id,
+                who,
+                weight,
+            })
+            .collect::<Vec<_>>();
+        allocations.sort_by_key(|allocation| allocation.cid);
+        let bundle = witness(
+            initial,
+            c,
+            3,
+            0,
+            bundle_model,
+            allocation_root(&allocations),
+        );
+        let fixture = Fixture {
+            components,
+            bundle,
+            allocations,
+        };
+        let mut state = initial.clone();
+        let mut released = [0; 32];
+        let mut publication = Value::Null;
+        let mut commands = Vec::new();
+        let mut source_ids = BTreeMap::new();
+        for height in 1..=75 {
+            let txs = match height {
+                1 => {
+                    let mut txs = fixture
+                        .components
+                        .iter()
+                        .zip(authors)
+                        .map(|(component, &who)| {
+                            signed(c, who, nonce(&state, who), 23, component.encode().unwrap())
+                        })
+                        .collect::<Vec<_>>();
+                    txs.push(signed(
+                        c,
+                        3,
+                        nonce(&state, 3),
+                        23,
+                        fixture.bundle.encode().unwrap(),
+                    ));
+                    txs
+                }
+                16 => attestations(&state, c, &fixture.ids(), 14),
+                32 => attestations(&state, c, &fixture.ids(), 15),
+                56 => {
+                    let (id, tx) = fixture.release(&state, c, 100_000);
+                    released = id;
+                    vec![tx]
+                }
+                _ => vec![],
+            };
+            if !txs.is_empty() {
+                commands.push(json!({"height":height,"transactions":txs.iter().map(hex::encode).collect::<Vec<_>>(),"before_root":hex::encode(pon_executor::root(&state).unwrap())}));
+            }
+            state = step(&state, c, height, &txs);
+            continuity_v1::check_state(&state, height, c).unwrap();
+            if height == 1 {
+                for (component, &who) in fixture.components.iter().zip(authors) {
+                    let contribution = object(&state, component.contribution_id);
+                    assert_eq!(contribution["parent"], initial["model:current"]);
+                    assert_eq!(
+                        contribution["owner"],
+                        hex::encode(development_public(who).unwrap())
+                    );
+                    assert_eq!(
+                        stored_model(&state, c, component.candidate_artifact),
+                        full_model(
+                            c,
+                            &parts[authors.iter().position(|&author| author == who).unwrap()]
+                        )
+                    );
+                    source_ids.insert(who, read_hash(&contribution["model_evidence_v4"]["source"]));
+                }
+            }
+            if height == 48 {
+                for cid in fixture.ids() {
+                    let evaluation = evaluation::read_evaluation(&state, cid).unwrap();
+                    assert_eq!(evaluation["closed"]["status"], "complete-scored");
+                    assert_eq!(evaluation["closed"]["missing_reveal_count"], 0);
+                }
+            }
+            if height == 56 {
+                assert_eq!(state["model:current"], hex::encode(released));
+                assert_eq!(
+                    stored_model(&state, c, fixture.bundle.candidate_artifact),
+                    full_model(c, bundle_model)
+                );
+                publication = state[&format!("release:{}", hex::encode(released))].clone();
+                assert_eq!(publication["model_composition_v4"]["correct"], 25);
+                assert_eq!(
+                    publication["model_composition_v4"]["shapley_fairness_accepted"],
+                    false
+                );
+            }
+        }
+        assert_ne!(source_ids[&0], source_ids[&2]);
+        if authors.contains(&1) {
+            assert_eq!(source_ids[&0], source_ids[&1]);
+        }
+        let before_claim = state.clone();
+        let mut claim_txs = Vec::new();
+        for (position, allocation) in fixture.allocations.iter().enumerate() {
+            let mut index = position;
+            let mut layer = fixture
+                .allocations
+                .iter()
+                .map(Allocation::leaf)
+                .collect::<Vec<_>>();
+            let mut siblings = Vec::new();
+            while layer.len() > 1 {
+                if layer.len() % 2 == 1 {
+                    layer.push(*layer.last().unwrap());
+                }
+                siblings.push(layer[index ^ 1]);
+                layer = layer
+                    .chunks_exact(2)
+                    .map(|pairing| pair(pairing[0], pairing[1]))
+                    .collect();
+                index /= 2;
+            }
+            assert_eq!(layer[0], allocation_root(&fixture.allocations));
+            let mut payload = released.to_vec();
+            payload.extend(allocation.cid);
+            payload.extend(allocation.weight.to_le_bytes());
+            payload.push(u8::try_from(siblings.len()).unwrap());
+            for sibling in siblings {
+                payload.extend(sibling);
+            }
+            claim_txs.push(signed(
+                c,
+                allocation.who,
+                nonce(&state, allocation.who),
+                9,
+                payload,
+            ));
+        }
+        commands.push(json!({"height":76,"transactions":claim_txs.iter().map(hex::encode).collect::<Vec<_>>(),"before_root":hex::encode(pon_executor::root(&state).unwrap())}));
+        state = step(&state, c, 76, &claim_txs);
+        continuity_v1::check_state(&state, 76, c).unwrap();
+        let receipt = &state[&format!("release:{}", hex::encode(released))];
+        assert_eq!(receipt["remaining"], 1);
+        let total = fixture
+            .allocations
+            .iter()
+            .map(|allocation| allocation.weight)
+            .sum::<u64>();
+        let mut payments = BTreeMap::new();
+        let mut reservations = BTreeMap::<Hash, u64>::new();
+        for (allocation, raw) in fixture.allocations.iter().zip(&claim_txs) {
+            let amount =
+                u64::try_from(100_000_u128 * u128::from(allocation.weight) / u128::from(total))
+                    .unwrap();
+            assert_eq!(receipt["claims"][hex::encode(allocation.cid)], amount);
+            let fee = c.fees[9] + raw.len() as u64 * c.params["byte_fee_units"].as_u64().unwrap();
+            assert_eq!(
+                account(&state, allocation.who)["balance"].as_u64().unwrap(),
+                account(&before_claim, allocation.who)["balance"]
+                    .as_u64()
+                    .unwrap()
+                    + amount
+                    - fee
+            );
+            *reservations.entry(source_ids[&allocation.who]).or_default() += amount;
+            payments.insert(allocation.who.to_string(), json!({"gross":amount,"claim_fee":fee,"weight":allocation.weight,"before_claim":account(&before_claim, allocation.who),"after_claim":account(&state, allocation.who)}));
+        }
+        for (source, amount) in &reservations {
+            assert_eq!(
+                state[&composition::source_key(0, *source)]["reserved_units"],
+                *amount
+            );
+            assert!(*amount <= 100_000);
+        }
+        let alias_source = &state[&composition::source_key(0, source_ids[&0])];
+        assert_eq!(
+            alias_source["intakes"],
+            if authors.contains(&1) { 2 } else { 1 }
+        );
+        let group_gross = payments.get("0").unwrap()["gross"].as_u64().unwrap()
+            + payments
+                .get("1")
+                .map_or(0, |p| p["gross"].as_u64().unwrap());
+        let balances = |state: &State| {
+            account(state, 0)["balance"].as_u64().unwrap()
+                + account(state, 1)["balance"].as_u64().unwrap()
+        };
+        let group_net_change = i128::from(balances(&state)) - i128::from(balances(initial));
+        json!({"label":label,"scope":"signed-M06-contiguous-heights-1-through-76-not-a-PNW1-chain","bundle_artifact":hex::encode(fixture.bundle.candidate_artifact),"bundle_model_hex":hex::encode(full_model(c, bundle_model).encode()),"parent_model_hex":hex::encode(factor::IntegerModelV2::genesis(c.family).encode()),"component_authors":authors,"component_ids":fixture.components.iter().map(|component|hex::encode(component.contribution_id)).collect::<Vec<_>>(),"bundle_contribution":hex::encode(fixture.bundle.contribution_id),"component_model_hex":parts.iter().map(|part|hex::encode(full_model(c, part).encode())).collect::<Vec<_>>(),"weights":weights,"release":hex::encode(released),"publication":publication,"claims":receipt["claims"],"source_budgets":source_reservations(&state,0),"known_alias_source":hex::encode(source_ids[&0]),"known_alias_quota":alias_source,"alias_gross_payment":group_gross,"alias_net_account_change_after_all_own_fees":group_net_change.to_string(),"alias_accounts_initial":[account(initial,0),account(initial,1)],"alias_accounts_final":[account(&state,0),account(&state,1)],"payments":payments,"signed_commands":commands,"final_state_root":hex::encode(pon_executor::root(&state).unwrap()),"prospective_accepted":false,"public_reward_eligible":false,"shapley_fairness_accepted":false})
+    }
+
+    let directory = tempfile::tempdir().unwrap();
+    let (c, settings) = context();
+    let node = Node::open(directory.path(), settings, 2).unwrap();
+    let initial = node.read_active().unwrap().2;
+    drop(node);
+    assert_eq!(model_evidence_v3::MAX_INTAKES, 4);
+    assert_eq!(model_evidence_v3::MAX_RESERVED_UNITS, 100_000);
+    let a = trained(0, 25);
+    let b = trained(1, 25);
+    let bundle = add(&a, &b);
+    let mut z = vec![0; 2 * FEATURES];
+    z[FEATURES - 1] = 1000;
+    z[2 * FEATURES - 1] = -1000;
+    let split = [
+        add(&a, &z),
+        z.iter().map(|value| -value).collect(),
+        b.clone(),
+    ];
+    assert_eq!(add(&add(&split[0], &split[1]), &split[2]), bundle);
+    assert_eq!([correct(&a), correct(&b), correct(&bundle)], [24, 23, 25]);
+    assert_eq!(split.each_ref().map(|part| correct(part)), [2, 20, 23]);
+    assert_eq!(
+        split
+            .each_ref()
+            .map(|part| correct(&subtract(&bundle, part))),
+        [20, 2, 24]
+    );
+    let original = run_case(
+        &initial,
+        &c,
+        "original",
+        &[0, 2],
+        &[a, b],
+        &bundle,
+        &[80_000, 40_000],
+    );
+    let divided = run_case(
+        &initial,
+        &c,
+        "split",
+        &[0, 1, 2],
+        &split,
+        &bundle,
+        &[200_000, 920_000, 40_000],
+    );
+    assert_eq!(original["bundle_artifact"], divided["bundle_artifact"]);
+    assert_eq!(original["bundle_model_hex"], divided["bundle_model_hex"]);
+    assert_eq!(original["parent_model_hex"], divided["parent_model_hex"]);
+    assert_eq!(original["component_ids"][1], divided["component_ids"][2]);
+    assert_eq!(
+        original["component_model_hex"][1],
+        divided["component_model_hex"][2]
+    );
+    assert_eq!(original["alias_gross_payment"], 66_666);
+    assert_eq!(divided["alias_gross_payment"], 96_551);
+    assert_eq!(original["payments"]["2"]["gross"], 33_333);
+    assert_eq!(divided["payments"]["2"]["gross"], 3_448);
+    assert_eq!(
+        original["publication"]["model_composition_v4"]["zero_subset_checks"],
+        1
+    );
+    assert_eq!(
+        divided["publication"]["model_composition_v4"]["zero_subset_checks"],
+        4
+    );
+    let net = |value: &Value| {
+        value["alias_net_account_change_after_all_own_fees"]
+            .as_str()
+            .unwrap()
+            .parse::<i128>()
+            .unwrap()
+    };
+    assert_eq!(net(&original), 60_051);
+    assert_eq!(net(&divided), 86_865);
+    assert_eq!(net(&divided) - net(&original), 26_814);
+    eprintln!(
+        "native-v4-split-counterexample {}",
+        json!({"schema":"native-model-composition-v4-split-counterexample-v1","initialization":"ordinary-Node-open-genesis-state-only","evaluation_profile":evaluation::PROFILE,"continuity_profile":continuity_v1::PROFILE,"model_profile":composition::PROFILE,"genesis_state_root":hex::encode(pon_executor::root(&initial).unwrap()),"public_historical_rows":rows().len(),"max_intakes_per_source_round":model_evidence_v3::MAX_INTAKES,"max_reserved_units_per_source_round":model_evidence_v3::MAX_RESERVED_UNITS,"ordinary_Node_submission_verified":false,"PNW1_chain_verified":false,"independent_History_confirmation_verified":false,"network":hex::encode(c.network),"parameters":hex::encode(c.parameters),"family":hex::encode(c.family),"plan":hex::encode(c.plan),"original":original,"split":divided,"same_complete_bundle":true,"unknown_common_control_discovered":false,"source_cap_bypassed":false,"unauthorized_payer_debit":false,"production_activation":false,"economic_security_qualified":false})
+    );
+}

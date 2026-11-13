@@ -1,0 +1,382 @@
+{
+  "arithmetic": "exact rational amplitudes, Bayes updates and Bellman comparisons",
+  "chosen_policy_all_failures_path": [
+    {
+      "action": "measure",
+      "charged_units": 4,
+      "conditional_failure_probability": {
+        "denominator": 32,
+        "numerator": 15
+      },
+      "conditional_success_probability": {
+        "denominator": 32,
+        "numerator": 17
+      },
+      "continuation_delivered_probability": {
+        "denominator": 16384,
+        "numerator": 11089
+      },
+      "continuation_expected_spent": {
+        "denominator": 8192,
+        "numerator": 81351
+      },
+      "iterations": 1,
+      "marked_count_posterior": [
+        {
+          "denominator": 256,
+          "numerator": 81
+        },
+        {
+          "denominator": 64,
+          "numerator": 27
+        },
+        {
+          "denominator": 128,
+          "numerator": 27
+        },
+        {
+          "denominator": 64,
+          "numerator": 3
+        },
+        {
+          "denominator": 256,
+          "numerator": 1
+        }
+      ],
+      "reach_probability": {
+        "denominator": 1,
+        "numerator": 1
+      },
+      "remaining_budget": 18,
+      "winner_proof_units_on_success_only": 2
+    },
+    {
+      "action": "measure",
+      "charged_units": 3,
+      "conditional_failure_probability": {
+        "denominator": 16,
+        "numerator": 13
+      },
+      "conditional_success_probability": {
+        "denominator": 16,
+        "numerator": 3
+      },
+      "continuation_delivered_probability": {
+        "denominator": 512,
+        "numerator": 159
+      },
+      "continuation_expected_spent": {
+        "denominator": 1280,
+        "numerator": 13293
+      },
+      "iterations": 0,
+      "marked_count_posterior": [
+        {
+          "denominator": 40,
+          "numerator": 27
+        },
+        {
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "denominator": 40,
+          "numerator": 9
+        },
+        {
+          "denominator": 10,
+          "numerator": 1
+        },
+        {
+          "denominator": 1,
+          "numerator": 0
+        }
+      ],
+      "reach_probability": {
+        "denominator": 32,
+        "numerator": 15
+      },
+      "remaining_budget": 14,
+      "winner_proof_units_on_success_only": 2
+    },
+    {
+      "action": "measure",
+      "charged_units": 3,
+      "conditional_failure_probability": {
+        "denominator": 65,
+        "numerator": 59
+      },
+      "conditional_success_probability": {
+        "denominator": 65,
+        "numerator": 6
+      },
+      "continuation_delivered_probability": {
+        "denominator": 416,
+        "numerator": 63
+      },
+      "continuation_expected_spent": {
+        "denominator": 1040,
+        "numerator": 8973
+      },
+      "iterations": 0,
+      "marked_count_posterior": [
+        {
+          "denominator": 65,
+          "numerator": 54
+        },
+        {
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "denominator": 65,
+          "numerator": 9
+        },
+        {
+          "denominator": 65,
+          "numerator": 2
+        },
+        {
+          "denominator": 1,
+          "numerator": 0
+        }
+      ],
+      "reach_probability": {
+        "denominator": 512,
+        "numerator": 195
+      },
+      "remaining_budget": 11,
+      "winner_proof_units_on_success_only": 2
+    },
+    {
+      "action": "measure",
+      "charged_units": 3,
+      "conditional_failure_probability": {
+        "denominator": 472,
+        "numerator": 451
+      },
+      "conditional_success_probability": {
+        "denominator": 472,
+        "numerator": 21
+      },
+      "continuation_delivered_probability": {
+        "denominator": 1888,
+        "numerator": 123
+      },
+      "continuation_expected_spent": {
+        "denominator": 944,
+        "numerator": 5661
+      },
+      "iterations": 0,
+      "marked_count_posterior": [
+        {
+          "denominator": 59,
+          "numerator": 54
+        },
+        {
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "denominator": 118,
+          "numerator": 9
+        },
+        {
+          "denominator": 118,
+          "numerator": 1
+        },
+        {
+          "denominator": 1,
+          "numerator": 0
+        }
+      ],
+      "reach_probability": {
+        "denominator": 512,
+        "numerator": 177
+      },
+      "remaining_budget": 8,
+      "winner_proof_units_on_success_only": 2
+    },
+    {
+      "action": "measure",
+      "charged_units": 3,
+      "conditional_failure_probability": {
+        "denominator": 1804,
+        "numerator": 1765
+      },
+      "conditional_success_probability": {
+        "denominator": 1804,
+        "numerator": 39
+      },
+      "continuation_delivered_probability": {
+        "denominator": 1804,
+        "numerator": 39
+      },
+      "continuation_expected_spent": {
+        "denominator": 902,
+        "numerator": 2745
+      },
+      "iterations": 0,
+      "marked_count_posterior": [
+        {
+          "denominator": 451,
+          "numerator": 432
+        },
+        {
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "denominator": 451,
+          "numerator": 18
+        },
+        {
+          "denominator": 451,
+          "numerator": 1
+        },
+        {
+          "denominator": 1,
+          "numerator": 0
+        }
+      ],
+      "reach_probability": {
+        "denominator": 4096,
+        "numerator": 1353
+      },
+      "remaining_budget": 5,
+      "winner_proof_units_on_success_only": 2
+    },
+    {
+      "action": "stop",
+      "continuation_delivered_probability": {
+        "denominator": 1,
+        "numerator": 0
+      },
+      "continuation_expected_spent": {
+        "denominator": 1,
+        "numerator": 0
+      },
+      "marked_count_posterior": [
+        {
+          "denominator": 1765,
+          "numerator": 1728
+        },
+        {
+          "denominator": 1,
+          "numerator": 0
+        },
+        {
+          "denominator": 1765,
+          "numerator": 36
+        },
+        {
+          "denominator": 1765,
+          "numerator": 1
+        },
+        {
+          "denominator": 1,
+          "numerator": 0
+        }
+      ],
+      "reach_probability": {
+        "denominator": 16384,
+        "numerator": 5295
+      },
+      "remaining_budget": 2
+    }
+  ],
+  "existence_ceiling_scope": "only when no domain refresh occurs; not a W1 security bound",
+  "expected_budget_spent": {
+    "denominator": 8192,
+    "numerator": 97735
+  },
+  "initial_action": "pay-domain-setup",
+  "initial_setup_units_charged": 2,
+  "limits": {
+    "budget": 128,
+    "domain_size": 32,
+    "exact_fraction_bits": 4096,
+    "iterations": 16,
+    "processors": 8,
+    "states": 25000
+  },
+  "objective": "maximize delivered-winner probability, then minimize expected budget spent",
+  "optimal_delivered_probability": {
+    "denominator": 16384,
+    "numerator": 11089
+  },
+  "persistent_single_domain_existence_ceiling": {
+    "denominator": 256,
+    "numerator": 175
+  },
+  "request": {
+    "allow_refresh": false,
+    "budget_units": 20,
+    "costs": {
+      "candidate_check": 1,
+      "domain_setup": 2,
+      "oracle_iteration": 1,
+      "readout": 1,
+      "state_prepare": 1,
+      "unit": "declared-additive-resource-units",
+      "winner_proof": 2
+    },
+    "domain_size": 4,
+    "iteration_choices": [
+      0,
+      1,
+      2
+    ],
+    "marked_count_prior": [
+      {
+        "denominator": 256,
+        "numerator": 81
+      },
+      {
+        "denominator": 64,
+        "numerator": 27
+      },
+      {
+        "denominator": 128,
+        "numerator": 27
+      },
+      {
+        "denominator": 64,
+        "numerator": 3
+      },
+      {
+        "denominator": 256,
+        "numerator": 1
+      }
+    ],
+    "processors": 1,
+    "schema": "trnm-quantum-posterior-request-v1"
+  },
+  "schema": "trnm-quantum-posterior-policy-v1",
+  "scope": {
+    "actual_candidate_proof_validity_established": false,
+    "actual_w1_marked_prior_proved": false,
+    "all_algorithm_optimality_proved": false,
+    "complete_w1_cost_oracle_used": false,
+    "conditional_finite_policy_optimum": true,
+    "fresh_domains_realizable_in_w1_proved": false,
+    "joint_w1_daa_timestamp_chainwork_security_proved": false,
+    "model": "ideal finite count-prior search with coarsened Boolean batch observations",
+    "optimality_scope": "finite declared iteration grid, fixed processor count, retry/refresh/stop, one delivered winner",
+    "parallelism": "independent re-prepared processors conditional on the SAME domain marked count",
+    "physical_calibration_performed": false,
+    "policy_information": "count posterior only; identities and residual coherent state discarded",
+    "production_activation": false,
+    "proof_semantics": "ideal marked success produces one acceptable proof at its declared fixed cost; no real validation or delivery modeled",
+    "quantum_hardware_executed": false,
+    "quantum_work_lower_bound_proved": false,
+    "refresh": "paid new independent domain drawn from the original caller-declared count prior",
+    "resource_scope": "declared additive units; all processors charged; no calibrated wall time",
+    "whole_chain_quantum_qualified": false
+  },
+  "source_binding": {
+    "quantum_posterior_policy.py_sha256": "2885c0c07f459ad6da74bc0ddc5f5dfe7fb970a85ed0e7f99bfdb3dc36bdc410",
+    "scope": "this research module only; not repository/build/runtime closure"
+  },
+  "states_evaluated": 31
+}

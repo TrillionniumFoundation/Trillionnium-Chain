@@ -1,0 +1,32 @@
+test_adaptive_policy_beats_both_fixed_action_policies (__main__.JointTailTests.test_adaptive_policy_beats_both_fixed_action_policies) ... ok
+test_bellman_matches_independent_catalan_first_passage_law (__main__.JointTailTests.test_bellman_matches_independent_catalan_first_passage_law) ... ok
+test_cli_invalid_certificate_does_not_bypass_gap_validation (__main__.JointTailTests.test_cli_invalid_certificate_does_not_bypass_gap_validation) ... ok
+test_cli_invalid_certificate_emits_no_bound (__main__.JointTailTests.test_cli_invalid_certificate_emits_no_bound) ... ok
+test_cli_model_pass_and_native_refusal_are_distinct (__main__.JointTailTests.test_cli_model_pass_and_native_refusal_are_distinct) ... ok
+test_conditional_cs_certificate_is_exact (__main__.JointTailTests.test_conditional_cs_certificate_is_exact) ... ok
+test_correlated_marginal_product_cannot_replace_joint_moment (__main__.JointTailTests.test_correlated_marginal_product_cannot_replace_joint_moment) ... ok
+test_crossing_remains_absorbed_after_later_negative_credit (__main__.JointTailTests.test_crossing_remains_absorbed_after_later_negative_credit) ... ok
+test_cs_is_sufficient_but_not_necessary (__main__.JointTailTests.test_cs_is_sufficient_but_not_necessary) ... ok
+test_denominator_and_dp_work_limits_are_explicit_refusals (__main__.JointTailTests.test_denominator_and_dp_work_limits_are_explicit_refusals) ... ok
+test_direct_certificate_and_exact_anytime_bound (__main__.JointTailTests.test_direct_certificate_and_exact_anytime_bound) ... ok
+test_duplicate_credit_regeneration_rejects_finite_potential (__main__.JointTailTests.test_duplicate_credit_regeneration_rejects_finite_potential) ... ok
+test_duplicate_state_and_action_ids_refused (__main__.JointTailTests.test_duplicate_state_and_action_ids_refused) ... ok
+test_entry_debt_is_charged_in_the_same_joint_increment (__main__.JointTailTests.test_entry_debt_is_charged_in_the_same_joint_increment) ... ok
+test_future_conditioned_or_selected_scope_is_refused (__main__.JointTailTests.test_future_conditioned_or_selected_scope_is_refused) ... ok
+test_horizon_monotonicity_and_gap_monotonicity (__main__.JointTailTests.test_horizon_monotonicity_and_gap_monotonicity) ... ok
+test_inventory_potential_and_restart_remain_charged (__main__.JointTailTests.test_inventory_potential_and_restart_remain_charged) ... ok
+test_json_duplicates_floats_and_nonfinite_refused (__main__.JointTailTests.test_json_duplicates_floats_and_nonfinite_refused) ... ok
+test_native_flags_and_risks_never_promoted (__main__.JointTailTests.test_native_flags_and_risks_never_promoted) ... ok
+test_nonpositive_or_unit_z_refused (__main__.JointTailTests.test_nonpositive_or_unit_z_refused) ... ok
+test_nonpositive_probabilities_and_small_potential_refused (__main__.JointTailTests.test_nonpositive_probabilities_and_small_potential_refused) ... ok
+test_probability_sum_missing_successor_and_duplicate_outcome_refused (__main__.JointTailTests.test_probability_sum_missing_successor_and_duplicate_outcome_refused) ... ok
+test_rational_complexity_guards_moments_bound_dp_and_encoding (__main__.JointTailTests.test_rational_complexity_guards_moments_bound_dp_and_encoding) ... ok
+test_resource_limits_are_refusals (__main__.JointTailTests.test_resource_limits_are_refusals) ... ok
+test_unknown_fields_and_unknown_numerical_values_refused (__main__.JointTailTests.test_unknown_fields_and_unknown_numerical_values_refused) ... ok
+test_unreachable_state_and_unselected_action_are_still_checked (__main__.JointTailTests.test_unreachable_state_and_unselected_action_are_still_checked) ... ok
+test_zero_horizon_and_already_crossed (__main__.JointTailTests.test_zero_horizon_and_already_crossed) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 0.225s
+
+OK

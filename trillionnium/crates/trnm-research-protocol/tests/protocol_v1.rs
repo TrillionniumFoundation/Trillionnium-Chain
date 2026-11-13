@@ -824,3 +824,247 @@ fn state_rejects_signed_commands_for_another_chain() {
 
 #[path = "protocol_v1/security_cases.rs"]
 mod security_cases;
+
+#[test]
+fn authority_set_rejects_weak_ed25519_trust_anchor() {
+    // Identity is a valid Ed25519 encoding but a small-order point. Such a
+    // key must not be admitted as a genesis authority trust anchor.
+    let mut weak_key = [0u8; 32];
+    weak_key[0] = 1;
+    assert!(matches!(
+        AuthorityIdentityV1::new("did:trnm:weak".into(), weak_key),
+        Err(ProtocolStateError::InvalidAuthoritySet)
+    ));
+}
+
+#[test]
+fn authority_identity_serde_rejects_weak_trust_anchor() {
+    let value = serde_json::json!({
+        "signer_did": "did:trnm:weak",
+        "public_key": [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    });
+    assert!(serde_json::from_value::<AuthorityIdentityV1>(value).is_err());
+}
+
+#[test]
+fn authority_set_serde_rejects_duplicate_identity_entries() {
+    let identity = test_authorities().nakama_authorities[0].clone();
+    let value = serde_json::json!({
+        "nakama_authorities": [identity.clone(), identity],
+        "hepta_authorities": []
+    });
+    assert!(serde_json::from_value::<AuthoritySetV1>(value).is_err());
+}
+
+#[test]
+fn signed_command_serde_revalidates_signature_and_identity() {
+    let signed = sign(0, fixture_commands()[0].clone()).unwrap();
+    let encoded = serde_json::to_vec(&signed).unwrap();
+    let decoded: SignedResearchCommandV1 = serde_json::from_slice(&encoded).unwrap();
+    assert_eq!(decoded, signed);
+
+    let mut forged = serde_json::to_value(&signed).unwrap();
+    forged["signer_did"] = serde_json::json!("did:trnm:other-authority");
+    assert!(serde_json::from_value::<SignedResearchCommandV1>(forged).is_err());
+
+    let mut oversized = serde_json::to_value(&signed).unwrap();
+    oversized["signature"] = serde_json::json!(vec![0_u8; 65]);
+    assert!(serde_json::from_value::<SignedResearchCommandV1>(oversized).is_err());
+
+    let mut oversized_chain = serde_json::to_value(&signed).unwrap();
+    oversized_chain["chain_id"] = serde_json::json!("x".repeat(65));
+    assert!(serde_json::from_value::<SignedResearchCommandV1>(oversized_chain).is_err());
+}
+
+#[test]
+fn signed_decoder_rejects_oversized_signature_before_copying() {
+    let signed = sign(0, fixture_commands()[0].clone()).unwrap();
+    let mut encoded = signed.canonical_bytes();
+    // The final field is the 64-byte Ed25519 signature encoded as a
+    // one-byte-length CBOR byte string (0x58, 0x40).
+    let header = encoded.len() - 64 - 2;
+    assert_eq!(&encoded[header..header + 2], &[0x58, 0x40]);
+    encoded[header + 1] = 128;
+    encoded.extend_from_slice(&[0_u8; 64]);
+    assert!(matches!(
+        SignedResearchCommandV1::from_canonical_bytes(&encoded),
+        Err(SignedResearchCommandValidationError::CanonicalDecode(
+            CanonicalDecodeError::ByteLengthMismatch {
+                expected: 64,
+                got: 128
+            }
+        ))
+    ));
+}
+
+#[test]
+fn signed_decoder_rejects_oversized_text_before_copying() {
+    let signed = sign(0, fixture_commands()[0].clone()).unwrap();
+    let mut encoded = signed.canonical_bytes();
+    // The chain ID is the canonical one-byte-length text field immediately
+    // following the encoding marker. Replace it with a 256-byte text header;
+    // the bounded decoder must reject before allocating/copying the text.
+    let marker = [
+        0x6e, b't', b'r', b'n', b'm', b'-', b'd', b'e', b'v', b'n', b'e', b't', b'-', b'v', b'1',
+    ];
+    let start = encoded
+        .windows(marker.len())
+        .position(|window| window == marker)
+        .expect("chain ID marker");
+    let mut replacement = vec![0x79, 0x01, 0x00];
+    replacement.extend(vec![0_u8; 256]);
+    encoded.splice(start..start + marker.len(), replacement);
+    assert!(matches!(
+        SignedResearchCommandV1::from_canonical_bytes(&encoded),
+        Err(SignedResearchCommandValidationError::CanonicalDecode(
+            CanonicalDecodeError::ByteLengthMismatch {
+                expected: 64,
+                got: 256
+            }
+        ))
+    ));
+}
+
+#[test]
+fn signer_nonce_replay_is_rejected_for_a_distinct_command_id() {
+    let original = fixture_commands()[0].clone();
+    let first = sign(0, original.clone()).unwrap();
+    let mut state = test_state();
+    state.apply(&first).unwrap();
+
+    let ResearchCommandV1::MatchEvidenceCommitment(mut altered) = original else {
+        unreachable!()
+    };
+    altered.event_count += 1;
+    let replay = SignedResearchCommandV1::sign(
+        first.chain_id.clone(),
+        key("trnm.command", "distinct-command-same-nonce"),
+        first.signer_did.clone(),
+        first.signer_role,
+        first.nonce,
+        ResearchCommandV1::MatchEvidenceCommitment(altered),
+        &SigningKey::from_bytes(&NAKAMA_SEED),
+    )
+    .unwrap();
+
+    assert!(matches!(
+        state.apply(&replay),
+        Err(ProtocolStateError::SignerNonceReplay {
+            nonce: 1,
+            last_nonce: 1,
+            ..
+        })
+    ));
+}
+
+#[test]
+fn state_rejects_commands_from_a_different_chain() {
+    let first = sign(0, fixture_commands()[0].clone()).unwrap();
+    let mut state = test_state();
+    state.apply(&first).unwrap();
+
+    let ResearchCommandV1::MatchEvidenceCommitment(mut payload) = fixture_commands()[0].clone()
+    else {
+        unreachable!()
+    };
+    payload.event_count += 1;
+    let other_chain = SignedResearchCommandV1::sign(
+        "trnm-othernet-v1".into(),
+        key("trnm.command", "command-other-chain"),
+        first.signer_did.clone(),
+        first.signer_role,
+        2,
+        ResearchCommandV1::MatchEvidenceCommitment(payload),
+        &SigningKey::from_bytes(&NAKAMA_SEED),
+    )
+    .unwrap();
+
+    assert_eq!(
+        state.apply(&other_chain).unwrap_err(),
+        ProtocolStateError::ChainMismatch {
+            expected: "trnm-devnet-v1".into(),
+            got: "trnm-othernet-v1".into(),
+        }
+    );
+}
+
+#[test]
+fn signer_nonce_floor_survives_snapshot_restore() {
+    let original = fixture_commands()[0].clone();
+    let first = sign(0, original.clone()).unwrap();
+    let mut state = test_state();
+    state.apply(&first).unwrap();
+    let mut restored =
+        ResearchProtocolState::from_snapshot_for_chain("trnm-devnet-v1", state.export_snapshot())
+            .unwrap();
+
+    let ResearchCommandV1::MatchEvidenceCommitment(mut altered) = original else {
+        unreachable!()
+    };
+    altered.event_count += 1;
+    let replay = SignedResearchCommandV1::sign(
+        first.chain_id.clone(),
+        key("trnm.command", "distinct-command-after-restore"),
+        first.signer_did.clone(),
+        first.signer_role,
+        first.nonce,
+        ResearchCommandV1::MatchEvidenceCommitment(altered),
+        &SigningKey::from_bytes(&NAKAMA_SEED),
+    )
+    .unwrap();
+
+    assert!(matches!(
+        restored.apply(&replay),
+        Err(ProtocolStateError::SignerNonceReplay {
+            nonce: 1,
+            last_nonce: 1,
+            ..
+        })
+    ));
+}
+
+#[test]
+fn snapshot_v2_empty_state_has_fixed_namespace_bytes() {
+    let state =
+        ResearchProtocolState::with_chain_id("trnm-devnet-v1", AuthoritySetV1::default()).unwrap();
+    assert_eq!(state.export_snapshot().protocol_version, 2);
+    // Canonical array(10), version2, authority array(3)/version1/two empty
+    // buckets, then the eight empty object/journal arrays. This literal is an
+    // independent encoding oracle, not the implementation's encoder output.
+    assert_eq!(
+        state.canonical_snapshot_bytes(),
+        vec![0x8a, 0x02, 0x83, 0x01, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,]
+    );
+    let restored =
+        ResearchProtocolState::from_snapshot_for_chain("trnm-devnet-v1", state.export_snapshot())
+            .unwrap();
+    assert_eq!(restored, state);
+}
+
+#[test]
+fn snapshot_v2_bound_restart_preserves_normal_command_and_exact_retry() {
+    let mut state = test_state();
+    let first = sign(0, fixture_commands()[0].clone()).unwrap();
+    state.apply(&first).unwrap();
+    let snapshot = state.export_snapshot();
+    assert_eq!(snapshot.protocol_version, 2);
+    assert_eq!(snapshot.applied_commands.len(), 1);
+    assert_eq!(snapshot.applied_commands[0].nonce, first.nonce);
+    assert_eq!(snapshot.applied_commands[0].chain_id, first.chain_id);
+    let bytes = serde_json::to_vec(&snapshot).unwrap();
+    let decoded: ResearchProtocolSnapshotV1 = serde_json::from_slice(&bytes).unwrap();
+    let mut restored =
+        ResearchProtocolState::from_snapshot_for_chain("trnm-devnet-v1", decoded).unwrap();
+    assert_eq!(restored, state);
+    assert!(matches!(
+        restored.apply(&first).unwrap(),
+        ApplyOutcome::Idempotent { .. }
+    ));
+    let second = sign(1, fixture_commands()[1].clone()).unwrap();
+    assert_eq!(
+        restored.apply(&second).unwrap(),
+        state.apply(&second).unwrap()
+    );
+    assert_eq!(restored, state);
+}

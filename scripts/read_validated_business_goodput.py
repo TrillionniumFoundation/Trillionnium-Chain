@@ -184,6 +184,58 @@ def verified_imports(phase, business):
     return known, receipts, gaps
 
 
+def fixed_schedule_completion(outcomes, business):
+    """Retain delay before actual round entry under the original 1/5/9s schedule.
+
+    Native round starts can be delayed by the previous round. Its enclosing end
+    also includes confirmation bookkeeping, so this is scheduled-to-round-end
+    latency, not a reconstructed timestamp of a confirmation event. Missing
+    rows have unknown execution, never an invented zero duration. This additive
+    diagnostic grants no new confirmation and changes no original criterion.
+    """
+    rows, counts, successful = [], Counter(), []
+    for number in range(3):
+        scheduled = (1 + 4 * number) * 1_000_000_000
+        row = outcomes[number] if number < len(outcomes) else None
+        state = row["state"] if row is not None else "unobserved"
+        start = row["started_ns"] if row is not None else None
+        end = row["ended_ns"] if row is not None else None
+        if row is not None:
+            require(row["round"] == number and scheduled <= start <= end,
+                    "round precedes original fixed schedule")
+        confirmed_elapsed = end - scheduled if state == "validated" else None
+        if confirmed_elapsed is not None:
+            successful.append(confirmed_elapsed)
+        counts[state] += 1
+        rows.append({"round": number, "transaction": business[number * 7]["transaction_id"],
+                     "scheduled_ns": scheduled, "state": state,
+                     "started_ns": start, "ended_ns": end,
+                     "start_delay_ns": start - scheduled if start is not None else None,
+                     "round_end_from_schedule_ns": end - scheduled if end is not None else None,
+                     "on_time_validated_round_end_from_schedule_ns": confirmed_elapsed})
+    values = sorted(successful)
+    return {"schema": "pon-original-fixed-schedule-completion-v1",
+            "planned_rounds": 3, "outcomes": rows,
+            "planned_outcome_counts": dict(sorted(counts.items())),
+            "on_time_validated_rounds": len(values),
+            "rounds_without_observed_on_time_validation": 3 - len(values),
+            "successful_scheduled_round_latency_samples": len(values),
+            "successful_scheduled_round_latency_p50_nearest_rank_ns":
+                values[(len(values) - 1) // 2] if values else None,
+            "successful_scheduled_round_latency_p95_ns": None,
+            "successful_scheduled_round_latency_p99_ns": None,
+            "all_planned_confirmation_p95_ns": None,
+            "all_planned_confirmation_p99_ns": None,
+            "scope": {"schedule": "original campaign offsets 1, 5, 9 seconds",
+                      "clock": "retained campaign monotonic clock, not native observer-local clocks",
+                      "latency_end": "enclosing round end, including confirmation bookkeeping",
+                      "actual_round_start_excludes_prior_round_delay": True,
+                      "missing_round_execution_is_unknown": True,
+                      "counts_are_rounds_not_unique_business_effects": True,
+                      "three_rounds_are_insufficient_for_p95_or_p99": True,
+                      "original_confirmation_criteria_changed": False}}
+
+
 def phase_goodput(phase, business):
     mode = phase["mode"]
     require(mode in phases.MODES, "original phase mode required")
@@ -192,7 +244,8 @@ def phase_goodput(phase, business):
                 "unobserved_rounds": 3, "startup_or_campaign_error": phase["startup_or_campaign_error"],
                 "unique_validated_business_observed": 0, "validated_goodput_per_second": None,
                 "observed_validated_business_per_actual_second": None,
-                "actual_parent_phase_wall_ns": None, "finite_phase_criteria_met": False}
+                "actual_parent_phase_wall_ns": None, "finite_phase_criteria_met": False,
+                "fixed_schedule_completion": fixed_schedule_completion([], business)}
     require(phase["duration_seconds"] == 30 and phase["state_backend"] == "authenticated-v1",
             "original phase profile required")
     require(type(phase["finite_phase_criteria_met"]) is bool, "typed original phase outcome required")
@@ -312,6 +365,7 @@ def phase_goodput(phase, business):
             "successful_round_latency_p50_nearest_rank_ns": values[(n - 1) // 2] if n else None,
             "successful_round_latency_p95_ns": values[(95 * n + 99) // 100 - 1] if n >= 20 else None,
             "successful_round_latency_p99_ns": values[(99 * n + 99) // 100 - 1] if n >= 100 else None,
+            "fixed_schedule_completion": fixed_schedule_completion(outcomes, business),
             "whole_parent_phase_cpu_ns": phase["whole_parent_phase_cpu_ns"],
             "original_submissions_retained": len(phase["submissions"]),
             "original_history_calls_retained": len(phase["history"]),

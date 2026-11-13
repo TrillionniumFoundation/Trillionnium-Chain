@@ -1,0 +1,15 @@
+test_actual_merged_lanes_keep_all_original_controls (__main__.MergedQualificationLaneTests.test_actual_merged_lanes_keep_all_original_controls) ... ok
+test_complete_groups_cannot_reorder_duplicate_or_hide_in_shell_conditions (__main__.MergedQualificationLaneTests.test_complete_groups_cannot_reorder_duplicate_or_hide_in_shell_conditions) ... ok
+test_completion_commands_cannot_change_position_multiplicity_or_failure_policy (__main__.MergedQualificationLaneTests.test_completion_commands_cannot_change_position_multiplicity_or_failure_policy) ... ok
+test_credit_commands_cannot_change_position_multiplicity_or_failure_policy (__main__.MergedQualificationLaneTests.test_credit_commands_cannot_change_position_multiplicity_or_failure_policy) ... ok
+test_current_mapping_commands_cannot_change_position_multiplicity_or_failure_policy (__main__.MergedQualificationLaneTests.test_current_mapping_commands_cannot_change_position_multiplicity_or_failure_policy) ... ok
+test_fixed_probability_commands_cannot_change_position_multiplicity_or_failure_policy (__main__.MergedQualificationLaneTests.test_fixed_probability_commands_cannot_change_position_multiplicity_or_failure_policy) ... ok
+test_independent_literals_keep_original_neighbors_and_unique_commands (__main__.MergedQualificationLaneTests.test_independent_literals_keep_original_neighbors_and_unique_commands) ... ok
+test_learning_business_commands_cannot_change_position_multiplicity_or_failure_policy (__main__.MergedQualificationLaneTests.test_learning_business_commands_cannot_change_position_multiplicity_or_failure_policy) ... ok
+test_pq_effect_root_commands_cannot_change_position_multiplicity_or_failure_policy (__main__.MergedQualificationLaneTests.test_pq_effect_root_commands_cannot_change_position_multiplicity_or_failure_policy) ... ok
+test_whole_repository_and_external_lanes_cannot_suppress_failures (__main__.MergedQualificationLaneTests.test_whole_repository_and_external_lanes_cannot_suppress_failures) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 27.326s
+
+OK

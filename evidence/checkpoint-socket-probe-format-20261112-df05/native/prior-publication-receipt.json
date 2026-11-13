@@ -1,0 +1,17 @@
+{
+  "draft": true,
+  "evidence_commit": "b62cb86d22405dd9e5b441970639b6e5dd44a8b8",
+  "native_all_commands_passed": false,
+  "native_scope_pass": false,
+  "native_source": "7d4303f1a9ba3c259b92e58b85126eef3c5378a1",
+  "native_tree": "2a580a0444f56c0e70e0d73a7fad1120367d1e9e",
+  "operation_key": "chain-checkpoint-probe-native-publication-20261112-df05-v2",
+  "parent_evidence": "09e4801308366fac01e55bcbdcf8bdfd4e6d2810",
+  "parent_pr": 945,
+  "pr": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/947",
+  "production_activation": false,
+  "publication_complete": true,
+  "root_s879_results_relabelled": false,
+  "status": "HOLD",
+  "tests_relabelled_to_evidence_commit": false
+}

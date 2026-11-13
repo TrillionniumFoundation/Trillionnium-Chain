@@ -16,6 +16,45 @@ fn cfg() -> ConfigurationV2 {
         max_records: 16,
     }
 }
+
+#[cfg(unix)]
+#[test]
+fn generation_regular_wal_reopen_keeps_original_identity_and_pending_dispatch() {
+    use std::ffi::OsString;
+    use std::os::unix::ffi::OsStringExt;
+
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory
+        .path()
+        .join(OsString::from_vec(b"generation-\xff.sqlite".to_vec()));
+    let statement = statement();
+    let mut owner = MockOwner::new(&statement);
+    let mut first = NativeGenerationStoreV2::open(&path, cfg()).unwrap();
+    let id = first.prepare(&mut owner, statement.clone()).unwrap();
+    assert!(matches!(
+        first.begin(&mut owner, id).unwrap(),
+        DispatchDecisionV2::New
+    ));
+    let identity = first.journal_identity();
+    let before = first.readback(id).unwrap();
+    let mut second = NativeGenerationStoreV2::open(&path, cfg()).unwrap();
+    assert_eq!(second.journal_identity(), identity);
+    assert_eq!(second.readback(id).unwrap(), before);
+    assert!(matches!(
+        second.begin(&mut owner, id).unwrap(),
+        DispatchDecisionV2::Pending
+    ));
+    drop(first);
+    drop(second);
+    let mut cold = NativeGenerationStoreV2::open(&path, cfg()).unwrap();
+    assert_eq!(cold.journal_identity(), identity);
+    assert!(matches!(
+        cold.begin(&mut owner, id).unwrap(),
+        DispatchDecisionV2::Pending
+    ));
+    assert_eq!(cold.readback(id).unwrap(), before);
+    assert_eq!(before.resource_charge, statement.resource_cap);
+}
 fn statement() -> GenerationStatementV2 {
     GenerationStatementV2 {
         lane: GenerationLaneV2::FullW1ProofGeneration,

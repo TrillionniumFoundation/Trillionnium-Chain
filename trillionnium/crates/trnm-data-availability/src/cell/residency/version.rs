@@ -11,9 +11,18 @@ use super::{
     CellResidentWorkingSetV1,
 };
 use crate::cell::{
-    require, CellDigestV1, CellResultV1, CellVersionCommitmentV1, CellVersionLoaderContextV1,
-    CellVersionManifestV1,
+    require, CellAdoptionOwnerV1, CellAdoptionSnapshotV1, CellDigestV1, CellExecutionBoundaryV1,
+    CellResultV1, CellVersionCommitmentV1, CellVersionLoaderContextV1, CellVersionManifestV1,
 };
+
+/// A live node-local choice guard supplied by its actual policy owner. The
+/// snapshot is a CAS identity, not a permission token. A stale snapshot, changed
+/// execution boundary or differently selected complete version refuses use.
+pub struct CellAdoptionUseV1<'a> {
+    pub owner: &'a mut CellAdoptionOwnerV1,
+    pub snapshot: &'a CellAdoptionSnapshotV1,
+    pub execution: &'a CellExecutionBoundaryV1,
+}
 
 /// One task's complete, independently pinned TCV1 model/environment byte set.
 /// This borrows the existing pool and retains only metadata and borrowed views;
@@ -98,6 +107,33 @@ impl<'a> CellResidentVersionV1<'a> {
     /// file mapping reference. This is not process RSS or device memory.
     pub fn usage(&self) -> CellResidencyUsageV1 {
         self.working_set.usage()
+    }
+
+    /// Consume this task's actual resident bytes under the node's durable
+    /// selection. The choice owner holds its writer fence throughout the
+    /// callback, so a cooperating concurrent adopt/rollback cannot switch the
+    /// selected version between its check and this use. The task's original
+    /// cancellation and deadline are checked both before the owner read and
+    /// immediately before the consumer callback.
+    ///
+    /// This is an additional local selection gate. It does not replace the
+    /// host's current authorization, safe tensor loader, resource limits or
+    /// FinalUse grant, and cannot revoke bytes that a consumer already copied.
+    pub fn with_selected<T>(
+        &self,
+        task_id: CellDigestV1,
+        current: &CellVersionLoaderContextV1<'_>,
+        choice: CellAdoptionUseV1<'_>,
+        consume: impl FnOnce(CellResidentVersionViewV1<'a>) -> T,
+    ) -> CellResultV1<T> {
+        self.with_local(task_id, current, |_| {
+            choice.owner.with_selected_commitment_guard(
+                choice.snapshot,
+                self.commitment,
+                choice.execution,
+                || self.with_local(task_id, current, consume),
+            )
+        })?
     }
 
     /// Validate the original task and complete version, including both current
@@ -187,3 +223,7 @@ impl CellResidencyV1 {
 #[cfg(test)]
 #[path = "version_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "selected_version_tests.rs"]
+mod selected_tests;

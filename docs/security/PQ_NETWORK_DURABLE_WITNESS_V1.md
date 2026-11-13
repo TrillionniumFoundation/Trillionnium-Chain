@@ -151,7 +151,12 @@ BLOB reads.
 Advance holds an IMMEDIATE transaction. A new transition requires exact
 equality of the currently retained checkpoint and the proposed predecessor.
 An exact retry is accepted only when the current checkpoint equals the proposed
-successor and the retained preceding checkpoint equals the original predecessor.
+successor, the retained predecessor matches, and this live owner previously
+authenticated and committed that exact transition. An independently retained
+current-head pin does not authenticate restored predecessor metadata. After cold
+reopen, use a fresh signed Current response to read back the selected head;
+historical CAS retries are refused until this owner commits a new successor,
+whose exact live retry is then available.
 Forks, skipped sequences and wraparound refuse. The service commits under
 `synchronous=FULL` before creating a signed success reply.
 
@@ -268,7 +273,9 @@ acceptance gates, and they do not license a whole-chain PQ claim.
 The native slow-write control disproved the earlier blocking implementation's
 remaining-interval socket-timeout argument: a progressing 8 MiB write exceeded
 its 40 ms budget and the unchanged 500 ms stop assertion. The corrected adapter
-uses the existing pinned `rustix` 1.1.4 package with its Node-local `net` feature.
-That feature-graph change is explicit; package versions, Cargo.lock, compiler
-profiles, protocol bytes and original test/runtime budgets are unchanged. The
-original read/write controls must pass on the corrected exact source.
+originally used `rustix` 1.1.4 with its Node-local `net` feature. The current
+continuation updates the seven direct version requirements and both lockfiles
+to 1.1.6 for RUSTSEC-2026-0486. Existing features, compiler profiles, protocol
+bytes and original test/runtime budgets remain unchanged. The original
+read/write controls and new live/cold predecessor provenance controls must pass
+on the corrected exact source; prior results do not qualify the new dependency.

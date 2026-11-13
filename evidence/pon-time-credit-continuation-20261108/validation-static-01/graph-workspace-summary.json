@@ -1,0 +1,7 @@
+{
+  "manifest": "trillionnium/Cargo.toml",
+  "packages": 175,
+  "workspace_members": 26,
+  "resolve_nodes": 175,
+  "sha256": "6c36219d0c2d26851f70a5b2b044995f1616818630b8b2f6ce185c39da8366be"
+}

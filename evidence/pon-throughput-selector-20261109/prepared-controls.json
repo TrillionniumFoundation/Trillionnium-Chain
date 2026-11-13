@@ -1,0 +1,52 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "/workspace/scratch/48c53a24c6b4/review846/formal/throughput-v1/test_execution_report.py",
+        "-v"
+      ],
+      "elapsed_ns": 423795022,
+      "exit_code": 0,
+      "stderr_sha256": "f20a246cc7e52176f8dfd643b38822bc5ba1472f4f655dd105e94a5c3bfceb43",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "/workspace/scratch/48c53a24c6b4/review846/formal/throughput-v1/test_component_observations.py",
+        "-v"
+      ],
+      "elapsed_ns": 124553755,
+      "exit_code": 0,
+      "stderr_sha256": "eb4b99b9ef09eba2b6bbcf72c860ee4196361457443cd52af88bf6bd0c059a9e",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "/workspace/scratch/48c53a24c6b4/review846/formal/throughput-v1/test_whole_block_cost_metrics.py",
+        "-v"
+      ],
+      "elapsed_ns": 97354924,
+      "exit_code": 0,
+      "stderr_sha256": "c0f114ae5577eb32c89ee1dacb3e4d2828adbfcb14984fb28cae384ac714f861",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "native_executions": 0,
+  "qualification": "HOLD_NO_GO",
+  "schema": "trnm-prepared-throughput-controls-v1",
+  "scope": "materialized pinned source plus prepared changes; no Git checkout preflight or native execution",
+  "source_sha256": {
+    ".github/workflows/pon-throughput-evidence.yml": "dc2e58b148804dd668b9798d5c3bddd722b775bff9614d76d799f164d8e5cb3b",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "08fcdb452923cdd443381abd968ea8537282357d64ae73e7eac723e6f95da722",
+    "formal/throughput-v1/execution_report.py": "f88ade62886eb76d1e41706ecee40495303bb63a1fd5967aed79ed54067f8ed2",
+    "formal/throughput-v1/run_component_observations.py": "caabe97b8d4c63edfdec84bb4ce515f43dcc642123f606d58ccc0ad3bacde688",
+    "formal/throughput-v1/test_component_observations.py": "7e760699122ff919cf84cca1c0662b2f35531ba6365f9972d575f69e5785145d",
+    "formal/throughput-v1/test_execution_report.py": "0077217ca0b33a2d21dda50f5baa3828192087199eea6afc04425aed136bb125"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schema": "native-example-controlled-interruption-v1",
+  "observed_at": "2026-11-12T06:48:43.170700+00:00",
+  "execution_session_id": 91969,
+  "tool_observed_exit_code": 130,
+  "action": "Control-C sent only to owned native example diagnostic session",
+  "reason": "Parent requested switch from debug diagnostic to original four-gates release build profile after prior compiler SIGKILL; cause of SIGKILL is unknown",
+  "rust_compile_failure_claim": false,
+  "test_failure_claim": false,
+  "tests_completed": false,
+  "result": "controlled interruption; no test result",
+  "debug_artifact_lock_released": true,
+  "pq_command_started": false,
+  "original_log": "native-example-default-03.log",
+  "original_log_bytes": 805,
+  "original_log_sha256": "c86b34a4f07b18ec5099e400d6d0a2f40628f49b9b699293ec6c5f8d3d85d4fc"
+}

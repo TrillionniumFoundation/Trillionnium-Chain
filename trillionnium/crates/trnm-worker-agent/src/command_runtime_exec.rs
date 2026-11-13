@@ -187,8 +187,10 @@ mod unix {
         // independently owned groups are exiting and being reparented. A torn
         // numeric token is not an empty child list: restart a COMPLETE scan,
         // without accepting a partial ownership snapshot or extending the
-        // original cleanup deadline. All nonnumeric-failure classes remain
-        // immediate errors, including changed identities and missing owners.
+        // original cleanup deadline. A proc descriptor opened before its task
+        // vanished can also return std::io ESRCH on read. That is not an empty
+        // ownership snapshot: only another COMPLETE scan can succeed. Typed
+        // rustix wait/pidfd errors, permissions and identity failures still fail.
         fn retry_malformed_proc_numbers(
             deadline: Instant,
             mut scan: impl FnMut() -> Result<()>,
@@ -197,7 +199,10 @@ mod unix {
                 match scan() {
                     Ok(()) => return Ok(()),
                     Err(error)
-                        if error.downcast_ref::<std::num::ParseIntError>().is_some()
+                        if (error.downcast_ref::<std::num::ParseIntError>().is_some()
+                            || error.downcast_ref::<std::io::Error>().is_some_and(|error| {
+                                error.raw_os_error() == Some(rustix::io::Errno::SRCH.raw_os_error())
+                            }))
                             && Instant::now() < deadline =>
                     {
                         thread::sleep(

@@ -1,0 +1,24 @@
+{
+  "actual_oid": "faaa696e366ca1a54941d83c90422af79290a271",
+  "bytes": 21147039,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "faaa696e366ca1a54941d83c90422af79290a271"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 21147039,
+  "expected_oid": "faaa696e366ca1a54941d83c90422af79290a271",
+  "finished_at": "2026-11-12T01:41:52.738677+00:00",
+  "path": "evidence/pon-business-gates-readback-20261107/ci-d26/history/x64-head/history-native/long-history/confirmer/native.sqlite.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLWJ1c2luZXNzLWdhdGVzLXJlYWRiYWNrLTIwMjYxMTA3L2NpLWQyNi9oaXN0b3J5L3g2NC1oZWFkL2hpc3RvcnktbmF0aXZlL2xvbmctaGlzdG9yeS9jb25maXJtZXIvbmF0aXZlLnNxbGl0ZS5neg==",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "a9db42a4e939d86d454550152287550491a2609c703d52cba970f89c0dabd0d8",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:52.385268+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

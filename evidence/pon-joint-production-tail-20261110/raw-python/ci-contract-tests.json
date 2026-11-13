@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/test_ci_contract.py"
+  ],
+  "cwd": "/workspace/scratch/8e76272d9258/chain-joint-tail",
+  "elapsed_seconds": 36.17261453899846,
+  "error": null,
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "label": "ci-contract-tests",
+  "native_probability_qualified": false,
+  "passed": true,
+  "production_activation": false,
+  "source_commit": "4716bade250f327b012a098418f4eece6b73fcaa",
+  "source_tree": "bbc0278f87282d9bcf4e22b167040233516da310",
+  "started_at_utc": "2026-11-10T07:31:06.649216+00:00",
+  "stderr": "ci-contract-tests.stderr.log",
+  "stderr_sha256": "9f9b9303d5e8c6c21b71c43a00476ea6043cb5accfac457391f0982533f0a15c",
+  "stdout": "ci-contract-tests.stdout.log",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

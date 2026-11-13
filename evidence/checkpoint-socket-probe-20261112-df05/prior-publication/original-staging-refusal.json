@@ -1,0 +1,8 @@
+{
+  "error_type": "Refuse",
+  "no_success_inferred": true,
+  "operation_key": "root-operation-20261112-df05-native-publication-v2",
+  "publication_complete": false,
+  "reason": "command failed (1): git",
+  "status": "REFUSE_OR_UNKNOWN"
+}

@@ -1,0 +1,616 @@
+{
+  "commands": [
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "rev-parse",
+        "--show-toplevel"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:54:51.163391+00:00",
+      "label": "source-root",
+      "started_at": "2026-11-12T01:54:51.160119+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 48,
+      "stdout_sha256": "c0ce30d3b196224b04f5aff9b6b20ee0b485ab24590cc615fa966c94c7676b0f"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:54:51.166073+00:00",
+      "label": "head-before",
+      "started_at": "2026-11-12T01:54:51.163760+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 41,
+      "stdout_sha256": "92418b987f77d6bb2a1f23818ac06f1beaab1a3a360d8a48f5e25a5fa18fc53a"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "branch",
+        "--show-current"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:54:51.169100+00:00",
+      "label": "branch-before",
+      "started_at": "2026-11-12T01:54:51.166438+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 57,
+      "stdout_sha256": "0bb59c393c4c044e51781834bb569750c0fe91755d7c029fea8c06251aaec2e9"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "cat-file",
+        "commit",
+        "04f5b5515774aab6663bb80cf7831fe07367ba81"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:54:51.233351+00:00",
+      "label": "head-commit-original",
+      "started_at": "2026-11-12T01:54:51.193221+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 266,
+      "stdout_sha256": "e21b382d93a3358798b589cbbeee6158a9e2af23c1ba9f2b67513c8e052d7b32"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "for-each-ref",
+        "--format=%(refname)",
+        "refs/replace/"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:54:51.236901+00:00",
+      "label": "replacement-refs",
+      "started_at": "2026-11-12T01:54:51.233910+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "rev-parse",
+        "--path-format=absolute",
+        "--git-path",
+        "info/grafts"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:54:51.268908+00:00",
+      "label": "grafts-path",
+      "started_at": "2026-11-12T01:54:51.265796+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 65,
+      "stdout_sha256": "2ddaf1f909df26bbf19c2e772c23fc0c26f961284838a33e1ec037ea753fdf1e"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "rev-parse",
+        "--path-format=absolute",
+        "--git-path",
+        "index"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:54:51.273136+00:00",
+      "label": "before-locate-index",
+      "started_at": "2026-11-12T01:54:51.269954+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 59,
+      "stdout_sha256": "730161a6c29e4327f86400d1c3a611e552c17a6be589eda1e5a33760af8a6bb1"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "rev-parse",
+        "--path-format=absolute",
+        "--git-path",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:54:51.334368+00:00",
+      "label": "before-locate-HEAD",
+      "started_at": "2026-11-12T01:54:51.331008+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 58,
+      "stdout_sha256": "f225ce175ff1e0f18eedaf4e84e67efe5266800637bd7d59dbf907463915edc6"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "rev-parse",
+        "--shared-index-path"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:54:51.349812+00:00",
+      "label": "before-shared-index",
+      "started_at": "2026-11-12T01:54:51.338264+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "ls-files",
+        "-v",
+        "-z"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:54:51.375355+00:00",
+      "label": "visibility-before",
+      "started_at": "2026-11-12T01:54:51.352260+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 2950760,
+      "stdout_sha256": "e15e054af09e3965cedf3e105f1ffbdc4ca30647a0919b767cdcc7b093465181"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "ls-files",
+        "--stage",
+        "-z"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:54:51.418613+00:00",
+      "label": "index-stage-before",
+      "started_at": "2026-11-12T01:54:51.385089+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 4344728,
+      "stdout_sha256": "900cba002c907fbac62f42dfe30c82f5cd8a1e7a936703d755dca5414ae876ad"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "ls-tree",
+        "-r",
+        "-l",
+        "-z",
+        "--full-tree",
+        "04f5b5515774aab6663bb80cf7831fe07367ba81"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:54:51.749134+00:00",
+      "label": "head-tree-original",
+      "started_at": "2026-11-12T01:54:51.432643+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 4664231,
+      "stdout_sha256": "0222b7afb1db6558f1815c6989e1d498a082bd530390bed1af060ce6c91cda23"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "config",
+        "--show-origin",
+        "--show-scope",
+        "--get-regexp",
+        "^(core\\.(ignorestat|filemode|ignorecase|symlinks|trustctime|checkstat|fsmonitor|preloadindex|sparsecheckout|sparsecheckoutcone|splitindex|untrackedcache|repositoryformatversion|worktree|bare)|extensions\\.(worktreeconfig|objectformat)|index\\.(version|sparse))$"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:54:52.002162+00:00",
+      "label": "related-core-config-before",
+      "started_at": "2026-11-12T01:54:51.998824+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 135,
+      "stdout_sha256": "ad7889ad52a716af0577fc855505685936be7f2c21c354aa5560e0c360a96845"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "config",
+        "--bool",
+        "--get",
+        "core.ignoreStat"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 1,
+      "finished_at": "2026-11-12T01:54:52.005842+00:00",
+      "label": "ignorestat-before",
+      "started_at": "2026-11-12T01:54:52.002862+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "show",
+        "04f5b5515774aab6663bb80cf7831fe07367ba81:scripts/ci/verify_ci_source.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:54:52.012595+00:00",
+      "label": "original-source-guard",
+      "started_at": "2026-11-12T01:54:52.006437+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 11231,
+      "stdout_sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
+    },
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:54:52.121763+00:00",
+      "label": "project-preflight-original",
+      "started_at": "2026-11-12T01:54:52.020705+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 187,
+      "stdout_sha256": "83dcff667b9e4be937ae5cc0a8df2bebd5dcd2a38c3c423e0e528ec58e8b2678"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:55:28.303074+00:00",
+      "label": "head-before-metadata-change",
+      "started_at": "2026-11-12T01:55:28.299369+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 41,
+      "stdout_sha256": "92418b987f77d6bb2a1f23818ac06f1beaab1a3a360d8a48f5e25a5fa18fc53a"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "ls-files",
+        "--stage",
+        "-z"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:55:28.348329+00:00",
+      "label": "index-before-metadata-change",
+      "started_at": "2026-11-12T01:55:28.303821+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 4344728,
+      "stdout_sha256": "900cba002c907fbac62f42dfe30c82f5cd8a1e7a936703d755dca5414ae876ad"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "ls-files",
+        "-v",
+        "-z"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:55:28.488513+00:00",
+      "label": "flags-before-metadata-change",
+      "started_at": "2026-11-12T01:55:28.458444+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 2950760,
+      "stdout_sha256": "e15e054af09e3965cedf3e105f1ffbdc4ca30647a0919b767cdcc7b093465181"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "config",
+        "--bool",
+        "--get",
+        "core.ignoreStat"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 1,
+      "finished_at": "2026-11-12T01:55:28.550082+00:00",
+      "label": "ignorestat-before-change",
+      "started_at": "2026-11-12T01:55:28.546287+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "update-index",
+        "--no-skip-worktree",
+        "-z",
+        "--stdin"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:55:28.616885+00:00",
+      "label": "clear-skip-worktree",
+      "started_at": "2026-11-12T01:55:28.560589+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": "3a6ca40d7c991683c1d1eaed85fcba1793f7027c6c5fac475c3195366a01c759",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "04f5b5515774aab6663bb80cf7831fe07367ba81",
+        "--output",
+        "/home/qian-qi/work/chain-pon-outcome-7612-checkout-visibility-final/original-source-after.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:55:39.486131+00:00",
+      "label": "original-source-after",
+      "started_at": "2026-11-12T01:55:28.623142+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 423,
+      "stdout_sha256": "23f2bf83703a27301f81eddec791709d30a023d981acc60f03ca9999960fae62"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "ls-files",
+        "-v",
+        "-z"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:55:39.508806+00:00",
+      "label": "visibility-after",
+      "started_at": "2026-11-12T01:55:39.488625+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 2950760,
+      "stdout_sha256": "f8ca8ad3e66ab8ed9a3ab5c9cdee295def0b03b84e0ad13d1ef51c3789b72a21"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "ls-files",
+        "--stage",
+        "-z"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:55:39.617483+00:00",
+      "label": "index-stage-after",
+      "started_at": "2026-11-12T01:55:39.584149+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 4344728,
+      "stdout_sha256": "900cba002c907fbac62f42dfe30c82f5cd8a1e7a936703d755dca5414ae876ad"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all",
+        "--ignore-submodules=none"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:55:39.843968+00:00",
+      "label": "status-after",
+      "started_at": "2026-11-12T01:55:39.730062+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:55:39.848098+00:00",
+      "label": "head-after",
+      "started_at": "2026-11-12T01:55:39.844988+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 41,
+      "stdout_sha256": "92418b987f77d6bb2a1f23818ac06f1beaab1a3a360d8a48f5e25a5fa18fc53a"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "rev-parse",
+        "--path-format=absolute",
+        "--git-path",
+        "index"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:55:39.862051+00:00",
+      "label": "after-locate-index",
+      "started_at": "2026-11-12T01:55:39.858178+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 59,
+      "stdout_sha256": "730161a6c29e4327f86400d1c3a611e552c17a6be589eda1e5a33760af8a6bb1"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "rev-parse",
+        "--path-format=absolute",
+        "--git-path",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:55:39.888396+00:00",
+      "label": "after-locate-HEAD",
+      "started_at": "2026-11-12T01:55:39.885141+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 58,
+      "stdout_sha256": "f225ce175ff1e0f18eedaf4e84e67efe5266800637bd7d59dbf907463915edc6"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "rev-parse",
+        "--shared-index-path"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:55:39.901781+00:00",
+      "label": "after-shared-index",
+      "started_at": "2026-11-12T01:55:39.889596+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/usr/bin/git",
+        "--no-replace-objects",
+        "config",
+        "--show-origin",
+        "--show-scope",
+        "--get-regexp",
+        "^(core\\.(ignorestat|filemode|ignorecase|symlinks|trustctime|checkstat|fsmonitor|preloadindex|sparsecheckout|sparsecheckoutcone|splitindex|untrackedcache|repositoryformatversion|worktree|bare)|extensions\\.(worktreeconfig|objectformat)|index\\.(version|sparse))$"
+      ],
+      "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-final",
+      "execution_error": null,
+      "exit_code": 0,
+      "finished_at": "2026-11-12T01:55:39.906243+00:00",
+      "label": "related-core-config-after",
+      "started_at": "2026-11-12T01:55:39.902861+00:00",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdin_sha256": null,
+      "stdout_bytes": 135,
+      "stdout_sha256": "ad7889ad52a716af0577fc855505685936be7f2c21c354aa5560e0c360a96845"
+    }
+  ],
+  "schema": "chain-checkout-visibility-command-observation-v1",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "source_root": "/home/qian-qi/work/chain-pon-outcome-7612-final"
+}

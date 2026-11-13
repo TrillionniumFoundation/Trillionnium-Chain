@@ -16,6 +16,14 @@ on:
       - scripts/test_cell_learning_completion_join.py
       - scripts/cell_learning_scope_join.py
       - scripts/test_cell_learning_scope_join.py
+      - scripts/cell_learning_business_join.py
+      - scripts/cell_learning_business_economics.py
+      - scripts/test_cell_learning_business_join.py
+      - scripts/test_cell_learning_business_economics.py
+      - scripts/test_cell_learning_training_no_update_join.py
+      - evidence/heplcp03-interop-20261111/**
+      - evidence/next-use-provenance-20261110/**
+      - evidence/cell-learning-business-readback-20261109/bindings/**
       - evidence/cell-learning-completion-20261108/**
       - evidence/hepta-real-native-adoption-20261108/chain-reader/**
       - evidence/cell-learning-iteration-20261108/native-readbacks/**
@@ -80,6 +88,7 @@ jobs:
           "$py" scripts/test_cell_learning_iteration_join.py -v
           "$py" scripts/test_cell_learning_completion_join.py -v
           "$py" scripts/test_cell_learning_scope_join.py -v
+          "$py" scripts/test_cell_learning_training_no_update_join.py -v
       - name: Preserve original signed learning suites and execute actual V3 join
         run: |
           set -euo pipefail

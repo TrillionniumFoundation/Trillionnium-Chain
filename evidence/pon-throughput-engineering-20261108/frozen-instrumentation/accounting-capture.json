@@ -1,0 +1,30 @@
+{
+  "schema": "sqlite-wal-syscall-capture-v1",
+  "command": [
+    "/usr/bin/strace",
+    "-f",
+    "-ttt",
+    "-T",
+    "-yy",
+    "-s",
+    "1",
+    "-e",
+    "trace=execve,execveat,pwrite64,pwritev,pwritev2,write,writev,fsync,fdatasync",
+    "-o",
+    "/home/qian-qi/chain-throughput-engineering-20261108-86a09d93-evidence/frozen-instrumentation/accounting.strace",
+    "--",
+    "/home/qian-qi/chain-throughput-engineering-20261108-86a09d93-target/debug/deps/public_v3_request_accounting-2ab408a826e488ef",
+    "--exact",
+    "actual_paid_native_work_rejection_read_frames_and_partial_eof_are_attributed",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "binary_sha256": "23c27c528b172274819be31a23d21d82bc5b29a151e4ffb6fb088a6b1cdb44be",
+  "source_receipt_sha256": "fe3647e3f6f126ba63d13f92d944f7c69f0adee568c4d5951c9e864d5fb9f18c",
+  "trace_sha256": "50cac91776fbde491386d4da306ba4ff596114c48b6310b1b7361f85623fdc65",
+  "source_commit": "92529f8492545e6c395044165b4f5d7c3fb0972a",
+  "source_tree": "e96be99451284479b474acb5dce7443ef0a957b4",
+  "capture_started_unix_ns": 1794160497445400837,
+  "capture_finished_unix_ns": 1794160510591884120,
+  "strace_returncode": 0
+}

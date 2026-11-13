@@ -1,0 +1,112 @@
+{
+  "candidate": "e974fd617e0e2c0d1fc88584b1301a7ffb714a73",
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "label": "source-preflight",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "c32203b226220547f074c87c1e888e954c9e0f255d476247f1e8cc713924626d"
+    },
+    {
+      "argv": [
+        "git",
+        "worktree",
+        "add",
+        "-b",
+        "test/chain-verification-counterfactual-20261112-33ceda",
+        "/home/qq/chain-verification-counterfactual-33ceda-20261112",
+        "e974fd617e0e2c0d1fc88584b1301a7ffb714a73"
+      ],
+      "exit_code": 0,
+      "label": "create-worktree",
+      "stderr_sha256": "0a71a10b827e41d7faf95b0b303bbbb24c49dea4119c07b903ff39ae5a357fbb",
+      "stdout_sha256": "e38c384cb2fd1decb82b291fad09f5f15bc28cf662266b1630a067e63469bea3"
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "label": "counterfactual-preflight",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "4512ca7977ab1eebc5d7a1ebded2914f4d04d8fb985664026981f0b3aa2c6d41"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--binary"
+      ],
+      "exit_code": 0,
+      "label": "counterfactual-diff",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "66256993d7bad961038bc31e1b5fe7ac63cefd1d4d8dac9c42950699b99ef5bb"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--name-only"
+      ],
+      "exit_code": 0,
+      "label": "counterfactual-files",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "6d9b0a61ea28bff245383bece9a9b5314ce473a24a8dd647d30acd19d1b2625a"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "label": "diff-check",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "add",
+        "--",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+      ],
+      "exit_code": 0,
+      "label": "stage-counterfactual",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--staged"
+      ],
+      "exit_code": 0,
+      "label": "staged-preflight",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "3a529e74a70376878c29476aaf93ac25495c92c5b55b0449e6898d6949fdd7ee"
+    },
+    {
+      "argv": [
+        "git",
+        "commit",
+        "-m",
+        "test: retain pre-fix dispatch and output behavior for adversarial comparison"
+      ],
+      "exit_code": 128,
+      "label": "commit-counterfactual",
+      "stderr_sha256": "3b5a5063cd290409f2aa31a15ceaa8e59ddfb22086fafdda3938a062b618cd92",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "counterfactual_only": true,
+  "retained_behavior_source": "8970e2c81abbf48e2a4d3f0802d79624ab20fadd",
+  "tests_executed": false
+}

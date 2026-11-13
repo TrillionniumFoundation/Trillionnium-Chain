@@ -37,3 +37,18 @@ evidence/pon-client-confirmation-v1/**/*.log -text -whitespace
 
 # Preserve byte-exact successful and failed proof-chain observations.
 /evidence/pon-w1-qrom-proof-chain-20261108/*.log -text -whitespace
+
+# Preserve byte-exact raw output and captured artifacts for this model-storage observation.
+/evidence/cell-bt-owner-convergence-20261112/**/*.log -text -whitespace
+/evidence/cell-bt-owner-convergence-20261112/**/*.stdout -text -whitespace
+/evidence/cell-bt-owner-convergence-20261112/**/*.stderr -text -whitespace
+/evidence/cell-bt-owner-convergence-20261112/pending-patches/documentation-resource-scope.patch -text -whitespace
+/evidence/cell-bt-owner-convergence-20261112/remote/private-runtime02-projection/private-python-probe.maps -text -whitespace
+
+# Exact libtest output and captured source diff retain their original bytes.
+/evidence/pon-throughput-business-20261109/native-mvcc/run4/complete-block.stdout -text -whitespace
+/evidence/pon-throughput-business-20261109/native-mvcc/run4/complete-root-0-original.stdout -text -whitespace
+/evidence/pon-throughput-business-20261109/native-mvcc/run4/complete-root-1-streamed.stdout -text -whitespace
+/evidence/pon-throughput-business-20261109/native-mvcc/run4/complete-root-2-streamed.stdout -text -whitespace
+/evidence/pon-throughput-business-20261109/native-mvcc/run4/complete-root-3-original.stdout -text -whitespace
+/evidence/pon-throughput-business-20261109/native-node/run1/source-native.diff -text -whitespace

@@ -16,6 +16,7 @@ use trnm_crypto_primitives::qualified_work_task::{
     TaskMaterial,
 };
 use trnm_mvcc_fee::continuity_v1;
+use trnm_mvcc_fee::pon_executor::{ExecutionControl, ExecutionProgress};
 use trnm_mvcc_fee::qualified_task_lifecycle;
 use trnm_protocol::{
     pon_wire::{hash, Hash, Header},
@@ -443,11 +444,17 @@ impl Node {
         input: &[u8],
         control: &trnm_mvcc_fee::pon_executor::ExecutionControl<'_, crate::Error>,
     ) -> Result<PreparedCandidate> {
+        // The caller's original deadline/CPU owner also covers material binding
+        // and the complete parent read, including inactive-branch replay. Do not
+        // finish an uninterruptible state_at before consulting that owner.
+        let mut progress = || (control.progress)(ExecutionProgress::BeforeParentBinding);
+        progress()?;
         let (a, b) = derive_matrices(model, input).map_err(|e| format!("TASK_MATERIAL:{e:?}"))?;
         let task = trnm_crypto_primitives::pon_work::task_id(&a, &b)
             .map_err(|e| format!("TASK_MATRIX:{e:?}"))?;
+        progress()?;
         let height = self.parent_height(parent)?.checked_add(1).ok_or("HEIGHT")?;
-        let state = self.state_at(parent)?;
+        let state = self.state_at_with_progress(parent, &mut progress)?;
         if continuity_v1::enabled(&self.settings().app)
             && task == continuity_v1::maintenance_task()?
         {
@@ -550,6 +557,42 @@ impl Node {
     }
 }
 
+#[cfg(test)]
+#[path = "mining_prepare_control_tests.rs"]
+mod prepare_control_tests;
+
+#[cfg(test)]
+#[path = "pool_run_control_tests.rs"]
+pub(crate) mod pool_run_control_tests;
+
+#[cfg(test)]
+#[path = "pool_reconcile_control_tests.rs"]
+pub(crate) mod pool_reconcile_control_tests;
+
+// This is the existing run's cooperative wall/stop fence. Ordinary mining has
+// no public paid-CPU operation to borrow or replenish. A private local-only error
+// plus this callback's own marker distinguishes cancellation from an unrelated
+// SQL/native failure that happens while another thread requests a stop.
+struct RunBudget<'a> {
+    stop: &'a AtomicBool,
+    end: Instant,
+    cancelled: AtomicBool,
+}
+impl RunBudget<'_> {
+    fn checkpoint(&self, _: ExecutionProgress) -> Result<()> {
+        if self.stop.load(Ordering::Acquire) || Instant::now() >= self.end {
+            self.cancelled.store(true, Ordering::Release);
+            return Err(crate::Error::new(crate::ErrorCode::MiningRunStopped));
+        }
+        Ok(())
+    }
+    fn caused_cancellation(&self, error: &crate::Error) -> bool {
+        self.cancelled.load(Ordering::Acquire)
+            && error.is(crate::ErrorCode::MiningRunStopped)
+            && error.kind() == crate::ErrorKind::Cancelled
+    }
+}
+
 fn pause_until(deadline: Instant, end: Instant, stop: &AtomicBool) {
     while !stop.load(Ordering::Acquire) && Instant::now() < deadline && Instant::now() < end {
         let remaining = deadline.min(end).saturating_duration_since(Instant::now());
@@ -558,8 +601,10 @@ fn pause_until(deadline: Instant, end: Instant, stop: &AtomicBool) {
 }
 
 /// Shares the existing exclusive Node owner with ingress. Stop/runtime are checked
-/// before search and admission, and at bounded producer checkpoints. SQLite and
-/// deep native stages still cannot be preempted. Each real activated packet remains in the native durable store.
+/// during pre-admission pool/parent/execution checkpoints and proof production.
+/// SQLite calls and remaining indivisible native stages cannot be preempted.
+/// Admission, activation and final reconciliation retain their durable completion
+/// semantics; this is not a hard deadline for the complete run.
 pub fn run_pool_mining<F>(
     node: Arc<Mutex<Node>>,
     config: MiningConfig,
@@ -572,6 +617,13 @@ where
     config.validate()?;
     let started = Instant::now();
     let end = started + config.runtime;
+    let budget = RunBudget {
+        stop: &stop,
+        end,
+        cancelled: AtomicBool::new(false),
+    };
+    let progress = |point| budget.checkpoint(point);
+    let control = ExecutionControl::new(&progress, &());
     let mut next = started;
     let mut report = MiningReport {
         schema: "native-wall-pool-mining-report-v1",
@@ -673,16 +725,30 @@ where
             break;
         }
         let stage = Instant::now();
-        let batch_result = owner.pool_mining_batch(
+        #[cfg(test)]
+        pool_run_control_tests::enter_stage("pool-batch", end);
+        #[cfg(test)]
+        pool_reconcile_control_tests::enter_stage("pool-batch", end);
+        let batch_result = owner.pool_mining_batch_with_control(
             parent,
             generation,
             config.max_transactions,
             config.max_transaction_bytes,
+            &control,
         );
         event.pool_batch_ns = stage.elapsed().as_nanos();
         report.pool_batch_ns += event.pool_batch_ns;
+        #[cfg(test)]
+        pool_run_control_tests::after_stage("pool-batch");
         let batch = match batch_result {
             Ok(batch) => batch,
+            Err(error) if budget.caused_cancellation(&error) => {
+                event.kind = "stopped-before-search";
+                event.failure_stage = Some("pool-batch");
+                drop(owner);
+                observe(&event)?;
+                break;
+            }
             Err(error) => {
                 event.kind = "failed";
                 event.failure_stage = Some("pool-batch");
@@ -726,6 +792,8 @@ where
         }
         let make_stage = Instant::now();
         let stage = Instant::now();
+        #[cfg(test)]
+        pool_run_control_tests::enter_stage("prepare", end);
         let prepared = (|| match &config.material {
             MiningMaterial::LegacyDevelopment => {
                 ensure(
@@ -733,30 +801,43 @@ where
                     "EXPLICIT_TASK_REQUIRED",
                 )?;
                 let (a, b) = crate::maintenance();
-                owner.prepare_from_matrices(
+                owner.prepare_from_matrices_controlled(
                     parent,
                     batch.transactions.clone(),
                     config.miner,
                     now,
                     &a,
                     &b,
+                    &control,
                 )
             }
-            MiningMaterial::Registered { model, input } => owner.prepare_registered_material(
-                parent,
-                batch.transactions.clone(),
-                config.miner,
-                now,
-                config.search_attempts,
-                model,
-                input,
-            ),
+            MiningMaterial::Registered { model, input } => owner
+                .prepare_registered_material_controlled(
+                    parent,
+                    batch.transactions.clone(),
+                    config.miner,
+                    now,
+                    config.search_attempts,
+                    model,
+                    input,
+                    &control,
+                ),
         })();
         event.prepare_ns = stage.elapsed().as_nanos();
         report.prepare_ns += event.prepare_ns;
         drop(owner);
+        #[cfg(test)]
+        pool_run_control_tests::after_stage("prepare");
         let candidate = match prepared {
             Ok(candidate) => candidate,
+            Err(error) if budget.caused_cancellation(&error) => {
+                event.make_ns = make_stage.elapsed().as_nanos();
+                report.make_ns += event.make_ns;
+                event.kind = "stopped-before-search";
+                event.failure_stage = Some("prepare");
+                observe(&event)?;
+                break;
+            }
             Err(error) => {
                 event.make_ns = make_stage.elapsed().as_nanos();
                 event.kind = "failed";
@@ -850,15 +931,25 @@ where
             observe(&event)?;
             break;
         }
-        // Rechecking the whole native prefix is nonpreemptive. Inspect the
-        // cooperative fence again afterwards, before starting durable admission.
+        // The original run fence also covers the repeated native prefix. After
+        // it succeeds, check once more before starting durable admission. Do not
+        // cancel the subsequent admit/activate/reconcile completion sequence.
         let mut failure_stage = "batch-revalidation";
         let completion: Result<bool> = (|| {
             let stage = Instant::now();
-            let validation = owner.pool_validate_batch(&batch);
+            #[cfg(test)]
+            pool_run_control_tests::enter_stage("batch-revalidation", end);
+            #[cfg(test)]
+            pool_reconcile_control_tests::enter_stage("batch-revalidation", end);
+            let validation = owner.pool_validate_batch_with_control(&batch, &control);
             event.post_search_batch_validation_ns = stage.elapsed().as_nanos();
             report.post_search_batch_validation_ns += event.post_search_batch_validation_ns;
-            validation?;
+            #[cfg(test)]
+            pool_run_control_tests::after_stage("batch-revalidation");
+            match validation {
+                Err(error) if budget.caused_cancellation(&error) => return Ok(false),
+                other => other?,
+            };
             if stop.load(Ordering::Acquire) || Instant::now() >= end {
                 return Ok(false);
             }

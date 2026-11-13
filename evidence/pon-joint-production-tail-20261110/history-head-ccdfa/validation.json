@@ -1,0 +1,83 @@
+{
+  "schema": "trnm-joint-history-evidence-local-validation-v1",
+  "source_parent": "ccdfa205880399d8a281a09914df0ab9f16f580d",
+  "source_parent_tree": "9053ea46b29109240f0ce207c814fa783e99a0ea",
+  "candidate_files_before_this_receipt": [
+    {
+      "path": "evidence/pon-joint-production-tail-20261110/history-head-ccdfa/README.md",
+      "bytes": 4852,
+      "sha256": "e72e74bf7b8f5e16470f5e019e4e6a38fda58176f6320890e0ae6e3b78aa36df"
+    },
+    {
+      "path": "evidence/pon-joint-production-tail-20261110/history-head-ccdfa/manifest.json",
+      "bytes": 430,
+      "sha256": "ec482fa94bf33da6cce903f303afd173d36c1c38a2d7ef8cd5b0c5324f25a6c8"
+    },
+    {
+      "path": "evidence/pon-joint-production-tail-20261110/history-head-ccdfa/primary-publication-unknown.json.gz",
+      "bytes": 273694,
+      "sha256": "2fc4362ad280434efe6ea75302e3c656d794c781292a1a49b50bfd169522d0c9"
+    },
+    {
+      "path": "evidence/pon-joint-production-tail-20261110/history-head-ccdfa/readback.zip",
+      "bytes": 262600,
+      "sha256": "b171d53bb09f64f34c0538b7c44c6143b2d334e10427ac00c84736c0f6780d86"
+    },
+    {
+      "path": "evidence/pon-joint-production-tail-20261110/history-head-ccdfa/verify.py",
+      "bytes": 5911,
+      "sha256": "33a7c4fb21b4d05db58d7eb6a9e07bbfbb1b920bb4161f9c2770116bbde83d78"
+    }
+  ],
+  "receipt_self_excluded": true,
+  "checks": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "started_utc": "2026-11-11T00:06:24.989830+00:00",
+      "finished_utc": "2026-11-11T00:06:25.036318+00:00",
+      "exit_code": 0,
+      "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-joint-production-tail-20261110-8e76\", \"remote_policy_mutated\": false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python",
+        "evidence/pon-joint-production-tail-20261110/history-head-ccdfa/verify.py"
+      ],
+      "started_utc": "2026-11-11T00:06:25.036334+00:00",
+      "finished_utc": "2026-11-11T00:06:25.085403+00:00",
+      "exit_code": 0,
+      "stdout": "{\"retained_members_verified\": 30, \"original_result\": \"FAILED_EXIT_101\", \"failure_stage\": \"history-rpc\", \"completed_import_call_returns\": 3463, \"durable_committed_blocks\": null, \"server_exit_reason\": \"lifetime_expired\", \"unique_causal_attribution\": null, \"qualification\": \"HOLD_NO_GO\"}\nOriginal API metadata and complete packet hashes verified; no native workload executed.\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python",
+        "scripts/ci/check_repository.py"
+      ],
+      "started_utc": "2026-11-11T00:06:25.085421+00:00",
+      "finished_utc": "2026-11-11T00:06:38.298510+00:00",
+      "exit_code": 0,
+      "stdout": "{\"activation\": false, \"head\": \"ccdfa205880399d8a281a09914df0ab9f16f580d\", \"local_links\": 6113, \"normal_dependency_edges\": 27, \"result\": \"PASS\", \"runtime_implemented\": false, \"rust_files\": 1390, \"source_state\": \"dirty-candidate\", \"tree\": \"9053ea46b29109240f0ce207c814fa783e99a0ea\", \"workspace_packages\": 26}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "started_utc": "2026-11-11T00:06:38.298527+00:00",
+      "finished_utc": "2026-11-11T00:06:38.391597+00:00",
+      "exit_code": 0,
+      "stdout": "{\"artifact_comparison_jobs\": 1, \"head_jobs\": 5, \"inline_source_pins\": 26, \"merge_lanes\": 5, \"native_cost_architectures\": 2, \"pq_release_authority_controls\": {\"complete_release\": 55, \"groups\": {\"cch1_content_binding\": 3, \"initial_root_material\": 6, \"original_release\": 37, \"quorum_preflight\": 9}, \"platform_scope\": \"unix\", \"python_test_doubles\": 18, \"tests_executed\": false}, \"tests_executed\": false, \"w1_actual_reuse_v3_cells\": 4}\n",
+      "stderr": ""
+    }
+  ],
+  "native_commands_executed": false,
+  "native_success_claimed": false,
+  "all_actual_joint_obligations_open": 13,
+  "qualification": "HOLD_NO_GO"
+}

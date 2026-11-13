@@ -1,0 +1,27 @@
+[
+  {
+    "path": "history-fixed-attempt-01.txt",
+    "bytes": 3013,
+    "sha256": "bdec8084adf2cec585585732136aad43e4532a122d74e87b14b7df50164cb52b"
+  },
+  {
+    "path": "history-fixed-attempt-02-rust195.txt",
+    "bytes": 3575,
+    "sha256": "d906a269178ed7c3f56191bcc0efe555570676bce2989ee69285860e6a74a0ea"
+  },
+  {
+    "path": "history-fixed-attempt-03-rust195.txt",
+    "bytes": 1061,
+    "sha256": "0ea3f9800baa2469904f62722e59cc5288a7c898ea4edb0407fd0772ed41d6c3"
+  },
+  {
+    "path": "history-fixed-attempt-04-rust195.txt",
+    "bytes": 4371,
+    "sha256": "60c17f034584bdaf48beba9236867a0e050b31c11a8609a1e05d6d815ef87a0e"
+  },
+  {
+    "path": "history-typecheck-attempt-05-rust195.txt",
+    "bytes": 6551,
+    "sha256": "127fc558faaad7929955da70f594e321eb0b9bbe3714a84cb0d93cb69a83abc0"
+  }
+]

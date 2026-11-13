@@ -1,0 +1,153 @@
+{
+  "schema": "TRNM-W1-CLOSURE-CURRENT-LOCAL-VALIDATION2",
+  "source_before": {
+    "head": "35d57d41cc22ef7380da939f905ad171225eb484",
+    "tree": "844e00fb438917741f9cfc674afe742e713a7bbb",
+    "status": ""
+  },
+  "source_after": {
+    "head": "35d57d41cc22ef7380da939f905ad171225eb484",
+    "tree": "844e00fb438917741f9cfc674afe742e713a7bbb",
+    "status": ""
+  },
+  "source_endpoints_equal": true,
+  "commands": [
+    {
+      "name": "ci-contract",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "exit_code": 0,
+      "seconds": 37.999
+    },
+    {
+      "name": "source-integrity",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "exit_code": 0,
+      "seconds": 3.33
+    },
+    {
+      "name": "pq-corpus",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "seconds": 75.885
+    },
+    {
+      "name": "repository",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "exit_code": 0,
+      "seconds": 16.124
+    },
+    {
+      "name": "observer-tests",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_w1_lifetime_current_observation.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.425
+    },
+    {
+      "name": "workflow-tests",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_w1_qrom_closure_current_controls.py"
+      ],
+      "exit_code": 0,
+      "seconds": 12.795
+    },
+    {
+      "name": "corpus-check",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.354
+    },
+    {
+      "name": "inventory-check",
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.066
+    },
+    {
+      "name": "cargo-graph",
+      "argv": [
+        "cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": null,
+      "seconds": 0.0
+    }
+  ],
+  "actual_local_workflow_steps": {
+    "observations": {
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "source_before": {
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "preflight": {
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "named_controls": {
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "historical_refusal": {
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "reproduce": {
+      "outcome": "failure",
+      "conclusion": "failure"
+    },
+    "source_after": {
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "checkout": {
+      "outcome": "success",
+      "conclusion": "success"
+    },
+    "completion": {
+      "outcome": "failure",
+      "conclusion": "failure"
+    }
+  },
+  "hosted_actions_executed": false,
+  "historical_positive_workflow_executed_this_campaign": false,
+  "native_build_or_clippy_pass_claimed": false
+}

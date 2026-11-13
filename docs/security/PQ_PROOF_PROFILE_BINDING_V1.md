@@ -15,14 +15,22 @@ or failure budget.
 
 The selected identity is `trnm-w1-risc0-3.0.6-poseidon2-join-v2`. Its current
 [QROM contract](../../config/pon/w1-qrom-implementation-current-v2.json) has
-SHA-256 `846efa5cedfb811ae8255a5b3d5c0223e6e89180a89c9670e7bcb9204cbbed30`.
-The reference inputs were read from Chain commit
-`189b9b5959d836ef6ae96e14fb285948e4920aa9`. The current mapping metadata was
-explicitly rebound after that source freeze; the historical V1 contract retains
-its own source revision and bytes. The selected project and proof-fixture
-inputs are unchanged by the dependency continuation, while the separate current
-mapping records 137 local-closure inputs with the reviewed workspace lock update. A later integration commit must still reproduce the
-bound bytes or supply another reviewed source/profile mapping.
+SHA-256 `272275f202b896b74b7f7499695fa3f50b28a36465806c60b8c369e2e76db5b9`.
+The current reference inputs were read from Chain commit
+`39336622c63df1ae746d83a76bb53202cd01ba17`. The preceding dependency continuation
+reviewed `189b9b5959d836ef6ae96e14fb285948e4920aa9` and contract SHA-256
+`846efa5cedfb811ae8255a5b3d5c0223e6e89180a89c9670e7bcb9204cbbed30`; those
+observations remain historical. The current mapping now retains those 137 local
+closure records and adds the finite `pon_from_zero_filter_cost_v1.rs` diagnostic
+example, for 138 inputs. All 16 selected project inputs, saved proof fixtures,
+parameters and proof obligations are unchanged. The 138-input count preserves
+the existing crate-root and literal-data scope; cross-root Rust `#[path]` imports,
+including the example's node-side `w1_from_zero.rs` helper, are not enumerated by
+that mapping. Complete native source guarding is a separate observation.
+The historical V1 contract and
+reader retain their own source revision and bytes. The binding successor must
+reproduce these declared inputs; it does not acquire the native execution claims
+recorded on source `39336622`.
 
 | Selected property | Checked declaration |
 | --- | --- |
@@ -53,10 +61,12 @@ extracted identity, selected project and saved-fixture hashes, and upstream
 snapshot identity. For these reference inputs its SHA-256 is:
 
 ```text
-5cb35b39dda38d096620e70909bea0cc380464ac2166eddfed83469537deb031
+b86f7f122f8295418abb20ebd71132d1719a37770499b01293fa1d018f47a06e
 ```
 
-The preceding M2–M7 mapping produced descriptor
+The preceding dependency continuation produced descriptor
+`5cb35b39dda38d096620e70909bea0cc380464ac2166eddfed83469537deb031`.
+The earlier M2–M7 mapping produced descriptor
 `da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c`.
 The descriptor changes because it includes the mapping contract bytes; the
 selected image, SDK, field, FRI, control and verifier-parameter identities do
@@ -110,7 +120,7 @@ Use the candidate lock's separately reviewed descriptor value:
 
 ```sh
 python3 scripts/ci/pq_proof_profile_binding.py \
-  --expected-profile-descriptor-sha256 5cb35b39dda38d096620e70909bea0cc380464ac2166eddfed83469537deb031
+  --expected-profile-descriptor-sha256 b86f7f122f8295418abb20ebd71132d1719a37770499b01293fa1d018f47a06e
 python3 scripts/ci/test_pq_proof_profile_binding.py -v
 ```
 

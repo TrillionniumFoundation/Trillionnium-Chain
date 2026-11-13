@@ -1,0 +1,24 @@
+{
+  "actual_oid": "35bb28ba459cb8257d1d5e10e9921d314541e561",
+  "bytes": 1727386,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "35bb28ba459cb8257d1d5e10e9921d314541e561"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 1727386,
+  "expected_oid": "35bb28ba459cb8257d1d5e10e9921d314541e561",
+  "finished_at": "2026-11-12T01:41:55.813766+00:00",
+  "path": "evidence/pon-reversible-components-20261028/exact-observation.tar.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLXJldmVyc2libGUtY29tcG9uZW50cy0yMDI2MTAyOC9leGFjdC1vYnNlcnZhdGlvbi50YXIuZ3o=",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "c30cb922a55fc0bbd483228b9c54fe58a7f83b79744f0600a7cc7a1b121bbc65",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:55.761800+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -1,0 +1,24 @@
+{
+  "actual_oid": "5ff89f2ae3c121ef48b19c662ff2414ffb87d802",
+  "bytes": 1226203,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "5ff89f2ae3c121ef48b19c662ff2414ffb87d802"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 1226203,
+  "expected_oid": "5ff89f2ae3c121ef48b19c662ff2414ffb87d802",
+  "finished_at": "2026-11-12T01:55:16.908771+00:00",
+  "path": "evidence/pon-business-gates-readback-20261107/codeql-d26/retained-observation.tar.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLWJ1c2luZXNzLWdhdGVzLXJlYWRiYWNrLTIwMjYxMTA3L2NvZGVxbC1kMjYvcmV0YWluZWQtb2JzZXJ2YXRpb24udGFyLmd6",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "5f691a97cacf52aa05f27735c256e4139bfe1fa647e0b4d5b2e878de84cbb402",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:55:16.881391+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

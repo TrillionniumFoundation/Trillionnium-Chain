@@ -29,8 +29,13 @@ use crate::cell::{
 
 mod admission;
 mod contract;
+mod observation;
 pub use contract::{
     CellRs46ShardContractV1, CellRs46ShardOwnerV1, MAX_CELL_RS46_PROVIDER_DESCRIPTOR_BYTES_V1,
+};
+pub use observation::{
+    CellRs46ProviderPayloadFaultStageV2, CellRs46ProviderPayloadFaultV2,
+    CellRs46ProviderReadObservationV2,
 };
 
 const DESCRIPTORS: &str = "slot-descriptors-v1";
@@ -70,8 +75,8 @@ impl CellRs46ShardProviderConfigV1 {
     }
 }
 
-/// Sealed observation of exact bytes read from an acknowledged physical arena.
-/// It records this read, not a promise that the provider remains available.
+/// Sealed observation of exact bytes read from an original physical target.
+/// It authenticates this buffer, not an acknowledgement or future availability.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct CellRs46StoredShardV1 {
     operation: CellDigestV1,
@@ -180,6 +185,46 @@ impl CellRs46ShardProviderV1 {
         check(deadline)
     }
 
+    /// Stage six already selected CRS1 payloads as one bounded disposable-cache
+    /// batch. Every original operation pin and full wire is checked before any
+    /// cache write. This neither admits a provider nor acknowledges retention.
+    pub(super) fn cache_shard_batch(
+        shards: &[(&CellRs46ShardContractV1, CellDigestV1, &[u8]); CELL_RS46_TOTAL_SHARDS_V1],
+        cache: &CellStoreV1,
+        deadline: Instant,
+    ) -> CellResultV1<()> {
+        Self::cache_shards(shards, cache, deadline)
+    }
+
+    /// Prepare at most one six-slot plan chunk. This stages disposable CAS
+    /// bytes only; it neither reserves a provider nor acknowledges retention.
+    pub(super) fn cache_shards(
+        shards: &[(&CellRs46ShardContractV1, CellDigestV1, &[u8])],
+        cache: &CellStoreV1,
+        deadline: Instant,
+    ) -> CellResultV1<()> {
+        check(deadline)?;
+        require(
+            !shards.is_empty() && shards.len() <= CELL_RS46_TOTAL_SHARDS_V1,
+            "RS46 provider cache batch bound",
+        )?;
+        let mut manifests = Vec::with_capacity(shards.len());
+        for (contract, expected, wire) in shards {
+            check(deadline)?;
+            contract.verify_pin(*expected)?;
+            contract.verify_wire(wire)?;
+            check(deadline)?;
+            manifests.push((contract.manifest().id(), contract.manifest().encode()));
+        }
+        let entries: Vec<_> = shards
+            .iter()
+            .zip(&manifests)
+            .map(|((_, _, wire), (pinned, manifest))| (*pinned, manifest.as_slice(), *wire))
+            .collect();
+        cache.put_single_chunk_manifests_with_deadline(&entries, deadline)?;
+        check(deadline)
+    }
+
     /// Persist full metadata, reserve real arena space, copy at most once, then
     /// read the actual target back. The arena's initial attempt is charged before
     /// its first write. A failed or lost result is unknown, never a refund.
@@ -272,6 +317,22 @@ impl CellRs46ShardProviderV1 {
         let contract = self.descriptor(binding, expected_operation, deadline)?;
         controlled(deadline, checkpoint)?;
         self.read_contract(&contract, expected_operation, deadline, checkpoint)
+    }
+
+    /// Inspect the exact existing charged target without acknowledging it or
+    /// writing repair/funding state. Pending original ACKs remain pending; the
+    /// returned shard proves actual bytes only, not an acknowledged duty.
+    pub fn inspect_target(
+        &mut self,
+        binding: &CellRs46ChunkBindingV1,
+        expected_operation: CellDigestV1,
+        deadline: Instant,
+        checkpoint: &mut impl FnMut() -> CellResultV1<()>,
+    ) -> CellResultV1<CellRs46StoredShardV1> {
+        controlled(deadline, checkpoint)?;
+        let contract = self.descriptor(binding, expected_operation, deadline)?;
+        controlled(deadline, checkpoint)?;
+        self.read_contract_observed(&contract, expected_operation, deadline, checkpoint, true)
     }
 
     /// Rewrites only this immutable slot under the original cumulative arena
@@ -395,18 +456,49 @@ impl CellRs46ShardProviderV1 {
         deadline: Instant,
         checkpoint: &mut impl FnMut() -> CellResultV1<()>,
     ) -> CellResultV1<CellRs46StoredShardV1> {
+        self.read_contract_observed(contract, expected, deadline, checkpoint, false)
+    }
+
+    fn read_contract_observed(
+        &mut self,
+        contract: &CellRs46ShardContractV1,
+        expected: CellDigestV1,
+        deadline: Instant,
+        checkpoint: &mut impl FnMut() -> CellResultV1<()>,
+        allow_pending: bool,
+    ) -> CellResultV1<CellRs46StoredShardV1> {
         controlled(deadline, checkpoint)?;
         self.check_contract(contract, expected)?;
         self.check_reserved_contract(contract)?;
-        let bytes = self.arena.read_payload_controlled(
-            expected,
-            contract.manifest().size(),
-            deadline,
-            checkpoint,
-        )?;
+        let metadata_pin =
+            self.arena
+                .payload_read_metadata_pin(expected, allow_pending, deadline)?;
+        let bytes = if allow_pending {
+            self.arena.inspect_payload_controlled(
+                expected,
+                contract.manifest().size(),
+                deadline,
+                checkpoint,
+            )?
+        } else {
+            self.arena.read_payload_controlled(
+                expected,
+                contract.manifest().size(),
+                deadline,
+                checkpoint,
+            )?
+        };
         controlled(deadline, checkpoint)?;
         let shard = contract.verify_wire(&bytes)?;
         controlled(deadline, checkpoint)?;
+        // The last checkpoint already ran. Fence the same retained row and
+        // physical arena before returning this read-only target observation.
+        require(
+            self.arena
+                .payload_read_metadata_pin(expected, allow_pending, deadline)?
+                == metadata_pin,
+            "retention read metadata changed",
+        )?;
         self.check_reserved_contract(contract)?;
         // Re-read canonical metadata too: an in-flight file substitution cannot
         // turn this source-bound target observation into a different duty.
@@ -414,7 +506,7 @@ impl CellRs46ShardProviderV1 {
             self.descriptor(contract.binding(), expected, deadline)? == *contract,
             "RS46 provider descriptor changed",
         )?;
-        controlled(deadline, checkpoint)?;
+        check(deadline)?;
         Ok(CellRs46StoredShardV1 {
             operation: expected,
             provider_store: self.arena.store_id(),

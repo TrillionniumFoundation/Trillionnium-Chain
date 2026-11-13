@@ -74,6 +74,19 @@ It neither locks on-chain funds nor executes payment or external effects. Resour
 measurements and source-local caps remain protected-owner inputs; worker-meter
 integration, payment/undo and independent economics are still required.
 
+### Portable settlement arithmetic boundary
+
+The separate `trnm-service-settlement` candidate preserves its complete durable
+state when a provider, consumer-refund or protocol-fee destination cannot receive
+the settlement amount without overflowing `u128`. A rejected attempt must not
+consume escrow, advance result/account versions, or create a settlement record.
+The same refusal must leave retry and cold-reopen state unchanged, including when
+an earlier destination in the proposed output order was creditable.
+
+Regression: `trnm-service-settlement::tests::settlement_destination_overflow_preserves_all_durable_value_and_retry_state`.
+This checks the bounded candidate's transactional arithmetic; it does not establish
+funded external assets, ledger finality, or production economic qualification.
+
 ## Current source and verification
 
 - [`formal/pon-nakamoto-v1/ledger.py`](../../formal/pon-nakamoto-v1/ledger.py).

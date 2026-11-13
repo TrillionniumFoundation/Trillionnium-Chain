@@ -2,6 +2,7 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     ffi::OsString,
     fs,
+    io::Read,
     path::{Path, PathBuf},
     time::Duration,
 };
@@ -19,6 +20,14 @@ use crate::{
 };
 
 const JOURNAL_SCHEMA_VERSION_V1: u16 = 2;
+// The store is intentionally append-only, but replay must remain bounded even
+// when an operator hands us a forged SQLite file.  These limits are generous
+// relative to the bounded settlement command/evidence types and are checked
+// before collecting rows or decoding Borsh payloads.
+const MAX_OPERATION_ROWS_V1: u64 = 1_000_000;
+const MAX_OPERATION_FIELD_BYTES_V1: u64 = 4 * 1024 * 1024;
+const MAX_OPERATION_JOURNAL_BYTES_V1: u64 = 256 * 1024 * 1024;
+const MAX_COMMITTED_BLOCK_ROWS_V1: u64 = MAX_OPERATION_ROWS_V1 + 1;
 const META_SQL: &str = "CREATE TABLE metadata(singleton INTEGER PRIMARY KEY CHECK(singleton=1),schema_version INTEGER NOT NULL,config BLOB NOT NULL,sequence INTEGER NOT NULL,height INTEGER NOT NULL,block_id BLOB NOT NULL,state BLOB NOT NULL,state_root BLOB NOT NULL,journal_root BLOB NOT NULL,fenced INTEGER NOT NULL CHECK(fenced IN(0,1)),checksum BLOB NOT NULL) STRICT";
 const OP_SQL: &str = "CREATE TABLE operations(sequence INTEGER PRIMARY KEY,operation_id BLOB NOT NULL UNIQUE,execution BLOB NOT NULL,command BLOB NOT NULL,receipt BLOB NOT NULL,checksum BLOB NOT NULL) STRICT";
 const COMMITTED_BLOCKS_SQL: &str = "CREATE TABLE committed_blocks(marker_sequence INTEGER PRIMARY KEY,order_height INTEGER NOT NULL,order_block_id BLOB NOT NULL UNIQUE CHECK(length(order_block_id)=32),parent_order_height INTEGER NOT NULL,parent_order_block_id BLOB NOT NULL CHECK(length(parent_order_block_id)=32),source_operation_sequence INTEGER NOT NULL,target_operation_sequence INTEGER NOT NULL,source_state_root BLOB NOT NULL CHECK(length(source_state_root)=32),target_state_root BLOB NOT NULL CHECK(length(target_state_root)=32),source_operation_root BLOB NOT NULL CHECK(length(source_operation_root)=32),target_operation_root BLOB NOT NULL CHECK(length(target_operation_root)=32),previous_marker_checksum BLOB NOT NULL CHECK(length(previous_marker_checksum)=32),checksum BLOB NOT NULL CHECK(length(checksum)=32)) STRICT";
@@ -173,7 +182,11 @@ impl ConsumptionSettlementStoreV1 {
         validate_trust_bundle(&config.trust_bundle)?;
         reject_sidecars(&config.path)?;
         if config.path.exists() {
-            let connection = open_ro(&config.path)?;
+            // The normal open path must enforce the same direct-regular-file
+            // boundary as open_existing; otherwise SQLite follows a symlink
+            // and later writable opens can mutate an unrelated database.
+            require_existing_regular_store(&config.path)?;
+            let connection = open_read_snapshot(&config.path)?;
             verify_schema(&connection)?;
             audit(&connection, &config)?;
             if load_metadata(&connection, &config)?.5 {
@@ -183,6 +196,12 @@ impl ConsumptionSettlementStoreV1 {
                 ));
             }
         } else {
+            // Reject unsupported fresh configuration before creating any path.
+            // Existing stores retain their ordinary audit/compatibility checks.
+            to_sqlite(
+                config.trust_bundle.initial_order_height,
+                "initial Order height",
+            )?;
             if let Some(parent) = config.path.parent() {
                 fs::create_dir_all(parent).map_err(|cause| {
                     error(
@@ -215,9 +234,10 @@ impl ConsumptionSettlementStoreV1 {
                 journal_root,
                 false,
             )?;
+            validate_journal_capacity_before_commit(&transaction)?;
             transaction.commit()?;
             drop(connection);
-            let connection = open_ro(&config.path)?;
+            let connection = open_read_snapshot(&config.path)?;
             verify_schema(&connection)?;
             audit(&connection, &config)?;
         }
@@ -237,7 +257,7 @@ impl ConsumptionSettlementStoreV1 {
         validate_trust_bundle(&config.trust_bundle)?;
         require_existing_regular_store(&config.path)?;
         reject_sidecars(&config.path)?;
-        let connection = open_ro(&config.path)?;
+        let connection = open_read_snapshot(&config.path)?;
         verify_schema(&connection)?;
         audit(&connection, &config)?;
         if load_metadata(&connection, &config)?.5 {
@@ -278,12 +298,29 @@ impl ConsumptionSettlementStoreV1 {
             ));
         }
 
-        let before = self.fresh_readback()?;
+        let snapshot = open_read_snapshot(&self.config.path)?;
+        let before = self.readback_from_snapshot(&snapshot)?;
         if before.order_height == execution.order_height
             && before.order_block_id == execution.order_block_id
         {
+            let markers = load_committed_block_markers(&snapshot, &self.config)?;
+            let tail = markers.last().expect("audited marker journal is nonempty");
+            if tail.marker_sequence == 0
+                || (tail.parent_order_height, tail.parent_order_block_id)
+                    != (
+                        execution.expected_order_height,
+                        execution.expected_order_block_id,
+                    )
+                || tail.source_operation_sequence != tail.target_operation_sequence
+            {
+                return Err(error(
+                    ConsumptionSettlementErrorCodeV1::Conflict,
+                    "empty committed batch retry differs from durable marker",
+                ));
+            }
             return Ok(before);
         }
+        drop(snapshot);
         if before.order_height != execution.expected_order_height
             || before.order_block_id != execution.expected_order_block_id
         {
@@ -293,10 +330,12 @@ impl ConsumptionSettlementStoreV1 {
             ));
         }
 
+        #[cfg(test)]
+        snapshot_tests::wait_before_writer();
         let mut connection = open_rw(&self.config.path, false)?;
-        verify_schema(&connection)?;
-        audit(&connection, &self.config)?;
         let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
+        verify_schema(&transaction)?;
+        audit(&transaction, &self.config)?;
         let (sequence, height, block_id, state, journal_root, fenced) =
             load_metadata(&transaction, &self.config)?;
         if fenced {
@@ -328,9 +367,12 @@ impl ConsumptionSettlementStoreV1 {
             journal_root,
             false,
         )?;
+        validate_journal_capacity_before_commit(&transaction)?;
         transaction.commit()?;
         drop(connection);
 
+        #[cfg(test)]
+        snapshot_tests::wait_after_empty_commit();
         let after = self.fresh_readback()?;
         if after.sequence != before.sequence
             || after.order_height != execution.order_height
@@ -339,9 +381,12 @@ impl ConsumptionSettlementStoreV1 {
             || after.durable_journal_root != before.durable_journal_root
             || after.durable_committed_block_root == before.durable_committed_block_root
         {
+            // Another writer may have legitimately advanced the audited head
+            // after this commit. No permanent fence was written here, and the
+            // current head cannot acknowledge this call's exact target.
             return Err(error(
-                ConsumptionSettlementErrorCodeV1::ThirdStateFenced,
-                "empty committed batch readback differs from its exact target",
+                ConsumptionSettlementErrorCodeV1::CommitUncertain,
+                "empty committed batch target is not the current readback; no permanent fence was set",
             ));
         }
         Ok(after)
@@ -357,7 +402,14 @@ impl ConsumptionSettlementStoreV1 {
         candidate_block_id: Hash32V1,
         commands: &[ConsumptionSettlementCommandV1],
     ) -> ConsumptionSettlementResultV1<ConsumptionSettlementExecutionPreviewV1> {
-        let before = self.fresh_readback()?;
+        if commands.len() > crate::engine::MAX_RECEIPTS_V1 {
+            return Err(error(
+                ConsumptionSettlementErrorCodeV1::InvalidBounds,
+                "pre-commit command batch exceeds receipt bound",
+            ));
+        }
+        let connection = open_read_snapshot(&self.config.path)?;
+        let before = self.readback_from_snapshot(&connection)?;
         if &before != expected_parent
             || candidate_height
                 != before.order_height.checked_add(1).ok_or_else(|| {
@@ -374,12 +426,21 @@ impl ConsumptionSettlementStoreV1 {
                 "pre-commit candidate does not extend the exact fresh parent",
             ));
         }
-        let mut state = self.state()?;
+        validate_preview_sqlite_bounds(candidate_height, before.sequence, commands.len())?;
+        let recorded_block_id: bool = connection.query_row(
+            "SELECT EXISTS(SELECT 1 FROM committed_blocks WHERE order_block_id=?1)",
+            params![candidate_block_id.0.to_vec()],
+            |row| row.get(0),
+        )?;
+        if recorded_block_id {
+            return Err(error(
+                ConsumptionSettlementErrorCodeV1::InvalidContext,
+                "pre-commit candidate block ID is already recorded",
+            ));
+        }
+        let mut state = load_metadata(&connection, &self.config)?.3;
         let mut operation_ids = BTreeSet::new();
         let mut receipts = Vec::with_capacity(commands.len());
-        let connection = open_ro(&self.config.path)?;
-        verify_schema(&connection)?;
-        audit(&connection, &self.config)?;
         for (offset, command) in commands.iter().enumerate() {
             let id = operation_id(command)?;
             if !operation_ids.insert(id) || load_operation(&connection, id)?.is_some() {
@@ -388,8 +449,12 @@ impl ConsumptionSettlementStoreV1 {
                     "pre-commit batch repeats a Consumption/Settlement operation",
                 ));
             }
-            let (next_state, settlement_id) =
-                apply_transition(&self.config.trust_bundle, &state, candidate_height, command)?;
+            let (next_state, settlement_id) = apply_new_store_transition(
+                &self.config.trust_bundle,
+                &state,
+                candidate_height,
+                command,
+            )?;
             state = next_state;
             let offset = u64::try_from(offset).map_err(|_| {
                 error(
@@ -421,11 +486,13 @@ impl ConsumptionSettlementStoreV1 {
         }
         drop(connection);
         let candidate_post_state_root = state_root(&state)?;
+        #[cfg(test)]
+        snapshot_tests::wait_before_preview_readback();
         let after = self.fresh_readback()?;
         if after != before {
             return Err(error(
-                ConsumptionSettlementErrorCodeV1::TamperDetected,
-                "Consumption/Settlement source changed during read-only preview",
+                ConsumptionSettlementErrorCodeV1::StaleVersion,
+                "Consumption/Settlement source advanced during read-only preview; retry with a fresh parent",
             ));
         }
         Ok(ConsumptionSettlementExecutionPreviewV1 {
@@ -459,16 +526,19 @@ impl ConsumptionSettlementStoreV1 {
         let execution_bytes = canonical_bytes(execution)?;
         let id = operation_id(command)?;
 
-        let read_only = open_ro(&self.config.path)?;
+        let read_only = open_read_snapshot(&self.config.path)?;
         verify_schema(&read_only)?;
         audit(&read_only, &self.config)?;
         drop(read_only);
+        #[cfg(test)]
+        snapshot_tests::wait_before_writer();
 
         let mut connection = open_rw(&self.config.path, false)?;
-        verify_schema(&connection)?;
-        audit(&connection, &self.config)?;
+        let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
+        verify_schema(&transaction)?;
+        audit(&transaction, &self.config)?;
         let (sequence, height, block_id, state, journal_root, fenced) =
-            load_metadata(&connection, &self.config)?;
+            load_metadata(&transaction, &self.config)?;
         if fenced {
             return Err(error(
                 ConsumptionSettlementErrorCodeV1::ThirdStateFenced,
@@ -476,7 +546,7 @@ impl ConsumptionSettlementStoreV1 {
             ));
         }
         if let Some((stored_execution, stored_command, stored_receipt)) =
-            load_operation(&connection, id)?
+            load_operation(&transaction, id)?
         {
             if stored_execution != *execution || stored_command != *command {
                 return Err(error(
@@ -484,6 +554,7 @@ impl ConsumptionSettlementStoreV1 {
                     "operation ID replay differs from durable bytes",
                 ));
             }
+            drop(transaction);
             drop(connection);
             return Ok(ConsumptionSettlementOutcomeV1 {
                 confirmed: self.fresh_confirm(&stored_receipt)?,
@@ -504,7 +575,7 @@ impl ConsumptionSettlementStoreV1 {
                 "operation sequence overflow",
             )
         })?;
-        let (next_state, settlement_id) = apply_transition(
+        let (next_state, settlement_id) = apply_new_store_transition(
             &self.config.trust_bundle,
             &state,
             execution.order_height,
@@ -522,23 +593,6 @@ impl ConsumptionSettlementStoreV1 {
             settlement_id,
         };
 
-        let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
-        let (tx_sequence, tx_height, tx_block, tx_state, tx_journal_root, tx_fenced) =
-            load_metadata(&transaction, &self.config)?;
-        if (
-            tx_sequence,
-            tx_height,
-            tx_block,
-            &tx_state,
-            tx_journal_root,
-            tx_fenced,
-        ) != (sequence, height, block_id, &state, journal_root, false)
-        {
-            return Err(error(
-                ConsumptionSettlementErrorCodeV1::StaleVersion,
-                "store changed before atomic transition",
-            ));
-        }
         if matches!(fault, Some(ConsumptionCommitFaultV1::ThirdState)) {
             write_metadata(
                 &transaction,
@@ -550,6 +604,7 @@ impl ConsumptionSettlementStoreV1 {
                 operation_journal_root(&transaction)?,
                 true,
             )?;
+            validate_journal_capacity_before_commit(&transaction)?;
             transaction.commit()?;
             return Err(error(
                 ConsumptionSettlementErrorCodeV1::ThirdStateFenced,
@@ -586,8 +641,13 @@ impl ConsumptionSettlementStoreV1 {
             target_journal_root,
             false,
         )?;
+        #[cfg(test)]
+        snapshot_tests::pause_for_process_death("before-commit");
+        validate_journal_capacity_before_commit(&transaction)?;
         transaction.commit()?;
         drop(connection);
+        #[cfg(test)]
+        snapshot_tests::pause_for_process_death("after-commit");
         if matches!(fault, Some(ConsumptionCommitFaultV1::AppliedAckLost)) {
             return Err(error(
                 ConsumptionSettlementErrorCodeV1::CommitUncertain,
@@ -612,11 +672,18 @@ impl ConsumptionSettlementStoreV1 {
         &self,
     ) -> ConsumptionSettlementResultV1<ConsumptionSettlementFreshReadbackV1> {
         reject_sidecars(&self.config.path)?;
-        let connection = open_ro(&self.config.path)?;
-        verify_schema(&connection)?;
-        audit(&connection, &self.config)?;
+        let connection = open_read_snapshot(&self.config.path)?;
+        self.readback_from_snapshot(&connection)
+    }
+
+    fn readback_from_snapshot(
+        &self,
+        connection: &Connection,
+    ) -> ConsumptionSettlementResultV1<ConsumptionSettlementFreshReadbackV1> {
+        verify_schema(connection)?;
+        audit(connection, &self.config)?;
         let (sequence, order_height, order_block_id, state, journal_root, fenced) =
-            load_metadata(&connection, &self.config)?;
+            load_metadata(connection, &self.config)?;
         if fenced {
             return Err(error(
                 ConsumptionSettlementErrorCodeV1::ThirdStateFenced,
@@ -632,7 +699,7 @@ impl ConsumptionSettlementStoreV1 {
             order_block_id,
             durable_state_root: state_root(&state)?,
             durable_journal_root: journal_root,
-            durable_committed_block_root: committed_block_journal_root(&connection, &self.config)?,
+            durable_committed_block_root: committed_block_journal_root(connection, &self.config)?,
         })
     }
 
@@ -647,9 +714,15 @@ impl ConsumptionSettlementStoreV1 {
             ));
         }
         reject_sidecars(&self.config.path)?;
-        let connection = open_ro(&self.config.path)?;
+        let connection = open_read_snapshot(&self.config.path)?;
         verify_schema(&connection)?;
         audit(&connection, &self.config)?;
+        if load_metadata(&connection, &self.config)?.5 {
+            return Err(error(
+                ConsumptionSettlementErrorCodeV1::ThirdStateFenced,
+                "store is permanently fenced",
+            ));
+        }
         let (_, _, actual) =
             load_operation(&connection, expected.operation_id)?.ok_or_else(|| {
                 error(
@@ -668,53 +741,169 @@ impl ConsumptionSettlementStoreV1 {
 
     pub fn state(&self) -> ConsumptionSettlementResultV1<ConsumptionSettlementKernelStateV1> {
         reject_sidecars(&self.config.path)?;
-        let connection = open_ro(&self.config.path)?;
+        let connection = open_read_snapshot(&self.config.path)?;
         verify_schema(&connection)?;
         audit(&connection, &self.config)?;
-        Ok(load_metadata(&connection, &self.config)?.3)
+        let (_, _, _, state, _, fenced) = load_metadata(&connection, &self.config)?;
+        if fenced {
+            return Err(error(
+                ConsumptionSettlementErrorCodeV1::ThirdStateFenced,
+                "store is permanently fenced",
+            ));
+        }
+        Ok(state)
     }
 }
 
+// Admission and replay share the same capacity boundary. Check the staged
+// transaction before publishing it, so an ordinary append cannot create a
+// durable journal that the existing bounded reader would refuse on restart.
+// Counts and lengths are queried without collecting payload blobs.
+fn validate_journal_capacity_before_commit(
+    connection: &Connection,
+) -> ConsumptionSettlementResultV1<()> {
+    let (operations, bytes): (i64, i64) = connection.query_row(
+        "SELECT count(*),coalesce(sum(length(operation_id)+length(execution)+length(command)+length(receipt)+length(checksum)+20),0) FROM operations",
+        [],
+        |row| Ok((row.get(0)?, row.get(1)?)),
+    )?;
+    let markers: i64 =
+        connection.query_row("SELECT count(*) FROM committed_blocks", [], |row| {
+            row.get(0)
+        })?;
+    let valid = u64::try_from(operations).is_ok_and(|count| count <= MAX_OPERATION_ROWS_V1)
+        && u64::try_from(markers).is_ok_and(|count| count <= MAX_COMMITTED_BLOCK_ROWS_V1)
+        && u64::try_from(bytes)
+            .ok()
+            .and_then(|bytes| bytes.checked_add(4))
+            .is_some_and(|bytes| bytes <= MAX_OPERATION_JOURNAL_BYTES_V1);
+    if !valid {
+        return Err(error(
+            ConsumptionSettlementErrorCodeV1::InvalidBounds,
+            "staged journal exceeds the existing bounded replay capacity",
+        ));
+    }
+    Ok(())
+}
+
 fn open_rw(path: &Path, allow_create: bool) -> ConsumptionSettlementResultV1<Connection> {
+    if allow_create {
+        // SQLite follows a final symlink when CREATE is requested.  Refuse
+        // anything that appeared between the caller's absence check and this
+        // open, including a dangling symlink.
+        match fs::symlink_metadata(path) {
+            Ok(_) => {
+                return Err(error(
+                    ConsumptionSettlementErrorCodeV1::StoreFailure,
+                    "new Consumption/Settlement store path appeared before creation",
+                ));
+            }
+            Err(cause) if cause.kind() == std::io::ErrorKind::NotFound => {}
+            Err(cause) => {
+                return Err(error(
+                    ConsumptionSettlementErrorCodeV1::StoreFailure,
+                    format!("cannot inspect new Consumption/Settlement store path: {cause}"),
+                ));
+            }
+        }
+    } else {
+        // Existing writable operations must apply the same direct-file
+        // boundary as strict reopen.  This closes the common rename-to-
+        // symlink window between reject_sidecars and SQLite open.
+        require_existing_regular_store(path)?;
+    }
     let mut flags = OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_NO_MUTEX;
     if allow_create {
         flags |= OpenFlags::SQLITE_OPEN_CREATE;
     }
     let connection = Connection::open_with_flags(path, flags)?;
+    // Recheck after SQLite has resolved the path.  No schema or transaction
+    // work occurs until this confirms that the final pathname is still a
+    // direct regular file.
+    require_existing_regular_store(path)?;
     connection.busy_timeout(Duration::from_secs(2))?;
     Ok(connection)
 }
 
-fn open_ro(path: &Path) -> ConsumptionSettlementResultV1<Connection> {
+fn open_read_snapshot(path: &Path) -> ConsumptionSettlementResultV1<Connection> {
+    require_existing_regular_store(path)?;
+    // WAL-mode read-only opens can create sidecars. Reject that format before
+    // SQLite opens the file; never change its journal mode or recover it here.
+    reject_sidecars(path)?;
+    let mut header = [0_u8; 20];
+    fs::File::open(path)
+        .and_then(|mut file| file.read_exact(&mut header))
+        .map_err(|cause| {
+            error(
+                ConsumptionSettlementErrorCodeV1::StoreFailure,
+                cause.to_string(),
+            )
+        })?;
+    if header[18] == 2 || header[19] == 2 {
+        return Err(error(
+            ConsumptionSettlementErrorCodeV1::SchemaMismatch,
+            "WAL database format is not supported by read-only store snapshots",
+        ));
+    }
+    let connection = Connection::open_with_flags(
+        read_only_store_uri(path),
+        OpenFlags::SQLITE_OPEN_READ_ONLY
+            | OpenFlags::SQLITE_OPEN_NO_MUTEX
+            | OpenFlags::SQLITE_OPEN_URI,
+    )?;
+    require_existing_regular_store(path)?;
+    connection.busy_timeout(Duration::from_secs(2))?;
+    // Keep schema checks, replay audit, fencing and returned facts in one
+    // locking snapshot. Dropping the connection releases this read transaction.
+    connection.execute_batch("BEGIN DEFERRED")?;
+    Ok(connection)
+}
+
+fn read_only_store_uri(path: &Path) -> String {
     let bytes = path.as_os_str().as_encoded_bytes();
     let mut uri = String::from("file:");
-    for byte in bytes {
-        if byte.is_ascii_alphanumeric() || matches!(*byte, b'/' | b'.' | b'_' | b'-') {
+    for (index, byte) in bytes.iter().enumerate() {
+        // A literal leading // starts a URI authority. Escape its second slash
+        // so SQLite decodes the original pathname instead of treating a path
+        // component as a host. Do not normalize or lossily convert path bytes.
+        let starts_authority = index == 1 && bytes[0] == b'/' && *byte == b'/';
+        if !starts_authority
+            && (byte.is_ascii_alphanumeric() || matches!(*byte, b'/' | b'.' | b'_' | b'-'))
+        {
             uri.push(char::from(*byte));
         } else {
             uri.push_str(&format!("%{byte:02X}"));
         }
     }
-    uri.push_str("?mode=ro&immutable=1");
-    let connection = Connection::open_with_flags(
-        uri,
-        OpenFlags::SQLITE_OPEN_READ_ONLY
-            | OpenFlags::SQLITE_OPEN_NO_MUTEX
-            | OpenFlags::SQLITE_OPEN_URI,
-    )?;
-    connection.busy_timeout(Duration::from_secs(2))?;
-    Ok(connection)
+    uri.push_str("?mode=ro");
+    uri
 }
 
 fn reject_sidecars(path: &Path) -> ConsumptionSettlementResultV1<()> {
     for suffix in ["-wal", "-shm", "-journal"] {
         let mut sidecar: OsString = path.as_os_str().to_os_string();
         sidecar.push(suffix);
-        if Path::new(&sidecar).exists() {
-            return Err(error(
-                ConsumptionSettlementErrorCodeV1::SidecarPresent,
-                "SQLite sidecar is present",
-            ));
+        match fs::symlink_metadata(Path::new(&sidecar)) {
+            // `Path::exists` follows symlinks and reports false for a
+            // dangling one.  Treat every directory entry as present so a
+            // pre-placed sidecar symlink cannot be followed by SQLite during
+            // a subsequent writable open.
+            Ok(_) => {
+                return Err(error(
+                    ConsumptionSettlementErrorCodeV1::SidecarPresent,
+                    "SQLite sidecar is present",
+                ))
+            }
+            Err(cause) if cause.kind() == std::io::ErrorKind::NotFound => {}
+            Err(cause) => {
+                return Err(error(
+                    ConsumptionSettlementErrorCodeV1::StoreFailure,
+                    format!(
+                        "cannot inspect SQLite sidecar {}: {cause}",
+                        Path::new(&sidecar).display()
+                    ),
+                ))
+            }
         }
     }
     Ok(())
@@ -920,6 +1109,15 @@ fn insert_operation(
     receipt: &ConsumptionTransitionReceiptV1,
 ) -> ConsumptionSettlementResultV1<()> {
     let receipt_bytes = canonical_bytes(receipt)?;
+    if [execution.len(), command.len(), receipt_bytes.len()]
+        .into_iter()
+        .any(|length| length as u128 > u128::from(MAX_OPERATION_FIELD_BYTES_V1))
+    {
+        return Err(error(
+            ConsumptionSettlementErrorCodeV1::InvalidBounds,
+            "new operation exceeds the existing replay field bound",
+        ));
+    }
     let sum = operation_checksum(sequence, id, execution, command, &receipt_bytes);
     connection.execute(
         "INSERT INTO operations(sequence,operation_id,execution,command,receipt,checksum) VALUES(?1,?2,?3,?4,?5,?6)",
@@ -998,6 +1196,75 @@ fn operation_checksum(
     checksum(&[&sequence.to_le_bytes(), &id.0, execution, command, receipt])
 }
 
+fn checked_operation_field_len_v1(
+    encoded_len: i64,
+    label: &'static str,
+) -> ConsumptionSettlementResultV1<usize> {
+    let encoded_len = u64::try_from(encoded_len).map_err(|_| {
+        error(
+            ConsumptionSettlementErrorCodeV1::TamperDetected,
+            format!("{label} length is negative"),
+        )
+    })?;
+    if encoded_len > MAX_OPERATION_FIELD_BYTES_V1 {
+        return Err(error(
+            ConsumptionSettlementErrorCodeV1::TamperDetected,
+            format!("{label} exceeds the persisted field bound"),
+        ));
+    }
+    usize::try_from(encoded_len).map_err(|_| {
+        error(
+            ConsumptionSettlementErrorCodeV1::ArithmeticOverflow,
+            format!("{label} length does not fit usize"),
+        )
+    })
+}
+
+fn checked_operation_fixed_field_len_v1(
+    encoded_len: i64,
+    label: &'static str,
+) -> ConsumptionSettlementResultV1<usize> {
+    let encoded_len = checked_operation_field_len_v1(encoded_len, label)?;
+    if encoded_len != 32 {
+        return Err(error(
+            ConsumptionSettlementErrorCodeV1::TamperDetected,
+            format!("{label} must be exactly 32 bytes"),
+        ));
+    }
+    Ok(encoded_len)
+}
+
+fn account_operation_bytes_v1(
+    total: &mut u64,
+    encoded_len: usize,
+    label: &'static str,
+) -> ConsumptionSettlementResultV1<()> {
+    // Four bytes are included for each Borsh byte-vector length prefix in the
+    // journal-root preimage.  Account them before collecting the blob.
+    let contribution = u64::try_from(encoded_len)
+        .map_err(|_| error(ConsumptionSettlementErrorCodeV1::ArithmeticOverflow, label))?
+        .checked_add(4)
+        .ok_or_else(|| {
+            error(
+                ConsumptionSettlementErrorCodeV1::ArithmeticOverflow,
+                format!("{label} byte count overflow"),
+            )
+        })?;
+    *total = total.checked_add(contribution).ok_or_else(|| {
+        error(
+            ConsumptionSettlementErrorCodeV1::ArithmeticOverflow,
+            format!("{label} byte count overflow"),
+        )
+    })?;
+    if *total > MAX_OPERATION_JOURNAL_BYTES_V1 {
+        return Err(error(
+            ConsumptionSettlementErrorCodeV1::TamperDetected,
+            "operation journal exceeds the replay byte bound",
+        ));
+    }
+    Ok(())
+}
+
 fn operation_journal_root(connection: &Connection) -> ConsumptionSettlementResultV1<Hash32V1> {
     operation_journal_root_through(connection, u64::MAX)
 }
@@ -1007,11 +1274,37 @@ fn operation_journal_root_through(
     maximum_sequence: u64,
 ) -> ConsumptionSettlementResultV1<Hash32V1> {
     let maximum_sequence = to_sqlite(maximum_sequence.min(i64::MAX as u64), "maximum sequence")?;
-    let mut statement = connection
-        .prepare("SELECT receipt FROM operations WHERE sequence<=?1 ORDER BY sequence")?;
-    let receipts = statement
-        .query_map([maximum_sequence], |row| row.get::<_, Vec<u8>>(0))?
-        .collect::<Result<Vec<_>, _>>()?;
+    let mut statement = connection.prepare(
+        "SELECT length(receipt),receipt FROM operations WHERE sequence<=?1 ORDER BY sequence",
+    )?;
+    let mut rows = statement.query([maximum_sequence])?;
+    let mut receipts = Vec::new();
+    let mut operation_count = 0_u64;
+    let mut total_bytes = 4_u64; // Borsh Vec length prefix.
+    while let Some(row) = rows.next()? {
+        operation_count = operation_count.checked_add(1).ok_or_else(|| {
+            error(
+                ConsumptionSettlementErrorCodeV1::ArithmeticOverflow,
+                "operation journal row count overflow",
+            )
+        })?;
+        if operation_count > MAX_OPERATION_ROWS_V1 {
+            return Err(error(
+                ConsumptionSettlementErrorCodeV1::TamperDetected,
+                "operation journal exceeds the replay row bound",
+            ));
+        }
+        let receipt_len =
+            checked_operation_field_len_v1(row.get::<_, i64>(0)?, "operation receipt")?;
+        account_operation_bytes_v1(&mut total_bytes, receipt_len, "operation receipt")?;
+        receipts.push(row.get::<_, Vec<u8>>(1)?);
+    }
+    if total_bytes > MAX_OPERATION_JOURNAL_BYTES_V1 {
+        return Err(error(
+            ConsumptionSettlementErrorCodeV1::TamperDetected,
+            "operation journal exceeds the replay byte bound",
+        ));
+    }
     digest_value(
         "trnm.portable.v2.consumption-settlement-journal-root.candidate.v1",
         &receipts,
@@ -1116,42 +1409,54 @@ fn load_committed_block_markers(
     connection: &Connection,
     config: &ConsumptionSettlementStoreConfigV1,
 ) -> ConsumptionSettlementResultV1<Vec<CommittedBlockMarkerV1>> {
+    load_committed_block_markers_with_limit(connection, config, MAX_COMMITTED_BLOCK_ROWS_V1)
+}
+
+#[cfg(test)]
+pub(crate) fn test_load_committed_block_markers_with_limit(
+    connection: &Connection,
+    config: &ConsumptionSettlementStoreConfigV1,
+    maximum_rows: u64,
+) -> ConsumptionSettlementResultV1<()> {
+    load_committed_block_markers_with_limit(connection, config, maximum_rows).map(|_| ())
+}
+
+fn load_committed_block_markers_with_limit(
+    connection: &Connection,
+    config: &ConsumptionSettlementStoreConfigV1,
+    maximum_rows: u64,
+) -> ConsumptionSettlementResultV1<Vec<CommittedBlockMarkerV1>> {
     let mut statement = connection.prepare("SELECT marker_sequence,order_height,order_block_id,parent_order_height,parent_order_block_id,source_operation_sequence,target_operation_sequence,source_state_root,target_state_root,source_operation_root,target_operation_root,previous_marker_checksum,checksum FROM committed_blocks")?;
-    let rows = statement
-        .query_map([], |row| {
-            Ok((
-                row.get::<_, i64>(0)?,
-                row.get::<_, i64>(1)?,
-                row.get::<_, Vec<u8>>(2)?,
-                row.get::<_, i64>(3)?,
-                row.get::<_, Vec<u8>>(4)?,
-                row.get::<_, i64>(5)?,
-                row.get::<_, i64>(6)?,
-                row.get::<_, Vec<u8>>(7)?,
-                row.get::<_, Vec<u8>>(8)?,
-                row.get::<_, Vec<u8>>(9)?,
-                row.get::<_, Vec<u8>>(10)?,
-                row.get::<_, Vec<u8>>(11)?,
-                row.get::<_, Vec<u8>>(12)?,
-            ))
-        })?
-        .collect::<Result<Vec<_>, _>>()?;
-    let mut markers = Vec::with_capacity(rows.len());
-    for row in rows {
+    let mut rows = statement.query([])?;
+    let mut markers = Vec::new();
+    let mut marker_count = 0_u64;
+    while let Some(row) = rows.next()? {
+        marker_count = marker_count.checked_add(1).ok_or_else(|| {
+            error(
+                ConsumptionSettlementErrorCodeV1::ArithmeticOverflow,
+                "committed-block marker row count overflow",
+            )
+        })?;
+        if marker_count > maximum_rows {
+            return Err(error(
+                ConsumptionSettlementErrorCodeV1::TamperDetected,
+                "committed-block journal exceeds the replay row bound",
+            ));
+        }
         let marker = CommittedBlockMarkerV1 {
-            marker_sequence: from_sqlite(row.0, "marker sequence")?,
-            order_height: from_sqlite(row.1, "marker Order height")?,
-            order_block_id: Hash32V1(array32(row.2, "marker Order block ID")?),
-            parent_order_height: from_sqlite(row.3, "marker parent Order height")?,
-            parent_order_block_id: Hash32V1(array32(row.4, "marker parent Order block ID")?),
-            source_operation_sequence: from_sqlite(row.5, "marker source sequence")?,
-            target_operation_sequence: from_sqlite(row.6, "marker target sequence")?,
-            source_state_root: Hash32V1(array32(row.7, "marker source state root")?),
-            target_state_root: Hash32V1(array32(row.8, "marker target state root")?),
-            source_operation_root: Hash32V1(array32(row.9, "marker source operation root")?),
-            target_operation_root: Hash32V1(array32(row.10, "marker target operation root")?),
-            previous_marker_checksum: Hash32V1(array32(row.11, "previous marker checksum")?),
-            checksum: Hash32V1(array32(row.12, "marker checksum")?),
+            marker_sequence: from_sqlite(row.get(0)?, "marker sequence")?,
+            order_height: from_sqlite(row.get(1)?, "marker Order height")?,
+            order_block_id: Hash32V1(array32(row.get(2)?, "marker Order block ID")?),
+            parent_order_height: from_sqlite(row.get(3)?, "marker parent Order height")?,
+            parent_order_block_id: Hash32V1(array32(row.get(4)?, "marker parent Order block ID")?),
+            source_operation_sequence: from_sqlite(row.get(5)?, "marker source sequence")?,
+            target_operation_sequence: from_sqlite(row.get(6)?, "marker target sequence")?,
+            source_state_root: Hash32V1(array32(row.get(7)?, "marker source state root")?),
+            target_state_root: Hash32V1(array32(row.get(8)?, "marker target state root")?),
+            source_operation_root: Hash32V1(array32(row.get(9)?, "marker source operation root")?),
+            target_operation_root: Hash32V1(array32(row.get(10)?, "marker target operation root")?),
+            previous_marker_checksum: Hash32V1(array32(row.get(11)?, "previous marker checksum")?),
+            checksum: Hash32V1(array32(row.get(12)?, "marker checksum")?),
         };
         if marker.checksum != committed_block_marker_checksum(config, &marker)? {
             return Err(error(
@@ -1208,6 +1513,20 @@ fn advance_committed_block_marker(
                 "same-block marker extension does not expect the exact block",
             ));
         }
+        // An empty successor marker already records a block with no commands.
+        // Its first operation would need to expect the marker's parent during
+        // replay, but a same-block call expects the current block. Reject that
+        // inconsistent history inside the transaction, before it can commit.
+        // The genesis anchor is different: its parent is itself.
+        if tail.source_operation_sequence == tail.target_operation_sequence
+            && (tail.parent_order_height, tail.parent_order_block_id)
+                != (tail.order_height, tail.order_block_id)
+        {
+            return Err(error(
+                ConsumptionSettlementErrorCodeV1::InvalidContext,
+                "cannot append the first command to an already committed empty block",
+            ));
+        }
         let mut updated = tail;
         updated.target_operation_sequence = target_sequence;
         updated.target_state_root = target_state_root;
@@ -1238,10 +1557,13 @@ fn advance_committed_block_marker(
     ) != (tail.order_height, tail.order_block_id)
         || tail.order_height.checked_add(1) != Some(execution.order_height)
         || execution.order_block_id == tail.order_block_id
+        // Match candidate preview admission without rewriting historical zero-ID
+        // markers or changing exact replay and same-block extension semantics.
+        || execution.order_block_id == Hash32V1([0; 32])
     {
         return Err(error(
             ConsumptionSettlementErrorCodeV1::InvalidContext,
-            "committed-block marker target is not the direct Order successor",
+            "committed-block marker target is not a valid direct Order successor",
         ));
     }
     insert_committed_block_marker(
@@ -1283,29 +1605,44 @@ fn audit(
         ));
     }
     let mut statement = connection.prepare(
-        "SELECT sequence,operation_id,execution,command,receipt,checksum FROM operations ORDER BY sequence",
+        "SELECT sequence,length(operation_id),operation_id,length(execution),execution,length(command),command,length(receipt),receipt,length(checksum),checksum FROM operations ORDER BY sequence",
     )?;
-    let rows = statement
-        .query_map([], |row| {
-            Ok((
-                row.get::<_, i64>(0)?,
-                row.get::<_, Vec<u8>>(1)?,
-                row.get::<_, Vec<u8>>(2)?,
-                row.get::<_, Vec<u8>>(3)?,
-                row.get::<_, Vec<u8>>(4)?,
-                row.get::<_, Vec<u8>>(5)?,
-            ))
-        })?
-        .collect::<Result<Vec<_>, _>>()?;
+    let mut rows = statement.query([])?;
     let mut replay_state = initial_state(&config.trust_bundle);
     let mut replay_sequence = 0_u64;
-    for (row_sequence, id_bytes, execution_bytes, command_bytes, receipt_bytes, sum) in rows {
+    let mut total_bytes = 4_u64; // Borsh Vec length prefix in the journal root.
+    while let Some(row) = rows.next()? {
         replay_sequence = replay_sequence.checked_add(1).ok_or_else(|| {
             error(
                 ConsumptionSettlementErrorCodeV1::ArithmeticOverflow,
                 "audit sequence overflow",
             )
         })?;
+        if replay_sequence > MAX_OPERATION_ROWS_V1 {
+            return Err(error(
+                ConsumptionSettlementErrorCodeV1::TamperDetected,
+                "operation journal exceeds the replay row bound",
+            ));
+        }
+        let row_sequence = row.get::<_, i64>(0)?;
+        let operation_id_len =
+            checked_operation_fixed_field_len_v1(row.get::<_, i64>(1)?, "operation ID")?;
+        let id_bytes = row.get::<_, Vec<u8>>(2)?;
+        let execution_len =
+            checked_operation_field_len_v1(row.get::<_, i64>(3)?, "journal execution")?;
+        let command_len = checked_operation_field_len_v1(row.get::<_, i64>(5)?, "journal command")?;
+        let receipt_len = checked_operation_field_len_v1(row.get::<_, i64>(7)?, "journal receipt")?;
+        let checksum_len =
+            checked_operation_fixed_field_len_v1(row.get::<_, i64>(9)?, "operation checksum")?;
+        account_operation_bytes_v1(&mut total_bytes, operation_id_len, "operation ID")?;
+        account_operation_bytes_v1(&mut total_bytes, execution_len, "journal execution")?;
+        account_operation_bytes_v1(&mut total_bytes, command_len, "journal command")?;
+        account_operation_bytes_v1(&mut total_bytes, receipt_len, "journal receipt")?;
+        account_operation_bytes_v1(&mut total_bytes, checksum_len, "operation checksum")?;
+        let execution_bytes = row.get::<_, Vec<u8>>(4)?;
+        let command_bytes = row.get::<_, Vec<u8>>(6)?;
+        let receipt_bytes = row.get::<_, Vec<u8>>(8)?;
+        let sum = row.get::<_, Vec<u8>>(10)?;
         if from_sqlite(row_sequence, "sequence")? != replay_sequence {
             return Err(error(
                 ConsumptionSettlementErrorCodeV1::TamperDetected,
@@ -1564,6 +1901,61 @@ fn validate_execution_cas(
     Ok(())
 }
 
+// Admission-only backend check. Historical audit/replay keeps using the generic
+// transition, and exact durable operation retries return before this path.
+fn apply_new_store_transition(
+    trust: &ConsumptionSettlementFreshGenesisTrustBundleV1,
+    state: &ConsumptionSettlementKernelStateV1,
+    order_height: u64,
+    command: &ConsumptionSettlementCommandV1,
+) -> ConsumptionSettlementResultV1<(ConsumptionSettlementKernelStateV1, Option<SettlementIdV1>)> {
+    let (next, settlement_id) = apply_transition(trust, state, order_height, command)?;
+    if matches!(command, ConsumptionSettlementCommandV1::AdmitRollup { .. }) {
+        let rollup = next.rollup.as_ref().ok_or_else(|| {
+            error(
+                ConsumptionSettlementErrorCodeV1::NotFound,
+                "new rollup is absent after admission",
+            )
+        })?;
+        let earliest_settlement =
+            rollup
+                .challenge_close_height
+                .checked_add(1)
+                .ok_or_else(|| {
+                    error(
+                        ConsumptionSettlementErrorCodeV1::ArithmeticOverflow,
+                        "rollup settlement successor height overflows",
+                    )
+                })?;
+        to_sqlite(earliest_settlement, "rollup settlement successor height")?;
+    }
+    Ok((next, settlement_id))
+}
+
+// Preview must stay within the same integer domain as the durable backend,
+// including empty batches and the final sequence of a multi-command batch.
+fn validate_preview_sqlite_bounds(
+    candidate_height: u64,
+    source_sequence: u64,
+    command_count: usize,
+) -> ConsumptionSettlementResultV1<()> {
+    to_sqlite(candidate_height, "pre-commit candidate height")?;
+    let command_count = u64::try_from(command_count).map_err(|_| {
+        error(
+            ConsumptionSettlementErrorCodeV1::ArithmeticOverflow,
+            "pre-commit command count exceeds u64",
+        )
+    })?;
+    let target_sequence = source_sequence.checked_add(command_count).ok_or_else(|| {
+        error(
+            ConsumptionSettlementErrorCodeV1::ArithmeticOverflow,
+            "pre-commit target sequence overflows",
+        )
+    })?;
+    to_sqlite(target_sequence, "pre-commit target sequence")?;
+    Ok(())
+}
+
 fn to_sqlite(value: u64, label: &str) -> ConsumptionSettlementResultV1<i64> {
     i64::try_from(value).map_err(|_| {
         error(
@@ -1589,4 +1981,1449 @@ fn array32(value: Vec<u8>, label: &str) -> ConsumptionSettlementResultV1<[u8; 32
             format!("{label} length is invalid"),
         )
     })
+}
+
+#[cfg(test)]
+mod snapshot_tests {
+    use super::*;
+
+    thread_local! {
+        static PROCESS_DEATH_STAGE: std::cell::RefCell<Option<(String, PathBuf)>> = const { std::cell::RefCell::new(None) };
+    }
+
+    pub(super) fn pause_for_process_death(stage: &str) {
+        let marker = PROCESS_DEATH_STAGE.with(|slot| {
+            let mut slot = slot.borrow_mut();
+            if slot.as_ref().is_some_and(|(expected, _)| expected == stage) {
+                slot.take().map(|(_, marker)| marker)
+            } else {
+                None
+            }
+        });
+        if let Some(marker) = marker {
+            fs::write(marker, stage).expect("signal reached process-death stage");
+            // The parent kills this owned child. Bound its lifetime if the parent dies.
+            std::thread::sleep(Duration::from_secs(30));
+            panic!("parent did not terminate process-death fixture");
+        }
+    }
+
+    struct OwnedTestChild(std::process::Child);
+
+    type ProcessDeathRequest = (
+        Hash32V1,
+        ConsumptionSettlementFreshGenesisTrustBundleV1,
+        ConsumptionCommittedExecutionContextV1,
+        ConsumptionSettlementCommandV1,
+    );
+
+    impl Drop for OwnedTestChild {
+        fn drop(&mut self) {
+            // Also runs when readiness checks or assertions panic.
+            let _ = self.0.kill();
+            let _ = self.0.wait();
+        }
+    }
+
+    #[test]
+    #[ignore = "child fixture explicitly executed by process_death_preserves_fail_closed_and_exact_retry"]
+    fn process_death_child_fixture() {
+        let path =
+            std::env::var_os("TRNM_SETTLEMENT_DEATH_DB").expect("parent-owned database path");
+        let marker =
+            std::env::var_os("TRNM_SETTLEMENT_DEATH_MARKER").expect("parent-owned stage marker");
+        let stage = std::env::var("TRNM_SETTLEMENT_DEATH_STAGE").expect("parent-selected stage");
+        assert!(matches!(stage.as_str(), "before-commit" | "after-commit"));
+        let path = PathBuf::from(path);
+        let (store_id, trust_bundle, execution, command): ProcessDeathRequest =
+            strict_decode(&fs::read(path.with_extension("request")).unwrap()).unwrap();
+        let config = ConsumptionSettlementStoreConfigV1 {
+            path,
+            store_id,
+            trust_bundle,
+        };
+        let store = ConsumptionSettlementStoreV1::open_existing(config).unwrap();
+        PROCESS_DEATH_STAGE.with(|slot| *slot.borrow_mut() = Some((stage, PathBuf::from(marker))));
+        store
+            .execute_committed_execution(&execution, &command)
+            .unwrap();
+        panic!("child unexpectedly returned an acknowledgment");
+    }
+
+    #[test]
+    fn process_death_preserves_fail_closed_and_exact_retry() {
+        for stage in ["before-commit", "after-commit"] {
+            let harness = crate::tests::Harness::new();
+            let config = harness.config();
+            let store = ConsumptionSettlementStoreV1::open(config.clone()).unwrap();
+            let before = store.fresh_readback().unwrap();
+            let execution = harness.execution(9, before.order_block_id(), 10);
+            let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.receipt(None, 10, 100),
+            };
+            let preview = store
+                .preview_before_vote_v1(
+                    &before,
+                    10,
+                    execution.order_block_id,
+                    std::slice::from_ref(&command),
+                )
+                .unwrap();
+            let expected_receipt = &preview.candidate_receipts()[0];
+            let marker = config.path.with_extension("stage");
+            fs::write(
+                config.path.with_extension("request"),
+                canonical_bytes(&(config.store_id, &config.trust_bundle, &execution, &command))
+                    .unwrap(),
+            )
+            .unwrap();
+            let mut child = OwnedTestChild(
+                std::process::Command::new(std::env::current_exe().unwrap())
+                    .args([
+                        "--ignored",
+                        "--exact",
+                        "store::snapshot_tests::process_death_child_fixture",
+                        "--nocapture",
+                    ])
+                    .env("TRNM_SETTLEMENT_DEATH_DB", &config.path)
+                    .env("TRNM_SETTLEMENT_DEATH_MARKER", &marker)
+                    .env("TRNM_SETTLEMENT_DEATH_STAGE", stage)
+                    .spawn()
+                    .expect("spawn owned process-death fixture"),
+            );
+            let deadline = std::time::Instant::now() + Duration::from_secs(10);
+            loop {
+                if fs::read(&marker).ok().as_deref() == Some(stage.as_bytes()) {
+                    break;
+                }
+                assert!(
+                    child.0.try_wait().unwrap().is_none(),
+                    "child exited before {stage}"
+                );
+                assert!(
+                    std::time::Instant::now() < deadline,
+                    "child did not reach {stage}"
+                );
+                std::thread::sleep(Duration::from_millis(10));
+            }
+            let mut journal_path = config.path.as_os_str().to_os_string();
+            journal_path.push("-journal");
+            let journal_path = PathBuf::from(journal_path);
+            let paused_database = fs::read(&config.path).unwrap();
+            let paused_journal = if stage == "before-commit" {
+                let bytes = fs::read(&journal_path)
+                    .expect("real rollback journal after transactional writes");
+                assert!(!bytes.is_empty());
+                Some(bytes)
+            } else {
+                reject_sidecars(&config.path).expect("commit removed rollback journal");
+                None
+            };
+            child.0.kill().expect("terminate only owned child");
+            assert!(!child.0.wait().unwrap().success());
+            assert_eq!(fs::read(&config.path).unwrap(), paused_database);
+            if let Some(journal_bytes) = paused_journal {
+                assert_eq!(fs::read(&journal_path).unwrap(), journal_bytes);
+                let codes = [
+                    ConsumptionSettlementStoreV1::open(config.clone())
+                        .unwrap_err()
+                        .code(),
+                    ConsumptionSettlementStoreV1::open_existing(config.clone())
+                        .unwrap_err()
+                        .code(),
+                    store.fresh_readback().unwrap_err().code(),
+                    store.state().unwrap_err().code(),
+                    store.confirm_receipt(expected_receipt).unwrap_err().code(),
+                    store
+                        .preview_before_vote_v1(
+                            &before,
+                            10,
+                            execution.order_block_id,
+                            std::slice::from_ref(&command),
+                        )
+                        .unwrap_err()
+                        .code(),
+                    store
+                        .execute_committed_execution(&execution, &command)
+                        .unwrap_err()
+                        .code(),
+                    store
+                        .advance_empty_committed_execution_v1(&execution)
+                        .unwrap_err()
+                        .code(),
+                ];
+                assert!(
+                    codes
+                        .iter()
+                        .all(|code| *code == ConsumptionSettlementErrorCodeV1::SidecarPresent),
+                    "{codes:?}"
+                );
+                assert_eq!(fs::read(&config.path).unwrap(), paused_database);
+                assert_eq!(fs::read(&journal_path).unwrap(), journal_bytes);
+                // No writable reopen, journal removal, or recovery attempt occurs.
+            } else {
+                let cold = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+                let head = cold.fresh_readback().unwrap();
+                let state = cold.state().unwrap();
+                assert_eq!(head.sequence(), 1);
+                assert_eq!(head.order_block_id(), execution.order_block_id);
+                assert_eq!(
+                    head.durable_state_root(),
+                    preview.candidate_post_state_root()
+                );
+                let snapshot = open_read_snapshot(&config.path).unwrap();
+                let rows: u64 = snapshot
+                    .query_row("SELECT COUNT(*) FROM operations", [], |row| row.get(0))
+                    .unwrap();
+                assert_eq!(rows, 1);
+                drop(snapshot);
+                let retry = cold
+                    .execute_committed_execution(&execution, &command)
+                    .unwrap();
+                assert!(retry.is_replay());
+                assert_eq!(retry.receipt(), expected_receipt);
+                assert_eq!(
+                    cold.confirm_receipt(expected_receipt).unwrap().receipt(),
+                    expected_receipt
+                );
+                assert_eq!(cold.fresh_readback().unwrap(), head);
+                assert_eq!(cold.state().unwrap(), state);
+                assert_eq!(fs::read(&config.path).unwrap(), paused_database);
+                reject_sidecars(&config.path).unwrap();
+            }
+            eprintln!("process-death stage {stage}: supported contract verified");
+        }
+    }
+
+    thread_local! {
+        static WRITER_RENDEZVOUS: std::cell::RefCell<Option<(
+            std::sync::mpsc::Sender<()>, std::sync::mpsc::Receiver<()>
+        )>> = const { std::cell::RefCell::new(None) };
+    }
+
+    pub(super) fn wait_before_writer() {
+        if let Some((ready, release)) = WRITER_RENDEZVOUS.with(|slot| slot.borrow_mut().take()) {
+            ready.send(()).expect("notify writer preflight complete");
+            release
+                .recv_timeout(Duration::from_secs(10))
+                .expect("release writer after both preflights");
+        }
+    }
+
+    thread_local! {
+        static EMPTY_COMMIT_RENDEZVOUS: std::cell::RefCell<Option<(
+            std::sync::mpsc::Sender<()>, std::sync::mpsc::Receiver<()>
+        )>> = const { std::cell::RefCell::new(None) };
+    }
+
+    pub(super) fn wait_after_empty_commit() {
+        if let Some((ready, release)) =
+            EMPTY_COMMIT_RENDEZVOUS.with(|slot| slot.borrow_mut().take())
+        {
+            ready.send(()).expect("notify empty commit complete");
+            release
+                .recv_timeout(Duration::from_secs(10))
+                .expect("release empty commit readback");
+        }
+    }
+
+    #[test]
+    fn overlapping_empty_retry_can_require_a_fresh_retry_after_cas() {
+        let harness = crate::tests::Harness::new();
+        let config = harness.config();
+        let store = ConsumptionSettlementStoreV1::open(config.clone()).unwrap();
+        let before = store.fresh_readback().unwrap();
+        let execution = harness.execution(before.order_height(), before.order_block_id(), 10);
+        let other = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+        let (ready_tx, ready_rx) = std::sync::mpsc::channel();
+        let (release_tx, release_rx) = std::sync::mpsc::channel();
+        let (outcome, head, bytes) = std::thread::scope(|scope| {
+            let worker = scope.spawn(|| {
+                WRITER_RENDEZVOUS.with(|slot| *slot.borrow_mut() = Some((ready_tx, release_rx)));
+                other.advance_empty_committed_execution_v1(&execution)
+            });
+            ready_rx
+                .recv_timeout(Duration::from_secs(10))
+                .expect("empty retry preflight before competing commit");
+            let head = store
+                .advance_empty_committed_execution_v1(&execution)
+                .unwrap();
+            let bytes = fs::read(&config.path).unwrap();
+            release_tx.send(()).unwrap();
+            (worker.join().unwrap(), head, bytes)
+        });
+        assert_eq!(
+            outcome.unwrap_err().code(),
+            ConsumptionSettlementErrorCodeV1::StaleVersion
+        );
+        let cold = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+        assert_eq!(
+            cold.advance_empty_committed_execution_v1(&execution)
+                .unwrap(),
+            head
+        );
+        assert_eq!(cold.fresh_readback().unwrap(), head);
+        assert_eq!(fs::read(&config.path).unwrap(), bytes);
+        let snapshot = open_read_snapshot(&config.path).unwrap();
+        assert!(!load_metadata(&snapshot, &config).unwrap().5);
+        assert_eq!(
+            load_committed_block_markers(&snapshot, &config)
+                .unwrap()
+                .len(),
+            2
+        );
+    }
+
+    #[test]
+    fn later_empty_successor_does_not_report_a_permanent_fence() {
+        let harness = crate::tests::Harness::new();
+        let config = harness.config();
+        let store = ConsumptionSettlementStoreV1::open(config.clone()).unwrap();
+        let before = store.fresh_readback().unwrap();
+        let state = store.state().unwrap();
+        let first = harness.execution(before.order_height(), before.order_block_id(), 10);
+        let second = harness.execution(10, first.order_block_id, 11);
+        let first_handle = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+        let (ready_tx, ready_rx) = std::sync::mpsc::channel();
+        let (release_tx, release_rx) = std::sync::mpsc::channel();
+        let (outcome, later_head) = std::thread::scope(|scope| {
+            let worker = scope.spawn(|| {
+                EMPTY_COMMIT_RENDEZVOUS
+                    .with(|slot| *slot.borrow_mut() = Some((ready_tx, release_rx)));
+                first_handle.advance_empty_committed_execution_v1(&first)
+            });
+            ready_rx
+                .recv_timeout(Duration::from_secs(10))
+                .expect("first empty block committed before its readback");
+            let first_head = store.fresh_readback().unwrap();
+            assert_eq!(first_head.order_height(), 10);
+            assert_eq!(first_head.order_block_id(), first.order_block_id);
+            let later_head = store.advance_empty_committed_execution_v1(&second).unwrap();
+            release_tx.send(()).unwrap();
+            (worker.join().unwrap(), later_head)
+        });
+        let bytes = fs::read(&config.path).unwrap();
+        let cold = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+        assert_eq!(cold.fresh_readback().unwrap(), later_head);
+        assert_eq!(cold.state().unwrap(), state);
+        assert_eq!(
+            cold.advance_empty_committed_execution_v1(&first)
+                .unwrap_err()
+                .code(),
+            ConsumptionSettlementErrorCodeV1::StaleVersion
+        );
+        assert_eq!(fs::read(&config.path).unwrap(), bytes);
+        let snapshot = open_read_snapshot(&config.path).unwrap();
+        assert!(!load_metadata(&snapshot, &config).unwrap().5);
+        assert_eq!(
+            load_committed_block_markers(&snapshot, &config)
+                .unwrap()
+                .len(),
+            3
+        );
+        drop(snapshot);
+        assert_eq!(
+            cold.advance_empty_committed_execution_v1(&second).unwrap(),
+            later_head
+        );
+        assert_eq!(fs::read(&config.path).unwrap(), bytes);
+        let third = harness.execution(11, second.order_block_id, 12);
+        assert_eq!(
+            cold.advance_empty_committed_execution_v1(&third)
+                .unwrap()
+                .order_height(),
+            12
+        );
+        assert_eq!(cold.state().unwrap(), state);
+        assert_eq!(
+            outcome.unwrap_err().code(),
+            ConsumptionSettlementErrorCodeV1::CommitUncertain
+        );
+    }
+
+    thread_local! {
+        static PREVIEW_RENDEZVOUS: std::cell::RefCell<Option<(
+            std::sync::mpsc::Sender<()>, std::sync::mpsc::Receiver<()>
+        )>> = const { std::cell::RefCell::new(None) };
+    }
+
+    pub(super) fn wait_before_preview_readback() {
+        if let Some((ready, release)) = PREVIEW_RENDEZVOUS.with(|slot| slot.borrow_mut().take()) {
+            ready.send(()).expect("notify preview snapshot released");
+            release
+                .recv_timeout(Duration::from_secs(10))
+                .expect("release preview readback");
+        }
+    }
+
+    #[test]
+    fn legal_writer_during_preview_is_stale_not_tampering() {
+        for with_command in [false, true] {
+            let harness = crate::tests::Harness::new();
+            let config = harness.config();
+            let store = ConsumptionSettlementStoreV1::open(config.clone()).unwrap();
+            let before = store.fresh_readback().unwrap();
+            let execution = harness.execution(before.order_height(), before.order_block_id(), 10);
+            let commands = if with_command {
+                vec![ConsumptionSettlementCommandV1::AdmitReceipt {
+                    receipt: harness.receipt(None, 10, 100),
+                }]
+            } else {
+                vec![]
+            };
+            let other = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+            let (ready_tx, ready_rx) = std::sync::mpsc::channel();
+            let (release_tx, release_rx) = std::sync::mpsc::channel();
+            let (outcome, head, bytes) = std::thread::scope(|scope| {
+                let worker = scope.spawn(|| {
+                    PREVIEW_RENDEZVOUS
+                        .with(|slot| *slot.borrow_mut() = Some((ready_tx, release_rx)));
+                    other.preview_before_vote_v1(&before, 10, execution.order_block_id, &commands)
+                });
+                ready_rx
+                    .recv_timeout(Duration::from_secs(10))
+                    .expect("preview read snapshot closed");
+                if let Some(command) = commands.first() {
+                    store
+                        .execute_committed_execution(&execution, command)
+                        .unwrap();
+                } else {
+                    store
+                        .advance_empty_committed_execution_v1(&execution)
+                        .unwrap();
+                }
+                let head = store.fresh_readback().unwrap();
+                let bytes = fs::read(&config.path).unwrap();
+                release_tx.send(()).unwrap();
+                (worker.join().unwrap(), head, bytes)
+            });
+            let cold = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+            assert_eq!(cold.fresh_readback().unwrap(), head);
+            assert_eq!(fs::read(&config.path).unwrap(), bytes);
+            let snapshot = open_read_snapshot(&config.path).unwrap();
+            assert!(!load_metadata(&snapshot, &config).unwrap().5);
+            assert_eq!(
+                load_committed_block_markers(&snapshot, &config)
+                    .unwrap()
+                    .len(),
+                2
+            );
+            drop(snapshot);
+            let next = harness.execution(10, execution.order_block_id, 11);
+            let preview = cold
+                .preview_before_vote_v1(&head, 11, next.order_block_id, &[])
+                .unwrap();
+            assert_eq!(
+                preview.candidate_post_state_root(),
+                head.durable_state_root()
+            );
+            assert_eq!(fs::read(&config.path).unwrap(), bytes);
+            assert_eq!(
+                outcome.unwrap_err().code(),
+                ConsumptionSettlementErrorCodeV1::StaleVersion
+            );
+        }
+    }
+
+    #[test]
+    fn preview_readback_preserves_tamper_and_fence_errors() {
+        for fence in [false, true] {
+            let harness = crate::tests::Harness::new();
+            let config = harness.config();
+            let store = ConsumptionSettlementStoreV1::open(config.clone()).unwrap();
+            let before = store.fresh_readback().unwrap();
+            let execution = harness.execution(before.order_height(), before.order_block_id(), 10);
+            let other = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+            let expected = if fence {
+                ConsumptionSettlementErrorCodeV1::ThirdStateFenced
+            } else {
+                ConsumptionSettlementErrorCodeV1::TamperDetected
+            };
+            let (ready_tx, ready_rx) = std::sync::mpsc::channel();
+            let (release_tx, release_rx) = std::sync::mpsc::channel();
+            let (outcome, bytes) = std::thread::scope(|scope| {
+                let worker = scope.spawn(|| {
+                    PREVIEW_RENDEZVOUS
+                        .with(|slot| *slot.borrow_mut() = Some((ready_tx, release_rx)));
+                    other.preview_before_vote_v1(&before, 10, execution.order_block_id, &[])
+                });
+                ready_rx
+                    .recv_timeout(Duration::from_secs(10))
+                    .expect("preview snapshot released");
+                if fence {
+                    let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+                        receipt: harness.receipt(None, 10, 100),
+                    };
+                    assert_eq!(
+                        store
+                            .execute_with_fault(
+                                &execution,
+                                &command,
+                                ConsumptionCommitFaultV1::ThirdState
+                            )
+                            .unwrap_err()
+                            .code(),
+                        expected
+                    );
+                } else {
+                    let connection = open_rw(&config.path, false).unwrap();
+                    connection.execute("UPDATE committed_blocks SET checksum=zeroblob(32) WHERE marker_sequence=0", []).unwrap();
+                }
+                let bytes = fs::read(&config.path).unwrap();
+                release_tx.send(()).unwrap();
+                (worker.join().unwrap(), bytes)
+            });
+            assert_eq!(outcome.unwrap_err().code(), expected);
+            assert_eq!(store.fresh_readback().unwrap_err().code(), expected);
+            assert_eq!(
+                ConsumptionSettlementStoreV1::open_existing(config.clone())
+                    .unwrap_err()
+                    .code(),
+                expected
+            );
+            assert_eq!(fs::read(&config.path).unwrap(), bytes);
+        }
+    }
+
+    #[test]
+    fn mixed_empty_and_command_writers_preserve_marker_kind_and_history() {
+        for empty_wins in [true, false] {
+            let harness = crate::tests::Harness::new();
+            let config = harness.config();
+            let store = ConsumptionSettlementStoreV1::open(config.clone()).unwrap();
+            let before = store.fresh_readback().unwrap();
+            let initial_state = store.state().unwrap();
+            let execution = harness.execution(before.order_height(), before.order_block_id(), 10);
+            let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.receipt(None, 10, 100),
+            };
+            let other = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+            let (ready_tx, ready_rx) = std::sync::mpsc::channel();
+            let (release_tx, release_rx) = std::sync::mpsc::channel();
+            let (loser, receipt, bytes) = std::thread::scope(|scope| {
+                let worker = scope.spawn(|| {
+                    WRITER_RENDEZVOUS
+                        .with(|slot| *slot.borrow_mut() = Some((ready_tx, release_rx)));
+                    if empty_wins {
+                        other
+                            .execute_committed_execution(&execution, &command)
+                            .map(|_| ())
+                    } else {
+                        other
+                            .advance_empty_committed_execution_v1(&execution)
+                            .map(|_| ())
+                    }
+                });
+                ready_rx
+                    .recv_timeout(Duration::from_secs(10))
+                    .expect("loser preflight finishes before winning commit");
+                let receipt = if empty_wins {
+                    store
+                        .advance_empty_committed_execution_v1(&execution)
+                        .unwrap();
+                    None
+                } else {
+                    Some(
+                        store
+                            .execute_committed_execution(&execution, &command)
+                            .unwrap()
+                            .receipt()
+                            .clone(),
+                    )
+                };
+                let bytes = fs::read(&config.path).unwrap();
+                release_tx.send(()).unwrap();
+                (worker.join().unwrap(), receipt, bytes)
+            });
+            assert_eq!(
+                loser.unwrap_err().code(),
+                ConsumptionSettlementErrorCodeV1::StaleVersion
+            );
+            assert_eq!(fs::read(&config.path).unwrap(), bytes);
+            let cold = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+            let head = cold.fresh_readback().unwrap();
+            let state = cold.state().unwrap();
+            assert_eq!(head.sequence(), u64::from(!empty_wins));
+            let snapshot = open_read_snapshot(&config.path).unwrap();
+            let markers = load_committed_block_markers(&snapshot, &config).unwrap();
+            assert_eq!(markers.len(), 2);
+            assert_eq!(markers[1].source_operation_sequence, 0);
+            assert_eq!(markers[1].target_operation_sequence, head.sequence());
+            assert!(!load_metadata(&snapshot, &config).unwrap().5);
+            drop(snapshot);
+            if empty_wins {
+                assert_eq!(state, initial_state);
+                assert_eq!(
+                    cold.advance_empty_committed_execution_v1(&execution)
+                        .unwrap(),
+                    head
+                );
+                assert_eq!(
+                    cold.execute_committed_execution(&execution, &command)
+                        .unwrap_err()
+                        .code(),
+                    ConsumptionSettlementErrorCodeV1::StaleVersion
+                );
+                let same_block = harness.execution(10, execution.order_block_id, 10);
+                assert_eq!(
+                    cold.execute_committed_execution(&same_block, &command)
+                        .unwrap_err()
+                        .code(),
+                    ConsumptionSettlementErrorCodeV1::InvalidContext
+                );
+            } else {
+                assert_eq!(
+                    cold.advance_empty_committed_execution_v1(&execution)
+                        .unwrap_err()
+                        .code(),
+                    ConsumptionSettlementErrorCodeV1::Conflict
+                );
+                let replay = cold
+                    .execute_committed_execution(&execution, &command)
+                    .unwrap();
+                assert!(replay.is_replay());
+                assert_eq!(Some(replay.receipt()), receipt.as_ref());
+            }
+            assert_eq!(cold.fresh_readback().unwrap(), head);
+            assert_eq!(cold.state().unwrap(), state);
+            assert_eq!(fs::read(&config.path).unwrap(), bytes);
+            let next = harness.execution(10, execution.order_block_id, 11);
+            let next_head = cold.advance_empty_committed_execution_v1(&next).unwrap();
+            let bytes = fs::read(&config.path).unwrap();
+            let reopened = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+            if let Some(receipt) = receipt {
+                assert_eq!(
+                    reopened.confirm_receipt(&receipt).unwrap().receipt(),
+                    &receipt
+                );
+                let replay = reopened
+                    .execute_committed_execution(&execution, &command)
+                    .unwrap();
+                assert!(replay.is_replay());
+                assert_eq!(replay.receipt(), &receipt);
+            }
+            assert_eq!(
+                reopened
+                    .advance_empty_committed_execution_v1(&execution)
+                    .unwrap_err()
+                    .code(),
+                ConsumptionSettlementErrorCodeV1::StaleVersion
+            );
+            assert_eq!(reopened.fresh_readback().unwrap(), next_head);
+            assert_eq!(reopened.state().unwrap(), state);
+            assert_eq!(fs::read(&config.path).unwrap(), bytes);
+        }
+    }
+
+    #[test]
+    fn concurrent_writers_serialize_exact_retry_and_stale_parent() {
+        for same_operation in [true, false] {
+            let harness = crate::tests::Harness::new();
+            let config = harness.config();
+            let store = ConsumptionSettlementStoreV1::open(config.clone()).unwrap();
+            let before = store.fresh_readback().unwrap();
+            let first_execution =
+                harness.execution(before.order_height(), before.order_block_id(), 10);
+            let mut second_execution = first_execution.clone();
+            if !same_operation {
+                second_execution.order_block_id = Hash32V1([61; 32]);
+            }
+            let first_command = ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.receipt(None, 10, 100),
+            };
+            let second_command = if same_operation {
+                first_command.clone()
+            } else {
+                ConsumptionSettlementCommandV1::AdmitReceipt {
+                    receipt: harness.receipt(None, 10, 101),
+                }
+            };
+            let executions = [first_execution, second_execution];
+            let commands = [first_command, second_command];
+            let previews: Vec<_> = (0..2)
+                .map(|index| {
+                    store
+                        .preview_before_vote_v1(
+                            &before,
+                            10,
+                            executions[index].order_block_id,
+                            std::slice::from_ref(&commands[index]),
+                        )
+                        .unwrap()
+                })
+                .collect();
+            let handles = [
+                ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap(),
+                ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap(),
+            ];
+            let (ready_tx, ready_rx) = std::sync::mpsc::channel();
+            let outcomes = std::thread::scope(|scope| {
+                let mut workers = Vec::new();
+                let mut releases = Vec::new();
+                for (index, handle) in handles.into_iter().enumerate() {
+                    let (release_tx, release_rx) = std::sync::mpsc::channel();
+                    releases.push(release_tx);
+                    let ready = ready_tx.clone();
+                    let execution = &executions[index];
+                    let command = &commands[index];
+                    workers.push(scope.spawn(move || {
+                        WRITER_RENDEZVOUS
+                            .with(|slot| *slot.borrow_mut() = Some((ready, release_rx)));
+                        handle.execute_committed_execution(execution, command)
+                    }));
+                }
+                // Both preflight snapshots are dropped before either writer starts.
+                for _ in 0..2 {
+                    ready_rx
+                        .recv_timeout(Duration::from_secs(10))
+                        .expect("both writer preflights");
+                }
+                for release in releases {
+                    release.send(()).unwrap();
+                }
+                workers
+                    .into_iter()
+                    .map(|worker| worker.join().unwrap())
+                    .collect::<Vec<_>>()
+            });
+            let initial_statuses: Vec<_> = outcomes
+                .iter()
+                .map(|outcome| {
+                    outcome
+                        .as_ref()
+                        .map(|outcome| outcome.is_replay())
+                        .map_err(|error| error.code())
+                })
+                .collect();
+            eprintln!(
+                "same_operation={same_operation}, initial replay statuses={initial_statuses:?}"
+            );
+            if same_operation {
+                assert!(outcomes.iter().all(Result::is_ok), "{outcomes:?}");
+                assert_eq!(
+                    outcomes
+                        .iter()
+                        .filter(|outcome| outcome.as_ref().unwrap().is_replay())
+                        .count(),
+                    1
+                );
+                assert_eq!(
+                    outcomes[0].as_ref().unwrap().receipt(),
+                    outcomes[1].as_ref().unwrap().receipt()
+                );
+            } else {
+                assert_eq!(
+                    outcomes.iter().filter(|outcome| outcome.is_ok()).count(),
+                    1,
+                    "{outcomes:?}"
+                );
+                assert_eq!(
+                    outcomes
+                        .iter()
+                        .filter(|outcome| outcome
+                            .as_ref()
+                            .is_err_and(|error| error.code()
+                                == ConsumptionSettlementErrorCodeV1::StaleVersion))
+                        .count(),
+                    1,
+                    "{outcomes:?}"
+                );
+            }
+            let head = store.fresh_readback().unwrap();
+            let winner = executions
+                .iter()
+                .position(|execution| execution.order_block_id == head.order_block_id())
+                .unwrap();
+            if !same_operation {
+                assert!(!outcomes[winner].as_ref().unwrap().is_replay());
+            }
+            let snapshot = open_read_snapshot(&config.path).unwrap();
+            let (_, _, receipt) =
+                load_operation(&snapshot, operation_id(&commands[winner]).unwrap())
+                    .unwrap()
+                    .unwrap();
+            for outcome in outcomes.iter().filter_map(|outcome| outcome.as_ref().ok()) {
+                assert_eq!(outcome.receipt(), &receipt);
+            }
+            assert_eq!(
+                receipt.post_state_root,
+                previews[winner].candidate_post_state_root()
+            );
+            assert_eq!(head.sequence(), 1);
+            assert_eq!(head.order_block_id(), executions[winner].order_block_id);
+            assert_eq!(head.durable_state_root(), receipt.post_state_root);
+            let state = store.state().unwrap();
+            let rows: u64 = snapshot
+                .query_row("SELECT COUNT(*) FROM operations", [], |row| row.get(0))
+                .unwrap();
+            assert_eq!(rows, 1);
+            drop(snapshot);
+            let bytes = fs::read(&config.path).unwrap();
+            drop(store);
+            let cold = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+            assert_eq!(cold.fresh_readback().unwrap(), head);
+            assert_eq!(cold.state().unwrap(), state);
+            for index in 0..2 {
+                let retry = cold.execute_committed_execution(&executions[index], &commands[index]);
+                if same_operation || index == winner {
+                    let retry = retry.unwrap();
+                    assert!(retry.is_replay());
+                    assert_eq!(retry.receipt(), &receipt);
+                } else {
+                    assert_eq!(
+                        retry.unwrap_err().code(),
+                        ConsumptionSettlementErrorCodeV1::StaleVersion
+                    );
+                }
+            }
+            assert_eq!(cold.fresh_readback().unwrap(), head);
+            assert_eq!(cold.state().unwrap(), state);
+            assert_eq!(fs::read(&config.path).unwrap(), bytes);
+        }
+    }
+
+    #[test]
+    fn preview_rejects_historical_block_id_reuse_without_mutation() {
+        for (with_command, nonempty_history) in [(false, false), (true, false), (false, true)] {
+            let harness = crate::tests::Harness::new();
+            let config = harness.config();
+            let store = ConsumptionSettlementStoreV1::open(config.clone()).unwrap();
+            let anchor = store.fresh_readback().unwrap();
+            let first = harness.execution(anchor.order_height(), anchor.order_block_id(), 10);
+            let first_head = if nonempty_history {
+                store
+                    .execute_committed_execution(
+                        &first,
+                        &ConsumptionSettlementCommandV1::AdmitReceipt {
+                            receipt: harness.receipt(None, 10, 100),
+                        },
+                    )
+                    .unwrap();
+                store.fresh_readback().unwrap()
+            } else {
+                store.advance_empty_committed_execution_v1(&first).unwrap()
+            };
+            let second =
+                harness.execution(first_head.order_height(), first_head.order_block_id(), 11);
+            let before = store.advance_empty_committed_execution_v1(&second).unwrap();
+            let state = store.state().unwrap();
+            let bytes = fs::read(&config.path).unwrap();
+            let commands = if with_command {
+                vec![ConsumptionSettlementCommandV1::AdmitReceipt {
+                    receipt: harness.receipt(None, 12, 100),
+                }]
+            } else {
+                Vec::new()
+            };
+            for reused_id in [anchor.order_block_id(), first_head.order_block_id()] {
+                let preview = store.preview_before_vote_v1(&before, 12, reused_id, &commands);
+                let mut execution = harness.execution(11, before.order_block_id(), 12);
+                execution.order_block_id = reused_id;
+                if with_command {
+                    assert!(store
+                        .execute_committed_execution(&execution, &commands[0])
+                        .is_err());
+                } else {
+                    assert!(store
+                        .advance_empty_committed_execution_v1(&execution)
+                        .is_err());
+                }
+                assert_eq!(store.fresh_readback().unwrap(), before);
+                assert_eq!(store.state().unwrap(), state);
+                assert_eq!(fs::read(&config.path).unwrap(), bytes);
+                let reopened = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+                assert_eq!(reopened.fresh_readback().unwrap(), before);
+                assert_eq!(reopened.state().unwrap(), state);
+                assert_eq!(
+                    preview
+                        .expect_err("preview cannot propose an already recorded block ID")
+                        .code(),
+                    ConsumptionSettlementErrorCodeV1::InvalidContext
+                );
+                assert_eq!(
+                    reopened
+                        .preview_before_vote_v1(&before, 12, reused_id, &commands)
+                        .unwrap_err()
+                        .code(),
+                    ConsumptionSettlementErrorCodeV1::InvalidContext
+                );
+                assert_eq!(fs::read(&config.path).unwrap(), bytes);
+            }
+            let valid = harness.execution(11, before.order_block_id(), 12);
+            let preview = store
+                .preview_before_vote_v1(&before, 12, valid.order_block_id, &commands)
+                .unwrap();
+            if with_command {
+                let committed = store
+                    .execute_committed_execution(&valid, &commands[0])
+                    .unwrap();
+                assert_eq!(
+                    committed.receipt().post_state_root,
+                    preview.candidate_post_state_root()
+                );
+            } else {
+                let committed = store.advance_empty_committed_execution_v1(&valid).unwrap();
+                assert_eq!(
+                    committed.durable_state_root(),
+                    preview.candidate_post_state_root()
+                );
+            }
+            ConsumptionSettlementStoreV1::open_existing(config).unwrap();
+        }
+    }
+
+    #[test]
+    fn legacy_zero_block_successor_reopens_and_replays_without_repair() {
+        for empty in [true, false] {
+            let harness = crate::tests::Harness::new();
+            let config = harness.config();
+            let store = ConsumptionSettlementStoreV1::open(config.clone()).unwrap();
+            let before = store.fresh_readback().unwrap();
+            let source = store.state().unwrap();
+            let mut execution = harness.execution(9, before.order_block_id(), 10);
+            execution.order_block_id = Hash32V1([0; 32]);
+            let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.receipt(None, 10, 100),
+            };
+            drop(store);
+
+            // Reproduce the prior implementation's canonical durable history
+            // with unchanged row/checksum writers, bypassing only new admission.
+            // No production API creates or repairs this historical fixture.
+            let mut connection = open_rw(&config.path, false).unwrap();
+            let transaction = connection
+                .transaction_with_behavior(TransactionBehavior::Immediate)
+                .unwrap();
+            let (state, receipt) = if empty {
+                (source, None)
+            } else {
+                let (state, settlement_id) =
+                    apply_transition(&config.trust_bundle, &source, 10, &command).unwrap();
+                let receipt = ConsumptionTransitionReceiptV1 {
+                    schema_version: SCHEMA_VERSION_V1,
+                    store_id: config.store_id,
+                    sequence: 1,
+                    operation_id: operation_id(&command).unwrap(),
+                    operation_kind: command.operation_kind(),
+                    order_height: execution.order_height,
+                    order_block_id: execution.order_block_id,
+                    post_state_root: state_root(&state).unwrap(),
+                    settlement_id,
+                };
+                insert_operation(
+                    &transaction,
+                    1,
+                    receipt.operation_id,
+                    &canonical_bytes(&execution).unwrap(),
+                    &canonical_bytes(&command).unwrap(),
+                    &receipt,
+                )
+                .unwrap();
+                (state, Some(receipt))
+            };
+            let sequence = u64::from(!empty);
+            let journal_root = operation_journal_root(&transaction).unwrap();
+            insert_committed_block_marker(
+                &transaction,
+                &config,
+                CommittedBlockMarkerV1 {
+                    marker_sequence: 1,
+                    order_height: 10,
+                    order_block_id: execution.order_block_id,
+                    parent_order_height: before.order_height(),
+                    parent_order_block_id: before.order_block_id(),
+                    source_operation_sequence: 0,
+                    target_operation_sequence: sequence,
+                    source_state_root: before.durable_state_root(),
+                    target_state_root: state_root(&state).unwrap(),
+                    source_operation_root: before.durable_journal_root(),
+                    target_operation_root: journal_root,
+                    previous_marker_checksum: before.durable_committed_block_root(),
+                    checksum: Hash32V1([0; 32]),
+                },
+            )
+            .unwrap();
+            write_metadata(
+                &transaction,
+                &config,
+                sequence,
+                10,
+                execution.order_block_id,
+                &state,
+                journal_root,
+                false,
+            )
+            .unwrap();
+            transaction.commit().unwrap();
+            drop(connection);
+
+            let bytes = fs::read(&config.path).unwrap();
+            let mut expected_head = None;
+            for _ in 0..2 {
+                let reopened = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+                let head = reopened.fresh_readback().unwrap();
+                assert_eq!(head.order_block_id(), Hash32V1([0; 32]));
+                assert_eq!(head.sequence(), sequence);
+                assert_eq!(reopened.state().unwrap(), state);
+                if let Some(expected) = &expected_head {
+                    assert_eq!(&head, expected);
+                }
+                if empty {
+                    assert_eq!(
+                        reopened
+                            .advance_empty_committed_execution_v1(&execution)
+                            .unwrap(),
+                        head
+                    );
+                } else {
+                    let replay = reopened
+                        .execute_committed_execution(&execution, &command)
+                        .unwrap();
+                    assert!(replay.is_replay());
+                    assert_eq!(Some(replay.receipt()), receipt.as_ref());
+                }
+                expected_head = Some(head);
+                assert_eq!(fs::read(&config.path).unwrap(), bytes);
+            }
+            if !empty {
+                // A historical nonempty block may still receive its ordinary
+                // same-block extension; only a new successor is newly refused.
+                let reopened = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+                let same_block = ConsumptionCommittedExecutionContextV1 {
+                    expected_order_height: execution.order_height,
+                    expected_order_block_id: execution.order_block_id,
+                    ..execution.clone()
+                };
+                let rollup = ConsumptionSettlementCommandV1::AdmitRollup {
+                    rollup: harness.rollup(&state, 10),
+                    receipts: state
+                        .receipts
+                        .iter()
+                        .map(|entry| entry.receipt.clone())
+                        .collect(),
+                };
+                let outcome = reopened
+                    .execute_committed_execution(&same_block, &rollup)
+                    .unwrap();
+                assert!(!outcome.is_replay());
+                let extended = reopened.fresh_readback().unwrap();
+                assert_eq!(extended.sequence(), 2);
+                assert_eq!(extended.order_block_id(), execution.order_block_id);
+                drop(reopened);
+                let cold = ConsumptionSettlementStoreV1::open_existing(config.clone()).unwrap();
+                assert_eq!(cold.fresh_readback().unwrap(), extended);
+                let retry = cold
+                    .execute_committed_execution(&same_block, &rollup)
+                    .unwrap();
+                assert!(retry.is_replay());
+                assert_eq!(retry.receipt(), outcome.receipt());
+            }
+        }
+    }
+
+    #[test]
+    fn read_only_uri_preserves_path_escapes_without_authority() {
+        for (path, expected) in [
+            ("relative.sqlite", "file:relative.sqlite?mode=ro"),
+            ("/tmp/store.sqlite", "file:/tmp/store.sqlite?mode=ro"),
+            ("//tmp/store.sqlite", "file:/%2Ftmp/store.sqlite?mode=ro"),
+            ("///tmp/store.sqlite", "file:/%2F/tmp/store.sqlite?mode=ro"),
+            (
+                "//tmp/store ?#%+:é.sqlite",
+                "file:/%2Ftmp/store%20%3F%23%25%2B%3A%C3%A9.sqlite?mode=ro",
+            ),
+        ] {
+            assert_eq!(read_only_store_uri(Path::new(path)), expected);
+        }
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn leading_double_slash_path_remains_readable_after_create_and_commit() {
+        use std::os::unix::ffi::OsStringExt;
+
+        for leading_slashes in [1, 2, 3] {
+            for filename in [
+                b"store.sqlite".as_slice(),
+                "store ?#%+:é.sqlite".as_bytes(),
+                b"store ?#%+:\xff.sqlite".as_slice(),
+                b"store?mode=rwc&immutable=1#%2F.sqlite".as_slice(),
+            ] {
+                let harness = crate::tests::Harness::new();
+                let mut config = harness.config();
+                config
+                    .path
+                    .set_file_name(OsString::from_vec(filename.to_vec()));
+                let ordinary_config = config.clone();
+                // Linux resolves these spellings to the same regular file.
+                // Keep raw path bytes: lossy text conversion is not equivalent.
+                let mut spelling = OsString::from("/".repeat(leading_slashes - 1));
+                spelling.push(&config.path);
+                config.path = PathBuf::from(spelling);
+                let store = ConsumptionSettlementStoreV1::open(config.clone())
+                    .expect("create and read back a valid double-slash pathname");
+                assert_eq!(
+                    fs::canonicalize(&config.path).unwrap(),
+                    fs::canonicalize(&ordinary_config.path).unwrap()
+                );
+                let before = store.fresh_readback().unwrap();
+                let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+                    receipt: harness.receipt(None, 10, 100),
+                };
+                let execution = harness.execution(9, before.order_block_id(), 10);
+                let preview = store
+                    .preview_before_vote_v1(
+                        &before,
+                        10,
+                        execution.order_block_id,
+                        std::slice::from_ref(&command),
+                    )
+                    .unwrap();
+                let outcome = store
+                    .execute_committed_execution(&execution, &command)
+                    .unwrap();
+                assert_eq!(
+                    outcome.receipt().post_state_root,
+                    preview.candidate_post_state_root()
+                );
+                let state = store.state().unwrap();
+                let head = store.fresh_readback().unwrap();
+                let bytes = fs::read(&ordinary_config.path).unwrap();
+                drop(store);
+                let cold = ConsumptionSettlementStoreV1::open_existing(config).unwrap();
+                assert_eq!(cold.state().unwrap(), state);
+                assert_eq!(cold.fresh_readback().unwrap(), head);
+                let replay = cold
+                    .execute_committed_execution(&execution, &command)
+                    .unwrap();
+                assert!(replay.is_replay());
+                assert_eq!(replay.receipt(), outcome.receipt());
+                assert_eq!(fs::read(&ordinary_config.path).unwrap(), bytes);
+                let snapshot = open_read_snapshot(&cold.config.path).unwrap();
+                for statement in [
+                    "CREATE TABLE must_stay_absent(value INTEGER)",
+                    "UPDATE metadata SET fenced = fenced",
+                ] {
+                    assert!(matches!(snapshot.execute_batch(statement),
+                        Err(rusqlite::Error::SqliteFailure(error, _))
+                            if error.code == rusqlite::ErrorCode::ReadOnly));
+                }
+                drop(snapshot);
+                assert_eq!(fs::read(&ordinary_config.path).unwrap(), bytes);
+                let entries: Vec<_> = fs::read_dir(ordinary_config.path.parent().unwrap())
+                    .unwrap()
+                    .map(|entry| entry.unwrap().file_name())
+                    .collect();
+                assert_eq!(
+                    entries,
+                    vec![ordinary_config.path.file_name().unwrap().to_os_string()]
+                );
+                let ordinary =
+                    ConsumptionSettlementStoreV1::open_existing(ordinary_config).unwrap();
+                assert_eq!(ordinary.fresh_readback().unwrap(), head);
+                assert_eq!(ordinary.state().unwrap(), state);
+            }
+        }
+    }
+
+    #[test]
+    fn invalid_fresh_height_preserves_missing_path_and_corrected_retry() {
+        let harness = crate::tests::Harness::new();
+        let mut config = harness.config();
+        config.path = config
+            .path
+            .parent()
+            .unwrap()
+            .join("missing/nested/store.sqlite");
+        let missing_parent = config.path.parent().unwrap().to_path_buf();
+        config.trust_bundle.initial_order_height = i64::MAX as u64 + 1;
+        assert_eq!(
+            ConsumptionSettlementStoreV1::open(config.clone())
+                .expect_err("unrepresentable initial height")
+                .code(),
+            ConsumptionSettlementErrorCodeV1::ArithmeticOverflow
+        );
+        let path_created = config.path.exists();
+        let parent_created = missing_parent.exists();
+        config.trust_bundle.initial_order_height = i64::MAX as u64;
+        let corrected = ConsumptionSettlementStoreV1::open(config.clone());
+        assert!(
+            !path_created && !parent_created && corrected.is_ok(),
+            "invalid initialization created file={path_created}, parent={parent_created}; corrected retry={corrected:?}"
+        );
+        let store = corrected.expect("corrected retry");
+        assert_eq!(
+            store.fresh_readback().unwrap().order_height(),
+            i64::MAX as u64
+        );
+        drop(store);
+        ConsumptionSettlementStoreV1::open_existing(config).expect("cold reopen at maximum height");
+    }
+
+    #[test]
+    fn maximum_fresh_height_is_representable() {
+        let harness = crate::tests::Harness::new();
+        let mut config = harness.config();
+        config.trust_bundle.initial_order_height = i64::MAX as u64;
+        let store =
+            ConsumptionSettlementStoreV1::open(config.clone()).expect("maximum initial height");
+        assert_eq!(
+            store.fresh_readback().unwrap().order_height(),
+            i64::MAX as u64
+        );
+        drop(store);
+        ConsumptionSettlementStoreV1::open_existing(config).expect("cold reopen maximum height");
+    }
+
+    #[test]
+    fn legacy_unfinishable_rollup_journal_reopens_and_replays_without_repair() {
+        for close_height in [i64::MAX as u64, i64::MAX as u64 + 1, u64::MAX] {
+            let mut harness = crate::tests::Harness::new();
+            harness
+                .trust
+                .settlement_policy
+                .minimum_rollup_challenge_blocks = close_height - 11;
+            let config = harness.config();
+            let store = ConsumptionSettlementStoreV1::open(config.clone()).expect("fresh fixture");
+            let first_execution =
+                harness.execution(9, config.trust_bundle.initial_order_block_id, 10);
+            store
+                .execute_committed_execution(
+                    &first_execution,
+                    &ConsumptionSettlementCommandV1::AdmitReceipt {
+                        receipt: harness.receipt(None, 10, 100),
+                    },
+                )
+                .expect("ordinary receipt");
+            let source = store.state().expect("source state");
+            let before = store.fresh_readback().expect("source head");
+            let execution = harness.execution(10, first_execution.order_block_id, 11);
+            let command = ConsumptionSettlementCommandV1::AdmitRollup {
+                rollup: harness.rollup(&source, 11),
+                receipts: source
+                    .receipts
+                    .iter()
+                    .map(|item| item.receipt.clone())
+                    .collect(),
+            };
+            assert_eq!(
+                store
+                    .execute_committed_execution(&execution, &command)
+                    .expect_err("new unfinishable rollup is rejected")
+                    .code(),
+                ConsumptionSettlementErrorCodeV1::ArithmeticOverflow
+            );
+            assert_eq!(
+                store.fresh_readback().expect("rejection preserves head"),
+                before
+            );
+            drop(store);
+
+            // Reproduce the preceding implementation's durable bytes, using its
+            // generic transition and unchanged canonical/checksum/journal writers.
+            // This fixture path exists only in cfg(test), never in admission.
+            let (legacy_state, settlement_id) =
+                apply_transition(&config.trust_bundle, &source, 11, &command)
+                    .expect("legacy generic transition");
+            assert_eq!(
+                legacy_state
+                    .rollup
+                    .as_ref()
+                    .expect("legacy rollup")
+                    .challenge_close_height,
+                close_height
+            );
+            let id = operation_id(&command).expect("legacy operation ID");
+            let receipt = ConsumptionTransitionReceiptV1 {
+                schema_version: SCHEMA_VERSION_V1,
+                store_id: config.store_id,
+                sequence: before.sequence() + 1,
+                operation_id: id,
+                operation_kind: command.operation_kind(),
+                order_height: execution.order_height,
+                order_block_id: execution.order_block_id,
+                post_state_root: state_root(&legacy_state).expect("legacy state root"),
+                settlement_id,
+            };
+            let mut connection = open_rw(&config.path, false).expect("fixture writer");
+            let transaction = connection
+                .transaction_with_behavior(TransactionBehavior::Immediate)
+                .expect("fixture transaction");
+            insert_operation(
+                &transaction,
+                receipt.sequence,
+                id,
+                &canonical_bytes(&execution).expect("execution bytes"),
+                &canonical_bytes(&command).expect("command bytes"),
+                &receipt,
+            )
+            .expect("legacy journal row");
+            let target_journal = operation_journal_root(&transaction).expect("legacy journal root");
+            advance_committed_block_marker(
+                &transaction,
+                &config,
+                &execution,
+                before.sequence(),
+                receipt.sequence,
+                before.durable_state_root(),
+                receipt.post_state_root,
+                before.durable_journal_root(),
+                target_journal,
+            )
+            .expect("legacy block marker");
+            write_metadata(
+                &transaction,
+                &config,
+                receipt.sequence,
+                execution.order_height,
+                execution.order_block_id,
+                &legacy_state,
+                target_journal,
+                false,
+            )
+            .expect("legacy metadata");
+            transaction.commit().expect("persist legacy fixture");
+            drop(connection);
+            let original_bytes = fs::read(&config.path).expect("persisted legacy bytes");
+
+            let reopened = ConsumptionSettlementStoreV1::open_existing(config.clone())
+                .expect("legacy journal passes cold schema and replay audit");
+            let legacy_head = reopened.fresh_readback().expect("legacy head");
+            assert_eq!(legacy_head.sequence(), receipt.sequence);
+            assert_eq!(legacy_head.durable_state_root(), receipt.post_state_root);
+            assert_eq!(legacy_head.durable_journal_root(), target_journal);
+            assert_eq!(reopened.state().expect("legacy state"), legacy_state);
+            let replay = reopened
+                .execute_committed_execution(&execution, &command)
+                .expect("exact historical retry bypasses new-admission guard");
+            assert!(replay.is_replay());
+            assert_eq!(replay.receipt(), &receipt);
+            assert_eq!(
+                reopened.fresh_readback().expect("replay preserves head"),
+                legacy_head
+            );
+            assert_eq!(
+                reopened.state().expect("replay preserves state"),
+                legacy_state
+            );
+            // Readability is not repair: maturity still cannot fit this backend.
+            assert!(
+                legacy_state.rollup.as_ref().unwrap().challenge_close_height >= i64::MAX as u64
+            );
+            assert!(legacy_state.settlement.is_none());
+            drop(reopened);
+            assert_eq!(
+                fs::read(&config.path).expect("unchanged legacy bytes"),
+                original_bytes
+            );
+            reject_sidecars(&config.path).expect("no leftover sidecars");
+            ConsumptionSettlementStoreV1::open_existing(config).expect("repeat cold reopen");
+        }
+    }
+
+    #[test]
+    fn preview_sqlite_sequence_bounds_cover_empty_and_multi_command_batches() {
+        let maximum = i64::MAX as u64;
+        for (source, count) in [(maximum, 0), (maximum - 1, 1), (maximum - 2, 2)] {
+            validate_preview_sqlite_bounds(maximum, source, count)
+                .expect("last representable target sequence");
+        }
+        for (source, count) in [(maximum, 1), (maximum - 1, 2), (u64::MAX, 1)] {
+            assert_eq!(
+                validate_preview_sqlite_bounds(maximum, source, count)
+                    .expect_err("unrepresentable target sequence")
+                    .code(),
+                ConsumptionSettlementErrorCodeV1::ArithmeticOverflow
+            );
+        }
+    }
+
+    #[test]
+    fn wal_header_is_rejected_without_creating_sidecars() {
+        let harness = crate::tests::Harness::new();
+        let config = harness.config();
+        drop(ConsumptionSettlementStoreV1::open(config.clone()).expect("create store"));
+        let connection = open_rw(&config.path, false).expect("fixture writer");
+        let mode: String = connection
+            .query_row("PRAGMA journal_mode=WAL", [], |row| row.get(0))
+            .expect("create WAL-mode fixture");
+        assert_eq!(mode, "wal");
+        connection
+            .execute_batch("PRAGMA wal_checkpoint(TRUNCATE)")
+            .expect("checkpoint fixture");
+        drop(connection);
+        reject_sidecars(&config.path).expect("closed WAL fixture has no sidecars");
+        let before = fs::read(&config.path).expect("fixture bytes");
+        assert_eq!((before[18], before[19]), (2, 2));
+        assert_eq!(
+            ConsumptionSettlementStoreV1::open_existing(config.clone())
+                .expect_err("WAL format unsupported")
+                .code(),
+            ConsumptionSettlementErrorCodeV1::SchemaMismatch
+        );
+        assert_eq!(
+            ConsumptionSettlementStoreV1::open(config.clone())
+                .expect_err("ordinary reopen also rejects WAL")
+                .code(),
+            ConsumptionSettlementErrorCodeV1::SchemaMismatch
+        );
+        assert_eq!(fs::read(&config.path).expect("unchanged fixture"), before);
+        reject_sidecars(&config.path).expect("rejected reads did not create sidecars");
+    }
+
+    #[test]
+    fn read_snapshot_blocks_fence_commit_until_release() {
+        let harness = crate::tests::Harness::new();
+        let config = harness.config();
+        let store = ConsumptionSettlementStoreV1::open(config.clone()).expect("create store");
+        let reader = open_read_snapshot(&config.path).expect("read snapshot");
+        verify_schema(&reader).expect("snapshot schema");
+        audit(&reader, &config).expect("snapshot audit");
+        let (sequence, height, block, state, journal, fenced) =
+            load_metadata(&reader, &config).expect("snapshot metadata");
+        assert!(!fenced);
+
+        let writer = open_rw(&config.path, false).expect("second connection");
+        writer
+            .busy_timeout(Duration::ZERO)
+            .expect("nonblocking commit");
+        writer
+            .execute_batch("BEGIN IMMEDIATE")
+            .expect("writer transaction");
+        write_metadata(
+            &writer, &config, sequence, height, block, &state, journal, true,
+        )
+        .expect("stage valid permanent fence");
+        let error = writer
+            .execute_batch("COMMIT")
+            .expect_err("reader must block commit");
+        assert_eq!(
+            error.sqlite_error_code(),
+            Some(rusqlite::ErrorCode::DatabaseBusy)
+        );
+        audit(&reader, &config).expect("old snapshot remains coherent");
+        assert_eq!(
+            load_metadata(&reader, &config).expect("same snapshot"),
+            (sequence, height, block, state, journal, false)
+        );
+        drop(reader);
+        writer
+            .execute_batch("COMMIT")
+            .expect("commit after reader release");
+        drop(writer);
+        reject_sidecars(&config.path).expect("no sidecars after commit");
+        assert_eq!(
+            store
+                .fresh_readback()
+                .expect_err("fresh read sees fence")
+                .code(),
+            ConsumptionSettlementErrorCodeV1::ThirdStateFenced
+        );
+        assert_eq!(
+            ConsumptionSettlementStoreV1::open_existing(config)
+                .expect_err("cold reopen sees fence")
+                .code(),
+            ConsumptionSettlementErrorCodeV1::ThirdStateFenced
+        );
+    }
 }

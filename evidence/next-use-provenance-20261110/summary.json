@@ -1,0 +1,24 @@
+{
+  "schema": "trnm-next-use-provenance-validation-v1",
+  "source_commit": "09d7fe450216f2972a4a6621eeb52a9ed01e121e",
+  "source_tree": "3c6a4fc391599e766a653511619e624607240e78",
+  "parent": "675cdfc114a00e8a971f4f229528f71973d52d73",
+  "selected_source_sha256": {
+    "docs/development/CELL_LEARNING_BUSINESS_READBACK_V1.md": "b52af5624e8ec2f3f5fd2d04b54f63a4a3a9d937929800ac36b0a22759a74608",
+    "scripts/cell_learning_business_join.py": "9cd2c059e574bbf6a45a7825578f332a58a556cec704759749e5bb2d6715fd9d",
+    "scripts/ci/run_cell_learning_business_readback.py": "5aac9e94162e97da83c8e94e80f4a1b36004196ac5ccc5d98c4d639448d58e03",
+    "scripts/test_cell_learning_business_join.py": "9968c970da6b1790140a2718c3feaf33d3898181ec834a836dba71833a72c6b6"
+  },
+  "python_control_methods": 127,
+  "original_material_readbacks": 2,
+  "source_integrity_control_exit": 0,
+  "full_tracked_worktree_verified": false,
+  "checkout_scope": "sparse",
+  "new_training_performed": false,
+  "external_payment_performed": false,
+  "independent_consumer_verified": false,
+  "old_scratch_raw_artifacts_recovered": false,
+  "authority": "DENY_ALL",
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO"
+}

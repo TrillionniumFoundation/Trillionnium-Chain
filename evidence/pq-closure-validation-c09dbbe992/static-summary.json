@@ -1,0 +1,196 @@
+{
+  "cargo_static_command_names": [
+    "preflight",
+    "metadata-default",
+    "metadata-all-features",
+    "metadata-fuzz",
+    "format"
+  ],
+  "initial_run_original_terminal_status": "unknown preserved; nine completed suites counted only",
+  "native_status_at_static_packaging": "pending_separate_raw_archive_not_included",
+  "packaged_at_utc": "2026-11-11T04:15:30.785451+00:00",
+  "raw_archive": {
+    "bytes": 574216,
+    "path": "static-raw-c09dbbe992.tar.xz",
+    "sha256": "0e84878ae27b3c1895eada4cd72105326ac89fe10b9d3608dc90139ba53f4b36"
+  },
+  "resume_run": "separate recovery execution; all 18 selected commands complete; first nine suites not repeated",
+  "schema": "TRNM-C1-STATIC-VALIDATION-PACKAGE1",
+  "source_qualification": "These observations validate selected C1 static controls only; they are not C2 execution or a whole-chain PQ qualification.",
+  "status": "SELECTED_STATIC_VALIDATION_COMPLETE_NATIVE_SEPARATE",
+  "verification_did_not_execute_tests_or_native_workloads": true,
+  "verified_observations": {
+    "cargo_static_commands_passed": 5,
+    "completed_outer_suite_tests": 474,
+    "hosted_ci_results_in_this_static_package": false,
+    "initial_completed_outer_tests": 204,
+    "initial_completed_suite_count": 9,
+    "initial_integration_terminal_state": "unknown_no_receipt",
+    "initial_progress_dots_excluded": 18,
+    "native_results_in_this_static_package": false,
+    "production_activation": false,
+    "qrom_current": 14,
+    "qrom_historical": 8,
+    "qrom_named": 81,
+    "qrom_suites": [
+      {
+        "module": "test_w1_control_tree_audit",
+        "success_ids": [
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_aligned_sponge_matches_upstream_interpreter_golden",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_altered_final_join_is_refused_even_in_matching_catalogs",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_bundle_duplicate_source_record_is_refused",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_bundle_relabelled_mutation_cannot_repin_source",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_canonical_field_boundary_is_preserved",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_catalog_recomputation_does_not_certify_semantics_or_qrom",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_catalog_tree_matches_fixed_sdk_root",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_cli_never_overwrites_existing_evidence",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_constants_parser_rejects_expressions_and_noncanonical_values",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_duplicate_control_id_is_refused",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_inclusion_path_reproduces_tree_root",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_length_extension_caveat_is_visible_in_unpadded_hash",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_missing_and_added_program_are_refused",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_montgomery_decoding_is_not_ordinary_integer_encoding",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_named_catalog_disagreement_is_refused",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_noncanonical_leaf_and_sibling_are_refused_before_hashing",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_only_join_is_a_different_control_root",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_out_of_range_and_boolean_path_indices_are_refused",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_partial_control_parser_does_not_ignore_malformed_entry",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_permutation_matches_upstream_known_answer",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_program_reordering_is_refused_and_changes_root",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_sdk_catalog_is_not_the_default_allowlist",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_short_and_long_paths_are_refused",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_source_mutation_and_missing_source_fail_closed",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_tree_rejects_256_leaves_like_sdk_constructor",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_unaligned_sponge_matches_upstream_interpreter_golden",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_unknown_same_size_program_roster_is_refused",
+          "test_w1_control_tree_audit.ControlTreeAuditTests.test_wrong_index_or_path_reproduces_a_different_root"
+        ],
+        "tests_run": 28
+      },
+      {
+        "module": "test_w1_qrom_conditional_budget",
+        "success_ids": [
+          "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_256_is_only_an_explicit_hypothetical_width_and_can_fail_budget",
+          "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_bool_float_and_malformed_fractions_are_rejected",
+          "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_cli_deep_json_below_byte_limit_returns_structured_rejection",
+          "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_cli_exact_input_round_trip_and_duplicate_or_nonfinite_rejection",
+          "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_domain_and_query_mass_inconsistencies_are_rejected",
+          "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_exact_threshold_and_one_rational_step_above_it",
+          "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_expression_floor_distinguishes_impossible_and_zero_allowance",
+          "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_fractional_mass_and_expression_above_one_are_not_rounded_or_clamped",
+          "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_input_cannot_override_qualification_or_request_project_certification",
+          "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_merkle_components_are_distinct_and_exact",
+          "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_no_inputs_remain_unknown_without_classical_or_width_defaults",
+          "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_passing_every_component_never_qualifies_a_project",
+          "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_unknown_factor_is_not_zero_or_silently_replaced_by_t"
+        ],
+        "tests_run": 13
+      },
+      {
+        "module": "test_w1_qrom_implementation_audit",
+        "success_ids": [
+          "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_actual_saved_v2_mapping_keeps_all_security_claims_unqualified",
+          "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_changed_audit_helper_is_refused_before_execution",
+          "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_changed_native_source_is_refused_before_mapping",
+          "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_changed_seal_word_is_rejected_by_full_artifact_identity",
+          "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_changed_source_snapshot_is_refused",
+          "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_contract_cannot_promote_unknown_quantum_budget_or_qualification",
+          "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_control_index_high_bits_are_refused",
+          "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_duplicate_keys_and_nonfinite_numbers_are_refused",
+          "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_existing_output_is_not_replaced",
+          "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_external_commitment_substitution_is_refused",
+          "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_false_historical_guest_identity_is_refused",
+          "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_fixed_receipt_trailing_data_is_refused",
+          "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_fri_schedule_does_not_treat_boolean_as_po2",
+          "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_import_cache_and_search_path_cannot_replace_checked_helper_bytes",
+          "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_inner_and_outer_parameter_fields_are_separate_controls",
+          "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_parent_directory_symlink_is_refused",
+          "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_raw_po2_must_not_be_montgomery_decoded",
+          "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_real_control_inclusion_sibling_change_is_refused",
+          "test_w1_qrom_implementation_audit.ImplementationAuditTests.test_zero_seal_and_foreign_receipt_kind_are_refused"
+        ],
+        "tests_run": 19
+      },
+      {
+        "module": "test_w1_fri_transcript_audit",
+        "success_ids": [
+          "test_w1_fri_transcript_audit.FriTranscriptAuditTests.test_actual_saved_seal_geometry_and_security_boundary",
+          "test_w1_fri_transcript_audit.FriTranscriptAuditTests.test_canonical_value_change_does_not_become_a_proof_verification",
+          "test_w1_fri_transcript_audit.FriTranscriptAuditTests.test_changed_declared_seal_length_cannot_hide_in_outer_suffix",
+          "test_w1_fri_transcript_audit.FriTranscriptAuditTests.test_missing_or_changed_upstream_source_is_refused",
+          "test_w1_fri_transcript_audit.FriTranscriptAuditTests.test_noncanonical_words_in_cap_coefficients_and_last_opening_are_refused",
+          "test_w1_fri_transcript_audit.FriTranscriptAuditTests.test_raw_po2_scope_does_not_confuse_lift_limit_with_seal_acceptance",
+          "test_w1_fri_transcript_audit.FriTranscriptAuditTests.test_truncated_u_coefficient_section_and_trailing_word_are_refused"
+        ],
+        "tests_run": 7
+      },
+      {
+        "module": "test_w1_qrom_workflow_gate",
+        "success_ids": [
+          "test_w1_qrom_workflow_gate.WorkflowGateTests.test_actual_unknown_and_hypothetical_reports_pass_the_scope_gate",
+          "test_w1_qrom_workflow_gate.WorkflowGateTests.test_hypothetical_report_rejects_inexact_fraction_input",
+          "test_w1_qrom_workflow_gate.WorkflowGateTests.test_hypothetical_report_rejects_wrong_fractions_and_numeric_booleans",
+          "test_w1_qrom_workflow_gate.WorkflowGateTests.test_hypothetical_report_requires_nonnull_component_results",
+          "test_w1_qrom_workflow_gate.WorkflowGateTests.test_named_import_system_exit_zero_is_rejected",
+          "test_w1_qrom_workflow_gate.WorkflowGateTests.test_named_load_tests_system_exit_zero_is_rejected",
+          "test_w1_qrom_workflow_gate.WorkflowGateTests.test_named_missing_duplicate_and_skipped_controls_are_rejected",
+          "test_w1_qrom_workflow_gate.WorkflowGateTests.test_named_roster_executes_exactly_once_without_recursing_into_real_suites",
+          "test_w1_qrom_workflow_gate.WorkflowGateTests.test_report_scope_rejects_qualification_escalation_and_false_as_zero",
+          "test_w1_qrom_workflow_gate.WorkflowGateTests.test_status_independently_rechecks_named_ids_and_boolean_scope",
+          "test_w1_qrom_workflow_gate.WorkflowGateTests.test_status_rejects_exit_zero_without_named_completion",
+          "test_w1_qrom_workflow_gate.WorkflowGateTests.test_status_requires_every_step_outcome_and_conclusion",
+          "test_w1_qrom_workflow_gate.WorkflowGateTests.test_unknown_report_cannot_infer_derived_values_or_comparisons",
+          "test_w1_qrom_workflow_gate.WorkflowGateTests.test_unknown_report_requires_all_input_and_component_names"
+        ],
+        "tests_run": 14
+      },
+      {
+        "module": "test_w1_qrom_historical_fixture",
+        "success_ids": [
+          "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_cli_publishes_three_separate_scopes_and_never_overwrites",
+          "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_exact_real_historical_mapping_keeps_current_tree_unqualified",
+          "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_git_replace_cannot_substitute_the_historical_object",
+          "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_git_symlink_entry_is_refused_even_with_matching_bytes",
+          "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_historical_blob_ignores_changed_worktree_and_new_head",
+          "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_missing_commit_never_falls_back_to_present_worktree",
+          "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_original_reader_acceptance_is_not_a_current_refusal",
+          "test_w1_qrom_historical_fixture.HistoricalFixtureTests.test_wrong_size_digest_path_and_commit_type_are_refused"
+        ],
+        "tests_run": 8
+      },
+      {
+        "module": "test_w1_qrom_current_implementation_audit",
+        "success_ids": [
+          "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_all_lifetime_and_cryptographic_obligations_remain_unknown",
+          "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_all_six_local_crates_and_literal_inputs_are_bound",
+          "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_cli_report_is_created_once_and_never_replaces_prior_evidence",
+          "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_contract_edit_cannot_relabel_unreviewed_source",
+          "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_current_mapping_reaches_the_original_complete_saved_fixture",
+          "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_fixed_parameters_and_fri_mapping_are_preserved",
+          "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_historical_reader_bytes_are_preserved",
+          "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_included_work_profile_change_requires_review",
+          "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_local_path_manifest_change_requires_review",
+          "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_missing_funded_source_is_refused",
+          "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_new_local_build_script_requires_review",
+          "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_old_contract_and_its_failure_remain_visible",
+          "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_project_input_digests_are_the_reviewed_values",
+          "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_unlisted_rust_file_is_not_silently_accepted"
+        ],
+        "tests_run": 14
+      }
+    ],
+    "qrom_unique_observed_success_ids": 103,
+    "resume_completed_commands": 18,
+    "resume_completed_outer_tests": 270,
+    "resume_completed_suites": 4,
+    "retained_snapshot_sha256": "81966162e2ae881348ae09cb94879b8b705fd309fba1d79b1d30aeb86f676b1f",
+    "same_uninterrupted_run_claimed": false,
+    "skipped_controls_counted": 0,
+    "source": {
+      "commit": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50",
+      "tree": "f15a7ee4a0f5455eaf965db01dcd49e02a5f22b6"
+    },
+    "top_level_python_controls": 577,
+    "whole_chain_pq_qualified": false
+  }
+}

@@ -810,14 +810,18 @@ where
         let mut cycles = 0;
         let mut next = started;
         let mut rpc = |index: usize, request: &Request| {
-            public_v3::call_public_protected_v3(
+            // Every dial and all client phases share this poller's original
+            // absolute end, including retries after a transport failure.
+            public_v3::call_public_protected_v3_with_deadline(
                 cfg.peers[index].address,
                 request,
                 &settings,
                 &cfg.peers[index].server_public,
                 &caller,
                 policy,
+                Some(end),
             )
+            .0
         };
         let poll_context = PollContext {
             node: &node,
@@ -1599,6 +1603,90 @@ mod tests {
             .unwrap();
         assert_eq!(engine.states[0].failures, 2);
         assert_eq!(observed, 2);
+    }
+
+    #[test]
+    fn polling_transport_retries_share_original_end_and_release_stalled_socket() {
+        use std::{io::ErrorKind, net::TcpListener};
+
+        let settings = Settings::development(Some(1)).unwrap();
+        let dir = tempfile::tempdir().unwrap();
+        let node = Arc::new(Mutex::new(
+            Node::open(dir.path(), settings.clone(), 1).unwrap(),
+        ));
+        let before = {
+            let mut owner = node.lock().unwrap();
+            let original = crate::ingress::public_v3::ServiceMutationCpuDomain::standalone();
+            owner.bind_public_service_cpu_domain(&original).unwrap();
+            owner.read_active().unwrap()
+        };
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        listener.set_nonblocking(true).unwrap();
+        let mut cfg = config(&settings);
+        cfg.peers[0].address = listener.local_addr().unwrap();
+        cfg.runtime_ms = 1200;
+        let peer = thread::spawn(move || {
+            let server_end = Instant::now() + Duration::from_secs(5);
+            let accept = || loop {
+                match listener.accept() {
+                    Ok((stream, _)) => break stream,
+                    Err(error) if error.kind() == ErrorKind::WouldBlock => {
+                        assert!(Instant::now() < server_end, "missing bounded poll call");
+                        thread::sleep(Duration::from_millis(2));
+                    }
+                    Err(error) => panic!("accept failed: {error}"),
+                }
+            };
+            let mut hello = [0; 108];
+            let mut first = accept();
+            first
+                .set_read_timeout(Some(Duration::from_secs(3)))
+                .unwrap();
+            first.read_exact(&mut hello).unwrap();
+            // Consume part of the poller's original lifetime before failing
+            // the first real TCP call. The second call cannot start a new one.
+            thread::sleep(Duration::from_millis(600));
+            drop(first);
+            let mut second = accept();
+            second
+                .set_read_timeout(Some(Duration::from_secs(3)))
+                .unwrap();
+            second.read_exact(&mut hello).unwrap();
+            // Withhold the challenge. The client must close this socket at the
+            // original end, not wait for the ordinary two-second phase timeout.
+            assert_eq!(second.read(&mut [0; 1]).unwrap(), 0);
+        });
+        let stop = Arc::new(AtomicBool::new(false));
+        let mut events = Vec::new();
+        let report =
+            run_pinned_peer_polling(node.clone(), cfg, identity(72), stop.clone(), |event| {
+                events.push(event.clone());
+                Ok(())
+            })
+            .unwrap();
+        peer.join().unwrap();
+        // This allows 300 ms of scheduling slack but fails both the old
+        // unbounded caller and a mistaken fresh 1,200-ms budget on the retry.
+        assert!(report.elapsed_ns < 1_500_000_000, "{report:?}");
+        assert!(report.elapsed_ns >= 1_200_000_000, "{report:?}");
+        assert_eq!(report.stop_reason, "runtime");
+        assert_eq!(report.rpc_attempts, 2);
+        assert_eq!(report.transport_errors, 2);
+        assert_eq!(report.ok_replies, 0);
+        assert_eq!(report.history_pages, 0);
+        assert_eq!(report.verified_new_packets, 0);
+        assert_eq!(events.len(), 2);
+        assert!(events.iter().all(|event| {
+            event.kind == "failure_cursor_retained"
+                && event.rpc_cost.is_none()
+                && event.error.is_some()
+        }));
+        assert_eq!(report.peers[0].failures, 2);
+        assert_eq!(report.peers[0].cursor, hex::encode(settings.genesis()));
+        assert!(report.peers[0].fixed_target.is_none());
+        assert!(report.peers[0].last_completed.is_none());
+        assert!(!stop.load(Ordering::Acquire));
+        assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
     }
 
     #[test]

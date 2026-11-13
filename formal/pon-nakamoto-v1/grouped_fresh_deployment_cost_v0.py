@@ -4,6 +4,10 @@ This module grants no demand, funding, admission, FinalUse or chainwork authorit
 Material equality is not customer independence or proof of actual consumption.
 The concrete source catalogue below identifies existing owners and the missing
 composition; it does not replace a call to any of those owners.
+
+The emitted accounting report uses the fresh v1 namespace for fixed-packet
+identity binding. Historical worker observations and the original work profile
+retain their meanings; no stored v0 report is rewritten.
 """
 from __future__ import annotations
 
@@ -16,10 +20,13 @@ from grouped_work_lottery_v0 import request_precommitment
 from experiments.grouped_cell_operator_v0 import model_commitment
 
 
-SCHEMA = 'pon-grouped-fresh-deployment-cost-v0'
+SCHEMA = 'pon-grouped-fresh-deployment-cost-v1'
 CASES = ('valid', 'carrier_replay', 'forged_endpoint', 'truncated_cancel',
          'discarded_response', 'after_local_cap')
 LOCAL_CAP = 256
+FIXED_PACKET_NONCES = ('1', '2')
+FIXED_PACKET_BY_CASE = {'valid': '1', 'carrier_replay': '1', 'discarded_response': '2'}
+_EXPECTATIONS_UNSUPPLIED = object()
 DEMAND_COMPONENTS = (
     {
         'owner': 'M06 native task lifecycle',
@@ -121,6 +128,30 @@ def _identity(value):
     return type(value) is str and 0 < len(value) <= 512 and value.strip() == value
 
 
+def _work_id_map(value):
+    return (type(value) is dict and set(value) == set(FIXED_PACKET_NONCES)
+            and all(_identity(value[nonce]) for nonce in FIXED_PACKET_NONCES)
+            and value['1'] != value['2'])
+
+
+def produced_work_ids(produced):
+    """Bind the original two nonce slots; labels alone do not authenticate work.
+
+    The campaign obtains these IDs from its original native freeze before any
+    receiver is started. Offline readback uses the unchanged pinned producer
+    table, not a receiver's chosen IDs or an old aggregate count.
+    """
+    if (type(produced) is not list or len(produced) != len(FIXED_PACKET_NONCES)
+            or any(type(row) is not dict or type(row.get('nonce')) is not int
+                   or row['nonce'] != int(nonce)
+                   for row, nonce in zip(produced, FIXED_PACKET_NONCES))):
+        raise ValueError('FIXED_PACKET_PRODUCER_ROSTER')
+    identities = {str(row['nonce']): row.get('work_id') for row in produced}
+    if not _work_id_map(identities):
+        raise ValueError('FIXED_PACKET_PRODUCER_WORK_IDS')
+    return identities
+
+
 def _seconds(value):
     if type(value) not in (int, float):
         return None
@@ -139,7 +170,7 @@ def _sum_seconds(values):
     return total if math.isfinite(total) else None
 
 
-def topology_accounting(planned_receivers, workers):
+def topology_accounting(planned_receivers, workers, *, expected_work_ids=_EXPECTATIONS_UNSUPPLIED):
     """Check all precommitted slots; partial/failed workers stay in the denominator.
 
     CPU in wait4 includes each reaped receiver and its waited native child on
@@ -147,6 +178,11 @@ def topology_accounting(planned_receivers, workers):
     Missing or malformed observations make complete totals null. Named partial
     sums retain usable measurements without asserting coverage of omitted work.
     Caller must independently bind these local observations to retained bytes.
+    Each fixed packet has one work identity across carrier replays and receivers.
+    The two fixed nonce slots have distinct work identities. Production-table
+    expectations, when supplied, bind every response to the original slot; an
+    omitted expectation is only an unanchored structural observation. Passing
+    an explicit malformed expectation never falls back to unanchored inspection.
     """
     if type(planned_receivers) is not int or planned_receivers not in (1, 2, 4):
         raise ValueError('FANOUT_TOPOLOGY')
@@ -162,6 +198,15 @@ def topology_accounting(planned_receivers, workers):
     byte_known = dict.fromkeys(byte_parts, 0)
     byte_complete = dict.fromkeys(byte_parts, True)
     expected_attempts = planned_receivers * len(CASES)
+    packet_work_ids = {nonce: set() for nonce in FIXED_PACKET_NONCES}
+    expected = None
+    expectation_supplied = expected_work_ids is not _EXPECTATIONS_UNSUPPLIED
+    if expectation_supplied:
+        if _work_id_map(expected_work_ids):
+            expected = dict(expected_work_ids)
+        else:
+            issues.append('FIXED_PACKET_EXPECTATIONS_MALFORMED')
+            work_complete = False
     if not slots_complete:
         issues.append('RECEIVER_DENOMINATOR')
 
@@ -317,6 +362,11 @@ def topology_accounting(planned_receivers, workers):
                         work_complete = False
                     else:
                         work_ids.add(work_id)
+                        nonce = FIXED_PACKET_BY_CASE[case]
+                        packet_work_ids[nonce].add(work_id)
+                        if expected is not None and work_id != expected[nonce]:
+                            issues.append(entry + ':WORK_ID_NOT_FIXED_PACKET')
+                            work_complete = False
             elif case == 'forged_endpoint':
                 if response.get('status') != 'rejected' or response.get('error') != 'NATIVE_Seal(Endpoint)':
                     issues.append(entry + ':FORGED_ENDPOINT')
@@ -364,6 +414,13 @@ def topology_accounting(planned_receivers, workers):
                     and client['received_bytes'] > row['ack_kernel_accepted_bytes']):
                 issues.append(entry + ':CLIENT_BYTES_EXCEED_ACK')
                 byte_complete['client'] = byte_complete['ack_kernel'] = False
+    for nonce, identities in packet_work_ids.items():
+        if len(identities) > 1:
+            issues.append('FIXED_PACKET_WORK_ID_REBINDING:' + nonce)
+            work_complete = False
+    if packet_work_ids['1'] & packet_work_ids['2']:
+        issues.append('DISTINCT_FIXED_PACKETS_ALIAS_WORK_ID')
+        work_complete = False
     if known_material != planned_receivers or len(content_ids) != 1:
         issues.append('MATERIAL_CONTENT_CHANGED_OR_UNKNOWN')
     cpu, native_cpu = _sum_seconds(cpu_parts), _sum_seconds(native_parts)
@@ -382,6 +439,10 @@ def topology_accounting(planned_receivers, workers):
                 intentionally_discarded_client_responses=discarded,
                 distinct_verified_work_ids=len(work_ids) if coverage and work_complete else None,
                 observed_distinct_verified_work_ids_partial=len(work_ids),
+                observed_work_ids_by_fixed_packet={nonce: sorted(identities)
+                    for nonce, identities in packet_work_ids.items()},
+                producer_work_id_expectations_supplied=expectation_supplied,
+                producer_work_ids_bound=expected is not None and coverage and work_complete,
                 distinct_material_content_ids=len(content_ids) if slots_complete
                     and known_material == planned_receivers else None,
                 observed_distinct_material_content_ids_partial=len(content_ids),

@@ -36,6 +36,7 @@ impl GrowthWorkCheckedPacket {
 
     /// Domain-separated exact complete packet identity for the original shared
     /// scheduling set. Neither block ID alone nor caller text can claim it.
+    #[cfg(test)]
     pub(crate) fn completion_identity(&self) -> Result<trnm_protocol::pon_wire::Hash> {
         Ok(trnm_protocol::pon_wire::hash(
             b"public-growth-complete-work-identity-v1",

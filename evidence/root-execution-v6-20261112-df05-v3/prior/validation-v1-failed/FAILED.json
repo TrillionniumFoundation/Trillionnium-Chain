@@ -1,0 +1,9 @@
+{
+  "error": "source reconstruction reported failure",
+  "error_type": "RuntimeError",
+  "no_success_inferred": true,
+  "operation_key": "root-operation-20261112-df05-native-validation-v1",
+  "records_completed": 0,
+  "stage": "await-source",
+  "traceback": "Traceback (most recent call last):\n  File \"<string>\", line 37, in <module>\nRuntimeError: source reconstruction reported failure\n"
+}

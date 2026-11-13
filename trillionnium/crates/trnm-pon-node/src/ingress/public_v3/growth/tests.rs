@@ -800,3 +800,95 @@ fn growth_signed_tcp_uses_paid_parallel_preparation_and_rejects_unknown_child_cp
         }
     }
 }
+
+#[test]
+fn public_growth_v1_future_ancestor_defers_fresh_and_duplicate_before_work() {
+    for existing in [false, true] {
+        let settings = settings("public-growth-future-ancestor");
+        let directory = tempfile::tempdir().unwrap();
+        let mut node =
+            Node::open_with_permanent_account_growth_v2(directory.path(), settings.clone())
+                .unwrap();
+        let future =
+            crate::ingress::now().unwrap() + settings.limit("future_skew_seconds").unwrap() + 3600;
+        let mut parent = settings.genesis();
+        for timestamp in [11, 21, future, 22, 23] {
+            let packet = node
+                .make_growth_consensus_maintenance(
+                    parent,
+                    vec![],
+                    crate::development_public(3).unwrap(),
+                    timestamp,
+                    4096,
+                )
+                .unwrap();
+            parent = node.admit_growth(&packet, future).unwrap();
+        }
+        let packet = node
+            .make_growth_consensus_maintenance(
+                parent,
+                vec![],
+                crate::development_public(3).unwrap(),
+                24,
+                4096,
+            )
+            .unwrap();
+        let id = packet.id().unwrap();
+        if existing {
+            assert_eq!(node.admit_growth(&packet, future).unwrap(), id);
+        }
+        let active = node.active().unwrap();
+        let owner = Arc::new(Mutex::new(node));
+        let server = PublicServer::new(
+            identity(92),
+            PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+        )
+        .unwrap()
+        .with_native_growth()
+        .unwrap();
+        let mut run = Running::start(directory, owner, settings.clone(), server);
+        let work_before = run.metrics.lock().unwrap().work_started;
+        let reply = run.call(&Request::GrowthSubmitV1 {
+            packet: hex::encode(packet.encode().unwrap()),
+        });
+        assert!(!reply.ok, "future ancestor reached public activation: existing={existing}, future={future}, expected_block={}, reply={}", hex::encode(id), reply.value);
+        assert!(
+            reply.value.to_string().contains("TIME_DEFERRED"),
+            "{}",
+            reply.value
+        );
+        assert_eq!(run.metrics.lock().unwrap().work_started, work_before);
+        {
+            let owner = run.owner.as_ref().unwrap().lock().unwrap();
+            assert_eq!(owner.active().unwrap(), active);
+            if existing {
+                assert_eq!(
+                    owner.growth_packet(id).unwrap().encode().unwrap(),
+                    packet.encode().unwrap()
+                );
+            } else {
+                assert!(owner.parent_height(id).is_err());
+            }
+        }
+        // A separate eligible branch still uses the real listener successfully.
+        let honest = {
+            let owner = run.owner.as_ref().unwrap().lock().unwrap();
+            owner
+                .make_growth_consensus_maintenance(
+                    settings.genesis(),
+                    vec![],
+                    crate::development_public(4).unwrap(),
+                    12,
+                    4096,
+                )
+                .unwrap()
+        };
+        assert_eq!(
+            run.submit(&honest)["active"],
+            hex::encode(honest.id().unwrap())
+        );
+        let metrics = run.finish();
+        assert_eq!(metrics.mutation_cpu_in_flight_after_shutdown, 0);
+        assert!(!metrics.mutation_cpu_unavailable_after_shutdown);
+    }
+}

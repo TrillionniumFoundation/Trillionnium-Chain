@@ -659,3 +659,165 @@ fn capacity_observe_refuses_complete_state_reference_before_creating_store() {
     rejected(output, "CONTINUITY_PROFILE");
     assert!(!store.exists());
 }
+
+#[test]
+fn native_growth_v2_cli_current_clock_defers_future_ancestors_and_preserves_packets() {
+    let directory = tempfile::tempdir().unwrap();
+    let store = directory.path().join("growth");
+    let settings = settings();
+    let mut node =
+        trnm_pon_node::Node::open_with_permanent_account_growth_v2(&store, settings.clone())
+            .unwrap();
+    let mut parent = settings.genesis();
+    for timestamp in [11, 21, 301, 22, 23] {
+        let packet = node
+            .make_growth_consensus_maintenance(
+                parent,
+                vec![],
+                development_public(3).unwrap(),
+                timestamp,
+                4096,
+            )
+            .unwrap();
+        parent = node.admit_growth(&packet, 100_000).unwrap();
+    }
+    // This is the historical recovery state. Clock rollback does not erase it.
+    node.activate(parent).unwrap();
+    let active = node.active().unwrap();
+    let parent_raw = node.growth_packet(parent).unwrap().encode().unwrap();
+    let candidate = node
+        .make_growth_consensus_maintenance(parent, vec![], development_public(3).unwrap(), 24, 4096)
+        .unwrap();
+    let candidate_id = candidate.id().unwrap();
+    let candidate_file = directory.path().join("candidate.pnp2");
+    std::fs::write(&candidate_file, candidate.encode().unwrap()).unwrap();
+    drop(node);
+
+    rejected(
+        command("growth-submit", &store)
+            .arg("--packet")
+            .arg(&candidate_file)
+            .args(["--logical-now", "24"])
+            .output()
+            .unwrap(),
+        "TIME_DEFERRED",
+    );
+    let mined_file = directory.path().join("deferred.pnp2");
+    rejected(
+        command("growth-mine", &store)
+            .args([
+                "--parent",
+                &hex::encode(parent),
+                "--timestamp",
+                "24",
+                "--logical-now",
+                "24",
+                "--miner",
+                &hex::encode(development_public(3).unwrap()),
+            ])
+            .arg("--output")
+            .arg(&mined_file)
+            .output()
+            .unwrap(),
+        "TIME_DEFERRED",
+    );
+    assert!(
+        !mined_file.exists(),
+        "deferred mining emitted a new proof artifact"
+    );
+    rejected(
+        command("growth-activate", &store)
+            .args(["--block", &hex::encode(parent), "--logical-now", "24"])
+            .output()
+            .unwrap(),
+        "TIME_DEFERRED",
+    );
+    {
+        let observed =
+            trnm_pon_node::Node::open_growth_packet_observer(&store, settings.clone()).unwrap();
+        assert_eq!(observed.active().unwrap(), active);
+        assert_eq!(
+            observed.growth_packet(parent).unwrap().encode().unwrap(),
+            parent_raw
+        );
+        assert!(observed.parent_height(candidate_id).is_err());
+    }
+    let admitted = accepted(
+        command("growth-submit", &store)
+            .arg("--packet")
+            .arg(&candidate_file)
+            .args(["--logical-now", "1000"])
+            .output()
+            .unwrap(),
+    );
+    assert_eq!(admitted["result"]["block"], hex::encode(candidate_id));
+    assert_eq!(admitted["result"]["active"], hex::encode(candidate_id));
+    rejected(
+        command("growth-activate", &store)
+            .args(["--block", &hex::encode(candidate_id), "--logical-now", "24"])
+            .output()
+            .unwrap(),
+        "TIME_DEFERRED",
+    );
+    let observed = trnm_pon_node::Node::open_growth_packet_observer(&store, settings).unwrap();
+    assert_eq!(observed.active().unwrap().0, candidate_id);
+    assert_eq!(
+        observed
+            .growth_packet(candidate_id)
+            .unwrap()
+            .encode()
+            .unwrap(),
+        candidate.encode().unwrap()
+    );
+}
+
+#[test]
+fn native_growth_v2_cli_normal_fixed_clock_mine_submit_and_activation() {
+    let directory = tempfile::tempdir().unwrap();
+    let producer = directory.path().join("producer");
+    let follower = directory.path().join("follower");
+    let transactions = directory.path().join("transactions.json");
+    let packet = directory.path().join("normal.pnp2");
+    std::fs::write(&transactions, b"[]").unwrap();
+    let mined = accepted(
+        command("growth-mine", &producer)
+            .arg("--transactions")
+            .arg(&transactions)
+            .args([
+                "--timestamp",
+                "11",
+                "--logical-now",
+                "1000",
+                "--miner",
+                &hex::encode(development_public(3).unwrap()),
+            ])
+            .arg("--output")
+            .arg(&packet)
+            .output()
+            .unwrap(),
+    );
+    assert_eq!(mined["result"]["admitted"], true);
+    assert_eq!(mined["result"]["state"]["height"], 1);
+    let submitted = accepted(
+        command("growth-submit", &follower)
+            .arg("--packet")
+            .arg(&packet)
+            .args(["--logical-now", "1000"])
+            .output()
+            .unwrap(),
+    );
+    let block = mined["result"]["block"].as_str().unwrap();
+    assert_eq!(submitted["result"]["block"], block);
+    assert_eq!(submitted["result"]["active"], block);
+    let activated = accepted(
+        command("growth-activate", &follower)
+            .args(["--block", block, "--logical-now", "1000"])
+            .output()
+            .unwrap(),
+    );
+    assert_eq!(activated["result"]["block"], block);
+    assert_eq!(activated["result"]["height"], 1);
+    let observed = accepted(packet_status(&follower, &std::fs::read(packet).unwrap()));
+    assert_eq!(observed["result"]["stored_exact"], true);
+    assert_eq!(observed["result"]["active_chain_member"], true);
+}

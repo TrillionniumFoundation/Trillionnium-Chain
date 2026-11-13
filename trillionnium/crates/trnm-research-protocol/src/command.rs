@@ -27,7 +27,7 @@ impl CanonicalCbor for AuthorityRole {
 ///
 /// Nakama authority keys can sign only match-fact commitments. Every other
 /// research object must be issued through a Hepta authority key.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct SignedResearchCommandV1 {
     pub chain_id: String,
     pub command_id: ExternalKey,
@@ -37,6 +37,82 @@ pub struct SignedResearchCommandV1 {
     pub public_key: [u8; 32],
     pub command: ResearchCommandV1,
     pub signature: Vec<u8>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SignedResearchCommandWireV1 {
+    #[serde(deserialize_with = "deserialize_chain_id")]
+    chain_id: String,
+    command_id: ExternalKey,
+    #[serde(deserialize_with = "deserialize_signer_did")]
+    signer_did: String,
+    signer_role: AuthorityRole,
+    nonce: u64,
+    public_key: [u8; 32],
+    command: ResearchCommandV1,
+    #[serde(deserialize_with = "deserialize_signature")]
+    signature: Vec<u8>,
+}
+
+fn deserialize_chain_id<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let value = String::deserialize(deserializer)?;
+    if value.len() > 64 {
+        return Err(serde::de::Error::custom(
+            "research command chain id exceeds 64 bytes",
+        ));
+    }
+    Ok(value)
+}
+
+fn deserialize_signer_did<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let value = String::deserialize(deserializer)?;
+    if value.len() > 192 {
+        return Err(serde::de::Error::custom(
+            "research command signer DID exceeds 192 bytes",
+        ));
+    }
+    Ok(value)
+}
+
+fn deserialize_signature<'de, D>(deserializer: D) -> Result<Vec<u8>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let signature = Vec::<u8>::deserialize(deserializer)?;
+    if signature.len() > 64 {
+        return Err(serde::de::Error::custom(
+            "research command signature exceeds 64 bytes",
+        ));
+    }
+    Ok(signature)
+}
+
+impl<'de> Deserialize<'de> for SignedResearchCommandV1 {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let wire = SignedResearchCommandWireV1::deserialize(deserializer)?;
+        let command = Self {
+            chain_id: wire.chain_id,
+            command_id: wire.command_id,
+            signer_did: wire.signer_did,
+            signer_role: wire.signer_role,
+            nonce: wire.nonce,
+            public_key: wire.public_key,
+            command: wire.command,
+            signature: wire.signature,
+        };
+        command.validate().map_err(serde::de::Error::custom)?;
+        Ok(command)
+    }
 }
 
 impl SignedResearchCommandV1 {
@@ -95,15 +171,15 @@ impl SignedResearchCommandV1 {
         if version != PROTOCOL_VERSION as u64 {
             return Err(CanonicalDecodeError::UnsupportedVersion(version).into());
         }
-        let encoding = decoder.text()?;
+        let encoding = decoder.text_bounded::<64>()?;
         if encoding != CANONICAL_ENCODING {
             return Err(SignedResearchCommandValidationError::EncodingMismatch(
                 encoding,
             ));
         }
-        let chain_id = decoder.text()?;
+        let chain_id = decoder.text_bounded::<64>()?;
         let command_id = ExternalKey::from_bytes(decoder.bytes_exact()?);
-        let signer_did = decoder.text()?;
+        let signer_did = decoder.text_bounded::<192>()?;
         let role_raw = decoder.uint()?;
         let signer_role = match role_raw {
             1 => AuthorityRole::NakamaAuthority,
@@ -119,6 +195,9 @@ impl SignedResearchCommandV1 {
         let nonce = decoder.uint()?;
         let public_key = decoder.bytes_exact()?;
         let command = ResearchCommandV1::decode(&mut decoder)?;
+        // Ed25519 signatures are fixed-width. Decode with the exact-length
+        // primitive so a malicious envelope cannot allocate an oversized
+        // signature buffer before validation rejects it.
         let signature = decoder.bytes_exact::<64>()?.to_vec();
         decoder.finish()?;
 
@@ -161,6 +240,9 @@ impl SignedResearchCommandV1 {
             .map_err(|_| SignedResearchCommandValidationError::InvalidSignature)?;
         let verifying_key = VerifyingKey::from_bytes(&self.public_key)
             .map_err(|_| SignedResearchCommandValidationError::InvalidPublicKey)?;
+        if verifying_key.is_weak() {
+            return Err(SignedResearchCommandValidationError::InvalidPublicKey);
+        }
         verifying_key
             .verify_strict(
                 &self.signing_bytes(),

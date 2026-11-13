@@ -926,7 +926,10 @@ impl ExternalCheckpointAuthorityV2 {
         self.require_recovery_admission_v1()?;
         let owner = socket_owner_v1::SocketOwnerV1::bind(socket_path.as_ref())?;
         for stream in owner.listener().incoming() {
-            owner.revalidate()?;
+            // A connect-only liveness probe carries no request. Revalidate the
+            // socket owner after a complete frame in handle_connection_v2,
+            // before any checkpoint read or advance, so the probe itself does
+            // not fence an idle owner whose lease pathname was displaced.
             match stream {
                 Ok(stream) => {
                     if let Err(error) = self.handle_connection_v2(stream, &owner) {

@@ -1,0 +1,17 @@
+EXECUTING ["cargo", "--version"]
+
+RESULT {"argv": ["cargo", "--version"], "exit_code": 0, "stdout_file": "a13-native-1125-0.stdout", "stdout_bytes": 36}
+EXECUTING ["rustc", "--version"]
+
+RESULT {"argv": ["rustc", "--version"], "exit_code": 0, "stdout_file": "a13-native-1125-1.stdout", "stdout_bytes": 36}
+EXECUTING ["cargo", "metadata", "--manifest-path", "trillionnium/Cargo.toml", "--locked", "--offline", "--format-version", "1"]
+
+RESULT {"argv": ["cargo", "metadata", "--manifest-path", "trillionnium/Cargo.toml", "--locked", "--offline", "--format-version", "1"], "exit_code": 0, "stdout_file": "a13-native-1125-2.stdout", "stdout_bytes": 834834}
+EXECUTING ["cargo", "metadata", "--manifest-path", "trillionnium/fuzz/Cargo.toml", "--locked", "--offline", "--format-version", "1"]
+error: manifest path `trillionnium/fuzz/Cargo.toml` does not exist
+
+RESULT {"argv": ["cargo", "metadata", "--manifest-path", "trillionnium/fuzz/Cargo.toml", "--locked", "--offline", "--format-version", "1"], "exit_code": 101, "stdout_file": "a13-native-1125-3.stdout", "stdout_bytes": 0}
+EXECUTING ["cargo", "fmt", "--manifest-path", "trillionnium/Cargo.toml", "--all", "--", "--check"]
+
+RESULT {"argv": ["cargo", "fmt", "--manifest-path", "trillionnium/Cargo.toml", "--all", "--", "--check"], "exit_code": 0, "stdout_file": "a13-native-1125-4.stdout", "stdout_bytes": 0}
+EXIT_CODES [0, 0, 0, 101, 0]

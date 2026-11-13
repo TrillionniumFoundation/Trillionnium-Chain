@@ -1,0 +1,72 @@
+[
+  {
+    "name": "format",
+    "command": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 23.768,
+    "source_commit": "b9a38fd6d245e20849c7edd848dbbe18298cad7e",
+    "source_unchanged": true,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "profile_overrides": {},
+    "coordination": "Hepta build paused; one Cargo build for this task; -j1"
+  },
+  {
+    "name": "strict-clippy-all-targets",
+    "command": [
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-data-availability",
+      "--all-targets",
+      "--all-features",
+      "-j1",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 51.206,
+    "source_commit": "b9a38fd6d245e20849c7edd848dbbe18298cad7e",
+    "source_unchanged": true,
+    "log_sha256": "bc9ca992a5ac3f9d2d673618ca176ad5eac612c2990bc5e07579f0c8ed6397f7",
+    "profile_overrides": {},
+    "coordination": "Hepta build paused; one Cargo build for this task; -j1"
+  },
+  {
+    "name": "native-all-targets",
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-data-availability",
+      "--all-targets",
+      "--all-features",
+      "-j1",
+      "--",
+      "--test-threads=1"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 234.619,
+    "source_commit": "b9a38fd6d245e20849c7edd848dbbe18298cad7e",
+    "source_unchanged": true,
+    "log_sha256": "3079c28f188a052db6848fa0561087ada1b227a7080eb67d414ef38890828fcb",
+    "profile_overrides": {},
+    "coordination": "Hepta build paused; one Cargo build for this task; -j1"
+  }
+]

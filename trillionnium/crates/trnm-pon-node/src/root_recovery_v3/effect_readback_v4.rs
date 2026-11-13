@@ -5,6 +5,7 @@
 //! or retry authority. Its private directory requires trusted administration;
 //! restoring all retained files and all external currentness owners is outside
 //! its guarantee. Root recovery floors are caller pins, not custody evidence.
+use super::witnessed_v5::WitnessedRootOwnerV5;
 use super::{
     digest, map_error, rejected, require, JournalHeadV3, OwnerBudgetV3, RootOwnerResultV3,
     RootOwnerV3, StoreV3,
@@ -28,6 +29,7 @@ const REQUEST_DIGEST: &[u8] = b"TRNM/RootProvider/RequestDigest/v4\0";
 const RECEIPT: &[u8] = b"TRNM/RootProvider/ReadbackReceipt/v4\0";
 const FILE: &[u8] = b"TRNM/RootProvider/EvidenceJournal/v4\0";
 const RECORD: &[u8] = b"TRNM/RootProvider/EvidenceRecord/v4\0";
+const HISTORY_FLOOR: &[u8] = b"TRNM/RootProvider/HistoryFloor/v6\0";
 const MAX_ENROLLMENT: usize = 64 * 1024;
 const MAX_RECORD: usize = 256 * 1024;
 const MAX_RECORDS: usize = 128;
@@ -234,7 +236,7 @@ impl RootOwnerV3 {
         result
     }
 
-    fn refresh_provider_enrollment(
+    pub(super) fn refresh_provider_enrollment(
         &mut self,
         expected: &ProviderEnrollmentV4,
         budget: &mut OwnerBudgetV3,
@@ -561,6 +563,99 @@ struct Replay {
     records: usize,
     chain: DigestV3,
 }
+
+/// The held session's exact last accepted journal head. This is deliberately
+/// volatile: it detects history replacement while this owner remains alive,
+/// not a rollback that also restores the process or precedes a cold open.
+#[derive(Clone, Copy, Eq, PartialEq)]
+struct SessionHeadV4 {
+    bytes: u64,
+    records: usize,
+    chain: DigestV3,
+}
+
+/// An exact retained prefix of the original provider journal. This is a caller
+/// pin, not a signature, a current-head assertion or proof of independent
+/// custody. Authentication and survival outside the restored journal are the
+/// caller's obligations. Exporting a restored file and importing that same
+/// value cannot establish freshness.
+///
+/// The new pin namespace does not change V4 records or signed domains. A valid
+/// suffix may follow this prefix, including an unanswered read. Only history
+/// through this floor is protected against cold rollback relative to the pin;
+/// later records need an independently retained newer floor.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct ProviderHistoryFloorV6 {
+    enrollment: DigestV3,
+    operation: DigestV3,
+    bytes: u64,
+    records: u64,
+    chain: DigestV3,
+}
+impl ProviderHistoryFloorV6 {
+    /// Initial pin for an independently authorized first enrollment. It cannot
+    /// justify registering the same historical operation at another empty path
+    /// after the caller has retained a later floor.
+    pub fn initial(enrollment: &ProviderEnrollmentV4) -> RootOwnerResultV3<Self> {
+        let mut header = FILE.to_vec();
+        put_blob(&mut header, &enrollment.encode()?)?;
+        let value = Self {
+            enrollment: enrollment.commitment()?,
+            operation: enrollment.operation,
+            bytes: header.len() as u64,
+            records: 0,
+            chain: enrollment.commitment()?,
+        };
+        value.encode()?;
+        Ok(value)
+    }
+    pub fn encode(&self) -> RootOwnerResultV3<Vec<u8>> {
+        require(
+            self.enrollment != [0; 64]
+                && self.operation != [0; 64]
+                && self.chain != [0; 64]
+                && self.bytes > FILE.len() as u64
+                && self.bytes <= MAX_FILE
+                && self.records <= MAX_RECORDS as u64,
+            "ROOT_PROVIDER_HISTORY_FLOOR_SHAPE",
+        )?;
+        let mut bytes = HISTORY_FLOOR.to_vec();
+        bytes.extend(self.enrollment);
+        bytes.extend(self.operation);
+        bytes.extend(self.bytes.to_be_bytes());
+        bytes.extend(self.records.to_be_bytes());
+        bytes.extend(self.chain);
+        Ok(bytes)
+    }
+    /// Decode an already authenticated, independently retained pin. This checks
+    /// the closed encoding only; it cannot authenticate the pin's source.
+    pub fn from_external_pin(bytes: &[u8]) -> RootOwnerResultV3<Self> {
+        let mut reader = Reader::new(bytes);
+        reader.domain(HISTORY_FLOOR)?;
+        let value = Self {
+            enrollment: reader.fixed()?,
+            operation: reader.fixed()?,
+            bytes: reader.u64()?,
+            records: reader.u64()?,
+            chain: reader.fixed()?,
+        };
+        reader.finish()?;
+        require(
+            value.encode()? == bytes,
+            "ROOT_PROVIDER_HISTORY_FLOOR_ENCODING",
+        )?;
+        Ok(value)
+    }
+    pub fn operation_id(&self) -> DigestV3 {
+        self.operation
+    }
+    fn matches(&self, bytes: usize, replay: &Replay) -> bool {
+        self.bytes == bytes as u64
+            && self.records == replay.records as u64
+            && self.chain == replay.chain
+    }
+}
+
 impl Replay {
     fn initial(enrollment: &ProviderEnrollmentV4) -> RootOwnerResultV3<Self> {
         Ok(Self {
@@ -693,6 +788,8 @@ pub struct ProviderEvidenceJournalV4 {
     parent: PathBuf,
     process: u32,
     enrollment: ProviderEnrollmentV4,
+    session_head: Option<SessionHeadV4>,
+    history_floor: Option<ProviderHistoryFloorV6>,
     fenced: bool,
 }
 impl ProviderEvidenceJournalV4 {
@@ -707,7 +804,12 @@ impl ProviderEvidenceJournalV4 {
         value.file.write_all(&header)?;
         value.file.sync_all()?;
         value.directory.sync_all()?;
-        value.check(budget)?;
+        value.session_head = Some(SessionHeadV4 {
+            bytes: header.len() as u64,
+            records: 0,
+            chain: value.enrollment.commitment()?,
+        });
+        value.replay(budget)?;
         Ok(value)
     }
     pub fn open_existing(
@@ -718,6 +820,78 @@ impl ProviderEvidenceJournalV4 {
         let mut value = Self::bind(path, enrollment, false, budget)?;
         value.replay(budget)?;
         Ok(value)
+    }
+    /// Reopen only if complete verified history contains the externally retained
+    /// prefix at its exact frame boundary. A witness for the Root journal alone
+    /// cannot supply this provider-history pin.
+    pub fn open_existing_with_history_floor_v6(
+        path: &Path,
+        enrollment: ProviderEnrollmentV4,
+        floor: ProviderHistoryFloorV6,
+        budget: &mut OwnerBudgetV3,
+    ) -> RootOwnerResultV3<Self> {
+        let mut value = Self::bind(path, enrollment, false, budget)?;
+        value.install_external_history_floor_v6(floor, budget)?;
+        Ok(value)
+    }
+    /// Install or advance a caller-authenticated floor without changing any
+    /// journal byte. A floor cannot be cleared or lowered on the live owner.
+    /// First creation also requires this explicit step before V5 readback;
+    /// creating a new local path is not evidence that an operation is new.
+    pub fn install_external_history_floor_v6(
+        &mut self,
+        floor: ProviderHistoryFloorV6,
+        budget: &mut OwnerBudgetV3,
+    ) -> RootOwnerResultV3<()> {
+        let result = (|| {
+            self.check(budget)?;
+            floor.encode()?;
+            require(
+                floor.enrollment == self.enrollment.commitment()?
+                    && floor.operation == self.enrollment.operation,
+                "ROOT_PROVIDER_HISTORY_FLOOR_ENROLLMENT",
+            )?;
+            if let Some(old) = &self.history_floor {
+                require(
+                    floor.records > old.records || &floor == old,
+                    "ROOT_PROVIDER_HISTORY_FLOOR_REGRESSION",
+                )?;
+                self.replay(budget)?;
+            }
+            self.history_floor = Some(floor);
+            self.replay(budget)?;
+            Ok(())
+        })();
+        if result.is_err() {
+            self.fenced = true;
+        }
+        result
+    }
+    /// Observe the verified local prefix for separate external retention. This
+    /// does not install a floor, certify freshness or authorize any effect.
+    pub fn history_checkpoint_v6(
+        &mut self,
+        budget: &mut OwnerBudgetV3,
+    ) -> RootOwnerResultV3<ProviderHistoryFloorV6> {
+        let result = (|| {
+            let state = self.replay(budget)?;
+            let head = self
+                .session_head
+                .ok_or_else(|| rejected("ROOT_PROVIDER_MISSING_HEAD"))?;
+            let floor = ProviderHistoryFloorV6 {
+                enrollment: self.enrollment.commitment()?,
+                operation: self.enrollment.operation,
+                bytes: head.bytes,
+                records: state.records as u64,
+                chain: state.chain,
+            };
+            floor.encode()?;
+            Ok(floor)
+        })();
+        if result.is_err() {
+            self.fenced = true;
+        }
+        result
     }
     fn bind(
         path: &Path,
@@ -763,6 +937,8 @@ impl ProviderEvidenceJournalV4 {
             parent: parent.to_path_buf(),
             process: std::process::id(),
             enrollment,
+            session_head: None,
+            history_floor: None,
             fenced: false,
         };
         value.check(budget)?;
@@ -801,6 +977,11 @@ impl ProviderEvidenceJournalV4 {
         let mut bytes = Vec::new();
         (&self.file).take(MAX_FILE + 1).read_to_end(&mut bytes)?;
         require(bytes.len() as u64 <= MAX_FILE, "ROOT_PROVIDER_FILE_BOUND")?;
+        require(
+            self.session_head
+                .is_none_or(|head| head.bytes == bytes.len() as u64),
+            "ROOT_PROVIDER_SESSION_HISTORY_CHANGED",
+        )?;
         let mut reader = Reader::new(&bytes);
         reader.domain(FILE)?;
         require(
@@ -808,6 +989,10 @@ impl ProviderEvidenceJournalV4 {
             "ROOT_PROVIDER_PINNED_ENROLLMENT",
         )?;
         let mut state = Replay::initial(&self.enrollment)?;
+        let mut floor_seen = self
+            .history_floor
+            .as_ref()
+            .is_none_or(|floor| floor.matches(reader.position, &state));
         while !reader.rest().is_empty() {
             let event = reader.blob()?;
             state.apply(event, &self.enrollment, budget)?;
@@ -815,8 +1000,25 @@ impl ProviderEvidenceJournalV4 {
                 reader.fixed::<64>()? == state.chain,
                 "ROOT_PROVIDER_RECORD_CHAIN",
             )?;
+            floor_seen |= self
+                .history_floor
+                .as_ref()
+                .is_some_and(|floor| floor.matches(reader.position, &state));
         }
+        require(floor_seen, "ROOT_PROVIDER_HISTORY_FLOOR_NOT_IN_HISTORY")?;
         self.check(budget)?;
+        let observed = SessionHeadV4 {
+            bytes: bytes.len() as u64,
+            records: state.records,
+            chain: state.chain,
+        };
+        require(
+            self.session_head.is_none_or(|head| head == observed),
+            "ROOT_PROVIDER_SESSION_HISTORY_CHANGED",
+        )?;
+        // Only the first verified replay on a new owner adopts existing bytes.
+        // Later advances happen solely after this owner's durable append.
+        self.session_head = Some(observed);
         Ok(state)
     }
     fn append(
@@ -831,6 +1033,10 @@ impl ProviderEvidenceJournalV4 {
         frame.extend(state.chain);
         let length = self.file.metadata()?.len();
         require(
+            self.session_head.is_some_and(|head| head.bytes == length),
+            "ROOT_PROVIDER_SESSION_HISTORY_CHANGED",
+        )?;
+        require(
             length
                 .checked_add(frame.len() as u64)
                 .is_some_and(|n| n <= MAX_FILE),
@@ -842,6 +1048,16 @@ impl ProviderEvidenceJournalV4 {
         self.file.sync_all()?;
         self.directory.sync_all()?;
         self.check(budget)?;
+        let expected_length = length + frame.len() as u64;
+        require(
+            self.file.metadata()?.len() == expected_length,
+            "ROOT_PROVIDER_SESSION_HISTORY_CHANGED",
+        )?;
+        self.session_head = Some(SessionHeadV4 {
+            bytes: expected_length,
+            records: state.records,
+            chain: state.chain,
+        });
         Ok(state.evidence)
     }
     pub fn evidence(
@@ -877,9 +1093,41 @@ impl ProviderEvidenceJournalV4 {
         transport: &mut impl RootProviderReadbackTransportV4,
         budget: &mut OwnerBudgetV3,
     ) -> RootOwnerResultV3<ProviderEvidenceV4> {
+        self.reconcile_checked(transport, budget, |enrollment, budget| {
+            root.refresh_provider_enrollment(enrollment, budget)
+        })
+    }
+
+    /// Read the same original operation through a required live V5 witness.
+    /// Both sides of the provider callback revalidate the witnessed Root owner;
+    /// no inner V3 owner, static-floor fallback or effect-dispatch API escapes.
+    /// The existing V4 journal and signatures remain declarations, not proof
+    /// that a real external action occurred or that it may be repeated.
+    pub fn reconcile_witnessed_v5(
+        &mut self,
+        root: &mut WitnessedRootOwnerV5,
+        transport: &mut impl RootProviderReadbackTransportV4,
+        budget: &mut OwnerBudgetV3,
+    ) -> RootOwnerResultV3<ProviderEvidenceV4> {
+        if self.history_floor.is_none() {
+            self.fenced = true;
+            return Err(rejected("ROOT_PROVIDER_EXTERNAL_HISTORY_FLOOR_REQUIRED"));
+        }
+        self.reconcile_checked(transport, budget, |enrollment, budget| {
+            root.refresh_provider_enrollment_v4(enrollment, budget)
+        })
+    }
+
+    fn reconcile_checked(
+        &mut self,
+        transport: &mut impl RootProviderReadbackTransportV4,
+        budget: &mut OwnerBudgetV3,
+        mut refresh_root: impl FnMut(&ProviderEnrollmentV4, &mut OwnerBudgetV3) -> RootOwnerResultV3<()>,
+    ) -> RootOwnerResultV3<ProviderEvidenceV4> {
         let result = (|| {
+            self.check(budget)?;
             let original = budget.identity.clone();
-            root.refresh_provider_enrollment(&self.enrollment, budget)?;
+            refresh_root(&self.enrollment, budget)?;
             let state = self.replay(budget)?;
             // Reserve capacity for both request and response before calling out.
             require(
@@ -898,7 +1146,7 @@ impl ProviderEvidenceJournalV4 {
             let response = transport.readback(&request, budget);
             budget.check_identity(&original)?;
             let signed = response?;
-            root.refresh_provider_enrollment(&self.enrollment, budget)?;
+            refresh_root(&self.enrollment, budget)?;
             self.check(budget)?;
             signed.verify(&self.enrollment, &request, budget)?;
             let mut event = vec![2];

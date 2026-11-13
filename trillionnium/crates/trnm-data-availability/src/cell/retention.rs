@@ -5,6 +5,9 @@
 mod catalog_inventory;
 mod payload_read;
 pub(crate) use catalog_inventory::CellRetentionCatalogObjectV1;
+pub(crate) use payload_read::{
+    CellRetentionPayloadFaultStageV2, CellRetentionPayloadObservationV2,
+};
 
 use std::{
     collections::BTreeSet,
@@ -19,8 +22,10 @@ use rusqlite::{params, Connection, OpenFlags, OptionalExtension};
 use sha2::{Digest, Sha256};
 
 use super::{
-    require, store::verify_chunk, CellDigestV1, CellErrorV1, CellManifestV1, CellResultV1,
-    CellStoreV1, MAX_CELL_BYTES,
+    require,
+    store::{verify_chunk, MAX_CHUNK_COMMIT_BATCH},
+    CellDigestV1, CellErrorV1, CellManifestV1, CellResultV1, CellStoreV1, MAX_CELL_BYTES,
+    MAX_CHUNK_BYTES,
 };
 
 const APPLICATION_ID: i64 = 0x5443_5231;
@@ -101,6 +106,9 @@ pub struct CellRetentionReadbackV1 {
     pub acknowledged: bool,
     pub retired: bool,
 }
+
+mod repair_preflight;
+mod reservation_preflight;
 
 struct Row {
     contract: CellRetentionContractV1,
@@ -602,7 +610,7 @@ impl CellRetentionStoreV1 {
             stopped: false,
         };
         control.check()?;
-        let mut row = self.required_row(operation)?;
+        let mut row = self.audited_repair_row_controlled(operation, &mut control)?;
         control.check()?;
         require(row.status != 2, "retention retired")?;
         require(
@@ -735,6 +743,14 @@ impl CellRetentionStoreV1 {
         )?;
         control.check()?;
         if !already_complete {
+            // The durable intent and its debit survive a refusal here. Reuse
+            // the original complete arena invariants before physical work;
+            // an individually valid row is not a complete layout observation.
+            let current = self.audited_repair_row_controlled(operation, &mut control)?;
+            require(
+                row_checksum(&current) == row_checksum(&row),
+                "retention repair prior changed",
+            )?;
             self.copy_payload_controlled(&row, cache, &mut control)?;
             self.complete_repair_controlled(repair_operation, operation, amount, &mut control)?;
         }
@@ -775,7 +791,7 @@ impl CellRetentionStoreV1 {
             stopped: false,
         };
         control.check()?;
-        let mut row = self.required_row(operation)?;
+        let mut row = self.audited_repair_row_controlled(operation, &mut control)?;
         control.check()?;
         require(row.status != 2, "retention retired")?;
         require(
@@ -873,11 +889,26 @@ impl CellRetentionStoreV1 {
             Some(deadline),
         )?;
         self.arena.seek(SeekFrom::Start(row.offset))?;
-        for chunk in row.contract.manifest.chunks() {
-            check_deadline(deadline)?;
-            let mut bytes = vec![0; chunk.size as usize];
-            self.arena.read_exact(&mut bytes)?;
-            cache.put_chunk_with_deadline(chunk, &bytes, Some(deadline))?;
+        // required_row validates chunk_bytes and every actual chunk length.
+        // Bound buffered payloads by the existing maximum chunk size, and each
+        // transaction by the store's existing member limit before the writer.
+        // Cache batches committed before a later error are not rolled back.
+        let batch_len = MAX_CHUNK_COMMIT_BATCH
+            .min((MAX_CHUNK_BYTES / row.contract.manifest.chunk_bytes()) as usize);
+        for chunks in row.contract.manifest.chunks().chunks(batch_len) {
+            let mut payloads = Vec::with_capacity(chunks.len());
+            for chunk in chunks {
+                check_deadline(deadline)?;
+                let mut bytes = vec![0; chunk.size as usize];
+                self.arena.read_exact(&mut bytes)?;
+                payloads.push(bytes);
+            }
+            let batch: Vec<_> = chunks
+                .iter()
+                .zip(&payloads)
+                .map(|(chunk, bytes)| (chunk, bytes.as_slice()))
+                .collect();
+            cache.put_chunk_batch_with_deadline(&batch, Some(deadline))?;
         }
         cache.verify_complete_until(&row.contract.manifest, deadline)?;
         self.readback(&row)
@@ -1257,6 +1288,27 @@ impl CellRetentionStoreV1 {
     fn required_row(&self, operation: CellDigestV1) -> CellResultV1<Row> {
         self.row(operation)?
             .ok_or(CellErrorV1::Invalid("retention unknown obligation"))
+    }
+
+    /// Observe the existing bounded layout and repair-conservation rules under
+    /// the repair owner's original checkpoints. This is a current local check,
+    /// not an atomic snapshot against noncooperating database writers.
+    fn audited_repair_row_controlled(
+        &self,
+        operation: CellDigestV1,
+        control: &mut OperationControl<'_, impl FnMut() -> CellResultV1<()>>,
+    ) -> CellResultV1<Row> {
+        control.check()?;
+        validate_schema(&self.connection)?;
+        self.check_arena_controlled(control)?;
+        let rows =
+            Self::audit_layout_from(&self.connection, &self.config, &mut || control.check())?;
+        let row = rows
+            .into_iter()
+            .find(|row| row.contract.operation == operation)
+            .ok_or(CellErrorV1::Invalid("retention unknown obligation"))?;
+        control.check()?;
+        Ok(row)
     }
 
     fn row(&self, operation: CellDigestV1) -> CellResultV1<Option<Row>> {

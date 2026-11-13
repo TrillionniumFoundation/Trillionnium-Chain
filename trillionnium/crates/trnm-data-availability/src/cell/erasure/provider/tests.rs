@@ -11,6 +11,8 @@ use crate::cell::{
     CellRs46ShardInputV1, MAX_CHUNK_BYTES,
 };
 
+mod observation;
+
 fn deadline() -> Instant {
     Instant::now() + Duration::from_secs(20)
 }
@@ -137,6 +139,66 @@ impl Fixture {
     }
 }
 
+#[test]
+fn provider_plan_cache_batch_checks_every_operation_and_wire_before_any_row() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("plan-batch.sqlite");
+    let target = cache(&path);
+    let fixture = Fixture::new();
+    let contracts: Vec<_> = (0..6).map(|slot| fixture.contract(slot, 7)).collect();
+    let good: Vec<_> = contracts
+        .iter()
+        .zip(&fixture.wires)
+        .map(|(contract, wire)| (contract, contract.operation(), wire.as_slice()))
+        .collect();
+    let before = target.cache_usage().unwrap();
+    let mut wrong_operation = good.clone();
+    wrong_operation[5].1[0] ^= 1;
+    assert!(CellRs46ShardProviderV1::cache_shards(&wrong_operation, &target, deadline(),).is_err());
+    assert_eq!(target.cache_usage().unwrap(), before);
+    let mut damaged = fixture.wires[5].clone();
+    let last = damaged.len() - 1;
+    damaged[last] ^= 1;
+    let mut wrong_wire = good.clone();
+    wrong_wire[5].2 = &damaged;
+    assert!(CellRs46ShardProviderV1::cache_shards(&wrong_wire, &target, deadline()).is_err());
+    assert_eq!(target.cache_usage().unwrap(), before);
+    let mut wrong_slot = good.clone();
+    wrong_slot[5].2 = &fixture.wires[0];
+    assert!(CellRs46ShardProviderV1::cache_shards(&wrong_slot, &target, deadline()).is_err());
+    assert_eq!(target.cache_usage().unwrap(), before);
+    let mut oversized = good.clone();
+    oversized.push(good[0]);
+    assert!(CellRs46ShardProviderV1::cache_shards(&oversized, &target, deadline()).is_err());
+    assert!(CellRs46ShardProviderV1::cache_shards(
+        &good,
+        &target,
+        Instant::now() - Duration::from_millis(1),
+    )
+    .is_err());
+    assert_eq!(target.cache_usage().unwrap(), before);
+    CellRs46ShardProviderV1::cache_shards(&good, &target, deadline()).unwrap();
+    let accepted = target.cache_usage().unwrap();
+    assert_eq!(accepted.chunk_rows, 6);
+    assert_eq!(accepted.manifest_rows, 6);
+    CellRs46ShardProviderV1::cache_shards(&good, &target, deadline()).unwrap();
+    assert_eq!(target.cache_usage().unwrap(), accepted);
+    drop(target);
+    let reopened = CellStoreV1::open_read_only(&path).unwrap();
+    for (contract, _, wire) in good {
+        assert_eq!(
+            reopened.manifest(contract.manifest().id()).unwrap(),
+            Some(contract.manifest().clone())
+        );
+        assert_eq!(
+            reopened
+                .chunk(contract.manifest().chunks()[0].sha256)
+                .unwrap(),
+            Some(wire.to_vec())
+        );
+    }
+}
+
 fn ledger(path: &Path, operation: CellDigestV1) -> Option<(u64, u64, u8)> {
     Connection::open_with_flags(
         path.join("retention.sqlite"),
@@ -230,6 +292,68 @@ fn csp1_roundtrip_keeps_independent_source_operation_context_and_slot_pins() {
     assert_ne!(changed.operation(), contract.operation());
     assert!(changed.verify_pin(contract.operation()).is_err());
     assert_eq!(contract.manifest().context().runtime, context().runtime);
+}
+
+#[test]
+fn provider_six_shard_cache_batch_rejects_late_bad_pins_and_wires_before_any_write() {
+    let fixture = Fixture::new();
+    let contracts: [_; CELL_RS46_TOTAL_SHARDS_V1] =
+        std::array::from_fn(|slot| fixture.contract(slot, 1));
+    let staged = std::array::from_fn(|slot| {
+        (
+            &contracts[slot],
+            contracts[slot].operation(),
+            fixture.wires[slot].as_slice(),
+        )
+    });
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("six-shards.sqlite");
+    let target = cache(&path);
+    let before = target.cache_usage().unwrap();
+    assert_eq!(before.chunk_rows, 0);
+    assert_eq!(before.manifest_rows, 0);
+
+    let mut wrong_pin = staged;
+    wrong_pin[CELL_RS46_TOTAL_SHARDS_V1 - 1].1[0] ^= 1;
+    assert!(matches!(
+        CellRs46ShardProviderV1::cache_shard_batch(&wrong_pin, &target, deadline()),
+        Err(CellErrorV1::Invalid("RS46 provider operation pin"))
+    ));
+    assert_eq!(target.cache_usage().unwrap(), before);
+
+    let mut changed_wire = fixture.wires[CELL_RS46_TOTAL_SHARDS_V1 - 1].clone();
+    *changed_wire.last_mut().unwrap() ^= 1;
+    let mut wrong_wire = staged;
+    wrong_wire[CELL_RS46_TOTAL_SHARDS_V1 - 1].2 = &changed_wire;
+    assert!(matches!(
+        CellRs46ShardProviderV1::cache_shard_batch(&wrong_wire, &target, deadline()),
+        Err(CellErrorV1::Invalid("RS46 provider payload pin"))
+    ));
+    assert_eq!(target.cache_usage().unwrap(), before);
+
+    CellRs46ShardProviderV1::cache_shard_batch(&staged, &target, deadline()).unwrap();
+    let after = target.cache_usage().unwrap();
+    assert_eq!(after.chunk_rows, CELL_RS46_TOTAL_SHARDS_V1 as u64);
+    assert_eq!(after.manifest_rows, CELL_RS46_TOTAL_SHARDS_V1 as u64);
+    drop(target);
+
+    let reopened = CellStoreV1::open_read_only(&path).unwrap();
+    assert_eq!(reopened.cache_usage().unwrap(), after);
+    for (slot, contract) in contracts.iter().enumerate() {
+        let manifest = reopened
+            .manifest(contract.manifest().id())
+            .unwrap()
+            .unwrap();
+        assert_eq!(manifest.encode(), contract.manifest().encode());
+        reopened.verify_complete(&manifest).unwrap();
+        assert_eq!(
+            reopened
+                .chunk(manifest.chunks()[0].sha256)
+                .unwrap()
+                .unwrap(),
+            fixture.wires[slot]
+        );
+    }
 }
 
 #[test]
@@ -747,4 +871,42 @@ fn provider_expired_deadline_and_immediate_cancel_create_no_slot() {
         .is_err());
     assert_eq!(fs::read_dir(path.join(DESCRIPTORS)).unwrap().count(), 0);
     assert!(ledger(&path, contract.operation()).is_none());
+}
+
+#[test]
+fn provider_inspection_reads_acknowledged_target_without_extra_debit() {
+    let dir = tempfile::tempdir().unwrap();
+    let fixture = Fixture::new();
+    let contract = fixture.contract(0, 1);
+    let source = cache(&dir.path().join("source.sqlite"));
+    fixture.stage(&contract, &source);
+    let path = dir.path().join("provider");
+    let mut provider = CellRs46ShardProviderV1::create(&path, fixture.config(0, 16)).unwrap();
+    let (initial, _) = provider
+        .publish(&contract, contract.operation(), &source, deadline())
+        .unwrap();
+    let charged = ledger(&path, contract.operation()).unwrap();
+    let bytes = fs::read(path.join("payload.arena")).unwrap();
+    let observed = provider
+        .inspect_target(
+            &fixture.binding,
+            contract.operation(),
+            deadline(),
+            &mut || Ok(()),
+        )
+        .unwrap();
+    assert_eq!(observed.shard().encode(), fixture.wires[0]);
+    assert_eq!(ledger(&path, contract.operation()), Some(charged));
+    assert_eq!(fs::read(path.join("payload.arena")).unwrap(), bytes);
+    let (ack, verified) = provider
+        .reconcile_acknowledgement(
+            &fixture.binding,
+            contract.operation(),
+            deadline(),
+            &mut || Ok(()),
+        )
+        .unwrap();
+    assert_eq!(ack, initial);
+    assert_eq!(verified.shard().encode(), fixture.wires[0]);
+    assert_eq!(ledger(&path, contract.operation()), Some(charged));
 }

@@ -1,0 +1,24 @@
+{
+  "actual_oid": "5c2352b5d545ab5d3a2612c98977af8489c0cfbc",
+  "bytes": 16012332,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "5c2352b5d545ab5d3a2612c98977af8489c0cfbc"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 16012332,
+  "expected_oid": "5c2352b5d545ab5d3a2612c98977af8489c0cfbc",
+  "finished_at": "2026-11-12T01:41:46.512518+00:00",
+  "path": "evidence/chain-six-full-20261108/archives/proof-mmcs-f3-originals.tar.xz",
+  "path_base64": "ZXZpZGVuY2UvY2hhaW4tc2l4LWZ1bGwtMjAyNjExMDgvYXJjaGl2ZXMvcHJvb2YtbW1jcy1mMy1vcmlnaW5hbHMudGFyLnh6",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "3a620d4e0fc597913d37bfc3eac7cc1c9cfb90d2ff7c398a535425d9fd7de319",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:46.279435+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -1,0 +1,61 @@
+{
+  "after": {
+    "base": null,
+    "candidate": "c8373b4ea47b134ffac9b39480fd9e38a087aeeb",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "c8373b4ea47b134ffac9b39480fd9e38a087aeeb",
+    "tested_tree": "703fae11c986bfb33d704b28c5b9bf29282b18e7",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2545812344,
+    "tracked_entries": 26642,
+    "tracked_worktree_verified": true
+  },
+  "argv": [
+    "python3",
+    "/home/qq/work/chain-sqlite-advisory-20261110-checks/run-hook-frozen-2348.py"
+  ],
+  "before": {
+    "base": null,
+    "candidate": "c8373b4ea47b134ffac9b39480fd9e38a087aeeb",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "c8373b4ea47b134ffac9b39480fd9e38a087aeeb",
+    "tested_tree": "703fae11c986bfb33d704b28c5b9bf29282b18e7",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2545812344,
+    "tracked_entries": 26642,
+    "tracked_worktree_verified": true
+  },
+  "cwd": "/home/qq/work/chain-sqlite-advisory-20261110",
+  "elapsed_ns": 438354946863,
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/home/qq/work/chain-sqlite-advisory-20261110-checks/native-target",
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_RUN_ID": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_STATIC": null,
+    "RUNNER_ARCH": null,
+    "RUSTC": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTC_WORKSPACE_WRAPPER": null,
+    "RUSTC_WRAPPER": null,
+    "RUSTFLAGS": null,
+    "RUST_TEST_THREADS": null,
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "exit_code": 1,
+  "log_bytes": 401,
+  "log_file": "sqlite-hook-frozen-2348.log",
+  "log_sha256": "36e5fdbab901e060dfab3a7e07e7686378e724deb86b064b30cfca8a72308142",
+  "schema": "trnm-pq-native-command-v1",
+  "started_utc": "2026-11-10T23:41:37.930987+00:00",
+  "status": "command_failed",
+  "whole_chain_quantum_security_qualified": false
+}

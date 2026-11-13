@@ -7,7 +7,8 @@ use trnm_crypto_primitives::pon_work;
 use trnm_mvcc_fee::continuity_v1;
 use trnm_pon_node::research_work_schedule::{
     asert_target, inspect_retained_branch, AsertInputs, CheckedBranchSchedule, ClockEligibility,
-    FullWorkCheck, HistoryHeader, NativeWire, Policy, Profile, ProfileInputs, MAX_RESEARCH_HEIGHT,
+    FullWorkCheck, HistoryHeader, IncrementalWorkSchedule, NativeWire, Policy, Profile,
+    ProfileInputs, MAX_RESEARCH_HEIGHT,
 };
 use trnm_pon_node::{consensus, development_public, GrowthPacket, Node, Packet, Settings};
 use trnm_protocol::pon_wire::{hash, Hash, Header};
@@ -541,6 +542,87 @@ fn local_clock_rollback_only_changes_defer_status_not_history_or_target() {
     );
 }
 
+#[test]
+fn branch_clock_retains_the_maximum_of_nonmonotone_legacy_history() {
+    let profile = fixture(Policy::AnchoredAsert {
+        activation_height: 5,
+        half_life_seconds: 160,
+    });
+    let mut history = Vec::new();
+    for timestamp in [1010, 1020, 1100, 1021, 1022] {
+        append(&profile, &mut history, timestamp);
+    }
+    let checked = context(&profile, &history);
+    let historical = checked
+        .check_historical_header(&candidate(&profile, &history, 1023))
+        .unwrap();
+    assert_eq!(checked.max_ancestor_time(), 1100);
+    assert_eq!(
+        historical.clock_eligibility(903),
+        ClockEligibility::Eligible
+    );
+    assert_eq!(
+        historical.branch_clock_eligibility(903),
+        ClockEligibility::DeferredUntil(980)
+    );
+    let original = historical.clone();
+    for now in [980, 981, 903, 0, u64::MAX] {
+        let expected = if now < 980 {
+            ClockEligibility::DeferredUntil(980)
+        } else {
+            ClockEligibility::Eligible
+        };
+        assert_eq!(historical.branch_clock_eligibility(now), expected);
+        assert_eq!(checked.branch_clock_eligibility(now), expected);
+        assert_eq!(historical, original);
+    }
+
+    // Keep the high legacy ancestor after it leaves the eleven-point MTP.
+    for timestamp in 1023..=1035 {
+        append(&profile, &mut history, timestamp);
+    }
+    assert!(history
+        .iter()
+        .rev()
+        .take(11)
+        .all(|row| row.header.timestamp < 1100));
+    let extended = context(&profile, &history);
+    let later = extended
+        .check_historical_header(&candidate(&profile, &history, 1036))
+        .unwrap();
+    assert_eq!(extended.max_ancestor_time(), 1100);
+    assert_eq!(later.clock_eligibility(916), ClockEligibility::Eligible);
+    assert_eq!(
+        later.branch_clock_eligibility(979),
+        ClockEligibility::DeferredUntil(980)
+    );
+}
+
+#[test]
+fn incremental_genesis_has_no_imported_credit_or_anchor() {
+    for policy in [
+        Policy::FixedTarget,
+        Policy::AnchoredAsert {
+            activation_height: 1,
+            half_life_seconds: 160,
+        },
+    ] {
+        let profile = fixture(policy);
+        let prefix = IncrementalWorkSchedule::new(&profile);
+        assert_eq!(prefix.profile_id(), profile.id());
+        assert_eq!(prefix.tip(), profile.inputs().genesis);
+        assert_eq!(prefix.height(), 0);
+        assert_eq!(prefix.anchor(), None);
+        assert_eq!(prefix.cumulative_work(), consensus::Work::default());
+        assert_eq!(prefix.max_ancestor_time(), profile.inputs().genesis_time);
+        assert_eq!(prefix.next_context().unwrap(), context(&profile, &[]));
+        assert_eq!(
+            prefix.branch_clock_eligibility(879),
+            ClockEligibility::DeferredUntil(880)
+        );
+    }
+}
+
 #[derive(Clone, Copy)]
 enum Backend {
     Pnh1,
@@ -612,9 +694,26 @@ impl NativePacket {
         .unwrap();
     }
     fn check(&self, checked: &CheckedBranchSchedule) -> trnm_pon_node::Result<FullWorkCheck> {
+        self.check_with_progress(checked, &mut || Ok(()))
+    }
+    fn check_with_progress(
+        &self,
+        checked: &CheckedBranchSchedule,
+        progress: &mut impl FnMut() -> trnm_pon_node::Result<()>,
+    ) -> trnm_pon_node::Result<FullWorkCheck> {
         match self {
-            Self::Pnh1(p) => checked.check_pnh1_packet(p, &mut || Ok(())),
-            Self::Pgh2(p) => checked.check_pgh2_packet(p, &mut || Ok(())),
+            Self::Pnh1(p) => checked.check_pnh1_packet(p, progress),
+            Self::Pgh2(p) => checked.check_pgh2_packet(p, progress),
+        }
+    }
+    fn advance(
+        &self,
+        prefix: &mut IncrementalWorkSchedule,
+        progress: &mut impl FnMut() -> trnm_pon_node::Result<()>,
+    ) -> trnm_pon_node::Result<FullWorkCheck> {
+        match self {
+            Self::Pnh1(p) => prefix.append_pnh1_packet(p, progress),
+            Self::Pgh2(p) => prefix.append_pgh2_packet(p, progress),
         }
     }
     fn reprove(&mut self, required: Hash) {
@@ -685,6 +784,12 @@ impl Backend {
             (Self::Pnh1, NativePacket::Pnh1(p)) => node.admit(p, GENESIS_TIME + 10000),
             (Self::Pgh2, NativePacket::Pgh2(p)) => node.admit_growth(p, GENESIS_TIME + 10000),
             _ => panic!("native wire mismatch"),
+        }
+    }
+    fn retained(self, node: &Node, id: Hash) -> NativePacket {
+        match self {
+            Self::Pnh1 => NativePacket::Pnh1(node.packet(id).unwrap()),
+            Self::Pgh2 => NativePacket::Pgh2(node.growth_packet(id).unwrap()),
         }
     }
     fn activate(self, node: &mut Node, id: Hash) {
@@ -849,10 +954,76 @@ fn native_complete_proof_campaign(backend: Backend) {
     let mut node = backend.open(directory.path(), settings.clone());
     let first = backend.make(&node, genesis, GENESIS_TIME + 10, 0);
     let first_id = backend.admit(&mut node, &first).unwrap();
+
+    // Opaque incremental state has no arithmetic-history or peer-work import.
+    let mut incremental = IncrementalWorkSchedule::new(&profile);
+    assert_eq!(
+        incremental.next_context().unwrap(),
+        inspect_retained_branch(&node, &profile, genesis, &mut || Ok(())).unwrap()
+    );
+    let mut other_wire = profile.inputs().clone();
+    other_wire.wire = match other_wire.wire {
+        NativeWire::Pnh1 => NativeWire::Pgh2,
+        NativeWire::Pgh2 => NativeWire::Pnh1,
+    };
+    let mut other_namespace = profile.inputs().clone();
+    other_namespace.parameters[0] ^= 1;
+    for (inputs, error) in [
+        (other_wire, "SCHEDULE_WIRE"),
+        (other_namespace, "SCHEDULE_NAMESPACE"),
+    ] {
+        let wrong_profile = Profile::new(inputs).unwrap();
+        let mut refused = IncrementalWorkSchedule::new(&wrong_profile);
+        let before = refused.clone();
+        let mut callbacks = 0;
+        assert_eq!(
+            first
+                .advance(&mut refused, &mut || {
+                    callbacks += 1;
+                    Ok(())
+                })
+                .unwrap_err()
+                .to_string(),
+            error
+        );
+        assert_eq!(callbacks, 0);
+        assert_eq!(refused, before);
+    }
+    let first_receipt = first.advance(&mut incremental, &mut || Ok(())).unwrap();
+    assert_eq!(first_receipt.block(), first_id);
+    assert_eq!(incremental.tip(), first_id);
+    assert_eq!(incremental.anchor().unwrap().key().block, first_id);
+    let first_prefix = incremental.clone();
+    assert_eq!(
+        incremental.next_context().unwrap(),
+        inspect_retained_branch(&node, &profile, first_id, &mut || Ok(())).unwrap()
+    );
+
     let fast = backend.make(&node, first_id, GENESIS_TIME + 11, 0);
     let fast_id = backend.admit(&mut node, &fast).unwrap();
     backend.activate(&mut node, fast_id);
     let fast_context = inspect_retained_branch(&node, &profile, fast_id, &mut || Ok(())).unwrap();
+    let mut direct_callbacks = 0;
+    let direct = fast
+        .check_with_progress(&incremental.next_context().unwrap(), &mut || {
+            direct_callbacks += 1;
+            Ok(())
+        })
+        .unwrap();
+    let mut incremental_callbacks = 0;
+    let advanced = fast
+        .advance(&mut incremental, &mut || {
+            incremental_callbacks += 1;
+            Ok(())
+        })
+        .unwrap();
+    assert_eq!(advanced, direct);
+    // The same candidate's single complete replay plus one final publish
+    // checkpoint; adding a parent did not cause another parent-proof replay.
+    assert!(direct_callbacks > 1);
+    assert_eq!(incremental_callbacks, direct_callbacks + 1);
+    assert_eq!(incremental.next_context().unwrap(), fast_context);
+    let fast_prefix = incremental.clone();
     assert!(fast_context.required_target() < fast.header().target);
     let mut fresh = backend.make(&node, fast_id, GENESIS_TIME + 12, 0);
     fresh.reprove(fast_context.required_target());
@@ -891,6 +1062,93 @@ fn native_complete_proof_campaign(backend: Backend) {
     corrupt.proof_mut()[index..index + 4].copy_from_slice(&(old ^ 1).to_le_bytes());
     let wrong_product_refusal = corrupt.check(&fast_context).unwrap_err().to_string();
     assert_eq!(wrong_product_refusal, "WORK:Product");
+    let unchanged = incremental.clone();
+    assert_eq!(
+        corrupt
+            .advance(&mut incremental, &mut || Ok(()))
+            .unwrap_err()
+            .to_string(),
+        "WORK:Product"
+    );
+    assert_eq!(incremental, unchanged);
+    assert_eq!(
+        fresh
+            .advance(
+                &mut incremental,
+                &mut || Err("INCREMENTAL_CANCELLED".into())
+            )
+            .unwrap_err()
+            .to_string(),
+        "INCREMENTAL_CANCELLED"
+    );
+    assert_eq!(incremental, unchanged);
+    let mut wrong_parent = fresh.clone();
+    wrong_parent.header_mut().parent = genesis;
+    let mut preflight_callbacks = 0;
+    assert_eq!(
+        wrong_parent
+            .advance(&mut incremental, &mut || {
+                preflight_callbacks += 1;
+                Ok(())
+            })
+            .unwrap_err()
+            .to_string(),
+        "SCHEDULE_PARENT"
+    );
+    assert_eq!(preflight_callbacks, 0);
+    assert_eq!(incremental, unchanged);
+
+    let mut candidate_callbacks = 0;
+    fresh
+        .check_with_progress(&fast_context, &mut || {
+            candidate_callbacks += 1;
+            Ok(())
+        })
+        .unwrap();
+    let mut late_callbacks = 0;
+    assert_eq!(
+        fresh
+            .advance(&mut incremental, &mut || {
+                late_callbacks += 1;
+                if late_callbacks > candidate_callbacks {
+                    Err("INCREMENTAL_FINAL_CANCELLED".into())
+                } else {
+                    Ok(())
+                }
+            })
+            .unwrap_err()
+            .to_string(),
+        "INCREMENTAL_FINAL_CANCELLED"
+    );
+    assert_eq!(late_callbacks, candidate_callbacks + 1);
+    assert_eq!(incremental, unchanged);
+
+    // The cancelled candidate can be retried; only the successful publication
+    // adds its exact work. Re-delivery then adds no credit and enters no replay.
+    assert_eq!(
+        fresh.advance(&mut incremental, &mut || Ok(())).unwrap(),
+        result
+    );
+    let after_fresh = incremental.clone();
+    let mut duplicate_callbacks = 0;
+    assert_eq!(
+        fresh
+            .advance(&mut incremental, &mut || {
+                duplicate_callbacks += 1;
+                Ok(())
+            })
+            .unwrap_err()
+            .to_string(),
+        "SCHEDULE_DUPLICATE_BLOCK"
+    );
+    assert_eq!(duplicate_callbacks, 0);
+    assert_eq!(incremental, after_fresh);
+    assert_eq!(incremental.height(), 3);
+    assert_eq!(
+        incremental.cumulative_work(),
+        result.historical().cumulative_work()
+    );
+
     let cancellation = match &fresh {
         NativePacket::Pnh1(p) => {
             fast_context.check_pnh1_packet(p, &mut || Err("SCHEDULE_TEST_CANCELLED".into()))
@@ -905,6 +1163,10 @@ fn native_complete_proof_campaign(backend: Backend) {
     let high = backend.make(&node, first_id, GENESIS_TIME + 100, 1);
     let high_id = backend.admit(&mut node, &high).unwrap();
     let high_context = inspect_retained_branch(&node, &profile, high_id, &mut || Ok(())).unwrap();
+    let mut high_prefix = first_prefix.clone();
+    high.advance(&mut high_prefix, &mut || Ok(())).unwrap();
+    assert_eq!(high_prefix.next_context().unwrap(), high_context);
+    assert_eq!(incremental, after_fresh);
     // Freshly computed full W1 at the *correct candidate target*, above MTP,
     // below its parent's timestamp. It fails the intended new time rule.
     let backwards = backend.make(&node, high_id, GENESIS_TIME + 11, 1);
@@ -912,12 +1174,27 @@ fn native_complete_proof_campaign(backend: Backend) {
     backwards.full_verify();
     let backwards_research_refusal = backwards.check(&high_context).unwrap_err().to_string();
     assert_eq!(backwards_research_refusal, "SCHEDULE_TIME_NONDECREASING");
+    let before_backwards = high_prefix.clone();
+    assert_eq!(
+        backwards
+            .advance(&mut high_prefix, &mut || Ok(()))
+            .unwrap_err()
+            .to_string(),
+        "SCHEDULE_TIME_NONDECREASING"
+    );
+    assert_eq!(high_prefix, before_backwards);
     let old_rule_id = backend.admit(&mut node, &backwards).unwrap();
     assert_eq!(node.parent_height(old_rule_id).unwrap(), 3);
 
     let equal = backend.make(&node, high_id, GENESIS_TIME + 100, 1);
     equal.full_verify();
-    equal.check(&high_context).unwrap();
+    let equal_check = equal.check(&high_context).unwrap();
+    assert_eq!(
+        equal.advance(&mut high_prefix, &mut || Ok(())).unwrap(),
+        equal_check
+    );
+    assert_eq!(incremental, after_fresh);
+    assert_eq!(first_prefix.height(), 1);
     let equal_id = backend.admit(&mut node, &equal).unwrap();
     assert_eq!(node.parent_height(equal_id).unwrap(), 3);
 
@@ -930,6 +1207,58 @@ fn native_complete_proof_campaign(backend: Backend) {
         .unwrap_err()
         .to_string();
     assert_eq!(cross_fork_anchor_refusal, "SCHEDULE_ANCHOR_MISMATCH");
+    let mut alternate = IncrementalWorkSchedule::new(&profile);
+    other_anchor
+        .advance(&mut alternate, &mut || Ok(()))
+        .unwrap();
+    assert_eq!(alternate.next_context().unwrap(), other_context);
+    assert_ne!(alternate.anchor(), first_prefix.anchor());
+    assert_eq!(incremental, after_fresh);
+
+    // A real old-policy nonmonotone prefix retains its greatest timestamp.
+    // The candidate-only clock may pass while an earlier ancestor is deferred.
+    let late_activation = Profile::for_node(
+        &settings,
+        Policy::AnchoredAsert {
+            activation_height: 3,
+            half_life_seconds: 160,
+        },
+    )
+    .unwrap();
+    let mut legacy_prefix = IncrementalWorkSchedule::new(&late_activation);
+    first.advance(&mut legacy_prefix, &mut || Ok(())).unwrap();
+    high.advance(&mut legacy_prefix, &mut || Ok(())).unwrap();
+    let legacy_receipt = backwards
+        .advance(&mut legacy_prefix, &mut || Ok(()))
+        .unwrap();
+    let skew = profile.inputs().future_skew_seconds;
+    let candidate_now = backwards.header().timestamp.saturating_sub(skew);
+    let branch_ready = high.header().timestamp.saturating_sub(skew);
+    assert_eq!(
+        legacy_receipt.historical().clock_eligibility(candidate_now),
+        ClockEligibility::Eligible
+    );
+    assert_eq!(
+        legacy_receipt
+            .historical()
+            .branch_clock_eligibility(candidate_now),
+        ClockEligibility::DeferredUntil(branch_ready)
+    );
+    assert_eq!(legacy_prefix.max_ancestor_time(), high.header().timestamp);
+    let legacy_before = legacy_prefix.clone();
+    for now in [branch_ready, candidate_now, 0, u64::MAX] {
+        let expected = if now < branch_ready {
+            ClockEligibility::DeferredUntil(branch_ready)
+        } else {
+            ClockEligibility::Eligible
+        };
+        assert_eq!(legacy_prefix.branch_clock_eligibility(now), expected);
+        assert_eq!(
+            legacy_receipt.historical().branch_clock_eligibility(now),
+            expected
+        );
+        assert_eq!(legacy_prefix, legacy_before);
+    }
     let c0 = Profile::for_node(&settings, Policy::FixedTarget).unwrap();
     let c0_context = inspect_retained_branch(&node, &c0, fast_id, &mut || Ok(())).unwrap();
     assert_eq!(c0_context.required_target(), fast.header().target);
@@ -937,6 +1266,15 @@ fn native_complete_proof_campaign(backend: Backend) {
     let reopened = backend.open(directory.path(), settings);
     let cold = inspect_retained_branch(&reopened, &profile, fast_id, &mut || Ok(())).unwrap();
     assert_eq!(cold, fast_context);
+    let mut cold_incremental = IncrementalWorkSchedule::new(&profile);
+    for id in [first_id, fast_id] {
+        backend
+            .retained(&reopened, id)
+            .advance(&mut cold_incremental, &mut || Ok(()))
+            .unwrap();
+    }
+    assert_eq!(cold_incremental, fast_prefix);
+    assert_eq!(cold_incremental.next_context().unwrap(), cold);
     let cold_nonmonotone_refusal =
         inspect_retained_branch(&reopened, &profile, old_rule_id, &mut || Ok(()))
             .unwrap_err()
@@ -944,6 +1282,12 @@ fn native_complete_proof_campaign(backend: Backend) {
     assert_eq!(cold_nonmonotone_refusal, "SCHEDULE_TIME_NONDECREASING");
     let cold_c0 = inspect_retained_branch(&reopened, &c0, fast_id, &mut || Ok(())).unwrap();
     assert_eq!(cold_c0, c0_context);
+    let mut c0_incremental = IncrementalWorkSchedule::new(&c0);
+    for packet in [&first, &fast] {
+        packet.advance(&mut c0_incremental, &mut || Ok(())).unwrap();
+    }
+    assert_eq!(c0_incremental.next_context().unwrap(), cold_c0);
+    assert_eq!(c0_incremental.anchor(), None);
     if let Some(root) = std::env::var_os("TRNM_WORK_SCHEDULE_RESEARCH_DIR") {
         export_research_evidence(
             Path::new(&root),
@@ -980,4 +1324,50 @@ fn pnh1_fresh_complete_work_time_refusal_and_native_cold_readback() {
 #[test]
 fn pgh2_fresh_complete_work_time_refusal_and_native_cold_readback() {
     native_complete_proof_campaign(Backend::Pgh2);
+}
+
+#[test]
+fn incremental_normal_complete_packets_match_retained_context_for_both_wires() {
+    for backend in [Backend::Pnh1, Backend::Pgh2] {
+        let directory = tempfile::tempdir().unwrap();
+        let settings = backend.settings();
+        let genesis = settings.genesis();
+        let profile = Profile::for_node(&settings, Policy::FixedTarget).unwrap();
+        let mut node = backend.open(directory.path(), settings);
+        let packet = backend.make(&node, genesis, GENESIS_TIME + 10, 0);
+        let block = backend.admit(&mut node, &packet).unwrap();
+        let mut prefix = IncrementalWorkSchedule::new(&profile);
+        let mut direct_callbacks = 0;
+        let direct = packet
+            .check_with_progress(&prefix.next_context().unwrap(), &mut || {
+                direct_callbacks += 1;
+                Ok(())
+            })
+            .unwrap();
+        let mut append_callbacks = 0;
+        let appended = packet
+            .advance(&mut prefix, &mut || {
+                append_callbacks += 1;
+                Ok(())
+            })
+            .unwrap();
+        assert_eq!(appended, direct);
+        assert_eq!(prefix.tip(), block);
+        assert_eq!(prefix.height(), 1);
+        assert_eq!(prefix.max_ancestor_time(), GENESIS_TIME + 10);
+        assert_eq!(append_callbacks, direct_callbacks + 1);
+        assert_eq!(
+            prefix.branch_clock_eligibility(GENESIS_TIME + 20),
+            ClockEligibility::Eligible
+        );
+        assert_eq!(
+            prefix.next_context().unwrap(),
+            inspect_retained_branch(&node, &profile, block, &mut || Ok(())).unwrap()
+        );
+        assert_eq!(
+            node.activate_observed(block, GENESIS_TIME + 20).unwrap(),
+            block
+        );
+        assert_eq!(backend.retained(&node, block).encode(), packet.encode());
+    }
 }

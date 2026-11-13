@@ -3,7 +3,9 @@
 //! benefit nor source independence, training provenance, demand, or mining hardness.
 use crate::integer_factor_candidate_v2::{self as factor, FactorState, IntegerModelV2};
 use crate::model_composition_v4 as composition;
+use crate::model_composition_v6 as source_settlement;
 use crate::model_evolution_v5 as evolution;
+use crate::model_source_composition_v6 as source_composition;
 use crate::pon_executor::{canonical, prefix_rows, Config, Result, State};
 use crate::public_evaluation;
 use serde::{Deserialize, Serialize};
@@ -195,7 +197,11 @@ fn control_model(control: &Control, family: Hash) -> Result<IntegerModelV2> {
     IntegerModelV2::from_coefficients(family, coefficients)
 }
 pub fn enabled(cfg: &Config) -> bool {
-    cfg.params["model_profile"] == PROFILE || composition::enabled(cfg) || evolution::enabled(cfg)
+    cfg.params["model_profile"] == PROFILE
+        || composition::enabled(cfg)
+        || source_settlement::enabled(cfg)
+        || evolution::enabled(cfg)
+        || source_composition::enabled(cfg)
 }
 pub(crate) fn install(params: &mut Value) -> Result<()> {
     let policy = installed()?;
@@ -216,8 +222,14 @@ fn check_context(cfg: &Config) -> Result<&'static Installed> {
     if composition::enabled(cfg) {
         composition::check_context(cfg)?;
     }
+    if source_settlement::enabled(cfg) {
+        source_settlement::check_context(cfg)?;
+    }
     if evolution::enabled(cfg) {
         evolution::check_context(cfg)?;
+    }
+    if source_composition::enabled(cfg) {
+        source_composition::check_context(cfg)?;
     }
     Ok(p)
 }
@@ -236,7 +248,7 @@ pub(crate) fn controls(cfg: &Config) -> Result<Vec<IntegerModelV2>> {
         .map(|c| context_control(cfg, c))
         .collect()
 }
-fn source(cfg: &Config, author: Hash) -> Result<Hash> {
+pub(crate) fn source(cfg: &Config, author: Hash) -> Result<Hash> {
     let author = hex::encode(author);
     let entry = check_context(cfg)?
         .sources
@@ -252,7 +264,11 @@ fn evidence_key(cid: Hash) -> String {
     format!("model-evidence-v3:{}", hex::encode(cid))
 }
 fn context_evidence_key(cfg: &Config, cid: Hash) -> String {
-    if evolution::enabled(cfg) {
+    if source_settlement::enabled(cfg) {
+        source_settlement::evidence_key(cid)
+    } else if source_composition::enabled(cfg) {
+        source_composition::evidence_key(cid)
+    } else if evolution::enabled(cfg) {
         evolution::evidence_key(cid)
     } else if composition::enabled(cfg) {
         composition::evidence_key(cid)
@@ -260,8 +276,12 @@ fn context_evidence_key(cfg: &Config, cid: Hash) -> String {
         evidence_key(cid)
     }
 }
-fn context_source_key(cfg: &Config, round: u64, source: Hash) -> String {
-    if evolution::enabled(cfg) {
+pub(crate) fn context_source_key(cfg: &Config, round: u64, source: Hash) -> String {
+    if source_settlement::enabled(cfg) {
+        source_settlement::source_key(round, source)
+    } else if source_composition::enabled(cfg) {
+        source_composition::source_key(round, source)
+    } else if evolution::enabled(cfg) {
         evolution::source_key(round, source)
     } else if composition::enabled(cfg) {
         composition::source_key(round, source)
@@ -270,7 +290,9 @@ fn context_source_key(cfg: &Config, round: u64, source: Hash) -> String {
     }
 }
 fn metadata_key(cfg: &Config) -> &'static str {
-    if evolution::enabled(cfg) {
+    if source_settlement::enabled(cfg) || source_composition::enabled(cfg) {
+        "model_evidence_v6"
+    } else if evolution::enabled(cfg) {
         "model_evidence_v5"
     } else if composition::enabled(cfg) {
         "model_evidence_v4"
@@ -323,11 +345,20 @@ fn correct(model: &IntegerModelV2, tasks: &[Task]) -> Result<u64> {
     Ok(count)
 }
 pub(crate) fn model_correct(cfg: &Config, model: &IntegerModelV2) -> Result<u64> {
+    complete_model_evaluation(cfg, model).map(|(_, correct)| correct)
+}
+/// The actual immutable task count is returned only after every row succeeds.
+pub(crate) fn complete_model_evaluation(
+    cfg: &Config,
+    model: &IntegerModelV2,
+) -> Result<(u64, u64)> {
     check(
         cfg.task_windows.is_none(),
         "TASK_WINDOW_GENERATION_REQUIRED",
     )?;
-    correct(model, &check_context(cfg)?.tasks)
+    let tasks = &check_context(cfg)?.tasks;
+    let correct = correct(model, tasks)?;
+    Ok((tasks.len() as u64, correct))
 }
 pub(crate) fn dataset_root(cfg: &Config, generation: u64) -> Result<Hash> {
     match crate::model_task_windows_v1::selected(cfg, generation)? {
@@ -381,7 +412,16 @@ fn record(
         .ok_or("MODEL_EVIDENCE_ARITHMETIC")?
         / count;
     let mut result = json!({"schema":"native-integer-model-evidence-record-v3","network":hex::encode(cfg.network),"parameters":hex::encode(cfg.parameters),"family":hex::encode(cfg.family),"plan":hex::encode(cfg.plan),"policy":hex::encode(policy.policy_hash),"tasks":hex::encode(tasks_hash),"contribution":hex::encode(cid),"candidate":hex::encode(artifact),"parent":hex::encode(parent),"rows":count,"candidate_correct":candidate_correct,"parent_correct":parent_correct,"controls":control_records,"strongest_correct":strongest,"score":score,"scope":"exact-public-retrospective-integer-dataset-only","prospective_accepted":false,"independent_accepted":false,"public_reward_eligible":false});
-    let domain: &[u8] = if evolution::enabled(cfg) {
+    let domain: &[u8] = if source_settlement::enabled(cfg) {
+        result["schema"] = json!("native-integer-model-evidence-record-v6");
+        result["source_policy"] = cfg.params["model_source_policy_hash"].clone();
+        b"native-model-empirical-record-v6"
+    } else if source_composition::enabled(cfg) {
+        result["schema"] = json!("native-integer-model-evidence-record-v6");
+        result["source_composition_policy"] =
+            cfg.params["model_source_composition_policy_hash"].clone();
+        b"native-model-empirical-record-v6"
+    } else if evolution::enabled(cfg) {
         result["schema"] = json!("native-integer-model-evidence-record-v5");
         result["evolution_policy"] = cfg.params["model_evolution_policy_hash"].clone();
         result["active_experts"] = json!(candidate_model.active_experts());
@@ -421,7 +461,9 @@ pub(crate) fn admit(
     let admitted_source = source(cfg, vh(contribution, "owner")?)?;
     let round = n(contribution, "submission_round")?;
     let key = context_source_key(cfg, round, admitted_source);
-    let schema = if evolution::enabled(cfg) {
+    let schema = if source_settlement::enabled(cfg) || source_composition::enabled(cfg) {
+        "native-model-source-budget-v6"
+    } else if evolution::enabled(cfg) {
         "native-model-source-budget-v5"
     } else if composition::enabled(cfg) {
         "native-model-source-budget-v4"
@@ -434,7 +476,9 @@ pub(crate) fn admit(
         "MODEL_EVIDENCE_SOURCE_LIMIT",
     )?;
     let result = record(s, cfg, cid, contribution)?;
-    let domain: &[u8] = if evolution::enabled(cfg) {
+    let domain: &[u8] = if source_settlement::enabled(cfg) || source_composition::enabled(cfg) {
+        b"native-model-source-root-work-v6"
+    } else if evolution::enabled(cfg) {
         b"native-model-source-root-work-v5"
     } else if composition::enabled(cfg) {
         b"native-model-source-root-work-v4"
@@ -531,7 +575,10 @@ pub(crate) fn reserve_release(
     let bundle_evidence = adoption(s, cfg, bundle_id, bundle, true)?;
     check(total > 0, "MODEL_EVIDENCE_GAIN")?;
     let mut checked = Vec::with_capacity(allocations.len());
-    if composition::enabled(cfg) {
+    if composition::enabled(cfg)
+        || source_settlement::enabled(cfg)
+        || source_composition::enabled(cfg)
+    {
         for (cid, contribution, weight) in allocations {
             let evidence = adoption(s, cfg, *cid, contribution, false)?;
             checked.push(composition::CheckedComponent {
@@ -542,7 +589,58 @@ pub(crate) fn reserve_release(
             });
         }
     }
-    let composition_record = if composition::enabled(cfg) {
+    if source_settlement::enabled(cfg) {
+        // The complete source game is evaluated before any quota is changed.
+        // Every source is rounded and capped once; payments only divide that
+        // already fixed entitlement among its signed contribution owners.
+        let record = source_settlement::validate(
+            s,
+            cfg,
+            bundle_id,
+            bundle,
+            &bundle_evidence,
+            &checked,
+            budget,
+        )?;
+        let round = n(bundle, "submission_round")?;
+        let mut updates = Vec::new();
+        for item in record["sources"].as_array().ok_or("MODEL_SOURCE_RECORD")? {
+            let source = vh(item, "source")?;
+            let key = context_source_key(cfg, round, source);
+            let mut quota = s.get(&key).ok_or("MODEL_EVIDENCE_SOURCE")?;
+            check(
+                quota["schema"] == "native-model-source-budget-v6"
+                    && quota["source"] == hex::encode(source)
+                    && n(&quota, "round")? == round,
+                "MODEL_EVIDENCE_SOURCE",
+            )?;
+            let previous = n(&quota, "reserved_units")?;
+            let capacity = MAX_RESERVED_UNITS
+                .checked_sub(previous)
+                .ok_or("MODEL_EVIDENCE_SOURCE_BUDGET")?;
+            check(n(item, "cap")? == capacity, "MODEL_SOURCE_CAP")?;
+            let amount = n(item, "reward")?;
+            check(amount <= capacity, "MODEL_EVIDENCE_SOURCE_BUDGET")?;
+            quota["reserved_units"] = json!(previous
+                .checked_add(amount)
+                .ok_or("MODEL_EVIDENCE_ARITHMETIC")?);
+            updates.push((key, quota));
+        }
+        for (key, quota) in updates {
+            s.put(key, quota);
+        }
+        return Ok(Some(record));
+    }
+    let composition_record = if source_composition::enabled(cfg) {
+        Some(source_composition::validate(
+            s,
+            cfg,
+            bundle_id,
+            bundle,
+            &bundle_evidence,
+            &checked,
+        )?)
+    } else if composition::enabled(cfg) {
         Some(composition::validate(
             s,
             cfg,
@@ -556,7 +654,7 @@ pub(crate) fn reserve_release(
     };
     let mut additions = BTreeMap::<String, u64>::new();
     for (cid, contribution, score) in allocations {
-        if !composition::enabled(cfg) {
+        if !composition::enabled(cfg) && !source_composition::enabled(cfg) {
             adoption(s, cfg, *cid, contribution, true)?;
         }
         let admitted_source = source(cfg, vh(contribution, "owner")?)?;
@@ -597,13 +695,16 @@ pub(crate) fn cleanup(state: &mut State, cfg: &Config, height: u64) -> Result<()
         return Ok(());
     }
     let round = height / n(&cfg.params, "candidate_round_blocks")?;
-    let (source_prefix, evidence_prefix) = if evolution::enabled(cfg) {
-        ("model-source-v5:", "model-evidence-v5:")
-    } else if composition::enabled(cfg) {
-        ("model-source-v4:", "model-evidence-v4:")
-    } else {
-        ("model-source-v3:", "model-evidence-v3:")
-    };
+    let (source_prefix, evidence_prefix) =
+        if source_settlement::enabled(cfg) || source_composition::enabled(cfg) {
+            ("model-source-v6:", "model-evidence-v6:")
+        } else if evolution::enabled(cfg) {
+            ("model-source-v5:", "model-evidence-v5:")
+        } else if composition::enabled(cfg) {
+            ("model-source-v4:", "model-evidence-v4:")
+        } else {
+            ("model-source-v3:", "model-evidence-v3:")
+        };
     let removed: Vec<_> = [evidence_prefix, source_prefix]
         .into_iter()
         .flat_map(|prefix| prefix_rows(state, prefix))
@@ -621,6 +722,9 @@ pub(crate) fn cleanup(state: &mut State, cfg: &Config, height: u64) -> Result<()
         .collect();
     for key in removed {
         state.remove(&key);
+    }
+    if source_composition::enabled(cfg) {
+        source_composition::cleanup(state)?;
     }
     Ok(())
 }

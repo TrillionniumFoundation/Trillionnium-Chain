@@ -1,0 +1,184 @@
+{
+  "archive_manifest": {
+    "archive_member_count_including_manifest": 112,
+    "deferred_large_file_count": 7,
+    "included_file_hashes_independently_verified": 111,
+    "path": "validation/durable-current-remote/pre-model-bindings-01-readback/extracted/manifest.json",
+    "sha256": "5684ab1391adc8355988fd4c66a651575a52f07e1b28131a77fb729b212f12bf"
+  },
+  "configuration_findings": {
+    "active_prefix_after": "/home/qq/work/chain-bt-4a0b-runtime02/env",
+    "base_prefix_after": "/home/qq/work/chain-bt-4a0b-runtime02/python",
+    "interpretation": "Active sys.prefix/get_paths and actually observed module/ELF origins use the new private roots or the original system pins. Low-level sysconfig prefix/exec_prefix/LIBDIR retain old installation text because original bytes were preserved. This is not proof of arbitrary relocation, every configuration string rewritten, or full namespace isolation.",
+    "purelib_after": "/home/qq/work/chain-bt-4a0b-runtime02/env/lib/python3.12/site-packages",
+    "stdlib_after": "/home/qq/work/chain-bt-4a0b-runtime02/python/lib/python3.12",
+    "unchanged_low_level_old_installation_values": {
+      "LIBDIR": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/lib",
+      "exec_prefix": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu",
+      "prefix": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu"
+    }
+  },
+  "native_process": {
+    "cancelled": false,
+    "exit_code": 0,
+    "output_complete": true,
+    "output_durable": true,
+    "sdk_bytes_hex_reassembly_verified": true,
+    "state": "succeeded",
+    "stdout_bytes": 1373,
+    "stdout_sha256": "353207db6ae3edf44f017a58fcd8269d54de32b1544f184fd4e89924e48d7263",
+    "timed_out": false
+  },
+  "pending": "The separate full environment-2 import preflight stopped at source-before before launching its runtime child. Its raw failure is a separate observation, not an original runtime-guard rejection. Actual full runtime/model admission remains pending.",
+  "results": {
+    "canonical_python_outside_managed_roots": 1,
+    "committed_path_members": 22435,
+    "copy_and_probe_elapsed_seconds": 28.759371254127473,
+    "distinct_physical_byte_claim": false,
+    "executable_mappings": 8,
+    "external_path_members": 13,
+    "managed_path_members": 22421,
+    "module_origins": 73,
+    "new_snapshot": {
+      "bytes": 7097177,
+      "path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/runtime-snapshot.projected.v2.json",
+      "sha256": "1085538a9d5901bf8e724347c97166669d8dd1ac5815c3e8825cfaa1ba3dd11a"
+    },
+    "old_runtime_origins_in_probe": false,
+    "original_configure_and_verify_files_passed": true,
+    "pathwise_verified_bytes": 1112520241,
+    "probe_elapsed_seconds": 1.3375914520584047,
+    "prospective_chunks": 95,
+    "prospective_payload_bytes": 279627268,
+    "python_symlink_aliases_inside_managed_roots": 3,
+    "regular_path_copies": 22419,
+    "regular_path_copy_bytes": 1006564981
+  },
+  "retention_boundaries": {
+    "deferred_files": [
+      {
+        "archive_member": "validation/private-runtime02-projection/runtime-snapshot.projected.v2.json",
+        "bytes": 7097177,
+        "included": false,
+        "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/runtime-snapshot.projected.v2.json",
+        "retained_on_original_host": true,
+        "sha256": "1085538a9d5901bf8e724347c97166669d8dd1ac5815c3e8825cfaa1ba3dd11a"
+      },
+      {
+        "archive_member": "validation/private-runtime02-projection/expected-projection.json",
+        "bytes": 7097177,
+        "included": false,
+        "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/expected-projection.json",
+        "retained_on_original_host": true,
+        "sha256": "1085538a9d5901bf8e724347c97166669d8dd1ac5815c3e8825cfaa1ba3dd11a"
+      },
+      {
+        "archive_member": "validation/private-runtime02-projection/expected-byte-map.json",
+        "bytes": 9222443,
+        "included": false,
+        "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/expected-byte-map.json",
+        "retained_on_original_host": true,
+        "sha256": "d95d018f2a65b30a44b30f3120757dc8c1865efc6169a02bd571e7009252bba0"
+      },
+      {
+        "archive_member": "validation/private-runtime02-projection/original-members-before.json",
+        "bytes": 5724871,
+        "included": false,
+        "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/original-members-before.json",
+        "retained_on_original_host": true,
+        "sha256": "5be81639ab3308928e4846572350b6575416be6d235e18a9bce21328c6460c8c"
+      },
+      {
+        "archive_member": "validation/private-runtime02-projection/original-members-after.json",
+        "bytes": 5724871,
+        "included": false,
+        "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/original-members-after.json",
+        "retained_on_original_host": true,
+        "sha256": "5be81639ab3308928e4846572350b6575416be6d235e18a9bce21328c6460c8c"
+      },
+      {
+        "archive_member": "validation/private-runtime02-projection/projected-members-before-probe.json",
+        "bytes": 5403955,
+        "included": false,
+        "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/projected-members-before-probe.json",
+        "retained_on_original_host": true,
+        "sha256": "842f0653dda8d4f98578cc2f4eab1d92b915825b00ff452e1659d81fff86711c"
+      },
+      {
+        "archive_member": "validation/private-runtime02-projection/projected-members-after-probe.json",
+        "bytes": 5403955,
+        "included": false,
+        "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/projected-members-after-probe.json",
+        "retained_on_original_host": true,
+        "sha256": "842f0653dda8d4f98578cc2f4eab1d92b915825b00ff452e1659d81fff86711c"
+      }
+    ],
+    "deferred_original_host_files_retained": true,
+    "full_snapshot_and_22k_row_files_locally_unpacked": false,
+    "historical_failures_not_reclassified": true,
+    "historical_metadata_equal_via_reviewed_driver_assertions_and_receipt": true,
+    "old_six_extra_pyc_left_unchanged": true
+  },
+  "reviewed_raw_files": [
+    {
+      "archive_member": "validation/private-runtime02-projection/summary.json",
+      "bytes": 8338,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/summary.json",
+      "retained_on_original_host": true,
+      "sha256": "678b1bd68e857c4811bbf951330c7f6a00b1a5e337b8791eec04edb3780fed53"
+    },
+    {
+      "archive_member": "validation/private-runtime02-projection/private-python-probe.json",
+      "bytes": 28197,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/private-python-probe.json",
+      "retained_on_original_host": true,
+      "sha256": "2f39466078a44753c590cf58958dfba55a78eda92add55b9e27736524ed7479a"
+    },
+    {
+      "archive_member": "validation/private-runtime02-projection/private-python-probe.maps",
+      "bytes": 6031,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/private-python-probe.maps",
+      "retained_on_original_host": true,
+      "sha256": "6ee5d27fcfdf9ec0ebe61445e0655cdb9b59d2ee6221ba18c26e66e9fc0f5ac2"
+    },
+    {
+      "archive_member": "validation/private-runtime02-projection/private-python-probe.stdout",
+      "bytes": 242,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/private-python-probe.stdout",
+      "retained_on_original_host": true,
+      "sha256": "2687f5be4c2b26f29bf7dffab4f6b16ba74b664416ce91a76d754113b06b806f"
+    },
+    {
+      "archive_member": "validation/private-runtime02-projection/private-python-probe.stderr",
+      "bytes": 0,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/private-python-probe.stderr",
+      "retained_on_original_host": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "validation/private-runtime02-projection/unchanged-payload-members.json",
+      "bytes": 8300,
+      "included": true,
+      "original_path": "/home/qq/work/chain-bt-owner-convergence-20261112-4a0b-validation/private-runtime02-projection/unchanged-payload-members.json",
+      "retained_on_original_host": true,
+      "sha256": "020f1d5f62988896e179c3ab50f83a5ed942110e235ac8280c6bb7a0d258101a"
+    }
+  ],
+  "reviewer": "release_acceptance",
+  "schema": "trnm.private-runtime-projection-result-review.v1",
+  "scope": {
+    "full_sealed_runtime_import_admission_performed": false,
+    "h_called_by_reviewer": false,
+    "hepta_final_use": false,
+    "host_runtime_bytes_claimed_as_bt_payload": false,
+    "model_executed": false,
+    "production_activation": false
+  },
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "status": "PROJECTION_AND_PHYSICAL_PROBE_PASSED_FULL_IMPORT_NOT_YET_QUALIFIED"
+}

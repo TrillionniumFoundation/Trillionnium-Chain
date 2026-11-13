@@ -15,13 +15,15 @@ use trnm_service_settlement::native_budget::NativeBudgetEffectCheckV1;
 #[path = "shard/plan.rs"]
 mod plan;
 pub use plan::{
-    NativeCellRetainedShardPlanReadbackV1, NativeCellRetainedShardPlanRequestV1,
-    NativeCellRetainedShardPlanTargetsV1, NativeCellRetainedShardSlotReadbackV1,
-    NativeCellRetainedShardVerificationBudgetV1, NativeCellShardDamageV1,
-    NativeCellShardRecoveryActionV1, NativeCellShardRecoveryBudgetV1, NativeCellShardRecoveryCpuV1,
-    NativeCellShardRecoveryFailureV1, NativeCellShardRecoveryLimitsV1,
-    NativeCellShardRecoveryReadbackV1, NativeCellShardRecoveryRequestV1,
-    NativeCellShardRecoveryUsageV1,
+    NativeCellPagedRetainedShardPlanReadbackV2, NativeCellPagedRetainedShardPlanTargetsV2,
+    NativeCellPagedShardRecoveryBudgetV2, NativeCellPagedShardRecoveryReadbackV2,
+    NativeCellRetainedShardPageReadbackV2, NativeCellRetainedShardPlanReadbackV1,
+    NativeCellRetainedShardPlanRequestV1, NativeCellRetainedShardPlanTargetsV1,
+    NativeCellRetainedShardSlotReadbackV1, NativeCellRetainedShardVerificationBudgetV1,
+    NativeCellShardDamageV1, NativeCellShardRecoveryActionV1, NativeCellShardRecoveryBudgetV1,
+    NativeCellShardRecoveryCpuV1, NativeCellShardRecoveryFailureV1,
+    NativeCellShardRecoveryLimitsV1, NativeCellShardRecoveryReadbackV1,
+    NativeCellShardRecoveryRequestV1, NativeCellShardRecoveryUsageV1,
 };
 
 #[derive(Clone, Debug)]
@@ -352,3 +354,15 @@ impl Node {
             .map_err(owner_error)
     }
 }
+
+#[cfg(target_os = "linux")]
+pub use plan::{
+    native_cell_shard_parent_group_subject_v3, NativeCellGroupedChildCpuV3,
+    NativeCellGroupedShardPlanReadbackV3, NativeCellGroupedShardRecoveryBudgetV3,
+    NativeCellGroupedShardRecoveryFailureV3, NativeCellGroupedShardRecoveryReadbackV3,
+    NativeCellGroupedShardRepairRequestV3, NativeCellGroupedShardStorageRequestV3,
+    NativeCellShardGroupChildV3, NativeCellShardGroupJournalConfigV3,
+    NativeCellShardGroupJournalV3, NativeCellShardGroupKindV3,
+    NativeCellShardParentGroupReadbackV3, NativeCellShardParentGroupV3,
+    NATIVE_CELL_SHARD_PARENT_GROUP_WIDTH_V3,
+};

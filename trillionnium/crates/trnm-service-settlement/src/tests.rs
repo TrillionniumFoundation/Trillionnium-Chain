@@ -52,17 +52,17 @@ fn certificate(value: u64) -> AvailabilityCertificateIdV1 {
     AvailabilityCertificateIdV1(h(value).0)
 }
 
-struct Harness {
+pub(super) struct Harness {
     _temporary: TempDir,
     path: PathBuf,
     store_id: Hash32V1,
-    trust: ConsumptionSettlementFreshGenesisTrustBundleV1,
+    pub(super) trust: ConsumptionSettlementFreshGenesisTrustBundleV1,
     provider_key: SigningKey,
     consumer_key: SigningKey,
 }
 
 impl Harness {
-    fn new() -> Self {
+    pub(super) fn new() -> Self {
         let temporary = TempDir::new().expect("temporary directory");
         let path = temporary.path().join("consumption-settlement.sqlite");
         let provider_key = SigningKey::from_bytes(&[7; 32]);
@@ -138,7 +138,7 @@ impl Harness {
         }
     }
 
-    fn config(&self) -> ConsumptionSettlementStoreConfigV1 {
+    pub(super) fn config(&self) -> ConsumptionSettlementStoreConfigV1 {
         ConsumptionSettlementStoreConfigV1 {
             path: self.path.clone(),
             store_id: self.store_id,
@@ -150,7 +150,7 @@ impl Harness {
         ConsumptionSettlementStoreV1::open(self.config()).expect("open candidate store")
     }
 
-    fn execution(
+    pub(super) fn execution(
         &self,
         expected_height: u64,
         expected_block: Hash32V1,
@@ -197,7 +197,7 @@ impl Harness {
         }
     }
 
-    fn receipt(
+    pub(super) fn receipt(
         &self,
         prior: Option<&ConsumptionReceiptStateV1>,
         height: u64,
@@ -268,7 +268,7 @@ impl Harness {
         }
     }
 
-    fn rollup(
+    pub(super) fn rollup(
         &self,
         state: &ConsumptionSettlementKernelStateV1,
         height: u64,
@@ -423,6 +423,189 @@ fn settlement_operation(
 }
 
 #[test]
+fn settlement_destination_overflow_preserves_all_durable_value_and_retry_state() {
+    for destination in 0..3 {
+        let mut harness = Harness::new();
+        match destination {
+            0 => harness.trust.provider_opening_balance = u128::MAX,
+            1 => harness.trust.consumer_opening_balance = u128::MAX,
+            _ => harness.trust.protocol_opening_balance = u128::MAX,
+        }
+        let store = harness.open();
+        let (parent, rolled_up) = execute_rollup(&harness, &store);
+        let parent = advance_empty_blocks_through(&harness, &store, 12, parent, 14);
+        let before = store.state().expect("state before rejected settlement");
+        let head_before = store
+            .fresh_readback()
+            .expect("authenticated head before refusal");
+        let command = ConsumptionSettlementCommandV1::Settle {
+            operation: settlement_operation(&harness, &rolled_up),
+        };
+        for _ in 0..2 {
+            let error = store
+                .execute_committed_execution(&harness.execution(14, parent, 15), &command)
+                .expect_err("overflow must reject without consuming escrow");
+            assert_eq!(
+                error.code(),
+                ConsumptionSettlementErrorCodeV1::ArithmeticOverflow
+            );
+            assert_eq!(store.state().expect("state after refusal"), before);
+            assert_eq!(
+                store.fresh_readback().expect("head after refusal"),
+                head_before
+            );
+        }
+        drop(store);
+        let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config())
+            .expect("reopen after rejected settlement");
+        assert_eq!(reopened.state().expect("reopened state"), before);
+        assert_eq!(
+            reopened.fresh_readback().expect("reopened head"),
+            head_before
+        );
+        assert_eq!(before.escrow.balance, 1_000);
+        assert!(!before.escrow.closed);
+        assert!(before.settlement.is_none());
+    }
+}
+
+#[test]
+fn exhausted_settlement_counters_preserve_preview_retry_and_cold_state() {
+    for exhausted_escrow in [true, false] {
+        let mut harness = Harness::new();
+        if exhausted_escrow {
+            harness.trust.escrow_version = u64::MAX;
+        } else {
+            harness.trust.result_revision = u64::MAX;
+        }
+        let store = harness.open();
+        let (parent, rolled_up) = execute_rollup(&harness, &store);
+        let parent = advance_empty_blocks_through(&harness, &store, 12, parent, 14);
+        let before = store.state().expect("state before counter exhaustion");
+        let head = store
+            .fresh_readback()
+            .expect("head before counter exhaustion");
+        let bytes = fs::read(&harness.path).unwrap();
+        let execution = harness.execution(14, parent, 15);
+        let command = ConsumptionSettlementCommandV1::Settle {
+            operation: settlement_operation(&harness, &rolled_up),
+        };
+        assert_eq!(
+            store
+                .preview_before_vote_v1(
+                    &head,
+                    15,
+                    execution.order_block_id,
+                    std::slice::from_ref(&command)
+                )
+                .expect_err("preview counter overflow")
+                .code(),
+            ConsumptionSettlementErrorCodeV1::ArithmeticOverflow
+        );
+        assert_eq!(store.state().unwrap(), before);
+        assert_eq!(store.fresh_readback().unwrap(), head);
+        assert_eq!(fs::read(&harness.path).unwrap(), bytes);
+        for _ in 0..2 {
+            assert_eq!(
+                store
+                    .execute_committed_execution(&execution, &command)
+                    .expect_err("settlement counter overflow")
+                    .code(),
+                ConsumptionSettlementErrorCodeV1::ArithmeticOverflow
+            );
+            assert_eq!(store.state().unwrap(), before);
+            assert_eq!(store.fresh_readback().unwrap(), head);
+            assert_eq!(fs::read(&harness.path).unwrap(), bytes);
+        }
+        drop(store);
+        let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config()).unwrap();
+        assert_eq!(
+            reopened
+                .execute_committed_execution(&execution, &command)
+                .expect_err("cold retry counter overflow")
+                .code(),
+            ConsumptionSettlementErrorCodeV1::ArithmeticOverflow
+        );
+        assert_eq!(reopened.state().unwrap(), before);
+        assert_eq!(reopened.fresh_readback().unwrap(), head);
+        assert_eq!(fs::read(&harness.path).unwrap(), bytes);
+        assert_eq!(before.escrow.balance, harness.trust.escrow_funding);
+        assert!(!before.escrow.closed);
+        assert!(before.settlement.is_none());
+    }
+}
+
+#[test]
+fn last_settlement_counter_successor_settles_replays_and_reopens() {
+    let mut harness = Harness::new();
+    harness.trust.escrow_version = u64::MAX - 1;
+    harness.trust.result_revision = u64::MAX - 1;
+    let store = harness.open();
+    let (parent, rolled_up) = execute_rollup(&harness, &store);
+    let parent = advance_empty_blocks_through(&harness, &store, 12, parent, 14);
+    let execution = harness.execution(14, parent, 15);
+    let command = ConsumptionSettlementCommandV1::Settle {
+        operation: settlement_operation(&harness, &rolled_up),
+    };
+    let preview = store
+        .preview_before_vote_v1(
+            &store.fresh_readback().unwrap(),
+            15,
+            execution.order_block_id,
+            std::slice::from_ref(&command),
+        )
+        .expect("last counter successor preview");
+    let outcome = store
+        .execute_committed_execution(&execution, &command)
+        .unwrap();
+    assert!(!outcome.is_replay());
+    let state = store.state().unwrap();
+    let head = store.fresh_readback().unwrap();
+    assert_eq!(
+        head.durable_state_root(),
+        preview.candidate_post_state_root()
+    );
+    assert_eq!(state.escrow.version, u64::MAX);
+    assert_eq!(state.result.revision, u64::MAX);
+    assert!(state.escrow.closed);
+    assert_eq!(state.escrow.balance, 0);
+    assert_eq!(
+        state.result.settlement_maturity,
+        SETTLEMENT_MATURITY_FINAL_V1
+    );
+    assert!(state.settlement.is_some());
+    for (id, balance) in [
+        (harness.trust.provider_account_id, 505),
+        (harness.trust.consumer_account_id, 750),
+        (harness.trust.protocol_account_id, 345),
+    ] {
+        let account = state
+            .accounts
+            .iter()
+            .find(|account| account.account_id == id)
+            .unwrap();
+        assert_eq!(account.balance, balance);
+        assert_eq!(account.version, 1);
+    }
+    let bytes = fs::read(&harness.path).unwrap();
+    let replay = store
+        .execute_committed_execution(&execution, &command)
+        .unwrap();
+    assert!(replay.is_replay());
+    assert_eq!(replay.receipt(), outcome.receipt());
+    drop(store);
+    let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config()).unwrap();
+    let cold_replay = reopened
+        .execute_committed_execution(&execution, &command)
+        .unwrap();
+    assert!(cold_replay.is_replay());
+    assert_eq!(cold_replay.receipt(), outcome.receipt());
+    assert_eq!(reopened.state().unwrap(), state);
+    assert_eq!(reopened.fresh_readback().unwrap(), head);
+    assert_eq!(fs::read(&harness.path).unwrap(), bytes);
+}
+
+#[test]
 fn receipt_rollup_and_settlement_are_bilateral_gap_free_and_conserved() {
     let harness = Harness::new();
     let store = harness.open();
@@ -498,6 +681,394 @@ fn execution_preview_checks_bilateral_receipt_and_preserves_durable_rows() {
     assert_ne!(
         preview.candidate_post_state_root(),
         before.durable_state_root()
+    );
+}
+
+fn assert_zero_block_successor_is_rejected(empty: bool) {
+    let harness = Harness::new();
+    let store = harness.open();
+    let before = store.fresh_readback().unwrap();
+    let state = store.state().unwrap();
+    let bytes = fs::read(&harness.path).unwrap();
+    let mut execution = harness.execution(9, h(900), 10);
+    execution.order_block_id = Hash32V1([0; 32]);
+    let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+        receipt: harness.receipt(None, 10, 100),
+    };
+    let commands = if empty {
+        &[][..]
+    } else {
+        std::slice::from_ref(&command)
+    };
+    assert_eq!(
+        store
+            .preview_before_vote_v1(&before, 10, execution.order_block_id, commands)
+            .unwrap_err()
+            .code(),
+        ConsumptionSettlementErrorCodeV1::InvalidContext
+    );
+    for _ in 0..2 {
+        let result = if empty {
+            store
+                .advance_empty_committed_execution_v1(&execution)
+                .map(|_| ())
+        } else {
+            store
+                .execute_committed_execution(&execution, &command)
+                .map(|_| ())
+        };
+        assert_eq!(
+            result
+                .expect_err("zero successor block ID must match preview refusal")
+                .code(),
+            ConsumptionSettlementErrorCodeV1::InvalidContext
+        );
+        assert_eq!(store.fresh_readback().unwrap(), before);
+        assert_eq!(store.state().unwrap(), state);
+        assert_eq!(fs::read(&harness.path).unwrap(), bytes);
+    }
+    drop(store);
+    let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config()).unwrap();
+    assert_eq!(reopened.fresh_readback().unwrap(), before);
+    assert_eq!(reopened.state().unwrap(), state);
+    assert_eq!(fs::read(&harness.path).unwrap(), bytes);
+
+    let cold_result = if empty {
+        reopened
+            .advance_empty_committed_execution_v1(&execution)
+            .map(|_| ())
+    } else {
+        reopened
+            .execute_committed_execution(&execution, &command)
+            .map(|_| ())
+    };
+    assert_eq!(
+        cold_result.unwrap_err().code(),
+        ConsumptionSettlementErrorCodeV1::InvalidContext
+    );
+    assert_eq!(reopened.fresh_readback().unwrap(), before);
+    assert_eq!(reopened.state().unwrap(), state);
+    assert_eq!(fs::read(&harness.path).unwrap(), bytes);
+
+    // Refusing an invalid target must not prevent its corrected successor.
+    execution.order_block_id = h(1_010);
+    let preview = reopened
+        .preview_before_vote_v1(&before, 10, execution.order_block_id, commands)
+        .unwrap();
+    if empty {
+        reopened
+            .advance_empty_committed_execution_v1(&execution)
+            .unwrap();
+    } else {
+        reopened
+            .execute_committed_execution(&execution, &command)
+            .unwrap();
+    }
+    assert_eq!(
+        reopened.fresh_readback().unwrap().durable_state_root(),
+        preview.candidate_post_state_root()
+    );
+}
+
+#[test]
+fn zero_block_successor_command_rejects_atomically_like_preview() {
+    assert_zero_block_successor_is_rejected(false);
+}
+
+#[test]
+fn zero_block_successor_empty_rejects_atomically_like_preview() {
+    assert_zero_block_successor_is_rejected(true);
+}
+
+#[test]
+fn zero_genesis_block_retains_same_block_command_and_cold_replay() {
+    let mut harness = Harness::new();
+    harness.trust.initial_order_block_id = Hash32V1([0; 32]);
+    let store = harness.open();
+    let mut execution = harness.execution(9, Hash32V1([0; 32]), 9);
+    execution.order_block_id = Hash32V1([0; 32]);
+    let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+        receipt: harness.receipt(None, 9, 100),
+    };
+    let outcome = store
+        .execute_committed_execution(&execution, &command)
+        .unwrap();
+    assert!(!outcome.is_replay());
+    let before = store.fresh_readback().unwrap();
+    let state = store.state().unwrap();
+    let bytes = fs::read(&harness.path).unwrap();
+    drop(store);
+    let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config()).unwrap();
+    let replay = reopened
+        .execute_committed_execution(&execution, &command)
+        .unwrap();
+    assert!(replay.is_replay());
+    assert_eq!(replay.receipt(), outcome.receipt());
+    assert_eq!(reopened.fresh_readback().unwrap(), before);
+    assert_eq!(reopened.state().unwrap(), state);
+    assert_eq!(fs::read(&harness.path).unwrap(), bytes);
+}
+
+#[test]
+fn execution_preview_rejects_unrepresentable_height_without_changing_cold_state() {
+    let mut harness = Harness::new();
+    harness.trust.initial_order_height = i64::MAX as u64;
+    let store = harness.open();
+    let before = store.fresh_readback().expect("boundary parent");
+    let before_state = store.state().expect("boundary state");
+    let before_bytes = fs::read(&harness.path).expect("boundary database");
+    let height = before.order_height() + 1;
+    let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+        receipt: harness.receipt(None, height, 25),
+    };
+    for commands in [Vec::new(), vec![command]] {
+        let error = store
+            .preview_before_vote_v1(&before, height, h(1_010), &commands)
+            .expect_err("preview height must fit durable SQLite range");
+        assert_eq!(
+            error.code(),
+            ConsumptionSettlementErrorCodeV1::ArithmeticOverflow
+        );
+        assert_eq!(store.fresh_readback().expect("unchanged parent"), before);
+        assert_eq!(store.state().expect("unchanged state"), before_state);
+        assert_eq!(
+            fs::read(&harness.path).expect("unchanged bytes"),
+            before_bytes
+        );
+        let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config())
+            .expect("cold reopen after rejection");
+        assert_eq!(reopened.fresh_readback().expect("cold parent"), before);
+        assert_eq!(reopened.state().expect("cold state"), before_state);
+    }
+}
+
+#[test]
+fn execution_preview_accepts_last_sqlite_height_and_matches_commit() {
+    for with_receipt in [false, true] {
+        let mut harness = Harness::new();
+        harness.trust.initial_order_height = (i64::MAX as u64) - 1;
+        let store = harness.open();
+        let before = store.fresh_readback().expect("last extensible parent");
+        let before_state = store.state().expect("parent state");
+        let before_bytes = fs::read(&harness.path).expect("parent bytes");
+        let height = i64::MAX as u64;
+        let commands = if with_receipt {
+            vec![ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.receipt(None, height, 25),
+            }]
+        } else {
+            Vec::new()
+        };
+        let execution = harness.execution(before.order_height(), before.order_block_id(), height);
+        let preview = store
+            .preview_before_vote_v1(&before, height, execution.order_block_id, &commands)
+            .expect("last representable preview");
+        assert_eq!(store.fresh_readback().expect("unchanged parent"), before);
+        assert_eq!(store.state().expect("unchanged state"), before_state);
+        assert_eq!(
+            fs::read(&harness.path).expect("unchanged bytes"),
+            before_bytes
+        );
+        if let Some(command) = commands.first() {
+            store
+                .execute_committed_execution(&execution, command)
+                .expect("last representable commit");
+        } else {
+            store
+                .advance_empty_committed_execution_v1(&execution)
+                .expect("last representable empty commit");
+        }
+        let committed = store.fresh_readback().expect("committed boundary");
+        assert_eq!(committed.order_height(), height);
+        assert_eq!(
+            committed.durable_state_root(),
+            preview.candidate_post_state_root()
+        );
+        assert_eq!(committed.sequence(), u64::from(with_receipt));
+        let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config())
+            .expect("cold boundary reopen");
+        assert_eq!(
+            reopened.fresh_readback().expect("cold committed parent"),
+            committed
+        );
+        assert_eq!(
+            reopened.state().expect("cold committed state"),
+            store.state().expect("committed state")
+        );
+    }
+}
+
+#[test]
+fn new_rollup_requires_representable_settlement_successor() {
+    for close_height in [i64::MAX as u64, (i64::MAX as u64) + 1] {
+        let mut harness = Harness::new();
+        harness
+            .trust
+            .settlement_policy
+            .minimum_rollup_challenge_blocks = close_height - 12;
+        let store = harness.open();
+        let (parent_block, state) = execute_receipt_chain(&harness, &store);
+        let command = ConsumptionSettlementCommandV1::AdmitRollup {
+            rollup: harness.rollup(&state, 12),
+            receipts: state
+                .receipts
+                .iter()
+                .map(|entry| entry.receipt.clone())
+                .collect(),
+        };
+        let before = store.fresh_readback().expect("receipt parent");
+        let before_bytes = fs::read(&harness.path).expect("receipt database");
+        let execution = harness.execution(11, parent_block, 12);
+        let mut invalid = command.clone();
+        if let ConsumptionSettlementCommandV1::AdmitRollup { rollup, .. } = &mut invalid {
+            rollup.provider_signature.signature[0] ^= 1;
+        }
+        assert_eq!(
+            store
+                .preview_before_vote_v1(
+                    &before,
+                    12,
+                    execution.order_block_id,
+                    std::slice::from_ref(&invalid)
+                )
+                .expect_err("signature validation precedes backend bound")
+                .code(),
+            ConsumptionSettlementErrorCodeV1::InvalidSignature
+        );
+        assert_eq!(
+            store
+                .execute_committed_execution(&execution, &invalid)
+                .expect_err("commit preserves signature error precedence")
+                .code(),
+            ConsumptionSettlementErrorCodeV1::InvalidSignature
+        );
+        let preview = store.preview_before_vote_v1(
+            &before,
+            12,
+            execution.order_block_id,
+            std::slice::from_ref(&command),
+        );
+        let commit = store.execute_committed_execution(&execution, &command);
+        assert!(
+            preview.is_err() && commit.is_err(),
+            "unfinishable rollup must reject: preview={preview:?}, commit={commit:?}"
+        );
+        assert_eq!(
+            preview.expect_err("preview rejection").code(),
+            ConsumptionSettlementErrorCodeV1::ArithmeticOverflow
+        );
+        assert_eq!(
+            commit.expect_err("commit rejection").code(),
+            ConsumptionSettlementErrorCodeV1::ArithmeticOverflow
+        );
+        assert_eq!(store.fresh_readback().expect("unchanged parent"), before);
+        assert_eq!(store.state().expect("unchanged state"), state);
+        assert_eq!(
+            fs::read(&harness.path).expect("unchanged bytes"),
+            before_bytes
+        );
+        let reopened =
+            ConsumptionSettlementStoreV1::open_existing(harness.config()).expect("cold reopen");
+        assert_eq!(reopened.fresh_readback().expect("cold parent"), before);
+        assert_eq!(reopened.state().expect("cold state"), state);
+    }
+}
+
+#[test]
+fn last_representable_rollup_successor_settles_and_reopens() {
+    let maximum = i64::MAX as u64;
+    let mut harness = Harness::new();
+    harness.trust.initial_order_height = maximum - 5;
+    let store = harness.open();
+    let receipt_height = maximum - 4;
+    let receipt_execution = harness.execution(
+        maximum - 5,
+        harness.trust.initial_order_block_id,
+        receipt_height,
+    );
+    store
+        .execute_committed_execution(
+            &receipt_execution,
+            &ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.receipt(None, receipt_height, 25),
+            },
+        )
+        .expect("boundary receipt");
+    let state = store.state().expect("receipt state");
+    let rollup_height = maximum - 3;
+    let command = ConsumptionSettlementCommandV1::AdmitRollup {
+        rollup: harness.rollup(&state, rollup_height),
+        receipts: state
+            .receipts
+            .iter()
+            .map(|entry| entry.receipt.clone())
+            .collect(),
+    };
+    let before = store.fresh_readback().expect("rollup parent");
+    let execution = harness.execution(
+        receipt_height,
+        receipt_execution.order_block_id,
+        rollup_height,
+    );
+    let preview = store
+        .preview_before_vote_v1(
+            &before,
+            rollup_height,
+            execution.order_block_id,
+            std::slice::from_ref(&command),
+        )
+        .expect("last finishable rollup preview");
+    store
+        .execute_committed_execution(&execution, &command)
+        .expect("last finishable rollup commit");
+    let state = store.state().expect("rollup state");
+    assert_eq!(
+        state
+            .rollup
+            .as_ref()
+            .expect("rollup")
+            .challenge_close_height,
+        maximum - 1
+    );
+    assert_eq!(
+        store
+            .fresh_readback()
+            .expect("rollup head")
+            .durable_state_root(),
+        preview.candidate_post_state_root()
+    );
+    let parent = advance_empty_blocks_through(
+        &harness,
+        &store,
+        rollup_height,
+        execution.order_block_id,
+        maximum - 1,
+    );
+    store
+        .execute_committed_execution(
+            &harness.execution(maximum - 1, parent, maximum),
+            &ConsumptionSettlementCommandV1::Settle {
+                operation: settlement_operation(&harness, &state),
+            },
+        )
+        .expect("settle at maximum SQLite height");
+    let final_state = store.state().expect("settled state");
+    assert!(final_state.escrow.closed);
+    assert_eq!(final_state.escrow.balance, 0);
+    assert_eq!(
+        final_state
+            .settlement
+            .as_ref()
+            .expect("settlement")
+            .applied_height,
+        maximum
+    );
+    let reopened =
+        ConsumptionSettlementStoreV1::open_existing(harness.config()).expect("cold settled reopen");
+    assert_eq!(reopened.state().expect("cold state"), final_state);
+    assert_eq!(
+        reopened.fresh_readback().expect("cold head"),
+        store.fresh_readback().expect("settled head")
     );
 }
 
@@ -783,6 +1354,37 @@ fn commit_uncertainty_reopens_to_exact_source_target_or_permanent_fence() {
 }
 
 #[test]
+fn state_reads_reject_a_durable_fence_on_all_existing_handles() {
+    let harness = Harness::new();
+    let store = harness.open();
+    let other_handle = harness.open();
+    assert_eq!(store.state().unwrap(), other_handle.state().unwrap());
+    let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+        receipt: harness.receipt(None, 10, 100),
+    };
+    let execution = harness.execution(9, h(900), 10);
+    assert_eq!(
+        store
+            .execute_with_fault(&execution, &command, ConsumptionCommitFaultV1::ThirdState)
+            .expect_err("durable fence")
+            .code(),
+        ConsumptionSettlementErrorCodeV1::ThirdStateFenced
+    );
+    let fenced_bytes = std::fs::read(&harness.config().path).unwrap();
+    for handle in [&store, &other_handle] {
+        assert_eq!(
+            handle.state().expect_err("fenced state read").code(),
+            ConsumptionSettlementErrorCodeV1::ThirdStateFenced
+        );
+        assert_eq!(
+            handle.fresh_readback().expect_err("fenced readback").code(),
+            ConsumptionSettlementErrorCodeV1::ThirdStateFenced
+        );
+        assert_eq!(std::fs::read(&harness.config().path).unwrap(), fenced_bytes);
+    }
+}
+
+#[test]
 fn committed_block_journal_covers_empty_same_block_and_tamper_boundaries() {
     let harness = Harness::new();
     let store = harness.open();
@@ -896,6 +1498,81 @@ fn committed_block_journal_covers_empty_same_block_and_tamper_boundaries() {
     );
     drop(multi_store);
     ConsumptionSettlementStoreV1::open(multi.config()).expect("same-block reopen");
+}
+
+#[test]
+fn empty_retry_requires_exact_parent_and_empty_successor_marker() {
+    let mut results = Vec::new();
+    for case in ["changed-parent", "nonempty-target", "genesis-anchor"] {
+        let harness = Harness::new();
+        let store = harness.open();
+        let mut execution = harness.execution(9, h(900), 10);
+        match case {
+            "changed-parent" => {
+                let committed = store
+                    .advance_empty_committed_execution_v1(&execution)
+                    .expect("genuine empty successor");
+                assert_eq!(
+                    store
+                        .advance_empty_committed_execution_v1(&execution)
+                        .unwrap(),
+                    committed
+                );
+                execution.expected_order_block_id = h(999);
+            }
+            "nonempty-target" => {
+                store
+                    .execute_committed_execution(
+                        &execution,
+                        &ConsumptionSettlementCommandV1::AdmitReceipt {
+                            receipt: harness.receipt(None, 10, 100),
+                        },
+                    )
+                    .expect("nonempty successor");
+            }
+            "genesis-anchor" => {
+                execution = harness.execution(8, h(800), 9);
+                execution.order_block_id = h(900);
+            }
+            _ => unreachable!(),
+        }
+        let before = store.fresh_readback().unwrap();
+        let state = store.state().unwrap();
+        let bytes = fs::read(&harness.path).unwrap();
+        let result = store.advance_empty_committed_execution_v1(&execution);
+        assert_eq!(store.fresh_readback().unwrap(), before, "{case}");
+        assert_eq!(store.state().unwrap(), state, "{case}");
+        assert_eq!(fs::read(&harness.path).unwrap(), bytes, "{case}");
+        drop(store);
+        let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config()).unwrap();
+        assert_eq!(reopened.fresh_readback().unwrap(), before, "{case}");
+        assert_eq!(reopened.state().unwrap(), state, "{case}");
+        let cold_result = reopened.advance_empty_committed_execution_v1(&execution);
+        assert_eq!(reopened.fresh_readback().unwrap(), before, "{case}");
+        assert_eq!(reopened.state().unwrap(), state, "{case}");
+        assert_eq!(fs::read(&harness.path).unwrap(), bytes, "{case}");
+        results.push((
+            case,
+            result.err().map(|error| error.code()),
+            cold_result.err().map(|error| error.code()),
+        ));
+        if case == "changed-parent" {
+            execution.expected_order_block_id = h(900);
+            assert_eq!(
+                reopened
+                    .advance_empty_committed_execution_v1(&execution)
+                    .unwrap(),
+                before
+            );
+            assert_eq!(fs::read(&harness.path).unwrap(), bytes);
+        }
+    }
+    assert!(
+        results.iter().all(|(_, warm, cold)| *warm
+            == Some(ConsumptionSettlementErrorCodeV1::Conflict)
+            && *cold == Some(ConsumptionSettlementErrorCodeV1::Conflict)),
+        "retry outcomes (None means accepted): {results:?}"
+    );
 }
 
 #[test]
@@ -1082,4 +1759,909 @@ fn open_existing_requires_precreated_regular_nonsymlink_store() {
             ConsumptionSettlementErrorCodeV1::StoreFailure
         );
     }
+}
+
+#[cfg(unix)]
+#[test]
+fn sqlite_sidecar_objects_refuse_creation_and_reopen_without_file_effects() {
+    use std::os::unix::fs::symlink;
+
+    for existing in [false, true] {
+        let harness = Harness::new();
+        let database = harness.path.clone();
+        if existing {
+            drop(ConsumptionSettlementStoreV1::open(harness.config()).expect("initial store"));
+        }
+        let original = fs::read(&database).ok();
+        for suffix in ["-wal", "-shm", "-journal"] {
+            let mut name = database.as_os_str().to_os_string();
+            name.push(suffix);
+            let sidecar = std::path::PathBuf::from(name);
+            let target = database.parent().unwrap().join(format!("missing{suffix}"));
+            for dangling in [true, false] {
+                if dangling {
+                    symlink(&target, &sidecar).unwrap();
+                } else {
+                    fs::write(&sidecar, b"unresolved sidecar bytes").unwrap();
+                }
+                let error = ConsumptionSettlementStoreV1::open(harness.config())
+                    .expect_err("sidecar object must refuse before SQLite is opened");
+                assert_eq!(
+                    error.code(),
+                    ConsumptionSettlementErrorCodeV1::SidecarPresent
+                );
+                if existing {
+                    let error = ConsumptionSettlementStoreV1::open_existing(harness.config())
+                        .expect_err("existing opener must enforce the same sidecar boundary");
+                    assert_eq!(
+                        error.code(),
+                        ConsumptionSettlementErrorCodeV1::SidecarPresent
+                    );
+                }
+                assert_eq!(
+                    fs::read(&database).ok(),
+                    original,
+                    "database must remain unchanged"
+                );
+                if dangling {
+                    assert_eq!(fs::read_link(&sidecar).unwrap(), target);
+                    assert!(
+                        !target.exists(),
+                        "refusal must not create the symlink target"
+                    );
+                } else {
+                    assert_eq!(fs::read(&sidecar).unwrap(), b"unresolved sidecar bytes");
+                }
+                fs::remove_file(&sidecar).unwrap();
+            }
+        }
+        drop(
+            ConsumptionSettlementStoreV1::open(harness.config())
+                .expect("clean store remains available"),
+        );
+        ConsumptionSettlementStoreV1::open_existing(harness.config())
+            .expect("clean reopen remains available");
+    }
+}
+
+#[cfg(unix)]
+#[test]
+fn sqlite_sidecar_inspection_error_refuses_before_database_creation() {
+    let harness = Harness::new();
+    let mut config = harness.config();
+    config.path = config.path.with_file_name("a".repeat(255));
+    let database = config.path.clone();
+    let mut probe = database.as_os_str().to_os_string();
+    probe.push("-journal");
+    let cause = fs::symlink_metadata(&probe).expect_err("overlong sidecar fixture");
+    assert_ne!(cause.kind(), std::io::ErrorKind::NotFound);
+    let error = ConsumptionSettlementStoreV1::open(config)
+        .expect_err("inspection failure cannot be treated as sidecar absence");
+    assert_eq!(error.code(), ConsumptionSettlementErrorCodeV1::StoreFailure);
+    assert!(error.message().starts_with("cannot inspect SQLite sidecar"));
+    assert!(!database.exists(), "refusal must precede database creation");
+    assert_eq!(fs::read_dir(database.parent().unwrap()).unwrap().count(), 0);
+}
+
+#[test]
+fn duplicate_price_resource_keys_are_rejected_before_store_creation() {
+    let mut harness = Harness::new();
+    let mut duplicate = harness.trust.prices[0].clone();
+    duplicate.unit_price += 1;
+    harness.trust.prices.push(duplicate);
+    let error = ConsumptionSettlementStoreV1::open(harness.config())
+        .expect_err("duplicate price resource key must be rejected");
+    assert_eq!(error.code(), ConsumptionSettlementErrorCodeV1::NonCanonical);
+    assert!(!harness.path.exists());
+}
+
+#[test]
+fn duplicate_usage_resource_keys_preserve_state_and_allow_valid_retry() {
+    for change_amount in [false, true] {
+        let harness = Harness::new();
+        let store = harness.open();
+        let before = store.state().expect("initial state");
+        let head_before = store.fresh_readback().expect("initial head");
+        let execution = harness.execution(9, h(900), 10);
+        let mut body = harness.receipt(None, 10, 100).body;
+        let mut duplicate = body.usage[0].clone();
+        if change_amount {
+            duplicate.amount += 1;
+        } else {
+            duplicate.measurement_commitment = h(9_999);
+        }
+        body.usage.push(duplicate);
+        body.usage.sort();
+        body.cumulative_usage = cumulative_usage_for_test(None, &body.usage)
+            .expect("construct duplicate-input fixture");
+        body.cumulative_usage_root =
+            cumulative_root_for_test(&body.cumulative_usage).expect("fixture cumulative root");
+        body.cumulative_charge = body.usage.iter().map(|entry| entry.amount * 3).sum();
+        let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+            receipt: harness.sign_receipt(body),
+        };
+        for _ in 0..2 {
+            let error = store
+                .execute_committed_execution(&execution, &command)
+                .expect_err("duplicate usage resource key must be rejected");
+            assert_eq!(error.code(), ConsumptionSettlementErrorCodeV1::NonCanonical);
+            assert_eq!(store.state().expect("state after rejection"), before);
+            assert_eq!(
+                store.fresh_readback().expect("head after rejection"),
+                head_before
+            );
+        }
+        drop(store);
+        let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config())
+            .expect("reopen after invalid input");
+        assert_eq!(reopened.state().expect("reopened state"), before);
+        assert_eq!(
+            reopened.fresh_readback().expect("reopened head"),
+            head_before
+        );
+        reopened
+            .execute_committed_execution(
+                &execution,
+                &ConsumptionSettlementCommandV1::AdmitReceipt {
+                    receipt: harness.receipt(None, 10, 100),
+                },
+            )
+            .expect("valid receipt remains admissible");
+    }
+}
+
+#[test]
+fn usage_key_uniqueness_distinguishes_units_and_checks_nonadjacent_entries() {
+    let mut harness = Harness::new();
+    let mut other_price = harness.trust.prices[0].clone();
+    other_price.unit = 4;
+    harness.trust.prices.push(other_price);
+    let store = harness.open();
+    let execution = harness.execution(9, h(900), 10);
+    let before = store.fresh_readback().expect("initial head");
+    let mut body = harness.receipt(None, 10, 100).body;
+    let mut other_unit = body.usage[0].clone();
+    other_unit.amount = 101;
+    other_unit.unit = 4;
+    body.usage.push(other_unit);
+    let mut malformed = body.clone();
+    let mut duplicate = body.usage[0].clone();
+    duplicate.amount = 102;
+    malformed.usage.push(duplicate);
+    assert!(malformed.usage.windows(2).all(|pair| pair[0] < pair[1]));
+    malformed.cumulative_usage = cumulative_usage_for_test(None, &malformed.usage)
+        .expect("construct nonadjacent duplicate fixture");
+    malformed.cumulative_usage_root =
+        cumulative_root_for_test(&malformed.cumulative_usage).expect("fixture root");
+    malformed.cumulative_charge = 909;
+    let error = store
+        .execute_committed_execution(
+            &execution,
+            &ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.sign_receipt(malformed),
+            },
+        )
+        .expect_err("nonadjacent duplicate resource key");
+    assert_eq!(error.code(), ConsumptionSettlementErrorCodeV1::NonCanonical);
+    assert_eq!(store.fresh_readback().expect("unchanged head"), before);
+    body.cumulative_usage = cumulative_usage_for_test(None, &body.usage).expect("distinct units");
+    body.cumulative_usage_root =
+        cumulative_root_for_test(&body.cumulative_usage).expect("valid root");
+    body.cumulative_charge = 603;
+    store
+        .execute_committed_execution(
+            &execution,
+            &ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.sign_receipt(body),
+            },
+        )
+        .expect("distinct unit keys remain valid");
+}
+
+#[test]
+fn full_width_equivalent_fee_ratios_conserve_and_reopen() {
+    for (numerator, denominator, expected_fee) in [
+        (1, 1, 450),
+        (u128::MAX, u128::MAX, 450),
+        (u128::MAX - 1, u128::MAX, 449),
+        (0, u128::MAX, 0),
+    ] {
+        let mut harness = Harness::new();
+        harness.trust.settlement_policy.protocol_fee_numerator = numerator;
+        harness.trust.settlement_policy.protocol_fee_denominator = denominator;
+        let store = harness.open();
+        let (parent, rolled_up) = execute_rollup(&harness, &store);
+        let parent = advance_empty_blocks_through(&harness, &store, 12, parent, 14);
+        store
+            .execute_committed_execution(
+                &harness.execution(14, parent, 15),
+                &ConsumptionSettlementCommandV1::Settle {
+                    operation: settlement_operation(&harness, &rolled_up),
+                },
+            )
+            .expect("representable full-width fee settles");
+        let state = store.state().expect("settled state");
+        assert!(state.escrow.closed);
+        assert_eq!(state.escrow.balance, 0);
+        let settlement = state.settlement.as_ref().expect("settlement");
+        assert_eq!(settlement.intent.inputs[0].amount, 1_000);
+        assert_eq!(
+            settlement
+                .intent
+                .planned_deltas
+                .iter()
+                .map(|d| d.amount)
+                .sum::<u128>(),
+            1_000
+        );
+        assert_eq!(
+            settlement.receipt.applied_deltas,
+            settlement.intent.planned_deltas
+        );
+        for (id, expected) in [
+            (harness.trust.provider_account_id, 100 + 450 - expected_fee),
+            (harness.trust.consumer_account_id, 750),
+            (harness.trust.protocol_account_id, 300 + expected_fee),
+        ] {
+            assert_eq!(
+                state
+                    .accounts
+                    .iter()
+                    .find(|a| a.account_id == id)
+                    .expect("account")
+                    .balance,
+                expected
+            );
+        }
+        let head = store.fresh_readback().expect("settled head");
+        drop(store);
+        let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config())
+            .expect("reopen full-width settlement");
+        assert_eq!(reopened.state().expect("reopened state"), state);
+        assert_eq!(reopened.fresh_readback().expect("reopened head"), head);
+    }
+}
+
+#[test]
+fn proportional_fee_matches_independent_big_integer_vectors() {
+    let vectors: Vec<[String; 4]> =
+        serde_json::from_str(include_str!("../test-vectors/protocol_fee_u128.json"))
+            .expect("Python bigint vectors");
+    let mut overflowing_products = 0;
+    for row in vectors {
+        let [amount, numerator, denominator, expected] =
+            row.map(|s| s.parse::<u128>().expect("u128"));
+        overflowing_products += usize::from(amount.checked_mul(numerator).is_none());
+        assert_eq!(
+            crate::engine::proportional_fee(amount, numerator, denominator),
+            Some(expected),
+            "amount={amount}, numerator={numerator}, denominator={denominator}"
+        );
+    }
+    assert!(overflowing_products > 500);
+    for amount in 0..=64_u128 {
+        for denominator in 1..=64_u128 {
+            for numerator in 0..=denominator {
+                assert_eq!(
+                    crate::engine::proportional_fee(amount, numerator, denominator),
+                    Some(amount * numerator / denominator)
+                );
+            }
+        }
+    }
+    assert_eq!(crate::engine::proportional_fee(0, 0, 0), None);
+    assert_eq!(crate::engine::proportional_fee(u128::MAX, 1, 0), None);
+    assert_eq!(crate::engine::proportional_fee(0, 2, 1), None);
+    assert_eq!(
+        crate::engine::proportional_fee(1, u128::MAX, u128::MAX - 1),
+        None
+    );
+}
+
+#[test]
+fn maximum_charge_fee_conserves_full_u128_escrow_and_reopens() {
+    for (numerator, denominator, expected_fee) in [
+        (u128::MAX, u128::MAX, u128::MAX),
+        (u128::MAX - 1, u128::MAX, u128::MAX - 1),
+        (1, 2, u128::MAX / 2),
+        (0, 1, 0),
+    ] {
+        let mut harness = Harness::new();
+        harness.trust.escrow_funding = u128::MAX;
+        harness.trust.provider_opening_balance = 0;
+        harness.trust.consumer_opening_balance = 0;
+        harness.trust.protocol_opening_balance = 0;
+        harness.trust.settlement_policy.protocol_fee_numerator = numerator;
+        harness.trust.settlement_policy.protocol_fee_denominator = denominator;
+        let store = harness.open();
+        let receipt = harness.receipt(None, 10, u128::MAX / 3);
+        store
+            .execute_committed_execution(
+                &harness.execution(9, h(900), 10),
+                &ConsumptionSettlementCommandV1::AdmitReceipt { receipt },
+            )
+            .expect("maximum charge receipt");
+        let receipted = store.state().expect("receipt state");
+        let rollup = harness.rollup(&receipted, 11);
+        store
+            .execute_committed_execution(
+                &harness.execution(10, h(1_010), 11),
+                &ConsumptionSettlementCommandV1::AdmitRollup {
+                    rollup,
+                    receipts: receipted
+                        .receipts
+                        .iter()
+                        .map(|r| r.receipt.clone())
+                        .collect(),
+                },
+            )
+            .expect("maximum charge rollup");
+        let rolled_up = store.state().expect("rollup state");
+        let parent = advance_empty_blocks_through(&harness, &store, 11, h(1_011), 13);
+        store
+            .execute_committed_execution(
+                &harness.execution(13, parent, 14),
+                &ConsumptionSettlementCommandV1::Settle {
+                    operation: settlement_operation(&harness, &rolled_up),
+                },
+            )
+            .expect("maximum charge settlement");
+        let state = store.state().expect("settled state");
+        let settlement = state.settlement.as_ref().expect("settlement");
+        assert!(state.escrow.closed);
+        assert_eq!(state.escrow.balance, 0);
+        assert_eq!(settlement.intent.inputs[0].amount, u128::MAX);
+        assert_eq!(
+            settlement
+                .intent
+                .planned_deltas
+                .iter()
+                .map(|d| d.amount)
+                .sum::<u128>(),
+            u128::MAX
+        );
+        assert_eq!(
+            settlement.receipt.applied_deltas,
+            settlement.intent.planned_deltas
+        );
+        for (id, balance) in [
+            (harness.trust.provider_account_id, u128::MAX - expected_fee),
+            (harness.trust.consumer_account_id, 0),
+            (harness.trust.protocol_account_id, expected_fee),
+        ] {
+            assert_eq!(
+                state
+                    .accounts
+                    .iter()
+                    .find(|a| a.account_id == id)
+                    .expect("account")
+                    .balance,
+                balance
+            );
+        }
+        let head = store.fresh_readback().expect("settled head");
+        drop(store);
+        let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config())
+            .expect("reopen maximum charge settlement");
+        assert_eq!(reopened.state().expect("reopened state"), state);
+        assert_eq!(reopened.fresh_readback().expect("reopened head"), head);
+    }
+}
+
+#[test]
+fn command_after_empty_block_is_rejected_without_changing_recoverable_head() {
+    let harness = Harness::new();
+    let store = harness.open();
+    let before = store
+        .advance_empty_committed_execution_v1(&harness.execution(9, h(900), 10))
+        .expect("empty block");
+    let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+        receipt: harness.receipt(None, 10, 100),
+    };
+    let error = store
+        .execute_committed_execution(&harness.execution(10, h(1_010), 10), &command)
+        .expect_err("empty block cannot acquire a first command after commitment");
+    assert_eq!(
+        error.code(),
+        ConsumptionSettlementErrorCodeV1::InvalidContext
+    );
+    assert_eq!(store.fresh_readback().expect("unchanged head"), before);
+    drop(store);
+    let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config())
+        .expect("rejected command leaves recoverable store");
+    assert_eq!(reopened.fresh_readback().expect("reopened head"), before);
+    reopened
+        .execute_committed_execution(
+            &harness.execution(10, h(1_010), 11),
+            &ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.receipt(None, 11, 100),
+            },
+        )
+        .expect("valid next-block receipt after rejected input");
+    drop(reopened);
+    harness.open().fresh_readback().expect("retry reopens");
+}
+
+#[test]
+fn permanent_fence_blocks_confirmation_from_preexisting_handle() {
+    let harness = Harness::new();
+    let store = harness.open();
+    let receipt = store
+        .execute_committed_execution(
+            &harness.execution(9, h(900), 10),
+            &ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.receipt(None, 10, 100),
+            },
+        )
+        .expect("first receipt")
+        .receipt()
+        .clone();
+    let state = store.state().expect("first state");
+    let command = ConsumptionSettlementCommandV1::AdmitRollup {
+        rollup: harness.rollup(&state, 10),
+        receipts: state
+            .receipts
+            .iter()
+            .map(|item| item.receipt.clone())
+            .collect(),
+    };
+    assert_eq!(
+        store
+            .execute_with_fault(
+                &harness.execution(10, h(1_010), 10),
+                &command,
+                ConsumptionCommitFaultV1::ThirdState,
+            )
+            .expect_err("permanent fence")
+            .code(),
+        ConsumptionSettlementErrorCodeV1::ThirdStateFenced
+    );
+    assert_eq!(
+        store
+            .confirm_receipt(&receipt)
+            .expect_err("fenced confirmation")
+            .code(),
+        ConsumptionSettlementErrorCodeV1::ThirdStateFenced
+    );
+}
+
+#[test]
+fn first_command_at_genesis_anchor_remains_recoverable() {
+    let harness = Harness::new();
+    let store = harness.open();
+    let mut execution = harness.execution(9, h(900), 9);
+    execution.order_block_id = h(900);
+    store
+        .execute_committed_execution(
+            &execution,
+            &ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.receipt(None, 9, 100),
+            },
+        )
+        .expect("first command at self-parent genesis anchor");
+    drop(store);
+    harness
+        .open()
+        .fresh_readback()
+        .expect("genesis command reopens");
+}
+
+// Exercise the public preview and commit paths against the same authenticated
+// parent. A refusal must leave both logical state and the actual database intact.
+fn assert_admission_rejected_without_mutation(
+    harness: &Harness,
+    store: &ConsumptionSettlementStoreV1,
+    command: &ConsumptionSettlementCommandV1,
+    expected: ConsumptionSettlementErrorCodeV1,
+    label: &str,
+) {
+    let before = store.fresh_readback().expect("admission parent");
+    let state = store.state().expect("admission state");
+    let bytes = fs::read(&harness.path).expect("admission database");
+    let height = before.order_height() + 1;
+    let execution = harness.execution(before.order_height(), before.order_block_id(), height);
+    let preview_error = store
+        .preview_before_vote_v1(
+            &before,
+            height,
+            execution.order_block_id,
+            std::slice::from_ref(command),
+        )
+        .expect_err(label);
+    assert_eq!(preview_error.code(), expected, "preview: {label}");
+    let commit_error = store
+        .execute_committed_execution(&execution, command)
+        .expect_err(label);
+    assert_eq!(commit_error.code(), expected, "commit: {label}");
+    assert_eq!(store.fresh_readback().expect("unchanged parent"), before);
+    assert_eq!(store.state().expect("unchanged state"), state);
+    assert_eq!(fs::read(&harness.path).expect("unchanged bytes"), bytes);
+    let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config())
+        .expect("reopen after rejected admission");
+    assert_eq!(reopened.fresh_readback().expect("cold parent"), before);
+    assert_eq!(reopened.state().expect("cold state"), state);
+    assert_eq!(fs::read(&harness.path).expect("cold bytes"), bytes);
+}
+
+#[test]
+fn bilateral_authority_fields_and_signature_domains_reject_atomically() {
+    for is_rollup in [false, true] {
+        let harness = Harness::new();
+        let store = harness.open();
+        let (valid, body_id, height) = if is_rollup {
+            let (_, state) = execute_receipt_chain(&harness, &store);
+            let rollup = harness.rollup(&state, 12);
+            let id = consumption_rollup_id_v1(&rollup.body).expect("rollup ID");
+            (
+                ConsumptionSettlementCommandV1::AdmitRollup {
+                    rollup,
+                    receipts: state
+                        .receipts
+                        .iter()
+                        .map(|row| row.receipt.clone())
+                        .collect(),
+                },
+                Hash32V1::from(id),
+                12,
+            )
+        } else {
+            let receipt = harness.receipt(None, 10, 100);
+            let id = consumption_receipt_id_v1(&receipt.body).expect("receipt ID");
+            (
+                ConsumptionSettlementCommandV1::AdmitReceipt { receipt },
+                Hash32V1::from(id),
+                10,
+            )
+        };
+        for provider in [false, true] {
+            for case in 0..14 {
+                let mut command = valid.clone();
+                let (provider_entry, consumer_entry) = match &mut command {
+                    ConsumptionSettlementCommandV1::AdmitReceipt { receipt } => (
+                        &mut receipt.provider_signature,
+                        &mut receipt.consumer_signature,
+                    ),
+                    ConsumptionSettlementCommandV1::AdmitRollup { rollup, .. } => (
+                        &mut rollup.provider_signature,
+                        &mut rollup.consumer_signature,
+                    ),
+                    ConsumptionSettlementCommandV1::Settle { .. } => unreachable!(),
+                };
+                let entry = if provider {
+                    provider_entry
+                } else {
+                    consumer_entry
+                };
+                let expected = if case < 8 {
+                    ConsumptionSettlementErrorCodeV1::Unauthorized
+                } else {
+                    ConsumptionSettlementErrorCodeV1::InvalidSignature
+                };
+                match case {
+                    0 => entry.agent_id = agent(999),
+                    1 => entry.key_id = key_id(999),
+                    2 => entry.key_role ^= 1,
+                    3 => entry.policy_revision += 1,
+                    4 => entry.key_generation += 1,
+                    5 => entry.authority_height -= 1,
+                    6 => entry.authority_height += 1,
+                    7 => entry.signature_scheme += 1,
+                    8 => entry.signature.clear(),
+                    9 => {
+                        entry.signature.pop();
+                    }
+                    10 => entry.signature.push(0),
+                    11 => entry.signature[0] ^= 1,
+                    12 | 13 => {
+                        // A genuine signature by the correct key is insufficient
+                        // when its statement uses the other role or object domain.
+                        let object = if is_rollup ^ (case == 13) {
+                            "rollup"
+                        } else {
+                            "receipt"
+                        };
+                        let role = if provider ^ (case == 12) {
+                            "provider"
+                        } else {
+                            "consumer"
+                        };
+                        let domain =
+                            format!("trnm.portable.v2.consumption-{object}-{role}-signature.v1");
+                        let (registered, key) = if provider {
+                            (&harness.trust.provider, &harness.provider_key)
+                        } else {
+                            (&harness.trust.consumer, &harness.consumer_key)
+                        };
+                        *entry = harness.sign_entry(registered, key, body_id, height, &domain);
+                    }
+                    _ => unreachable!(),
+                }
+                assert_admission_rejected_without_mutation(
+                    &harness,
+                    &store,
+                    &command,
+                    expected,
+                    &format!("rollup={is_rollup}, provider={provider}, case={case}"),
+                );
+            }
+        }
+        let before = store.fresh_readback().expect("parent after all refusals");
+        let execution = harness.execution(before.order_height(), before.order_block_id(), height);
+        let preview = store
+            .preview_before_vote_v1(
+                &before,
+                height,
+                execution.order_block_id,
+                std::slice::from_ref(&valid),
+            )
+            .expect("valid preview after signature refusals");
+        let committed = store
+            .execute_committed_execution(&execution, &valid)
+            .expect("valid admission after signature refusals");
+        assert!(!committed.replay);
+        assert_eq!(
+            store
+                .fresh_readback()
+                .expect("admitted state")
+                .durable_state_root(),
+            preview.candidate_post_state_root()
+        );
+        assert!(
+            store
+                .execute_committed_execution(&execution, &valid)
+                .expect("exact valid retry")
+                .replay
+        );
+        let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config())
+            .expect("reopen valid admission");
+        assert_eq!(
+            reopened.fresh_readback().expect("cold valid parent"),
+            store.fresh_readback().expect("valid parent")
+        );
+    }
+}
+
+#[test]
+fn genuinely_signed_foreign_context_and_identity_bodies_reject_atomically() {
+    // Re-sign each altered body so these cases reach the trust-context check,
+    // rather than merely demonstrating that changing signed bytes is rejected.
+    macro_rules! alter_binding {
+        ($body:expr, $case:expr) => {
+            match $case {
+                0 => $body.schema_version += 1,
+                1 => $body.context.genesis_hash = h(999),
+                2 => $body.context.chain_id.push_str("-other"),
+                3 => $body.context.protocol_version += 1,
+                4 => $body.context.stack_profile_hash = h(999),
+                5 => $body.provider_id = agent(999),
+                6 => $body.consumer_id = agent(999),
+                7 => $body.task_id = task(999),
+                8 => $body.lease_id = lease(999),
+                9 => $body.attempt += 1,
+                10 => $body.result_id = result(999),
+                11 => $body.related_party_policy_hash = h(999),
+                _ => unreachable!(),
+            }
+        };
+    }
+    for is_rollup in [false, true] {
+        let harness = Harness::new();
+        let store = harness.open();
+        if is_rollup {
+            execute_receipt_chain(&harness, &store);
+        }
+        let state = store.state().expect("parent state");
+        for case in 0..12 {
+            let command = if is_rollup {
+                let mut body = harness.rollup(&state, 12).body;
+                alter_binding!(body, case);
+                ConsumptionSettlementCommandV1::AdmitRollup {
+                    rollup: harness.sign_rollup(body, 12),
+                    receipts: state
+                        .receipts
+                        .iter()
+                        .map(|row| row.receipt.clone())
+                        .collect(),
+                }
+            } else {
+                let mut body = harness.receipt(None, 10, 100).body;
+                alter_binding!(body, case);
+                ConsumptionSettlementCommandV1::AdmitReceipt {
+                    receipt: harness.sign_receipt(body),
+                }
+            };
+            assert_admission_rejected_without_mutation(
+                &harness,
+                &store,
+                &command,
+                ConsumptionSettlementErrorCodeV1::InvalidContext,
+                &format!("foreign binding: rollup={is_rollup}, case={case}"),
+            );
+        }
+        let valid = if is_rollup {
+            ConsumptionSettlementCommandV1::AdmitRollup {
+                rollup: harness.rollup(&state, 12),
+                receipts: state
+                    .receipts
+                    .iter()
+                    .map(|row| row.receipt.clone())
+                    .collect(),
+            }
+        } else {
+            ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.receipt(None, 10, 100),
+            }
+        };
+        let before = store
+            .fresh_readback()
+            .expect("parent after context refusals");
+        let execution = harness.execution(
+            before.order_height(),
+            before.order_block_id(),
+            before.order_height() + 1,
+        );
+        store
+            .execute_committed_execution(&execution, &valid)
+            .expect("valid admission after context refusals");
+        let reopened = ConsumptionSettlementStoreV1::open_existing(harness.config())
+            .expect("reopen after valid admission");
+        assert_eq!(
+            reopened.fresh_readback().expect("cold valid parent"),
+            store.fresh_readback().expect("valid parent")
+        );
+    }
+}
+
+#[test]
+fn execution_preview_rejects_oversized_command_batches_before_allocation() {
+    let harness = Harness::new();
+    let store = harness.open();
+    let command = ConsumptionSettlementCommandV1::AdmitReceipt {
+        receipt: harness.receipt(None, 10, 25),
+    };
+    let commands = vec![command; 1_025];
+    let before = store.fresh_readback().expect("fresh parent");
+    let error = store
+        .preview_before_vote_v1(&before, 10, h(1_010), &commands)
+        .expect_err("oversized pre-commit command batch");
+    assert_eq!(
+        error.code(),
+        ConsumptionSettlementErrorCodeV1::InvalidBounds
+    );
+}
+
+#[test]
+fn committed_block_marker_replay_fails_closed_at_row_bound() {
+    let harness = Harness::new();
+    let store = harness.open();
+    let genesis = store.fresh_readback().expect("genesis readback");
+    store
+        .advance_empty_committed_execution_v1(&harness.execution(
+            genesis.order_height(),
+            genesis.order_block_id(),
+            genesis.order_height() + 1,
+        ))
+        .expect("append marker");
+    drop(store);
+    let connection = Connection::open(&harness.path).expect("open marker database");
+    let error = crate::store::test_load_committed_block_markers_with_limit(
+        &connection,
+        &harness.config(),
+        1,
+    )
+    .expect_err("marker replay must fail closed above its row bound");
+    assert_eq!(
+        error.code(),
+        ConsumptionSettlementErrorCodeV1::TamperDetected
+    );
+}
+
+#[cfg(unix)]
+#[test]
+fn dangling_sqlite_sidecar_symlink_is_rejected() {
+    use std::os::unix::fs::symlink;
+
+    let harness = Harness::new();
+    drop(harness.open());
+    let sidecar = format!("{}-shm", harness.path.display());
+    symlink("missing-shm-target", &sidecar).expect("create dangling sidecar symlink");
+    let error = ConsumptionSettlementStoreV1::open(harness.config())
+        .expect_err("dangling sidecar symlink must be rejected");
+    assert_eq!(
+        error.code(),
+        ConsumptionSettlementErrorCodeV1::SidecarPresent
+    );
+}
+
+#[test]
+fn oversized_operation_field_fails_before_replay_decode() {
+    let harness = Harness::new();
+    let store = harness.open();
+    store
+        .execute_committed_execution(
+            &harness.execution(9, h(900), 10),
+            &ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.receipt(None, 10, 100),
+            },
+        )
+        .expect("seed operation");
+    drop(store);
+    let connection = Connection::open(&harness.path).expect("open store");
+    let oversized = i64::try_from(4_u64 * 1024 * 1024 + 1).expect("SQLite length");
+    connection
+        .execute(
+            "UPDATE operations SET command=zeroblob(?1) WHERE sequence=1",
+            [oversized],
+        )
+        .expect("write oversized command");
+    drop(connection);
+    let error = ConsumptionSettlementStoreV1::open(harness.config())
+        .expect_err("oversized persisted operation must fail closed");
+    assert_eq!(
+        error.code(),
+        ConsumptionSettlementErrorCodeV1::TamperDetected
+    );
+}
+
+#[test]
+fn oversized_operation_identity_fails_before_replay_decode() {
+    let harness = Harness::new();
+    let store = harness.open();
+    store
+        .execute_committed_execution(
+            &harness.execution(9, h(900), 10),
+            &ConsumptionSettlementCommandV1::AdmitReceipt {
+                receipt: harness.receipt(None, 10, 100),
+            },
+        )
+        .expect("seed operation");
+    drop(store);
+    let connection = Connection::open(&harness.path).expect("open store");
+    let oversized = i64::try_from(4_u64 * 1024 * 1024 + 1).expect("SQLite length");
+    connection
+        .execute(
+            "UPDATE operations SET operation_id=zeroblob(?1) WHERE sequence=1",
+            [oversized],
+        )
+        .expect("write oversized operation ID");
+    drop(connection);
+    let error = ConsumptionSettlementStoreV1::open(harness.config())
+        .expect_err("oversized operation ID must fail closed");
+    assert_eq!(
+        error.code(),
+        ConsumptionSettlementErrorCodeV1::TamperDetected
+    );
+}
+
+#[cfg(unix)]
+#[test]
+fn create_open_rejects_dangling_store_symlink() {
+    use std::os::unix::fs::symlink;
+
+    let harness = Harness::new();
+    let target = harness.path.with_extension("target.sqlite");
+    symlink(&target, &harness.path).expect("create dangling store symlink");
+    let error = ConsumptionSettlementStoreV1::open(harness.config())
+        .expect_err("create open must reject a symlink");
+    assert_eq!(error.code(), ConsumptionSettlementErrorCodeV1::StoreFailure);
+    assert!(
+        !target.exists(),
+        "SQLite must not create the symlink target"
+    );
+}
+
+#[cfg(unix)]
+#[test]
+fn readback_rejects_store_path_replaced_by_symlink() {
+    use std::os::unix::fs::symlink;
+
+    let harness = Harness::new();
+    let store = harness.open();
+    let target = harness.path.with_extension("target.sqlite");
+    fs::rename(&harness.path, &target).expect("move store behind endpoint");
+    symlink(&target, &harness.path).expect("replace store endpoint with symlink");
+    let error = store
+        .state()
+        .expect_err("readback must reject a symlinked store endpoint");
+    assert_eq!(error.code(), ConsumptionSettlementErrorCodeV1::StoreFailure);
 }

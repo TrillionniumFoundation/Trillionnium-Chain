@@ -11,6 +11,7 @@ use fs2::FileExt;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
+use std::cell::Cell;
 use std::collections::BTreeMap;
 use std::fs::{self, File, OpenOptions};
 use std::io::{Read, Seek, SeekFrom, Write};
@@ -505,7 +506,8 @@ impl Replay {
 
 struct Sidecar {
     directory: PathBuf,
-    _lock: File,
+    directory_file: File,
+    lock: File,
     file: File,
     identity: (u64, u64),
     length: u64,
@@ -516,6 +518,7 @@ struct Sidecar {
     artifact_hashes: BTreeMap<String, u64>,
     orphan_artifacts_at_open: Vec<Value>,
     supplied_checkpoint_matches: Option<bool>,
+    lease_fenced: Cell<bool>,
 }
 
 fn directory(path: &Path) -> Result<()> {
@@ -527,9 +530,39 @@ fn directory(path: &Path) -> Result<()> {
     }
     let metadata = fs::symlink_metadata(path)?;
     ensure(
-        metadata.is_dir() && !metadata.file_type().is_symlink(),
+        metadata.is_dir()
+            && metadata.uid() == rustix::process::geteuid().as_raw()
+            && metadata.mode() & 0o022 == 0,
         "OWNER_JOURNAL_DIRECTORY",
     )
+}
+fn owner_file(path: &Path, file: &File, code: &'static str) -> Result<fs::Metadata> {
+    let held = file.metadata()?;
+    let named = fs::symlink_metadata(path)?;
+    ensure(
+        held.is_file()
+            && held.nlink() == 1
+            && held.uid() == rustix::process::geteuid().as_raw()
+            && held.mode() & 0o022 == 0
+            && named.is_file()
+            && (named.dev(), named.ino()) == (held.dev(), held.ino()),
+        code,
+    )?;
+    Ok(held)
+}
+fn owner_lease(path: &Path, directory: &File, lock: &File) -> Result<()> {
+    let held = directory.metadata()?;
+    let named = fs::symlink_metadata(path)?;
+    ensure(
+        held.is_dir()
+            && held.uid() == rustix::process::geteuid().as_raw()
+            && held.mode() & 0o022 == 0
+            && named.is_dir()
+            && (named.dev(), named.ino()) == (held.dev(), held.ino()),
+        "OWNER_JOURNAL_DIRECTORY",
+    )?;
+    owner_file(&path.join("owner.lock"), lock, "OWNER_JOURNAL_LOCK")?;
+    Ok(())
 }
 fn safe_absolute(path: &Path) -> Result<()> {
     ensure(
@@ -542,9 +575,11 @@ fn safe_absolute(path: &Path) -> Result<()> {
 }
 fn read_packet_file(path: &Path, length: u64) -> Result<Vec<u8>> {
     ensure((1..=1_048_576).contains(&length), "OWNER_JOURNAL_ARTIFACT")?;
+    // A cached artifact may have been replaced by a FIFO. Open without waiting
+    // for its writer, then keep the descriptor-bound regular-file refusal.
     let file = OpenOptions::new()
         .read(true)
-        .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
+        .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC | libc::O_NONBLOCK)
         .open(path)?;
     let metadata = file.metadata()?;
     ensure(
@@ -602,28 +637,38 @@ impl Sidecar {
             "OWNER_JOURNAL_LIMITS",
         )?;
         directory(path)?;
-        let lock = OpenOptions::new()
+        let directory_file = OpenOptions::new()
             .read(true)
-            .write(true)
-            .create(true)
-            .truncate(false)
-            .mode(0o600)
-            .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
-            .open(path.join("owner.lock"))?;
-        ensure(lock.metadata()?.is_file(), "OWNER_JOURNAL_LOCK")?;
+            .custom_flags(libc::O_DIRECTORY | libc::O_NOFOLLOW | libc::O_CLOEXEC)
+            .open(path)?;
+        let flags = rustix::fs::OFlags::RDWR
+            | rustix::fs::OFlags::CREATE
+            | rustix::fs::OFlags::NOFOLLOW
+            | rustix::fs::OFlags::NONBLOCK
+            | rustix::fs::OFlags::CLOEXEC;
+        let mode = rustix::fs::Mode::RUSR | rustix::fs::Mode::WUSR;
+        let lock = File::from(
+            rustix::fs::openat(&directory_file, "owner.lock", flags, mode)
+                .map_err(std::io::Error::from)?,
+        );
+        owner_lease(path, &directory_file, &lock)?;
         lock.try_lock_exclusive()
             .map_err(|_| Error::from("OWNER_JOURNAL_BUSY"))?;
+        owner_lease(path, &directory_file, &lock)?;
         directory(&path.join("packets"))?;
-        let mut file = OpenOptions::new()
-            .read(true)
-            .append(true)
-            .create(true)
-            .mode(0o600)
-            .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
-            .open(path.join("journal.pnoj1"))?;
-        let metadata = file.metadata()?;
+        let mut file = File::from(
+            rustix::fs::openat(
+                &directory_file,
+                "journal.pnoj1",
+                flags | rustix::fs::OFlags::APPEND,
+                mode,
+            )
+            .map_err(std::io::Error::from)?,
+        );
+        owner_lease(path, &directory_file, &lock)?;
+        let metadata = owner_file(&path.join("journal.pnoj1"), &file, "OWNER_JOURNAL_REPLACED")?;
         ensure(
-            metadata.is_file() && metadata.len() <= options.maximum_journal_bytes,
+            metadata.len() <= options.maximum_journal_bytes,
             "OWNER_JOURNAL_LENGTH",
         )?;
         let mut replay = Replay::default();
@@ -637,7 +682,7 @@ impl Sidecar {
             )?;
             file.write_all(MAGIC)?;
             file.sync_all()?;
-            File::open(path)?.sync_all()?;
+            directory_file.sync_all()?;
             length = MAGIC.len() as u64;
         } else {
             file.seek(SeekFrom::Start(0))?;
@@ -728,7 +773,8 @@ impl Sidecar {
         orphan_artifacts_at_open.sort_by(|a, b| a["sha256"].as_str().cmp(&b["sha256"].as_str()));
         let mut sidecar = Self {
             directory: path.to_owned(),
-            _lock: lock,
+            directory_file,
+            lock,
             file,
             identity: (metadata.dev(), metadata.ino()),
             length,
@@ -739,6 +785,7 @@ impl Sidecar {
             artifact_hashes,
             orphan_artifacts_at_open,
             supplied_checkpoint_matches: None,
+            lease_fenced: Cell::new(false),
         };
         let context = json!({"network":hex::encode(settings.network()),"parameters":hex::encode(settings.parameters()),"genesis":hex::encode(settings.genesis())});
         if sidecar.hashes.is_empty() {
@@ -771,16 +818,29 @@ impl Sidecar {
         Ok(sidecar)
     }
     fn guard(&self) -> Result<()> {
-        let actual = self.file.metadata()?;
-        let named = fs::symlink_metadata(self.directory.join("journal.pnoj1"))?;
-        ensure(
-            named.is_file()
-                && !named.file_type().is_symlink()
-                && (actual.dev(), actual.ino()) == self.identity
-                && (named.dev(), named.ino()) == self.identity
-                && actual.len() == self.length,
-            "OWNER_JOURNAL_REPLACED",
-        )
+        // A live checkpoint requires the same held directory and lock, not just
+        // the same journal bytes. Replacing the lock path or adding a hard-link
+        // alias cannot leave this sidecar reporting an exclusive owner lease.
+        // A detected loss stays terminal for this live owner even if the old
+        // names are restored. This cannot detect an entire replace-and-restore
+        // that happens between calls; the directory still needs trusted custody.
+        ensure(!self.lease_fenced.get(), "OWNER_JOURNAL_REPLACED")?;
+        let result = (|| {
+            owner_lease(&self.directory, &self.directory_file, &self.lock)?;
+            let actual = owner_file(
+                &self.directory.join("journal.pnoj1"),
+                &self.file,
+                "OWNER_JOURNAL_REPLACED",
+            )?;
+            ensure(
+                (actual.dev(), actual.ino()) == self.identity && actual.len() == self.length,
+                "OWNER_JOURNAL_REPLACED",
+            )
+        })();
+        if result.is_err() {
+            self.lease_fenced.set(true);
+        }
+        result
     }
     fn append(&mut self, payload: Value) -> Result<u64> {
         self.guard()?;

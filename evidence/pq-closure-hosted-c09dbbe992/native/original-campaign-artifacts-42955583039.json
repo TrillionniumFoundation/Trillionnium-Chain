@@ -1,0 +1,25 @@
+{
+  "total_count": 1,
+  "artifacts": [
+    {
+      "id": 13829055578,
+      "node_id": "MDg6QXJ0aWZhY3QxMzgyOTA1NTU3OA==",
+      "name": "pon-native-campaign-x64-head-release-c09dbbe9921da12db8bf7240a8a95a0e9a789e50-1",
+      "size_in_bytes": 70936486,
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13829055578",
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13829055578/zip",
+      "expired": false,
+      "digest": "sha256:078f427e72d34dc1b0a96f13d16a231d78e9c949656ae57b1fe52665c91cfebe",
+      "created_at": "2026-11-11T04:31:47Z",
+      "updated_at": "2026-11-11T04:31:47Z",
+      "expires_at": "2026-12-11T04:31:39Z",
+      "workflow_run": {
+        "id": 42955583039,
+        "repository_id": 1323087357,
+        "head_repository_id": 1323087357,
+        "head_branch": "fix/chain-pq-closure-20261111-d4d2",
+        "head_sha": "c09dbbe9921da12db8bf7240a8a95a0e9a789e50"
+      }
+    }
+  ]
+}

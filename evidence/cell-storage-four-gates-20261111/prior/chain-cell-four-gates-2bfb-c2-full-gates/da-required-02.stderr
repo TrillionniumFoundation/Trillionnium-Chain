@@ -1,0 +1,19 @@
+   Compiling trnm-data-availability v0.1.0 (/home/qq/work/chain-cell-four-gates-20261111-2bfb/trillionnium/crates/trnm-data-availability)
+error[E0425]: cannot find function `mkfifo` in module `rustix::fs`
+   --> crates/trnm-data-availability/src/cell/snapshot_schedule/tests.rs:680:17
+    |
+680 |     rustix::fs::mkfifo(
+    |                 ^^^^^^
+    |
+   ::: /home/qq/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustix-1.1.4/src/fs/at.rs:502:1
+    |
+502 | pub fn mkfifoat<P: path::Arg, Fd: AsFd>(dirfd: Fd, path: P, mode: Mode) -> io::Result<()> {
+    | ----------------------------------------------------------------------------------------- similarly named function `mkfifoat` defined here
+    |
+help: a function with a similar name exists
+    |
+680 |     rustix::fs::mkfifoat(
+    |                       ++
+
+For more information about this error, try `rustc --explain E0425`.
+error: could not compile `trnm-data-availability` (lib test) due to 1 previous error

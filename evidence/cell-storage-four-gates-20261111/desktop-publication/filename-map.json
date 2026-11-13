@@ -1,0 +1,14 @@
+{
+  "archive_unchanged": true,
+  "removed_archive_prefix": "desktop-publication-records/",
+  "renames": [
+    {
+      "bytes": 7652,
+      "error": "Extra data: line 270 column 2 (char 7650)",
+      "expanded": "setup/summary.json.raw",
+      "original": "setup/summary.json",
+      "sha256": "5679eb1e5aaf90c8de7d049f1e01549b3597441c45e4f1a6138f8d18df2a9784"
+    }
+  ],
+  "schema": "expanded-original-filename-map-v1"
+}

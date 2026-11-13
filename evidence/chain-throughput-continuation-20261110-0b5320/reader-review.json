@@ -1,0 +1,60 @@
+{
+  "cases": [
+    {
+      "fixed_error": "EXPECTED_CONTROL_PANIC_SOURCE",
+      "fixed_guard_accepted": false,
+      "mode": "budget-before-v2",
+      "mutation": "wrong_panic_thread",
+      "prior_guard_accepted": true,
+      "stderr_sha256": "ea4f43208aebd2c892db48d1a98e14c55dba9244dd5f2cf2e08363992d33a735",
+      "stdout_sha256": "6ec9a1717341ee7e3b4e73bb28c8509ca00b97fe99448e88692295b790d5115c",
+      "test": "ingress::history_import::tests::detached_budget_controls::shared_detached_history_continues_from_real_deficit_without_new_credit"
+    },
+    {
+      "fixed_error": "EXPECTED_CONTROL_PANIC_SOURCE",
+      "fixed_guard_accepted": false,
+      "mode": "budget-before-v2",
+      "mutation": "extra_unrelated_panic",
+      "prior_guard_accepted": true,
+      "stderr_sha256": "e13be1cdfc7081cc42259c7271bc605e14ad2d72ab6d11871ea46cc4bbc3df14",
+      "stdout_sha256": "6ec9a1717341ee7e3b4e73bb28c8509ca00b97fe99448e88692295b790d5115c",
+      "test": "ingress::history_import::tests::detached_budget_controls::shared_detached_history_continues_from_real_deficit_without_new_credit"
+    },
+    {
+      "fixed_error": "EXPECTED_CONTROL_PANIC_SOURCE",
+      "fixed_guard_accepted": false,
+      "mode": "budget-before-v2",
+      "mutation": "wrong_panic_thread",
+      "prior_guard_accepted": true,
+      "stderr_sha256": "f1b9b8938ea7a0756474e22e679860e2430aa092d51124197b8e662ecbd3f142",
+      "stdout_sha256": "e39c6895b31869ec3ebe34b9dad67d9eb9719ed1543ce4f4d77e18a56cfe0126",
+      "test": "mining::prepare_control_tests::registered_prepare_pre_cancel_keeps_error_before_material_or_parent_io"
+    },
+    {
+      "fixed_error": "EXPECTED_CONTROL_PANIC_SOURCE",
+      "fixed_guard_accepted": false,
+      "mode": "budget-before-v2",
+      "mutation": "extra_unrelated_panic",
+      "prior_guard_accepted": true,
+      "stderr_sha256": "de4464d3f4a7bde0450f4de13fb9436c80b9cddde2d12c18e826aef3667160fe",
+      "stdout_sha256": "e39c6895b31869ec3ebe34b9dad67d9eb9719ed1543ce4f4d77e18a56cfe0126",
+      "test": "mining::prepare_control_tests::registered_prepare_pre_cancel_keeps_error_before_material_or_parent_io"
+    }
+  ],
+  "native_campaign_executed": false,
+  "native_tests_executed": false,
+  "result": "PASS: all four previously accepted mutations refused after hardening",
+  "schema": "pon-independent-budget-reader-mutation-review-v1",
+  "scope": "synthetic reader mutations only; no native build, native control, or service campaign result",
+  "source": {
+    "fixed_runner_sha256": "6acf7c2db61a4af3ee346ce497cc1a46a4f801a68656d13d7d4f995e0931259c",
+    "fixture_path": "scripts/ci/test_pon_budget_controls.py",
+    "fixture_sha256": "0a9bc83d70146247faa97d1f457280ca346114a588723961cb582a390ca9a38b",
+    "initial_observation": "These same four mutations were observed accepted before hardening. That first observation did not capture a file hash; the prior hash here identifies the independent reconstructed replay, not a retrospectively collected source receipt.",
+    "prior_guard_reconstructed_runner_sha256": "7e450db8eef6ea497c20e75013895b733d9c55b52db1a142f72266eb8595830c",
+    "prior_guard_source": "In-memory restoration of only the exact pre-hardening validate_case panic guard from prior inspection; no production or runner file was replaced.",
+    "runner_path": "scripts/ci/run_pon_budget_controls.py",
+    "source_and_fixture_unchanged_during_replay": true
+  },
+  "unaltered_expected_panic_accepted_by_both_readers": true
+}

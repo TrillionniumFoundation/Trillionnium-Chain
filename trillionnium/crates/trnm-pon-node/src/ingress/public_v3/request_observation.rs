@@ -4,7 +4,7 @@ use super::work_rejection::PublicRejectionWorkObservation;
 use serde::{ser::SerializeStruct, Serialize};
 use std::fmt::{self, Write};
 use std::sync::{
-    atomic::{AtomicBool, AtomicU64, Ordering},
+    atomic::{AtomicBool, AtomicU32, AtomicU64, Ordering},
     Arc, Mutex, OnceLock,
 };
 use std::thread::{self, ThreadId};
@@ -105,6 +105,39 @@ impl Default for RequestErrorDiagnostics {
     }
 }
 
+/// First actual Err at each owner, bound to its original typed cause and phase.
+/// A later transport/shutdown error must not move an earlier refusal's clock.
+/// None is no captured event; a present event with no clock remains unknown.
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
+pub struct RequestErrorMoment {
+    pub observed_ns: Option<u64>,
+    pub phase: &'static str,
+    pub error_code: Option<&'static str>,
+}
+
+#[derive(Clone, Copy, Debug, Serialize)]
+pub struct RequestErrorTiming {
+    schema: &'static str,
+    pub first_dispatch_error: Option<RequestErrorMoment>,
+    pub first_terminal_error: Option<RequestErrorMoment>,
+    /// Conservative: any lost request observation can hide an earlier event.
+    pub observation_failed: bool,
+    clock_is_observer_local: bool,
+    has_control_authority: bool,
+}
+impl Default for RequestErrorTiming {
+    fn default() -> Self {
+        Self {
+            schema: "public-v3-request-error-timing-v1",
+            first_dispatch_error: None,
+            first_terminal_error: None,
+            observation_failed: false,
+            clock_is_observer_local: true,
+            has_control_authority: false,
+        }
+    }
+}
+
 /// Additive, local settlement facts. The existing CpuSettle span measures the
 /// actual call through the original budget/journal result, including refusal.
 /// It overlaps the end of the existing dispatch CPU sample; never add the two.
@@ -195,7 +228,7 @@ pub enum SubmitPhase {
     RootCommitment,
 }
 impl SubmitPhase {
-    const ALL: [Self; 19] = [
+    pub(in crate::ingress) const ALL: [Self; 19] = [
         Self::Decode,
         Self::ContextOwnerWait,
         Self::Context,
@@ -285,6 +318,129 @@ pub struct ApplicationFrameBytes {
     pub complete: bool,
 }
 
+/// Returned frame-wrapper calls only, not syscall counts or physical network
+/// measurements. No-progress includes WouldBlock, Interrupted and an already
+/// complete read. Known subtotals never stand in for complete clock coverage.
+#[derive(Clone, Copy, Debug, Serialize)]
+pub struct ReactorFrameIoObservation {
+    pub phase: ApplicationFramePhase,
+    pub calls_returned: u64,
+    pub progressed_calls: u64,
+    pub no_progress_calls: u64,
+    pub failed_calls: u64,
+    pub wall_ns: Option<u64>,
+    pub wall_ns_known_sum: u64,
+    pub wall_unknown_calls: u64,
+    pub thread_cpu_ns: Option<u64>,
+    pub thread_cpu_ns_known_sum: u64,
+    pub thread_cpu_unknown_calls: u64,
+}
+impl ReactorFrameIoObservation {
+    fn new(phase: ApplicationFramePhase) -> Self {
+        Self {
+            phase,
+            calls_returned: 0,
+            progressed_calls: 0,
+            no_progress_calls: 0,
+            failed_calls: 0,
+            wall_ns: None,
+            wall_ns_known_sum: 0,
+            wall_unknown_calls: 0,
+            thread_cpu_ns: None,
+            thread_cpu_ns_known_sum: 0,
+            thread_cpu_unknown_calls: 0,
+        }
+    }
+    fn record(mut self, sample: ReactorIoSample, progressed: bool) -> Option<Self> {
+        self.calls_returned = self.calls_returned.checked_add(1)?;
+        let outcome = if sample.failed {
+            &mut self.failed_calls
+        } else if progressed {
+            &mut self.progressed_calls
+        } else {
+            &mut self.no_progress_calls
+        };
+        *outcome = outcome.checked_add(1)?;
+        self.wall_ns_known_sum = self
+            .wall_ns_known_sum
+            .checked_add(sample.wall_ns.unwrap_or(0))?;
+        self.wall_unknown_calls = self
+            .wall_unknown_calls
+            .checked_add(u64::from(sample.wall_ns.is_none()))?;
+        self.wall_ns = (self.wall_unknown_calls == 0).then_some(self.wall_ns_known_sum);
+        self.thread_cpu_ns_known_sum = self
+            .thread_cpu_ns_known_sum
+            .checked_add(sample.thread_cpu_ns.unwrap_or(0))?;
+        self.thread_cpu_unknown_calls = self
+            .thread_cpu_unknown_calls
+            .checked_add(u64::from(sample.thread_cpu_ns.is_none()))?;
+        self.thread_cpu_ns =
+            (self.thread_cpu_unknown_calls == 0).then_some(self.thread_cpu_ns_known_sum);
+        Some(self)
+    }
+}
+
+#[derive(Clone, Copy, Debug, Serialize)]
+pub struct ReactorIoObservation {
+    schema: &'static str,
+    pub frames: [ReactorFrameIoObservation; 6],
+    pub observation_failed: bool,
+    calls_are_wrapper_returns: bool,
+    includes_read_buffer_preparation: bool,
+    cpu_is_reactor_thread_only: bool,
+    includes_wait_between_calls: bool,
+    has_control_authority: bool,
+}
+impl Default for ReactorIoObservation {
+    fn default() -> Self {
+        Self {
+            schema: "public-v3-reactor-frame-io-observation-v1",
+            frames: [
+                ApplicationFramePhase::Hello,
+                ApplicationFramePhase::Challenge,
+                ApplicationFramePhase::Solution,
+                ApplicationFramePhase::Ready,
+                ApplicationFramePhase::Body,
+                ApplicationFramePhase::Response,
+            ]
+            .map(ReactorFrameIoObservation::new),
+            observation_failed: false,
+            calls_are_wrapper_returns: true,
+            includes_read_buffer_preparation: true,
+            cpu_is_reactor_thread_only: true,
+            includes_wait_between_calls: false,
+            has_control_authority: false,
+        }
+    }
+}
+
+pub(super) struct ReactorIoStamp {
+    started: Instant,
+    cpu: Option<ThreadCpuStamp>,
+}
+pub(super) struct ReactorIoSample {
+    wall_ns: Option<u64>,
+    thread_cpu_ns: Option<u64>,
+    failed: bool,
+}
+impl ReactorIoStamp {
+    pub(super) fn start() -> Self {
+        Self {
+            started: Instant::now(),
+            cpu: ThreadCpuStamp::start(),
+        }
+    }
+    pub(super) fn finish(self, failed: bool) -> ReactorIoSample {
+        ReactorIoSample {
+            wall_ns: Instant::now()
+                .checked_duration_since(self.started)
+                .and_then(|elapsed| u64::try_from(elapsed.as_nanos()).ok()),
+            thread_cpu_ns: self.cpu.and_then(ThreadCpuStamp::finish),
+            failed,
+        }
+    }
+}
+
 /// Cross-thread/async wait: wall time only, never fabricated thread CPU. The
 /// queue interval starts when the paid body is complete and ends at dequeue.
 #[derive(Clone, Copy, Debug, Serialize, Default)]
@@ -335,6 +491,49 @@ pub struct PublicRequestLifecycleObservation {
     pub has_control_authority: bool,
 }
 
+/// Bracket the actual first false-to-true write of this request's cancel flag.
+/// Other owners may set the same flag without this observer; a later observed
+/// write must not invent the missing original signal clock or cause.
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
+pub struct RequestCancellationSignal {
+    pub before_ns: Option<u64>,
+    pub after_ns: Option<u64>,
+    pub source: &'static str,
+    pub phase: &'static str,
+}
+
+#[derive(Clone, Debug, Serialize)]
+pub struct RequestCancellationObservation {
+    pub schema: &'static str,
+    pub observed_signal_calls: u64,
+    pub first_flag_transition: Option<RequestCancellationSignal>,
+    pub worker_entered: bool,
+    pub worker_entered_ns: Option<u64>,
+    pub worker_returned: bool,
+    pub worker_returned_ns: Option<u64>,
+    pub observation_failed: bool,
+    pub clock_is_observer_local: bool,
+    pub signals_are_request_flag_writes: bool,
+    pub has_control_authority: bool,
+}
+impl Default for RequestCancellationObservation {
+    fn default() -> Self {
+        Self {
+            schema: "public-v3-request-cancellation-observation-v1",
+            observed_signal_calls: 0,
+            first_flag_transition: None,
+            worker_entered: false,
+            worker_entered_ns: None,
+            worker_returned: false,
+            worker_returned_ns: None,
+            observation_failed: false,
+            clock_is_observer_local: true,
+            signals_are_request_flag_writes: true,
+            has_control_authority: false,
+        }
+    }
+}
+
 #[derive(Clone, Debug, Serialize)]
 pub struct PublicRequestObservation {
     pub connection_id: Option<u64>,
@@ -343,7 +542,11 @@ pub struct PublicRequestObservation {
     /// Successful socket accept through the actual connection/task owners.
     /// This is a local diagnostic clock, not a remote confirmation or authority.
     pub lifecycle: PublicRequestLifecycleObservation,
+    /// Signal, actual per-request worker return and resource-owner closure are
+    /// separate observations. None certifies cancellation of durable effects.
+    pub cancellation: RequestCancellationObservation,
     pub frames: [ApplicationFrameBytes; 6],
+    pub reactor_io: ReactorIoObservation,
     pub application_bytes_read: Option<u64>,
     pub application_bytes_written: Option<u64>,
     pub physical_network_bytes: Option<u64>,
@@ -364,6 +567,7 @@ pub struct PublicRequestObservation {
     pub dispatch_accepted: Option<bool>,
     pub dispatch_error_code: Option<&'static str>,
     pub error_diagnostics: RequestErrorDiagnostics,
+    pub error_timing: RequestErrorTiming,
     pub dispatch_thread_cpu_ns: Option<u64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cpu_settlement: Option<PublicCpuSettlementObservation>,
@@ -396,6 +600,7 @@ impl PublicRequestObservation {
                 clock_is_observer_local: true,
                 has_control_authority: false,
             },
+            cancellation: RequestCancellationObservation::default(),
             frames: [
                 ApplicationFramePhase::Hello,
                 ApplicationFramePhase::Challenge,
@@ -410,6 +615,7 @@ impl PublicRequestObservation {
                 bytes_written: 0,
                 complete: false,
             }),
+            reactor_io: ReactorIoObservation::default(),
             application_bytes_read: None,
             application_bytes_written: None,
             physical_network_bytes: None,
@@ -422,6 +628,7 @@ impl PublicRequestObservation {
             dispatch_accepted: None,
             dispatch_error_code: None,
             error_diagnostics: RequestErrorDiagnostics::default(),
+            error_timing: RequestErrorTiming::default(),
             dispatch_thread_cpu_ns: None,
             cpu_settlement: None,
             submit_phases: submit_phases(),
@@ -455,6 +662,7 @@ struct TaskProgress {
     dispatch_accepted: Option<bool>,
     dispatch_error_code: Option<&'static str>,
     dispatch_error_diagnostic: Option<ObservedErrorDiagnostic>,
+    first_dispatch_error: Option<RequestErrorMoment>,
     dispatch_thread_cpu_ns: Option<u64>,
     cpu_settlement: Option<PublicCpuSettlementObservation>,
     paid_task_queue_wait: RequestWaitObservation,
@@ -469,6 +677,12 @@ struct Cell {
     task_created: AtomicBool,
     task_closed: AtomicBool,
     task_closed_ns: OnceLock<Option<u64>>,
+    cancellation_signal_calls: AtomicU64,
+    first_cancellation_signal: OnceLock<RequestCancellationSignal>,
+    worker_entered: AtomicBool,
+    worker_entered_ns: OnceLock<Option<u64>>,
+    worker_returned: AtomicBool,
+    worker_returned_ns: OnceLock<Option<u64>>,
 }
 
 struct Inner {
@@ -586,6 +800,7 @@ impl PublicRequestObserver {
                         value.dispatch_accepted = task.dispatch_accepted;
                         value.dispatch_error_code = task.dispatch_error_code;
                         value.error_diagnostics.dispatch = task.dispatch_error_diagnostic;
+                        value.error_timing.first_dispatch_error = task.first_dispatch_error;
                         value.dispatch_thread_cpu_ns = task.dispatch_thread_cpu_ns;
                         value.cpu_settlement = task.cpu_settlement;
                         value.paid_task_queue_wait = task.paid_task_queue_wait;
@@ -614,8 +829,38 @@ impl PublicRequestObserver {
                     .task_closed
                     .then(|| cell.task_closed_ns.get().copied().flatten())
                     .flatten();
+                value.cancellation.first_flag_transition =
+                    cell.first_cancellation_signal.get().copied();
+                // The first event is published only after its call is counted.
+                // Acquire it first so a concurrent snapshot cannot expose a
+                // transition with an older zero-call census.
+                value.cancellation.observed_signal_calls =
+                    cell.cancellation_signal_calls.load(Ordering::Acquire);
+                // Read return before entry, just as task close precedes the
+                // creation read above. A live snapshot cannot expose a clock
+                // for an event whose release flag it has not acquired.
+                value.cancellation.worker_returned = cell.worker_returned.load(Ordering::Acquire);
+                value.cancellation.worker_entered = cell.worker_entered.load(Ordering::Acquire);
+                if value.cancellation.worker_entered {
+                    // This worker may have entered after the earlier creation
+                    // read. Its acquire makes the original creation visible.
+                    value.task_created = cell.task_created.load(Ordering::Acquire);
+                }
+                value.cancellation.worker_entered_ns = value
+                    .cancellation
+                    .worker_entered
+                    .then(|| cell.worker_entered_ns.get().copied().flatten())
+                    .flatten();
+                value.cancellation.worker_returned_ns = value
+                    .cancellation
+                    .worker_returned
+                    .then(|| cell.worker_returned_ns.get().copied().flatten())
+                    .flatten();
                 value.observation_failed =
                     cell.failed.load(Ordering::Acquire) || phase_failures != 0;
+                value.cancellation.observation_failed = value.observation_failed;
+                value.error_timing.observation_failed = value.observation_failed;
+                value.reactor_io.observation_failed = value.observation_failed;
                 value.complete = value.connection_closed
                     && (!value.task_created || value.task_closed)
                     && !value.observation_failed;
@@ -700,6 +945,12 @@ impl PublicRequestObserver {
                 task_created: AtomicBool::new(false),
                 task_closed: AtomicBool::new(false),
                 task_closed_ns: OnceLock::new(),
+                cancellation_signal_calls: AtomicU64::new(0),
+                first_cancellation_signal: OnceLock::new(),
+                worker_entered: AtomicBool::new(false),
+                worker_entered_ns: OnceLock::new(),
+                worker_returned: AtomicBool::new(false),
+                worker_returned_ns: OnceLock::new(),
             });
             if slot.set(cell.clone()).is_ok() {
                 return Some(ConnectionObservation {
@@ -715,6 +966,7 @@ impl PublicRequestObserver {
     }
 }
 
+#[derive(Clone)]
 struct Handle {
     cell: Arc<Cell>,
     inner: Arc<Inner>,
@@ -755,6 +1007,35 @@ impl ConnectionObservation {
             inner: self.inner.clone(),
         }
     }
+    pub(super) fn cancel_request(
+        &self,
+        cancelled: &AtomicBool,
+        source: &'static str,
+        phase: &'static str,
+    ) {
+        let before_ns = self.inner.timestamp_ns(Instant::now());
+        // Preserve the original release write. Reading its atomic predecessor
+        // only decides whether this diagnostic owns the first transition;
+        // it never changes cancellation, admission, deadlines or CPU credit.
+        let was_set = cancelled.swap(true, Ordering::Release);
+        let after_ns = self.inner.timestamp_ns(Instant::now());
+        self.inner.count(&self.cell.cancellation_signal_calls);
+        if !was_set
+            && self
+                .cell
+                .first_cancellation_signal
+                .set(RequestCancellationSignal {
+                    before_ns,
+                    after_ns,
+                    source,
+                    phase,
+                })
+                .is_err()
+        {
+            self.cell.failed.store(true, Ordering::Release);
+            self.inner.count(&self.inner.failures);
+        }
+    }
     pub(super) fn identity(&self, id: u64) {
         self.handle().update(|r| {
             r.connection_id = Some(id);
@@ -768,8 +1049,38 @@ impl ConnectionObservation {
             true
         });
     }
+    #[cfg(test)]
     pub(super) fn frame(&self, phase: usize, read: usize, written: usize, complete: bool) {
+        self.record_frame(phase, read, written, complete, None);
+    }
+    pub(super) fn frame_attempt(
+        &self,
+        phase: usize,
+        read: usize,
+        written: usize,
+        complete: bool,
+        sample: ReactorIoSample,
+    ) {
+        self.record_frame(phase, read, written, complete, Some(sample));
+    }
+    fn record_frame(
+        &self,
+        phase: usize,
+        read: usize,
+        written: usize,
+        complete: bool,
+        sample: Option<ReactorIoSample>,
+    ) {
         self.handle().update(|r| {
+            let io = match sample {
+                Some(sample) => {
+                    match r.reactor_io.frames[phase].record(sample, read != 0 || written != 0) {
+                        Some(io) => Some(io),
+                        None => return false,
+                    }
+                }
+                None => None,
+            };
             let f = &mut r.frames[phase];
             let Some(rx) = f.bytes_read.checked_add(read as u64) else {
                 return false;
@@ -780,6 +1091,9 @@ impl ConnectionObservation {
             f.bytes_read = rx;
             f.bytes_written = tx;
             f.complete |= complete;
+            if let Some(io) = io {
+                r.reactor_io.frames[phase] = io;
+            }
             if phase == 5 && complete {
                 r.response_frame_complete = true;
                 r.response_write
@@ -796,10 +1110,16 @@ impl ConnectionObservation {
     }
     pub(super) fn terminal_error(&self, phase: &'static str, error: &crate::Error) {
         let code = error.code().map(crate::ErrorCode::as_str);
+        let moment = RequestErrorMoment {
+            observed_ns: self.inner.timestamp_ns(Instant::now()),
+            phase,
+            error_code: code,
+        };
         self.handle().update(|r| {
             r.terminal_phase = Some(phase);
             r.terminal_error_code = code;
             r.error_diagnostics.terminal = Some(ObservedErrorDiagnostic::capture(error));
+            r.error_timing.first_terminal_error.get_or_insert(moment);
             r.challenge_wait
                 .finish(self.inner.epoch, Some((false, code)));
             r.grant_wait.finish(self.inner.epoch, Some((false, code)));
@@ -894,6 +1214,28 @@ impl TaskObservation {
     pub(in crate::ingress) fn phase(&self, phase: SubmitPhase) -> SubmitPhaseGuard<'_> {
         self.phases.phase(phase)
     }
+    /// Sample the already-open owner spans for diagnostic attribution only.
+    /// One atomic mask is a coherent sample; it never waits for a row mutex or
+    /// relies on a clock value being available. An ambiguous overlap stays
+    /// unknown instead of guessing a stage or changing a native result.
+    pub(in crate::ingress) fn active_phase(&self) -> std::result::Result<Option<SubmitPhase>, ()> {
+        self.phases.active_phase()
+    }
+    pub(super) fn worker_scope(&self) -> Option<RequestWorkerObservation> {
+        let network = self.network.as_ref()?;
+        let entered = network.inner.timestamp_ns(Instant::now());
+        let recordable = network.cell.worker_entered_ns.set(entered).is_ok();
+        if !recordable || entered.is_none() {
+            network.cell.failed.store(true, Ordering::Release);
+            network.inner.count(&network.inner.failures);
+        }
+        network.cell.worker_entered.store(true, Ordering::Release);
+        Some(RequestWorkerObservation {
+            network: network.clone(),
+            thread: thread::current().id(),
+            recordable,
+        })
+    }
     fn update_task(&self, change: impl FnOnce(&mut TaskProgress)) {
         if let Some(network) = &self.network {
             network.update_task(change);
@@ -941,10 +1283,18 @@ impl TaskObservation {
         });
     }
     pub(super) fn dispatch_error(&self, error: &crate::Error) {
-        self.update_task(|r| {
-            r.dispatch_error_code = error.code().map(crate::ErrorCode::as_str);
-            r.dispatch_error_diagnostic = Some(ObservedErrorDiagnostic::capture(error));
-        });
+        if let Some(network) = &self.network {
+            let moment = RequestErrorMoment {
+                observed_ns: network.inner.timestamp_ns(Instant::now()),
+                phase: "dispatch",
+                error_code: error.code().map(crate::ErrorCode::as_str),
+            };
+            network.update_task(|r| {
+                r.dispatch_error_code = moment.error_code;
+                r.dispatch_error_diagnostic = Some(ObservedErrorDiagnostic::capture(error));
+                r.first_dispatch_error.get_or_insert(moment);
+            });
+        }
     }
     pub(super) fn work_started(&self) {
         self.update_task(|r| {
@@ -974,6 +1324,7 @@ struct PhaseRecorder(Arc<PhaseRecorderInner>);
 struct PhaseRecorderInner {
     epoch: Instant,
     rows: Mutex<[SubmitPhaseObservation; 19]>,
+    active: AtomicU32,
     failures: AtomicU64,
 }
 impl PhaseRecorder {
@@ -981,6 +1332,7 @@ impl PhaseRecorder {
         Self(Arc::new(PhaseRecorderInner {
             epoch,
             rows: Mutex::new(submit_phases()),
+            active: AtomicU32::new(0),
             failures: AtomicU64::new(0),
         }))
     }
@@ -1012,6 +1364,37 @@ impl PhaseRecorder {
         };
         (rows, self.failures())
     }
+    fn active_phase(&self) -> std::result::Result<Option<SubmitPhase>, ()> {
+        if self.failures() != 0 {
+            return Err(());
+        }
+        let active = self.0.active.load(Ordering::Acquire);
+        if active == 0 {
+            return Ok(None);
+        }
+        for phase in SubmitPhase::ALL {
+            if active & (1 << phase as u32) == 0 {
+                continue;
+            }
+            // HistoryImport is the enclosing local invocation. All other
+            // containment comes from the existing declared parent links.
+            // Never choose by timestamp or guess across live sibling spans.
+            let mut lineage = 0u32;
+            let mut current = Some(phase);
+            while let Some(parent) = current {
+                lineage |= 1 << parent as u32;
+                current = if parent == SubmitPhase::HistoryImport {
+                    None
+                } else {
+                    parent.parent().or(Some(SubmitPhase::HistoryImport))
+                };
+            }
+            if active & !lineage == 0 {
+                return Ok(Some(phase));
+            }
+        }
+        Err(())
+    }
     fn phase(&self, phase: SubmitPhase) -> SubmitPhaseGuard<'_> {
         let started = Instant::now();
         let started_ns = started
@@ -1030,6 +1413,9 @@ impl PhaseRecorder {
                 recordable = true;
             }
         });
+        if recordable {
+            self.0.active.fetch_or(1 << phase as u32, Ordering::Release);
+        }
         SubmitPhaseGuard {
             observation: self,
             phase,
@@ -1071,6 +1457,10 @@ impl Drop for SubmitPhaseGuard<'_> {
         if !self.recordable {
             return;
         }
+        self.observation
+            .0
+            .active
+            .fetch_and(!(1 << self.phase as u32), Ordering::Release);
         let ended = Instant::now();
         let wall = ended
             .checked_duration_since(self.started)
@@ -1105,6 +1495,34 @@ impl Drop for TaskObservation {
             }
             network.cell.task_closed.store(true, Ordering::Release);
         }
+    }
+}
+
+/// Declared before the real dequeued Task so unwind, early-return and normal
+/// completion record worker return only after its task locals and accounting
+/// have ended. A completed output may still be owned by the response queue.
+pub(super) struct RequestWorkerObservation {
+    network: Handle,
+    thread: ThreadId,
+    recordable: bool,
+}
+impl Drop for RequestWorkerObservation {
+    fn drop(&mut self) {
+        if !self.recordable {
+            return;
+        }
+        let network = &self.network;
+        if self.thread != thread::current().id() {
+            network.cell.failed.store(true, Ordering::Release);
+            network.inner.count(&network.inner.failures);
+            return;
+        }
+        let returned = network.inner.timestamp_ns(Instant::now());
+        if network.cell.worker_returned_ns.set(returned).is_err() || returned.is_none() {
+            network.cell.failed.store(true, Ordering::Release);
+            network.inner.count(&network.inner.failures);
+        }
+        network.cell.worker_returned.store(true, Ordering::Release);
     }
 }
 
@@ -1157,8 +1575,200 @@ fn thread_cpu_ns() -> Option<u64> {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn active_phase_context_is_lock_free_and_uses_declared_nested_spans() {
+        let observation = TaskObservation::local(Instant::now());
+        let outer = observation.phase(SubmitPhase::HistoryImport);
+        let admission = observation.phase(SubmitPhase::Admission);
+        let execution = observation.phase(SubmitPhase::Execution);
+        let root = observation.phase(SubmitPhase::RootCommitment);
+        let rows = observation.phases.0.rows.lock().unwrap();
+        assert_eq!(
+            observation.active_phase(),
+            Ok(Some(SubmitPhase::RootCommitment))
+        );
+        drop(rows);
+        root.finish(true);
+        assert_eq!(observation.active_phase(), Ok(Some(SubmitPhase::Execution)));
+        execution.finish(true);
+        assert_eq!(observation.active_phase(), Ok(Some(SubmitPhase::Admission)));
+        admission.finish(true);
+        assert_eq!(
+            observation.active_phase(),
+            Ok(Some(SubmitPhase::HistoryImport))
+        );
+        outer.finish(true);
+        assert_eq!(observation.active_phase(), Ok(None));
+        assert_eq!(observation.phase_snapshot().1, 0);
+    }
+
+    #[test]
+    fn active_phase_context_keeps_sibling_overlap_and_unwind_explicit() {
+        let observation = TaskObservation::local(Instant::now());
+        let work = observation.phase(SubmitPhase::Work);
+        // Different depths are not evidence of valid nesting. Work is not an
+        // ancestor of execution, so no stage may be guessed for this overlap.
+        let execution = observation.phase(SubmitPhase::Execution);
+        assert_eq!(observation.active_phase(), Err(()));
+        execution.finish(false);
+        work.finish(false);
+        assert_eq!(observation.active_phase(), Ok(None));
+        let unwind = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            let _phase = observation.phase(SubmitPhase::Commit);
+            assert_eq!(observation.active_phase(), Ok(Some(SubmitPhase::Commit)));
+            panic!("preserve native unwind");
+        }));
+        assert!(unwind.is_err());
+        assert_eq!(observation.active_phase(), Ok(None));
+        let (phases, failures) = observation.phase_snapshot();
+        assert_eq!(failures, 0);
+        let commit = phases[SubmitPhase::Commit as usize];
+        assert!(commit.started);
+        assert!(!commit.completed);
+        assert_eq!(commit.accepted, None);
+    }
+
     use super::*;
     use std::sync::Barrier;
+
+    #[test]
+    fn cancellation_keeps_first_flag_transition_and_separates_worker_from_resource_close() {
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let connection = observer.connection().unwrap();
+        let task = connection.task();
+        let worker = task.worker_scope().unwrap();
+        let cancelled = AtomicBool::new(false);
+        connection.cancel_request(&cancelled, "peer_write_closed", "work");
+        assert!(cancelled.load(Ordering::Acquire));
+        let first = observer.snapshot().records[0]
+            .cancellation
+            .first_flag_transition
+            .unwrap();
+        connection.cancel_request(&cancelled, "connection_cleanup", "cleanup");
+        drop(connection);
+        drop(task);
+        let live = observer.snapshot();
+        let row = &live.records[0];
+        assert!(row.connection_closed && row.task_closed);
+        assert_eq!(row.cancellation.first_flag_transition, Some(first));
+        assert_eq!(row.cancellation.observed_signal_calls, 2);
+        assert!(row.cancellation.worker_entered && !row.cancellation.worker_returned);
+        assert!(row.cancellation.worker_returned_ns.is_none());
+        drop(worker);
+        let finished = observer.snapshot();
+        let row = &finished.records[0];
+        assert!(finished.coverage_complete());
+        assert!(row.cancellation.worker_returned);
+        assert!(first.before_ns.unwrap() <= first.after_ns.unwrap());
+        assert!(first.after_ns <= row.lifecycle.connection_closed_ns);
+        assert!(row.cancellation.worker_returned_ns >= row.lifecycle.task_closed_ns);
+    }
+
+    #[test]
+    fn cancellation_does_not_reconstruct_an_earlier_unobserved_signal() {
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let connection = observer.connection().unwrap();
+        let cancelled = AtomicBool::new(true);
+        connection.cancel_request(&cancelled, "connection_cleanup", "cleanup");
+        drop(connection);
+        let snapshot = observer.snapshot();
+        let value = &snapshot.records[0].cancellation;
+        assert!(snapshot.coverage_complete());
+        assert_eq!(value.observed_signal_calls, 1);
+        assert!(value.first_flag_transition.is_none());
+        assert!(!value.worker_entered && !value.worker_returned);
+        assert!(value.worker_entered_ns.is_none() && value.worker_returned_ns.is_none());
+    }
+
+    #[test]
+    fn cancellation_and_worker_clocks_do_not_wait_for_diagnostic_row_locks() {
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let connection = observer.connection().unwrap();
+        let task = connection.task();
+        let row_lock = connection.cell.row.lock().unwrap();
+        let task_lock = connection.cell.task.lock().unwrap();
+        let worker = task.worker_scope().unwrap();
+        connection.cancel_request(&AtomicBool::new(false), "peer_write_closed", "work");
+        drop(worker);
+        drop(task_lock);
+        drop(row_lock);
+        drop(task);
+        drop(connection);
+        let snapshot = observer.snapshot();
+        assert!(snapshot.coverage_complete());
+        assert!(snapshot.records[0].cancellation.worker_returned);
+        assert!(snapshot.records[0]
+            .cancellation
+            .first_flag_transition
+            .is_some());
+    }
+
+    #[test]
+    fn cancellation_duplicate_worker_entry_preserves_first_owner_and_marks_capture_failed() {
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let connection = observer.connection().unwrap();
+        let task = connection.task();
+        let first = task.worker_scope().unwrap();
+        let stamp = observer.snapshot().records[0]
+            .cancellation
+            .worker_entered_ns;
+        let duplicate = task.worker_scope().unwrap();
+        drop(duplicate);
+        let live = observer.snapshot();
+        assert!(live.records[0].cancellation.observation_failed);
+        assert!(!live.records[0].cancellation.worker_returned);
+        assert_eq!(live.records[0].cancellation.worker_entered_ns, stamp);
+        drop(task);
+        drop(first);
+        drop(connection);
+        let finished = observer.snapshot();
+        assert!(finished.records[0].cancellation.worker_returned);
+        assert!(!finished.coverage_complete());
+    }
+
+    #[test]
+    fn cancellation_live_snapshots_keep_signal_census_and_worker_creation_consistent() {
+        let observer = PublicRequestObserver::new(32).unwrap();
+        let start = Barrier::new(2);
+        thread::scope(|scope| {
+            let writer = scope.spawn(|| {
+                start.wait();
+                for _ in 0..32 {
+                    let connection = observer.connection().unwrap();
+                    let task = connection.task();
+                    let worker = task.worker_scope().unwrap();
+                    connection.cancel_request(&AtomicBool::new(false), "peer_write_closed", "work");
+                    thread::yield_now();
+                    drop(task);
+                    drop(worker);
+                    drop(connection);
+                }
+            });
+            start.wait();
+            for _ in 0..128 {
+                for row in observer.snapshot().records {
+                    let value = row.cancellation;
+                    assert!(
+                        value.first_flag_transition.is_none() || value.observed_signal_calls > 0
+                    );
+                    assert!(!value.worker_entered || row.task_created);
+                    assert!(!value.worker_returned || value.worker_entered);
+                    assert!(value.worker_entered || value.worker_entered_ns.is_none());
+                    assert!(value.worker_returned || value.worker_returned_ns.is_none());
+                }
+                thread::yield_now();
+            }
+            writer.join().unwrap();
+        });
+        let snapshot = observer.snapshot();
+        assert_eq!(snapshot.records.len(), 32);
+        assert!(snapshot
+            .records
+            .iter()
+            .all(|row| row.cancellation.worker_returned));
+        // Concurrent snapshots may deliberately make the original optional
+        // try-lock capture incomplete. They may never manufacture valid zeros.
+    }
 
     #[test]
     fn lifecycle_retains_disconnect_until_actual_task_owner_exits() {
@@ -1428,6 +2038,164 @@ mod tests {
         assert!(snapshot.records[0].observation_failed);
         assert!(!snapshot.records[0].complete);
         assert!(snapshot.records[0].error_diagnostics.dispatch.is_none());
+        assert!(snapshot.records[0].error_timing.observation_failed);
+        assert!(snapshot.records[0]
+            .error_timing
+            .first_dispatch_error
+            .is_none());
+        assert!(snapshot.records[0].reactor_io.observation_failed);
+    }
+
+    #[test]
+    fn first_error_time_keeps_original_cause_phase_and_owner_clock() {
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let connection = observer.connection().unwrap();
+        let task = connection.task();
+        task.dispatch_error(&"PUBLIC_REQUEST_CANCELLED".into());
+        let first_dispatch = observer.snapshot().records[0]
+            .error_timing
+            .first_dispatch_error
+            .unwrap();
+        task.dispatch_error(&"ROOT".into());
+        connection.terminal_error("queue", &"PUBLIC_REQUEST_DEADLINE".into());
+        let first_terminal = observer.snapshot().records[0]
+            .error_timing
+            .first_terminal_error
+            .unwrap();
+        connection.terminal_error("shutdown", &"PUBLIC_EOF".into());
+        drop(task);
+        drop(connection);
+        let snapshot = observer.snapshot();
+        assert!(snapshot.coverage_complete());
+        let row = &snapshot.records[0];
+        let timing = row.error_timing;
+        assert_eq!(timing.schema, "public-v3-request-error-timing-v1");
+        assert!(timing.clock_is_observer_local && !timing.has_control_authority);
+        assert!(!timing.observation_failed);
+        assert_eq!(timing.first_dispatch_error, Some(first_dispatch));
+        assert_eq!(timing.first_terminal_error, Some(first_terminal));
+        assert_eq!(first_dispatch.phase, "dispatch");
+        assert_eq!(first_dispatch.error_code, Some("PUBLIC_REQUEST_CANCELLED"));
+        assert_eq!(first_terminal.phase, "queue");
+        assert_eq!(first_terminal.error_code, Some("PUBLIC_REQUEST_DEADLINE"));
+        assert_eq!(row.dispatch_error_code, None); // The existing last Err remains ROOT.
+        assert_eq!(row.terminal_error_code, Some("PUBLIC_EOF"));
+        assert_eq!(row.terminal_phase, Some("shutdown"));
+        for (event, closed) in [
+            (first_dispatch, row.lifecycle.task_closed_ns),
+            (first_terminal, row.lifecycle.connection_closed_ns),
+        ] {
+            let stamp = event.observed_ns.unwrap();
+            assert!(row.lifecycle.accepted_ns.unwrap() <= stamp && stamp <= closed.unwrap());
+        }
+    }
+
+    #[test]
+    fn terminal_error_contention_marks_first_event_coverage_unknown() {
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let connection = observer.connection().unwrap();
+        let held = connection.cell.row.lock().unwrap();
+        connection.terminal_error("hello", &"PUBLIC_EOF".into());
+        drop(held);
+        connection.terminal_error("shutdown", &"PUBLIC_REQUEST_CANCELLED".into());
+        drop(connection);
+        let snapshot = observer.snapshot();
+        assert_eq!(snapshot.measurement_failures, 1);
+        let timing = snapshot.records[0].error_timing;
+        assert!(timing.observation_failed);
+        // This later captured event cannot be presented as complete first-error coverage.
+        assert_eq!(timing.first_terminal_error.unwrap().phase, "shutdown");
+        assert!(!snapshot.records[0].complete);
+    }
+
+    #[test]
+    fn reactor_io_keeps_unknown_clocks_and_error_attempts_in_their_denominators() {
+        // Counterexample values exercise the recorder; they are not I/O evidence.
+        let observer = PublicRequestObserver::new(1).unwrap();
+        let connection = observer.connection().unwrap();
+        for (read, wall_ns, thread_cpu_ns, failed) in [
+            (4, Some(10), Some(7), false),
+            (0, Some(20), None, false),
+            (0, None, Some(2), true),
+        ] {
+            connection.frame_attempt(
+                0,
+                read,
+                0,
+                false,
+                ReactorIoSample {
+                    wall_ns,
+                    thread_cpu_ns,
+                    failed,
+                },
+            );
+        }
+        drop(connection);
+        let snapshot = observer.snapshot();
+        let row = &snapshot.records[0];
+        assert!(row.complete && !row.reactor_io.observation_failed);
+        let frame = row.reactor_io.frames[0];
+        assert_eq!(frame.calls_returned, 3);
+        assert_eq!(frame.progressed_calls, 1);
+        assert_eq!(frame.no_progress_calls, 1);
+        assert_eq!(frame.failed_calls, 1);
+        assert_eq!(
+            (
+                frame.wall_ns,
+                frame.wall_ns_known_sum,
+                frame.wall_unknown_calls
+            ),
+            (None, 30, 1)
+        );
+        assert_eq!(
+            (
+                frame.thread_cpu_ns,
+                frame.thread_cpu_ns_known_sum,
+                frame.thread_cpu_unknown_calls
+            ),
+            (None, 9, 1)
+        );
+        assert_eq!(row.application_bytes_read, Some(4));
+        let unentered = row.reactor_io.frames[5];
+        assert_eq!(unentered.calls_returned, 0);
+        assert_eq!(unentered.wall_ns, None);
+        assert_eq!(unentered.thread_cpu_ns, None);
+    }
+
+    #[test]
+    fn reactor_io_capture_contention_and_overflow_do_not_block_or_manufacture_zero_cost() {
+        let observer = PublicRequestObserver::new(2).unwrap();
+        let connection = observer.connection().unwrap();
+        let held = connection.cell.row.lock().unwrap();
+        connection.frame_attempt(0, 1, 0, false, ReactorIoStamp::start().finish(false));
+        drop(held);
+        drop(connection);
+        let overflow = observer.connection().unwrap();
+        overflow.cell.row.lock().unwrap().reactor_io.frames[0].calls_returned = u64::MAX;
+        overflow.frame_attempt(0, 1, 0, false, ReactorIoStamp::start().finish(false));
+        drop(overflow);
+        let snapshot = observer.snapshot();
+        assert_eq!(snapshot.measurement_failures, 2);
+        assert_eq!(snapshot.records[0].reactor_io.frames[0].calls_returned, 0);
+        assert_eq!(
+            snapshot.records[1].reactor_io.frames[0].calls_returned,
+            u64::MAX
+        );
+        for row in &snapshot.records {
+            assert!(row.observation_failed && row.reactor_io.observation_failed);
+            assert_eq!(row.application_bytes_read, None);
+            assert_eq!(row.reactor_io.frames[0].wall_ns, None);
+            assert_eq!(row.frames[0].bytes_read, 0);
+            assert!(!row.complete);
+        }
+    }
+
+    #[test]
+    fn reactor_io_cpu_clock_cannot_migrate_between_threads() {
+        let stamp = ReactorIoStamp::start();
+        let sample = thread::spawn(move || stamp.finish(false)).join().unwrap();
+        assert!(sample.wall_ns.is_some());
+        assert_eq!(sample.thread_cpu_ns, None);
     }
 
     #[test]

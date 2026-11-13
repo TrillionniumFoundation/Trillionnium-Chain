@@ -1,0 +1,105 @@
+{
+  "schema": "r2-current-pins-and-codec-test-scope-v1",
+  "base_head": "29ac3c8e86ebc59462da45d10fced1ca020e02c9",
+  "base_tree": "46164cd85fff00e3a080acc29fef25a27751082b",
+  "scope": "three cfg(test) attributes and three current pin values; no runtime policy, validator, allowed-set, historical frozen pin, or remote source change",
+  "files": [
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "base_git_blob": "54402b2cdd0da9148ef148b379116ccada93a9d6",
+      "new_git_blob": "fff4e7603dd8cc7450a5de9d59d56bde3b71990f",
+      "base_sha256": "d1e361290cc6fc09edb00d5efb4dba3d95871d4f1b4462491f2130db4b71a807",
+      "new_sha256": "467f942d0c3b25c2822e0c3e65590087d2a6736e0719a4551ac8e3d49b6de2e9",
+      "base_bytes": 36087,
+      "new_bytes": 36087
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs",
+      "base_git_blob": "ef2494869bfe78083d890e400ec6be7642bef033",
+      "new_git_blob": "674a79f988a2dd6353aa7ab9e2c927af9d7ce32b",
+      "base_sha256": "f8c65d541eeff28625f1028ab1ba1e9c8fa6dadc71cca39a1a7368da850b52cc",
+      "new_sha256": "acda39784d95c2206c8b3fb249d1386a8cb811e5ff9a8109d2cbebf16255da46",
+      "base_bytes": 7976,
+      "new_bytes": 8027
+    },
+    {
+      "path": "config/pon/pq-cross-branch-corpus-v1.json",
+      "base_git_blob": "5f61f91fdec9829aa8e627f458df2c571e7b33a3",
+      "new_git_blob": "b8e151a84fd4847b9a8c7153c92a0b92d2182e37",
+      "base_sha256": "1530e0720b08b2c50aa8c209286425b26bd3f5dadfd1e1113f50757c18f4dc6b",
+      "new_sha256": "a4092981264019c805945e295c833cbab904be3a57956decfc4d9720cfc32c61",
+      "base_bytes": 165070,
+      "new_bytes": 165070
+    }
+  ],
+  "patch": "diff --git a/.github/workflows/pon-recent-batch-acceptance.yml b/.github/workflows/pon-recent-batch-acceptance.yml\n--- a/.github/workflows/pon-recent-batch-acceptance.yml\n+++ b/.github/workflows/pon-recent-batch-acceptance.yml\n@@ -77,7 +77,7 @@\n           test \"$(git hash-object trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner_tests.rs)\" = 6119f98bb45fda6399d2528db9f61a69751e397f\n           # The whole-file pin covers the opt-in owner census, integrated\n           # admission/readback refinements, and retained legacy replay-prefix cache.\n-          test \"$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)\" = a8bd7b9c8d9b02617060bea955b3bb21d905129f\n+          test \"$(git hash-object trillionnium/crates/trnm-pon-node/src/store.rs)\" = 56a5b134d2b9113f1f7528c856fa2986bb6ec79c\n           test \"$(git hash-object trillionnium/crates/trnm-pon-node/src/store/history_page.rs)\" = abb5f3193ee4d7f02633be4e3f6fdd3e1365a5e9\n           test \"$(git hash-object trillionnium/crates/trnm-pon-node/src/native_authenticated_tests.rs)\" = c98c5333ab3609b30b11fd0a700917ce7f2a8999\n           test \"$(git hash-object trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs)\" = e99453b1abe6ce589f003be199b5553241cba398\ndiff --git a/trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs b/trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs\n--- a/trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs\n+++ b/trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs\n@@ -17,15 +17,18 @@\n }\n \n impl PacketCodecContext {\n+    #[cfg(test)]\n     pub(crate) fn network(&self) -> crate::Hash {\n         self.app.network\n     }\n+    #[cfg(test)]\n     pub(crate) fn parameters(&self) -> crate::Hash {\n         self.app.parameters\n     }\n     pub(crate) fn is_pq(&self) -> bool {\n         pq::enabled(&self.app)\n     }\n+    #[cfg(test)]\n     pub(crate) fn encode(&self, packet: &Packet) -> Result<Vec<u8>> {\n         encode_packet_for_config(packet, &self.app)\n     }\ndiff --git a/config/pon/pq-cross-branch-corpus-v1.json b/config/pon/pq-cross-branch-corpus-v1.json\n--- a/config/pon/pq-cross-branch-corpus-v1.json\n+++ b/config/pon/pq-cross-branch-corpus-v1.json\n@@ -1016,7 +1016,7 @@\n     \".github/workflows/pon-legacy-reorg-cost-20261104.yml\": \"822a4ab34e0b88dd7fae0f136ef4a1368f8ccd49\",\n     \".github/workflows/pon-original-workspace-large-state-cpu.yml\": \"7e966fecb14d7975e15ad6c5a81786c20ad62bf7\",\n     \".github/workflows/pon-pq-system-continuation.yml\": \"3795f47f3eef1024e1c6243b4bbb3b01a27524e5\",\n-    \".github/workflows/pon-recent-batch-acceptance.yml\": \"54402b2cdd0da9148ef148b379116ccada93a9d6\",\n+    \".github/workflows/pon-recent-batch-acceptance.yml\": \"fff4e7603dd8cc7450a5de9d59d56bde3b71990f\",\n     \".github/workflows/pon-w1-transparent-profile.yml\": \"837d9eb80ca5e2567edf6d4f261757b3b5f6ff6c\",\n     \".github/workflows/trnm-required-baseline.yml\": \"4d8a23542b730786c8e9055ca8485cf6da2c1b8c\",\n     \"config/consensus-mainline.json\": \"b193c404177350c5e1443104f02bb0ac114f6aeb\",\n@@ -1500,7 +1500,7 @@\n     \"trillionnium/crates/trnm-pon-node/src/peer_polling.rs\": \"cb8ee16131be79e01a8c053235c8c145abfae27a\",\n     \"trillionnium/crates/trnm-pon-node/src/pq_application_local.rs\": \"0d0e96a9653b6d1e45df498b3dac0cc86295cbf3\",\n     \"trillionnium/crates/trnm-pon-node/src/pq_application_local/config.rs\": \"196d83be902378428db6a58e09e01656f83a4e74\",\n-    \"trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs\": \"ef2494869bfe78083d890e400ec6be7642bef033\",\n+    \"trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs\": \"674a79f988a2dd6353aa7ab9e2c927af9d7ce32b\",\n     \"trillionnium/crates/trnm-pon-node/src/pq_parent_cli.rs\": \"bd4b98cb487e3f79ab8b64e78a2c563710105be7\",\n     \"trillionnium/crates/trnm-pon-node/src/pq_parent_cli/config.rs\": \"4e7a3afacdd11c90e9c694eb72bf64a9d4fefad7\",\n     \"trillionnium/crates/trnm-pon-node/src/pq_parent_cli/config/npq6.rs\": \"0065011b74c5f6b954a49cdfaaf0300072e6a837\",\n",
+  "patch_sha256": "c964a864a1d20c34400b4710f173ec75bc15b6ba764c266fd767338e8753eff0",
+  "current_inline_count": 26,
+  "remaining_inline_mismatches_under_in_memory_patch": [],
+  "current_corpus_pin_count_before": 901,
+  "current_corpus_pin_count_after": 901,
+  "git_apply_check": {
+    "argv": [
+      "git",
+      "--no-replace-objects",
+      "apply",
+      "--check",
+      "--whitespace=error",
+      "-"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "checker_unchanged_git_blob": "8f1db0b191fd7771167d2fcf9c80c43adc6e3b49",
+  "native_or_required_gate_execution": false,
+  "head_tree_and_clean_unchanged": true,
+  "preparation_job_id": "1a1be612f07-5e21-87",
+  "preparation_status": {
+    "at_unix_ms": 1794195404435,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 0,
+    "job_id": "1a1be612f07-5e21-87",
+    "launch_nonce": "adecdbcda3da2f48d5ff4196adad7a1d",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 6416,
+        "stored": 6416
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "independent_identity_review": {
+    "path": "/workspace/scratch/70ae3f2c90d7/b-context-identity-review.json",
+    "sha256": "35a38e19ade4fbe35b2402f7bcd94b20217cb730dc37e2a61dd137e5b2d96693"
+  },
+  "held_boundaries": [
+    "R1 repository and strict Clippy failures are retained; this patch has not been compiled or run through repository gates.",
+    "Existing historical SOURCE_PINS and current-source-observation snapshots are not refreshed or reclassified as fresh evidence.",
+    "CPU, reserve/refill/burst, deadline, native relation, fences, packet encoding, and identity hash domains are unchanged.",
+    "Only network/parameters/encode accessors are cfg(test); production is_pq/decode and encode_packet_for_config remain."
+  ]
+}

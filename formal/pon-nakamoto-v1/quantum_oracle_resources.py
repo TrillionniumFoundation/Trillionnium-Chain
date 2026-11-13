@@ -242,6 +242,15 @@ class PhysicalModel:
                     "factories_per_instance", "factory_physical_qubits_per_d2",
                     "factory_t_cycles_per_distance"):
             integer(getattr(self, key), key.upper(), 1, 10**9)
+        # T layers are part of the same declared Toffoli decomposition:
+        # they cannot outnumber either its T gates or its complete depth.
+        # In particular, a total depth of one with T depth three makes the
+        # aggregated serial-clock formula undercount intervening non-T work.
+        # These necessary consistency checks do not verify a physical layout.
+        if self.t_depth_per_toffoli > self.t_per_toffoli:
+            raise ValueError("T_DEPTH_EXCEEDS_T_COUNT")
+        if self.t_depth_per_toffoli > self.toffoli_decomposition_depth:
+            raise ValueError("T_DEPTH_EXCEEDS_DECOMPOSITION_DEPTH")
         integer(self.maximum_distance, "MAXIMUM_DISTANCE", 3, 1001)
         if self.maximum_distance % 2 != 1:
             raise ValueError("ODD_MAXIMUM_DISTANCE_REQUIRED")

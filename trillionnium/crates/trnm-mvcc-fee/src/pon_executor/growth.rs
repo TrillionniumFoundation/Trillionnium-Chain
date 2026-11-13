@@ -284,7 +284,7 @@ pub fn execute_with_commitment_observed_control<E: Send>(
             growth: Some(inputs.partition),
             observer: inputs.observer,
             #[cfg(test)]
-            force_repeated_sender_speculation: false,
+            force_account_conflict_speculation: false,
         },
     )
 }

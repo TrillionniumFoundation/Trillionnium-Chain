@@ -1,7 +1,8 @@
 """Join original Hepta learning checkpoints to the existing first-use reader.
 
-HEPLCP02 includes the evaluation profile in the initial commitment. HEPLCP01
-has no such pin and is deliberately refused. This read-only adapter replays the native
+HEPLCP02 includes the evaluation profile in the initial commitment. HEPLCP03
+adds the explicit, scoped trainer-NoUpdate observation without changing old bytes.
+HEPLCP01 has no evaluation pin and is deliberately refused. This adapter replays the native
 checkpoint relation; it cannot authenticate its owner, its learning signatures,
 current permission, model execution, or settlement. All external qualification
 flags remain false, including for correctly bound native engineering fixtures.
@@ -13,11 +14,13 @@ import copy
 import cell_adoption_readback as native
 
 MAGIC = b"HEPLCP02"
+TRAINER_NO_UPDATE_MAGIC = b"HEPLCP03"
 MAX_CHECKPOINT = 8192
 MAX_FREEZE = 65536
 MAX_RECEIPTS = 7
 FREEZE_SCHEMA = "trnm-cell-learning-freeze-expectations-v2"
 REPORT_SCHEMA = "trnm-cell-learning-iteration-use-review-v2"
+TRAINER_NO_UPDATE_REPORT_SCHEMA = "trnm-cell-learning-iteration-use-review-v3"
 INITIAL_DOMAIN = b"hepta.learning.iteration-checkpoint.v2\0"
 RECEIPT_DOMAIN = b"hepta.learning.iteration-observation.v1\0"
 BUNDLE_DOMAIN = b"hepta.cell.compatibility-bundle.v1\0"
@@ -123,6 +126,7 @@ class _Reader:
     def __init__(self, raw):
         require(type(raw) is bytes and len(raw) <= MAX_CHECKPOINT, "LEARNING_CHECKPOINT_LIMIT")
         self.raw, self.offset = raw, 0
+        self.trainer_no_update = False
 
     def take(self, length):
         end = self.offset + length
@@ -165,7 +169,7 @@ class _Reader:
 
     def observation(self):
         tag = self.number(1)
-        require(tag <= 7, "LEARNING_CHECKPOINT_ENUM")
+        require(tag <= 7 or (tag == 8 and self.trainer_no_update), "LEARNING_CHECKPOINT_ENUM")
         value = dict(tag=tag)
         if tag == 0:
             value.update(episode_digest=self.digest(), completed_task_receipt=self.digest())
@@ -180,6 +184,11 @@ class _Reader:
             value.update(candidate_bundle=self.digest(), proposal_id=self.identifier(), composition_digest=self.digest(), disposition=self.flag())
         elif tag == 5:
             value.update(candidate_bundle=self.digest(), selection_digest=self.digest())
+        elif tag == 8:
+            reason = self.number(1)
+            require(reason == 0, "LEARNING_TRAINER_NO_UPDATE_REASON")
+            value.update(reason=reason, retained_bundle=self.digest(), dataset=self.digest(),
+                         update_rule=self.digest(), steps=self.number(8), milliseconds=self.number(8))
         else:
             value["retained_bundle" if tag == 7 else "candidate_bundle"] = self.digest()
             value["state_partition"] = {name: self.identifier() for name in ("principal_id", "agent_id", "cell_id", "run_id")}
@@ -211,6 +220,13 @@ def _observation_signing_bytes(value):
         raw.extend(_digest(value["composition_digest"])); raw.append(value["disposition"])
     elif tag == 5:
         raw.extend(_digest(value["candidate_bundle"])); raw.extend(_digest(value["selection_digest"]))
+    elif tag == 8:
+        require(type(value["reason"]) is int and value["reason"] == 0, "LEARNING_TRAINER_NO_UPDATE_REASON")
+        raw.append(value["reason"])
+        for name in ("retained_bundle", "dataset", "update_rule"):
+            raw.extend(_digest(value[name]))
+        for name in ("steps", "milliseconds"):
+            raw.extend(_number(value[name], 8))
     else:
         raw.extend(_digest(value["retained_bundle" if tag == 7 else "candidate_bundle"]))
         partition = PARTITION_DOMAIN + b"".join(_id(value["state_partition"][name]) for name in ("principal_id", "agent_id", "cell_id", "run_id"))
@@ -235,13 +251,15 @@ def _replay(snapshot):
     expected_tag, prior_time, no_update = 0, 0, False
     selected = bundle_digest(request["selected_bundle"])
     candidate = candidate_id = episode = dataset = selection = decision_bundle = None
+    training_no_update = None
     budget = request["budget"]
     for receipt in receipts:
         value, observed = receipt["observation"], receipt["observed_unix_seconds"]
         tag = value["tag"]
-        require(tag == expected_tag or (tag == 7 and expected_tag == 6), "LEARNING_STAGE_ORDER")
+        require(tag == expected_tag or (tag == 7 and expected_tag == 6) or
+                (tag == 8 and expected_tag == 2), "LEARNING_STAGE_ORDER")
         require(receipt["operation_id"] == request["operation_id"], "LEARNING_OPERATION")
-        require(receipt["actor_id"] == owners[OWNER_IDS[min(tag, 6)]], "LEARNING_ACTOR")
+        require(receipt["actor_id"] == owners[OWNER_IDS[2 if tag == 8 else min(tag, 6)]], "LEARNING_ACTOR")
         require(receipt["predecessor"] == head, "LEARNING_RECEIPT_PREDECESSOR")
         require(0 < observed < request["envelope"]["expiry_unix_seconds"] and observed >= prior_time,
                 "LEARNING_RECEIPT_TIME")
@@ -268,6 +286,16 @@ def _replay(snapshot):
                     and 1 <= value["milliseconds"] <= budget["maximum_training_milliseconds"]
                     and 1 <= value["artifact_bytes"] <= budget["maximum_artifact_bytes"], "LEARNING_TRAINING_BUDGET")
             expected_tag = 3
+        elif tag == 8:
+            require(value["reason"] == 0, "LEARNING_TRAINER_NO_UPDATE_REASON")
+            require(value["retained_bundle"] == selected and value["dataset"] == dataset,
+                    "LEARNING_TRAINER_NO_UPDATE_BINDING")
+            _digest(value["update_rule"])
+            require(1 <= value["steps"] <= budget["maximum_training_steps"] and
+                    1 <= value["milliseconds"] <= budget["maximum_training_milliseconds"],
+                    "LEARNING_TRAINING_BUDGET")
+            training_no_update = copy.deepcopy(value)
+            no_update, decision_bundle, expected_tag = True, selected, 5
         elif tag == 3:
             require(value["candidate_bundle"] == candidate_id and value["evaluation_profile"] == request["evaluation_profile"],
                     "LEARNING_EVALUATION_PROFILE")
@@ -294,15 +322,25 @@ def _replay(snapshot):
             expected_tag = None
         head, prior_time = _receipt_head(receipt), observed
     require(head == snapshot["head_digest"], "LEARNING_CHECKPOINT_HEAD")
-    return dict(initial_head=initial, head=head, next_stage=expected_tag, no_update=no_update,
+    result = dict(initial_head=initial, head=head, next_stage=expected_tag, no_update=no_update,
                 selected_bundle=selected, candidate_bundle=candidate_id,
                 next_task_bundle=decision_bundle)
+    if training_no_update is not None:
+        result["training_no_update"] = training_no_update
+    return result
 
 
 def decode_native_learning_checkpoint(raw):
-    """Bounded original HEPLCP02 decoding and structural replay, no authority."""
+    """Bounded original HEPLCP02/03 decoding and structural replay, no authority.
+
+    As in the original Rust codec, HEPLCP03 must contain an explicit tag 8.
+    A missing, failed or unknown training result cannot select this codec.
+    The original separately pinned Root scope is required by the use join below.
+    """
     reader = _Reader(raw)
-    require(reader.take(8) == MAGIC, "LEARNING_CHECKPOINT_VERSION")
+    magic = reader.take(8)
+    require(magic in (MAGIC, TRAINER_NO_UPDATE_MAGIC), "LEARNING_CHECKPOINT_VERSION")
+    reader.trainer_no_update = magic == TRAINER_NO_UPDATE_MAGIC
     request = {name: reader.identifier() for name in REQUEST_IDS}
     for name in ("completed_task_receipt", "selected_artifact_digest", "evaluation_profile"):
         request[name] = reader.digest()
@@ -324,6 +362,8 @@ def decode_native_learning_checkpoint(raw):
             evidence_digest=reader.digest(), observed_unix_seconds=reader.number(8), observation=reader.observation()))
     snapshot = dict(request=request, owners=owners, receipts=receipts, head_digest=reader.digest())
     require(reader.offset == len(raw), "LEARNING_CHECKPOINT_TRAILING_BYTES")
+    require(any(receipt["observation"]["tag"] == 8 for receipt in receipts) == reader.trainer_no_update,
+            "LEARNING_CHECKPOINT_TRAINER_NO_UPDATE_VERSION")
     replay = _replay(snapshot)
     return snapshot, replay
 
@@ -342,7 +382,8 @@ def frozen_expectations_from_initial_checkpoint(raw):
 
 
 def review_native_learning_iteration(checkpoint_raw, readback_raw, *, expected_checkpoint_sha256,
-                                     expected_readback_sha256, frozen, expected):
+                                     expected_readback_sha256, frozen, expected,
+                                     root_profile_raw=None, expected_root_profile_sha256=None):
     """Join independently pinned original freeze, checkpoint and first use.
 
     The original actor exports first use while the learning coordinator awaits
@@ -359,6 +400,17 @@ def review_native_learning_iteration(checkpoint_raw, readback_raw, *, expected_c
     snapshot, replay = decode_native_learning_checkpoint(checkpoint_raw)
     require(snapshot["request"] == frozen["request"] and snapshot["owners"] == frozen["owners"]
             and replay["initial_head"] == frozen_head, "LEARNING_FROZEN_REQUEST")
+    trainer_no_update = replay.get("training_no_update")
+    root_scope_review = None
+    if trainer_no_update is not None:
+        require(root_profile_raw is not None and expected_root_profile_sha256 is not None,
+                "LEARNING_TRAINER_NO_UPDATE_ROOT_PROFILE_REQUIRED")
+        # Reuse the existing scoped reader's original Root profile contract.
+        # Delayed import avoids a module-initialization cycle; its decoder call
+        # reads only the initial HEPLCP02 and never calls this use join again.
+        import cell_learning_scope_join as scoped
+        root_scope_review = scoped._review_scope(root_profile_raw, expected_root_profile_sha256,
+                                                 snapshot, replay, frozen)
     original = native.review_native_learning_use(readback_raw,
         expected_readback_sha256=expected_readback_sha256, expected=expected)
     envelope = native.decode(readback_raw, native.MAX_WIRE)
@@ -386,13 +438,15 @@ def review_native_learning_iteration(checkpoint_raw, readback_raw, *, expected_c
             and replay["next_task_bundle"] == native.native_digest(use["bundle_digest"]),
             "LEARNING_READBACK_SELECTION")
     require((payload["disposition"] == "retained_model") == replay["no_update"], "LEARNING_READBACK_DISPOSITION")
-    return dict(schema=REPORT_SCHEMA, scope="pinned-native-freeze-checkpoint-and-first-use-materials-only",
-        checkpoint_sha256=expected_checkpoint_sha256, checkpoint_schema=MAGIC.decode("ascii"),
+    result = dict(schema=REPORT_SCHEMA if trainer_no_update is None else TRAINER_NO_UPDATE_REPORT_SCHEMA,
+        scope="pinned-native-freeze-checkpoint-and-first-use-materials-only",
+        checkpoint_sha256=expected_checkpoint_sha256, checkpoint_schema=checkpoint_raw[:8].decode("ascii"),
         frozen_initial_head=frozen_head, learning_head=replay["head"],
         evaluation_profile=request["evaluation_profile"], original_owner_ids=copy.deepcopy(snapshot["owners"]),
         original_budget=copy.deepcopy(request["budget"]), original_envelope=copy.deepcopy(request["envelope"]),
         receipt_count=len(snapshot["receipts"]), no_update=replay["no_update"],
-        evaluation_disposition="no_update" if snapshot["receipts"][3]["observation"]["disposition"] else "qualified",
+        evaluation_disposition=next(("no_update" if receipt["observation"]["disposition"] else "qualified"
+            for receipt in snapshot["receipts"] if receipt["observation"]["tag"] == 3), None),
         proposal_disposition=next(("no_admissible_update" if receipt["observation"]["disposition"] else "update_candidates"
             for receipt in snapshot["receipts"] if receipt["observation"]["tag"] == 4), None),
         frozen_request_bindings_consistent=True, receipt_chain_bindings_consistent=True,
@@ -406,3 +460,8 @@ def review_native_learning_iteration(checkpoint_raw, readback_raw, *, expected_c
         real_model_training_verified=False, physical_installation_accepted=False,
         settlement_verified=False, hepta_final_use_accepted=False, production_activation=False,
         qualification="HOLD_NO_GO")
+    if trainer_no_update is not None:
+        result.update(training_disposition="quantized_weights_unchanged", trained_candidate_present=False,
+                      training_no_update=trainer_no_update, root_scope_review=root_scope_review,
+                      quantized_weights_unchanged_verified=False)
+    return result

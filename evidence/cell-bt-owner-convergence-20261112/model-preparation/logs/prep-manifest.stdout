@@ -1,0 +1,1 @@
+{"bytes": 67483, "input_sha256": "09b809f40a1ff85631a9b035233890dce968fdcd7dc6b2b15c27bd006f56e2b3", "native_operation_started": false, "path": "/workspace/scratch/4a0b199bc6c0/model-preparation/prep-manifest.json", "sha256": "bb0ef4a26a40d5062d42d4f33a5fb7f890bbed4e6f0a41e85d49d45e5e2703c5", "status": "BLOCKED_HOST_AF_UNIX", "unchanged_pin_count": 29}

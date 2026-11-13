@@ -1,0 +1,7 @@
+{
+  "recorded_utc": "2026-11-09T14:10:57.271816+00:00",
+  "action": "Removed only this task cargo-target after both Clippy attempts completed; original stdout/stderr/metadata retained.",
+  "reason": "git add failed with No space left on device while staging the evidence README; no source or external cache deleted.",
+  "deleted_path": "/workspace/scratch/678905e225be/cargo-target",
+  "free_bytes_after": 457326592
+}

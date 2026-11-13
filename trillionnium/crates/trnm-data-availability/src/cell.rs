@@ -5,12 +5,16 @@
 
 use std::{fmt, io};
 
+mod adoption;
+mod adoption_boundary;
 mod archive;
 mod bep52;
 mod bep52_peer;
+mod bep52_storage;
 mod cache_budget;
 mod cache_wal;
 mod closure;
+mod content_graph_v3;
 mod content_v2;
 mod custody;
 mod delta;
@@ -27,6 +31,7 @@ mod placement;
 pub mod pq;
 mod recoverability;
 mod release;
+mod release_snapshot;
 mod residency;
 mod retained;
 mod retention;
@@ -36,7 +41,16 @@ mod tensor;
 mod tensor_reader;
 mod version;
 mod version_content;
+mod version_content_closure_v3;
 mod version_retention;
+
+pub use adoption::{
+    CellAdoptionActionV1, CellAdoptionOwnerV1, CellAdoptionPolicyV1, CellAdoptionReceiptV1,
+    CellAdoptionSnapshotV1, CellCandidateEvidenceV1, CellCandidateObservationV1,
+    CellProposalRetentionReceiptV1, MAX_CELL_ADOPTION_CANDIDATES_V1,
+    MAX_CELL_ADOPTION_DECISIONS_V1,
+};
+pub use adoption_boundary::{CellExecutionBoundaryV1, CellModelUpdateBoundaryV1};
 
 pub use archive::{
     CellReleaseRetentionConfigV2, CellReleaseRetentionContractV2, CellReleaseRetentionReadbackV2,
@@ -53,10 +67,32 @@ pub use bep52_peer::{
     CellBep52PeerSessionV1, CellBep52PeerUsageV1, CellBep52SeedV1, CELL_BEP52_PEER_PROFILE_V1,
     MAX_CELL_BEP52_DHT_RESPONSE_BYTES_V1, MAX_CELL_BEP52_PEER_FRAME_BYTES_V1,
 };
+pub use bep52_peer::{
+    CellBep52ReleaseLimitsV2, CellBep52ReleasePlanV2, CellBep52ReleaseReadUsageV2,
+    CellBep52ReleaseSessionV2, CELL_BEP52_RELEASE_PROFILE_V2, MAX_CELL_BEP52_RELEASE_CHUNKS_V2,
+    MAX_CELL_BEP52_RELEASE_PAYLOAD_V2,
+};
+pub use bep52_storage::{
+    fetch_cell_bep52_storage_v2, CellBep52LeafLocationV2, CellBep52LeafProofV2,
+    CellBep52StorageAssemblerV2, CellBep52StorageBindingV2, CellBep52StorageFetchReportV2,
+    CellBep52StorageSeedV2, CellBep52VerifiedStorageChunkV2, CELL_BEP52_LEAF_BYTES_V2,
+    CELL_BEP52_STORAGE_PEER_PROFILE_V2, CELL_BEP52_STORAGE_PROFILE_V2,
+    MAX_CELL_BEP52_LEAF_PROOF_BYTES_V2, MAX_CELL_BEP52_STORAGE_INFO_BYTES_V2,
+    MAX_CELL_BEP52_STORAGE_MAPPING_BYTES_V2, MAX_CELL_BEP52_STORAGE_METAINFO_BYTES_V2,
+    MAX_CELL_BEP52_STORAGE_PIECES_V2,
+};
 pub use cache_budget::{CellCacheConfigV4, CellCacheUsageV2};
 pub use closure::{
     CellClosureFileV1, CellFileRoleV1, CellLoaderContextV1, CellReleaseClosureV1,
     MAX_CELL_CLOSURE_BYTES_V1, MAX_CELL_CLOSURE_FILES_V1,
+};
+pub use content_graph_v3::{
+    verify_cell_content_graph_v3, CellContentGraphErrorV3, CellContentGraphLimitsV3,
+    CellContentGraphLinkKindV3, CellContentGraphLinkV3, CellContentGraphNodeObservationV3,
+    CellContentGraphNodeV3, CellContentGraphReadbackV3, CellContentGraphUsageV3,
+    MAX_CELL_CONTENT_GRAPH_DEPTH_V3, MAX_CELL_CONTENT_GRAPH_EDGES_V3,
+    MAX_CELL_CONTENT_GRAPH_NODES_V3, MAX_CELL_CONTENT_GRAPH_NODE_BYTES_V3,
+    MAX_CELL_CONTENT_GRAPH_OBJECTS_V3,
 };
 pub use content_v2::{
     CellContentClosureReadbackV2, CellContentClosureV2, CellContentDependencyV2,
@@ -75,9 +111,15 @@ pub use custody::{
 };
 pub use delta::{fetch_delta_to_file, CellChunkDeltaV1, CellDeltaPlanV1, MAX_CELL_DELTA_BYTES_V1};
 pub use erasure::{
-    CellRetainedShardChunkV1, CellRetainedShardPlanFileV1, CellRetainedShardPlanRequestV1,
-    CellRetainedShardPlanV1, CellRetainedShardRootV1, MAX_CELL_RETAINED_SHARD_CHUNKS_V1,
-    MAX_CELL_RETAINED_SHARD_PLAN_BYTES_V1, MAX_CELL_RETAINED_SHARD_ROOTS_V1,
+    restore_cell_paged_version_to_cache_v2, CellPagedRetainedShardPlanFileV2,
+    CellPagedRetainedShardPlanRequestV2, CellPagedRetainedShardPlanV2,
+    CellPagedShardRestoreBudgetV2, CellPagedShardRestoreLimitsV2, CellPagedShardRestoreReadbackV2,
+    CellPagedShardRestoreRequestV2, CellPagedShardRestoreUsageV2, CellRetainedShardChunkV1,
+    CellRetainedShardPagePinV2, CellRetainedShardPageV2, CellRetainedShardPlanFileV1,
+    CellRetainedShardPlanRequestV1, CellRetainedShardPlanV1, CellRetainedShardRootV1,
+    MAX_CELL_PAGED_RETAINED_CHUNKS_V2, MAX_CELL_RETAINED_SHARD_CHUNKS_V1,
+    MAX_CELL_RETAINED_SHARD_PAGES_V2, MAX_CELL_RETAINED_SHARD_PLAN_BYTES_V1,
+    MAX_CELL_RETAINED_SHARD_ROOTS_V1, MAX_CELL_RETAINED_SHARD_ROOT_BYTES_V2,
 };
 pub use erasure::{
     CellRs46CacheTargetV1, CellRs46ChunkBindingV1, CellRs46CodewordV1, CellRs46ManifestBindingV1,
@@ -87,9 +129,10 @@ pub use erasure::{
     CELL_RS46_TOTAL_SHARDS_V1, MAX_CELL_RS46_SHARD_BYTES_V1, MAX_CELL_RS46_SHARD_WIRE_BYTES_V1,
 };
 pub use erasure::{
-    CellRs46ShardContractV1, CellRs46ShardOwnerV1, CellRs46ShardProviderConfigV1,
-    CellRs46ShardProviderV1, CellRs46ShardRepairRequestV1, CellRs46StoredShardV1,
-    MAX_CELL_RS46_PROVIDER_DESCRIPTOR_BYTES_V1,
+    CellRs46ProviderPayloadFaultStageV2, CellRs46ProviderPayloadFaultV2,
+    CellRs46ProviderReadObservationV2, CellRs46ShardContractV1, CellRs46ShardOwnerV1,
+    CellRs46ShardProviderConfigV1, CellRs46ShardProviderV1, CellRs46ShardRepairRequestV1,
+    CellRs46StoredShardV1, MAX_CELL_RS46_PROVIDER_DESCRIPTOR_BYTES_V1,
 };
 #[cfg(target_os = "linux")]
 pub use host_handoff::{
@@ -135,12 +178,18 @@ pub use release::{
     CellReleaseFetchOptionsV2, CellReleaseFetchReportV1, CellTensorModelFetchReportV1,
     CellTransportFetchReportV2,
 };
-pub use residency::{
-    CellLocalSelectionV1, CellResidencyConfigV1, CellResidencyPrepareReportV1,
-    CellResidencyUsageV1, CellResidencyV1, CellResidentFileV1, CellResidentTensorFileV1,
-    CellResidentTensorModelV1, CellResidentTensorV1, CellResidentViewV1, CellResidentWorkingSetV1,
+pub use release_snapshot::{
+    CellReleaseSnapshotCommitmentV1, CellReleaseSnapshotLoaderContextV1, CellReleaseSnapshotV1,
+    CellResidentReleaseSnapshotV1, CellResidentReleaseSnapshotViewV1,
+    MAX_CELL_RELEASE_SNAPSHOT_BYTES_V1,
 };
-pub use residency::{CellResidentVersionV1, CellResidentVersionViewV1};
+pub use residency::{CellAdoptionUseV1, CellResidentVersionV1, CellResidentVersionViewV1};
+pub use residency::{
+    CellLocalReleaseSelectionV1, CellLocalSelectionStateV1, CellLocalSelectionV1,
+    CellResidencyConfigV1, CellResidencyPrepareReportV1, CellResidencyUsageV1, CellResidencyV1,
+    CellResidentFileV1, CellResidentTensorFileV1, CellResidentTensorModelV1, CellResidentTensorV1,
+    CellResidentViewV1, CellResidentWorkingSetV1,
+};
 pub use retained::{
     fetch_retained_version_set, CellRetainedFetchFailureV1, CellRetainedFetchObservationV1,
     CellRetainedFetchUsageV1, CellRetainedObjectV1, CellRetainedReadBudgetV1,
@@ -179,6 +228,10 @@ pub use version_content::{
 #[cfg(target_os = "linux")]
 pub use version_content::{
     CellSealedContentScopeV2, VerifiedCellSealedContentV2, VerifiedCellSealedVersionContentV2,
+};
+pub use version_content_closure_v3::{
+    CellContentLineagePinV3, CellContentLineageReadbackV3, CellVersionContentClosureV3,
+    MAX_CELL_CONTENT_LINEAGE_BYTES_V3, MAX_CELL_CONTENT_LINEAGE_VERSIONS_V3,
 };
 pub use version_retention::{
     CellVersionCatalogAnchorV3, CellVersionLoaderPinV3, CellVersionRetentionConfigV3,

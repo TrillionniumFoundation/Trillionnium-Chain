@@ -5,8 +5,8 @@
 //! The journal mechanics follow native_budget.rs at b6c730c2; this module neither
 //! credits accounts nor manufactures a native refund. Provider ACK is not Positive.
 use crate::native_budget::{
-    NativeBudgetAnchorV1, NativeBudgetErrorV1, NativeFundingOwnerV1, NativeFundingSourceV1,
-    NativePaymentObservationV1, NativePaymentQueryV1,
+    check_native_store_paths, NativeBudgetAnchorV1, NativeBudgetErrorV1, NativeFundingOwnerV1,
+    NativeFundingSourceV1, NativePaymentObservationV1, NativePaymentQueryV1,
 };
 use borsh::{BorshDeserialize, BorshSerialize};
 use rusqlite::{params, Connection, OptionalExtension, TransactionBehavior};
@@ -742,12 +742,7 @@ impl NativeGenerationStoreV2 {
             (1..=4096).contains(&configuration.max_records),
             "GENERATION_RECORD_LIMIT",
         )?;
-        if let Ok(m) = path.symlink_metadata() {
-            require(
-                m.is_file() && !m.file_type().is_symlink(),
-                "GENERATION_STORE_FILE",
-            )?;
-        }
+        check_native_store_paths(path, "GENERATION_STORE_FILE")?;
         if let Some(parent) = path.parent().filter(|p| !p.as_os_str().is_empty()) {
             std::fs::create_dir_all(parent)?;
         }

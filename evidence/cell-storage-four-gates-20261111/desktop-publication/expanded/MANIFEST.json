@@ -1,0 +1,839 @@
+{
+  "files": [
+    {
+      "path": "setup/base-object.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794443848651784367,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/base-object.stderr"
+    },
+    {
+      "path": "setup/base-object.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794443848651784367,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/base-object.stdout"
+    },
+    {
+      "path": "setup/c3-full-source-audit/after-branch.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794446795737396418,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/after-branch.stderr"
+    },
+    {
+      "path": "setup/c3-full-source-audit/after-branch.stdout",
+      "sha256": "c36d08e7a4bc5676cde4f109ee4181ed3ca0b4838ec85fde84f274d92377a05e",
+      "size": 59,
+      "source_mtime_ns": 1794446795739632159,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/after-branch.stdout"
+    },
+    {
+      "path": "setup/c3-full-source-audit/after-clean.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794446795743260036,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/after-clean.stderr"
+    },
+    {
+      "path": "setup/c3-full-source-audit/after-clean.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794446795743260036,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/after-clean.stdout"
+    },
+    {
+      "path": "setup/c3-full-source-audit/after-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794446795731214661,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/after-head.stderr"
+    },
+    {
+      "path": "setup/c3-full-source-audit/after-head.stdout",
+      "sha256": "2a3c779ef6c8106354f2ed1bd8fb24374e5751dedbfeb99a2e1de26f75d3b0fa",
+      "size": 41,
+      "source_mtime_ns": 1794446795734079609,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/after-head.stdout"
+    },
+    {
+      "path": "setup/c3-full-source-audit/before-branch.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794446650032717207,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/before-branch.stderr"
+    },
+    {
+      "path": "setup/c3-full-source-audit/before-branch.stdout",
+      "sha256": "c36d08e7a4bc5676cde4f109ee4181ed3ca0b4838ec85fde84f274d92377a05e",
+      "size": 59,
+      "source_mtime_ns": 1794446650035717112,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/before-branch.stdout"
+    },
+    {
+      "path": "setup/c3-full-source-audit/before-clean.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794446650040399793,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/before-clean.stderr"
+    },
+    {
+      "path": "setup/c3-full-source-audit/before-clean.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794446650040399793,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/before-clean.stdout"
+    },
+    {
+      "path": "setup/c3-full-source-audit/before-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794446649839795575,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/before-head.stderr"
+    },
+    {
+      "path": "setup/c3-full-source-audit/before-head.stdout",
+      "sha256": "2a3c779ef6c8106354f2ed1bd8fb24374e5751dedbfeb99a2e1de26f75d3b0fa",
+      "size": 41,
+      "source_mtime_ns": 1794446649936720270,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/before-head.stdout"
+    },
+    {
+      "path": "setup/c3-full-source-audit/final-clean.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794446806057751726,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/final-clean.stderr"
+    },
+    {
+      "path": "setup/c3-full-source-audit/final-clean.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794446806057751726,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/final-clean.stdout"
+    },
+    {
+      "path": "setup/c3-full-source-audit/full-physical-source.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794446796852188182,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/full-physical-source.stderr"
+    },
+    {
+      "path": "setup/c3-full-source-audit/full-physical-source.stdout",
+      "sha256": "48d910b14e2897b8e9720280bdff823544d2ccbc0c80698dff1a6d06b9a562f7",
+      "size": 423,
+      "source_mtime_ns": 1794446805997303266,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/full-physical-source.stdout"
+    },
+    {
+      "path": "setup/c3-full-source-audit/github-identity.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794446650778110078,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/github-identity.stderr"
+    },
+    {
+      "path": "setup/c3-full-source-audit/github-identity.stdout",
+      "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981",
+      "size": 10,
+      "source_mtime_ns": 1794446652051652803,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/github-identity.stdout"
+    },
+    {
+      "path": "setup/c3-full-source-audit/index-flags.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794446796775046543,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/index-flags.stderr"
+    },
+    {
+      "path": "setup/c3-full-source-audit/index-flags.stdout",
+      "sha256": "600d9af981bf30c963c4961a96f895dbd2048ff9825ef895f8d870d7508193ea",
+      "size": 2725005,
+      "source_mtime_ns": 1794446796792807385,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/index-flags.stdout"
+    },
+    {
+      "path": "setup/c3-full-source-audit/materialize-complete-tree.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794446652119650634,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/materialize-complete-tree.stderr"
+    },
+    {
+      "path": "setup/c3-full-source-audit/materialize-complete-tree.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794446652119650634,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/materialize-complete-tree.stdout"
+    },
+    {
+      "path": "setup/c3-full-source-audit/origin.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794446652111650889,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/origin.stderr"
+    },
+    {
+      "path": "setup/c3-full-source-audit/origin.stdout",
+      "sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7",
+      "size": 65,
+      "source_mtime_ns": 1794446652114650793,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/origin.stdout"
+    },
+    {
+      "path": "setup/c3-full-source-audit/preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794446650659198618,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/preflight.stderr"
+    },
+    {
+      "path": "setup/c3-full-source-audit/preflight.stdout",
+      "sha256": "64d4a324a23bd14342da6eb90d43634651470c35bb7978b645ef64e9df0b624c",
+      "size": 180,
+      "source_mtime_ns": 1794446650752694239,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/preflight.stdout"
+    },
+    {
+      "path": "setup/c3-full-source-audit/source-full.json",
+      "sha256": "48d910b14e2897b8e9720280bdff823544d2ccbc0c80698dff1a6d06b9a562f7",
+      "size": 423,
+      "source_mtime_ns": 1794446805997303266,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/source-full.json"
+    },
+    {
+      "path": "setup/c3-full-source-audit/sparse-disabled.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794446796843910903,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/sparse-disabled.stderr"
+    },
+    {
+      "path": "setup/c3-full-source-audit/sparse-disabled.stdout",
+      "sha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+      "size": 6,
+      "source_mtime_ns": 1794446796847044256,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/sparse-disabled.stdout"
+    },
+    {
+      "path": "setup/c3-full-source-audit/summary.json",
+      "sha256": "58a0ad6211ec1c870579ad37415369cc3755f7ccf2b106a51d46ef23daf2d995",
+      "size": 11208,
+      "source_mtime_ns": 1794446807181560904,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/c3-full-source-audit/summary.json"
+    },
+    {
+      "path": "setup/checkout-exact-base.stderr",
+      "sha256": "37fb654e74911c6040521ed93573b002056ac2284e275f3bb8427da3dfa4010b",
+      "size": 75,
+      "source_mtime_ns": 1794443861494120634,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/checkout-exact-base.stderr"
+    },
+    {
+      "path": "setup/checkout-exact-base.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794443861493393531,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/checkout-exact-base.stdout"
+    },
+    {
+      "path": "setup/interim-c3-import/bundle-fetch.stderr",
+      "sha256": "1000c5861e04cc2dee3b283eab8b745b8c60a28c4bbd46482539c02ae511ee6b",
+      "size": 169,
+      "source_mtime_ns": 1794444680682946399,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/bundle-fetch.stderr"
+    },
+    {
+      "path": "setup/interim-c3-import/bundle-fetch.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794444680682459003,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/bundle-fetch.stdout"
+    },
+    {
+      "path": "setup/interim-c3-import/bundle-heads.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794444680521563527,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/bundle-heads.stderr"
+    },
+    {
+      "path": "setup/interim-c3-import/bundle-heads.stdout",
+      "sha256": "36d53df4081a64efdd1ef23c006040afe39deed7708c93886126fdb42e71a322",
+      "size": 46,
+      "source_mtime_ns": 1794444680521563527,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/bundle-heads.stdout"
+    },
+    {
+      "path": "setup/interim-c3-import/bundle-verify.stderr",
+      "sha256": "229cab7d70400751e9904ed11ed24f58279282087dd4c7058c4088ac023aa559",
+      "size": 122,
+      "source_mtime_ns": 1794444680518574960,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/bundle-verify.stderr"
+    },
+    {
+      "path": "setup/interim-c3-import/bundle-verify.stdout",
+      "sha256": "baa8b53eacd0cfe8a286b80797ed9c9f0389255ce1ef58b2ddde42a6672b45be",
+      "size": 207,
+      "source_mtime_ns": 1794444680518428383,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/bundle-verify.stdout"
+    },
+    {
+      "path": "setup/interim-c3-import/candidate-branch.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794444681351026694,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/candidate-branch.stderr"
+    },
+    {
+      "path": "setup/interim-c3-import/candidate-branch.stdout",
+      "sha256": "c36d08e7a4bc5676cde4f109ee4181ed3ca0b4838ec85fde84f274d92377a05e",
+      "size": 59,
+      "source_mtime_ns": 1794444681351026694,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/candidate-branch.stdout"
+    },
+    {
+      "path": "setup/interim-c3-import/candidate-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794444681338132962,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/candidate-head.stderr"
+    },
+    {
+      "path": "setup/interim-c3-import/candidate-head.stdout",
+      "sha256": "2a3c779ef6c8106354f2ed1bd8fb24374e5751dedbfeb99a2e1de26f75d3b0fa",
+      "size": 41,
+      "source_mtime_ns": 1794444681338132962,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/candidate-head.stdout"
+    },
+    {
+      "path": "setup/interim-c3-import/candidate-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794444681334085888,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/candidate-preflight.stderr"
+    },
+    {
+      "path": "setup/interim-c3-import/candidate-preflight.stdout",
+      "sha256": "64d4a324a23bd14342da6eb90d43634651470c35bb7978b645ef64e9df0b624c",
+      "size": 180,
+      "source_mtime_ns": 1794444681334085888,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/candidate-preflight.stdout"
+    },
+    {
+      "path": "setup/interim-c3-import/candidate-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794444681402437088,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/candidate-status.stderr"
+    },
+    {
+      "path": "setup/interim-c3-import/candidate-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794444681402437088,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/candidate-status.stdout"
+    },
+    {
+      "path": "setup/interim-c3-import/candidate.bundle",
+      "sha256": "5bde7e04c201d25d940a56d855e9d5dd7b9013fc3675c697c00d3ca28484b2e5",
+      "size": 35021,
+      "source_mtime_ns": 1794444680513788985,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/candidate.bundle"
+    },
+    {
+      "path": "setup/interim-c3-import/fast-forward.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794444681242389429,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/fast-forward.stderr"
+    },
+    {
+      "path": "setup/interim-c3-import/fast-forward.stdout",
+      "sha256": "2e4a11bf3b4b6cc62ba39ad5edf40716d5da048cf1500d65ca206424b3d583f4",
+      "size": 2225,
+      "source_mtime_ns": 1794444681242389429,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/fast-forward.stdout"
+    },
+    {
+      "path": "setup/interim-c3-import/fetched-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794444680687458851,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/fetched-head.stderr"
+    },
+    {
+      "path": "setup/interim-c3-import/fetched-head.stdout",
+      "sha256": "2a3c779ef6c8106354f2ed1bd8fb24374e5751dedbfeb99a2e1de26f75d3b0fa",
+      "size": 41,
+      "source_mtime_ns": 1794444680687458851,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/fetched-head.stdout"
+    },
+    {
+      "path": "setup/interim-c3-import/pr-body.md",
+      "sha256": "7226f2e36ed2cb202b5c93c28a17308aebd6d4bbc63ba4d3cfe5822ffef0a8ad",
+      "size": 2783,
+      "source_mtime_ns": 1794444680514323609,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/pr-body.md"
+    },
+    {
+      "path": "setup/interim-c3-import/summary.json",
+      "sha256": "c80a93155523abfd5ee443a2fdf1c57f2023e0bb0b2b8b8167f6da5f1707e54b",
+      "size": 4312,
+      "source_mtime_ns": 1794444681404154021,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-import/summary.json"
+    },
+    {
+      "path": "setup/interim-c3-publication/create-draft.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794445118084474199,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/create-draft.stderr"
+    },
+    {
+      "path": "setup/interim-c3-publication/create-draft.stdout",
+      "sha256": "dd48b92faaf7676ad72d695b882ca37effdf0f6dedeb19dd1ea52630d5500279",
+      "size": 70,
+      "source_mtime_ns": 1794445118084474199,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/create-draft.stdout"
+    },
+    {
+      "path": "setup/interim-c3-publication/existing-prs.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794445114872856855,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/existing-prs.stderr"
+    },
+    {
+      "path": "setup/interim-c3-publication/existing-prs.stdout",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "size": 3,
+      "source_mtime_ns": 1794445114872856855,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/existing-prs.stdout"
+    },
+    {
+      "path": "setup/interim-c3-publication/final-local-clean.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794445120588068247,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/final-local-clean.stderr"
+    },
+    {
+      "path": "setup/interim-c3-publication/final-local-clean.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794445120588068247,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/final-local-clean.stdout"
+    },
+    {
+      "path": "setup/interim-c3-publication/final-local-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794445120534410799,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/final-local-head.stderr"
+    },
+    {
+      "path": "setup/interim-c3-publication/final-local-head.stdout",
+      "sha256": "2a3c779ef6c8106354f2ed1bd8fb24374e5751dedbfeb99a2e1de26f75d3b0fa",
+      "size": 41,
+      "source_mtime_ns": 1794445120534410799,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/final-local-head.stdout"
+    },
+    {
+      "path": "setup/interim-c3-publication/github-identity.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794445105073090738,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/github-identity.stderr"
+    },
+    {
+      "path": "setup/interim-c3-publication/github-identity.stdout",
+      "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981",
+      "size": 10,
+      "source_mtime_ns": 1794445105073090738,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/github-identity.stdout"
+    },
+    {
+      "path": "setup/interim-c3-publication/normal-push-c3.stderr",
+      "sha256": "59d6a8a8708378858bae5e2cb13192bc9db08398061d5a4bfa8107d78da6126b",
+      "size": 731,
+      "source_mtime_ns": 1794445110471355445,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/normal-push-c3.stderr"
+    },
+    {
+      "path": "setup/interim-c3-publication/normal-push-c3.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794445110470376233,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/normal-push-c3.stdout"
+    },
+    {
+      "path": "setup/interim-c3-publication/origin-fetch.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794445103616415781,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/origin-fetch.stderr"
+    },
+    {
+      "path": "setup/interim-c3-publication/origin-fetch.stdout",
+      "sha256": "c4874cc316c1897dfadc6fe958b373b5afe2a710ae8a77d787fc262b03295ace",
+      "size": 41,
+      "source_mtime_ns": 1794445103616415781,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/origin-fetch.stdout"
+    },
+    {
+      "path": "setup/interim-c3-publication/origin-push.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794445103619752442,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/origin-push.stderr"
+    },
+    {
+      "path": "setup/interim-c3-publication/origin-push.stdout",
+      "sha256": "c4874cc316c1897dfadc6fe958b373b5afe2a710ae8a77d787fc262b03295ace",
+      "size": 41,
+      "source_mtime_ns": 1794445103619752442,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/origin-push.stdout"
+    },
+    {
+      "path": "setup/interim-c3-publication/pr-readback.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794445120529298690,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/pr-readback.stderr"
+    },
+    {
+      "path": "setup/interim-c3-publication/pr-readback.stdout",
+      "sha256": "5079f57bd88c34052be47bd884320cedb41a0dc9d9287ed946c79b65336be0e3",
+      "size": 3303,
+      "source_mtime_ns": 1794445120529298690,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/pr-readback.stdout"
+    },
+    {
+      "path": "setup/interim-c3-publication/preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794445105242577308,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/preflight.stderr"
+    },
+    {
+      "path": "setup/interim-c3-publication/preflight.stdout",
+      "sha256": "64d4a324a23bd14342da6eb90d43634651470c35bb7978b645ef64e9df0b624c",
+      "size": 180,
+      "source_mtime_ns": 1794445105242577308,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/preflight.stdout"
+    },
+    {
+      "path": "setup/interim-c3-publication/reconcile-pr-1.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794445119309644391,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/reconcile-pr-1.stderr"
+    },
+    {
+      "path": "setup/interim-c3-publication/reconcile-pr-1.stdout",
+      "sha256": "c2c48538d5d3306480c307a9a0ae0387ccd6602f4e79ad86e3d04593a7bb97bc",
+      "size": 331,
+      "source_mtime_ns": 1794445119309644391,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/reconcile-pr-1.stdout"
+    },
+    {
+      "path": "setup/interim-c3-publication/remote-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794445113424215271,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/remote-head.stderr"
+    },
+    {
+      "path": "setup/interim-c3-publication/remote-head.stdout",
+      "sha256": "055c1898aa3a7237f59d3eeabbbf1443f91d72bf47e0e663a02fef3b0e1f6542",
+      "size": 100,
+      "source_mtime_ns": 1794445113424215271,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/remote-head.stdout"
+    },
+    {
+      "path": "setup/interim-c3-publication/source-branch.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794445102466888437,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/source-branch.stderr"
+    },
+    {
+      "path": "setup/interim-c3-publication/source-branch.stdout",
+      "sha256": "c36d08e7a4bc5676cde4f109ee4181ed3ca0b4838ec85fde84f274d92377a05e",
+      "size": 59,
+      "source_mtime_ns": 1794445102466888437,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/source-branch.stdout"
+    },
+    {
+      "path": "setup/interim-c3-publication/source-clean.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794445103610585047,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/source-clean.stderr"
+    },
+    {
+      "path": "setup/interim-c3-publication/source-clean.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794445103610585047,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/source-clean.stdout"
+    },
+    {
+      "path": "setup/interim-c3-publication/source-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794445102463118391,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/source-head.stderr"
+    },
+    {
+      "path": "setup/interim-c3-publication/source-head.stdout",
+      "sha256": "2a3c779ef6c8106354f2ed1bd8fb24374e5751dedbfeb99a2e1de26f75d3b0fa",
+      "size": 41,
+      "source_mtime_ns": 1794445102463118391,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/source-head.stdout"
+    },
+    {
+      "path": "setup/interim-c3-publication/summary.json",
+      "sha256": "b5a8863d5a176e3f54ba82f7e49b81041ab3ad8666142f37b23412d0356b0cea",
+      "size": 9761,
+      "source_mtime_ns": 1794445120591450897,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/interim-c3-publication/summary.json"
+    },
+    {
+      "path": "setup/isolated-branch.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794443861604012947,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/isolated-branch.stderr"
+    },
+    {
+      "path": "setup/isolated-branch.stdout",
+      "sha256": "c36d08e7a4bc5676cde4f109ee4181ed3ca0b4838ec85fde84f274d92377a05e",
+      "size": 59,
+      "source_mtime_ns": 1794443861604012947,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/isolated-branch.stdout"
+    },
+    {
+      "path": "setup/isolated-clone.stderr",
+      "sha256": "e6eb7c2a23b3ea6d30c0c61b2d7cbaeaf7434560b13ffafcdcacf2796d6a75a7",
+      "size": 89,
+      "source_mtime_ns": 1794443848648244129,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/isolated-clone.stderr"
+    },
+    {
+      "path": "setup/isolated-clone.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794443848646784519,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/isolated-clone.stdout"
+    },
+    {
+      "path": "setup/isolated-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794443861591872062,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/isolated-head.stderr"
+    },
+    {
+      "path": "setup/isolated-head.stdout",
+      "sha256": "9290ff62cbae8bb66e973b01a756e413a21d123f7ef5c86547069bd2c0adc644",
+      "size": 41,
+      "source_mtime_ns": 1794443861591872062,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/isolated-head.stdout"
+    },
+    {
+      "path": "setup/isolated-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794443861587383090,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/isolated-preflight.stderr"
+    },
+    {
+      "path": "setup/isolated-preflight.stdout",
+      "sha256": "64d4a324a23bd14342da6eb90d43634651470c35bb7978b645ef64e9df0b624c",
+      "size": 180,
+      "source_mtime_ns": 1794443861587383090,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/isolated-preflight.stdout"
+    },
+    {
+      "path": "setup/isolated-sparse-patterns.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794443862054195750,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/isolated-sparse-patterns.stderr"
+    },
+    {
+      "path": "setup/isolated-sparse-patterns.stdout",
+      "sha256": "ec62f0afded79ec67ab4c1240206410ce1dbc065230883f9864adedb3f20a669",
+      "size": 15,
+      "source_mtime_ns": 1794443862054195750,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/isolated-sparse-patterns.stdout"
+    },
+    {
+      "path": "setup/isolated-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794443862049376609,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/isolated-status.stderr"
+    },
+    {
+      "path": "setup/isolated-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794443862048376640,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/isolated-status.stdout"
+    },
+    {
+      "path": "setup/original-after-branch.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794443862063263702,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/original-after-branch.stderr"
+    },
+    {
+      "path": "setup/original-after-branch.stdout",
+      "sha256": "33d2c09c455e70c42752ee24c24a92b28bea38ba970e83e10e63d7047107e4c4",
+      "size": 61,
+      "source_mtime_ns": 1794443862063263702,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/original-after-branch.stdout"
+    },
+    {
+      "path": "setup/original-after-config-path.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794443862145581473,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/original-after-config-path.stderr"
+    },
+    {
+      "path": "setup/original-after-config-path.stdout",
+      "sha256": "a529aadcb5948bdf54bbfc337416ea33ea6c255691c06464b2e533cace1c162b",
+      "size": 78,
+      "source_mtime_ns": 1794443862145581473,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/original-after-config-path.stdout"
+    },
+    {
+      "path": "setup/original-after-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794443862058376335,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/original-after-head.stderr"
+    },
+    {
+      "path": "setup/original-after-head.stdout",
+      "sha256": "82ef599a50dd0a5cef339bc50cf1b50ccb9b0311f2deccb982912d2052e13919",
+      "size": 41,
+      "source_mtime_ns": 1794443862058376335,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/original-after-head.stdout"
+    },
+    {
+      "path": "setup/original-after-status.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794443862140373840,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/original-after-status.stderr"
+    },
+    {
+      "path": "setup/original-after-status.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794443862140373840,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/original-after-status.stdout"
+    },
+    {
+      "path": "setup/sparse-non-evidence.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794443848657970723,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/sparse-non-evidence.stderr"
+    },
+    {
+      "path": "setup/sparse-non-evidence.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "source_mtime_ns": 1794443848657970723,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/sparse-non-evidence.stdout"
+    },
+    {
+      "path": "setup/summary.json",
+      "sha256": "5679eb1e5aaf90c8de7d049f1e01549b3597441c45e4f1a6138f8d18df2a9784",
+      "size": 7652,
+      "source_mtime_ns": 1794443862148564847,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/summary.json"
+    },
+    {
+      "path": "setup/summary.validated.json",
+      "sha256": "ced7f02a1cb3a5ce4693c29cecb190630637afac69e22f9b82d2799a25835814",
+      "size": 7924,
+      "source_mtime_ns": 1794444110506814446,
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/summary.validated.json"
+    },
+    {
+      "path": "pty/desktop-readonly-preparation.log",
+      "sha256": "9ee0540d79d31843f6b2a4f23417109734deb80f5654134ee24ced57cce0dfc4",
+      "size": 1059,
+      "source_mtime_ns": 1794443604270221761,
+      "source_path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/terminals/dpty-f3be35092e86444d6a56678059c352557e19624f0317db6ed8caf0c54ab8d311/output.log"
+    },
+    {
+      "path": "pty/desktop-publication-setup.log",
+      "sha256": "2e97fde89d4382b6741190da6adde9e8fae10bff7be3f6dceb3c9644886887cd",
+      "size": 3252,
+      "source_mtime_ns": 1794443862148564847,
+      "source_path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/terminals/dpty-0473759aeaca513be9a75e737269816bb86dcdd4e69b5c40befc0d9d5e1c5226/output.log"
+    },
+    {
+      "path": "pty/desktop-setup-receipt-validation.log",
+      "sha256": "cb54157a1e7d045b2a18c3e74d767f45a757220c987269c9dfacaa671c7a24e5",
+      "size": 308,
+      "source_mtime_ns": 1794444110506814446,
+      "source_path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/terminals/dpty-d9abc9d830a16348e0996a8008367188639de92e5d55f62b13488f4a6a6d73cd/output.log"
+    },
+    {
+      "path": "pty/desktop-c3-import.log",
+      "sha256": "cb70c4cc1732d4c2dd11a4d733ee10d4e84bc4b3a817280383f9b30f968957a0",
+      "size": 1396,
+      "source_mtime_ns": 1794444681404154021,
+      "source_path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/terminals/dpty-9784e1e6c6653605c440d056c24c0f58fc9443696f5f62716458a89ac12afeeb/output.log"
+    },
+    {
+      "path": "pty/desktop-c3-draft-publication.log",
+      "sha256": "ec69b67d821b0390c8418796343fdbae13b9983b9ca0752f501331eb9dcb8e46",
+      "size": 1962,
+      "source_mtime_ns": 1794445120591450897,
+      "source_path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/terminals/dpty-6b805aeda3249a5c6d171b653f485fd6b57131510e16b30c1a6245b568b06b1a/output.log"
+    },
+    {
+      "path": "pty/desktop-c3-full-source-audit.log",
+      "sha256": "21cec3038b03f243b3056b9b70dd019d8a26eb89ed1467945ee5a47e3fffe63d",
+      "size": 1976,
+      "source_mtime_ns": 1794446807191715716,
+      "source_path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/terminals/dpty-fe7f908d75f19e0bb32cd332227df5a57c62ceb3d14c4ca329d2b1aba9467c15/output.log"
+    },
+    {
+      "generated": true,
+      "path": "README.md",
+      "sha256": "69327a0daa92667b19b655ce8d1eedb62a1c97e40137dcc9d502110eb67d1f00",
+      "size": 879,
+      "source_path": null
+    }
+  ],
+  "invalid_json": [
+    {
+      "error": "Extra data: line 270 column 2 (char 7650)",
+      "path": "setup/summary.json",
+      "sha256": "5679eb1e5aaf90c8de7d049f1e01549b3597441c45e4f1a6138f8d18df2a9784",
+      "source_path": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish-setup/summary.json"
+    }
+  ],
+  "original_bytes_preserved": true,
+  "schema": "desktop-publication-records-v1",
+  "scope": "original desktop receipts; no new native execution",
+  "self_exclusions": [
+    "MANIFEST.json",
+    "SHA256SUMS"
+  ],
+  "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"
+}

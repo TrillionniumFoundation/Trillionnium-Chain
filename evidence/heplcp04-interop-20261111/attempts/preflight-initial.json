@@ -1,0 +1,9 @@
+{
+  "source_sha": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+  "command": "bash scripts/project-preflight.sh",
+  "returncode": 2,
+  "at_utc": "2026-11-11T12:18:13.605989+00:00",
+  "log_path": "/home/qq/af52-chain-20261111/preflight-initial.log",
+  "log_sha256": "1e85d4622435cd769c79fc3bdd3ac3cef3c643c135889988e8479a1ffc4e893e",
+  "output": "project boundary failed: not an allowed development branch\n"
+}

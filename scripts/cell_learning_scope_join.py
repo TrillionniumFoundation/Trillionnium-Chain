@@ -1,11 +1,12 @@
 """Join an original scoped Root profile to the completed-learning reader.
 
-The Root profile is a separate original input: HEPLCP02 alone does not encode
+The Root profile is a separate original input: HEPLCP02/03 alone do not encode
 FrozenLearningScopeV2. This read-only review checks the same component and rule
 restrictions, without authenticating Root custody or granting FinalUse.
 
 The accepted Root JSON layout is pinned to hepta-private-ci commit
-71738345326b98d88b738250d2b84ecbcb466eb8. Its nested scope descriptor uses
+71738345326b98d88b738250d2b84ecbcb466eb8 and retained by the HEPLCP03 source
+f97f3c90ac1ac3d5171fd9f25b3e34431f44a367. Its nested scope descriptor uses
 update_scope; the earlier b8e8c6e layout and mixed layouts are refused.
 """
 import argparse
@@ -19,6 +20,7 @@ import cell_learning_completion_join as completion
 import cell_learning_iteration_join as iteration
 
 REPORT_SCHEMA = "trnm-cell-learning-scoped-completed-use-review-v1"
+TRAINER_NO_UPDATE_REPORT_SCHEMA = "trnm-cell-learning-scoped-completed-use-review-v2"
 SCOPE_DOMAIN = b"hepta.learning.frozen-update-scope.v2\0"
 MAX_PROFILE = 16384
 
@@ -70,7 +72,11 @@ def _review_scope(profile_raw, expected_profile_sha256, snapshot, replay, frozen
                        all(components[name] == incumbent[name] for name in incumbent if name not in allowed),
                        "LEARNING_ROOT_SCOPE_COMPONENTS")
         native.require(candidate["training_lineage"]["update_rule"] == rule, "LEARNING_ROOT_SCOPE_RULE")
-    return dict(root_profile_sha256=expected_profile_sha256,
+    unchanged = [receipt["observation"] for receipt in snapshot["receipts"]
+                 if receipt["observation"]["tag"] == 8]
+    for outcome in unchanged:
+        native.require(outcome["update_rule"] == rule, "LEARNING_ROOT_SCOPE_RULE")
+    result = dict(root_profile_sha256=expected_profile_sha256,
                 initial_checkpoint_sha256=native.sha(initial_raw), initial_head=original["initial_head"],
                 operation_id=original["request"]["operation_id"], identity_digest=profile["identity_digest"],
                 writer_proof_digest=profile["writer_proof_digest"], update_scope=scope,
@@ -78,6 +84,10 @@ def _review_scope(profile_raw, expected_profile_sha256, snapshot, replay, frozen
                 allowed_changed_components=sorted(allowed), frozen_scope_bindings_consistent=True,
                 all_recorded_training_observations_within_scope=True,
                 root_profile_origin_authenticated=False, tensor_update_mask_verified=False)
+    if unchanged:
+        result.update(trainer_no_update_receipts_checked=len(unchanged),
+                      quantized_weights_unchanged_verified=False)
+    return result
 
 
 def review_native_scoped_learning_completion(
@@ -94,10 +104,12 @@ def review_native_scoped_learning_completion(
         selection_raw, completed_raw, readback_raw,
         expected_selection_sha256=expected_selection_sha256,
         expected_completed_sha256=expected_completed_sha256,
-        expected_readback_sha256=expected_readback_sha256, frozen=frozen, expected=expected)
+        expected_readback_sha256=expected_readback_sha256, frozen=frozen, expected=expected,
+        root_profile_raw=root_profile_raw, expected_root_profile_sha256=expected_root_profile_sha256)
     snapshot, replay = iteration.decode_native_learning_checkpoint(completed_raw)
     scope_review = _review_scope(root_profile_raw, expected_root_profile_sha256, snapshot, replay, frozen)
-    result.update(schema=REPORT_SCHEMA, scope="pinned-scoped-root-profile-completed-receipt-chain-and-acknowledged-use-only",
+    result.update(schema=TRAINER_NO_UPDATE_REPORT_SCHEMA if "training_no_update" in replay else REPORT_SCHEMA,
+                  scope="pinned-scoped-root-profile-completed-receipt-chain-and-acknowledged-use-only",
                   root_scope_review=scope_review)
     return result
 

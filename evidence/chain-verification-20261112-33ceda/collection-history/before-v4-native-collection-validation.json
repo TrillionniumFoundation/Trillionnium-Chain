@@ -1,0 +1,20 @@
+{
+  "a990_cohort_status": "FAILED_OR_INCOMPLETE",
+  "a990_native_tests_passed": 89,
+  "a990_strict_clippy_exit": 101,
+  "external_gap_collected": false,
+  "index_sha256": "e09d4f849f3bcd5c06b8b4bb85e5339818263863c9279ce5c2dcd37d53c78b43",
+  "json_originals_parsed": true,
+  "new_a990_native_files": 124,
+  "no_env_files": true,
+  "no_staged_elf": true,
+  "original_bytes": 7966819,
+  "original_files": 522,
+  "pending_remote_groups": [
+    "97aa/native",
+    "final-v4-counterfactual/native"
+  ],
+  "readme_sha256": "d8a49eb961df187a46d65bd6d3628fdf260a718a1c158e50883c3889278b435d",
+  "schema": "chain-evidence-collection-validation-v1",
+  "sha256sum_exit": 0
+}

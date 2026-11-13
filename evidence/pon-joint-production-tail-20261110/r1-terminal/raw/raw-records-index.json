@@ -1,0 +1,28 @@
+{
+  "files": [
+    {
+      "bytes": 1148,
+      "path": "environment.json",
+      "sha256": "d6183490efaf04694c92eefa5949573c955fb910e9f221e320e7fda1d77cab29"
+    },
+    {
+      "bytes": 304,
+      "path": "ownership.json",
+      "sha256": "7f54522af732a7e8ec9f569f8f690400c421e426e62396f852b8f5a3d9e1fcc1"
+    },
+    {
+      "bytes": 17583,
+      "path": "runner.py",
+      "sha256": "66f2e33da06d9e1167a5240027d6363defa79ff7e235e7763d96980c47d603b8"
+    },
+    {
+      "bytes": 838,
+      "path": "summary.json",
+      "sha256": "496d9afdf7723eeb00796dcb01877f61679db1dc6d4c6c95f091e0bbfe170a4e"
+    }
+  ],
+  "schema": "joint-tail-rog-raw-index-v1",
+  "source_and_target_trees_not_archived": true,
+  "source_preserved_at": "/home/qian-qi/chain-joint-tail-native-20261110-8e76/source",
+  "target_preserved_at": "/home/qian-qi/chain-joint-tail-native-20261110-8e76/target"
+}

@@ -4,7 +4,7 @@ Status: **research only; HOLD / NO-GO**. This contract is a budget-review aid,
 not a cryptographic proof, production activation, or an attestation that the
 chain has a failure probability of at most `2^-128`.
 
-The implementation baseline is PQ integration candidate
+The original implementation baseline is PQ integration candidate
 [`12e510b211110d93d9ead07e02c07a1eecc28ae9`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/12e510b211110d93d9ead07e02c07a1eecc28ae9).
 The [machine-readable register](../../config/pon/pq128-lifetime-budget-v1.json)
 and [budget checker](../../scripts/ci/pq_lifetime_budget.py) extend the existing
@@ -214,26 +214,148 @@ Its source hashes describe the bytes read for the example only. All security,
 theorem-applicability, composition-coverage, and activation flags remain false
 in both modes, and the actual lifetime failure bound remains null.
 
+### Published runtime source mapping, 2026-11-12
+
+The source lock and `experiment.source_revision` now both name published
+runtime checkpoint
+[`523bee8709645e7dbc3455f1dc74737f7067af62`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/523bee8709645e7dbc3455f1dc74737f7067af62),
+tree `5fdd5f7073a91d210c82411a37c8982d4159f29b`. The 15 exact regular Git
+blobs were read again at this revision and compared with the working regular
+files. All 15 file hashes remain identical to the local Runtime A review below.
+The new lock-byte SHA-256 is
+`5714721c9ebc841d04e88c923cc649fbe061cc25c3b0497bce3b6f8d1b887405`.
+
+Only the revision fields change. Event sets, numerical allocations, assumptions,
+eight unknown terms, four unknown query budgets and false qualification fields
+are unchanged. The actual lifetime bound remains null and the result remains
+HOLD. The Root register is unchanged. The published runtime has Runtime A's
+tree but a distinct commit identity; tree equality and the retained former
+Metadata B observation are not new execution evidence. The metadata successor
+must pass its own source and execution gates. The original local review and
+its failure observations remain below with their original identities.
+
+### Retained local Runtime A source mapping, 2026-11-12
+
+The 15 declared source paths are reviewed against Runtime A,
+`b3bc526b96d3a8e2ad0be7faa4f00f11d9f7ea53`,
+tree `5fdd5f7073a91d210c82411a37c8982d4159f29b`. For each path, review checked
+the exact regular Git blob and compared `git show` bytes with the working
+regular file. The source lock and `experiment.source_revision` both name
+Runtime A. The lock-byte SHA-256 is
+`40e4035ffd1641288fc18c0fe18733f51c7c930a85212d570cef1fdf85d8bd27`.
+
+Fourteen pins retain the preceding `7f83ea843d6d1578a475a7a0c4dc026da564a795`
+mapping. The only changed pin is
+`trillionnium/crates/trnm-service-settlement/src/native_budget.rs`:
+
+```text
+prior:    1fd964a4bfb3dec372c04a32853d9b08a3b80773d3182099d80705ab916ace38
+reviewed: 04f10f76d9f3bcdbe2df1b0bf3182d3e5d66a8f3974982a3491f156e50ba7c68
+```
+
+The reviewed change adds the native journal path check and calls it before the
+original budget store opens SQLite. It inspects the original OS path and its
+`-journal`, `-wal` and `-shm` sidecars using `symlink_metadata`; existing objects
+must be regular files, only `NotFound` means absent, and other inspection errors
+are returned. Regular recovery sidecars remain permitted. The containing
+directory is still a trusted boundary; this does not prevent a concurrent path
+swap or qualify currency backing, service delivery or external effects. Other
+modules that call the helper are not automatically included in these 15 paths.
+
+The lifetime manifest differs only at `experiment.source_revision`. Its event
+sets, numerical allocations, assumptions, eight unknown event terms, four
+unknown query budgets and all false qualification fields remain unchanged.
+The actual lifetime failure bound remains null and the result remains HOLD.
+The reader executed before this update returned exit 2 with
+`source lock hash mismatch` for `native_budget.rs`; that old-mapping refusal is
+retained. This metadata successor supplies a reviewed declared-path binding,
+not a native execution result or a complete dependency closure, and still
+requires final-source validation. The separate 43-path Root register is
+unchanged by this review.
+
+### Retained joint-source mapping
+
+The 15 declared paths are bound to `8add285b6c0a91d8b7812efe2d02c9342f74c91b`, tree `8aaa486aa4ccd4e41e33241fb4e7e273d3c3d5f6`.
+Only `trnm-pon-node/src/store.rs` differs from the preceding 15-path lock: the
+account-scope check now guards fresh/cold/warm Node ownership before execution.
+The original event sets, equations, unknown terms and qualification flags are
+unchanged. V5 witness custody and entropy obligations are recorded separately
+in the Root register; their absence from this 15-path roster remains explicit.
+A metadata child stores this lock; its own exact source requires separate
+validation. The lifetime bound remains unknown.
+
+### Earlier composed-source mapping
+
+The current 15-path lock is reviewed against the published runtime checkpoint
+[`ef6df12a042912664df64f2112c2b1c600dce9fa`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/ef6df12a042912664df64f2112c2b1c600dce9fa),
+whose Git tree is `5e89951169fe2d5ef7418c3dc23984babda172ce`.
+Its lock-byte SHA-256 is
+`84a7fb53e5ee99bb04cf32cb0392a7fed8c40c1f535dbae6f50ae0e2b0414cf2`.
+For every declared path, review checked the exact regular Git blob (mode
+`100644` or `100755`) and byte equality with the candidate regular file before
+rebinding. All 15 paths matched. Compared with the preceding lock, only the
+`consensus.rs` and `ingress/pq_network.rs` fingerprints change. The former adds
+test helper/vector coverage; the latter requires complete SPKI equality after
+the peer-identity lookup. The manifest differs only at
+`experiment.source_revision`.
+
+The revision identifies these 15 declared source blobs in the published
+runtime checkpoint. A subsequent metadata commit carries this reviewed
+mapping; its complete tree differs from the runtime checkpoint. The binding
+scope remains `declared-event-paths-only`, with the checker and its refusal
+rules unchanged.
+
+The original [repository-truth failure](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42830743518/job/129995452145)
+at `e4abb172147e941b62483652b0ceabaae4317624` remains evidence for that source:
+58 tests ran with one error, the stale `consensus.rs` source-lock hash.
+Post-rebind test results require a separately frozen candidate. The eight
+unknown event terms, four unknown shared-primitive query budgets, null actual
+lifetime bound and HOLD remain unchanged. Complete dependency coverage and
+cryptographic provenance remain unestablished; all qualification flags remain
+false. CI continues to verify the reviewed mapping and cannot silently
+regenerate it from arbitrary current bytes.
+
+### Preceding composed-source mappings
+
 ### Current composed-source mapping
 
 The current 15-path lock is independently reviewed against exact source
-`66b7064be597039ce871b5b12ad5568850a2dd46`. Its current lock-byte SHA-256 is
+`b7e38fdc2e43c468692abc52aec03737f2df7f1b`, tree
+`b75d318fc7b7b027a810f4a70a9cd91e0b3930f8`. Its lock-byte SHA-256 is
+`af0ceb6ae756031305b9b73f1b6695664c830558fed7a13b6c2e7ff255592f92`.
+The [original-budget continuation review](../../evidence/chain-throughput-budget-20261110-065438/source-lock-review/README.md)
+and its [per-path comparisons](../../evidence/chain-throughput-budget-20261110-065438/source-lock-review/publication-reanchor.json)
+retain all 15 exact Git regular-blob and working-file comparisons. Thirteen
+fingerprints are unchanged. The `consensus.rs` change is the existing test-only
+integer-vector continuation that caused the original e4abb source-lock refusal;
+`store.rs` exposes the existing progress-aware state reader within the crate.
+The manifest differs only at `experiment.source_revision`. The original failed
+CI observation and the frozen-source pre-rebinding refusals remain retained.
+This maintenance does not claim that the updated declarations were already in
+the source checkpoint or that its native/business gates passed.
+
+### Retained composed-source mapping, 2026-11-09
+
+The preceding 15-path lock was independently reviewed against exact source
+`66b7064be597039ce871b5b12ad5568850a2dd46`. Its lock-byte SHA-256 was
 `29ba9abdbb39d96bece885a0cd821fd9ad428413974cd530d26434f5a7daf84a`.
-The [current composition review](../../evidence/cell-storage-convergence-f2568-20261109/README.md)
+The [preceding composition review](../../evidence/cell-storage-convergence-f2568-20261109/README.md)
 and its [source-maintenance inventory](../../evidence/cell-storage-convergence-f2568-20261109/ci-source-maintenance19.members.json)
 preserve the prior files, the original refusal, all 15 Git regular-blob and
 working-file comparisons, and isolated original Python controls.
-Only the `cell/pq.rs` fingerprint and the declaration revision change;
-the manifest differs only at `experiment.source_revision`.
+At that review, only the `cell/pq.rs` fingerprint and the declaration revision
 
-The preceding mapping named `0f0592ace4b08a1d39e1ffad31beee76ddc4fd66`
+The [retained composition review](../../evidence/cell-storage-convergence-f2568-20261109/README.md)
+and its [source-maintenance inventory](../../evidence/cell-storage-convergence-f2568-20261109/ci-source-maintenance19.members.json)
+preserve the prior files, the original refusal, all 15 Git regular-blob and
+working-file comparisons, and isolated original Python controls.
+In that mapping, only the `cell/pq.rs` fingerprint and declaration revision
+changed; the manifest differed only at `experiment.source_revision`.
+
+The earlier mapping named `0f0592ace4b08a1d39e1ffad31beee76ddc4fd66`
 and lock SHA-256 `8771ac5c7bfff29266a89e7b65bf1d57a021fd38a0461b7cc937db58c34557b0`.
 Its [earlier composition review](PQ_COMPOSITION_SOURCE_LOCK_REVIEW_20261108.md)
-remains unchanged. The eight unknown event terms, four unknown shared-primitive
-query budgets, null actual lifetime bound and HOLD remain unchanged.
-Complete dependency coverage and cryptographic provenance remain unestablished;
-all qualification flags remain false. CI continues to verify the reviewed
-mapping and cannot silently regenerate it from arbitrary current bytes.
+remains unchanged.
 
 ### Original source-lock generation record
 
@@ -250,8 +372,8 @@ new reviewed mapping; CI must not silently regenerate the lock from whatever
 bytes it is checking.
 
 The following historical command requires the original source/lock checkout.
-The current mapping has its own exact revision and per-path generation record
-in the composition review above. No command silently rewrites the lock:
+The current mapping uses the separate checkpoint and reviewed per-path digests
+stated above. No command silently rewrites the lock:
 
 ```sh
 python3 - <<'PY'

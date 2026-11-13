@@ -1,0 +1,21 @@
+{
+  "A2_parent": "43e5c9d6b668276d03e1c7a76f467ec211e1d7dc",
+  "A_to_A2_changed_files": [
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "scripts/ci/check_ci_contract.py"
+  ],
+  "CI_repair_execution_source": "17449baa42429ac98b55c100b1c523ff0abe40d0",
+  "all_other_git_tree_paths_and_blobs_identical": true,
+  "common_config_before_add_attested": false,
+  "formal_execution_source": "43e5c9d6b668276d03e1c7a76f467ec211e1d7dc",
+  "native_execution_source": "43e5c9d6b668276d03e1c7a76f467ec211e1d7dc",
+  "native_or_formal_relabelled_as_A2": false,
+  "new_tests_or_simulator_executions_by_collector": 0,
+  "original_cloud_terminal_outcome": "UNKNOWN",
+  "schema": "trnm-joint-resource-source-provenance-v1",
+  "source_A": "43e5c9d6b668276d03e1c7a76f467ec211e1d7dc",
+  "source_A2": "17449baa42429ac98b55c100b1c523ff0abe40d0",
+  "source_A2_tree": "30d1f68d13d0eac47fc48a228f3b0cb47fbddc79",
+  "source_A_tree": "beac87c2431d149dbd6d2de4a2e1eaf0617520cc",
+  "source_mutations_by_collector": false
+}

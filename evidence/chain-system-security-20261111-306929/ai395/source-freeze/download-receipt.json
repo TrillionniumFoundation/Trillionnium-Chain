@@ -1,0 +1,210 @@
+{
+  "schema": "metadata-archive-transport-readback-v1",
+  "segments": [
+    {
+      "archive_offset": 0,
+      "chunk_sha256": "1c9ce1a9e2342a0fde4600789097c523984102791c10c5b7c8341777e6911d87",
+      "eof": false,
+      "next_offset": 65536,
+      "offset": 0,
+      "path": "/home/qq/chain-system-security-native-receipts-20261112-306929/metadata-freeze-original-observations-20261112-306929.tar.gz",
+      "size": 188878,
+      "version": "66306:47490029:188878:1794447635349979363:1794447635349979363"
+    },
+    {
+      "archive_offset": 65536,
+      "chunk_sha256": "81687756f575482568909f99e2e36baad9a055686a4ac641575d697b2ac1bc73",
+      "eof": true,
+      "next_offset": 32768,
+      "offset": 0,
+      "path": "/home/qq/chain-system-security-native-receipts-20261112-306929/metadata-freeze-original-observations-20261112-306929.parts/part-65536.bin",
+      "size": 32768,
+      "version": "66306:47490057:32768:1794448055768544494:1794448055768544494"
+    },
+    {
+      "archive_offset": 98304,
+      "chunk_sha256": "9f41c43cdd53a09351188b0ab03c5799eef4023587545a7b580a5a5f03ef6347",
+      "eof": true,
+      "next_offset": 32768,
+      "offset": 0,
+      "path": "/home/qq/chain-system-security-native-receipts-20261112-306929/metadata-freeze-original-observations-20261112-306929.parts/part-98304.bin",
+      "size": 32768,
+      "version": "66306:47490058:32768:1794448055768605972:1794448055768605972"
+    },
+    {
+      "archive_offset": 131072,
+      "chunk_sha256": "48cecc0fc455137f62ad1cc9a752a5a9f8b69871a410ea56c185519b9f22fef1",
+      "eof": true,
+      "next_offset": 32768,
+      "offset": 0,
+      "path": "/home/qq/chain-system-security-native-receipts-20261112-306929/metadata-freeze-original-observations-20261112-306929.parts/part-131072.bin",
+      "size": 32768,
+      "version": "66306:47490059:32768:1794448055768644921:1794448055768644921"
+    },
+    {
+      "archive_offset": 163840,
+      "chunk_sha256": "4282593e5667960c949fc420f3957b3c7e618f8c0b2ba191603dadd2a5a4fd12",
+      "eof": true,
+      "next_offset": 25038,
+      "offset": 0,
+      "path": "/home/qq/chain-system-security-native-receipts-20261112-306929/metadata-freeze-original-observations-20261112-306929.parts/part-163840.bin",
+      "size": 25038,
+      "version": "66306:47490060:25038:1794448055768686359:1794448055768686359"
+    }
+  ],
+  "recorded_failed_reads": [
+    {
+      "key": "sqlite_metadata_archive32-65536",
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "tool call error: tool call failed for `codex_apps/h.binary_read`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "key": "sqlite_metadata_archive32-98304",
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "tool call error: tool call failed for `codex_apps/h.binary_read`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "key": "sqlite_metadata_parts_part-98304",
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "tool call error: tool call failed for `codex_apps/h.binary_read`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "key": "sqlite_metadata_parts_part-131072",
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "tool call error: tool call failed for `codex_apps/h.binary_read`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out"
+          }
+        ],
+        "isError": true
+      }
+    },
+    {
+      "key": "sqlite_metadata_parts_part-163840",
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "tool call error: tool call failed for `codex_apps/h.binary_read`\n\nCaused by:\n    Mcp error: -32603: MCP request timed out"
+          }
+        ],
+        "isError": true
+      }
+    }
+  ],
+  "archive_job_status": {
+    "at_unix_ms": 1794447635384,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 0,
+    "job_id": "1a1cd69ed42-2564-12a6",
+    "launch_nonce": "5c8f37b58417d9f40b40cdeae9b62990",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 672,
+        "stored": 672
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "parts_job_status": {
+    "at_unix_ms": 1794448055804,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 0,
+    "job_id": "1a1cd7057fe-2564-12b6",
+    "launch_nonce": "f75b6fd4519430dc827f8e44d5f81a7d",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 1439,
+        "stored": 1439
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "expected_archive": {
+    "archive": {
+      "bytes": 188878,
+      "path": "/home/qq/chain-system-security-native-receipts-20261112-306929/metadata-freeze-original-observations-20261112-306929.tar.gz",
+      "sha256": "d2c41611e9e185b71fe78d52667fee6bff84f40307900a9feede5387f9056cab"
+    },
+    "every_source_byte_unchanged_before_after": true,
+    "inner_manifest_sha256": "e6fa1b0e30605fb461e5f97700cd4a95420251b7f407717915e42ab08d4a9d3b",
+    "new_native_execution": false,
+    "new_provider_build": false,
+    "production_activation": false,
+    "schema": "root-metadata-static-archive-result-v1",
+    "source_checkout_modified": false,
+    "source_payload_count": 89,
+    "status": "ARCHIVED_ORIGINAL_COMPLETED_OBSERVATIONS",
+    "tar_member_count": 90
+  },
+  "source_raw_reexecuted": false,
+  "new_native_execution": false
+}

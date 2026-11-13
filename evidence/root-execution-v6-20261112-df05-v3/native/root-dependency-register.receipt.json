@@ -1,0 +1,22 @@
+{
+  "bytes": 8507,
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "scripts/ci/pq_root_dependency_register.py"
+  ],
+  "cwd": "/data/chain-root-operation-owned-20261112-df05-v4",
+  "elapsed_ns": 12706169140,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "log": "root-dependency-register.log",
+  "name": "root-dependency-register",
+  "process_exit_code": 0,
+  "sha256": "e5d3730914dcf2eea797766bbe9ac976c0cf597071beb4b0c4ce41665b859f14",
+  "source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "timed_out": false
+}

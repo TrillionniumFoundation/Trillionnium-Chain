@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "03c4cf3dbcfe228135190e61e1fdfbf2ca28c135"
+  ],
+  "commit": "03c4cf3dbcfe228135190e61e1fdfbf2ca28c135",
+  "cwd": "/home/qq/work/chain-cell-paged-model-34e09-20261110",
+  "started_at_utc": "2026-11-10T09:56:37.904532+00:00",
+  "tree": "8730387e2f58e1c6ed9c4647985d05096db4d8f3"
+}

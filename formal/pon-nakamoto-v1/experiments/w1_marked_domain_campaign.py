@@ -32,7 +32,7 @@ from w1_marked_domain import (
 )
 from w1_quantum_oracle import FixedTemplate, canonical
 
-SCHEMA = "trnm-w1-literal-domain-campaign-v1"
+SCHEMA = "trnm-w1-literal-domain-campaign-v3"
 # One bounded I/O policy covers the accepted maximum of three 4096-nonce
 # reduced censuses plus three 64-nonce native censuses and their controls.
 # Default runs remain below one MiB. This is a hard cap, never a retry/fallback.
@@ -265,7 +265,7 @@ def replay_campaign(record):
     if source_record() != before:
         raise ValueError("SOURCE_CHANGED_DURING_REPLAY")
     return {
-        "schema": "trnm-w1-literal-domain-replay-v1",
+        "schema": "trnm-w1-literal-domain-replay-v3",
         "campaign_sha256": digest(canonical(record)),
         "literal_cases_replayed": len(record["cases"]),
         "native_nonces_replayed": sum(row["census"]["domain_size"] for row in record["cases"] if row["census"]["native_shape"]),

@@ -1,0 +1,21 @@
+{
+  "CARGO_BUILD_JOBS": "1",
+  "CARGO_ENCODED_RUSTFLAGS": null,
+  "CARGO_HOME": "/home/qq/.cargo",
+  "CARGO_INCREMENTAL": null,
+  "CARGO_TARGET_DIR": "/home/qq/chain-system-security-20261112-306929/trillionnium/target",
+  "LD_LIBRARY_PATH": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib",
+  "OPENSSL_CONF": "/dev/null",
+  "OPENSSL_DIR": "/home/qq/chain-system-security-root-provider-20261112-306929/trnm-pq-provider-3.5.9.6hHYb0FI/install",
+  "OPENSSL_MODULES": "/home/qq/chain-system-security-root-provider-20261112-306929/trnm-pq-provider-3.5.9.6hHYb0FI/install/lib/ossl-modules",
+  "OPENSSL_STATIC": "1",
+  "RUSTC": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+  "RUSTC_WORKSPACE_WRAPPER": null,
+  "RUSTC_WRAPPER": null,
+  "RUSTDOC": "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+  "RUSTFLAGS": null,
+  "RUST_TEST_THREADS": "1",
+  "TRNM_PQ_OPENSSL": "/home/qq/chain-system-security-root-provider-20261112-306929/trnm-pq-provider-3.5.9.6hHYb0FI/install/bin/openssl",
+  "TRNM_PQ_OPENSSL_SHA256": "09362cd9a4f5ef29e9cdd9fe26092a706ffe589f1e52c8c5572bd74df7ccdc1d",
+  "TRNM_PQ_OPENSSL_VERSION": "3.5.9"
+}

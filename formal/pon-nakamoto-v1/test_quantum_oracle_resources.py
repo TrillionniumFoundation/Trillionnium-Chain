@@ -240,6 +240,33 @@ class ResourceAccounting(unittest.TestCase):
         report = q.account(replace(request, physical_models=(model,)))
         self.assertEqual(report["physical_sensitivity"][0]["status"], "NO_DISTANCE_IN_DECLARED_RANGE")
 
+    def test_impossible_toffoli_decomposition_depths_are_refused(self):
+        request = q.example(True)
+        # These inputs used to pass validation. Total circuit depth cannot
+        # be smaller than its T depth, and T depth cannot exceed T count.
+        for changes, error in (
+                ({"toffoli_decomposition_depth": 1}, "T_DEPTH_EXCEEDS_DECOMPOSITION_DEPTH"),
+                ({"t_per_toffoli": 2}, "T_DEPTH_EXCEEDS_T_COUNT")):
+            model = replace(request.physical_models[0], **changes)
+            with self.subTest(changes=changes):
+                with self.assertRaisesRegex(ValueError, error):
+                    q.account(replace(request, physical_models=(model,)))
+                # The directly callable calculator must apply the same guard.
+                counts = {"gate_count": 301, "gate_depth": 301,
+                          "toffoli_count": 1, "toffoli_depth": 1,
+                          "direct_t_count": 0, "direct_t_depth": 0}
+                with self.assertRaisesRegex(ValueError, error):
+                    q.physical_estimate(counts, 100, 1, model)
+
+    def test_toffoli_depth_equal_to_count_and_total_depth_remains_admitted(self):
+        request = q.example(True)
+        model = replace(request.physical_models[0], t_per_toffoli=3,
+                        t_depth_per_toffoli=3, toffoli_decomposition_depth=3)
+        report = q.account(replace(request, physical_models=(model,)))
+        self.assertEqual(report["physical_sensitivity"][0]["status"], "CONDITIONAL_ESTIMATE")
+        self.assertFalse(report["physical_sensitivity"][0]["model_is_physical_calibration"])
+        self.assertFalse(report["quantum_work_lower_bound_proved"])
+
     def test_threshold_and_nonfinite_errors_refused(self):
         request = q.example(True)
         for error in ("0.01", "0.1", "NaN", "Infinity", "-0.1", "1e-100000", True, 0.001):

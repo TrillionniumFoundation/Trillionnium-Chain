@@ -23,7 +23,7 @@
 #if !SQLITE_OS_UNIX || OS_VXWORKS || SQLITE_THREADSAFE != 1
 # error "Unexpected SQLite OS/threading configuration"
 #endif
-#if SQLITE_VERSION_NUMBER != 3054000 || SQLITE_ENABLE_LOCKING_STYLE != 0
+#if SQLITE_VERSION_NUMBER != 3054001 || SQLITE_ENABLE_LOCKING_STYLE != 0
 # error "Unexpected SQLite version or Unix locking configuration"
 #endif
 #if SQLITE_MAX_MMAP_SIZE != 0x7fff0000 || SQLITE_DEFAULT_MMAP_SIZE != 0

@@ -6,6 +6,33 @@ use crate::cell::{
 use trnm_protocol::pq_frame::ml_dsa_65_key_id_from_spki;
 use zeroize::Zeroizing;
 
+#[test]
+fn cpv3_retained_key_matches_fresh_verification_for_successive_valid_authorizations() {
+    let (_dir, _store, version) = fixture();
+    let (key, pin) = key();
+    let pins = CellPqKeyPinsV2::new(vec![pin.clone()]).unwrap();
+    let model = owner(version.model().closure(), CellFileRoleV1::Base);
+    let environment = owner(version.environment(), CellFileRoleV1::Configuration);
+    let original = auth(&version, &key);
+    for sequence in [4, 5] {
+        let mut statement = original.statement().clone();
+        statement.sequence = sequence;
+        let signed = CellPqVersionAuthorizationV3::sign(statement, &key).unwrap();
+        let mut current = expected(&version, &pin, &model, &environment);
+        current.authority.sequence = sequence;
+        current.authority.now += sequence;
+        let fresh = signed.verify_at(&version, &current).unwrap();
+        let retained = signed
+            .verify_at_with_pins(&version, &current, &pins)
+            .unwrap();
+        assert_eq!(
+            fresh.version_at(&current).unwrap(),
+            retained.version_at(&current).unwrap()
+        );
+        assert_eq!(fresh.expires_at(), retained.expires_at());
+    }
+}
+
 fn key() -> (PqNativeSigningKey, CellPqKeyPinV2) {
     let seed = Zeroizing::new([72; 32]);
     let spki = PqNativeSigningKey::public_spki_from_seed(&seed);
@@ -190,4 +217,35 @@ fn cpv3_withdrawal_expiry_and_legacy_profile_have_no_fallback() {
     assert!(
         crate::cell::pq::CellPqReleaseAuthorizationV2::decode(&auth.encode().unwrap()).is_err()
     );
+}
+
+#[test]
+fn cpv3_retained_verifier_rechecks_signature_and_complete_authority_pin() {
+    let (_dir, _store, version) = fixture();
+    let (key, pin) = key();
+    let keys = CellPqKeyPinsV2::new(vec![pin.clone()]).unwrap();
+    let model = owner(version.model().closure(), CellFileRoleV1::Base);
+    let environment = owner(version.environment(), CellFileRoleV1::Configuration);
+    let current = expected(&version, &pin, &model, &environment);
+    let authorization = auth(&version, &key);
+    let proof = authorization
+        .verify_at_with_pins(&version, &current, &keys)
+        .unwrap();
+    assert_eq!(proof.version_at(&current).unwrap(), &version);
+    let mut bad = authorization.clone();
+    bad.signature[0] ^= 1;
+    assert!(bad.verify_at_with_pins(&version, &current, &keys).is_err());
+    let mut changed = pin.clone();
+    changed.revoked_at = Some(800);
+    let changed_view = expected(&version, &changed, &model, &environment);
+    assert!(authorization.verify_at(&version, &changed_view).is_ok());
+    assert!(authorization
+        .verify_at_with_pins(&version, &changed_view, &keys)
+        .is_err());
+    let mut next = expected(&version, &pin, &model, &environment);
+    next.authority.sequence += 1;
+    assert!(proof.version_at(&next).is_err());
+    assert!(authorization
+        .verify_at_with_pins(&version, &current, &keys.clone())
+        .is_ok());
 }

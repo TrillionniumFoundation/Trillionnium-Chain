@@ -24,31 +24,29 @@ env:
   CI: "true"
   PYTHONDONTWRITEBYTECODE: "1"
 jobs:
-  qrom-implementation:
-    name: W1 QROM implementation (${{ matrix.source }}, x64)
+  qrom-historical-implementation:
+    name: W1 QROM historical V1 (fixed 0c830e0, x64)
     runs-on: ubuntu-24.04
     timeout-minutes: 20
-    strategy:
-      fail-fast: false
-      matrix:
-        source: [head, prospective-merge]
     env:
-      SOURCE_KIND: ${{ matrix.source }}
-      EXPECTED_SOURCE: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
-      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
-      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+      # V1 pins historical bytes. Its positive replay must execute that source;
+      # the current candidate and its V1 refusal are required in the companion job.
+      SOURCE_KIND: head
+      EXPECTED_SOURCE: 0c830e0be8939ce80c8443c9ad68021b87343a00
+      EXPECTED_HEAD: 0c830e0be8939ce80c8443c9ad68021b87343a00
+      EXPECTED_BASE: 1e4bffc371bcdc53aabc621b6b6cb2485ab36f53
     steps:
       - name: Reserve source-specific observations
         id: observations
         shell: bash
         run: |
           set -euo pipefail
-          w1_qrom_out="$RUNNER_TEMP/pon-w1-qrom-implementation-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          w1_qrom_out="$RUNNER_TEMP/pon-w1-qrom-historical-v1-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           mkdir "$w1_qrom_out"
           printf 'W1_QROM_OUT=%s\n' "$w1_qrom_out" >> "$GITHUB_ENV"
-          printf 'Offline construction mapping, saved-fixture consistency and hypothetical component arithmetic only. No new proof verification, QROM instantiation, quantum-work qualification or consensus admission is established.\n' > "$w1_qrom_out/SCOPE.txt"
+          printf 'Fixed historical source 0c830e0be8939ce80c8443c9ad68021b87343a00 and original 81-name V1 roster only. This result does not validate the current candidate. Current V2 mapping and V1-on-current source drift are separate required jobs. No new proof verification, QROM instantiation, quantum-work qualification or consensus admission is established.\n' > "$w1_qrom_out/SCOPE.txt"
           python3 --version > "$w1_qrom_out/python-version.txt" 2>&1
-      - name: Checkout exact candidate without persistent credentials
+      - name: Checkout immutable historical V1 source without persistent credentials
         id: checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -225,14 +223,34 @@ jobs:
               raise SystemExit('every fixed named test must execute exactly once with success and no skips')
           print('All fixed named controls executed exactly once; security qualification remains false.')
           PY
-      - name: Reproduce the fixed implementation and saved-fixture map
+      - name: Verify historical Git materialization and current refusal controls
+        id: historical_controls
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/w1_qrom_supplemental_controls.py --suite historical \
+            --repo-root "$GITHUB_WORKSPACE" --output-dir "$W1_QROM_OUT" \
+            2>&1 | tee "$W1_QROM_OUT/historical-controls.log"
+      - name: Reproduce the historical map and retain current-tree v1 refusal
         id: implementation
         if: always() && steps.preflight.outcome == 'success'
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/w1_qrom_implementation_audit.py --repo-root "$GITHUB_WORKSPACE" \
-            --output "$W1_QROM_OUT/implementation.json" 2>&1 | tee "$W1_QROM_OUT/implementation.log"
+          python3 scripts/w1_qrom_historical_fixture.py --repo-root "$GITHUB_WORKSPACE" \
+            --output-dir "$W1_QROM_OUT" 2>&1 | tee "$W1_QROM_OUT/implementation.log"
+      - name: Check the separately reviewed current-source mapping
+        id: current_implementation
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/w1_qrom_supplemental_controls.py --suite current \
+            --repo-root "$GITHUB_WORKSPACE" --output-dir "$W1_QROM_OUT" \
+            2>&1 | tee "$W1_QROM_OUT/current-controls.log"
+          python3 scripts/w1_qrom_current_implementation_audit.py --repo-root "$GITHUB_WORKSPACE" \
+            --output "$W1_QROM_OUT/implementation-current.json" 2>&1 | tee "$W1_QROM_OUT/implementation-current.log"
       - name: Preserve all unknown project quantum inputs
         id: budget_unknown
         if: always() && steps.preflight.outcome == 'success'
@@ -252,7 +270,7 @@ jobs:
             > "$W1_QROM_OUT/budget-hypothetical.json" 2> "$W1_QROM_OUT/budget-hypothetical.log"
       - name: Require every report to retain the unqualified security boundary
         id: report_scopes
-        if: always() && steps.implementation.outcome == 'success' && steps.budget_unknown.outcome == 'success' && steps.budget_hypothetical.outcome == 'success'
+        if: always() && steps.implementation.outcome == 'success' && steps.current_implementation.outcome == 'success' && steps.budget_unknown.outcome == 'success' && steps.budget_hypothetical.outcome == 'success'
         shell: bash
         run: |
           set -euo pipefail
@@ -263,7 +281,16 @@ jobs:
           import re
           import sys
 
+          # These generators re-read the reviewed source contracts and actual
+          # checkout. Reports cannot vouch for one another's source identities.
+          repo_root = Path.cwd()
+          sys.path.insert(0, str(repo_root / 'scripts'))
+          import w1_qrom_historical_fixture as historical_materializer
+          import w1_qrom_current_implementation_audit as current_mapper
+          import w1_qrom_supplemental_controls as supplemental_controls
+
           out = Path(sys.argv[1])
+          supplemental_controls.verify_completions(repo_root, out)
           def require(condition, message):
               if not condition:
                   raise ValueError(message)
@@ -289,6 +316,14 @@ jobs:
               return (type(observed) is dict and set(observed) == set(expected)
                       and all(observed[key] is value for key, value in expected.items()))
 
+          def exact_observation(observed, expected, label):
+              # Canonical JSON also distinguishes bool/int and int/float values;
+              # Python container equality alone would accept True == 1.
+              canonical = lambda value: json.dumps(value, sort_keys=True,
+                  separators=(',', ':'), allow_nan=False)
+              require(canonical(observed) == canonical(expected),
+                      label + ': differs from the actual reviewed-source observation')
+
           implementation = read('implementation.json')
           expected_implementation = {
               'post_quantum_soundness_qualified': False,
@@ -304,6 +339,92 @@ jobs:
                   and implementation.get('result') == 'MAPPING_REPRODUCED_SECURITY_HOLD'
                   and exact_qualification(implementation.get('qualification'), expected_implementation),
                   'implementation observation widened its qualification scope')
+          historical_revision = 'cb114b13bf848a77634e40a08b31b30c7c758e7b'
+          historical_contract = '7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22'
+          historical_reader = 'c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354'
+          refusal_reason = 'input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs'
+          require(implementation.get('source_base_commit') == historical_revision
+                  and implementation.get('contract_sha256') == historical_contract,
+                  'historical mapping cannot be relabeled as current-source evidence')
+          historical = read('historical-source.json')
+          fields(historical, {
+              'schema', 'historical_source_commit', 'historical_contract_sha256',
+              'historical_reader_sha256', 'project_files', 'pinned_checkout_inputs', 'scope',
+              'historical_full_repository_checked', 'current_project_mapping',
+              'fresh_cryptographic_verification', 'qualification',
+          }, 'historical materialization')
+          require(historical['schema'] == 'TRNM-W1-QROM-HISTORICAL-MATERIALIZATION1'
+                  and historical['historical_source_commit'] == historical_revision
+                  and historical['historical_contract_sha256'] == historical_contract
+                  and historical['historical_reader_sha256'] == historical_reader
+                  and historical['scope'] == 'historical-declared-project-blobs-and-pinned-fixtures-only'
+                  and exact_qualification(historical['qualification'], expected_implementation)
+                  and historical['historical_full_repository_checked'] is False
+                  and historical['current_project_mapping'] is False
+                  and historical['fresh_cryptographic_verification'] is False,
+                  'historical materialization scope or identity differs')
+          rows = historical['project_files']
+          require(type(rows) is list and len(rows) == len(implementation['project_files'])
+                  and len(rows) > 0, 'historical source roster is incomplete')
+          for row, expected in zip(rows, implementation['project_files']):
+              fields(row, {'path', 'bytes', 'sha256', 'git_mode', 'git_blob_oid'}, 'historical Git source')
+              require({key: row[key] for key in ('path', 'bytes', 'sha256')} == expected
+                      and row['git_mode'] in ('100644', '100755')
+                      and type(row['git_blob_oid']) is str
+                      and re.fullmatch(r'[0-9a-f]{40}', row['git_blob_oid']) is not None,
+                      'historical Git source record differs')
+          expected_pinned = (implementation['helper_execution']['sources']
+                             + implementation['saved_fixture_files']
+                             + [implementation['upstream_snapshot']])
+          require(historical['pinned_checkout_inputs'] == expected_pinned,
+                  'historical helper and saved-fixture identities differ')
+          refusal = read('current-v1-refusal.json')
+          fields(refusal, {
+              'schema', 'result', 'reason', 'historical_source_commit',
+              'historical_contract_sha256', 'historical_reader_sha256', 'target',
+              'current_source_mapping_performed', 'qualification',
+          }, 'current-tree v1 refusal')
+          require(refusal['schema'] == 'TRNM-W1-QROM-HISTORICAL-CURRENT-REFUSAL1'
+                  and refusal['result'] == 'INPUT_REJECTED' and refusal['reason'] == refusal_reason
+                  and refusal['historical_source_commit'] == historical_revision
+                  and refusal['historical_contract_sha256'] == historical_contract
+                  and refusal['historical_reader_sha256'] == historical_reader
+                  and refusal['target'] == 'actual-current-worktree'
+                  and refusal['current_source_mapping_performed'] is False
+                  and exact_qualification(refusal['qualification'], expected_implementation),
+                  'current-tree refusal cannot become a historical or current mapping pass')
+          current = read('implementation-current.json')
+          require(type(current) is dict
+                  and current.get('schema') == 'TRNM-W1-QROM-CURRENT-IMPLEMENTATION-AUDIT2'
+                  and current.get('result') == 'CURRENT_MAPPING_REPRODUCED_SECURITY_HOLD'
+                  and current.get('source_base_commit') != historical_revision
+                  and exact_qualification(current.get('qualification'), expected_implementation),
+                  'separate current-source mapping is missing or widened its qualification')
+          old_refusal = current.get('historical_v1')
+          require(type(old_refusal) is dict
+                  and old_refusal.get('reader_sha256') == historical_reader
+                  and old_refusal.get('contract_sha256') == historical_contract
+                  and old_refusal.get('result') == 'INPUT_REJECTED'
+                  and old_refusal.get('reason') == refusal_reason
+                  and old_refusal.get('named_roster_completed') is False
+                  and old_refusal.get('workflow_passed') is False,
+                  'current mapping must preserve the original historical-reader refusal')
+          closure = current.get('local_path_closure')
+          require(type(closure) is dict and closure.get('source_before_after_equal') is True
+                  and type(closure.get('source_files_checked')) is int
+                  and type(closure.get('files')) is list
+                  and closure['source_files_checked'] == len(closure['files']) > 0,
+                  'current-source declared closure is incomplete or changed')
+          for flag in ('fresh_cryptographic_verification', 'native_binary_executed',
+                       'whole_repository_source_verified', 'third_party_source_closure_verified',
+                       'provider_build_identity_verified', 'git_commit_ancestry_verified'):
+              require(current.get(flag) is False, 'current-source mapping widened: ' + flag)
+          expected_historical, expected_materialization = historical_materializer.historical_mapping(repo_root)
+          exact_observation(implementation, expected_historical, 'historical mapping')
+          exact_observation(historical, expected_materialization, 'historical Git materialization')
+          exact_observation(refusal, historical_materializer.current_v1_refusal(repo_root),
+                            'current-tree historical refusal')
+          exact_observation(current, current_mapper.build_report(repo_root), 'current-source mapping')
           expected_budget = {
               'unconditional_project_security_bits': None,
               'quantum_security_bits': None,
@@ -516,7 +637,7 @@ jobs:
           W1_QROM_STEP_RESULTS: ${{ toJSON(steps) }}
         run: |
           set -euo pipefail
-          w1_qrom_out="$RUNNER_TEMP/pon-w1-qrom-implementation-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          w1_qrom_out="$RUNNER_TEMP/pon-w1-qrom-historical-v1-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           mkdir -p "$w1_qrom_out"
           python3 - "$w1_qrom_out" <<'PY' 2>&1 | tee "$w1_qrom_out/ci-status.log"
           from collections import Counter
@@ -528,6 +649,9 @@ jobs:
 
           out = Path(sys.argv[1])
           steps = json.loads(os.environ['W1_QROM_STEP_RESULTS'])
+          sys.path.insert(0, str(Path.cwd() / 'scripts/ci'))
+          import w1_qrom_supplemental_controls as supplemental_controls
+
           expected_digest = 'ca685b61914435e0be6defdaa0bc4f2368f7430060663315cd96f226adab5bd8'
           required_modules = (
               'test_w1_control_tree_audit',
@@ -621,9 +745,16 @@ jobs:
               named_completion_sha256 = check_named_completion()
           except Exception as error:
               named_completion_error = str(error)
+          supplemental_completion_error = None
+          supplemental_completion_sha256 = None
+          try:
+              supplemental_completion_sha256 = supplemental_controls.verify_completions(Path.cwd(), out)
+          except Exception as error:
+              supplemental_completion_error = str(error)
           required = (
               'observations', 'checkout', 'source_before', 'preflight', 'named_tests',
-              'implementation', 'budget_unknown', 'budget_hypothetical',
+              'historical_controls', 'implementation', 'current_implementation',
+              'budget_unknown', 'budget_hypothetical',
               'report_scopes', 'source_after',
           )
           incomplete = [name for name in required if
@@ -655,9 +786,12 @@ jobs:
               'named_test_completion_error': named_completion_error,
               'named_test_completion_sha256': named_completion_sha256,
               'named_test_completion_verified': named_completion_error is None,
+              'supplemental_completion_error': supplemental_completion_error,
+              'supplemental_completion_sha256': supplemental_completion_sha256,
+              'supplemental_completion_verified': supplemental_completion_error is None,
               'all_required_observations_passed': not incomplete and identity_error is None
-                  and named_completion_error is None,
-              'scope': 'Offline construction and saved-fixture mapping with conditional arithmetic. This workflow does not establish proof or quantum security.',
+                  and named_completion_error is None and supplemental_completion_error is None,
+              'scope': 'Separate historical mapping, actual current-tree historical refusal, reviewed current-source mapping and conditional arithmetic. None establishes proof or quantum security.',
               'post_quantum_soundness_qualified': False,
               'complete_w1_soundness_qualified': False,
               'quantum_work_qualified': False,
@@ -672,14 +806,116 @@ jobs:
           if report['all_required_observations_passed'] is not True:
               raise SystemExit('required observations failed, were skipped or lost source identity: '
                                + ', '.join(incomplete) + '; ' + str(identity_error)
-                               + '; named completion: ' + str(named_completion_error))
+                               + '; named completion: ' + str(named_completion_error)
+                               + '; supplemental completion: ' + str(supplemental_completion_error))
           print('All required exact-source observations completed; project security remains unqualified.')
           PY
       - name: Retain source identities reports logs and every failure
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: w1-qrom-implementation-${{ matrix.source }}-x64-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/pon-w1-qrom-implementation-${{ matrix.source }}-x64-${{ github.run_id }}-${{ github.run_attempt }}/
+          name: w1-qrom-historical-v1-x64-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/pon-w1-qrom-historical-v1-head-x64-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: error
+          retention-days: 30
+
+  qrom-current-implementation:
+    name: W1 QROM current V2 (${{ matrix.source }}, x64)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        source: [head, prospective-merge]
+    env:
+      SOURCE_KIND: ${{ matrix.source }}
+      EXPECTED_SOURCE: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+    steps:
+      - name: Reserve current-source observations
+        id: observations
+        shell: bash
+        run: |
+          set -euo pipefail
+          w1_qrom_current_out="$RUNNER_TEMP/pon-w1-qrom-current-v2-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$w1_qrom_current_out"
+          printf 'W1_QROM_CURRENT_OUT=%s\n' "$w1_qrom_current_out" >> "$GITHUB_ENV"
+          printf 'Current V2 source mapping and original V1 source-pin refusal. Historical V1 positive replay is a separate fixed-source job. All cryptographic, native-execution and production qualifications remain false.\n' > "$w1_qrom_current_out/SCOPE.txt"
+          python3 --version > "$w1_qrom_current_out/python-version.txt" 2>&1
+      - name: Checkout exact current candidate without persistent credentials
+        id: checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_SOURCE }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify complete current source before observations
+        id: source_before
+        if: always() && steps.observations.outcome == 'success' && steps.checkout.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$W1_QROM_CURRENT_OUT/source-before.json" 2>&1 | tee "$W1_QROM_CURRENT_OUT/source-before.log"
+      - name: Audit the current project boundary
+        id: preflight
+        if: always() && steps.source_before.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/project-preflight.sh --audit 2>&1 | tee "$W1_QROM_CURRENT_OUT/preflight.log"
+      - name: Execute all fixed current-source named controls
+        id: named_tests
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/w1_qrom_current_ci.py named --repo-root "$GITHUB_WORKSPACE" --out "$W1_QROM_CURRENT_OUT" 2>&1 | tee "$W1_QROM_CURRENT_OUT/named-tests.log"
+      - name: Retain original V1 refusal and exact current source differences
+        id: historical_drift
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/w1_qrom_current_ci.py drift --repo-root "$GITHUB_WORKSPACE" --out "$W1_QROM_CURRENT_OUT" 2>&1 | tee "$W1_QROM_CURRENT_OUT/historical-drift.log"
+      - name: Reproduce the explicit current V2 mapping
+        id: implementation
+        if: always() && steps.preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/w1_qrom_current_implementation_audit.py --repo-root "$GITHUB_WORKSPACE" --output "$W1_QROM_CURRENT_OUT/implementation.json" 2>&1 | tee "$W1_QROM_CURRENT_OUT/implementation.log"
+      - name: Verify complete current source after observations
+        id: source_after
+        if: always() && steps.source_before.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+          fi
+          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$W1_QROM_CURRENT_OUT/source-after.json" 2>&1 | tee "$W1_QROM_CURRENT_OUT/source-after.log"
+      - name: Require all current stages and original historical rejection
+        id: status
+        if: always()
+        shell: bash
+        env:
+          W1_QROM_CURRENT_STEP_RESULTS: ${{ toJSON(steps) }}
+        run: |
+          set -euo pipefail
+          w1_qrom_current_out="$RUNNER_TEMP/pon-w1-qrom-current-v2-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir -p "$w1_qrom_current_out"
+          python3 scripts/ci/w1_qrom_current_ci.py verify --repo-root "$GITHUB_WORKSPACE" --out "$w1_qrom_current_out" --kind "$SOURCE_KIND" --expected-source "$EXPECTED_SOURCE" --expected-head "$EXPECTED_HEAD" --expected-base "$EXPECTED_BASE" 2>&1 | tee "$w1_qrom_current_out/current-ci-status.log"
+      - name: Retain complete current-source observations and failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: w1-qrom-current-v2-${{ matrix.source }}-x64-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/pon-w1-qrom-current-v2-${{ matrix.source }}-x64-${{ github.run_id }}-${{ github.run_attempt }}/
           if-no-files-found: error
           retention-days: 30

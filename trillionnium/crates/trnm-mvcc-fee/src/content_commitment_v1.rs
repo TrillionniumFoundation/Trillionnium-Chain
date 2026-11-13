@@ -26,6 +26,14 @@ use trnm_protocol::{
     pq_frame::ml_dsa_65_key_id_from_spki,
 };
 
+mod history_v2;
+pub use history_v2::{
+    migration_history_snapshot_size_v2, observe_migration_history_v2,
+    observe_migration_history_with_progress_v2, verify_migration_history_v2,
+    verify_migration_history_with_progress_v2, MigrationHistoryBlockV2, MigrationHistoryReadbackV2,
+    MigrationHistorySourceV2, MAX_MIGRATION_HISTORY_BLOCKS_V2, MAX_MIGRATION_HISTORY_BYTES_V2,
+};
+
 pub const MAX_SNAPSHOT_ROWS_V1: usize = 65_536;
 pub const MAX_SNAPSHOT_KEY_BYTES_V1: usize = 160;
 pub const MAX_SNAPSHOT_VALUE_BYTES_V1: usize = 4096;

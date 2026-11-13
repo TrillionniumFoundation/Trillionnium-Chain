@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "2a06d2933a466675b081bb3b004a732f676d8028",
+    "--output",
+    "/workspace/scratch/8e76272d9258/r1-exact-validation/source.report.json"
+  ],
+  "elapsed_seconds": 5.085120237999945,
+  "exit_code": 0,
+  "native_gate_pass_claimed": false,
+  "scope": "exact committed evidence recovery, unchanged installed source",
+  "source_commit": "2a06d2933a466675b081bb3b004a732f676d8028",
+  "source_tree": "b1b73e10f3e8f4eb152d11bc0278a6a65fc47f9b",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "d97d1133487050ea05126b54e6a79e62c09eeae9f5eb44577be9aa1a1e6632e0"
+}

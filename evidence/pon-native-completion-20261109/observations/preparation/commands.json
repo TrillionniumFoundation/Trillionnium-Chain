@@ -1,0 +1,80 @@
+[
+  {
+    "stage": "base-boundary",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--audit"
+    ],
+    "cwd": "/data/chain-six-d9fb-20261108/publish-source",
+    "exit_code": 0,
+    "elapsed_seconds": 0.11516900500282645
+  },
+  {
+    "stage": "clone",
+    "argv": [
+      "git",
+      "clone",
+      "--shared",
+      "--no-checkout",
+      "/data/chain-six-d9fb-20261108/publish-source",
+      "/data/chain-abg-70ae-20261108/source"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108",
+    "exit_code": 0,
+    "elapsed_seconds": 0.016409332863986492
+  },
+  {
+    "stage": "origin",
+    "argv": [
+      "git",
+      "remote",
+      "set-url",
+      "origin",
+      "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "exit_code": 0,
+    "elapsed_seconds": 0.0041877031326293945
+  },
+  {
+    "stage": "checkout",
+    "argv": [
+      "git",
+      "checkout",
+      "-b",
+      "fix/chain-native-completion-20261108-70ae",
+      "e798d7125724d4b9f98c24d00cc80031f2eab4a9"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "exit_code": 0,
+    "elapsed_seconds": 12.799917665077373
+  },
+  {
+    "stage": "preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "exit_code": 0,
+    "elapsed_seconds": 0.11546955700032413
+  },
+  {
+    "stage": "source-before",
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+      "--output",
+      "/data/chain-abg-70ae-20261108/evidence/preparation/source-before.json"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "exit_code": 0,
+    "elapsed_seconds": 6.682265414856374
+  }
+]

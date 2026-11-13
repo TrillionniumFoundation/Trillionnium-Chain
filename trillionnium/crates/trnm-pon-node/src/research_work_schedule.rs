@@ -189,7 +189,7 @@ impl Anchor {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 struct Point {
     block: Hash,
     height: u64,
@@ -206,6 +206,7 @@ pub struct CheckedBranchSchedule {
     parent_height: u64,
     parent_time: u64,
     median: u64,
+    max_ancestor_time: u64,
     required_target: Hash,
     cumulative_work: Work,
     anchor: Option<Anchor>,
@@ -255,6 +256,11 @@ impl CheckedBranchSchedule {
             parent_height: parent.height,
             parent_time: parent.timestamp,
             median: median(&points),
+            max_ancestor_time: points
+                .iter()
+                .map(|point| point.timestamp)
+                .max()
+                .ok_or("SCHEDULE_HISTORY")?,
             required_target: required(profile, &points)?,
             cumulative_work,
             anchor: branch_anchor(profile, &points)?,
@@ -276,6 +282,20 @@ impl CheckedBranchSchedule {
     }
     pub fn anchor(&self) -> Option<Anchor> {
         self.anchor
+    }
+
+    /// Maximum timestamp of this complete parent path, including genesis.
+    /// Legacy prefixes can be nonmonotone, so the tip alone is insufficient.
+    pub fn max_ancestor_time(&self) -> u64 {
+        self.max_ancestor_time
+    }
+
+    pub fn branch_clock_eligibility(&self, now: u64) -> ClockEligibility {
+        clock_eligibility_at(
+            self.max_ancestor_time
+                .saturating_sub(self.profile.inputs.future_skew_seconds),
+            now,
+        )
     }
 
     /// A retained anchor hint is never allowed to replace this branch's anchor.
@@ -305,6 +325,10 @@ impl CheckedBranchSchedule {
             cumulative_work: self.cumulative_work.checked_add(block_work)?,
             eligible_at: header
                 .timestamp
+                .saturating_sub(self.profile.inputs.future_skew_seconds),
+            branch_eligible_at: self
+                .max_ancestor_time
+                .max(header.timestamp)
                 .saturating_sub(self.profile.inputs.future_skew_seconds),
         })
     }
@@ -380,6 +404,7 @@ pub struct HistoricalCheck {
     block_work: Work,
     cumulative_work: Work,
     eligible_at: u64,
+    branch_eligible_at: u64,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -404,14 +429,16 @@ impl HistoricalCheck {
     pub fn cumulative_work(&self) -> Work {
         self.cumulative_work
     }
-    /// The local clock controls only present eligibility. It cannot alter any
-    /// previously computed target, statement, or historical work contribution.
+    /// Candidate-only current eligibility, not eligibility of its ancestors.
+    /// The local clock cannot alter target, statement or historical credit.
     pub fn clock_eligibility(&self, now: u64) -> ClockEligibility {
-        if now >= self.eligible_at {
-            ClockEligibility::Eligible
-        } else {
-            ClockEligibility::DeferredUntil(self.eligible_at)
-        }
+        clock_eligibility_at(self.eligible_at, now)
+    }
+
+    /// Current eligibility of the complete prefix including this candidate.
+    /// A legacy ancestor may be later than the candidate or its parent.
+    pub fn branch_clock_eligibility(&self, now: u64) -> ClockEligibility {
+        clock_eligibility_at(self.branch_eligible_at, now)
     }
 }
 
@@ -431,6 +458,182 @@ impl FullWorkCheck {
     }
     pub fn wire(&self) -> NativeWire {
         self.wire
+    }
+}
+
+fn clock_eligibility_at(eligible_at: u64, now: u64) -> ClockEligibility {
+    if now >= eligible_at {
+        ClockEligibility::Eligible
+    } else {
+        ClockEligibility::DeferredUntil(eligible_at)
+    }
+}
+
+/// Ephemeral research prefix constructed only by complete W1 packet checks.
+///
+/// Unlike caller-supplied arithmetic history, this private state starts at
+/// genesis and advances through full PNH1 or PGH2 verification. Each append
+/// replays only its candidate proof. It does not authenticate application State,
+/// task authorization, native storage, or production consensus. No checkpoint,
+/// peer work claim, deserialization or CheckedBranchSchedule import exists.
+///
+/// Cloning explicitly branches an already checked research prefix. Its memory
+/// remains bounded by MAX_RESEARCH_HEIGHT; cold reconstruction must replay
+/// complete packets again. This is not a native Node/storage-epoch cache.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct IncrementalWorkSchedule {
+    profile: Profile,
+    points: Vec<Point>,
+    seen: BTreeSet<Hash>,
+    cumulative_work: Work,
+    anchor: Option<Anchor>,
+    max_ancestor_time: u64,
+}
+
+impl IncrementalWorkSchedule {
+    pub fn new(profile: &Profile) -> Self {
+        let config = profile.inputs();
+        Self {
+            profile: profile.clone(),
+            points: vec![Point {
+                block: config.genesis,
+                height: 0,
+                timestamp: config.genesis_time,
+                target: config.initial_target,
+            }],
+            seen: BTreeSet::from([config.genesis]),
+            cumulative_work: Work::default(),
+            anchor: None,
+            max_ancestor_time: config.genesis_time,
+        }
+    }
+
+    pub fn profile_id(&self) -> Hash {
+        self.profile.id()
+    }
+
+    pub fn tip(&self) -> Hash {
+        self.points.last().expect("genesis point is retained").block
+    }
+
+    pub fn height(&self) -> u64 {
+        self.points
+            .last()
+            .expect("genesis point is retained")
+            .height
+    }
+
+    pub fn cumulative_work(&self) -> Work {
+        self.cumulative_work
+    }
+
+    pub fn anchor(&self) -> Option<Anchor> {
+        self.anchor
+    }
+
+    pub fn max_ancestor_time(&self) -> u64 {
+        self.max_ancestor_time
+    }
+
+    pub fn branch_clock_eligibility(&self, now: u64) -> ClockEligibility {
+        clock_eligibility_at(
+            self.max_ancestor_time
+                .saturating_sub(self.profile.inputs.future_skew_seconds),
+            now,
+        )
+    }
+
+    /// Export arithmetic about the next candidate without replaying ancestors.
+    /// A terminal prefix at height 4096 is valid, but has no successor context.
+    pub fn next_context(&self) -> Result<CheckedBranchSchedule> {
+        let parent = self.points.last().ok_or("SCHEDULE_HISTORY")?;
+        Ok(CheckedBranchSchedule {
+            profile: self.profile.clone(),
+            parent: parent.block,
+            parent_height: parent.height,
+            parent_time: parent.timestamp,
+            median: median(&self.points),
+            max_ancestor_time: self.max_ancestor_time,
+            required_target: required(&self.profile, &self.points)?,
+            cumulative_work: self.cumulative_work,
+            anchor: self.anchor,
+        })
+    }
+
+    /// Every ordinary refusal, including a final cancellation, leaves self
+    /// unchanged. The returned receipt is published with the prefix once.
+    pub fn append_pnh1_packet(
+        &mut self,
+        packet: &Packet,
+        progress: &mut impl FnMut() -> Result<()>,
+    ) -> Result<FullWorkCheck> {
+        ensure(
+            self.profile.inputs.wire == NativeWire::Pnh1,
+            "SCHEDULE_WIRE",
+        )?;
+        let block = packet.id()?;
+        ensure(!self.seen.contains(&block), "SCHEDULE_DUPLICATE_BLOCK")?;
+        let checked = self.next_context()?.check_pnh1_packet(packet, progress)?;
+        self.finish_append(&packet.header, checked, progress)
+    }
+
+    /// Uses the actual PGH2 challenge, never the nested PNH1 ledger challenge.
+    pub fn append_pgh2_packet(
+        &mut self,
+        packet: &GrowthPacket,
+        progress: &mut impl FnMut() -> Result<()>,
+    ) -> Result<FullWorkCheck> {
+        ensure(
+            self.profile.inputs.wire == NativeWire::Pgh2,
+            "SCHEDULE_WIRE",
+        )?;
+        let block = packet.id()?;
+        ensure(!self.seen.contains(&block), "SCHEDULE_DUPLICATE_BLOCK")?;
+        let checked = self.next_context()?.check_pgh2_packet(packet, progress)?;
+        self.finish_append(&packet.header.ledger, checked, progress)
+    }
+
+    // Only the two full-verification methods above may reach this publisher.
+    // Derive every fallible value and take the final cancellation checkpoint
+    // before modifying any prefix field. No successor target is needed here:
+    // accepting the terminal height must not accidentally request height 4097.
+    fn finish_append(
+        &mut self,
+        header: &Header,
+        checked: FullWorkCheck,
+        progress: &mut impl FnMut() -> Result<()>,
+    ) -> Result<FullWorkCheck> {
+        let parent = self.points.last().ok_or("SCHEDULE_HISTORY")?;
+        let next_anchor = match self.profile.inputs.policy {
+            Policy::AnchoredAsert {
+                activation_height, ..
+            } if header.height == activation_height => Some(Anchor {
+                key: AnchorKey {
+                    profile: self.profile.id,
+                    block: checked.block,
+                },
+                height: header.height,
+                target: header.target,
+                parent_time: parent.timestamp,
+            }),
+            _ => self.anchor,
+        };
+        let point = Point {
+            block: checked.block,
+            height: header.height,
+            timestamp: header.timestamp,
+            target: header.target,
+        };
+        let next_work = checked.historical.cumulative_work;
+        let next_maximum = self.max_ancestor_time.max(header.timestamp);
+        progress()?;
+
+        self.points.push(point);
+        self.seen.insert(checked.block);
+        self.cumulative_work = next_work;
+        self.anchor = next_anchor;
+        self.max_ancestor_time = next_maximum;
+        Ok(checked)
     }
 }
 
@@ -689,4 +892,102 @@ pub fn inspect_retained_branch(
     }
     progress()?;
     CheckedBranchSchedule::from_parent_first(profile, parent, &rows)
+}
+
+#[cfg(test)]
+mod incremental_boundary_tests {
+    use super::*;
+
+    #[test]
+    fn terminal_arithmetic_fixture_accepts_one_complete_w1_then_refuses_successor() {
+        let profile = Profile::new(ProfileInputs {
+            network: [1; 32],
+            parameters: [2; 32],
+            genesis: [3; 32],
+            genesis_time: 1000,
+            initial_target: [255; 32],
+            pow_limit: [255; 32],
+            legacy_interval: 16,
+            spacing_seconds: 10,
+            future_skew_seconds: 120,
+            wire: NativeWire::Pnh1,
+            policy: Policy::FixedTarget,
+        })
+        .unwrap();
+        let mut prefix = IncrementalWorkSchedule::new(&profile);
+
+        // Private arithmetic boundary fixture only. These 4095 prefix IDs are
+        // synthetic; this test does NOT claim 4096 complete proof executions.
+        // There is deliberately no production API for importing this state.
+        let work = consensus::required_work([255; 32]).unwrap();
+        for height in 1..MAX_RESEARCH_HEIGHT {
+            let block = hash(b"incremental-boundary-fixture", &[&height.to_le_bytes()]);
+            prefix.points.push(Point {
+                block,
+                height,
+                timestamp: 1000 + height,
+                target: [255; 32],
+            });
+            prefix.seen.insert(block);
+            prefix.cumulative_work = prefix.cumulative_work.checked_add(work).unwrap();
+            prefix.max_ancestor_time = 1000 + height;
+        }
+        let before = prefix.cumulative_work();
+        let (a, b) = crate::maintenance();
+        let header = Header {
+            network: profile.inputs.network,
+            parameters: profile.inputs.parameters,
+            parent: prefix.tip(),
+            height: MAX_RESEARCH_HEIGHT,
+            timestamp: 1000 + MAX_RESEARCH_HEIGHT,
+            target: prefix.next_context().unwrap().required_target(),
+            miner: [4; 32],
+            transactions: sequence_root("transactions", &[]),
+            state: [6; 32],
+            receipts: [7; 32],
+            work_task: pon_work::task_id(&a, &b).unwrap(),
+            nonce: 0,
+        };
+        let proof = pon_work::prove(header.challenge(), &a, &b).unwrap();
+        let packet = Packet {
+            header,
+            transactions: vec![],
+            proof,
+        };
+        let accepted = prefix.append_pnh1_packet(&packet, &mut || Ok(())).unwrap();
+        assert_eq!(prefix.height(), MAX_RESEARCH_HEIGHT);
+        assert_eq!(prefix.tip(), accepted.block());
+        assert_eq!(prefix.cumulative_work(), before.checked_add(work).unwrap());
+        assert_eq!(
+            prefix.next_context().unwrap_err().to_string(),
+            "SCHEDULE_HORIZON"
+        );
+
+        let terminal = prefix.clone();
+        let mut successor = packet.clone();
+        successor.header.parent = prefix.tip();
+        successor.header.height += 1;
+        successor.header.timestamp += 1;
+        let mut callbacks = 0;
+        assert_eq!(
+            prefix
+                .append_pnh1_packet(&successor, &mut || {
+                    callbacks += 1;
+                    Ok(())
+                })
+                .unwrap_err()
+                .to_string(),
+            "SCHEDULE_HORIZON"
+        );
+        assert_eq!(callbacks, 0);
+        assert_eq!(prefix, terminal);
+        assert_eq!(
+            prefix
+                .append_pnh1_packet(&packet, &mut || Ok(()))
+                .unwrap_err()
+                .to_string(),
+            "SCHEDULE_DUPLICATE_BLOCK"
+        );
+        assert_eq!(prefix, terminal);
+    }
 }

@@ -1,0 +1,75 @@
+{
+  "schema": "trnm-sqlite-fixed-plan-v1",
+  "roster_source": "Original committed 9021d15ffe1dfdfb1358a2372b5a472babbf80ac observations, preserved by evidence-only child 39d4dcd3b9c10532cac058679ac99af53382da6d; names only, no old outcomes inherited.",
+  "feature_selection": "Existing default Cargo features; no --all-features or feature overrides.",
+  "required_fresh_executions": {
+    "focused": 17,
+    "retained": 15
+  },
+  "focused": [
+    {
+      "package": "trnm-data-availability",
+      "tests": [
+        "cell::discovery::pq::epoch_directory::tests::sqlite_writer_and_commit_contention_preserve_deadline_clock_high_water_and_epoch_retirement",
+        "cell::retention::tests::repair_intent_and_charge_must_survive_sqlite_suppression_before_payload",
+        "cell::retention::tests::sqlite_like_wildcard_cannot_hide_a_user_trigger_at_repair_or_reopen",
+        "tests::certified_batch_and_da_head_share_one_fresh_sqlite_snapshot",
+        "tests::sqlite_dangling_sidecars_refuse_creation_before_database_exists",
+        "tests::sqlite_dangling_sidecars_refuse_existing_store_without_touching_files",
+        "tests::sqlite_sidecar_inspection_error_refuses_before_database_creation",
+        "tests::sqlite_sidecar_names_preserve_non_utf8_database_bytes"
+      ]
+    },
+    {
+      "package": "trnm-mvcc-fee",
+      "tests": [
+        "store::object_delta_tests::object_delta_sqlite_full_after_partial_writes_rolls_back_exactly_v1",
+        "tests::sqlite_sidecar_inspection_error_refuses_before_database_creation",
+        "tests::sqlite_sidecar_objects_refuse_creation_and_reopen_without_file_effects"
+      ]
+    },
+    {
+      "package": "trnm-service-settlement",
+      "tests": [
+        "tests::sqlite_sidecar_inspection_error_refuses_before_database_creation",
+        "tests::sqlite_sidecar_objects_refuse_creation_and_reopen_without_file_effects"
+      ]
+    },
+    {
+      "package": "trnm-task-kernel",
+      "tests": [
+        "archive_store::tests::sqlite_archive_inspection_error_refuses_before_creating_database",
+        "archive_store::tests::sqlite_archive_sidecars_refuse_creation_and_reopen_without_file_effects",
+        "tests::sqlite_sidecar_inspection_error_refuses_before_database_creation",
+        "tests::sqlite_sidecar_objects_refuse_creation_and_reopen_without_file_effects"
+      ]
+    }
+  ],
+  "retained": {
+    "trnm-data-availability": [
+      "tests::schema_drift_and_sidecar_are_fail_closed_without_migration",
+      "tests::row_tamper_is_rejected_on_reopen",
+      "tests::open_existing_requires_precreated_regular_nonsymlink_store"
+    ],
+    "trnm-mvcc-fee": [
+      "tests::schema_sidecar_and_self_consistent_row_tamper_fail_closed",
+      "tests::open_existing_requires_precreated_regular_nonsymlink_store",
+      "tests::crash_outcomes_reopen_to_exact_source_target_or_fence"
+    ],
+    "trnm-service-settlement": [
+      "tests::schema_sidecar_row_and_self_consistent_state_substitution_fail_closed",
+      "tests::open_existing_requires_precreated_regular_nonsymlink_store",
+      "tests::commit_uncertainty_reopens_to_exact_source_target_or_permanent_fence"
+    ],
+    "trnm-task-kernel": [
+      "tests::schema_sidecar_row_and_journal_tamper_fail_closed_without_migration",
+      "tests::open_existing_requires_precreated_regular_nonsymlink_store",
+      "tests::crash_outcomes_are_exact_and_third_state_is_permanently_fenced",
+      "archive_store::tests::initialization_handles_long_final_names_and_concurrent_publishers",
+      "archive_store::tests::archive_delete_moves_rows_and_reopen_preserves_proof",
+      "archive_store::tests::schema_and_archive_row_tamper_fail_closed_before_reopen_or_retry"
+    ]
+  },
+  "acceptance_granted": false,
+  "production_activation": false
+}

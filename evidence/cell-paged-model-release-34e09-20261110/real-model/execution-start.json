@@ -1,0 +1,15 @@
+{
+  "binary": "/home/qq/work/chain-cell-paged-model-34e09-20261110-target/release/examples/cell_sealed_research_paged_next_use_v1",
+  "binary_sha256": "8f17e829b29c9c7f88dd0b54a7c41c4c269197e2669ad9251fd009021e5f1309",
+  "build_profile": "release",
+  "external_cleanup_watchdog_seconds": 360,
+  "identity": {
+    "commit": "8dee97636e2b6932fb7a22b1b54f2cab09ae8406",
+    "status": "",
+    "tree": "237a733df7d91c4eb2206014e0f5408e34565e12"
+  },
+  "internal_original_seconds": 300,
+  "output": "/home/qq/work/chain-cell-paged-model-34e09-20261110-operation-02",
+  "source_sha256": "f1a5f11fafda16ff865b1cc71fab4d64aa652e2ca7addb5a2a3ab9ce03deead6",
+  "started_unix_ns": 1794312208862129094
+}

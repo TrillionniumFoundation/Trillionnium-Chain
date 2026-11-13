@@ -1,0 +1,1179 @@
+diff --git a/trillionnium/crates/trnm-data-availability/src/cell.rs b/trillionnium/crates/trnm-data-availability/src/cell.rs
+--- a/trillionnium/crates/trnm-data-availability/src/cell.rs
++++ b/trillionnium/crates/trnm-data-availability/src/cell.rs
+@@ -91,6 +91,9 @@
+ };
+ pub use delta::{fetch_delta_to_file, CellChunkDeltaV1, CellDeltaPlanV1, MAX_CELL_DELTA_BYTES_V1};
+ pub use erasure::{
++    restore_cell_paged_version_to_cache_v2, CellPagedShardRestoreBudgetV2,
++    CellPagedShardRestoreLimitsV2, CellPagedShardRestoreReadbackV2,
++    CellPagedShardRestoreRequestV2, CellPagedShardRestoreUsageV2,
+     CellPagedRetainedShardPlanFileV2, CellPagedRetainedShardPlanRequestV2,
+     CellPagedRetainedShardPlanV2, CellRetainedShardChunkV1, CellRetainedShardPagePinV2,
+     CellRetainedShardPageV2, CellRetainedShardPlanFileV1, CellRetainedShardPlanRequestV1,
+diff --git a/trillionnium/crates/trnm-data-availability/src/cell/erasure.rs b/trillionnium/crates/trnm-data-availability/src/cell/erasure.rs
+--- a/trillionnium/crates/trnm-data-availability/src/cell/erasure.rs
++++ b/trillionnium/crates/trnm-data-availability/src/cell/erasure.rs
+@@ -23,6 +23,9 @@
+     MAX_CELL_RS46_PROVIDER_DESCRIPTOR_BYTES_V1,
+ };
+ pub use retained_plan::{
++    restore_cell_paged_version_to_cache_v2, CellPagedShardRestoreBudgetV2,
++    CellPagedShardRestoreLimitsV2, CellPagedShardRestoreReadbackV2,
++    CellPagedShardRestoreRequestV2, CellPagedShardRestoreUsageV2,
+     CellPagedRetainedShardPlanFileV2, CellPagedRetainedShardPlanRequestV2,
+     CellPagedRetainedShardPlanV2, CellRetainedShardChunkV1, CellRetainedShardPagePinV2,
+     CellRetainedShardPageV2, CellRetainedShardPlanFileV1, CellRetainedShardPlanRequestV1,
+diff --git a/trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan.rs b/trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan.rs
+--- a/trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan.rs
++++ b/trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan.rs
+@@ -29,6 +29,9 @@
+ mod paged;
+ pub use file::CellRetainedShardPlanFileV1;
+ pub use paged::{
++    restore_cell_paged_version_to_cache_v2, CellPagedShardRestoreBudgetV2,
++    CellPagedShardRestoreLimitsV2, CellPagedShardRestoreReadbackV2,
++    CellPagedShardRestoreRequestV2, CellPagedShardRestoreUsageV2,
+     CellPagedRetainedShardPlanFileV2, CellPagedRetainedShardPlanRequestV2,
+     CellPagedRetainedShardPlanV2, CellRetainedShardPagePinV2, CellRetainedShardPageV2,
+     MAX_CELL_PAGED_RETAINED_CHUNKS_V2, MAX_CELL_RETAINED_SHARD_PAGES_V2,
+diff --git a/trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged.rs b/trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged.rs
+--- a/trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged.rs
++++ b/trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged.rs
+@@ -10,7 +10,13 @@
+ 
+ mod codec;
+ mod file;
++mod restore;
+ pub use file::CellPagedRetainedShardPlanFileV2;
++pub use restore::{
++    restore_cell_paged_version_to_cache_v2, CellPagedShardRestoreBudgetV2,
++    CellPagedShardRestoreLimitsV2, CellPagedShardRestoreReadbackV2,
++    CellPagedShardRestoreRequestV2, CellPagedShardRestoreUsageV2,
++};
+ 
+ /// The existing TCR1/CSP1 history limit remains a whole-plan admission limit.
+ pub const MAX_CELL_PAGED_RETAINED_CHUNKS_V2: usize = 4096;
+diff --git a/trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore.rs b/trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore.rs
+new file mode 100644
+--- /dev/null
++++ b/trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore.rs
+@@ -0,0 +1,332 @@
++//! Complete selected-version reconstruction from CRR2/CRG2 committed shards.
++//!
++//! This consumer path writes only its quota-controlled CAS. It never repairs a
++//! provider, reads catalog payload, settles a lease or grants execution rights.
++//! Completion is a sequential current observation, not an atomic snapshot.
++
++use std::{collections::BTreeSet, time::Instant};
++
++use super::{CellPagedRetainedShardPlanFileV2, MAX_CELL_PAGED_RETAINED_CHUNKS_V2};
++use crate::cell::{
++    require, CellContentDigestV2, CellContentReadSessionV2, CellContentReadUsageV2, CellDigestV1,
++    CellErrorV1, CellReleaseLimitsV1, CellResultV1, CellRs46CacheTargetV1,
++    CellRs46RepairBudgetV1, CellRs46RepairUsageV1, CellRs46ShardContractV1,
++    CellRs46ShardInputV1, CellStoreV1, CellVersionCatalogAnchorV3, CellVersionCommitmentV1,
++    CellVersionContentV2, CellVersionLoaderContextV1, CellVersionRetentionStoreV3,
++    MAX_CELL_RS46_SHARD_WIRE_BYTES_V1,
++};
++
++/// Independent caller pins and the original complete-catalog file owner.
++/// Exactly one complete version is restored; other protected versions remain
++/// part of root/catalog integrity checks, not a claim of consumer delivery.
++pub struct CellPagedShardRestoreRequestV2<'a, 'owner> {
++    pub plan_file: &'a CellPagedRetainedShardPlanFileV2,
++    pub catalog: &'a CellVersionRetentionStoreV3,
++    pub current_height: u64,
++    pub original_root_operation: CellDigestV1,
++    pub content: &'a CellVersionContentV2,
++    pub expected: &'a CellVersionLoaderContextV1<'owner>,
++    pub content_pin: CellContentDigestV2,
++    pub target: &'a CellStoreV1,
++}
++
++#[derive(Clone, Copy, Debug)]
++pub struct CellPagedShardRestoreLimitsV2 {
++    pub deadline: Instant,
++    pub maximum_attempts: u32,
++    pub maximum_chunks: u64,
++    pub maximum_provider_reads: u64,
++    pub maximum_input_bytes: u64,
++    pub maximum_reconstruction_bytes: u64,
++    pub maximum_cache_bytes: u64,
++    pub maximum_readback_payload_bytes: u64,
++    pub maximum_readback_chunks: u64,
++}
++
++/// Whole-attempt potential reservations retained after admitted failure. These
++/// are not measured traffic, physical storage, CPU, payment debits or evidence
++/// of independent failure domains.
++#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
++pub struct CellPagedShardRestoreUsageV2 {
++    pub attempts_committed: u32,
++    pub chunks_committed: u64,
++    pub provider_reads_committed: u64,
++    pub input_bytes_committed: u64,
++    pub reconstruction_bytes_committed: u64,
++    pub cache_bytes_committed: u64,
++    pub readback_payload_bytes_committed: u64,
++    pub readback_chunks_committed: u64,
++}
++
++#[derive(Clone, Debug, Eq, PartialEq)]
++struct Scope {
++    plan: CellDigestV1,
++    catalog: CellVersionCatalogAnchorV3,
++    root: CellDigestV1,
++    version: CellVersionCommitmentV1,
++    content: CellContentDigestV2,
++}
++
++/// One non-cloneable original deadline and allowance across failures/retries.
++/// The first admitted attempt also binds the original plan/root/content scope.
++pub struct CellPagedShardRestoreBudgetV2 {
++    limits: CellPagedShardRestoreLimitsV2,
++    usage: CellPagedShardRestoreUsageV2,
++    scope: Option<Scope>,
++    codec: CellRs46RepairBudgetV1,
++    readback: CellContentReadSessionV2,
++}
++
++impl CellPagedShardRestoreBudgetV2 {
++    pub fn new(limits: CellPagedShardRestoreLimitsV2) -> CellResultV1<Self> {
++        require(
++            (1..=1024).contains(&limits.maximum_attempts),
++            "paged restore finite attempts",
++        )?;
++        let codec_attempts = limits
++            .maximum_attempts
++            .checked_mul(MAX_CELL_PAGED_RETAINED_CHUNKS_V2 as u32)
++            .ok_or(CellErrorV1::Invalid("paged restore attempt overflow"))?;
++        let readback = CellContentReadSessionV2::new(
++            CellReleaseLimitsV1 {
++                max_payload_bytes: limits.maximum_readback_payload_bytes,
++                max_chunks: limits.maximum_readback_chunks,
++                deadline: limits.deadline,
++            },
++            limits.maximum_attempts,
++        )?;
++        Ok(Self {
++            limits,
++            usage: CellPagedShardRestoreUsageV2::default(),
++            scope: None,
++            codec: CellRs46RepairBudgetV1::new_with_cache(
++                limits.deadline,
++                codec_attempts,
++                limits.maximum_input_bytes,
++                limits.maximum_reconstruction_bytes,
++                limits.maximum_cache_bytes,
++            ),
++            readback,
++        })
++    }
++
++    pub fn usage(&self) -> CellPagedShardRestoreUsageV2 {
++        self.usage
++    }
++
++    pub fn codec_usage(&self) -> CellRs46RepairUsageV1 {
++        self.codec.usage()
++    }
++
++    pub fn readback_usage(&self) -> CellContentReadUsageV2 {
++        self.readback.usage()
++    }
++
++    pub fn deadline(&self) -> Instant {
++        self.limits.deadline
++    }
++
++    fn admit(&mut self, scope: Scope, cost: CellPagedShardRestoreUsageV2) -> CellResultV1<()> {
++        check(self.limits.deadline)?;
++        require(
++            self.scope.as_ref().is_none_or(|original| original == &scope),
++            "paged restore original scope changed",
++        )?;
++        let add = |left: u64, right: u64| {
++            left.checked_add(right)
++                .ok_or(CellErrorV1::Invalid("paged restore budget overflow"))
++        };
++        let next = CellPagedShardRestoreUsageV2 {
++            attempts_committed: self.usage.attempts_committed.checked_add(1)
++                .ok_or(CellErrorV1::Invalid("paged restore budget overflow"))?,
++            chunks_committed: add(self.usage.chunks_committed, cost.chunks_committed)?,
++            provider_reads_committed: add(self.usage.provider_reads_committed, cost.provider_reads_committed)?,
++            input_bytes_committed: add(self.usage.input_bytes_committed, cost.input_bytes_committed)?,
++            reconstruction_bytes_committed: add(self.usage.reconstruction_bytes_committed, cost.reconstruction_bytes_committed)?,
++            cache_bytes_committed: add(self.usage.cache_bytes_committed, cost.cache_bytes_committed)?,
++            readback_payload_bytes_committed: add(self.usage.readback_payload_bytes_committed, cost.readback_payload_bytes_committed)?,
++            readback_chunks_committed: add(self.usage.readback_chunks_committed, cost.readback_chunks_committed)?,
++        };
++        require(
++            next.attempts_committed <= self.limits.maximum_attempts
++                && next.chunks_committed <= self.limits.maximum_chunks
++                && next.provider_reads_committed <= self.limits.maximum_provider_reads
++                && next.input_bytes_committed <= self.limits.maximum_input_bytes
++                && next.reconstruction_bytes_committed <= self.limits.maximum_reconstruction_bytes
++                && next.cache_bytes_committed <= self.limits.maximum_cache_bytes
++                && next.readback_payload_bytes_committed <= self.limits.maximum_readback_payload_bytes
++                && next.readback_chunks_committed <= self.limits.maximum_readback_chunks,
++            "paged restore whole attempt budget",
++        )?;
++        self.scope = Some(scope);
++        self.usage = next;
++        Ok(())
++    }
++}
++
++/// Actual complete selected-version CAS readback, not whole-catalog custody,
++/// native settlement, future availability or execution rights.
++#[derive(Clone, Debug, Eq, PartialEq)]
++#[non_exhaustive]
++pub struct CellPagedShardRestoreReadbackV2 {
++    pub plan: CellDigestV1,
++    pub catalog: CellVersionCatalogAnchorV3,
++    pub original_root_operation: CellDigestV1,
++    pub version: CellVersionCommitmentV1,
++    pub content: CellContentDigestV2,
++    pub manifests: usize,
++    pub chunks: u64,
++    pub payload_bytes: u64,
++    pub verified_shards: u64,
++    pub rejected_shards: u64,
++    pub missing_shards: u64,
++    pub usage: CellPagedShardRestoreUsageV2,
++    pub codec_usage: CellRs46RepairUsageV1,
++    pub readback_usage: CellContentReadUsageV2,
++}
++
++/// Reconstruct every selected-version chunk from original committed CRS1 bytes.
++/// `None` records an unavailable slot; an error is preserved as a read failure.
++/// All six callbacks share the supplied original absolute deadline. Callback I/O
++/// is cooperative and must enforce its own transport/allocation bounds; this
++/// function caps each returned wire before decoding and never uses CAS/catalog
++/// payload as a recovery source. Its own live payload work is one codeword.
++///
++/// A failed attempt may leave valid quota-controlled cache entries. It neither
++/// returns complete readback nor rolls back those entries or original duties.
++pub fn restore_cell_paged_version_to_cache_v2(
++    request: CellPagedShardRestoreRequestV2<'_, '_>,
++    budget: &mut CellPagedShardRestoreBudgetV2,
++    mut read: impl FnMut(&CellRs46ShardContractV1, Instant) -> CellResultV1<Option<Vec<u8>>>,
++) -> CellResultV1<CellPagedShardRestoreReadbackV2> {
++    let CellPagedShardRestoreRequestV2 {
++        plan_file, catalog, current_height, original_root_operation,
++        content, expected, content_pin, target,
++    } = request;
++    let deadline = budget.deadline();
++    check(deadline)?;
++    let plan = plan_file.read_complete_current(catalog, current_height, deadline)?;
++    let pinned = content.pin_for_owner(expected, content_pin)?;
++    require(
++        original_root_operation != [0; 32]
++            && plan.roots().iter().any(|root| {
++                root.operation() == original_root_operation && root.version() == expected.commitment
++            }),
++        "paged restore original complete version root",
++    )?;
++    let mut selected = BTreeSet::new();
++    let mut cost = CellPagedShardRestoreUsageV2::default();
++    for manifest in content.version().manifests() {
++        check(deadline)?;
++        pinned.verify_manifest(manifest)?;
++        let id = manifest.id();
++        let position = plan.manifests().binary_search_by_key(&id, |value| value.id())
++            .map_err(|_| CellErrorV1::Invalid("paged restore manifest absent from root"))?;
++        require(
++            plan.manifests()[position] == *manifest && selected.insert(id),
++            "paged restore exact selected manifest",
++        )?;
++        for chunk in manifest.chunks() {
++            // Exact members of the bounded root union: at most 4,096 chunks
++            // of at most 4 MiB enter these sums, including repeated references.
++            let source = u64::from(chunk.size);
++            let wire = super::super::super::SHARD_HEADER_BYTES as u64 + source.div_ceil(4);
++            cost.chunks_committed += 1;
++            cost.provider_reads_committed += 6;
++            cost.input_bytes_committed += 6 * wire;
++            cost.reconstruction_bytes_committed += source + 6 * wire;
++            cost.cache_bytes_committed += 2 * source;
++            cost.readback_payload_bytes_committed += source;
++            cost.readback_chunks_committed += 1;
++        }
++    }
++    require(
++        cost.chunks_committed > 0
++            && cost.chunks_committed <= MAX_CELL_PAGED_RETAINED_CHUNKS_V2 as u64,
++        "paged restore selected chunk bound",
++    )?;
++    let scope = Scope {
++        plan: plan.commitment(), catalog: plan.catalog_anchor(),
++        root: original_root_operation, version: expected.commitment, content: content_pin,
++    };
++    // Reserve all potential work and final readback before callbacks or writes.
++    // Failed reads/codec/publication never refund this original allowance.
++    budget.admit(scope.clone(), cost)?;
++    let mut chunks = 0_u64;
++    let mut verified_shards = 0_u64;
++    let mut rejected_shards = 0_u64;
++    let mut missing_shards = 0_u64;
++    for page_index in 0..plan.page_count() {
++        check(deadline)?;
++        let page = plan_file.read_page(page_index, deadline)?;
++        for chunk in page.chunks() {
++            if !selected.contains(&chunk.manifest()) {
++                continue;
++            }
++            check(deadline)?;
++            let mut wires = Vec::with_capacity(6);
++            for (slot, contract) in chunk.slots().iter().enumerate() {
++                check(deadline)?;
++                if let Some(wire) = read(contract, deadline)? {
++                    require(
++                        wire.len() <= MAX_CELL_RS46_SHARD_WIRE_BYTES_V1
++                            && wire.len() as u64 <= contract.manifest().size(),
++                        "paged restore shard wire bound",
++                    )?;
++                    wires.push((slot as u8, wire));
++                }
++                check(deadline)?;
++            }
++            let inputs: Vec<_> = wires.iter().map(|(index, wire)| CellRs46ShardInputV1 {
++                index: *index, wire,
++            }).collect();
++            let codeword = chunk.slots()[0].codeword();
++            let repair = codeword.repair_chunk_to_cache(
++                chunk.binding(), codeword.id(), &inputs,
++                CellRs46CacheTargetV1 { store: target, content: &pinned },
++                &mut budget.codec,
++            )?;
++            require(
++                repair.cache_readback_observed(),
++                "paged restore actual chunk cache readback",
++            )?;
++            chunks += 1;
++            verified_shards += repair.verified_slots().len() as u64;
++            rejected_shards += repair.rejected_slots().len() as u64;
++            missing_shards += repair.missing_slots().len() as u64;
++            check(deadline)?;
++        }
++    }
++    require(
++        chunks == cost.chunks_committed,
++        "paged restore complete selected chunk coverage",
++    )?;
++    for manifest in content.version().manifests() {
++        check(deadline)?;
++        target.put_manifest_with_deadline(manifest.id(), &manifest.encode(), Some(deadline))?;
++    }
++    // Scan complete ordered actual target bytes, checking original full SHA-256
++    // and independently pinned TCV2 SHA-512 payload and chunk commitments.
++    let observed = content.verify_cached(target, expected, content_pin, &mut budget.readback)?;
++    require(
++        plan_file.read_complete_current(catalog, current_height, deadline)? == plan,
++        "paged restore final complete root changed",
++    )?;
++    check(deadline)?;
++    Ok(CellPagedShardRestoreReadbackV2 {
++        plan: scope.plan, catalog: scope.catalog, original_root_operation,
++        version: scope.version, content: scope.content,
++        manifests: selected.len(), chunks,
++        payload_bytes: cost.readback_payload_bytes_committed,
++        verified_shards, rejected_shards, missing_shards,
++        usage: budget.usage(), codec_usage: budget.codec_usage(),
++        readback_usage: observed.usage(),
++    })
++}
++
++fn check(deadline: Instant) -> CellResultV1<()> {
++    require(Instant::now() < deadline, "paged restore original deadline")
++}
++
++#[cfg(test)]
++mod tests;
+diff --git a/trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore/tests.rs b/trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore/tests.rs
+new file mode 100644
+--- /dev/null
++++ b/trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore/tests.rs
+@@ -0,0 +1,693 @@
++//! Real local provider bytes, complete version pins and irreversible budgets.
++//! These fixtures grant no native funding, custody settlement or execution rights.
++
++use super::*;
++use crate::cell::*;
++use sha2::{Digest, Sha256};
++use std::{cell::RefCell, collections::BTreeMap, fs, time::Duration};
++
++fn deadline() -> Instant {
++    Instant::now() + Duration::from_secs(60)
++}
++
++fn identity(tag: u8, ordinal: u64) -> CellDigestV1 {
++    let mut hash = Sha256::new();
++    hash.update(b"test-paged-consumer-restore");
++    hash.update([tag]);
++    hash.update(ordinal.to_be_bytes());
++    hash.finalize().into()
++}
++
++fn cache(path: &std::path::Path) -> CellStoreV1 {
++    CellStoreV1::open(
++        path,
++        CellCacheConfigV4 {
++            max_database_bytes: 64 << 20,
++            max_logical_bytes: 32 << 20,
++            max_chunk_rows: 1024,
++            max_manifest_rows: 1024,
++        },
++    )
++    .unwrap()
++}
++
++struct Fixture {
++    directory: tempfile::TempDir,
++    catalog: CellVersionRetentionStoreV3,
++    plan: CellPagedRetainedShardPlanFileV2,
++    contract: CellVersionRetentionContractV3,
++    content: CellVersionContentV2,
++    providers: RefCell<[CellRs46ShardProviderV1; 6]>,
++    slots: BTreeMap<CellDigestV1, usize>,
++}
++
++impl Fixture {
++    fn new(model_chunks: usize, page_width: u16) -> Self {
++        let directory = tempfile::tempdir().unwrap();
++        let source_path = directory.path().join("publisher.sqlite");
++        let staging_path = directory.path().join("delivery.sqlite");
++        let source = cache(&source_path);
++        let make = |context: CellContextV1, bytes: &[u8]| {
++            let manifest = CellManifestV1::new(
++                context,
++                bytes.len() as u64,
++                Sha256::digest(bytes).into(),
++                16_384,
++                bytes
++                    .chunks(16_384)
++                    .map(|chunk| CellChunkV1 {
++                        size: chunk.len() as u32,
++                        sha256: Sha256::digest(chunk).into(),
++                    })
++                    .collect(),
++            )
++            .unwrap();
++            source.put_manifest(manifest.id(), &manifest.encode()).unwrap();
++            for (chunk, bytes) in manifest.chunks().iter().zip(bytes.chunks(16_384)) {
++                source.put_chunk(chunk, bytes).unwrap();
++            }
++            manifest
++        };
++        let context = |runtime| CellContextV1 {
++            family: "paged-consumer-restore".into(),
++            base: [1; 32],
++            parent: [2; 32],
++            tokenizer: [3; 32],
++            layout: [4; 32],
++            runtime,
++        };
++        let closure = |manifest: &CellManifestV1, role, path: &str, generation| {
++            CellReleaseClosureV1::new(
++                manifest.context().clone(),
++                generation,
++                identity(70, generation),
++                vec![0],
++                vec![CellClosureFileV1 {
++                    path: path.into(),
++                    role,
++                    manifest: manifest.id(),
++                    payload_sha256: manifest.payload_sha256(),
++                    payload_bytes: manifest.size(),
++                    dependencies: vec![],
++                }],
++            )
++            .unwrap()
++        };
++        let environment_manifest = make(context(identity(71, 0)), b"pinned local runtime");
++        let environment = closure(
++            &environment_manifest,
++            CellFileRoleV1::Configuration,
++            "runtime.bin",
++            11,
++        );
++        let mut bytes = vec![0x53; model_chunks * 16_384];
++        for (index, chunk) in bytes.chunks_mut(16_384).enumerate() {
++            chunk[..8].copy_from_slice(&(index as u64).to_be_bytes());
++        }
++        let model_manifest = make(context(environment.id()), &bytes);
++        let model = closure(&model_manifest, CellFileRoleV1::Base, "base.bin", 17);
++        let pin = |value: &CellReleaseClosureV1, role, chunks, payload| CellVersionLoaderPinV3 {
++            closure_id: value.id(),
++            context: value.release().context().clone(),
++            selected_generation: value.selected_generation(),
++            loader_profile: value.loader_profile(),
++            required_roles: vec![role],
++            max_payload_bytes: payload,
++            max_chunks: chunks,
++        };
++        let model_pin = pin(&model, CellFileRoleV1::Base, model_chunks as u64, bytes.len() as u64);
++        let environment_pin = pin(&environment, CellFileRoleV1::Configuration, 1, 4096);
++        let mut manifests = vec![environment_manifest, model_manifest];
++        manifests.sort_by_key(CellManifestV1::id);
++        let version = CellVersionManifestV1::new(
++            CellModelReleaseRootV1::new(model, vec![]).unwrap(),
++            environment,
++            manifests,
++        )
++        .unwrap();
++        let objects = version
++            .manifests()
++            .iter()
++            .enumerate()
++            .map(|(index, manifest)| CellRetentionContractV1 {
++                operation: identity(10, index as u64),
++                funding_operation: identity(11, index as u64),
++                manifest: manifest.clone(),
++                retain_from_height: 10,
++                retain_until_height: 120,
++                maximum_repair_bytes: 2 * manifest.size(),
++                successor: None,
++            })
++            .collect();
++        let contract = CellVersionRetentionContractV3 {
++            operation: identity(1, 0),
++            funding_operation: identity(2, 0),
++            responsible_owner: [41; 32],
++            failure_domain: [42; 32],
++            replica_index: 0,
++            required_replicas: 1,
++            retain_from_height: 10,
++            retain_until_height: 100,
++            repair_deadline_height: 90,
++            version,
++            model: model_pin,
++            environment: environment_pin,
++            tensor_model: None,
++            snapshot: None,
++            objects,
++        };
++        let model = contract.model.loader_context();
++        let environment = contract.environment.loader_context();
++        let expected = CellVersionLoaderContextV1 {
++            commitment: contract.version.commitment(),
++            model: &model,
++            environment: &environment,
++        };
++        let mut readback = CellContentReadSessionV2::new(
++            CellReleaseLimitsV1 {
++                max_payload_bytes: 8 << 20,
++                max_chunks: 1024,
++                deadline: deadline(),
++            },
++            1,
++        )
++        .unwrap();
++        let content = CellVersionContentV2::capture_cached(
++            &contract.version,
++            &source,
++            &expected,
++            &mut readback,
++        )
++        .unwrap();
++        let mut catalog = CellVersionRetentionStoreV3::create(
++            &directory.path().join("catalog"),
++            CellVersionRetentionConfigV3 {
++                retention: CellRetentionConfigV1 {
++                    store_id: [73; 32],
++                    capacity_bytes: 8 << 20,
++                    maximum_obligations: 64,
++                },
++                maximum_versions: 16,
++                maximum_metadata_bytes: 16 << 20,
++            },
++        )
++        .unwrap();
++        catalog
++            .reserve_version(contract.clone(), catalog.anchor(deadline()).unwrap(), deadline())
++            .unwrap();
++        catalog
++            .acknowledge_version(contract.operation, &source, deadline())
++            .unwrap();
++        let configs: [CellRs46ShardProviderConfigV1; 6] = std::array::from_fn(|slot| {
++            CellRs46ShardProviderConfigV1 {
++                placement: CellRs46ShardPlacementV1 {
++                    provider_id: identity(30, slot as u64),
++                    responsible_owner: identity(31, slot as u64),
++                    administrator: identity(32, slot as u64),
++                    failure_domain: identity(33, slot as u64),
++                    domain_evidence: identity(34, slot as u64),
++                    repair_owner: identity(35, slot as u64),
++                },
++                owner_generation: 1,
++                capacity_bytes: 4 << 20,
++                maximum_obligations: 256,
++            }
++        });
++        let expected_catalog = catalog.anchor(deadline()).unwrap();
++        let plan = CellPagedRetainedShardPlanFileV2::create(
++            &directory.path().join("plan"),
++            &mut catalog,
++            CellPagedRetainedShardPlanRequestV2 {
++                operation: identity(3, 0),
++                expected_catalog,
++                current_height: 10,
++                required_until_height: 90,
++                providers: configs.clone(),
++                funding_operations: (0..model_chunks + 1)
++                    .map(|index| {
++                        std::array::from_fn(|slot| identity(40, (6 * index + slot) as u64))
++                    })
++                    .collect(),
++                maximum_repairs_per_slot: 2,
++                chunks_per_page: page_width,
++            },
++            deadline(),
++        )
++        .unwrap();
++        let staging = cache(&staging_path);
++        let mut providers: [CellRs46ShardProviderV1; 6] = configs
++            .into_iter()
++            .enumerate()
++            .map(|(slot, config)| {
++                CellRs46ShardProviderV1::create(
++                    &directory.path().join(format!("provider-{slot}")),
++                    config,
++                )
++                .unwrap()
++            })
++            .collect::<Vec<_>>()
++            .try_into()
++            .ok()
++            .unwrap();
++        let mut slots = BTreeMap::new();
++        for index in 0..plan.plan().page_count() {
++            let page = plan.read_page(index, deadline()).unwrap();
++            for (local, chunk) in page.chunks().iter().enumerate() {
++                plan.stage_chunk_from_catalog(index, local, &mut catalog, &staging, 11, deadline())
++                    .unwrap();
++                for (slot, contract) in chunk.slots().iter().enumerate() {
++                    providers[slot]
++                        .publish(contract, contract.operation(), &staging, deadline())
++                        .unwrap();
++                    slots.insert(contract.operation(), slot);
++                }
++            }
++        }
++        drop(source);
++        drop(staging);
++        fs::remove_file(source_path).unwrap();
++        fs::remove_file(staging_path).unwrap();
++        let arena = directory.path().join("catalog/objects/payload.arena");
++        let length = fs::metadata(&arena).unwrap().len() as usize;
++        fs::write(arena, vec![0; length]).unwrap();
++        Self {
++            directory,
++            catalog,
++            plan,
++            contract,
++            content,
++            providers: RefCell::new(providers),
++            slots,
++        }
++    }
++
++    fn limits(&self, attempts: u32) -> CellPagedShardRestoreLimitsV2 {
++        CellPagedShardRestoreLimitsV2 {
++            deadline: deadline(),
++            maximum_attempts: attempts,
++            maximum_chunks: 4096,
++            maximum_provider_reads: 6 * 4096,
++            maximum_input_bytes: 32 << 20,
++            maximum_reconstruction_bytes: 32 << 20,
++            maximum_cache_bytes: 32 << 20,
++            maximum_readback_payload_bytes: 32 << 20,
++            maximum_readback_chunks: 4096,
++        }
++    }
++
++    fn read(&self, contract: &CellRs46ShardContractV1, end: Instant) -> CellResultV1<Option<Vec<u8>>> {
++        self.read_subset(contract, end, &[0, 1, 2, 3])
++    }
++
++    fn read_subset(
++        &self,
++        contract: &CellRs46ShardContractV1,
++        end: Instant,
++        available: &[usize],
++    ) -> CellResultV1<Option<Vec<u8>>> {
++        let slot = self.slots[&contract.operation()];
++        if !available.contains(&slot) {
++            return Ok(None);
++        }
++        Ok(Some(
++            self.providers.borrow_mut()[slot]
++                .read(contract.binding(), contract.operation(), end, &mut || Ok(()))?
++                .shard()
++                .encode(),
++        ))
++    }
++
++    fn restore(
++        &self,
++        target: &CellStoreV1,
++        budget: &mut CellPagedShardRestoreBudgetV2,
++        read: impl FnMut(&CellRs46ShardContractV1, Instant) -> CellResultV1<Option<Vec<u8>>>,
++    ) -> CellResultV1<CellPagedShardRestoreReadbackV2> {
++        let model = self.contract.model.loader_context();
++        let environment = self.contract.environment.loader_context();
++        restore_cell_paged_version_to_cache_v2(
++            CellPagedShardRestoreRequestV2 {
++                plan_file: &self.plan,
++                catalog: &self.catalog,
++                current_height: 11,
++                original_root_operation: self.contract.operation,
++                content: &self.content,
++                expected: &CellVersionLoaderContextV1 {
++                    commitment: self.contract.version.commitment(),
++                    model: &model,
++                    environment: &environment,
++                },
++                content_pin: self.content.commitment(),
++                target,
++            },
++            budget,
++            read,
++        )
++    }
++
++    fn provider_payloads(&self) -> Vec<CellDigestV1> {
++        (0..6)
++            .map(|slot| {
++                Sha256::digest(
++                    fs::read(self.directory.path().join(format!("provider-{slot}/payload.arena")))
++                        .unwrap(),
++                )
++                .into()
++            })
++            .collect()
++    }
++}
++
++#[test]
++fn paged_consumer_restore_crosses_128_from_four_actual_targets_without_copy_fallback() {
++    let fixture = Fixture::new(128, 128);
++    assert_eq!(fixture.plan.plan().page_count(), 2);
++    assert_eq!(fixture.plan.plan().chunk_count(), 129);
++    let target = cache(&fixture.directory.path().join("consumer.sqlite"));
++    assert_eq!(target.cache_usage().unwrap().chunk_rows, 0);
++    let before = fixture.catalog.inventory(11, deadline()).unwrap();
++    let provider_payloads = fixture.provider_payloads();
++    let mut budget = CellPagedShardRestoreBudgetV2::new(fixture.limits(1)).unwrap();
++    let mut reads = 0;
++    let result = fixture
++        .restore(&target, &mut budget, |contract, end| {
++            reads += 1;
++            fixture.read(contract, end)
++        })
++        .unwrap();
++    assert_eq!(reads, 129 * 6);
++    assert_eq!(result.original_root_operation, fixture.contract.operation);
++    assert_eq!(result.version, fixture.contract.version.commitment());
++    assert_eq!(result.content, fixture.content.commitment());
++    assert_eq!(result.plan, fixture.plan.commitment());
++    assert_eq!(result.chunks, 129);
++    assert_eq!(result.verified_shards, 129 * 4);
++    assert_eq!(result.missing_shards, 129 * 2);
++    assert_eq!(result.rejected_shards, 0);
++    assert_eq!(result.usage.attempts_committed, 1);
++    assert_eq!(result.usage.provider_reads_committed, 129 * 6);
++    assert_eq!(result.codec_usage.attempts_committed, 129);
++    assert_eq!(result.readback_usage.attempted_scans, 1);
++    assert_eq!(target.cache_usage().unwrap().chunk_rows, 129);
++    for manifest in fixture.content.version().manifests() {
++        target.verify_complete(manifest).unwrap();
++    }
++    let after = fixture.catalog.inventory(11, deadline()).unwrap();
++    assert_eq!(after.anchor, before.anchor);
++    assert_eq!(after.usage, before.usage);
++    assert_eq!(fixture.provider_payloads(), provider_payloads);
++}
++
++#[test]
++fn paged_consumer_restore_missing_last_page_refuses_before_reads_or_cache_writes() {
++    let fixture = Fixture::new(2, 2);
++    let target = cache(&fixture.directory.path().join("consumer.sqlite"));
++    let last = fs::read_dir(fixture.directory.path().join("plan"))
++        .unwrap()
++        .map(|entry| entry.unwrap().path())
++        .filter(|path| path.file_name().unwrap() != "root.crr2")
++        .max()
++        .unwrap();
++    fs::remove_file(last).unwrap();
++    let mut budget = CellPagedShardRestoreBudgetV2::new(fixture.limits(1)).unwrap();
++    let mut reads = 0;
++    assert!(fixture
++        .restore(&target, &mut budget, |_, _| {
++            reads += 1;
++            Ok(None)
++        })
++        .is_err());
++    assert_eq!(reads, 0);
++    assert_eq!(target.cache_usage().unwrap().chunk_rows, 0);
++}
++
++#[test]
++fn paged_consumer_restore_late_missing_quorum_spends_one_original_attempt() {
++    let fixture = Fixture::new(2, 2);
++    let target = cache(&fixture.directory.path().join("consumer.sqlite"));
++    let last = fixture.plan.read_page(1, deadline()).unwrap();
++    let missing_operation = last.chunks()[0].slots()[3].operation();
++    let mut budget = CellPagedShardRestoreBudgetV2::new(fixture.limits(1)).unwrap();
++    assert!(fixture
++        .restore(&target, &mut budget, |contract, end| {
++            if contract.operation() == missing_operation {
++                Ok(None)
++            } else {
++                fixture.read(contract, end)
++            }
++        })
++        .is_err());
++    let charged = budget.usage();
++    assert_eq!(charged.attempts_committed, 1);
++    assert_eq!(charged.chunks_committed, 3);
++    assert_eq!(charged.provider_reads_committed, 18);
++    // Two full 16 KiB model chunks and the 20-byte runtime file. Each CRS1
++    // wire carries its 81-byte header, including unavailable slots' potential.
++    assert_eq!(charged.input_bytes_committed, 50_640);
++    assert_eq!(charged.reconstruction_bytes_committed, 83_428);
++    assert_eq!(charged.cache_bytes_committed, 65_576);
++    assert_eq!(charged.readback_payload_bytes_committed, 32_788);
++    assert_eq!(charged.readback_chunks_committed, 3);
++    let mut reads = 0;
++    assert!(fixture
++        .restore(&target, &mut budget, |contract, end| {
++            reads += 1;
++            fixture.read(contract, end)
++        })
++        .is_err());
++    assert_eq!(reads, 0, "a failed attempt must not mint another allowance");
++    assert_eq!(budget.usage(), charged);
++}
++
++#[test]
++fn paged_consumer_restore_global_short_budget_refuses_before_callback() {
++    let fixture = Fixture::new(2, 2);
++    let target = cache(&fixture.directory.path().join("consumer.sqlite"));
++    let mut limits = fixture.limits(1);
++    limits.maximum_provider_reads = 17;
++    let mut budget = CellPagedShardRestoreBudgetV2::new(limits).unwrap();
++    let mut reads = 0;
++    assert!(fixture
++        .restore(&target, &mut budget, |_, _| {
++            reads += 1;
++            Ok(None)
++        })
++        .is_err());
++    assert_eq!(reads, 0);
++    assert_eq!(target.cache_usage().unwrap().chunk_rows, 0);
++}
++
++#[test]
++fn paged_consumer_restore_wrong_content_pin_refuses_even_when_shards_are_available() {
++    let fixture = Fixture::new(2, 2);
++    let target = cache(&fixture.directory.path().join("consumer.sqlite"));
++    let model = fixture.contract.model.loader_context();
++    let environment = fixture.contract.environment.loader_context();
++    let expected = CellVersionLoaderContextV1 {
++        commitment: fixture.contract.version.commitment(),
++        model: &model,
++        environment: &environment,
++    };
++    let mut wrong = fixture.content.commitment();
++    wrong[0] ^= 1;
++    let mut budget = CellPagedShardRestoreBudgetV2::new(fixture.limits(1)).unwrap();
++    let mut reads = 0;
++    assert!(restore_cell_paged_version_to_cache_v2(
++        CellPagedShardRestoreRequestV2 {
++            plan_file: &fixture.plan,
++            catalog: &fixture.catalog,
++            current_height: 11,
++            original_root_operation: fixture.contract.operation,
++            content: &fixture.content,
++            expected: &expected,
++            content_pin: wrong,
++            target: &target,
++        },
++        &mut budget,
++        |contract, end| {
++            reads += 1;
++            fixture.read(contract, end)
++        },
++    )
++    .is_err());
++    assert_eq!(reads, 0);
++    assert_eq!(target.cache_usage().unwrap().chunk_rows, 0);
++}
++
++#[test]
++fn paged_consumer_restore_corrupt_committed_shard_cannot_be_hidden_by_available_peers() {
++    let fixture = Fixture::new(2, 2);
++    let target = cache(&fixture.directory.path().join("consumer.sqlite"));
++    let mut budget = CellPagedShardRestoreBudgetV2::new(fixture.limits(1)).unwrap();
++    let mut corrupt = false;
++    let result = fixture.restore(&target, &mut budget, |contract, end| {
++        let mut wire = fixture.read(contract, end)?;
++        if !corrupt {
++            if let Some(wire) = &mut wire {
++                *wire.last_mut().unwrap() ^= 1;
++                corrupt = true;
++            }
++        }
++        Ok(wire)
++    });
++    assert!(corrupt);
++    assert!(result.is_err());
++    assert_eq!(target.cache_usage().unwrap().chunk_rows, 0);
++}
++
++#[test]
++fn paged_consumer_restore_rechecks_earlier_page_bytes_after_last_provider_read() {
++    let fixture = Fixture::new(2, 2);
++    let target = cache(&fixture.directory.path().join("consumer.sqlite"));
++    let first = fs::read_dir(fixture.directory.path().join("plan"))
++        .unwrap()
++        .map(|entry| entry.unwrap().path())
++        .filter(|path| path.file_name().unwrap() != "root.crr2")
++        .min()
++        .unwrap();
++    let mut changed = fs::read(&first).unwrap();
++    *changed.last_mut().unwrap() ^= 1;
++    let mut budget = CellPagedShardRestoreBudgetV2::new(fixture.limits(1)).unwrap();
++    let mut reads = 0;
++    assert!(fixture
++        .restore(&target, &mut budget, |contract, end| {
++            let wire = fixture.read(contract, end)?;
++            reads += 1;
++            if reads == 18 {
++                // Preserve the inode and length of a previously observed page.
++                fs::write(&first, &changed)?;
++            }
++            Ok(wire)
++        })
++        .is_err());
++    assert_eq!(reads, 18);
++}
++
++#[test]
++fn paged_consumer_restore_catalog_change_cannot_be_hidden_by_a_readable_selected_version() {
++    let mut fixture = Fixture::new(2, 2);
++    let target = cache(&fixture.directory.path().join("consumer.sqlite"));
++    let mut added = fixture.contract.clone();
++    added.operation = identity(80, 0);
++    added.funding_operation = identity(81, 0);
++    fixture
++        .catalog
++        .reserve_version(
++            added,
++            fixture.catalog.anchor(deadline()).unwrap(),
++            deadline(),
++        )
++        .unwrap();
++    let current = fixture.catalog.anchor(deadline()).unwrap();
++    let mut budget = CellPagedShardRestoreBudgetV2::new(fixture.limits(1)).unwrap();
++    let mut reads = 0;
++    assert!(fixture
++        .restore(&target, &mut budget, |contract, end| {
++            reads += 1;
++            fixture.read(contract, end)
++        })
++        .is_err());
++    assert_eq!(reads, 0);
++    assert_eq!(target.cache_usage().unwrap().chunk_rows, 0);
++    assert_eq!(fixture.catalog.anchor(deadline()).unwrap(), current);
++}
++
++#[test]
++fn paged_consumer_restore_cold_targets_share_the_original_cumulative_allowance() {
++    let fixture = Fixture::new(2, 2);
++    let provider_payloads = fixture.provider_payloads();
++    let mut budget = CellPagedShardRestoreBudgetV2::new(fixture.limits(2)).unwrap();
++    let mut first_usage = None;
++    for attempt in 1..=2 {
++        let target = cache(&fixture.directory.path().join(format!("consumer-{attempt}.sqlite")));
++        let result = fixture
++            .restore(&target, &mut budget, |contract, end| fixture.read(contract, end))
++            .unwrap();
++        assert_eq!(result.usage.attempts_committed, attempt);
++        assert_eq!(result.usage.chunks_committed, u64::from(attempt) * 3);
++        assert_eq!(result.usage.provider_reads_committed, u64::from(attempt) * 18);
++        assert_eq!(result.readback_usage.attempted_scans, attempt);
++        if let Some(first) = first_usage {
++            assert_eq!(result.usage.readback_payload_bytes_committed, 2 * first);
++        } else {
++            first_usage = Some(result.usage.readback_payload_bytes_committed);
++        }
++        for manifest in fixture.content.version().manifests() {
++            target.verify_complete(manifest).unwrap();
++        }
++    }
++    assert_eq!(fixture.provider_payloads(), provider_payloads);
++    let charged = budget.usage();
++    let target = cache(&fixture.directory.path().join("consumer-refused.sqlite"));
++    let mut reads = 0;
++    assert!(fixture
++        .restore(&target, &mut budget, |_, _| {
++            reads += 1;
++            Ok(None)
++        })
++        .is_err());
++    assert_eq!(reads, 0);
++    assert_eq!(budget.usage(), charged);
++    assert_eq!(target.cache_usage().unwrap().chunk_rows, 0);
++}
++
++#[test]
++fn paged_consumer_restore_uses_parity_when_two_systematic_targets_are_unavailable() {
++    let fixture = Fixture::new(2, 2);
++    let target = cache(&fixture.directory.path().join("parity-consumer.sqlite"));
++    let mut budget = CellPagedShardRestoreBudgetV2::new(fixture.limits(1)).unwrap();
++    let result = fixture
++        .restore(&target, &mut budget, |contract, end| {
++            fixture.read_subset(contract, end, &[0, 2, 4, 5])
++        })
++        .unwrap();
++    assert_eq!(result.verified_shards, 12);
++    assert_eq!(result.missing_shards, 6);
++    assert_eq!(result.rejected_shards, 0);
++    assert_eq!(result.payload_bytes, 32_788);
++    assert_eq!(result.usage.input_bytes_committed, 50_640);
++    assert_eq!(result.usage.reconstruction_bytes_committed, 83_428);
++    assert_eq!(result.usage.cache_bytes_committed, 65_576);
++    assert_eq!(result.usage.readback_chunks_committed, 3);
++    assert_eq!(result.readback_usage.reserved_payload_bytes, 32_788);
++    assert_eq!(result.readback_usage.reserved_chunks, 3);
++    for manifest in fixture.content.version().manifests() {
++        target.verify_complete(manifest).unwrap();
++    }
++}
++
++#[test]
++fn paged_consumer_restore_requires_the_original_retained_root_operation() {
++    let fixture = Fixture::new(2, 2);
++    let target = cache(&fixture.directory.path().join("consumer.sqlite"));
++    let model = fixture.contract.model.loader_context();
++    let environment = fixture.contract.environment.loader_context();
++    let expected = CellVersionLoaderContextV1 {
++        commitment: fixture.contract.version.commitment(),
++        model: &model,
++        environment: &environment,
++    };
++    let mut budget = CellPagedShardRestoreBudgetV2::new(fixture.limits(1)).unwrap();
++    let mut reads = 0;
++    assert!(restore_cell_paged_version_to_cache_v2(
++        CellPagedShardRestoreRequestV2 {
++            plan_file: &fixture.plan,
++            catalog: &fixture.catalog,
++            current_height: 11,
++            original_root_operation: identity(99, 0),
++            content: &fixture.content,
++            expected: &expected,
++            content_pin: fixture.content.commitment(),
++            target: &target,
++        },
++        &mut budget,
++        |contract, end| {
++            reads += 1;
++            fixture.read(contract, end)
++        },
++    )
++    .is_err());
++    assert_eq!(reads, 0);
++    assert_eq!(budget.usage().attempts_committed, 0);
++    assert_eq!(target.cache_usage().unwrap().chunk_rows, 0);
++}
+diff --git a/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md b/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
+--- a/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
++++ b/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
+@@ -1,3 +1,25 @@
++**Paged selected-version consumer restoration — NOT YET RUN; qualification HOLD:**
++
++The V2 capacity continuation adds `restore_cell_paged_version_to_cache_v2`
++to reconstruct one independently pinned complete version from its original
++CRR2/CRG2 shard contracts into a quota-controlled consumer cache. Admission
++checks the complete current catalog/pages, original root operation, TCV1
++loader policy and independent TCV2 content pin before reads or cache writes.
++One original deadline and scope-bound cumulative budget reserve the complete
++selected-version attempt across all pages, including potential provider reads,
++codec work, cache publication/readback and final ordered content readback.
++Recovery uses the supplied original shard bytes without publisher, delivery-cache
++or catalog-payload fallback. Completion requires full TCV2 readback and another
++complete current page/catalog check. The consumer path grants no provider
++repair, funding, settlement or execution authority. Eleven added local tests
++cover 129 synthetic chunks across two pages, actual local provider targets,
++a parity-bearing four-slot subset, pin/page/catalog refusals, late quorum failure,
++original cumulative limits and final same-inode page corruption. These new tests
++are **NOT YET RUN**; prior C2 results remain scoped to their original source.
++The [capacity contract](specs/pon/CELL_STORAGE_CAPACITY_V2.md) retains the real-model
++native paged reconstruction, independent domains/WAN, paid retention lifecycle,
++ordinary Hepta FinalUse and production qualification as **HOLD**.
++
+ **Complete model capacity continuation — HOLD:**
+ 
+ The [explicit V2 capacity profiles](specs/pon/CELL_STORAGE_CAPACITY_V2.md)
+diff --git a/docs/development/specs/pon/CELL_STORAGE_CAPACITY_V2.md b/docs/development/specs/pon/CELL_STORAGE_CAPACITY_V2.md
+--- a/docs/development/specs/pon/CELL_STORAGE_CAPACITY_V2.md
++++ b/docs/development/specs/pon/CELL_STORAGE_CAPACITY_V2.md
+@@ -128,6 +128,55 @@
+ not include metadata/funding preflight CPU. The latter still uses the original
+ wall deadline. This distinction must remain in cost reports.
+ 
++## Selected-version consumer reconstruction
++
++`restore_cell_paged_version_to_cache_v2` adds an explicit consumer path from
++the original CRR2/CRG2 contracts to the selected version's bounded CAS. It
++accepts the complete plan file and current catalog, original root operation,
++independent loader context, TCV2 content record/pin and target cache. Complete
++current pages/catalog and exact version membership are checked before provider
++callbacks or cache publication. Other protected versions remain covered by
++root/catalog integrity checks; this receipt observes delivery of the selected
++complete version only.
++
++One non-cloneable `CellPagedShardRestoreBudgetV2` holds the original absolute
++deadline, first admitted plan/root/content scope and cumulative whole-attempt
++reservations. Those reservations cover every selected chunk, six potential
++provider reads per chunk, full possible shard-wire input, reconstruction,
++cache publication/readback and final complete ordered content readback. An
++admitted failed attempt keeps its full reservation. A later page, retry or
++new consumer cache does not replenish that owner. These are conservative
++logical reservations, not physical traffic, CPU or payment measurements.
++
++Each callback receives its original committed shard contract and the same
++deadline. `None` records an unavailable slot; callback errors abort the
++attempt. Returned wires are bounded before codec admission. The existing
++codeword primitive validates original shard identities and recovered bytes,
++including the pinned TCV2 SHA-512 chunk value, before cache publication.
++Four verified obtainable shards are required. Recovery has no payload fallback
++to the publisher, a delivery cache or the catalog arena. Callback transport
++and allocation remain the callback owner's responsibility.
++
++Final success requires a complete ordered target-cache readback under TCV1
++and the independently pinned TCV2, then rechecks every current plan page and
++the complete catalog. An earlier page changed during processing must refuse
++completion. Valid partial cache entries may remain after failure. No consumer
++receipt replaces complete native custody readback, repairs a provider, changes
++original funding/operation/Unknown responsibilities, settles a lease or grants
++loader/Hepta FinalUse authority.
++
++Current new test status: **NOT YET RUN**. Eleven cases exercise 129 synthetic
++chunks across two pages (128 actual 16 KiB model chunks plus a 20-byte runtime
++fixture), real local provider payloads, four-slot parity reconstruction,
++source/staging-cache removal and unavailable catalog payload, independent pin
++and original-root refusals, missing/changed pages, current catalog drift,
++late insufficient quorum, exact retained reservations and two cold consumers
++sharing the same original allowance. Six local provider directories remain
++one operator's local fixture. These cases do not establish an actual model's
++native funded paged RS46 cycle, independent failure domains/WAN, continuous
++paid retention, ordinary Hepta FinalUse or production qualification; those
++remain **HOLD**.
++
+ ## Immutable typed release snapshot
+ 
+ The [CTS1 release snapshot](CELL_RELEASE_SNAPSHOT_V1.md) combines TCV1,

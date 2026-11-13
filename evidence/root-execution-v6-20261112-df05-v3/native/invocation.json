@@ -1,0 +1,10 @@
+{
+  "base": "8970e2c81abbf48e2a4d3f0802d79624ab20fadd",
+  "driver_sha256": "eea97a0ab2a7b7d4246a4f762198d3347340491ef6b6549eba5e97500f368be6",
+  "expected_source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "expected_tree": "5d2538f404e32319ea1084a6c79f37c52503546f",
+  "operation_key": "root-operation-20261112-df05-native-validation-v3",
+  "previous_tested_tree": "b1882c2e46827abfd1db5f8744be043d5776df6d",
+  "scope": "original complete Root runners and exact-source gates; no external effects; no publication in this process",
+  "source_parent": "92934b64f80ee9b20bcc070a08ca0966b7c5741d"
+}

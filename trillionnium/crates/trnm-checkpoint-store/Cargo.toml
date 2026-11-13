@@ -34,6 +34,7 @@ consensus_authority = false
 fs2 = "0.4"
 libc = "0.2"
 sha2 = "0.10"
+socket2 = "=0.6.1"
 trnm-checkpoint-types = { version = "0.1.0", path = "../trnm-checkpoint-types" }
 
 [dev-dependencies]

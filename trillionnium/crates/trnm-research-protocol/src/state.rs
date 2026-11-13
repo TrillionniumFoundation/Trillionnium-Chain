@@ -8,14 +8,38 @@ use crate::types::{
     ExternalKey, IssueWorkloadReceiptV1, MatchEvidenceCommitmentV1, ObjectRefV1, ResearchCommandV1,
     ResearchObjectKind, PROTOCOL_VERSION,
 };
+use ed25519_dalek::VerifyingKey;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 use thiserror::Error;
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+/// Snapshot schema v2 includes signer context in the applied-command journal
+/// so signer nonce floors survive persistence and restart. This is deliberately
+/// a fresh schema namespace; v1 snapshots must not be treated as complete state.
+pub const SNAPSHOT_VERSION_V2: u8 = 2;
+type SignerNonceKey = (String, String, u8, [u8; 32]);
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 pub struct AuthorityIdentityV1 {
     pub signer_did: String,
     pub public_key: [u8; 32],
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct AuthorityIdentityWireV1 {
+    signer_did: String,
+    public_key: [u8; 32],
+}
+
+impl<'de> Deserialize<'de> for AuthorityIdentityV1 {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let wire = AuthorityIdentityWireV1::deserialize(deserializer)?;
+        Self::new(wire.signer_did, wire.public_key).map_err(serde::de::Error::custom)
+    }
 }
 
 impl AuthorityIdentityV1 {
@@ -37,6 +61,14 @@ impl AuthorityIdentityV1 {
         {
             return Err(ProtocolStateError::InvalidAuthoritySet);
         }
+        // Authority keys are consensus trust anchors. Reject malformed or
+        // small-order Ed25519 points at genesis/configuration time rather than
+        // admitting an unusable identity that can never authenticate commands.
+        let key = VerifyingKey::from_bytes(&self.public_key)
+            .map_err(|_| ProtocolStateError::InvalidAuthoritySet)?;
+        if key.is_weak() {
+            return Err(ProtocolStateError::InvalidAuthoritySet);
+        }
         Ok(())
     }
 }
@@ -53,10 +85,34 @@ impl CanonicalCbor for AuthorityIdentityV1 {
 /// Genesis-derived in-protocol trust anchor. Ingress should still enforce its
 /// own capability policy; this second layer prevents an untrusted caller from
 /// self-asserting an authority role directly against the state machine.
-#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize)]
 pub struct AuthoritySetV1 {
     pub nakama_authorities: Vec<AuthorityIdentityV1>,
     pub hepta_authorities: Vec<AuthorityIdentityV1>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct AuthoritySetWireV1 {
+    #[serde(default)]
+    nakama_authorities: Vec<AuthorityIdentityV1>,
+    #[serde(default)]
+    hepta_authorities: Vec<AuthorityIdentityV1>,
+}
+
+impl<'de> Deserialize<'de> for AuthoritySetV1 {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let wire = AuthoritySetWireV1::deserialize(deserializer)?;
+        let authorities = Self {
+            nakama_authorities: wire.nakama_authorities,
+            hepta_authorities: wire.hepta_authorities,
+        };
+        authorities.validate().map_err(serde::de::Error::custom)?;
+        Ok(authorities)
+    }
 }
 
 impl AuthoritySetV1 {
@@ -285,15 +341,28 @@ pub struct AppliedCommandRecordV1 {
     pub command_id: ExternalKey,
     pub fingerprint: [u8; 32],
     pub primary_object_ref: ObjectRefV1,
+    /// Consensus-visible signer context retained with the replay journal.
+    /// Keeping the nonce floor in the snapshot prevents a restart from
+    /// reopening an already consumed signer nonce under a fresh command id.
+    pub chain_id: String,
+    pub signer_did: String,
+    pub signer_role: AuthorityRole,
+    pub nonce: u64,
+    pub public_key: [u8; 32],
 }
 
 impl CanonicalCbor for AppliedCommandRecordV1 {
     fn encode_canonical(&self, encoder: &mut Encoder) {
-        encoder.array(4);
+        encoder.array(9);
         encoder.uint(PROTOCOL_VERSION as u64);
         self.command_id.encode_canonical(encoder);
         encoder.bytes(&self.fingerprint);
         self.primary_object_ref.encode_canonical(encoder);
+        encoder.text(&self.chain_id);
+        encoder.text(&self.signer_did);
+        self.signer_role.encode_canonical(encoder);
+        encoder.uint(self.nonce);
+        encoder.bytes(&self.public_key);
     }
 }
 
@@ -362,6 +431,7 @@ pub struct ResearchProtocolState {
     challenges: BTreeMap<ExternalKey, ClaimChallengeObjectV1>,
     resolutions: BTreeMap<ExternalKey, ClaimResolutionObjectV1>,
     applied_commands: BTreeMap<ExternalKey, AppliedCommandRecordV1>,
+    signer_nonce_floors: BTreeMap<SignerNonceKey, u64>,
 }
 
 impl ResearchProtocolState {
@@ -370,6 +440,7 @@ impl ResearchProtocolState {
         Ok(Self {
             chain_id: String::new(),
             authorities,
+            signer_nonce_floors: BTreeMap::new(),
             ..Self::default()
         })
     }
@@ -430,6 +501,33 @@ impl ResearchProtocolState {
             });
         }
 
+        // A protocol state is chain-scoped.  The chain id is intentionally
+        // retained in each applied-command journal record (rather than added
+        // as a new snapshot field), so enforce that all commands in a state
+        // agree with the first journaled chain.  Without this guard, a valid
+        // command from another chain could be appended to an otherwise valid
+        // state and mutate objects under the wrong replay domain.
+        if let Some(existing) = self.applied_commands.values().next() {
+            if existing.chain_id != signed.chain_id {
+                return Err(ProtocolStateError::ChainIdMismatch {
+                    expected: existing.chain_id.clone(),
+                    actual: signed.chain_id.clone(),
+                });
+            }
+        }
+
+        let signer_key = signer_nonce_key(signed);
+        if let Some(last_nonce) = self.signer_nonce_floors.get(&signer_key) {
+            if signed.nonce <= *last_nonce {
+                return Err(ProtocolStateError::SignerNonceReplay {
+                    chain_id: signed.chain_id.clone(),
+                    signer_did: signed.signer_did.clone(),
+                    nonce: signed.nonce,
+                    last_nonce: *last_nonce,
+                });
+            }
+        }
+
         let primary_object_ref = match &signed.command {
             ResearchCommandV1::MatchEvidenceCommitment(payload) => self.apply_match(payload)?,
             ResearchCommandV1::EvaluationCommitment(payload) => self.apply_evaluation(payload)?,
@@ -446,8 +544,14 @@ impl ResearchProtocolState {
                 command_id: signed.command_id,
                 fingerprint,
                 primary_object_ref,
+                chain_id: signed.chain_id.clone(),
+                signer_did: signed.signer_did.clone(),
+                signer_role: signed.signer_role,
+                nonce: signed.nonce,
+                public_key: signed.public_key,
             },
         );
+        self.signer_nonce_floors.insert(signer_key, signed.nonce);
         let changed_object_refs =
             self.changed_object_refs_for(&signed.command, primary_object_ref)?;
         Ok(ApplyOutcome::Applied {
@@ -486,7 +590,7 @@ impl ResearchProtocolState {
 
     pub fn export_snapshot(&self) -> ResearchProtocolSnapshotV1 {
         ResearchProtocolSnapshotV1 {
-            protocol_version: PROTOCOL_VERSION,
+            protocol_version: SNAPSHOT_VERSION_V2,
             authorities: self.authorities.clone(),
             matches: self.matches.values().cloned().collect(),
             evaluations: self.evaluations.values().cloned().collect(),
@@ -506,7 +610,7 @@ impl ResearchProtocolState {
 
     pub fn canonical_snapshot_hash(&self) -> [u8; 32] {
         canonical_hash(
-            "trnm-research-protocol-snapshot-v1",
+            "trnm-research-protocol-snapshot-v2",
             &self.canonical_snapshot_bytes(),
         )
     }
@@ -611,12 +715,27 @@ impl ResearchProtocolState {
         chain_id: String,
         snapshot: ResearchProtocolSnapshotV1,
     ) -> Result<Self, ProtocolStateError> {
-        if snapshot.protocol_version != PROTOCOL_VERSION {
+        if snapshot.protocol_version != SNAPSHOT_VERSION_V2 {
             return Err(ProtocolStateError::UnsupportedSnapshotVersion(
                 snapshot.protocol_version,
             ));
         }
         snapshot.authorities.validate()?;
+        let applied_commands = collect_command_records(snapshot.applied_commands)?;
+        // A persisted journal cannot replace the caller's independent genesis
+        // binding. Unbound restores remain read-only until explicitly rebound.
+        if !chain_id.is_empty() {
+            if let Some(record) = applied_commands
+                .values()
+                .find(|record| record.chain_id != chain_id)
+            {
+                return Err(ProtocolStateError::ChainMismatch {
+                    expected: chain_id,
+                    got: record.chain_id.clone(),
+                });
+            }
+        }
+        let signer_nonce_floors = collect_signer_nonce_floors(&applied_commands)?;
         let state = Self {
             chain_id,
             authorities: snapshot.authorities,
@@ -655,7 +774,8 @@ impl ResearchProtocolState {
                 ResearchObjectKind::ClaimResolution,
                 |object| object.object_ref,
             )?,
-            applied_commands: collect_command_records(snapshot.applied_commands)?,
+            applied_commands,
+            signer_nonce_floors,
         };
         state.validate_snapshot_graph()?;
         Ok(state)
@@ -1249,14 +1369,73 @@ fn collect_command_records(
     records: Vec<AppliedCommandRecordV1>,
 ) -> Result<BTreeMap<ExternalKey, AppliedCommandRecordV1>, ProtocolStateError> {
     let mut map = BTreeMap::new();
+    let mut chain_id: Option<String> = None;
     for record in records {
         if record.command_id.as_bytes() == &[0; 32]
             || map.insert(record.command_id, record.clone()).is_some()
         {
             return Err(ProtocolStateError::InvalidSnapshotGraph);
         }
+        if let Some(expected) = &chain_id {
+            if expected != &record.chain_id {
+                return Err(ProtocolStateError::ChainIdMismatch {
+                    expected: expected.clone(),
+                    actual: record.chain_id.clone(),
+                });
+            }
+        } else {
+            chain_id = Some(record.chain_id.clone());
+        }
     }
     Ok(map)
+}
+
+fn signer_nonce_key(signed: &SignedResearchCommandV1) -> SignerNonceKey {
+    (
+        signed.chain_id.clone(),
+        signed.signer_did.clone(),
+        signed.signer_role as u8,
+        signed.public_key,
+    )
+}
+
+fn collect_signer_nonce_floors(
+    records: &BTreeMap<ExternalKey, AppliedCommandRecordV1>,
+) -> Result<BTreeMap<SignerNonceKey, u64>, ProtocolStateError> {
+    let mut floors: BTreeMap<SignerNonceKey, u64> = BTreeMap::new();
+    let mut seen = BTreeSet::new();
+    for record in records.values() {
+        if record.nonce == 0
+            || !snapshot_chain_id_is_canonical(&record.chain_id)
+            || AuthorityIdentityV1::new(record.signer_did.clone(), record.public_key).is_err()
+        {
+            return Err(ProtocolStateError::InvalidSnapshotGraph);
+        }
+        let key = (
+            record.chain_id.clone(),
+            record.signer_did.clone(),
+            record.signer_role as u8,
+            record.public_key,
+        );
+        if !seen.insert((key.clone(), record.nonce)) {
+            return Err(ProtocolStateError::InvalidSnapshotGraph);
+        }
+        floors
+            .entry(key)
+            .and_modify(|floor| *floor = (*floor).max(record.nonce))
+            .or_insert(record.nonce);
+    }
+    Ok(floors)
+}
+
+fn snapshot_chain_id_is_canonical(chain_id: &str) -> bool {
+    !chain_id.is_empty()
+        && chain_id.len() <= 64
+        && chain_id.bytes().all(|byte| {
+            byte.is_ascii_lowercase()
+                || byte.is_ascii_digit()
+                || matches!(byte, b'-' | b'_' | b'.' | b':')
+        })
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Error)]
@@ -1267,6 +1446,17 @@ pub enum ProtocolStateError {
     InvalidPayload(#[from] crate::types::ResearchPayloadValidationError),
     #[error("command id {command_id} was replayed with altered signed bytes")]
     AlteredReplay { command_id: ExternalKey },
+    #[error("research protocol state is bound to chain {expected}, not {actual}")]
+    ChainIdMismatch { expected: String, actual: String },
+    #[error(
+        "signer {signer_did} nonce {nonce} was replayed after {last_nonce} on chain {chain_id}"
+    )]
+    SignerNonceReplay {
+        chain_id: String,
+        signer_did: String,
+        nonce: u64,
+        last_nonce: u64,
+    },
     #[error("invalid or non-canonically ordered research authority set")]
     InvalidAuthoritySet,
     #[error("invalid research protocol chain binding")]

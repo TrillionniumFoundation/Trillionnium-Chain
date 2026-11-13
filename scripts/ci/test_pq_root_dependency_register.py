@@ -1,4 +1,4 @@
-"""Adversarial controls for the V2/V3 root dependency review register.
+"""Adversarial controls for the V2-V5 root dependency review register.
 
 These tests do not supply cryptographic error estimates. A successful register
 check is a source/declaration consistency result, including an explicit list
@@ -21,7 +21,7 @@ import pq_root_dependency_register as register
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = "config/pon/pq-root-dependency-register-v3.json"
 EXPECTED_ROLES = {"root-approval", "successor-possession", "anchor-writer",
-                  "anchor-response", "effect-provider"}
+                  "anchor-response", "effect-provider", "witness-response"}
 EXPECTED_PRIMITIVES = {"sha256", "sha512", "shake128", "shake256"}
 EXPECTED_DOMAINS = {"signature", "commitment", "proof", "ledger", "transport",
                     "recovery", "release", "application"}
@@ -47,6 +47,8 @@ class ContractCase(unittest.TestCase):
                      "composition_coverage_proved", "theorem_applicability_verified",
                      "transitive_dependency_closure_proved", "whole_chain_hash_query_scope_closed",
                      "independent_custody_verified",
+                     "independent_common_restore_exclusion_proved",
+                     "native_witness_durable_service_verified",
                      "anchor_independence_verified", "actual_external_effects_verified",
                      "native_m15_production_integration_complete", "production_activation",
                      "operational_refusal_caps_are_adversary_bounds", "source_revision_bound"):
@@ -159,6 +161,56 @@ class FrozenRoleTests(ContractCase):
                              ("validity_contract", "current-final-use-authority")):
             changed = deepcopy(data)
             changed["roles"]["effect-provider"]["implementations"]["rust-v4-readback"][field] = value
+            self.refused(changed)
+        witnessed = data["roles"]["effect-provider"]["implementations"]["rust-v5-witnessed-readback"]
+        self.assertIn(register.NATIVE_WITNESS_PROVIDER, witnessed["source_paths"])
+        self.assertIn(register.NATIVE_WITNESS_PROVIDER, data["source_files_sha256"])
+        self.assertIn(register.NODE + "tests/root_witness_provider_v5_native.rs", data["source_files_sha256"])
+        self.assertEqual(witnessed["validity_contract"],
+                         "same-historical-operation-live-witness-before-and-after-readback-no-effect-entry")
+        self.assertFalse(witnessed["production_qualified"])
+        for field, value in (("production_qualified", True),
+                             ("validity_contract", "current-final-use-authority")):
+            changed = deepcopy(data)
+            changed["roles"]["effect-provider"]["implementations"]["rust-v5-witnessed-readback"][field] = value
+            self.refused(changed)
+
+    def test_native_v5_witness_role_hashes_and_unproved_custody_are_explicit(self):
+        data = manifest()
+        witness = data["roles"]["witness-response"]
+        self.assertEqual(set(witness["implementations"]),
+                         {"rust-v5-witnessed-owner", "rust-v5-durable-register", "rust-v6-receipted-register"})
+        self.assertFalse(witness["independent_custody_verified"])
+        self.assertEqual(witness["epoch_scope"], data["roles"]["anchor-response"]["epoch_scope"])
+        native = witness["implementations"]["rust-v5-witnessed-owner"]
+        self.assertIn(register.NATIVE_WITNESS, native["source_paths"])
+        self.assertFalse(native["production_qualified"])
+        durable = witness["implementations"]["rust-v5-durable-register"]
+        self.assertIn(register.NATIVE_WITNESS_DURABLE, durable["source_paths"])
+        self.assertFalse(durable["production_qualified"])
+        changed = deepcopy(data)
+        del changed["roles"]["witness-response"]["implementations"]["rust-v5-durable-register"]
+        self.refused(changed)
+        self.assertIn(register.NATIVE_WITNESS_DURABLE, data["source_files_sha256"])
+        self.assertIn(register.NODE + "tests/root_witness_v5_durable_native.rs", data["source_files_sha256"])
+        self.assertFalse(data["operational_refusal_caps"]["native-witness-database-bytes"]["bounds_adversary_queries"])
+        use = data["hash_uses"]["native-fresh-witness-v5"]
+        self.assertEqual(use["primitive_ids"], ["sha512"])
+        self.assertEqual(use["roles"], ["anchor-writer", "witness-response"])
+        for key in ("ml-dsa-internals", "slh-dsa-sha2-internals"):
+            self.assertIn("witness-response", data["hash_uses"][key]["roles"])
+        for key in ("python-public-key-identities-v2", "python-verified-message-identity-v2",
+                    "python-journal-state-scope-effect-v2", "python-provider-executable-integrity"):
+            self.assertNotIn("witness-response", data["hash_uses"][key]["roles"])
+        for field in ("independent_common_restore_exclusion_proved",
+                      "native_witness_durable_service_verified"):
+            self.assertFalse(data["profiles"][field])
+            changed = deepcopy(data)
+            changed["profiles"][field] = True
+            self.refused(changed)
+        for field in ("roles", "source_paths", "constructions"):
+            changed = deepcopy(data)
+            changed["hash_uses"]["native-fresh-witness-v5"][field].pop()
             self.refused(changed)
 
     def test_height_and_unix_expiry_profiles_cannot_be_silently_equated(self):
@@ -450,6 +502,25 @@ class ReviewedSourceTests(ContractCase):
         self.write()
         self.inspect_refuses("frozen reviewed snapshot")
 
+    def test_reverted_lock_dependency_is_refused_even_with_rewritten_manifest_hash(self):
+        # Reproduce the dependency changed by this reviewed source continuation.
+        # A different resolvable package version is still different source.
+        relative = "trillionnium/Cargo.lock"
+        path = self.root / relative
+        raw = path.read_bytes()
+        current = (b'name = "rustix"\nversion = "1.1.6"\n'
+                   b'source = "registry+https://github.com/rust-lang/crates.io-index"\n'
+                   b'checksum = "e5e76742e5294153d4dde1207dbec5bdd81eef6fabdc0d2118babadabfd858aa"')
+        previous = (b'name = "rustix"\nversion = "1.1.4"\n'
+                    b'source = "registry+https://github.com/rust-lang/crates.io-index"\n'
+                    b'checksum = "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190"')
+        self.assertEqual(raw.count(current), 1)
+        path.write_bytes(raw.replace(current, previous, 1))
+        self.inspect_refuses("source hash mismatch: trillionnium/Cargo.lock")
+        self.data["source_files_sha256"][relative] = hashlib.sha256(path.read_bytes()).hexdigest()
+        self.write()
+        self.inspect_refuses("frozen reviewed snapshot")
+
     def test_omitted_extra_or_rebound_source_paths_refuse(self):
         original = deepcopy(self.data)
         del self.data["source_files_sha256"][NATIVE_OWNER]
@@ -525,6 +596,57 @@ class ReviewedSourceTests(ContractCase):
         self.assertNotIn("Traceback", result.stderr)
         self.assertEqual(json.loads(result.stderr)["status"], "REFUSE")
 
+
+
+class RetainedWitnessV6Tests(ContractCase):
+    def test_original_receipt_component_is_required_without_effect_authority(self):
+        data = manifest()
+        for role in ("anchor-writer", "witness-response"):
+            receipt = data["roles"][role]["implementations"]["rust-v6-receipted-register"]
+            self.assertIn(register.NATIVE_WITNESS_RECEIPTS, receipt["source_paths"])
+            self.assertIn("no-new-authority", receipt["validity_contract"])
+            self.assertFalse(receipt["production_qualified"])
+            changed = deepcopy(data)
+            changed["roles"][role]["implementations"]["rust-v6-receipted-register"]["production_qualified"] = True
+            self.refused(changed)
+        for path in (register.NATIVE_WITNESS_RECEIPTS,
+                     register.NODE + "tests/root_witness_v6_receipts_native.rs"):
+            self.assertIn(path, data["source_files_sha256"])
+            changed = deepcopy(data)
+            del changed["source_files_sha256"][path]
+            self.refused(changed)
+
+    def test_receipt_caps_are_refusal_limits_without_pruning_or_query_claims(self):
+        expected = {
+            "native-witness-receipt-database-bytes-v6": "33554432",
+            "native-witness-retained-receipts-v6": "128",
+            "native-witness-receipt-record-bytes-v6": "196608",
+        }
+        for name, maximum in expected.items():
+            data = manifest()
+            cap = data["operational_refusal_caps"][name]
+            self.assertEqual(cap["maximum"], maximum)
+            self.assertFalse(cap["bounds_adversary_queries"])
+            self.assertFalse(cap["permits_history_pruning"])
+            self.assertFalse(cap["permits_lifetime_reset"])
+            for field, value in (("maximum", "0"), ("bounds_adversary_queries", True),
+                                 ("permits_history_pruning", True), ("permits_lifetime_reset", True)):
+                changed = deepcopy(data)
+                changed["operational_refusal_caps"][name][field] = value
+                self.refused(changed)
+
+    def test_receipt_hash_uses_share_the_original_unknown_sha512_lifetime(self):
+        data = manifest()
+        name = "native-retained-witness-receipts-v6"
+        self.assertEqual(data["hash_uses"][name]["primitive_ids"], ["sha512"])
+        self.assertIn(name, data["primitives"]["sha512"]["use_ids"])
+        self.assertIsNone(data["primitives"]["sha512"]["query_budget"]["maximum"])
+        self.assertIsNone(data["hash_uses"][name]["failure_bound"])
+        changed = deepcopy(data)
+        changed["hash_uses"][name]["source_paths"].remove(register.NATIVE_WITNESS_RECEIPTS)
+        self.refused(changed)
+        data["profiles"]["native_witness_receipt_archive_independence_verified"] = True
+        self.refused(data)
 
 if __name__ == "__main__":
     unittest.main()

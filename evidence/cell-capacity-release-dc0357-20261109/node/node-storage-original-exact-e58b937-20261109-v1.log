@@ -1,0 +1,170 @@
+
+=== preflight 2026-11-09T14:34:37.063296+00:00 ===
+{"result": "PASS", "mode": "--dev", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-cell-capacity-release-dc0357-20261109", "remote_policy_mutated": false}
+
+=== format 2026-11-09T14:34:37.090635+00:00 ===
+
+=== cargo-test 2026-11-09T14:34:44.309578+00:00 ===
+   Compiling find-msvc-tools v0.1.9
+   Compiling shlex v1.3.0
+   Compiling cc v1.2.59
+   Compiling version_check v0.9.5
+   Compiling generic-array v0.14.7
+   Compiling proc-macro2 v1.0.106
+   Compiling cfg-if v1.0.4
+   Compiling quote v1.0.45
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.24
+   Compiling syn v2.0.117
+   Compiling vcpkg v0.2.15
+   Compiling pkg-config v0.3.32
+   Compiling cpufeatures v0.2.17
+   Compiling zeroize v1.9.1
+   Compiling libc v0.2.184
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling sha2-asm v0.6.4
+   Compiling cmov v0.5.4
+   Compiling bitflags v2.11.0
+   Compiling ctutils v0.4.6
+   Compiling digest v0.10.7
+   Compiling serde_core v1.0.228
+   Compiling semver v1.0.27
+   Compiling hybrid-array v0.4.15
+   Compiling rustc_version v0.4.1
+   Compiling cfg_aliases v0.2.2
+   Compiling curve25519-dalek v4.1.3
+   Compiling sha2 v0.10.9
+   Compiling libsqlite3-sys v0.37.0
+   Compiling zmij v1.0.21
+   Compiling hashbrown v0.16.1
+   Compiling autocfg v1.5.1
+   Compiling winnow v1.0.4
+   Compiling equivalent v1.0.2
+   Compiling indexmap v2.13.1
+   Compiling num-traits v0.2.19
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling crypto-common v0.2.2
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling openssl-sys v0.9.117
+   Compiling foldhash v0.2.0
+   Compiling signature v2.2.0
+   Compiling serde_json v1.0.149
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling serde v1.0.228
+   Compiling subtle v2.6.1
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling ed25519 v2.2.3
+   Compiling digest v0.11.3
+   Compiling serde_derive v1.0.228
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.0
+   Compiling thiserror v1.0.69
+   Compiling hashlink v0.11.1
+   Compiling ed25519-dalek v2.2.0
+   Compiling proc-macro-crate v3.5.0
+   Compiling borsh v1.8.0
+   Compiling thiserror-impl v1.0.69
+   Compiling keccak v0.2.2
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling foreign-types-shared v0.1.1
+   Compiling once_cell v1.21.4
+   Compiling anyhow v1.0.103
+   Compiling sponge-cursor v0.1.0
+   Compiling openssl v0.10.81
+   Compiling smallvec v1.15.1
+   Compiling fallible-iterator v0.3.0
+   Compiling shake v0.1.0
+   Compiling rusqlite v0.39.0
+   Compiling borsh-derive v1.8.0
+   Compiling foreign-types v0.3.2
+   Compiling module-lattice v0.2.3
+   Compiling signature v3.0.0
+   Compiling openssl-macros v0.1.1
+   Compiling hex v0.4.3
+   Compiling trnm-protocol v0.1.0 (/home/qq/work/chain-cell-capacity-dc0357-20261109/trillionnium/crates/trnm-protocol)
+   Compiling ml-dsa v0.1.1
+   Compiling rustix v1.1.4
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qq/work/chain-cell-capacity-dc0357-20261109/trillionnium/crates/trnm-crypto-primitives)
+   Compiling getrandom v0.4.2
+   Compiling linux-raw-sys v0.12.1
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qq/work/chain-cell-capacity-dc0357-20261109/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling nix v0.30.1
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete: missing=["/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib"]; observed=["/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib", "/home/qq/work/chain-cell-capacity-dc0357-20261109-target/debug", "/home/qq/work/chain-cell-capacity-dc0357-20261109-target/debug/deps"]; allowed=["/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib", "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib", "/home/qq/work/chain-cell-capacity-dc0357-20261109-target/debug", "/home/qq/work/chain-cell-capacity-dc0357-20261109-target/debug/deps"]
+   Compiling trnm-task-kernel v0.1.0 (/home/qq/work/chain-cell-capacity-dc0357-20261109/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-verification-profiles v0.1.0 (/home/qq/work/chain-cell-capacity-dc0357-20261109/trillionnium/crates/trnm-verification-profiles)
+   Compiling fs2 v0.4.3
+   Compiling getrandom v0.2.17
+   Compiling fastrand v2.3.0
+   Compiling tempfile v3.27.0
+   Compiling trnm-data-availability v0.1.0 (/home/qq/work/chain-cell-capacity-dc0357-20261109/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qq/work/chain-cell-capacity-dc0357-20261109/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-service-settlement v0.1.0 (/home/qq/work/chain-cell-capacity-dc0357-20261109/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-release-bundle v0.1.0 (/home/qq/work/chain-cell-capacity-dc0357-20261109/trillionnium/crates/trnm-release-bundle)
+   Compiling trnm-transport v0.1.0 (/home/qq/work/chain-cell-capacity-dc0357-20261109/trillionnium/crates/trnm-transport)
+   Compiling trnm-mempool v0.1.0 (/home/qq/work/chain-cell-capacity-dc0357-20261109/trillionnium/crates/trnm-mempool)
+   Compiling trnm-pon-node v0.1.0 (/home/qq/work/chain-cell-capacity-dc0357-20261109/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5m 11s
+     Running unittests src/lib.rs (/home/qq/work/chain-cell-capacity-dc0357-20261109-target/debug/deps/trnm_pon_node-003b0518496ba044)
+
+running 44 tests
+test store::storage_service::tests::cache_quota::cache_deletion_and_cache_quota_failure_cannot_release_actual_paid_retention ... ok
+test store::storage_service::tests::height_window::native_cell_repair_height_window_preserves_recovery_without_reserving_new_work ... ok
+test store::storage_service::tests::height_window::native_cell_storage_height_window_refuses_before_reservation_and_recovers_original_effect ... ok
+test store::storage_service::tests::native_cell_expired_storage_request_creates_no_budget_or_physical_obligation ... ok
+test store::storage_service::tests::native_cell_failed_initial_copy_needs_a_separate_funded_repair_and_preserves_unknown_cost ... ok
+test store::storage_service::tests::native_cell_physical_writer_wait_spends_original_storage_deadline ... ok
+test store::storage_service::tests::native_cell_repair_cpu_owner_cannot_move_threads_or_resume_after_exhaustion ... ok
+test store::storage_service::tests::native_cell_retirement_cannot_release_a_pending_effect_before_reconciliation ... ok
+test store::storage_service::tests::native_cell_retirement_rejects_another_chain_and_reconciles_orphaned_funding ... ok
+test store::storage_service::tests::native_cell_storage_escrow_replay_and_reorg_keep_physical_obligation ... ok
+test store::storage_service::tests::native_cell_storage_subject_and_real_byte_block_capacity_are_required_before_effect ... ok
+test store::storage_service::tests::release::native_release_complete_tasks_reopen_and_shared_members_keep_original_effects ... ok
+test store::storage_service::tests::release::native_release_interrupted_members_need_distinct_repairs_without_redispatch ... ok
+test store::storage_service::tests::release::native_release_outer_history_cannot_invent_missing_member_intents ... ok
+test store::storage_service::tests::release::native_release_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement ... ok
+test store::storage_service::tests::release::native_release_repair_scope_deadline_and_exact_old_reconciliation_remain_distinct ... ok
+test store::storage_service::tests::release::native_release_scope_alias_and_late_funding_errors_precede_every_reservation ... ok
+test store::storage_service::tests::replay_owner::native_cell_cancelled_native_funding_reconciles_old_effects_without_new_dispatch ... ok
+test store::storage_service::tests::replay_owner::native_cell_completed_repair_refuses_foreign_owner_and_recovers_orphaned_effect ... ok
+test store::storage_service::tests::replay_owner::native_cell_completed_retain_refuses_foreign_owner_and_recovers_orphaned_effect ... ok
+test store::storage_service::tests::replay_owner::native_cell_pending_repair_refuses_foreign_owner_and_recovers_orphaned_effect ... ok
+test store::storage_service::tests::replay_owner::native_cell_pending_retain_refuses_foreign_owner_and_recovers_orphaned_effect ... ok
+test store::storage_service::tests::shard::native_shard_pending_initial_effect_cannot_dispatch_even_with_source_present ... ok
+test store::storage_service::tests::shard::native_shard_real_funding_target_readback_and_repair_keep_original_debits ... ok
+test store::storage_service::tests::shard::native_shard_unknown_repair_never_reissues_and_foreign_owner_cannot_retire ... ok
+test store::storage_service::tests::version::native_version_outer_history_cannot_invent_missing_member_intents ... ok
+test store::storage_service::tests::version::native_version_pending_monetary_effect_cannot_retry_copy_with_a_new_source ... ok
+test store::storage_service::tests::version::native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement ... ok
+test store::storage_service::tests::version::native_version_scheduler_pending_metadata_accepts_only_new_funded_copy_then_reopens_done ... ok
+test store::storage_service::tests::version::native_version_scope_alias_and_late_funding_errors_precede_every_reservation ... ok
+test store::storage_service::tests::version::shard_plan::native_complete_version_to_complete_local_shard_plan_reopens_without_sources_or_new_debits ... ok
+test store::storage_service::tests::version::shard_plan::paged_tests::native_paged_shard_plan_checks_last_page_before_any_provider_effect ... ok
+test store::storage_service::tests::version::shard_plan::paged_tests::native_paged_shard_plan_corrupt_last_page_refuses_before_any_effect_or_debit ... ok
+test store::storage_service::tests::version::shard_plan::paged_tests::native_paged_shard_plan_counts_retired_provider_history_before_first_new_effect ... FAILED
+test store::storage_service::tests::version::shard_plan::paged_tests::native_paged_shard_plan_reopens_done_without_sources_or_fresh_allowance ... ok
+test store::storage_service::tests::version::shard_plan::paged_tests::native_paged_shard_plan_unknown_final_slot_never_replays_source_copy ... ok
+test store::storage_service::tests::version::shard_plan::paged_tests::recovery_tests::native_paged_shard_recovery_missing_quorum_preserves_whole_attempt_charge ... ok
+test store::storage_service::tests::version::shard_plan::paged_tests::recovery_tests::native_paged_shard_recovery_pending_last_page_never_redispatches_the_original_repair ... ok
+test store::storage_service::tests::version::shard_plan::paged_tests::recovery_tests::native_paged_shard_recovery_preflights_last_page_authority_and_exact_global_budget ... ok
+test store::storage_service::tests::version::shard_plan::paged_tests::recovery_tests::native_paged_shard_recovery_repairs_both_pages_from_four_original_targets_and_reopens_done ... ok
+test store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_automatic_recovery_uses_four_targets_after_all_sources_are_deleted ... ok
+test store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_pending_repair_cannot_redispatch_and_needs_independent_new_funding ... ok
+test store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies ... ok
+test store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_refuses_missing_quorum_without_spending_new_repairs_or_refunding_reads ... ok
+
+failures:
+
+---- store::storage_service::tests::version::shard_plan::paged_tests::native_paged_shard_plan_counts_retired_provider_history_before_first_new_effect stdout ----
+
+thread 'store::storage_service::tests::version::shard_plan::paged_tests::native_paged_shard_plan_counts_retired_provider_history_before_first_new_effect' (3188933) panicked at crates/trnm-pon-node/src/store/storage_service/version_paged_shard_plan_tests.rs:559:14:
+called `Result::unwrap()` on an `Err` value: Io(Os { code: 28, kind: StorageFull, message: "No space left on device" })
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    store::storage_service::tests::version::shard_plan::paged_tests::native_paged_shard_plan_counts_retired_provider_history_before_first_new_effect
+
+test result: FAILED. 43 passed; 1 failed; 0 ignored; 0 measured; 1351 filtered out; finished in 21.30s
+
+error: test failed, to rerun pass `-p trnm-pon-node --lib`

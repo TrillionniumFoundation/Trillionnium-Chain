@@ -3,6 +3,11 @@ use sha2::{Digest, Sha256};
 use std::collections::{HashMap, HashSet};
 use std::fmt;
 
+/// Deserialized relay values retain the current bounded wire contract.
+pub const MAX_RELAY_AUTH_FIELD_BYTES: usize = 256;
+pub const MAX_RELAY_AUTH_PAYLOAD_BYTES: usize = 2 * 1024 * 1024;
+pub const MAX_RELAY_AUTH_SIGNATURE_BYTES: usize = 512;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum RelaySessionStatus {
     Open,
@@ -10,19 +15,27 @@ pub enum RelaySessionStatus {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct RelayEnvelope {
     pub envelope_id: u64,
+    #[serde(deserialize_with = "deserialize_bounded_relay_field")]
     pub session_id: String,
     pub sequence: u64,
+    #[serde(deserialize_with = "deserialize_bounded_relay_field")]
     pub route: String,
+    #[serde(deserialize_with = "deserialize_bounded_relay_field")]
     pub from: String,
+    #[serde(deserialize_with = "deserialize_bounded_relay_optional_field")]
     pub to: Option<String>,
+    #[serde(deserialize_with = "deserialize_bounded_relay_payload")]
     pub payload: Vec<u8>,
     pub created_at_unix_ms: u128,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct RelaySession {
+    #[serde(deserialize_with = "deserialize_bounded_relay_field")]
     pub session_id: String,
     pub status: RelaySessionStatus,
     pub created_at_unix_ms: u128,
@@ -31,21 +44,82 @@ pub struct RelaySession {
 
 /// Phase A envelope auth schema aligned with `agent-user-p2p-communication-min-spec-v0.1`.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct RelayAuthEnvelope {
+    #[serde(deserialize_with = "deserialize_bounded_relay_field")]
     pub version: String,
-    #[serde(default)]
+    #[serde(default, deserialize_with = "deserialize_bounded_relay_field")]
     pub chain_id: String,
+    #[serde(deserialize_with = "deserialize_bounded_relay_field")]
     pub task_id: String,
+    #[serde(deserialize_with = "deserialize_bounded_relay_field")]
     pub session_id: String,
     pub seq: u64,
     pub timestamp_ms: u128,
+    #[serde(deserialize_with = "deserialize_bounded_relay_field")]
     pub msg_type: String,
+    #[serde(deserialize_with = "deserialize_bounded_relay_field")]
     pub from: String,
+    #[serde(deserialize_with = "deserialize_bounded_relay_field")]
     pub to: String,
+    #[serde(deserialize_with = "deserialize_bounded_relay_field")]
     pub nonce: String,
+    #[serde(deserialize_with = "deserialize_bounded_relay_payload")]
     pub payload: Vec<u8>,
+    #[serde(deserialize_with = "deserialize_bounded_relay_field")]
     pub payload_hash: String,
+    #[serde(deserialize_with = "deserialize_bounded_relay_signature")]
     pub sig: String,
+}
+
+fn deserialize_bounded_relay_field<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let value = String::deserialize(deserializer)?;
+    if value.len() > MAX_RELAY_AUTH_FIELD_BYTES {
+        return Err(serde::de::Error::custom("relay auth field exceeds bound"));
+    }
+    Ok(value)
+}
+
+fn deserialize_bounded_relay_signature<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let value = String::deserialize(deserializer)?;
+    if value.len() > MAX_RELAY_AUTH_SIGNATURE_BYTES {
+        return Err(serde::de::Error::custom(
+            "relay auth signature exceeds bound",
+        ));
+    }
+    Ok(value)
+}
+
+fn deserialize_bounded_relay_optional_field<'de, D>(
+    deserializer: D,
+) -> Result<Option<String>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    Option::<String>::deserialize(deserializer)?.map_or(Ok(None), |value| {
+        if value.len() > MAX_RELAY_AUTH_FIELD_BYTES {
+            Err(serde::de::Error::custom("relay auth field exceeds bound"))
+        } else {
+            Ok(Some(value))
+        }
+    })
+}
+
+fn deserialize_bounded_relay_payload<'de, D>(deserializer: D) -> Result<Vec<u8>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let value = Vec::<u8>::deserialize(deserializer)?;
+    if value.len() > MAX_RELAY_AUTH_PAYLOAD_BYTES {
+        return Err(serde::de::Error::custom("relay auth payload exceeds bound"));
+    }
+    Ok(value)
 }
 
 impl RelayAuthEnvelope {

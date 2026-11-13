@@ -1,0 +1,30 @@
+{
+  "all_real_world_costs_measured": false,
+  "economic_security_qualified": false,
+  "observations": {
+    "alias_net_account_increase": 26814,
+    "original": {
+      "alias_fees": 6615,
+      "alias_gross": 66666,
+      "alias_net_account_change": 60051,
+      "dust": 1,
+      "total_claimed": 99999,
+      "verified_signatures": 20,
+      "zero_subset_checks": 1
+    },
+    "split": {
+      "alias_fees": 9686,
+      "alias_gross": 96551,
+      "alias_net_account_change": 86865,
+      "dust": 1,
+      "total_claimed": 99999,
+      "verified_signatures": 26,
+      "zero_subset_checks": 4
+    }
+  },
+  "production_activation": false,
+  "receipt_sha256": "a2651e4b267e4ddc5be1511b1ca98b842239b37bca450ec0c10c800399955560",
+  "result": "COUNTEREXAMPLE_REPRODUCED",
+  "schema": "independent-v4-split-receipt-check-v1",
+  "scope": "native-receipt-arithmetic-signatures-and-charged-fixture-account-fees-not-complete-chain-replay"
+}

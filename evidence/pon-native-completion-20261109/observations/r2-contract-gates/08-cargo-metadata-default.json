@@ -1,0 +1,61 @@
+{
+  "label": "cargo-metadata-default",
+  "argv": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "metadata",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--format-version",
+    "1"
+  ],
+  "command": "/home/qian-qi/.cargo/bin/cargo +1.95.0 metadata --offline --locked --manifest-path trillionnium/Cargo.toml --format-version 1",
+  "cwd": "/data/chain-abg-70ae-20261108/source",
+  "expected_head": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+  "expected_tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+  "before": {
+    "head": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+    "tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+    "clean": true,
+    "status": "",
+    "matches_frozen_source": true
+  },
+  "started_utc": "2026-11-09T03:47:35.282423+00:00",
+  "timeout_seconds": 180,
+  "timeout_scope": "source/graph command wall-time supervisor only; no product deadline changed",
+  "stdout": "/data/chain-abg-70ae-20261108/evidence/r2-contract-gates/08-cargo-metadata-default.stdout",
+  "stderr": "/data/chain-abg-70ae-20261108/evidence/r2-contract-gates/08-cargo-metadata-default.stderr",
+  "expected_tests": null,
+  "tests_run": null,
+  "skipped": null,
+  "failures": null,
+  "errors": null,
+  "timed_out": false,
+  "exit_code": 0,
+  "passed": true,
+  "elapsed_seconds": 0.666702,
+  "after": {
+    "head": "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+    "tree": "6a5fad57d4e7dc6007c830650da6a351b3e8448e",
+    "clean": true,
+    "status": "",
+    "matches_frozen_source": true
+  },
+  "graph": {
+    "packages": 176,
+    "workspace_members": 26,
+    "resolve_nodes": 176,
+    "workspace_test_targets": 321,
+    "workspace_targets_with_test_enabled": 356,
+    "workspace_dev_dependency_edges": 26,
+    "target_directory": "/data/chain-abg-70ae-20261108/evidence/r2-contract-gates/cargo-metadata-target",
+    "workspace_root": "/data/chain-abg-70ae-20261108/source/trillionnium"
+  },
+  "finished_utc": "2026-11-09T03:47:36.074346+00:00",
+  "stdout_bytes": 831441,
+  "stderr_bytes": 0,
+  "stdout_sha256": "ffc5f4936f936c70cc19f4529967a6300d408567353ecefa9b2efe137e5abe72",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

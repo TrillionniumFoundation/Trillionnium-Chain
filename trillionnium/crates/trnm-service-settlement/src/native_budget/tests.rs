@@ -4,6 +4,118 @@
 use super::*;
 use serde_json::json;
 
+#[cfg(unix)]
+mod native_store_path_controls {
+    use super::*;
+    use crate::native_budget::task_operation_v2::NativeTaskOperationStoreV2;
+    use crate::native_generation_budget_v2::{ConfigurationV2, NativeGenerationStoreV2};
+    use std::ffi::OsString;
+    use std::os::unix::{ffi::OsStringExt, fs::symlink, net::UnixListener};
+
+    const OPENERS: [&str; 3] = ["budget", "task", "generation"];
+
+    fn open(kind: &str, path: &Path) -> NativeBudgetResultV1<()> {
+        match kind {
+            "budget" => NativeBudgetStoreV1::open(path, configuration()).map(drop),
+            "task" => NativeTaskOperationStoreV2::open(path, configuration()).map(drop),
+            "generation" => NativeGenerationStoreV2::open(
+                path,
+                ConfigurationV2 {
+                    network: [1; 32],
+                    parameters: [2; 32],
+                    genesis: [3; 32],
+                    max_records: 32,
+                },
+            )
+            .map(drop),
+            _ => panic!("unknown test opener"),
+        }
+    }
+
+    fn with_suffix(path: &Path, suffix: &str) -> std::path::PathBuf {
+        let mut bytes = path.as_os_str().to_os_string();
+        bytes.push(suffix);
+        bytes.into()
+    }
+
+    #[test]
+    fn native_openers_refuse_symlink_sidecars_before_creating_or_touching_files() {
+        for kind in OPENERS {
+            for suffix in ["-journal", "-wal", "-shm"] {
+                for dangling in [false, true] {
+                    let directory = tempfile::tempdir().unwrap();
+                    // An exact OS-byte path prevents a lossy UTF-8 alias from
+                    // checking a different sidecar than SQLite will open.
+                    let path = directory
+                        .path()
+                        .join(OsString::from_vec(b"native-\xff.sqlite".to_vec()));
+                    let victim = directory.path().join("unrelated-target");
+                    if !dangling {
+                        std::fs::write(&victim, b"retain unrelated bytes").unwrap();
+                    }
+                    let sidecar = with_suffix(&path, suffix);
+                    symlink(&victim, &sidecar).unwrap();
+                    let result = open(kind, &path);
+                    assert!(
+                        matches!(result, Err(NativeBudgetErrorV1::Invalid(_))),
+                        "{kind} {suffix} dangling={dangling} must refuse before SQLite"
+                    );
+                    assert!(!path.exists(), "{kind} {suffix} created a database");
+                    assert_eq!(std::fs::read_link(&sidecar).unwrap(), victim);
+                    if dangling {
+                        assert!(!victim.exists());
+                    } else {
+                        assert_eq!(std::fs::read(&victim).unwrap(), b"retain unrelated bytes");
+                    }
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn native_openers_refuse_nonregular_sidecars_before_creating_database() {
+        for kind in OPENERS {
+            for suffix in ["-journal", "-wal", "-shm"] {
+                for socket in [false, true] {
+                    let directory = tempfile::tempdir().unwrap();
+                    let path = directory.path().join("native.sqlite");
+                    let sidecar = with_suffix(&path, suffix);
+                    let listener = if socket {
+                        Some(UnixListener::bind(&sidecar).unwrap())
+                    } else {
+                        std::fs::create_dir(&sidecar).unwrap();
+                        None
+                    };
+                    assert!(
+                        matches!(open(kind, &path), Err(NativeBudgetErrorV1::Invalid(_))),
+                        "{kind} {suffix} socket={socket} must refuse before SQLite"
+                    );
+                    assert!(!path.exists(), "{kind} {suffix} created a database");
+                    assert!(std::fs::symlink_metadata(&sidecar).is_ok());
+                    drop(listener);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn native_openers_propagate_sidecar_inspection_error_before_creating_database() {
+        for kind in OPENERS {
+            let directory = tempfile::tempdir().unwrap();
+            // The database name itself fits Linux/macOS NAME_MAX; its sidecar
+            // does not. This is an actual OS inspection error, not NotFound.
+            let path = directory.path().join("x".repeat(255));
+            let original = std::fs::symlink_metadata(with_suffix(&path, "-journal")).unwrap_err();
+            assert_ne!(original.kind(), std::io::ErrorKind::NotFound);
+            let Err(NativeBudgetErrorV1::Io(observed)) = open(kind, &path) else {
+                panic!("{kind} must retain the original inspection error");
+            };
+            assert_eq!(observed.raw_os_error(), original.raw_os_error());
+            assert!(!path.exists(), "{kind} created a database before refusal");
+        }
+    }
+}
+
 fn configuration() -> NativeBudgetConfigV1 {
     NativeBudgetConfigV1 {
         network: [1; 32],
@@ -11,6 +123,47 @@ fn configuration() -> NativeBudgetConfigV1 {
         genesis: [3; 32],
         max_records: 32,
     }
+}
+
+#[cfg(unix)]
+#[test]
+fn native_budget_regular_wal_reopen_keeps_pending_money_and_unknown_cost() {
+    use std::ffi::OsString;
+    use std::os::unix::ffi::OsStringExt;
+
+    let (directory, mut store, mut owner, _, claim) = setup(NativeBudgetLaneV1::Serving);
+    store.reserve(&mut owner, claim.clone()).unwrap();
+    store
+        .begin_effect(&mut owner, claim.claim, [80; 32], [81; 32])
+        .unwrap();
+    store
+        .record_resources(claim.claim, NativeResourceOutcomeV1::Unknown, None)
+        .unwrap();
+    let before = store.report().unwrap();
+    drop(store);
+    let path = directory
+        .path()
+        .join(OsString::from_vec(b"budget-\xff.sqlite".to_vec()));
+    std::fs::rename(directory.path().join("budget.sqlite"), &path).unwrap();
+    let first = NativeBudgetStoreV1::open(&path, configuration()).unwrap();
+    assert_eq!(first.report().unwrap(), before);
+    let mut wal = path.as_os_str().to_os_string();
+    wal.push("-wal");
+    assert!(std::fs::symlink_metadata(&wal).unwrap().is_file());
+    let mut second = NativeBudgetStoreV1::open(&path, configuration()).unwrap();
+    assert_eq!(second.report().unwrap(), before);
+    assert_eq!(
+        second
+            .begin_effect(&mut owner, claim.claim, [80; 32], [81; 32])
+            .unwrap(),
+        NativeBudgetReplayV1::Pending
+    );
+    assert_eq!(second.report().unwrap(), before);
+    assert_eq!(
+        before["budgets"][0]["committed_units"],
+        claim.monetary_reservation
+    );
+    assert_eq!(before["budgets"][0]["pending_effects"], 1);
 }
 fn anchor() -> NativeBudgetAnchorV1 {
     NativeBudgetAnchorV1 {

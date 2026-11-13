@@ -1,0 +1,9 @@
+{
+  "before_worktree_add": true,
+  "control_files_written_and_fsynced": true,
+  "free_bytes": 191154024448,
+  "required_free_bytes": 3676569271,
+  "storage_root": "/data",
+  "tracked_bytes": 2602827447,
+  "tracked_entries": 28944
+}

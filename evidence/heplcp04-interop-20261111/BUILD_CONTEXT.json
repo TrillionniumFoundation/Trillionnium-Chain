@@ -1,0 +1,23 @@
+{
+  "source_commit": "afd2c91b3b9ef75ab9a174e3af772ad322118f7a",
+  "chain_input_commit": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+  "source_tree": "53b8853451ba8e22ad046b12e644054c69b841a2",
+  "explicit_reproduction_environment": {
+    "PATH": "/home/qq/.cargo/bin:/usr/local/bin:/usr/bin:/bin",
+    "RUSTUP_TOOLCHAIN": "1.96.0",
+    "CARGO_HOME": "/home/qq/.cargo",
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0"
+  },
+  "initial_exporter_sha256": "b8eb3e03193345d195b62d7f41ff2608628ff445ca335f7c23e9e5a96d325665",
+  "initial_binary_sha256": "5e541c1a60f10b5c4d41ee7d430b26da13298bc4f39adae7d205ffc88f0a89c8",
+  "original_input_git_blob": "3a89dace16756125639e0b3b20717e15c3f3908a",
+  "original_input_sha256": "49687e0ece90dceb6409978616700c0b32ec342631a1941994ae3b7a886a7496",
+  "native_fixture_sha256": "b873d6f0606100ec8a3246548009b6afda5aa9fbc55e2bd85a4c6fed7fd81a46",
+  "native_source_status_after": "",
+  "qualification": "HOLD_NO_GO",
+  "ordinary_complete_loops": 0,
+  "hepta_final_use_accepted": false
+}

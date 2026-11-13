@@ -1,0 +1,13 @@
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/chain-throughput-engineering-20261108-86a09d93/trillionnium/crates/trnm-mvcc-fee)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 49.84s
+     Running unittests src/lib.rs (/home/qian-qi/chain-throughput-engineering-20261108-86a09d93-target/debug/deps/trnm_mvcc_fee-ced44c332612cadc)
+
+running 5 tests
+test pon_executor::account_conflict_tests::account_conflict_unpredicted_task_payment_still_replays_once_against_exact_reads ... ok
+test pon_executor::account_conflict_tests::account_conflict_common_recipient_elides_real_predictions_without_skipping_signatures ... ok
+test pon_executor::account_conflict_tests::account_conflict_untrusted_hints_preserve_full_validation_and_first_error ... ok
+test pon_executor::account_conflict_tests::account_conflict_funding_chain_and_prior_sender_recipient_keep_canonical_results ... ok
+test pon_executor::account_conflict_tests::account_conflict_disjoint_and_self_transfers_retain_parallel_work ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 150 filtered out; finished in 0.07s
+

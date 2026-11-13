@@ -1,0 +1,30 @@
+   Compiling generic-array v0.14.7
+   Compiling typenum v1.20.1
+   Compiling crypto-common v0.2.2
+   Compiling libc v0.2.184
+   Compiling digest v0.11.3
+   Compiling rusqlite v0.39.0
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling shake v0.1.0
+   Compiling digest v0.10.7
+   Compiling signature v3.0.0
+   Compiling cpufeatures v0.2.17
+   Compiling rustix v1.1.4
+   Compiling cfg-if v1.0.4
+   Compiling sha2 v0.10.9
+   Compiling ml-dsa v0.1.1
+   Compiling getrandom v0.4.2
+   Compiling linux-raw-sys v0.12.1
+   Compiling trnm-crypto-primitives v0.1.0 (/workspace/scratch/a0d4983b1065/chain-throughput/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/a0d4983b1065/chain-throughput/trillionnium/crates/trnm-sqlite-io-boundary)
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: RUSTC must be absolute
+   Compiling trnm-task-kernel v0.1.0 (/workspace/scratch/a0d4983b1065/chain-throughput/trillionnium/crates/trnm-task-kernel)
+   Compiling fs2 v0.4.3
+   Compiling tempfile v3.27.0
+   Compiling trnm-mvcc-fee v0.1.0 (/workspace/scratch/a0d4983b1065/chain-throughput/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-data-availability v0.1.0 (/workspace/scratch/a0d4983b1065/chain-throughput/trillionnium/crates/trnm-data-availability)
+error: could not compile `trnm-data-availability` (lib)
+
+Caused by:
+  process didn't exit successfully: `rustc --crate-name trnm_data_availability --edition=2021 crates/trnm-data-availability/src/lib.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type lib --emit=dep-info,metadata,link -C opt-level=3 -C embed-bitcode=no --cfg 'feature="default"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values("default"))' -C metadata=8c43e5c3ee96c0ab -C extra-filename=-5d94db0557f04d3d --out-dir /workspace/scratch/a0d4983b1065/validation/mvcc-target/release/deps -C strip=debuginfo -L dependency=/workspace/scratch/a0d4983b1065/validation/mvcc-target/release/deps --extern borsh=/workspace/scratch/a0d4983b1065/validation/mvcc-target/release/deps/libborsh-b804ec62a89a1d77.rmeta --extern ed25519_dalek=/workspace/scratch/a0d4983b1065/validation/mvcc-target/release/deps/libed25519_dalek-fa65427ff5bebaaa.rmeta --extern fs2=/workspace/scratch/a0d4983b1065/validation/mvcc-target/release/deps/libfs2-2bc63fafa724eddc.rmeta --extern libc=/workspace/scratch/a0d4983b1065/validation/mvcc-target/release/deps/liblibc-cdd68bd9a1a5dbb7.rmeta --extern rusqlite=/workspace/scratch/a0d4983b1065/validation/mvcc-target/release/deps/librusqlite-9556a7af45f51c5f.rmeta --extern rustix=/workspace/scratch/a0d4983b1065/validation/mvcc-target/release/deps/librustix-8e11bfe2aea06206.rmeta --extern serde=/workspace/scratch/a0d4983b1065/validation/mvcc-target/release/deps/libserde-51fd75a68190aaea.rmeta --extern serde_json=/workspace/scratch/a0d4983b1065/validation/mvcc-target/release/deps/libserde_json-d2848616289ccf19.rmeta --extern sha2=/workspace/scratch/a0d4983b1065/validation/mvcc-target/release/deps/libsha2-dafe722d6503d9bc.rmeta --extern trnm_crypto_primitives=/workspace/scratch/a0d4983b1065/validation/mvcc-target/release/deps/libtrnm_crypto_primitives-321b5b7eb19a2f19.rmeta --extern trnm_protocol=/workspace/scratch/a0d4983b1065/validation/mvcc-target/release/deps/libtrnm_protocol-176e7aa50a5e607a.rmeta --extern zeroize=/workspace/scratch/a0d4983b1065/validation/mvcc-target/release/deps/libzeroize-85e2906a92e9143b.rmeta -L native=/workspace/scratch/a0d4983b1065/validation/mvcc-target/release/build/sha2-asm-b9434fe1ae98cd68/out -L native=/workspace/scratch/a0d4983b1065/validation/mvcc-target/release/build/sha2-asm-b9434fe1ae98cd68/out -L native=/workspace/scratch/a0d4983b1065/validation/mvcc-target/release/build/libsqlite3-sys-acee7b7e273211f0/out` (signal: 9, SIGKILL: kill)

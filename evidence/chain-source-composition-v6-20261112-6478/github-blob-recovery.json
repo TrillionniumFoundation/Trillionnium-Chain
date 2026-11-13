@@ -1,0 +1,111 @@
+{
+  "binary_readback_limitation": "GitHub fetch_blob and fetch reject non-UTF-8 blobs; archive creation returned the exact locally verified Git blob SHA. The local recovered archive bytes and every archived member were hash-verified.",
+  "objects": [
+    {
+      "binary_readback_unsupported": true,
+      "bytes": 27615,
+      "created_via_github": true,
+      "git_blob": "eb427ffd7ec82b326ca28db086a31bd9312b21ce",
+      "path": "recovered-agent-evidence/w7-recovered-python-observation.tar.gz",
+      "remote_create_sha_verified": true,
+      "remote_exact_byte_readback": false,
+      "sha256": "325473bcbf7c7daccb198a0dcabbdb7c4cdb6a275f132c91526e233162830af2"
+    },
+    {
+      "binary_readback_unsupported": true,
+      "bytes": 59863,
+      "created_via_github": true,
+      "git_blob": "cdd0e6d59922b06f6902e22a83b6011f64f54925",
+      "path": "recovered-agent-evidence/authority-lifetime-A-review-observation.tar.gz",
+      "remote_create_sha_verified": true,
+      "remote_exact_byte_readback": false,
+      "sha256": "ff277cb55be4fd73c3c2e8f92f22e99848946b2783431f9ff9bc7a931b390ce7"
+    },
+    {
+      "binary_readback_unsupported": true,
+      "bytes": 44054,
+      "created_via_github": true,
+      "git_blob": "e73eb904831777d4a10356fdea0fc10739220730",
+      "path": "recovered-agent-evidence/final-B-python-gates-observation.tar.gz",
+      "remote_create_sha_verified": true,
+      "remote_exact_byte_readback": false,
+      "sha256": "6cc2a2829e4a7a425fb5b05c79575b1a1b830e62a52b2e89497289c0c339e23a"
+    },
+    {
+      "binary_readback_unsupported": false,
+      "bytes": 14196,
+      "created_via_github": true,
+      "git_blob": "5ba4ac2b7f76eb9d9f61462d27899dbeb2f93b24",
+      "path": "config/pon/pq-authority-effects-v1.json",
+      "remote_create_sha_verified": true,
+      "remote_exact_byte_readback": true,
+      "sha256": "b1de7a047c393fc0427c6286a0dc1919b5b7180c0d533ee6db563dcdf53f3b6a"
+    },
+    {
+      "binary_readback_unsupported": false,
+      "bytes": 17620,
+      "created_via_github": true,
+      "git_blob": "70c9f9e865b8dc3fb85a79259b5e783b969de26b",
+      "path": "config/pon/pq128-lifetime-budget-v1.json",
+      "remote_create_sha_verified": true,
+      "remote_exact_byte_readback": true,
+      "sha256": "dcdb60516fa295030f0f9c99129f571ec63f7ef571202793d318fa1d8bf3c78c"
+    },
+    {
+      "binary_readback_unsupported": false,
+      "bytes": 2173,
+      "created_via_github": true,
+      "git_blob": "393dd66f2592c302dcbfa628fc136b5a72a1f75c",
+      "path": "config/pon/pq128-source-lock-v1.json",
+      "remote_create_sha_verified": true,
+      "remote_exact_byte_readback": true,
+      "sha256": "40e4035ffd1641288fc18c0fe18733f51c7c930a85212d570cef1fdf85d8bd27"
+    },
+    {
+      "binary_readback_unsupported": false,
+      "bytes": 26106,
+      "created_via_github": true,
+      "git_blob": "6c04f3c864df3c87fa07fd7fb546dc53c4b90c3a",
+      "path": "docs/security/PQ128_LIFETIME_BUDGET_V1.md",
+      "remote_create_sha_verified": true,
+      "remote_exact_byte_readback": true,
+      "sha256": "0d82dee98a24ac1ae787d5583ad136b2bf34a0f509ec7ef377bba53b5a4c3754"
+    },
+    {
+      "binary_readback_unsupported": false,
+      "bytes": 24350,
+      "created_via_github": true,
+      "git_blob": "0c044040cc596eca38eca865f0de9ba6ec1cca87",
+      "path": "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+      "remote_create_sha_verified": true,
+      "remote_exact_byte_readback": true,
+      "sha256": "e74195854501767bc2f0afb79f1c3b0d669541269c65b358abaa7de14312e86e"
+    },
+    {
+      "binary_readback_unsupported": false,
+      "bytes": 11127,
+      "created_via_github": true,
+      "git_blob": "162fb3c745b007aec8eca12c005367ca8428e071",
+      "path": "scripts/ci/pq_authority_effect_register.py",
+      "remote_create_sha_verified": true,
+      "remote_exact_byte_readback": true,
+      "sha256": "5a4ae814f384958a6b37e96ea98cf495e50979d9418081d72138b166e9906a24"
+    },
+    {
+      "binary_readback_unsupported": false,
+      "bytes": 14964,
+      "created_via_github": true,
+      "git_blob": "7deea0895071105c476f3d43844fce589e05c0ee",
+      "path": "scripts/ci/test_pq_authority_effect_register.py",
+      "remote_create_sha_verified": true,
+      "remote_exact_byte_readback": true,
+      "sha256": "6e1c147cc9a394f567f2a5b2c0dcd8b1a8fe3f09125543813bf736ffc00e0c4b"
+    }
+  ],
+  "old_B_commit_object_not_recovered": true,
+  "old_B_execution_qualification_inherited": false,
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "runtime_A_native_raw_logs_not_in_agent_checkpoint": true,
+  "schema": "trnm-github-blob-recovery-v1",
+  "v6_archive_original_unavailable": true
+}

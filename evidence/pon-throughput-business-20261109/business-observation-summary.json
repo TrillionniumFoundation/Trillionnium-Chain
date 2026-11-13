@@ -1,0 +1,51 @@
+{
+  "base_commit": "f2d14f9ebd25e054fe17c880331ae0d0c7df46e3",
+  "business_axes": {
+    "actual_model_service_net_value": {
+      "unknown_reason": "NO_INDEPENDENT_FUTURE_TASK_RETENTION_AND_COMPLETE_COST_EVALUATION",
+      "value": null
+    },
+    "complete_version_cold_hot_access_throughput": {
+      "unknown_reason": "NO_COMPLETE_DECLARED_COLD_HOT_LOADING_FAILURE_REPAIR_PROFILE",
+      "value": null
+    },
+    "confirmed_unique_business_transactions_per_second": {
+      "unknown_reason": "NO_NEW_CONFIRMED_CAMPAIGN_UNDER_ORIGINAL_RULE",
+      "value": null
+    },
+    "independently_accepted_unique_useful_tasks_per_second": {
+      "unknown_reason": "NO_INDEPENDENT_TASK_ACCEPTANCE_OR_COMPLETE_COST_CENSUS",
+      "value": null
+    }
+  },
+  "cargo_light_originals_archive": "validation/cargo-light-originals.tar.gz",
+  "local_native_node": {
+    "cargo_exit_code": 101,
+    "failure_cause": null,
+    "failure_observed": "rustc SIGKILL in trnm-data-availability",
+    "native_cancellation_snapshot": null,
+    "native_tests_executed": false,
+    "scope": "900-file unchanged dependency/include closure; no Node binary"
+  },
+  "merge_performed": false,
+  "new_component_profile_is_original_business_profile": false,
+  "original_business_gates": {
+    "four_second_host": "NOT_RUN",
+    "original_resource_contract_enforced": false,
+    "thirty_second_campaign": "NOT_RUN"
+  },
+  "pending_exact_committed_source_checks": [
+    "strict Clippy",
+    "native Node observation module",
+    "native TCP cancellation",
+    "CI whole-repository controls"
+  ],
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "raw_byte_digest_is_independent_origin_attestation": false,
+  "raw_originals_extracted_for_reproduction": {
+    "copied_again_in_this_evidence": false,
+    "reason": "Original historical complete-processes.tar.gz already retained in the base repository; reproduce_reports commands and raw outputs retained here."
+  },
+  "schema": "pon-business-throughput-continuation-v1"
+}

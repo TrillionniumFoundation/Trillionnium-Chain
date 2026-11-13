@@ -1,0 +1,229 @@
+{
+  "custody": {
+    "available_slots": [
+      0,
+      2,
+      4,
+      5
+    ],
+    "chunks_per_page": 64,
+    "schema": "trnm.cell-sealed-paged-custody.v1"
+  },
+  "expected": {
+    "bep52_plan": "fec516f77633a58dc1e60927ba7158103ca36c3f743efd05f0b566ad4317995b7b733d23031a173217533d82b049fce0eceb6ebf3d14b022941872ba475b4360",
+    "chunks": 95,
+    "cts1": "dd644852ec5bb6ec68048477838b97f10b4e3117cf49644505ffab737b0c7898d4bf915d73d2f013d43eafe860dff6beb500745e2cd0b7b66e62c7e8baf7552e",
+    "manifest_count": 30,
+    "payload_bytes": 280269602,
+    "previous_operation": "fad809b14a2ef0814d5cb125ac4c2713ca81d962797e038857416a838c0c5cc2",
+    "tcv1": "76e318b243995ff788bdfc4ef317395a525eeb1c3d751b549c0791a4da4e51deb4366338fcd0330b816252c9bcf5195b4de3247408afdad3386d94bf34e879dd",
+    "tcv2": "1ae64d141b4fcb979c18c846d0795237400eff1ad76abfd8d972c8a35196efee16448d1652e920ddb1fc3d58c32c4a52fb089195d7f51f1f72647f37814c43bb"
+  },
+  "schema": "trnm.cell-sealed-paged-research-source.v1",
+  "source": {
+    "context": {
+      "base": "c320c094769446c21d7e4a33795d7f9310b5e4c8ca5a6fecca40207b1f735b7c",
+      "family": "smollm2-135m-cpu-dev-v1",
+      "layout": "c9b06f9a029a3257801844f89acb59b5f59f6a39087335af323f274e9152992f",
+      "parent": "1c5af7b5a7144a619dfac83b14bd83ae77f1e2227b18a6a9c5dcb214889a0cba",
+      "runtime": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b",
+      "tokenizer": "a1883207efeacecee399f4dc699d2b547eb2d6ddb7500522933ed76c1521fb93"
+    },
+    "environment": {
+      "config/pon/devnet-v1.json": {
+        "path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/config/pon/devnet-v1.json",
+        "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+      },
+      "config/pon/ledger-v1.json": {
+        "path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/config/pon/ledger-v1.json",
+        "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a"
+      },
+      "config/pon/model-family-smollm2-135m-v1.json": {
+        "path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/config/pon/model-family-smollm2-135m-v1.json",
+        "sha256": "0837bbfb31f3f2b9a8731545c9f742aee1ebd32daed392a936a3ec9719537e52"
+      },
+      "config/pon/model-family-v1.json": {
+        "path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/config/pon/model-family-v1.json",
+        "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1"
+      },
+      "config/pon/work-profile-v1.json": {
+        "path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/config/pon/work-profile-v1.json",
+        "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880"
+      },
+      "formal/pon-nakamoto-v1/contract_wire.py": {
+        "path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/formal/pon-nakamoto-v1/contract_wire.py",
+        "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+      },
+      "formal/pon-nakamoto-v1/llm_adapter_contract.py": {
+        "path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/formal/pon-nakamoto-v1/llm_adapter_contract.py",
+        "sha256": "e46311a08584ad7becfc56cd0b699d9bc6921adcfe39319e50aa14faa984ced5"
+      },
+      "runtime/material-plan.json": {
+        "path": "/home/qq/hepta-smollm2-weight-research-20261103/inputs/experiment-plan.json",
+        "sha256": "01ec1a644f37b9fc7a4c6616f589768df97f8eed7a289b5de86afadaa7ce6165"
+      },
+      "runtime/runtime-snapshot.json": {
+        "path": "/home/qq/work/chain-cell-storage-convergence-f2568-20261109-sealed-prep-01/runtime-snapshot.v2.json",
+        "sha256": "e87a3658675836c130ba2a97a805bc6d86cc435135e72f4b6e40747e9271b9eb"
+      },
+      "scripts/cell_sealed_bootstrap_v1.py": {
+        "path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/scripts/cell_sealed_bootstrap_v1.py",
+        "sha256": "0f1f10fdae8a60725ff489bac367b31454eda9223a71d358488bed3603ea7962"
+      },
+      "scripts/llm_base_material.py": {
+        "path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/scripts/llm_base_material.py",
+        "sha256": "10d4c21419dd297dcdee6bd128c7cc1fdc1d343e1a62017da61bc1787fde113b"
+      },
+      "scripts/llm_cell_sealed_worker_v1.py": {
+        "path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/scripts/llm_cell_sealed_worker_v1.py",
+        "sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b"
+      },
+      "scripts/llm_inherited_runtime.py": {
+        "path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/scripts/llm_inherited_runtime.py",
+        "sha256": "069ad93e4adde21761a3e5343a181128b36fe7697e881d2d41c5a6fbc06f155b"
+      },
+      "scripts/llm_neural_read_worker.py": {
+        "path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/scripts/llm_neural_read_worker.py",
+        "sha256": "242cc3ce99b3187a2ee1de25dba77b6f0f699d5427b6e4198e6c77684b4963e9"
+      },
+      "scripts/llm_parent_material.py": {
+        "path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/scripts/llm_parent_material.py",
+        "sha256": "c39877c2219c1417eee912f43b1af703b62b704d768ec6f76ccce9ece96fd98a"
+      },
+      "scripts/llm_python_runtime_contract.py": {
+        "path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/scripts/llm_python_runtime_contract.py",
+        "sha256": "b947b8eaee6dcf4f2f932c22df7e4d989f27171702314e59b03f391ceebe7bbc"
+      },
+      "scripts/llm_runtime_exit_observation.py": {
+        "path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/scripts/llm_runtime_exit_observation.py",
+        "sha256": "c1aa0ab8889e2cbe2efd8cc80ae4f9bbb52b464aebc756a51cc5bd872c3dd086"
+      },
+      "scripts/llm_runtime_pilot.py": {
+        "path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/scripts/llm_runtime_pilot.py",
+        "sha256": "d2854289ae810115bccd3b7714c3d40b03cc6ec216747d6fca653aeac9299bd7"
+      },
+      "scripts/llm_runtime_rss_diagnostics.py": {
+        "path": "/home/qq/work/chain-cell-paged-model-34e09-20261110/scripts/llm_runtime_rss_diagnostics.py",
+        "sha256": "d15f4ddc914475ecc8ab473a16f8916b7dd805d8b39d741e49a9d2f63d8fe320"
+      }
+    },
+    "environment_generation": 1,
+    "material_profile": "smollm2-public-v2-material-runtime-bridge-v1",
+    "max_snapshot_bytes": 536870912,
+    "model": {
+      "adapter/artifact.safetensors": {
+        "path": "/home/qq/hepta-smollm2-weight-research-20261103/inputs/parent/artifact.safetensors",
+        "sha256": "1c5af7b5a7144a619dfac83b14bd83ae77f1e2227b18a6a9c5dcb214889a0cba"
+      },
+      "adapter/target-contract.json": {
+        "path": "/home/qq/hepta-smollm2-weight-research-20261103/inputs/parent/target-contract.json",
+        "sha256": "ebc8ac84999a91acb823d1bf8959a7dbc61fe20d7ba137f11affe426605d9852"
+      },
+      "adapter/wrapped-adapter.json": {
+        "path": "/home/qq/hepta-smollm2-weight-research-20261103/inputs/parent/wrapped-adapter.json",
+        "sha256": "b66cf58fc47319e4f7a54a47b952a51f13d98ba8c448651122d485b5ad2d6d1d"
+      },
+      "base/README.md": {
+        "path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/README.md",
+        "sha256": "4f97533ad95b1b2fea15fbc075c01b94578ebdd7c8138888fa43fa3abd530dc4"
+      },
+      "base/config.json": {
+        "path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/config.json",
+        "sha256": "8eb740e8bbe4cff95ea7b4588d17a2432deb16e8075bc5828ff7ba9be94d982a"
+      },
+      "base/generation_config.json": {
+        "path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/generation_config.json",
+        "sha256": "87b916edaaab66b3899b9d0dd0752727dff6666686da0504d89ae0a6e055a013"
+      },
+      "base/material-manifest.json": {
+        "path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/material-manifest.json",
+        "sha256": "6e6a76d478f28906566c1cc8db9ef767922b7a215c9f795da8d845e965c59f0c"
+      },
+      "base/model.safetensors": {
+        "path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/model.safetensors",
+        "sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c"
+      },
+      "base/special_tokens_map.json": {
+        "path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/special_tokens_map.json",
+        "sha256": "2b7379f3ae813529281a5c602bc5a11c1d4e0a99107aaa597fe936c1e813ca52"
+      },
+      "base/tokenizer.json": {
+        "path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/tokenizer.json",
+        "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c"
+      },
+      "base/tokenizer_config.json": {
+        "path": "/home/qq/hepta-smollm2-weight-research-20261103/pinned-base/tokenizer_config.json",
+        "sha256": "4ec77d44f62efeb38d7e044a1db318f6a939438425312dfa333b8382dbad98df"
+      }
+    },
+    "network": {
+      "consumer": {
+        "max_connections": 128,
+        "max_messages": 1000000,
+        "max_readback_attempts": 1,
+        "max_readback_bytes": 536870912,
+        "max_readback_chunks": 2048,
+        "max_received_bytes": 1073741824,
+        "max_sent_bytes": 1073741824
+      },
+      "publisher": {
+        "max_connections": 128,
+        "max_messages": 1000000,
+        "max_readback_attempts": 1,
+        "max_readback_bytes": 536870912,
+        "max_readback_chunks": 2048,
+        "max_received_bytes": 1073741824,
+        "max_sent_bytes": 1073741824
+      },
+      "request_timeout_ms": 30000,
+      "schema": "trnm.cell-sealed-research-network.v2",
+      "total": {
+        "max_connections": 256,
+        "max_messages": 2000000,
+        "max_readback_attempts": 2,
+        "max_readback_bytes": 1073741824,
+        "max_readback_chunks": 4096,
+        "max_received_bytes": 2147483648,
+        "max_sent_bytes": 2147483648
+      }
+    },
+    "operation": "297c80755f26df4b04f57ab76040f6bf7c2437b8b59ec5a41a87f17a57050b0e",
+    "output": "/home/qq/work/chain-cell-paged-model-34e09-20261110-operation-01",
+    "parent": {
+      "adapter": "3b3128293a86570a47a72c7bf081f898de1682ed1118c5a440ad7478c0f22e42",
+      "contract": "c9b06f9a029a3257801844f89acb59b5f59f6a39087335af323f274e9152992f",
+      "file_sha256": "1c5af7b5a7144a619dfac83b14bd83ae77f1e2227b18a6a9c5dcb214889a0cba",
+      "generation": 1,
+      "operation_id": "public-v2-material-derivation-no-execution"
+    },
+    "python": {
+      "path": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+      "sha256": "23bc148d2b48964b621c5561ff2b81c1d9c7b717967a7491efbf12f4304882b5"
+    },
+    "requests": [
+      {
+        "prompt": "Answer with only yes or no. Is 8517 greater than 8516?",
+        "request_id": "chain-capacity-dc0357-v2-fad809b14a2e-1"
+      },
+      {
+        "prompt": "Answer with only yes or no. Is 8517 greater than 8518?",
+        "request_id": "chain-capacity-dc0357-v2-fad809b14a2e-2"
+      }
+    ],
+    "runtime_rss_bytes": 8589934592,
+    "schema": "trnm.cell-sealed-research-source.v2",
+    "seconds": 300,
+    "snapshot": {
+      "composition_file": "adapter/target-contract.json",
+      "composition_profile": "sealed-smollm2-parent-lora-v1",
+      "environment_loader": "sealed-python-runtime-snapshot-v1",
+      "material_profile": "smollm2-public-v2-material-runtime-bridge-v1",
+      "model_loader": "sealed-smollm2-dense-v1",
+      "quantization": "none",
+      "schema": "trnm.cell-sealed-research-snapshot.v2",
+      "tensor_codec": "safetensors-dense-f32-f16-bf16-v1",
+      "worker_sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b"
+    },
+    "threads": 4
+  }
+}

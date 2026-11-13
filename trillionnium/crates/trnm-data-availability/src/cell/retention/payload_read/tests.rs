@@ -3,6 +3,8 @@ use std::time::Duration;
 use super::*;
 use crate::cell::{CellCacheConfigV4, CellContextV1};
 
+mod observation;
+
 fn deadline() -> Instant {
     Instant::now() + Duration::from_secs(10)
 }
@@ -88,6 +90,136 @@ fn bounded_arena_read_returns_exact_multichunk_bytes_without_cache_or_debit_chan
         arena.verify(contract.operation, deadline()).unwrap(),
         initial
     );
+}
+
+#[test]
+fn bounded_arena_chunk_read_returns_each_exact_original_range_without_full_payload_allocation() {
+    let dir = tempfile::tempdir().unwrap();
+    let (mut arena, cache, contract, bytes) = fixture(dir.path());
+    let initial = arena
+        .acknowledge(contract.operation, &cache, deadline())
+        .unwrap();
+    drop(cache);
+    fs::remove_file(dir.path().join("cache.sqlite")).unwrap();
+    for (index, expected) in bytes.chunks(16_384).enumerate() {
+        let actual = arena
+            .read_chunk_controlled(
+                contract.operation,
+                contract.manifest.id(),
+                index as u32,
+                deadline(),
+                &mut || Ok(()),
+            )
+            .unwrap();
+        assert_eq!(actual, expected);
+        assert!(actual.len() <= 16_384);
+    }
+    assert_eq!(
+        arena.verify(contract.operation, deadline()).unwrap(),
+        initial
+    );
+}
+
+#[test]
+fn bounded_arena_chunk_read_requires_ack_original_manifest_range_and_deadline() {
+    let dir = tempfile::tempdir().unwrap();
+    let (mut arena, cache, contract, _) = fixture(dir.path());
+    assert!(arena
+        .read_chunk_controlled(
+            contract.operation,
+            contract.manifest.id(),
+            0,
+            deadline(),
+            &mut || Ok(())
+        )
+        .is_err());
+    let initial = arena
+        .acknowledge(contract.operation, &cache, deadline())
+        .unwrap();
+    assert!(arena
+        .read_chunk_controlled(contract.operation, [99; 32], 0, deadline(), &mut || Ok(()))
+        .is_err());
+    assert!(arena
+        .read_chunk_controlled(
+            contract.operation,
+            contract.manifest.id(),
+            4,
+            deadline(),
+            &mut || Ok(())
+        )
+        .is_err());
+    assert!(arena
+        .read_chunk_controlled(
+            contract.operation,
+            contract.manifest.id(),
+            0,
+            Instant::now() - Duration::from_secs(1),
+            &mut || Ok(())
+        )
+        .is_err());
+    assert!(matches!(
+        arena.read_chunk_controlled(
+            contract.operation,
+            contract.manifest.id(),
+            0,
+            deadline(),
+            &mut || Err(CellErrorV1::Invalid("chunk owner cancelled"))
+        ),
+        Err(CellErrorV1::Invalid("chunk owner cancelled"))
+    ));
+    assert_eq!(
+        arena.verify(contract.operation, deadline()).unwrap(),
+        initial
+    );
+    arena
+        .retire(contract.operation, 10, None, deadline())
+        .unwrap();
+    assert!(arena
+        .read_chunk_controlled(
+            contract.operation,
+            contract.manifest.id(),
+            0,
+            deadline(),
+            &mut || Ok(())
+        )
+        .is_err());
+}
+
+#[test]
+fn bounded_arena_chunk_read_checks_requested_actual_bytes_without_using_valid_cache() {
+    let dir = tempfile::tempdir().unwrap();
+    let (mut arena, cache, contract, bytes) = fixture(dir.path());
+    arena
+        .acknowledge(contract.operation, &cache, deadline())
+        .unwrap();
+    arena.arena.seek(SeekFrom::Start(32_768)).unwrap();
+    arena.arena.write_all(&[0xff]).unwrap();
+    arena.arena.sync_all().unwrap();
+    cache.verify_complete(&contract.manifest).unwrap();
+    assert_eq!(
+        arena
+            .read_chunk_controlled(
+                contract.operation,
+                contract.manifest.id(),
+                0,
+                deadline(),
+                &mut || Ok(())
+            )
+            .unwrap(),
+        &bytes[..16_384]
+    );
+    assert!(arena
+        .read_chunk_controlled(
+            contract.operation,
+            contract.manifest.id(),
+            2,
+            deadline(),
+            &mut || Ok(())
+        )
+        .is_err());
+    let row = arena.required_row(contract.operation).unwrap();
+    assert_eq!(row.initial_bytes, bytes.len() as u64);
+    assert_eq!(row.repair_bytes, 0);
 }
 
 #[test]
@@ -238,4 +370,53 @@ fn bounded_arena_read_refuses_replaced_path_even_when_old_fd_has_valid_bytes() {
         Err(CellErrorV1::Invalid("retention arena identity"))
     ));
     assert_eq!(fs::read(&previous).unwrap()[..bytes.len()], bytes);
+}
+
+#[test]
+fn inspection_reads_charged_pending_copy_without_ack_or_debit() {
+    let dir = tempfile::tempdir().unwrap();
+    let (mut arena, cache, contract, bytes) = fixture(dir.path());
+    let mut checkpoint = || Ok(());
+    let mut control = OperationControl {
+        deadline: deadline(),
+        checkpoint: &mut checkpoint,
+        stopped: false,
+    };
+    // Establish the ordinary interruption boundary between a charged, durable
+    // initial copy and its acknowledgement. No committed state is rewound.
+    let mut row = arena.required_row(contract.operation).unwrap();
+    assert_eq!(row.status, 0);
+    assert_eq!(row.initial_bytes, 0);
+    row.initial_bytes = contract.manifest.size();
+    arena
+        .write_row_controlled(&row, false, &mut control)
+        .unwrap();
+    arena
+        .copy_payload_controlled(&row, &cache, &mut control)
+        .unwrap();
+    let pending = arena.readback(&row).unwrap();
+    assert!(!pending.acknowledged);
+    assert_eq!(pending.initial_copy_bytes_committed, bytes.len() as u64);
+    assert_eq!(pending.repair_bytes_committed, 0);
+    let actual = arena
+        .inspect_payload_controlled(
+            contract.operation,
+            bytes.len() as u64,
+            deadline(),
+            &mut || Ok(()),
+        )
+        .unwrap();
+    assert_eq!(actual, bytes);
+    let after = arena.required_row(contract.operation).unwrap();
+    assert_eq!(row_checksum(&after), row_checksum(&row));
+    assert_eq!(arena.readback(&after).unwrap(), pending);
+    let acknowledged = arena
+        .reconcile_acknowledgement(contract.operation, deadline())
+        .unwrap();
+    assert!(acknowledged.acknowledged);
+    assert_eq!(
+        acknowledged.initial_copy_bytes_committed,
+        pending.initial_copy_bytes_committed
+    );
+    assert_eq!(acknowledged.repair_bytes_committed, 0);
 }

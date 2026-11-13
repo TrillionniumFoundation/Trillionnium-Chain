@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "python3",
+    "evidence/pon-joint-production-tail-20261110/campaign-341b/verify.py",
+    "--original-archive",
+    "../campaign341b-readback/13779423325.zip"
+  ],
+  "exit_code": 0,
+  "base_head": "b50d40a7839f108fe5baeb57080f449aaa3acf3d",
+  "scope": "evidence-only validation; no archived workloads executed"
+}

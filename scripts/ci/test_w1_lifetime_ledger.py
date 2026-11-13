@@ -51,23 +51,16 @@ def hypothetical():
     return raw
 
 
-class LifetimeLedgerTests(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.sources = {path: (ROOT / path).read_bytes() for path in ledger.SOURCE_PINS}
-        cls.survey = ledger.source_survey(cls.sources)
-
-    def test_project_unknowns_do_not_produce_a_target_or_qualification(self):
-        result = ledger.make_report(ledger.template(), ROOT)
-        # This is an independently fixed successor, not an expected value read
-        # from the implementation under test. The M8 observation stays intact.
+class HistoricalLifetimeFixturesTests(unittest.TestCase):
+    def test_account_boundary_successor_preserves_the_fixed_historical_report(self):
         historical = ROOT / "evidence/pon-w1-lifetime-current-20261109/project-report.json"
+        successor = ROOT / "evidence/pon-w1-lifetime-account-boundary-20261110/project-report.json"
         self.assertEqual(hashlib.sha256(historical.read_bytes()).hexdigest(),
                          "8ee20462d669a0e21b0fe964585f85fa2a49e7e58273459ab2501b4a2e39dfc0")
-        fixture = ROOT / "evidence/pon-w1-lifetime-account-boundary-20261110/project-report.json"
-        # Permit exactly the seven reviewed source-observation changes. Every
-        # other historical report field is still compared in full; expected
-        # values must not be populated from ledger.SOURCE_BASE/SOURCE_PINS.
+        self.assertEqual(hashlib.sha256(successor.read_bytes()).hexdigest(),
+                         "b050b861ec172305d708ba7c01ca47d547b1646cc3daee1d6aec9877d2cf3390")
+        # Retain the exact seven reviewed differences from cdd984808. Values
+        # are independent of the implementation's current SOURCE_BASE/PINS.
         expected = json.loads(historical.read_bytes())
         survey = expected["selected_source_survey"]
         survey["base_commit"] = "077ac4f33206de00a178553d9a0c729a20685088"
@@ -81,10 +74,65 @@ class LifetimeLedgerTests(unittest.TestCase):
         survey["sources"][7]["sha256"] = (
             "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca")
         self.assertEqual((json.dumps(expected, indent=2, sort_keys=True, allow_nan=False)
-                          + "\n").encode(), fixture.read_bytes())
+                          + "\n").encode(), successor.read_bytes())
+
+
+class LifetimeLedgerTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.sources = {path: (ROOT / path).read_bytes() for path in ledger.SOURCE_PINS}
+        cls.survey = ledger.source_survey(cls.sources)
+
+    def test_project_unknowns_do_not_produce_a_target_or_qualification(self):
+        input_path = ROOT / "evidence/pon-quantum-lifetime-20261111-e464/lifetime-input.json"
+        raw = ledger.strict_json(input_path.read_bytes())
+        self.assertEqual(raw, ledger.template())
+        result = ledger.make_report(raw, ROOT)
+        fixture = ROOT / "evidence/pon-quantum-lifetime-20261111-e464/lifetime-report.json"
         self.assertEqual((json.dumps(result, indent=2, sort_keys=True, allow_nan=False)
                           + "\n").encode(), fixture.read_bytes())
-        self.assertNotEqual(fixture.read_bytes(), historical.read_bytes())
+        # Preserve both earlier reports. The dependency successor changed two
+        # pins; this successor changes the resource-model pin, size and matching
+        # observation identity only. No accounting/HOLD value may drift.
+        archived_input = ROOT / "evidence/pq-chain-convergence-20261111-d4d2/lifetime-input.json"
+        archived_report = ROOT / "evidence/pq-chain-convergence-20261111-d4d2/lifetime-report.json"
+        self.assertEqual(hashlib.sha256(archived_input.read_bytes()).hexdigest(),
+                         "a6e43a5c55e71154592a3489f566995e7961b91611e15d40a18a948a495f9f89")
+        self.assertEqual(hashlib.sha256(archived_report.read_bytes()).hexdigest(),
+                         "ed80f8de4f4880406242411fdfeef45fdcdc0667b410a2ced18abd99f2af344e")
+        self.assertEqual(input_path.read_bytes(), archived_input.read_bytes())
+        previous = ROOT / "evidence/pq-live-retry-20261111-fa62381e/lifetime-report.json"
+        previous_input = ROOT / "evidence/pq-live-retry-20261111-fa62381e/lifetime-input.json"
+        self.assertEqual(hashlib.sha256(previous.read_bytes()).hexdigest(),
+                         "2c3915cd2ab8bf0e93ea47728d82ec76762ba028416da17ea21a959fd506f81e")
+        self.assertEqual(previous_input.read_bytes(), archived_input.read_bytes())
+        expected = ledger.strict_json(archived_report.read_bytes())
+        self.assertEqual(expected["selected_source_survey"]["base_commit"],
+                         "8add285b6c0a91d8b7812efe2d02c9342f74c91b")
+        self.assertNotEqual(result, expected)
+        expected["selected_source_survey"]["base_commit"] = "7f83ea843d6d1578a475a7a0c4dc026da564a795"
+        changed = {
+            "trillionnium/crates/trnm-crypto-primitives/Cargo.toml":
+                "caff7ff137c94e26a378a2a95ae029a21b1ee30a79d08a05b8c9e3b1f1810ab8",
+            "trillionnium/Cargo.lock":
+                "53c4eab0fb3d2951894348de2b765e0a573e49acb5dbfe1fe805719ec868a136",
+        }
+        for row in expected["selected_source_survey"]["sources"]:
+            if row["path"] in changed:
+                row["sha256"] = changed[row["path"]]
+        self.assertEqual(expected, ledger.strict_json(previous.read_bytes()))
+        self.assertNotEqual(result, expected)
+        expected["selected_source_survey"]["base_commit"] = "1f2b0187d4522b5248294ddab318f34a63bdc5a3"
+        resource = "formal/pon-nakamoto-v1/quantum_oracle_resources.py"
+        reviewed_resource = "23a2f810685e5f352b3cc4b7b9e8b8ab76d6208122d7e2379ee9c9d51edf849a"
+        for row in expected["selected_source_survey"]["sources"]:
+            if row["path"] == resource:
+                row["sha256"] = reviewed_resource
+                row["bytes"] = "28132"
+        observation = expected["selected_source_survey"]["observations"]["resource_accounting"]
+        self.assertEqual(observation["anchor_line"], "175")
+        observation["sha256"] = reviewed_resource
+        self.assertEqual(result, expected)
         budget = result["lifetime_ledger"]
         self.assertIsNone(budget["sum_of_group_adversary_query_envelopes"])
         self.assertIsNone(budget["conditional_union"]["hypothetical_expression_meets_target"])
@@ -282,6 +330,23 @@ class LifetimeLedgerTests(unittest.TestCase):
             del sources[changed]
             with self.subTest(missing=changed), self.assertRaises(ledger.LedgerError):
                 ledger.source_survey(sources)
+        resource = "formal/pon-nakamoto-v1/quantum_oracle_resources.py"
+        sources = dict(self.sources)
+        sources[resource] = git_blob("6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d", resource)
+        self.assertEqual(hashlib.sha256(sources[resource]).hexdigest(),
+                         "72879d40ff1583b514cb43ab10f1fd69edb60522f9c67997dfd200747977279f")
+        with self.assertRaisesRegex(ledger.LedgerError, "source identity mismatch: " + resource):
+            ledger.source_survey(sources)
+        # These are the real dependency bytes behind the archived d4d2 survey.
+        # Neither old manifest nor old lock is valid for the current checkpoint.
+        for path in ("trillionnium/crates/trnm-crypto-primitives/Cargo.toml", lock):
+            sources = dict(self.sources)
+            sources[path] = git_blob("8add285b6c0a91d8b7812efe2d02c9342f74c91b", path)
+            self.assertNotEqual(sources[path], self.sources[path])
+            with self.subTest(historical_dependency=path):
+                with self.assertRaises(ledger.LedgerError) as refused:
+                    ledger.source_survey(sources)
+                self.assertEqual(str(refused.exception), "source identity mismatch: " + path)
         # This is the actual earlier lock from M7, not a fabricated invalid TOML.
         # It remains a rejected source even though it was a real prior candidate.
         historical_lock = git_blob("7ddfe2bfa480d1ebd91c07d03d56a963fff038c5", lock)
@@ -292,9 +357,6 @@ class LifetimeLedgerTests(unittest.TestCase):
         with self.assertRaises(ledger.LedgerError) as refused:
             ledger.source_survey(sources)
         self.assertEqual(str(refused.exception), "source identity mismatch: " + lock)
-        # Reuse the M7 revision already required above; the closure checkout has
-        # fetch-depth: 0. No new M8 history dependency or lazy fetch is added.
-        # These actual pre-boundary store bytes remain invalid current source.
         historical_store = git_blob("7ddfe2bfa480d1ebd91c07d03d56a963fff038c5", store)
         self.assertEqual(hashlib.sha256(historical_store).hexdigest(),
                          "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554")
@@ -303,6 +365,17 @@ class LifetimeLedgerTests(unittest.TestCase):
         with self.assertRaises(ledger.LedgerError) as refused:
             ledger.source_survey(sources)
         self.assertEqual(str(refused.exception), "source identity mismatch: " + store)
+        # The former source survey remains historical evidence. Its real
+        # consensus bytes cannot stand in for the reviewed current checkpoint.
+        consensus = "trillionnium/crates/trnm-pon-node/src/consensus.rs"
+        historical_consensus = git_blob("189b9b5959d836ef6ae96e14fb285948e4920aa9", consensus)
+        self.assertEqual(hashlib.sha256(historical_consensus).hexdigest(),
+                         "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62")
+        sources = dict(self.sources)
+        sources[consensus] = historical_consensus
+        with self.assertRaises(ledger.LedgerError) as refused:
+            ledger.source_survey(sources)
+        self.assertEqual(str(refused.exception), "source identity mismatch: " + consensus)
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "trillionnium").symlink_to(ROOT / "trillionnium", target_is_directory=True)
@@ -311,12 +384,9 @@ class LifetimeLedgerTests(unittest.TestCase):
 
     def test_source_lines_remain_independent_of_existing_qualification_labels(self):
         survey = self.survey
-        reviewed_base = "077ac4f33206de00a178553d9a0c729a20685088"
-        reviewed_store = "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca"
+        reviewed_base = "1f2b0187d4522b5248294ddab318f34a63bdc5a3"
         self.assertEqual(ledger.SOURCE_BASE, reviewed_base)
         self.assertEqual(survey["base_commit"], reviewed_base)
-        self.assertEqual(ledger.SOURCE_PINS["trillionnium/crates/trnm-pon-node/src/store.rs"],
-                         reviewed_store)
         for path, expected in ledger.SOURCE_PINS.items():
             with self.subTest(source_path=path):
                 original = git_blob(ledger.SOURCE_BASE, path)

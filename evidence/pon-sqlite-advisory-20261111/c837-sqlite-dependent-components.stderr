@@ -1,0 +1,33 @@
+   Compiling rand_core v0.10.1
+   Compiling rusqlite v0.41.1
+   Compiling getrandom v0.4.2
+   Compiling crypto-common v0.2.2
+   Compiling const-oid v0.10.2
+   Compiling rustix v1.1.4
+   Compiling serde_json v1.0.149
+   Compiling digest v0.11.3
+   Compiling linux-raw-sys v0.12.1
+   Compiling der v0.8.3
+   Compiling spki v0.8.1
+   Compiling shake v0.1.0
+   Compiling pkcs8 v0.11.0
+   Compiling signature v3.0.0
+   Compiling openssl-sys v0.9.117
+   Compiling openssl v0.10.81
+   Compiling tempfile v3.27.0
+   Compiling ml-dsa v0.1.1
+   Compiling trnm-task-kernel v0.1.0 (/home/qq/work/chain-sqlite-advisory-20261110/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qq/work/chain-sqlite-advisory-20261110/trillionnium/crates/trnm-crypto-primitives)
+   Compiling fs2 v0.4.3
+   Compiling trnm-service-settlement v0.1.0 (/home/qq/work/chain-sqlite-advisory-20261110/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qq/work/chain-sqlite-advisory-20261110/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-state-import v0.1.0 (/home/qq/work/chain-sqlite-advisory-20261110/trillionnium/crates/trnm-state-import)
+   Compiling trnm-data-availability v0.1.0 (/home/qq/work/chain-sqlite-advisory-20261110/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qq/work/chain-sqlite-advisory-20261110/trillionnium/crates/trnm-mvcc-fee)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 37.46s
+     Running unittests src/lib.rs (/home/qq/work/chain-sqlite-advisory-20261110-checks/native-target/debug/deps/trnm_data_availability-8bbc672735fa8318)
+
+thread 'cell::retention::tests::retention_process_child' (776524) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+error: test failed, to rerun pass `-p trnm-data-availability --lib`

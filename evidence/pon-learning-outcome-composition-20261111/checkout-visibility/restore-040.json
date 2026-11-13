@@ -1,0 +1,24 @@
+{
+  "actual_oid": "ae10582f6b180ded7c31bd089c562bd6eb9dd8aa",
+  "bytes": 1803594,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "ae10582f6b180ded7c31bd089c562bd6eb9dd8aa"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 1803594,
+  "expected_oid": "ae10582f6b180ded7c31bd089c562bd6eb9dd8aa",
+  "finished_at": "2026-11-12T01:41:54.066893+00:00",
+  "path": "evidence/pon-cell-concurrent-revalidation-20261107/ci/concurrent-ci-acc2ec24-v1.tar.gz",
+  "path_base64": "ZXZpZGVuY2UvcG9uLWNlbGwtY29uY3VycmVudC1yZXZhbGlkYXRpb24tMjAyNjExMDcvY2kvY29uY3VycmVudC1jaS1hY2MyZWMyNC12MS50YXIuZ3o=",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "07e037a308804890aa4f8f6fbe2b3e04da7b8ed68600e79bfc0ade8f79f932c2",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:54.035720+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

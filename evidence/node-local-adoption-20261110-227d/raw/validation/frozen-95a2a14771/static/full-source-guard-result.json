@@ -1,0 +1,33 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13",
+    "--output",
+    "/workspace/scratch/227dcdfdc6e4/validation/frozen-95a2a14771/static/full-source-guard.json"
+  ],
+  "elapsed_seconds": 16.077753784999913,
+  "exit_code": 0,
+  "log": "/workspace/scratch/227dcdfdc6e4/validation/frozen-95a2a14771/static/full-source-guard.log",
+  "log_sha256": "75088a4490ae1a1304afdc6c10f6d1d1130929882fae661b159ca40f84249185",
+  "name": "full-source-guard",
+  "reported": {
+    "base": null,
+    "candidate": "95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13",
+    "tested_tree": "3fba36baa1682fd5b4cbd5e49e07204464c26ed4",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2551682835,
+    "tracked_entries": 27867,
+    "tracked_worktree_verified": true
+  },
+  "started_utc": "2026-11-11T01:28:50.483103+00:00",
+  "tests": null
+}

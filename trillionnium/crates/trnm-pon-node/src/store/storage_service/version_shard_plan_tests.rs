@@ -453,3 +453,6 @@ fn native_complete_version_to_complete_local_shard_plan_reopens_without_sources_
 
 #[path = "version_shard_recovery_tests.rs"]
 mod recovery;
+
+#[path = "version_paged_shard_plan_tests.rs"]
+mod paged_tests;

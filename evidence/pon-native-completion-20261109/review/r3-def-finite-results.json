@@ -1,0 +1,319 @@
+{
+  "schema": "r3-def-finite-final-review-v1",
+  "date_utc": "2026-11-09",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "tested_commit": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+  "tested_tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+  "source_root": "/data/chain-abg-70ae-20261108/source",
+  "evidence_root": "/data/chain-abg-70ae-20261108/evidence/r3-def-finite",
+  "run_job": {
+    "host": "desktop",
+    "id": "1a1be7923df-5e21-fb",
+    "state": "succeeded",
+    "exit_code": 0,
+    "output_complete": true,
+    "output_durable": true,
+    "timed_out": false
+  },
+  "source_before": {
+    "clean": true,
+    "commit": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "expected_identity": true,
+    "status_bytes": 0,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df"
+  },
+  "source_after": {
+    "clean": true,
+    "commit": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "expected_identity": true,
+    "status_bytes": 0,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df"
+  },
+  "preflight": {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "elapsed_seconds": 0.11516857403330505,
+    "env_overrides": {
+      "GIT_NO_LAZY_FETCH": "1",
+      "GIT_TERMINAL_PROMPT": "0",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONHASHSEED": "0"
+    },
+    "expected_source_commit": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "expected_source_tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+    "finished_utc": "2026-11-09T04:03:04.808535+00:00",
+    "label": "preflight",
+    "launch_error": null,
+    "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r3-def-finite/preflight",
+    "outer_process_exit": 0,
+    "started_utc": "2026-11-09T04:03:04.693174+00:00",
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 172,
+      "sha256": "4c58882a4134d8adc21e7bcf4a095a3d15d31c83a068667459aa26e612434295"
+    },
+    "timed_out": false,
+    "timeout_seconds": 120
+  },
+  "unchanged_pinned_files": 17,
+  "source_pins_sha256": "59a11c83dada3f4146c344b17e2a6b13f6931d92ca8c79ec8893f27c37791e6d",
+  "modules": 9,
+  "actual_tests": 255,
+  "all_finite_suites_pass": true,
+  "no_skips_or_expected_failures": true,
+  "suite_elapsed_seconds": 12.770725925453007,
+  "runner_sha256": "1099446c74403b812c7e960326e4c33888bb0e11aaf96e22916f58b5f779f9ed",
+  "runner_reuse": "Byte-identical to reviewed R2 runner except EVIDENCE directory r2-def-finite -> r3-def-finite; explicit expected commit/tree changed only in invocation. The embedded r2-def-finite-evidence-v1 schema name denotes the reused report format, not the tested source.",
+  "command_manifest_sha256": "91dba3636dbdcdbcfb6adbd1e32250e705ceecdb8ecddcc255752b7200c86d9b",
+  "summary": {
+    "path": "/data/chain-abg-70ae-20261108/evidence/r3-def-finite/summary.json",
+    "sha256": "cdc7808fb5a69caa0c404c27c5832dd5fbc3b3ea355a7109610f4739ed19284a"
+  },
+  "log_manifest": {
+    "path": "/workspace/scratch/70ae3f2c90d7/r3-def-finite-log-manifest.json",
+    "sha256": "0e61daa105465222a61d60f681ca1c9936428dc73d6cc972a477881a545a63ce",
+    "file_count": 198,
+    "total_bytes": 255144,
+    "scope": "All 198 files in the completed run evidence directory, including exact command JSON, complete stdout/stderr, actual exits, preflight, before/after/source identity records, selected source hashes and suite outcomes."
+  },
+  "suite_results": [
+    {
+      "id": "test_cost_envelope_contract_v1",
+      "expected_tests": 29,
+      "actual_tests": 29,
+      "unittest_parent_exit": 0,
+      "terminal_status_lines": [
+        "OK"
+      ],
+      "pass": true,
+      "elapsed_seconds": 0.9177603968419135,
+      "remote_suite_json": "/data/chain-abg-70ae-20261108/evidence/r3-def-finite/test_cost_envelope_contract_v1/suite.json",
+      "suite_json_sha256": "0dd5ae723a4f04f38950409b4c68c9157d6940c16ba0da471d7959e786fce833",
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 5366,
+        "sha256": "cb31aee9aea9239c4ac2c0652f52704f8f789fd2844a54af3015a69591a05dee"
+      }
+    },
+    {
+      "id": "test_branch_time_daa_v1",
+      "expected_tests": 31,
+      "actual_tests": 31,
+      "unittest_parent_exit": 0,
+      "terminal_status_lines": [
+        "OK"
+      ],
+      "pass": true,
+      "elapsed_seconds": 0.5668243449181318,
+      "remote_suite_json": "/data/chain-abg-70ae-20261108/evidence/r3-def-finite/test_branch_time_daa_v1/suite.json",
+      "suite_json_sha256": "6d9a778edb32cf39103eb4134eec7893a7d03e8008bed655e85d385e65bcd2c9",
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 5638,
+        "sha256": "f0fc7fccc62bab7e2dd9fe22e79905b30043e04e3b7904a5a382f6320ddc09eb"
+      }
+    },
+    {
+      "id": "test_lifecycle_cost_v1",
+      "expected_tests": 31,
+      "actual_tests": 31,
+      "unittest_parent_exit": 0,
+      "terminal_status_lines": [
+        "OK"
+      ],
+      "pass": true,
+      "elapsed_seconds": 2.220633639022708,
+      "remote_suite_json": "/data/chain-abg-70ae-20261108/evidence/r3-def-finite/test_lifecycle_cost_v1/suite.json",
+      "suite_json_sha256": "36f883f967f66a9f0cb5160d8d3a839838fbb07f4864212de7d714aee37ae3bb",
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 5203,
+        "sha256": "1a00707d62dca967a2c9acbae57e87dc2e71f0c163e7c3fc0ca0e84292b43d9d"
+      }
+    },
+    {
+      "id": "test_credit_envelope_contract",
+      "expected_tests": 40,
+      "actual_tests": 40,
+      "unittest_parent_exit": 0,
+      "terminal_status_lines": [
+        "OK"
+      ],
+      "pass": true,
+      "elapsed_seconds": 0.767218594904989,
+      "remote_suite_json": "/data/chain-abg-70ae-20261108/evidence/r3-def-finite/test_credit_envelope_contract/suite.json",
+      "suite_json_sha256": "f27c5ced26f7de7c01250c64c90b3eaeee8d7f5125cb2d6f85548907474638b9",
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 6874,
+        "sha256": "029b26dc5229b1b089a499aec7fb39075b83bf2105fb117fa8bdc155f213410a"
+      }
+    },
+    {
+      "id": "test_normalized_search_cost",
+      "expected_tests": 37,
+      "actual_tests": 37,
+      "unittest_parent_exit": 0,
+      "terminal_status_lines": [
+        "OK"
+      ],
+      "pass": true,
+      "elapsed_seconds": 0.26591863413341343,
+      "remote_suite_json": "/data/chain-abg-70ae-20261108/evidence/r3-def-finite/test_normalized_search_cost/suite.json",
+      "suite_json_sha256": "ed8fea29b6fc0654ec8256a1dd3faa0c5828be93c9b0231a920255596326a7da",
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 6549,
+        "sha256": "2628c55f0c75452001cd17125b781bff7e5beea54e2a0b601dde4068394d4edc"
+      }
+    },
+    {
+      "id": "test_fixed_probability_contract",
+      "expected_tests": 16,
+      "actual_tests": 16,
+      "unittest_parent_exit": 0,
+      "terminal_status_lines": [
+        "OK"
+      ],
+      "pass": true,
+      "elapsed_seconds": 0.21580904489383101,
+      "remote_suite_json": "/data/chain-abg-70ae-20261108/evidence/r3-def-finite/test_fixed_probability_contract/suite.json",
+      "suite_json_sha256": "fcae2a346b7b8bf69002ba3442c2049c776ebcbf4f024a1a9cbe6737282dedbe",
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 2881,
+        "sha256": "092d9d2572b082fef807591c6da8b1bd27b90b2c75872f98587a54d3cd14b8c5"
+      }
+    },
+    {
+      "id": "test_credit_feasibility",
+      "expected_tests": 31,
+      "actual_tests": 31,
+      "unittest_parent_exit": 0,
+      "terminal_status_lines": [
+        "OK"
+      ],
+      "pass": true,
+      "elapsed_seconds": 1.669897586805746,
+      "remote_suite_json": "/data/chain-abg-70ae-20261108/evidence/r3-def-finite/test_credit_feasibility/suite.json",
+      "suite_json_sha256": "f9568c69de226d08b8b6a5575b272b7ea7719d3591c95880dd34358fe40d5627",
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 5159,
+        "sha256": "7c3dee7b79993bb7e4a49b36b98bc49795df6832e2ba33a2c6cc9f5bcee7139b"
+      }
+    },
+    {
+      "id": "test_amortized_cost_potential",
+      "expected_tests": 34,
+      "actual_tests": 34,
+      "unittest_parent_exit": 0,
+      "terminal_status_lines": [
+        "OK"
+      ],
+      "pass": true,
+      "elapsed_seconds": 1.368874236010015,
+      "remote_suite_json": "/data/chain-abg-70ae-20261108/evidence/r3-def-finite/test_amortized_cost_potential/suite.json",
+      "suite_json_sha256": "8ceaec4a47b484ea10fdf907a2db3860d3fc98d63e5b351ba5a53b9f575b456c",
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 5505,
+        "sha256": "963ca5ac57cf9c1991bb3209bb5799bc3e495c30b6bbf956089936821aae8801"
+      }
+    },
+    {
+      "id": "test_amortized_cost_potential_independent",
+      "expected_tests": 6,
+      "actual_tests": 6,
+      "unittest_parent_exit": 0,
+      "terminal_status_lines": [
+        "OK"
+      ],
+      "pass": true,
+      "elapsed_seconds": 4.77778944792226,
+      "remote_suite_json": "/data/chain-abg-70ae-20261108/evidence/r3-def-finite/test_amortized_cost_potential_independent/suite.json",
+      "suite_json_sha256": "5083aaa4cf0f4410b6bdda40ab9d8d9d1ebc823c54817a8b38472b9112c7762d",
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 1404,
+        "sha256": "931ee667cf5e2dbf77d2f14e029b5665ae94617329aec9a4956d67c3d44b26f9"
+      }
+    }
+  ],
+  "child_exit_semantics": "Unittest parent exits are distinct from unchanged tests' expected negative/HOLD CLI child exits. No additional child instrumentation, new tests, or changed test/deadline/timeout roster.",
+  "concurrent_load": "Root native and B's thirteen existing gates ran concurrently as development checks; original fixed-cgroup stress was not exercised. The reused runner retains its common native/static/Clippy parallel-development annotation.",
+  "qualification": {
+    "D": "HOLD",
+    "E": "HOLD",
+    "F": "HOLD",
+    "AG_joint": "HOLD_NO_GO",
+    "production_acceptance": false,
+    "scope": "Finite model controls only. No all-legal-strategy cost lower bound, empirical physical upper bound, complete history premise, original business deadline or mixed-consensus proof."
+  },
+  "delivery_readme": {
+    "path": "/workspace/scratch/70ae3f2c90d7/b-work/delivery-readme-template.md",
+    "sha256": "9def679402b619abf6d03618b9e0a965e0f9e4c4a8d3105165ed226350b4c046",
+    "lines": 155,
+    "bytes": 14581,
+    "placeholders": [
+      "@@CODE_HEAD@@",
+      "@@CODE_TREE@@"
+    ],
+    "rendered_or_copied_to_source": false,
+    "corrections": [
+      "A/C has eight held-out rows, candidate and strongest control each 4/8; not four rows per side.",
+      "Query-only wording; 13 sampled owner files unchanged, no new dispatch/training/installation; query may reconcile observed facts.",
+      "r18 signed namespace and unchanged numeric resource/deadline limits are explicit.",
+      "Paired cold controls use the same 2-second deadline; do not stand in for original 4-second fixed-host business or default History deadlines.",
+      "133.3ms calculation is conditional on a thread near one full CPU and elapsed time approximately equal to CPU time; actual 0.25CPU host cap changes accrual timing, no measured universal-starvation claim.",
+      "Final outcome rows only take effect after delivery guard verifies all required final-source gates; text no longer claims to be a rendered qualification receipt or demands a later rendering step."
+    ],
+    "included_scope": "A-G matrix, eleven user adversarial groups, 12/32 unknown cost endpoints, concrete B liveness/durability/fairness/cgroup limitations, A/C #829 tested and evidence heads, all specified failed observations and relative evidence links."
+  },
+  "r3_selector_static_review": {
+    "patch_sha256": "552d4f5a89e8d8c1f48af9006602fa80d7199633068f997057b48230a4553600",
+    "paths": [
+      "config/pon/applicability-v1.json",
+      "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md"
+    ],
+    "independent_local_check": "The complete patch's four changed lines are exactly two r14-to-r18 selector substitutions; no other changed bytes in those lines and no checker changes in the patch.",
+    "peer_source_audit": "Budget agent's manifest reports no current-corpus pin or old-blob/SHA references and only the two live literal locations. Reviewer did not rerun its whole-tree scan or full gate.",
+    "full_gate_or_native_tests_run_by_this_selector_review": false
+  },
+  "other_evidence": "R1/R2 failed source and repository observations remain untouched. Root reports separate R3 native/Clippy/source-after job 1a1be74a590-5e21-d7 complete; this report does not independently execute or reclassify that job."
+}

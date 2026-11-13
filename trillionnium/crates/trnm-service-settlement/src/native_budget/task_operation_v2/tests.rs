@@ -12,6 +12,45 @@ fn config() -> NativeBudgetConfigV1 {
         max_records: 8,
     }
 }
+
+#[cfg(unix)]
+#[test]
+fn task_operation_regular_wal_reopen_keeps_checkpoint_and_one_time_begin() {
+    use std::ffi::OsString;
+    use std::os::unix::ffi::OsStringExt;
+
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory
+        .path()
+        .join(OsString::from_vec(b"task-\xff.sqlite".to_vec()));
+    let mut first = NativeTaskOperationStoreV2::open(&path, config()).unwrap();
+    let mut owner = Owner::new();
+    let binding = binding();
+    first.reserve(&mut owner, binding.clone()).unwrap();
+    assert_eq!(
+        first.begin(&mut owner, binding.claim).unwrap(),
+        NativeBudgetReplayV1::New
+    );
+    let checkpoint = first.checkpoint().unwrap();
+    let snapshot = first.snapshot(binding.claim).unwrap();
+    let mut second = NativeTaskOperationStoreV2::open(&path, config()).unwrap();
+    assert_eq!(second.checkpoint().unwrap(), checkpoint);
+    assert_eq!(second.snapshot(binding.claim).unwrap(), snapshot);
+    assert_eq!(
+        second.begin(&mut owner, binding.claim).unwrap(),
+        NativeBudgetReplayV1::Pending
+    );
+    drop(first);
+    drop(second);
+    let mut cold = NativeTaskOperationStoreV2::open(&path, config()).unwrap();
+    assert_eq!(cold.checkpoint().unwrap(), checkpoint);
+    assert_eq!(
+        cold.begin(&mut owner, binding.claim).unwrap(),
+        NativeBudgetReplayV1::Pending
+    );
+    assert_eq!(owner.starts, 1);
+    assert_eq!(cold.snapshot(binding.claim).unwrap(), snapshot);
+}
 fn binding() -> NativeTaskOperationBindingV2 {
     NativeTaskOperationBindingV2 {
         claim: [10; 32],

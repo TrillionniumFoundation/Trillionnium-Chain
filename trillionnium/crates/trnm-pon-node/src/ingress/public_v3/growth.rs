@@ -1,5 +1,6 @@
 //! Explicit PGH2/PNP2 development slice on the original protected-v3 transport.
-//! No pool, history walker, automatic parent recovery or new supervisor.
+//! No pool, history-import service, automatic parent recovery or new supervisor.
+//! Current eligibility walks retained ancestor headers under the original budget.
 use super::*;
 use crate::store::growth::GrowthWorkCheckedPacket;
 use crate::{GrowthPacket, GrowthProgress};
@@ -136,14 +137,20 @@ pub(super) fn dispatch(
         Request::GrowthSubmitV1 { packet: text } => {
             let charge = measurement.ok_or("PUBLIC_GROWTH_ORIGINAL_CPU_REQUIRED")?;
             let packet = packet(&text)?;
+            let parent = packet.header.ledger.parent;
             {
                 let mut owner = lock_owner(node, &mut wait)?;
-                if let Some(id) = owner.precheck_growth_admission_with_progress(
-                    &packet,
-                    super::super::now()?,
-                    &checkpoint,
-                )? {
-                    // This existing exact packet gets no new W1 priority.
+                let clock = super::super::now()?;
+                let existing =
+                    owner.precheck_growth_admission_with_progress(&packet, clock, &checkpoint)?;
+                // The candidate's own clock predicate does not cover a future
+                // ancestor in a historically valid nonmonotone branch. Keep
+                // this check before W1 and before the duplicate fast return.
+                owner.check_observed_history_with_progress(parent, clock, &mut || {
+                    checkpoint(GrowthProgress::BeforeContext)
+                })?;
+                if let Some(id) = existing {
+                    // This existing exact packet gets no new completion priority.
                     return submit_result(&mut owner, id);
                 }
             }
@@ -179,20 +186,32 @@ pub(super) fn dispatch(
             }
             let checked = result?;
             checkpoint(GrowthProgress::BeforeContext)?;
-            charge
-                .workers
-                .live
-                .as_ref()
-                .ok_or("PUBLIC_GROWTH_ORIGINAL_CPU_REQUIRED")?
-                .growth_work_verified(&checked)?;
+            let completion_cpu = ServiceMutationCpuCheckpoint::from_actual_live(
+                charge
+                    .workers
+                    .live
+                    .as_ref()
+                    .ok_or("PUBLIC_GROWTH_ORIGINAL_CPU_REQUIRED")?
+                    .clone(),
+            );
             let mut owner = lock_owner(node, &mut wait)?;
             // Reacquired ORIGINAL owner. No cached State, clock or parent is
             // supplied; the typed entry rebinds all current inputs before commit.
-            let id = owner.admit_growth_work_checked_with_worker_accounting(
+            let clock = super::super::now()?;
+            // Recheck in the original owner after unlocked W1, using this
+            // original request's deadline and CPU callback. Admission checks
+            // the candidate timestamp at the same clock. Nothing resets the
+            // reservation, and the signed postcommit activation contract stays
+            // unchanged.
+            owner.check_observed_history_with_progress(parent, clock, &mut || {
+                checkpoint(GrowthProgress::BeforeContext)
+            })?;
+            let id = owner.admit_growth_work_checked_with_completion(
                 checked,
-                super::super::now()?,
+                clock,
                 &checkpoint,
                 &charge.workers,
+                Some(&completion_cpu),
             )?;
             submit_result(&mut owner, id)
         }

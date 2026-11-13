@@ -1,0 +1,2700 @@
+{
+  "contract_sha256": "3ce8a244eefa4e197a53047dd5a38b2497bdf5eb0e36f463005cd7b372c14fc8",
+  "control_scope": {
+    "all_program_bytecode_to_control_ids_recomputed": false,
+    "all_program_relations_and_rbr_proved": false,
+    "all_recursive_trace_sizes_reachable": null,
+    "allowed_lift_po2_max": 22,
+    "allowed_lift_po2_min": 14,
+    "fixed_final_program": "join.zkr",
+    "generic_outer_verifier_explicit_po2_max": 24,
+    "generic_outer_verifier_explicit_po2_min": null,
+    "named_default_inner_programs": 27,
+    "padding_digest_has_no_accepting_code_proved": false,
+    "padding_leaf_count": 229,
+    "padding_leaf_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+    "warning": "Parser po2 and lift-name limits do not prove reachable recursion trace bounds."
+  },
+  "control_tree": {
+    "allowed_program_count": 27,
+    "allowed_programs": [
+      {
+        "control_id": "0d79bc33b4760b4783cbb96fdc87724c7e0c463eb0ba1b2705d39f43c698bd2d",
+        "inclusion_recomputed": true,
+        "index": 0,
+        "program": "identity.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "7a8f24092c34ed3eb81b3d0a0b796c588c615d3488ef9e61c21dbd1e4b83ea6e",
+        "inclusion_recomputed": true,
+        "index": 1,
+        "program": "join.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "96cdf605f755f175a5661812810f2d491507c05f2ea4a83e4c3cad693d26651e",
+        "inclusion_recomputed": true,
+        "index": 2,
+        "program": "join_povw.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "f74a894ff593584f65847630ead1a23af78c5f5fed2b61090866e01fa5767f12",
+        "inclusion_recomputed": true,
+        "index": 3,
+        "program": "join_unwrap_povw.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "411fa636f2d364648f035174d3778d6340d9ae1dd648fc35657c173f01e27e5f",
+        "inclusion_recomputed": true,
+        "index": 4,
+        "program": "lift_rv32im_v2_14.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "1ca3ca03030719064ba61b3125bdd326fc57f74e799ef860bdea6f3227381e16",
+        "inclusion_recomputed": true,
+        "index": 5,
+        "program": "lift_rv32im_v2_15.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "c32b3627d2b3d60c64adf523a98bd16c0ff607471f3d6630d1f26d5e9406d841",
+        "inclusion_recomputed": true,
+        "index": 6,
+        "program": "lift_rv32im_v2_16.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "c9b08054994f542a6310b00d9b6fc6528ed7bb6f4ca5476a686847127cdfdc5b",
+        "inclusion_recomputed": true,
+        "index": 7,
+        "program": "lift_rv32im_v2_17.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "e7934a23ddce1423b425cf32aa23be29f48cd40e0b6ff9376dce6f3bf9d0bc35",
+        "inclusion_recomputed": true,
+        "index": 8,
+        "program": "lift_rv32im_v2_18.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "8c2fdd36ede09a4b9d316a43c51f1160cbd8876659c5f35810c3a119c60d3843",
+        "inclusion_recomputed": true,
+        "index": 9,
+        "program": "lift_rv32im_v2_19.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "34530b42028fb631c90e1226bb0e750d4b9b593840d45216f75dca449dac7734",
+        "inclusion_recomputed": true,
+        "index": 10,
+        "program": "lift_rv32im_v2_20.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "fd84d83092a1e1244d423a26d89c892ab098b467c6d82229912deb26e37d2562",
+        "inclusion_recomputed": true,
+        "index": 11,
+        "program": "lift_rv32im_v2_21.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "9d9dbf33535ab11f52a93839dfd23b352b7626009e81d9459fd04e488898ec6a",
+        "inclusion_recomputed": true,
+        "index": 12,
+        "program": "lift_rv32im_v2_22.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "c6972402cc81bc6c1122e65aa7cf463f3ac3f477c7dd860582ca7420fc7b8b02",
+        "inclusion_recomputed": true,
+        "index": 13,
+        "program": "lift_rv32im_v2_povw_14.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "2f6ea1104bdd5955faa135611e8f803e7b4461703b937e704da70955ec115467",
+        "inclusion_recomputed": true,
+        "index": 14,
+        "program": "lift_rv32im_v2_povw_15.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "a7b55654228123448cd67c400d9bf80b4e54eb3997ee92103e900903b6578862",
+        "inclusion_recomputed": true,
+        "index": 15,
+        "program": "lift_rv32im_v2_povw_16.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "2adab2445391035b21f255606a1ba060a7d5a64db5cdf13d9fda7f22a2853270",
+        "inclusion_recomputed": true,
+        "index": 16,
+        "program": "lift_rv32im_v2_povw_17.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "58b27422240db834c08b8e6c12000c093efce8613263f05825c380009c41da48",
+        "inclusion_recomputed": true,
+        "index": 17,
+        "program": "lift_rv32im_v2_povw_18.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "26c84437d3e26875b259880d0f29da47ed5ca869133637701d33fb15a83dce4b",
+        "inclusion_recomputed": true,
+        "index": 18,
+        "program": "lift_rv32im_v2_povw_19.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "177fde1441dc735dbd6a58245d82b2036623ac41547dc345f1fd7c486ac51462",
+        "inclusion_recomputed": true,
+        "index": 19,
+        "program": "lift_rv32im_v2_povw_20.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "eac3fb487080a62e6ff85d331dd72a4706e50e55c9cb842dea48d71e3e119a04",
+        "inclusion_recomputed": true,
+        "index": 20,
+        "program": "lift_rv32im_v2_povw_21.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "0344cd54d62d2a1b6538b674d5aa141250ff4c5be08c6e3d16cb5e1de632252d",
+        "inclusion_recomputed": true,
+        "index": 21,
+        "program": "lift_rv32im_v2_povw_22.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "53a7b23d07f99e5d5685e85874f5181e8486aa267a0ae607ffe9ba47c8bdda4a",
+        "inclusion_recomputed": true,
+        "index": 22,
+        "program": "resolve.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "20ac6e29b1806a143b508414140e2e15e461f93e04e3830af39cca362b8f005d",
+        "inclusion_recomputed": true,
+        "index": 23,
+        "program": "resolve_povw.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "ba1d7275d5840e4f998e2c5120810c0eb197e90219696e2a64dec7662aa3cb06",
+        "inclusion_recomputed": true,
+        "index": 24,
+        "program": "resolve_unwrap_povw.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "7771415b778fea1923440e2eb22c4a1e1d7ada2d42cbe03d13402743c0988a31",
+        "inclusion_recomputed": true,
+        "index": 25,
+        "program": "union.zkr",
+        "program_semantics_audited": false
+      },
+      {
+        "control_id": "1688f04cca489638862dba455c1d5c561513f975c885a3491f0fe12df761c847",
+        "inclusion_recomputed": true,
+        "index": 26,
+        "program": "unwrap_povw.zkr",
+        "program_semantics_audited": false
+      }
+    ],
+    "complete_cargo_graph_audited": false,
+    "complete_qrom_bound_established": false,
+    "control_ids_derived_from_zkr_binaries": false,
+    "declared_root": "a54dc85ac99f851c92d7c96d7318af41dbe7c0194edfcc37eb4d422a998c1f56",
+    "depth": 8,
+    "digest_encoding": "8 canonical Montgomery u32 words, little-endian bytes",
+    "field_modulus": 2013265921,
+    "final_join": {
+      "control_id": "7a8f24092c34ed3eb81b3d0a0b796c588c615d3488ef9e61c21dbd1e4b83ea6e",
+      "index": 1,
+      "merkle_path": [
+        "0d79bc33b4760b4783cbb96fdc87724c7e0c463eb0ba1b2705d39f43c698bd2d",
+        "c179ca3a39f26310b4f4ea0a7c3c9307e036fc3728d86c0a43b22d3605e2893f",
+        "191a654c175b0d5eabfd4670cf0df42ac810d769edfd29025c6417144bd8d72c",
+        "9b98b73af20fba33f5ae2204d2fecb16bf1b3618572b652103ac9c722ef47e5b",
+        "977f9e2868d664458077ac35fa9050290c7db016c2750620c362da3c275cab67",
+        "f765ab6e0cf5dc55c11d65688af0fe1428afc359c08b1656bbc4ba6b54c9746c",
+        "c6b87a237165c549ef7ac614d762ec1ce4b97441c9bfef6fd8ac90378170d816",
+        "2be97040fd0b390959c33114712a436382b2cd419665ee2fe801c158a9bbb155"
+      ]
+    },
+    "internal_node_hashes": 255,
+    "leaf_encoding": "control ID itself; no additional leaf hash",
+    "level_widths": [
+      256,
+      128,
+      64,
+      32,
+      16,
+      8,
+      4,
+      2,
+      1
+    ],
+    "matches_fixed_root": true,
+    "node_hash": "Poseidon2 unpadded overwrite sponge on exactly 16 field elements",
+    "ordering": "lexicographic program-name order, matching BTreeSet<String>",
+    "program_semantics_audited": false,
+    "root": "a54dc85ac99f851c92d7c96d7318af41dbe7c0194edfcc37eb4d422a998c1f56",
+    "schema": "TRNM-W1-CONTROL-TREE-AUDIT1",
+    "sdk_catalog_count": 32,
+    "sdk_programs_outside_default_root": [
+      {
+        "control_id": "817a4b13453eac5a4e67ea1bdcc0677681faa94e386bdd4b510429363685f067",
+        "program": "lift_rv32im_v2_23.zkr"
+      },
+      {
+        "control_id": "6c4f9e2ae5d3d5375956f608a54112418333ad2008052b059f3b500ba8df9d63",
+        "program": "lift_rv32im_v2_24.zkr"
+      },
+      {
+        "control_id": "bd19f156d23811155241e10f7d03ab483949e5039a512d75b7e3da40fcb5490e",
+        "program": "lift_rv32im_v2_povw_23.zkr"
+      },
+      {
+        "control_id": "7898f8140d13c04781c2073b2b28541dfa40f23fa824c30228b80b2601d7114a",
+        "program": "lift_rv32im_v2_povw_24.zkr"
+      },
+      {
+        "control_id": "6d55102aa73086602f7039412200124bdec91f0c497c606f9aa09040403e030b",
+        "program": "test_recursion_circuit.zkr"
+      }
+    ],
+    "source_checks": [
+      {
+        "bytes": 28372,
+        "path": "risc0/core/src/field/baby_bear.rs",
+        "sha256": "df3e77d606dd74d78fb6b6f3dbbe72455c5ed5b091f7a74de8c049e85b857ff3"
+      },
+      {
+        "bytes": 14258,
+        "path": "risc0/zkp/src/core/hash/poseidon2/consts.rs",
+        "sha256": "5ee51bce046bce1306181a43136aa0731dcf976ab10e2e8d82db88711efdcc41"
+      },
+      {
+        "bytes": 13790,
+        "path": "risc0/zkp/src/core/hash/poseidon2/mod.rs",
+        "sha256": "a2993a2e29fa33345a6a9ce0b4f192efe7412746b92b172b0eed8ce78ee8471f"
+      },
+      {
+        "bytes": 8231,
+        "path": "risc0/zkp/src/core/digest.rs",
+        "sha256": "15ea8c15627e5074eea6d0e71895bd006d28f0cfe9ddb2f2dd73de6cbcd22772"
+      },
+      {
+        "bytes": 13225,
+        "path": "risc0/circuit/recursion/src/control_id.rs",
+        "sha256": "6fedf46fad3ca0ce3e537139be7873a43dd68fee5fc803d3e58604b4e9ae16cb"
+      },
+      {
+        "bytes": 7725,
+        "path": "risc0/zkvm/src/receipt/merkle.rs",
+        "sha256": "b3eeb7cc62bba1dfa9ba32a75b905510b4777b9f61004891163d8f43ee8072d6"
+      },
+      {
+        "bytes": 16709,
+        "path": "risc0/zkvm/src/receipt/succinct.rs",
+        "sha256": "8e0165b3210e30e77074763d71d85fd0595e4190b96725182f33665b7df90d60"
+      },
+      {
+        "bytes": 45343,
+        "path": "risc0/zkvm/src/receipt.rs",
+        "sha256": "ec445670befb0fad19bfe46eede73e551de03d9f91fa1fb81c9149dc04912fed"
+      },
+      {
+        "bytes": 1762,
+        "path": "risc0/zkp/src/lib.rs",
+        "sha256": "107521d2426442fbc9358b7b9ae5650be92d670ea85e9a34aec7b9e9cc27dc6d"
+      }
+    ],
+    "status": "CATALOG_AND_TREE_RECOMPUTED",
+    "upstream_commit": "8c215e2f4ccdd935f0517bf05d90f1ae032840a9",
+    "zero_padding_leaves": 229,
+    "zkr_binaries_rebuilt": false
+  },
+  "field": {
+    "digest_storage_bits": 256,
+    "digest_support_size": "269903886087112502248563194479599378733081424069948722819014098894255554561",
+    "extension_degree": 4,
+    "extension_polynomial": "X^4 + 11",
+    "proof_base_modulus": 2013265921,
+    "uniform_bit_oracle_sigma_justified": null,
+    "work_modulus": 4294967291
+  },
+  "fresh_cryptographic_verification": false,
+  "fri_schedule_scope": "Public parser arithmetic; reachable seals and full IOR rounds are unproved.",
+  "fri_schedules": [
+    {
+      "final_coefficients_base": 4,
+      "final_coefficients_extension": 1,
+      "folding_rounds": [],
+      "initial_rows": 4,
+      "po2": 0,
+      "queries": 50,
+      "query_position_bits": 2
+    },
+    {
+      "final_coefficients_base": 8,
+      "final_coefficients_extension": 2,
+      "folding_rounds": [],
+      "initial_rows": 8,
+      "po2": 1,
+      "queries": 50,
+      "query_position_bits": 3
+    },
+    {
+      "final_coefficients_base": 16,
+      "final_coefficients_extension": 4,
+      "folding_rounds": [],
+      "initial_rows": 16,
+      "po2": 2,
+      "queries": 50,
+      "query_position_bits": 4
+    },
+    {
+      "final_coefficients_base": 32,
+      "final_coefficients_extension": 8,
+      "folding_rounds": [],
+      "initial_rows": 32,
+      "po2": 3,
+      "queries": 50,
+      "query_position_bits": 5
+    },
+    {
+      "final_coefficients_base": 64,
+      "final_coefficients_extension": 16,
+      "folding_rounds": [],
+      "initial_rows": 64,
+      "po2": 4,
+      "queries": 50,
+      "query_position_bits": 6
+    },
+    {
+      "final_coefficients_base": 128,
+      "final_coefficients_extension": 32,
+      "folding_rounds": [],
+      "initial_rows": 128,
+      "po2": 5,
+      "queries": 50,
+      "query_position_bits": 7
+    },
+    {
+      "final_coefficients_base": 256,
+      "final_coefficients_extension": 64,
+      "folding_rounds": [],
+      "initial_rows": 256,
+      "po2": 6,
+      "queries": 50,
+      "query_position_bits": 8
+    },
+    {
+      "final_coefficients_base": 512,
+      "final_coefficients_extension": 128,
+      "folding_rounds": [],
+      "initial_rows": 512,
+      "po2": 7,
+      "queries": 50,
+      "query_position_bits": 9
+    },
+    {
+      "final_coefficients_base": 1024,
+      "final_coefficients_extension": 256,
+      "folding_rounds": [],
+      "initial_rows": 1024,
+      "po2": 8,
+      "queries": 50,
+      "query_position_bits": 10
+    },
+    {
+      "final_coefficients_base": 128,
+      "final_coefficients_extension": 32,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 128,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 2048,
+      "po2": 9,
+      "queries": 50,
+      "query_position_bits": 11
+    },
+    {
+      "final_coefficients_base": 256,
+      "final_coefficients_extension": 64,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 256,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 4096,
+      "po2": 10,
+      "queries": 50,
+      "query_position_bits": 12
+    },
+    {
+      "final_coefficients_base": 512,
+      "final_coefficients_extension": 128,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 512,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 8192,
+      "po2": 11,
+      "queries": 50,
+      "query_position_bits": 13
+    },
+    {
+      "final_coefficients_base": 1024,
+      "final_coefficients_extension": 256,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 1024,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 16384,
+      "po2": 12,
+      "queries": 50,
+      "query_position_bits": 14
+    },
+    {
+      "final_coefficients_base": 128,
+      "final_coefficients_extension": 32,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 2048,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 128,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 32768,
+      "po2": 13,
+      "queries": 50,
+      "query_position_bits": 15
+    },
+    {
+      "final_coefficients_base": 256,
+      "final_coefficients_extension": 64,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 4096,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 256,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 65536,
+      "po2": 14,
+      "queries": 50,
+      "query_position_bits": 16
+    },
+    {
+      "final_coefficients_base": 512,
+      "final_coefficients_extension": 128,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 8192,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 512,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 131072,
+      "po2": 15,
+      "queries": 50,
+      "query_position_bits": 17
+    },
+    {
+      "final_coefficients_base": 1024,
+      "final_coefficients_extension": 256,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 16384,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 1024,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 262144,
+      "po2": 16,
+      "queries": 50,
+      "query_position_bits": 18
+    },
+    {
+      "final_coefficients_base": 128,
+      "final_coefficients_extension": 32,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 32768,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 2048,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 128,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 524288,
+      "po2": 17,
+      "queries": 50,
+      "query_position_bits": 19
+    },
+    {
+      "final_coefficients_base": 256,
+      "final_coefficients_extension": 64,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 65536,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 4096,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 256,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 1048576,
+      "po2": 18,
+      "queries": 50,
+      "query_position_bits": 20
+    },
+    {
+      "final_coefficients_base": 512,
+      "final_coefficients_extension": 128,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 131072,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 8192,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 512,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 2097152,
+      "po2": 19,
+      "queries": 50,
+      "query_position_bits": 21
+    },
+    {
+      "final_coefficients_base": 1024,
+      "final_coefficients_extension": 256,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 262144,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 16384,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 1024,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 4194304,
+      "po2": 20,
+      "queries": 50,
+      "query_position_bits": 22
+    },
+    {
+      "final_coefficients_base": 128,
+      "final_coefficients_extension": 32,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 524288,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 32768,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 2048,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 128,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 8388608,
+      "po2": 21,
+      "queries": 50,
+      "query_position_bits": 23
+    },
+    {
+      "final_coefficients_base": 256,
+      "final_coefficients_extension": 64,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 1048576,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 65536,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 4096,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 256,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 16777216,
+      "po2": 22,
+      "queries": 50,
+      "query_position_bits": 24
+    },
+    {
+      "final_coefficients_base": 512,
+      "final_coefficients_extension": 128,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 2097152,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 131072,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 8192,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 512,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 33554432,
+      "po2": 23,
+      "queries": 50,
+      "query_position_bits": 25
+    },
+    {
+      "final_coefficients_base": 1024,
+      "final_coefficients_extension": 256,
+      "folding_rounds": [
+        {
+          "committed_domain_rows": 4194304,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 262144,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 16384,
+          "leaf_base_elements": 64
+        },
+        {
+          "committed_domain_rows": 1024,
+          "leaf_base_elements": 64
+        }
+      ],
+      "initial_rows": 67108864,
+      "po2": 24,
+      "queries": 50,
+      "query_position_bits": 26
+    }
+  ],
+  "fri_transcript_audit": {
+    "build_precondition": "circuit_debug disabled; this module does not attest build features.",
+    "grinding": {
+      "credited_grinding_bits": 0,
+      "explicit_gate_found_in_inspected_path": false,
+      "limits": "Does not exclude offline transcript search, wrapper gates, the separate rv32im protocol, or generated recursive verifier behavior. PoN lottery supplies no credit here.",
+      "method": "Manual control-flow review tied to exact six-file source hashes.",
+      "source_scope": [
+        "risc0/zkp/src/verify/mod.rs",
+        "risc0/zkp/src/verify/fri.rs",
+        "risc0/zkp/src/verify/merkle.rs",
+        "risc0/zkp/src/verify/read_iop.rs",
+        "risc0/zkp/src/core/hash/poseidon2/mod.rs",
+        "risc0/zkp/src/core/hash/poseidon2/rng.rs"
+      ]
+    },
+    "merkle_binding": {
+      "cap": "Read fixed cap in order, validate digests, reconstruct root; only root is mixed.",
+      "dimensions_or_positions_tagged_inside_hash": false,
+      "encoding": "Reduced Montgomery u32 words; digest has eight words; widths are typed externally.",
+      "final_polynomial_layout": "component-major: coefficient i component j is final[j*d_final+i].",
+      "fri_leaf_layout": "component-major: element i component j is data[j*16+i].",
+      "leaf_length": "Trusted taps/CHECK_SIZE/FRI constants set exact consumed field-word counts.",
+      "leaf_node_purpose_tags_present": false,
+      "leaf_position": "idx<row_size; idx+row_size and low bits determine ordered hash_pair path.",
+      "source": [
+        "risc0/zkp/src/verify/mod.rs",
+        "risc0/zkp/src/verify/fri.rs",
+        "risc0/zkp/src/verify/merkle.rs",
+        "risc0/zkp/src/merkle.rs",
+        "risc0/zkp/src/verify/read_iop.rs",
+        "risc0/zkp/src/core/hash/poseidon2/mod.rs"
+      ],
+      "tree_depth": "Derived from committed raw po2 and fixed circuit; consume L-cap_depth siblings.",
+      "u_coefficients_layout": "Each Fp4 coefficient has four consecutive base words."
+    },
+    "ordered_fs_events": [
+      {
+        "id": "rng_init",
+        "kind": "initialize",
+        "operation": "new: zero cells; pool_used=0",
+        "order": 0,
+        "source": "risc0/zkp/src/core/hash/poseidon2/rng.rs"
+      },
+      {
+        "id": "proof_system_info",
+        "kind": "commit",
+        "operation": "commit_circuit_info: H_elem(16 byte-to-field elements)",
+        "order": 1,
+        "source": "risc0/zkp/src/verify/mod.rs"
+      },
+      {
+        "id": "circuit_info",
+        "kind": "commit",
+        "operation": "commit_circuit_info: H_elem(16 byte-to-field elements)",
+        "order": 2,
+        "source": "risc0/zkp/src/verify/mod.rs"
+      },
+      {
+        "id": "public_outputs_and_po2",
+        "kind": "commit",
+        "operation": "read_slice_with_po2: H_elem(32 outputs + raw po2 word); values vary, size is fixed",
+        "order": 3,
+        "source": "risc0/zkp/src/verify/mod.rs"
+      },
+      {
+        "id": "code_root",
+        "kind": "commit_then_code_check",
+        "operation": "verify_group(CODE): reconstruct cap root, mix, then call check_code(po2,root)",
+        "order": 4,
+        "source": "risc0/zkp/src/verify/mod.rs"
+      },
+      {
+        "id": "data_root",
+        "kind": "commit",
+        "operation": "verify_group(DATA): reconstruct cap root and mix",
+        "order": 5,
+        "source": "risc0/zkp/src/verify/mod.rs"
+      },
+      {
+        "id": "accum_mix",
+        "kind": "challenge",
+        "operation": "read_rng: 20 base-field squeezes",
+        "order": 6,
+        "source": "risc0/zkp/src/verify/mod.rs"
+      },
+      {
+        "id": "accum_root",
+        "kind": "commit",
+        "operation": "verify_group(ACCUM): reconstruct cap root and mix",
+        "order": 7,
+        "source": "risc0/zkp/src/verify/mod.rs"
+      },
+      {
+        "id": "constraint_mix",
+        "kind": "challenge",
+        "operation": "verify_validity: one Fp4 before check root",
+        "order": 8,
+        "source": "risc0/zkp/src/verify/mod.rs"
+      },
+      {
+        "id": "check_root",
+        "kind": "commit",
+        "operation": "MerkleTreeVerifier::new: reconstruct cap root and mix",
+        "order": 9,
+        "source": "risc0/zkp/src/verify/merkle.rs"
+      },
+      {
+        "id": "deep_point_z",
+        "kind": "challenge",
+        "operation": "one Fp4 after check root; requires circuit_debug disabled",
+        "order": 10,
+        "source": "risc0/zkp/src/verify/mod.rs"
+      },
+      {
+        "id": "u_coefficients",
+        "kind": "commit_then_constraint_check",
+        "operation": "H_ext(num_taps+CHECK_SIZE extension coefficients); reject failed validity equation",
+        "order": 11,
+        "source": "risc0/zkp/src/verify/mod.rs"
+      },
+      {
+        "id": "fri_batch_mix",
+        "kind": "challenge",
+        "operation": "one Fp4 after U commitment and validity check",
+        "order": 12,
+        "source": "risc0/zkp/src/verify/mod.rs"
+      },
+      {
+        "id": "fri0_root",
+        "kind": "commit",
+        "operation": "VerifyRoundInfo::new: root for 65536 rows of 64 base words",
+        "order": 13,
+        "source": "risc0/zkp/src/verify/fri.rs"
+      },
+      {
+        "id": "fri0_fold_mix",
+        "kind": "challenge",
+        "operation": "one Fp4 after the corresponding root commitment",
+        "order": 14,
+        "source": "risc0/zkp/src/verify/fri.rs"
+      },
+      {
+        "id": "fri1_root",
+        "kind": "commit",
+        "operation": "VerifyRoundInfo::new: root for 4096 rows of 64 base words",
+        "order": 15,
+        "source": "risc0/zkp/src/verify/fri.rs"
+      },
+      {
+        "id": "fri1_fold_mix",
+        "kind": "challenge",
+        "operation": "one Fp4 after the corresponding root commitment",
+        "order": 16,
+        "source": "risc0/zkp/src/verify/fri.rs"
+      },
+      {
+        "id": "fri2_root",
+        "kind": "commit",
+        "operation": "VerifyRoundInfo::new: root for 256 rows of 64 base words",
+        "order": 17,
+        "source": "risc0/zkp/src/verify/fri.rs"
+      },
+      {
+        "id": "fri2_fold_mix",
+        "kind": "challenge",
+        "operation": "one Fp4 after the corresponding root commitment",
+        "order": 18,
+        "source": "risc0/zkp/src/verify/fri.rs"
+      },
+      {
+        "id": "final_polynomial",
+        "kind": "commit",
+        "operation": "H_elem(4*d_final base elements), component-major layout",
+        "order": 19,
+        "source": "risc0/zkp/src/verify/fri.rs"
+      },
+      {
+        "id": "query_loop",
+        "kind": "challenge_and_openings",
+        "operation": "50 positions, with replacement; accum,code,data,check then each FRI round; openings do not mix RNG",
+        "order": 20,
+        "source": "risc0/zkp/src/verify/fri.rs"
+      },
+      {
+        "id": "seal_exhaustion",
+        "kind": "check",
+        "operation": "verify_complete rejects unread seal words",
+        "order": 21,
+        "source": "risc0/zkp/src/verify/read_iop.rs"
+      }
+    ],
+    "parameters": {
+      "accum_mix_base_elements": 20,
+      "circuit_info_ascii": "RECURSION:rev1v1",
+      "digest_words": 8,
+      "explicit_generic_po2_max": 24,
+      "extension_degree": 4,
+      "extension_polynomial": "X^4+11",
+      "field_modulus": 2013265921,
+      "final_coefficient_threshold": 256,
+      "fold": 16,
+      "inverse_rate": 4,
+      "leaf_widths_base_elements": {
+        "accum": 12,
+        "check": 16,
+        "code": 23,
+        "data": 128,
+        "fri": 64
+      },
+      "output_base_elements": 32,
+      "proof_system_info_ascii": "RISC0_STARK:v1__",
+      "queries": 50,
+      "register_count": 163,
+      "rng_rate_cells": 16,
+      "rng_width_cells": 24,
+      "tap_count": 643,
+      "u_coefficients_extension_elements": 659
+    },
+    "po2_boundary": {
+      "all_po2_up_to_generic_max_accepted_claimed": false,
+      "default_lift_name_limit_is_not_proven_outer_seal_limit": true,
+      "generic_explicit_max": 24,
+      "raw_word_not_as_u32_decoded": true,
+      "reachable_outer_po2_set_proved": false,
+      "source": [
+        "risc0/zkp/src/verify/mod.rs",
+        "risc0/core/src/field/baby_bear.rs",
+        "risc0/zkvm/src/receipt/succinct.rs"
+      ],
+      "succinct_code_callback_ignores_po2_argument": true
+    },
+    "qrom_interface_obligations": [
+      "Bind vector widths, lengths, heights, field encodings and phase/circuit context throughout extraction.",
+      "Instantiate the selected theorem's quantum commitment-extraction property for the cap-Merkle construction.",
+      "Account for unpadded hashing and cross-length/type aliases; parser typing is not an arbitrary-length CRH proof.",
+      "Prove the required joint quantum oracle model for commitment hashing and stateful RNG sharing Poseidon2.",
+      "Match actual commit/challenge order, raw po2, sampling, statement adaptivity and build features to the theorem.",
+      "Prove generated recursive verifiers implement this relation for all allowed control programs.",
+      "Instantiate RBR/state-restoration and circuit/proximity bounds including exceptional DEEP points.",
+      "Bound lifetime queries across every use and attempt, with compiler losses; RNG call counts are not that budget."
+    ],
+    "qualification": {
+      "arithmetic_relation_verified": false,
+      "fiat_shamir_challenges_recomputed": false,
+      "fresh_cryptographic_verification": false,
+      "merkle_openings_verified": false,
+      "post_quantum_soundness_qualified": false,
+      "qrom_instantiated": false,
+      "security_bits_quantum": null,
+      "whole_receipt_identity_enforced_here": false
+    },
+    "result": "SOURCE_MAPPING_AND_ENCODING_GEOMETRY_REPRODUCED_SECURITY_HOLD",
+    "rng": {
+      "base_draws_per_query": 4,
+      "bit_rule": "Always draw four; first nonzero as_u32 or zero; mask low bits.",
+      "commit_rule": "If pool_used!=0 permute and reset; add 8 raw digest cells; permute.",
+      "derived_rng_cost": {
+        "base_squeezes": 244,
+        "count_kind": "Source-level RNG call schedule, not a QROM query budget.",
+        "includes_commitment_hash_calls": false,
+        "includes_nested_verification_or_adversary_queries": false,
+        "qrom_queries_inferred": null,
+        "rng_permutation_calls": 32
+      },
+      "extension_rule": "Four consecutive base squeezes in the fixed Fp4 basis.",
+      "ideal_sampler_deviation": {
+        "assumption": "Conditionally independent uniform Fp draws and k<=27.",
+        "fifty_queries_tv_upper_bound": "50/p^4",
+        "per_query_tv": "(1-2^-k)/p^4 <= p^-4",
+        "real_poseidon2_qrom_distribution_proved": false
+      },
+      "openings_change_rng_state": false,
+      "query_position_bits": 20,
+      "sampling_with_replacement": true
+    },
+    "saved_v2_geometry": {
+      "D": 1048576,
+      "N": 262144,
+      "R": 3,
+      "all_seal_words_accounted_for": true,
+      "all_seal_words_canonical": true,
+      "final_coefficients_base": 256,
+      "final_coefficients_extension": 64,
+      "opaque_outer_suffix_bytes": 34334,
+      "opaque_outer_suffix_semantically_parsed": false,
+      "opaque_outer_suffix_sha256": "809bee1f7723c38f048650f5af5e388250bc6efe1fd35fde1e4d11ebf436b282",
+      "per_query_words": 1019,
+      "po2": 18,
+      "prequery_ranges": [
+        {
+          "base_word_count": 33,
+          "id": "outputs_and_po2",
+          "raw_bytes_sha256": "93be9f45591e88bb37bfd9799a5f5191c8848ce2024eb5dcb63a5862575c1029",
+          "seal_word_end_exclusive": 33,
+          "seal_word_start_inclusive": 0
+        },
+        {
+          "base_word_count": 256,
+          "id": "code_cap",
+          "raw_bytes_sha256": "4c188b968744163c02a9a9a0cb787eac089f5add3a86818cd8b965b2b83e017d",
+          "seal_word_end_exclusive": 289,
+          "seal_word_start_inclusive": 33
+        },
+        {
+          "base_word_count": 256,
+          "id": "data_cap",
+          "raw_bytes_sha256": "4589abf539ba45314d2869e3e66ed0a1c6d51dda1a5cb5c141453a5fb1fca9bf",
+          "seal_word_end_exclusive": 545,
+          "seal_word_start_inclusive": 289
+        },
+        {
+          "base_word_count": 256,
+          "id": "accum_cap",
+          "raw_bytes_sha256": "3f575e77862f7be83d84e7d06e6e475dafd4d22002b890020d5fc7c2fe2f5080",
+          "seal_word_end_exclusive": 801,
+          "seal_word_start_inclusive": 545
+        },
+        {
+          "base_word_count": 256,
+          "id": "check_cap",
+          "raw_bytes_sha256": "923cc196e1074405ffb0908f69a340f39f5f51ab8d229dbc5f70f3adb9e61329",
+          "seal_word_end_exclusive": 1057,
+          "seal_word_start_inclusive": 801
+        },
+        {
+          "base_word_count": 2636,
+          "id": "u_coefficients",
+          "raw_bytes_sha256": "c05e854944727e090513343a3f1b31de06f4c654214ee098a3eca137bdecd369",
+          "seal_word_end_exclusive": 3693,
+          "seal_word_start_inclusive": 1057
+        },
+        {
+          "base_word_count": 256,
+          "id": "fri0_cap",
+          "raw_bytes_sha256": "c41e6dab88be077ecb43a65408687eb5b7a9d0868bb6f3ad1c5151a85024377e",
+          "seal_word_end_exclusive": 3949,
+          "seal_word_start_inclusive": 3693
+        },
+        {
+          "base_word_count": 256,
+          "id": "fri1_cap",
+          "raw_bytes_sha256": "85515293f963f8287641ef5e366c2419ef6fce5c92fa6232dfe4ceb376b44410",
+          "seal_word_end_exclusive": 4205,
+          "seal_word_start_inclusive": 3949
+        },
+        {
+          "base_word_count": 256,
+          "id": "fri2_cap",
+          "raw_bytes_sha256": "2725efa31e8c33faa07c0c9527f6ecae91435a77c13c82c18f146f420e2df627",
+          "seal_word_end_exclusive": 4461,
+          "seal_word_start_inclusive": 4205
+        },
+        {
+          "base_word_count": 256,
+          "id": "final_polynomial_coefficients",
+          "raw_bytes_sha256": "5ec99808efbe33ab9647996ee5c0269030f2a18df0a20f38385c86d18f1970fd",
+          "seal_word_end_exclusive": 4717,
+          "seal_word_start_inclusive": 4461
+        }
+      ],
+      "prequery_words": 4717,
+      "queries": 50,
+      "query_end_word_exclusive": 55667,
+      "query_template": [
+        {
+          "cap_depth": 5,
+          "cap_digests": 32,
+          "height": 20,
+          "leaf_words": 12,
+          "opening_words": 132,
+          "oracle": "accum",
+          "query_word_end_exclusive": 132,
+          "query_word_start_inclusive": 0,
+          "rows": 1048576,
+          "sibling_digest_count": 15
+        },
+        {
+          "cap_depth": 5,
+          "cap_digests": 32,
+          "height": 20,
+          "leaf_words": 23,
+          "opening_words": 143,
+          "oracle": "code",
+          "query_word_end_exclusive": 275,
+          "query_word_start_inclusive": 132,
+          "rows": 1048576,
+          "sibling_digest_count": 15
+        },
+        {
+          "cap_depth": 5,
+          "cap_digests": 32,
+          "height": 20,
+          "leaf_words": 128,
+          "opening_words": 248,
+          "oracle": "data",
+          "query_word_end_exclusive": 523,
+          "query_word_start_inclusive": 275,
+          "rows": 1048576,
+          "sibling_digest_count": 15
+        },
+        {
+          "cap_depth": 5,
+          "cap_digests": 32,
+          "height": 20,
+          "leaf_words": 16,
+          "opening_words": 136,
+          "oracle": "check",
+          "query_word_end_exclusive": 659,
+          "query_word_start_inclusive": 523,
+          "rows": 1048576,
+          "sibling_digest_count": 15
+        },
+        {
+          "cap_depth": 5,
+          "cap_digests": 32,
+          "height": 16,
+          "leaf_words": 64,
+          "opening_words": 152,
+          "oracle": "fri0",
+          "query_word_end_exclusive": 811,
+          "query_word_start_inclusive": 659,
+          "rows": 65536,
+          "sibling_digest_count": 11
+        },
+        {
+          "cap_depth": 5,
+          "cap_digests": 32,
+          "height": 12,
+          "leaf_words": 64,
+          "opening_words": 120,
+          "oracle": "fri1",
+          "query_word_end_exclusive": 931,
+          "query_word_start_inclusive": 811,
+          "rows": 4096,
+          "sibling_digest_count": 7
+        },
+        {
+          "cap_depth": 5,
+          "cap_digests": 32,
+          "height": 8,
+          "leaf_words": 64,
+          "opening_words": 88,
+          "oracle": "fri2",
+          "query_word_end_exclusive": 1019,
+          "query_word_start_inclusive": 931,
+          "rows": 256,
+          "sibling_digest_count": 3
+        }
+      ],
+      "receipt_bytes": 257014,
+      "receipt_sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee",
+      "seal_bytes": 222668,
+      "seal_file_offset_bytes": 12,
+      "seal_po2_raw_word_index": 32,
+      "seal_sha256": "5db567c375823939177220fe12beb9df29ca032d3f5c64adcce8c60d04679619",
+      "seal_words": 55667
+    },
+    "schema": "TRNM-W1-FRI-TRANSCRIPT-GEOMETRY1",
+    "scope": "Fixed po2=18 saved-v2 recursion seal; static source map and encoding only.",
+    "source_files": [
+      {
+        "bytes": 1762,
+        "git_blob_sha1": "de0ffeb566be8ec5a85ef9e68b9376cdd8e85907",
+        "path": "risc0/zkp/src/lib.rs",
+        "sha256": "107521d2426442fbc9358b7b9ae5650be92d670ea85e9a34aec7b9e9cc27dc6d"
+      },
+      {
+        "bytes": 21753,
+        "git_blob_sha1": "e7ddb1a285d85c1bb74e45540cf5f827eb89faff",
+        "path": "risc0/zkp/src/verify/mod.rs",
+        "sha256": "003a67af89a7cfaeac9ff23808225cdc4d81c41d64956f20243574531b166c4f"
+      },
+      {
+        "bytes": 5802,
+        "git_blob_sha1": "2eefff59b74e92586b1e0a314dbf4f2930d675e5",
+        "path": "risc0/zkp/src/verify/fri.rs",
+        "sha256": "a601cfad5d01b294f934d697d6d832c57662e4778eac20ac549b1da53d11e377"
+      },
+      {
+        "bytes": 7173,
+        "git_blob_sha1": "b636147f6bf69e0a5062dc4db2dfa5c1aafcba2e",
+        "path": "risc0/zkp/src/verify/merkle.rs",
+        "sha256": "267ab31c38f7502d9d0d3feebe7eb2fc2cbed9d3af4db66fde349e2c3b61a478"
+      },
+      {
+        "bytes": 3473,
+        "git_blob_sha1": "762afe44b9665f1b6ae32ba588b985620791b8a8",
+        "path": "risc0/zkp/src/verify/read_iop.rs",
+        "sha256": "40a7027486fbce5979bd045860e3014ebc1d40f242c4b71ce2adf5722b6d81bc"
+      },
+      {
+        "bytes": 3584,
+        "git_blob_sha1": "284852330817b91836fbf2fc14157ebadda7995f",
+        "path": "risc0/zkp/src/merkle.rs",
+        "sha256": "87bf97f1eb09235bce50b62c4a5fef5517400f6c57554853e9c8043f4b32c64a"
+      },
+      {
+        "bytes": 8222,
+        "git_blob_sha1": "e3fb2bc82dac618808124d5299f6958fbdcf6f46",
+        "path": "risc0/zkp/src/taps.rs",
+        "sha256": "f5f69bcbed730cc8acd43da89dd4e37ca7560b9eb991a37238482f3655f7e402"
+      },
+      {
+        "bytes": 12957,
+        "git_blob_sha1": "d193c13fec17d56fc7eb4522f818a0ff495dc4c3",
+        "path": "risc0/zkp/src/adapter.rs",
+        "sha256": "1d1aca1dd7cc4c12477e0d887a3edfa0825b822efee671170ec667c7dd65ca1d"
+      },
+      {
+        "bytes": 1815,
+        "git_blob_sha1": "e1ab21d095cbf46a8aecd08ac2e87ea9ed5a1522",
+        "path": "risc0/circuit/recursion/src/info.rs",
+        "sha256": "128c29a8ddf0560fb3a69c03fa1d959fab542d2fa09eae6794d28be871e345e9"
+      },
+      {
+        "bytes": 90720,
+        "git_blob_sha1": "b301d24c8b367a667902802549dcd1081777a8d3",
+        "path": "risc0/circuit/recursion/src/taps.rs",
+        "sha256": "d32cbf5350d6f724cf3582ef92fb6c392f993b51ee89c5384f7ad79bab43ce83"
+      },
+      {
+        "bytes": 28372,
+        "git_blob_sha1": "989a827f26e34bfd81f670dc51db4a5ddfa7c6d7",
+        "path": "risc0/core/src/field/baby_bear.rs",
+        "sha256": "df3e77d606dd74d78fb6b6f3dbbe72455c5ed5b091f7a74de8c049e85b857ff3"
+      },
+      {
+        "bytes": 13790,
+        "git_blob_sha1": "d5bd9ebd899c3847c57aa11c58c8a287600f08e8",
+        "path": "risc0/zkp/src/core/hash/poseidon2/mod.rs",
+        "sha256": "a2993a2e29fa33345a6a9ce0b4f192efe7412746b92b172b0eed8ce78ee8471f"
+      },
+      {
+        "bytes": 2509,
+        "git_blob_sha1": "de17a70ab81f2e4661f877e13455a88974f4ac2c",
+        "path": "risc0/zkp/src/core/hash/poseidon2/rng.rs",
+        "sha256": "8c5868a8b258896835e2c3c93a84cfe01167f1a446e4d74a3b7be94ae1bf8017"
+      },
+      {
+        "bytes": 14258,
+        "git_blob_sha1": "0eedf1a38b71a3ce586ab05b51de2979da28e78e",
+        "path": "risc0/zkp/src/core/hash/poseidon2/consts.rs",
+        "sha256": "5ee51bce046bce1306181a43136aa0731dcf976ab10e2e8d82db88711efdcc41"
+      },
+      {
+        "bytes": 8231,
+        "git_blob_sha1": "5b6304ac2fb5421e575d285825b8fbe3f81060dc",
+        "path": "risc0/zkp/src/core/digest.rs",
+        "sha256": "15ea8c15627e5074eea6d0e71895bd006d28f0cfe9ddb2f2dd73de6cbcd22772"
+      },
+      {
+        "bytes": 16709,
+        "git_blob_sha1": "f8b2142d41cc6a80787653fd8e07f5b2027bd948",
+        "path": "risc0/zkvm/src/receipt/succinct.rs",
+        "sha256": "8e0165b3210e30e77074763d71d85fd0595e4190b96725182f33665b7df90d60"
+      }
+    ],
+    "upstream_commit": "8c215e2f4ccdd935f0517bf05d90f1ae032840a9"
+  },
+  "generator_sha256": "999912e382b60d9944ee3a89fe2098fc755dd9fe9ac8aa8bbfb02a822c0102eb",
+  "git_commit_ancestry_verified": false,
+  "helper_execution": {
+    "mode": "compile_exact_pinned_repository_audit_bytes",
+    "sources": [
+      {
+        "bytes": 18002,
+        "path": "scripts/w1_control_tree_audit.py",
+        "sha256": "0e9b8e2fd9f6905f98b3df1a52b4ac2a46481b101b1d1a6afd29c2f5502f4865"
+      },
+      {
+        "bytes": 33723,
+        "path": "scripts/w1_profile_source_map.py",
+        "sha256": "324dc1726fc5bfcfd79e5d78d890737bfdd3c5877d74e417d2ed8018254523b0"
+      },
+      {
+        "bytes": 23660,
+        "path": "scripts/w1_fri_transcript_audit.py",
+        "sha256": "12cc991999f68d925f078888d1e18302739171ee6187bbeb2f3bfb17c19a88fc"
+      }
+    ],
+    "upstream_source_executed": false
+  },
+  "historical_v1": {
+    "contract_sha256": "7761787fca9ea92c7b678186ccb302900bfabc974460b7f6793c7a0aabb6cf22",
+    "named_roster_completed": false,
+    "reader_sha256": "c6fc6c36e4c2ce198c1dad465a7d36495253f844438f46df652715ea6dc8b354",
+    "reason": "input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+    "result": "INPUT_REJECTED",
+    "workflow_passed": false
+  },
+  "lifetime_budget": {
+    "accepted_statements_lifetime": null,
+    "adaptive_composition_bound": null,
+    "concrete_hash_to_ideal_oracle_error": null,
+    "hash_output_sigma_bits": null,
+    "max_fs_rounds_per_reduction": null,
+    "max_recursive_nodes_per_statement": null,
+    "min_verifier_randomness_bits": null,
+    "policy_adopted": false,
+    "quantum_queries_lifetime": null,
+    "rrbr_knowledge_error": null,
+    "target_total_failure_probability": null
+  },
+  "local_path_closure": {
+    "files": [
+      {
+        "bytes": 1596,
+        "path": "config/pon/work-profile-v1.json",
+        "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880"
+      },
+      {
+        "bytes": 318,
+        "path": "evidence/pon-w1-complete-succinct-20261028/full-proof/header.bin",
+        "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"
+      },
+      {
+        "bytes": 256886,
+        "path": "evidence/pon-w1-complete-succinct-20261028/full-proof/succinct.bin",
+        "sha256": "ca4d3c9f5159b7001abae7491604cadbbbfa97c0f93d90d5943e48936813ca2b"
+      },
+      {
+        "bytes": 223154,
+        "path": "evidence/pon-w1-verifier-hardening-20261028/real-lift-0000.bin",
+        "sha256": "d2b06a1feca2d15e8dc5741b43f481a82c32d7d3dab01e413d357012467093d3"
+      },
+      {
+        "bytes": 38332,
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.lock",
+        "sha256": "3d6b7e7895169e638240a0ed835a5352d64a0ae44f4b56ba0a00acc2ec6b3865"
+      },
+      {
+        "bytes": 349,
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml",
+        "sha256": "9ed358e1e24b58505d5d37e0a88ef3538b2c6146c3303a87c33b19208d667d25"
+      },
+      {
+        "bytes": 110,
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/lib.rs",
+        "sha256": "35b60c3d87a6dff48ff7fc63820f86fcc50bf7c7cb3551a58fa2242c6b8e77b5"
+      },
+      {
+        "bytes": 28049,
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/main.rs",
+        "sha256": "53048b6a7fd413bfb25abee86c4b7868be1c28364d43f53dc1bb2e40b14ae4b5"
+      },
+      {
+        "bytes": 5246,
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs",
+        "sha256": "b4f4f35fc69f8846e465928052d1ee006d262d05baedfbce00703ea8fa11a6a9"
+      },
+      {
+        "bytes": 1282,
+        "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/wire.rs",
+        "sha256": "fae4f60cca4bcd5aff132935307d3ea11de194765c6e3050adfaf7f346ef9cf3"
+      },
+      {
+        "bytes": 46489,
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock",
+        "sha256": "9756a0d8cb88c4f0e67f722dad933d30dcbe93d5bb2b6ca2be15f23fd0a3f2ef"
+      },
+      {
+        "bytes": 498,
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "sha256": "65263e60248f29008ff098d5fcf1f573a19da5a40f87ecdaa6d3cd5063c104ba"
+      },
+      {
+        "bytes": 284,
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/image.rs",
+        "sha256": "c972778fe557d3e1a23470423c46c899ade1633ba76cac48268129b2af5d1ddb"
+      },
+      {
+        "bytes": 11172,
+        "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+        "sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7"
+      },
+      {
+        "bytes": 74379,
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/Cargo.lock",
+        "sha256": "ed6ea70f20cbe45bf0bdef7f841adbdaa7c3b2a9838ffdfed64fa88f129b707a"
+      },
+      {
+        "bytes": 397,
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/Cargo.toml",
+        "sha256": "955e810713a1c15cf7b9af3f635705e7fdd20434aee829080f314fd68b98725e"
+      },
+      {
+        "bytes": 46025,
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock",
+        "sha256": "03a3b7f6cc81a6e1678f2fd23b2b448f8f90931c258f4e66a7bcdc422447d2bf"
+      },
+      {
+        "bytes": 564,
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.toml",
+        "sha256": "48f1c4580ff7de989bdcf1055d12ed5128b105994e653e6d11a593c029bd2037"
+      },
+      {
+        "bytes": 445,
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/src/main.rs",
+        "sha256": "c2db185d338be3ab7c6256239b750445e084547de742221517f9fc9f12711468"
+      },
+      {
+        "bytes": 290,
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/Cargo.toml",
+        "sha256": "98317da54f1b107b02486236f409f240c1910c948eaf31b5e093365147e2004f"
+      },
+      {
+        "bytes": 14597,
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/lib.rs",
+        "sha256": "aeee8bebc5b098744a34a568232fadb5a79963760d8e2e8b3fb6176683987322"
+      },
+      {
+        "bytes": 11159,
+        "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/v2.rs",
+        "sha256": "9f31aec3b6d7f376164b58f3ab2f89a191716a560235f73c692b390d1c9fa45b"
+      },
+      {
+        "bytes": 86,
+        "path": "rust-toolchain.toml",
+        "sha256": "24ef3b9d3edbd850aa386cb0a98e10450b0030991a4537cb359f54d49dbbb33a"
+      },
+      {
+        "bytes": 5079,
+        "path": "tests/fixtures/cpq1-content-v1/vectors.json",
+        "sha256": "b295ac507b880840176e5dc836dbb1773c13f16f4c4a60c0c89a0c57905dda5e"
+      },
+      {
+        "bytes": 40564,
+        "path": "trillionnium/Cargo.lock",
+        "sha256": "9e553749f03f3a849af9562d1a62f20181c6ce3594c99283eaadecb918f4a25e"
+      },
+      {
+        "bytes": 2204,
+        "path": "trillionnium/Cargo.toml",
+        "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+      },
+      {
+        "bytes": 924,
+        "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+        "sha256": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3"
+      },
+      {
+        "bytes": 3488,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_adversarial_cost.rs",
+        "sha256": "0d091365566386c60d90cd69ef040aff0500bd396a7f94e70410b4aed72e9fd9"
+      },
+      {
+        "bytes": 1722,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_cost.rs",
+        "sha256": "a6a7d58f5d3bbfabb63f4c0a9e9a14cc183f02d820b55999f376624180460cae"
+      },
+      {
+        "bytes": 28108,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_maintenance_cost.rs",
+        "sha256": "3310556fde267fdecbad1b2e8d0ff716a1ce536dbf755dee60a2124490bbf0c7"
+      },
+      {
+        "bytes": 5963,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_one_zero_io.rs",
+        "sha256": "1efb46c8d663829688a60084031186795ceaf4837e2167f417a27f159afc611d"
+      },
+      {
+        "bytes": 27944,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_one_zero_locality_cost.rs",
+        "sha256": "e697d084bd7ee9f3e847649044b311220756c26e63bdaae05686cb5f23336617"
+      },
+      {
+        "bytes": 2806,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_paired_io.rs",
+        "sha256": "aed36ea1d2dc71b8b1f5c70af4781a937c00998dabb6d9848c049761411faaa4"
+      },
+      {
+        "bytes": 3905,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_prepared_cost.rs",
+        "sha256": "9ac01ea460ec3e8c2280500c390faf918a93a73debc0a66ad55e0cd53c3519ab"
+      },
+      {
+        "bytes": 17263,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_producer_comparison.rs",
+        "sha256": "c82c7a6c91cac154b4f229c8b318ca1778fd5d04eebc9de6dca23893cff49493"
+      },
+      {
+        "bytes": 26180,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_rejection_cost.rs",
+        "sha256": "68582c646c39079cd0b85ed8317feb82ee5a9639775b8359b5c9410577ee6ec0"
+      },
+      {
+        "bytes": 26739,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_reused_cost.rs",
+        "sha256": "9c361257f43d4a2dd1c37b5a5178b3dcdd28b0da41879410b282f14701e24aed"
+      },
+      {
+        "bytes": 41232,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_routed_int257_grouped.rs",
+        "sha256": "1c29a290fffc5481b1980e19c13ef381e5caf9540af3787f227f2a145083d128"
+      },
+      {
+        "bytes": 50152,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_shared_material_v1.rs",
+        "sha256": "313f7b83dfb36d3eb0b0061bc87001057d9cb05ce4dfea24b9e95b9350d3106c"
+      },
+      {
+        "bytes": 1527,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_tiled_io.rs",
+        "sha256": "657ba21f36ca6b2efd229b1c0a019bbc59236a5c96e0b293d3d1a3d5fea5d1bb"
+      },
+      {
+        "bytes": 10535,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_native_winner_v2.rs",
+        "sha256": "ee1a573012568b1f104d66f37ff08a083719d8745031c6904929899217e9d7d1"
+      },
+      {
+        "bytes": 40529,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_rank_batch_v5.rs",
+        "sha256": "a5bd50b96e51f6c63fdf4ee996d47bcdf4b177a046d632365ee24398cdd91e48"
+      },
+      {
+        "bytes": 2953,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work.rs",
+        "sha256": "af443df76b65018d287874d22866ce873e283a3ca3526d5be6f9508da5af517a"
+      },
+      {
+        "bytes": 40448,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_expensive_v1.rs",
+        "sha256": "86cce1ac568a4542f37922ac88887f1e9a0c8071d233cd4be1fc0da19cf4364e"
+      },
+      {
+        "bytes": 17650,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_expensive_verifier_v1.rs",
+        "sha256": "e27598a342e73e100d9f801b9e040db45c46dd4f92bd900f73245ef270f076b8"
+      },
+      {
+        "bytes": 1495,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_io.rs",
+        "sha256": "2377bbb748a67fb238c2d113799adce472e905465b5ac46372597ff7ab4dd0b3"
+      },
+      {
+        "bytes": 5395,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_io.rs",
+        "sha256": "344f09d0a7112ac4c507d262b9b11391b892df74c24c06b67253b3272fa185cf"
+      },
+      {
+        "bytes": 26758,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_locality_cost.rs",
+        "sha256": "d3f620c89c05b20a845d0df0207af349efbb637d7e3fc40d3f0a0a69718017ae"
+      },
+      {
+        "bytes": 3938,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pq_message_oracle.rs",
+        "sha256": "da7ff070555cb88c7ee88cc3b764611097c79db26a0c00960d9d8e7779b78227"
+      },
+      {
+        "bytes": 18697,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pq_parameter_bench.rs",
+        "sha256": "8567e6a09d03fb7b63d73dedc1b0ae8bd77f25790af19a6c9d670974494336fb"
+      },
+      {
+        "bytes": 29053,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/pq_profile_bench.rs",
+        "sha256": "a4741b0179e52388dd4daeee30eaf82a1ef18b41a330b4806ab66102932a6a5a"
+      },
+      {
+        "bytes": 7114,
+        "path": "trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs",
+        "sha256": "ca6196f9067ea3ac86a2d743c13de9c9cac0715e4ae652654cdd6592a6d0cf9a"
+      },
+      {
+        "bytes": 8097,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+        "sha256": "cc7d52233e88755ea58efc96987f593c9eda92a4dda854a40a771eebc09b2b2d"
+      },
+      {
+        "bytes": 2171,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/owned_ed25519.rs",
+        "sha256": "cb2b365c7f9428cc0adca1deb38e3e627859fab3a8b45816d77370546fb2645d"
+      },
+      {
+        "bytes": 17866,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_grouped_fresh_seal_v0.rs",
+        "sha256": "7763bd52066366b0f30c9b4bc314ae713fbcf9063abd651c48c5c495cdfcad29"
+      },
+      {
+        "bytes": 48908,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_routed_int257_grouped.rs",
+        "sha256": "e9416457ee3df24cf5446ebffde6d7748a8eeff8f0f46e77b6ad9555e0ef6b0a"
+      },
+      {
+        "bytes": 104121,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+        "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03"
+      },
+      {
+        "bytes": 13186,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts.rs",
+        "sha256": "b6f453410f588391b8a05427299f7e7c3b10d1972d2057620146cde5ca28fbb9"
+      },
+      {
+        "bytes": 5124,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/churn_controls.rs",
+        "sha256": "d8e2d55c858925a749c97ea39d1c8935ef7767ae01436189d0e2fb587076e8c5"
+      },
+      {
+        "bytes": 23186,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/controls.rs",
+        "sha256": "1e53a6aa598d0fcb23866253f5c89add025cdd0654d6e82570a761a2d253f7a5"
+      },
+      {
+        "bytes": 9812,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/full_limb_controls.rs",
+        "sha256": "b418bcbac9261335b0296f46fed8644f2cdc11d3df368bee9b39f7909a357905"
+      },
+      {
+        "bytes": 4167,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/arithmetic_facts/tests.rs",
+        "sha256": "f93b72aa1b5dec2b991de6586214f274a7797f8a347d0444125101f0e52cee2f"
+      },
+      {
+        "bytes": 3747,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/artifacts.rs",
+        "sha256": "fd99053e94bb38b929b848898f4f2ad9f7d3ce33d48097e444337f6ed1d82919"
+      },
+      {
+        "bytes": 16879,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_one_zero.rs",
+        "sha256": "214552a72056e7b0a87e90f0e094cb2668a54de18bcf82e3eddc1896ab0b0031"
+      },
+      {
+        "bytes": 10436,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero.rs",
+        "sha256": "be1b375808d0923e3f938f1c4d23475a16bfe43bf665cb464d79d1dc9ef85f8f"
+      },
+      {
+        "bytes": 22281,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs",
+        "sha256": "0c9c4ddb772292efd0cf92dc174e8b2353b1e0f16f36df484a5e16b280316a0f"
+      },
+      {
+        "bytes": 8795,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts.rs",
+        "sha256": "d3e10fd0b3f2ab50fbf95778bd38353a1c9da38f44cf6f558d309661f47606a2"
+      },
+      {
+        "bytes": 21981,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/facts/tests.rs",
+        "sha256": "010410761dc0a71e03f32f43e82b09f808ee69cab860f5a708081ae661f6396e"
+      },
+      {
+        "bytes": 5033,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/integer_paired.rs",
+        "sha256": "fae34d70af6ac6fc61fb0e2e6f022df1548a333aaacd91eb83597e0174f41101"
+      },
+      {
+        "bytes": 24418,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs",
+        "sha256": "e029837d050952046c9c4fa694a8191470a8733cd96a3dc81e98cc46af59a0a3"
+      },
+      {
+        "bytes": 13599,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt/low_rank.rs",
+        "sha256": "b167b51b07a6fbf186a1485c1f742de3df1007cb9794c364c7421d77e0afacb4"
+      },
+      {
+        "bytes": 20390,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_limb.rs",
+        "sha256": "4dcb3b9280005cd022cb99c30752525406463d963419608b1532a7092198891d"
+      },
+      {
+        "bytes": 12611,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs",
+        "sha256": "5fd27cac9ddad5c87a4623f25d2a97f488d16d8542d9402f59f621db33dfb9ac"
+      },
+      {
+        "bytes": 26429,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_prefix.rs",
+        "sha256": "a88ab5bccbc7085fd0c4823e574a6dfe48b18c9d5d70493b817b97cf0a106899"
+      },
+      {
+        "bytes": 15194,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs",
+        "sha256": "3facd5578e8f57b88722e2c3c9c7a19b3d6c3427f9dad22648a13254656a9bab"
+      },
+      {
+        "bytes": 27102,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+        "sha256": "329fad8979b4ab8681aebe26edf6d3e65fcdbbc6de027262bffe697fb3ef31e2"
+      },
+      {
+        "bytes": 8669,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache_tests.rs",
+        "sha256": "6ced986fd49f46c2e29df809488c50844ad8ae6f05e69d540abaca1638fd611c"
+      },
+      {
+        "bytes": 22800,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs",
+        "sha256": "a0535365dc141d15d6e22242352f554d5ada6d31a02cd627f2eb92135704556c"
+      },
+      {
+        "bytes": 12902,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+        "sha256": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b"
+      },
+      {
+        "bytes": 8563,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tests.rs",
+        "sha256": "3b28edf202a2b7c7b42b12f2e07884d5e25593036fc74d2372900e294b73ee4c"
+      },
+      {
+        "bytes": 7158,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_auth/tuf.rs",
+        "sha256": "f94910f4eefc7be98c0741a48140d59d3a638f4613fdc1e7d0f6f5137c3fca73"
+      },
+      {
+        "bytes": 19075,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs",
+        "sha256": "2f775934937dc0997579ca43132c3a2aee262103ec66ca4a4be08d3b8f4f93f4"
+      },
+      {
+        "bytes": 3525,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_content_auth.rs",
+        "sha256": "5d7cb197c4296777ac00708b6b260cf2ee27aac17b778b43bbd71b9009b708d9"
+      },
+      {
+        "bytes": 5018,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_content_auth/profile_boundary_tests.rs",
+        "sha256": "0a5a6950d30d998ea3f89e8698d3aae64dd1c0126fc5435a57c9ee57942f5dd5"
+      },
+      {
+        "bytes": 4729,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_content_auth/tests.rs",
+        "sha256": "b96ec0d04833d8c69faeb958a6ddb4c0b7881bfae92035d3ba739f095d8b7ac7"
+      },
+      {
+        "bytes": 11609,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs",
+        "sha256": "e91a1c00a2b5e1cc598a8ca615a8f19adb51470f0575106140891e60b6d4ca37"
+      },
+      {
+        "bytes": 8198,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task.rs",
+        "sha256": "d2e08fc8bbd5527a67467ef39bdb7fc80dc17443242e240f3704d1d2f12b4c86"
+      },
+      {
+        "bytes": 4044,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/lifecycle_v2.rs",
+        "sha256": "00e0c3ec2a9e51add5393a9b4ce6e6eb58de9d709fb63cd61d2a6b1681ef0a3e"
+      },
+      {
+        "bytes": 6831,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/pq_lifecycle_v4.rs",
+        "sha256": "e4162c548d62787437564e19a9dbfbf1df8af310b40464db52942742cdfec2a0"
+      },
+      {
+        "bytes": 8938,
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task/pq_lifecycle_v5.rs",
+        "sha256": "9a78f1a2e4c3343e2c4885a95d9ab99eb1c25394f56fc9589cddf0fd9ebc936f"
+      },
+      {
+        "bytes": 18941,
+        "path": "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/pq/tuf_tap21_mldsa65_v1.json",
+        "sha256": "d56d1c460e0372e262fe4d0cfc4b255b9dc325eda93e512638bedbd3e18deef2"
+      },
+      {
+        "bytes": 1664284,
+        "path": "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/mldsa_65_verify_test.json",
+        "sha256": "1ca235f61928421a173a171780beb00264ae9155dc33c52a11e1766cc7979034"
+      },
+      {
+        "bytes": 7088,
+        "path": "trillionnium/crates/trnm-crypto-primitives/tests/pq_openssl_native.rs",
+        "sha256": "ec5635368af81c3982298d45071efbf57e74963ff3fc66a09a55c9c84d4492c3"
+      },
+      {
+        "bytes": 7624,
+        "path": "trillionnium/crates/trnm-crypto-primitives/tests/qualified_task_lifecycle_v2.rs",
+        "sha256": "da2d906d90f5f1a7ed80eff3368305a7275c52bcd80a6a9a4cbfd507901a2a2f"
+      },
+      {
+        "bytes": 9762,
+        "path": "trillionnium/crates/trnm-crypto-primitives/tests/qualified_work_task.rs",
+        "sha256": "8ad9579c1b96f319c46bd63acc4d1838e5b39609474bb8e1ecdc14192efc74bd"
+      },
+      {
+        "bytes": 6132,
+        "path": "trillionnium/crates/trnm-crypto-primitives/tests/tuf_tap21.rs",
+        "sha256": "ca4fcb7198dfcadf5ed0fa609594f7cb1e6104aeafe428fee57bfba169857052"
+      },
+      {
+        "bytes": 684,
+        "path": "trillionnium/crates/trnm-protocol/Cargo.toml",
+        "sha256": "8572aedaaa984786b22725108c5b376cc52664ccff24f0c493042c64acad3ccc"
+      },
+      {
+        "bytes": 1279,
+        "path": "trillionnium/crates/trnm-protocol/examples/pon_wire.rs",
+        "sha256": "2452de24afff42aaa72ac9a148d39bb0fe16e70f0547f33a3fae2ab8274260ad"
+      },
+      {
+        "bytes": 9650,
+        "path": "trillionnium/crates/trnm-protocol/src/content_commitment.rs",
+        "sha256": "1e85bb848addea4287ae4f8d5f26dcc1aece9919106dfd73c531ba0b96eeb5e1"
+      },
+      {
+        "bytes": 8022,
+        "path": "trillionnium/crates/trnm-protocol/src/content_commitment/tests.rs",
+        "sha256": "8ed765a896ea89891c921b216f4a5dd7c3ee89b8f4eb1a5b6b9e1d7e5eec5fe6"
+      },
+      {
+        "bytes": 41595,
+        "path": "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
+        "sha256": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a"
+      },
+      {
+        "bytes": 59988,
+        "path": "trillionnium/crates/trnm-protocol/src/crypto_profile/tests.rs",
+        "sha256": "600bb311882e1094c55826040b7d215f2f7b680bfcedab10678cdcb409a2ba27"
+      },
+      {
+        "bytes": 14038,
+        "path": "trillionnium/crates/trnm-protocol/src/funded_service_task_v1.rs",
+        "sha256": "c7c501901dd9fe38b447db61069a6d605379c5a02555acc874ffebfb2c948cb1"
+      },
+      {
+        "bytes": 5249,
+        "path": "trillionnium/crates/trnm-protocol/src/integer_evolution_v3.rs",
+        "sha256": "b16311bcbff7af586641931e1980e6886df6543fc6700251c3b44ec8a9adc305"
+      },
+      {
+        "bytes": 3284,
+        "path": "trillionnium/crates/trnm-protocol/src/integer_factor_v2.rs",
+        "sha256": "2300d2683378211e4e6d9e1720a6869eb2f1d30d35666f810cb6876613dccc38"
+      },
+      {
+        "bytes": 15774,
+        "path": "trillionnium/crates/trnm-protocol/src/lib.rs",
+        "sha256": "b965065ca4915d57e61af480ef6cfb8f775465c8ad0e4dec0b2895e110946b86"
+      },
+      {
+        "bytes": 3760,
+        "path": "trillionnium/crates/trnm-protocol/src/pon_growth.rs",
+        "sha256": "37b8c818e6dd7341b25cd3c1e66a8b5fe0aecca2c60201272a9a2551db147d5f"
+      },
+      {
+        "bytes": 19189,
+        "path": "trillionnium/crates/trnm-protocol/src/pon_state.rs",
+        "sha256": "96af0abf3ced5c462c16c1daceb657cc86eb8bf9e4e48b6af4cd666926dfa9bb"
+      },
+      {
+        "bytes": 12129,
+        "path": "trillionnium/crates/trnm-protocol/src/pon_state_bulk_tests.rs",
+        "sha256": "c3e16e156883125f5b7e6f601a5bd8abff7ba7139457220d1cde5299ce800f89"
+      },
+      {
+        "bytes": 32654,
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+        "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+      },
+      {
+        "bytes": 21244,
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+        "sha256": "8b18f12347a32c4ad55dae7c8fd7400144e0505fdd26ee7407362beafee7f0bb"
+      },
+      {
+        "bytes": 30536,
+        "path": "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs",
+        "sha256": "04d70da9048f5e85a6b580ccfdcf9bcd26576af802084af53bc37f70de71c647"
+      },
+      {
+        "bytes": 13891,
+        "path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+        "sha256": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429"
+      },
+      {
+        "bytes": 1856,
+        "path": "trillionnium/crates/trnm-protocol/src/pq_legacy_profile.rs",
+        "sha256": "5ba12e5b3bedcfcb2e495ef255ac4c4d457d27cbd9e6f90f8f839dda445fea75"
+      },
+      {
+        "bytes": 26325,
+        "path": "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs",
+        "sha256": "025f9a45830d97583a454241b61a73ca6fee41fdadeafc771ca60a0169a0530f"
+      },
+      {
+        "bytes": 9944,
+        "path": "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2/tests.rs",
+        "sha256": "29c450985b2151b22a67e4863ea042cfdccc87bc4aba7646e43d1a5bb19aefdb"
+      },
+      {
+        "bytes": 6151,
+        "path": "trillionnium/crates/trnm-protocol/src/pq_transaction.rs",
+        "sha256": "1e5bb25a4d538374bd68b7409c32b7d6aa8e675e3ea172f9a708f36bd6e1c3e3"
+      },
+      {
+        "bytes": 11950,
+        "path": "trillionnium/crates/trnm-protocol/src/qualified_work_task.rs",
+        "sha256": "429d696b9d8438efc8e17733555a4f4913e6d19a96c86b2af411a85ab863ffc5"
+      },
+      {
+        "bytes": 10733,
+        "path": "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v2.rs",
+        "sha256": "a1ea641665dc38f8e4dc88d4d2c86358f0b8daa64ee56984e8ba36cd93cf5bd8"
+      },
+      {
+        "bytes": 1792,
+        "path": "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v3.rs",
+        "sha256": "312a344ce187b3e942b29e0675915600c85c4f8db72b25ae04e8dc5ae1188069"
+      },
+      {
+        "bytes": 459,
+        "path": "trillionnium/crates/trnm-protocol/src/qualified_work_task/lifecycle_v4.rs",
+        "sha256": "e84890971bb6416e56913fdac1c735a8437e0e67770e1076530cdf5e7f2b41b8"
+      },
+      {
+        "bytes": 12866,
+        "path": "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v4.rs",
+        "sha256": "aeb3429701913abe20cdead6a33b022548214a1796a48f40fdb85a953a903719"
+      },
+      {
+        "bytes": 13706,
+        "path": "trillionnium/crates/trnm-protocol/src/qualified_work_task/pq_lifecycle_v5.rs",
+        "sha256": "002de1ce7bcfafa1c6d3dc540666311e8c8a2a973374f5c0f6a096c34ae643b4"
+      },
+      {
+        "bytes": 2844,
+        "path": "trillionnium/crates/trnm-protocol/src/sha2_backend_tests.rs",
+        "sha256": "b55c61c1be3be33e1ffa8d865416a0ac61e2270a41e953fbc51d48390d485379"
+      },
+      {
+        "bytes": 1974,
+        "path": "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/public.der",
+        "sha256": "0fb9557e08a03348d149977dcd9182af2981168a122107ea6a7e136c75774d61"
+      },
+      {
+        "bytes": 3615,
+        "path": "trillionnium/crates/trnm-protocol/tests/integer_evolution_v3.rs",
+        "sha256": "4056f533271873d6b8a4d1ea5aefa99f10ea4a8bf2d7fd8df2aff2410878aecd"
+      },
+      {
+        "bytes": 7353,
+        "path": "trillionnium/crates/trnm-protocol/tests/qualified_task_lifecycle_v2.rs",
+        "sha256": "c02f0dc67d6ae82e823729c224d945dbf228cd8eaeca877d7821520efb763873"
+      },
+      {
+        "bytes": 5051,
+        "path": "trillionnium/crates/trnm-protocol/tests/qualified_task_lifecycle_v3.rs",
+        "sha256": "d1d0d0e3909768035d4f9770ab94407ad871931cdd44dcd10e16118cac579eb6"
+      },
+      {
+        "bytes": 4606,
+        "path": "trillionnium/crates/trnm-protocol/tests/qualified_work_task.rs",
+        "sha256": "e6a79653acace6efc30ba289c0624fb3581f90d1267c4e8a427a44e2b41ea9f8"
+      },
+      {
+        "bytes": 2236,
+        "path": "trillionnium/crates/trnm-protocol/tests/support/native_pq_accounts_fixture.rs",
+        "sha256": "d460750af7794feb69d5563859938e79e9f4a2bb9991877ad560c280e351bee1"
+      },
+      {
+        "bytes": 2531,
+        "path": "trillionnium/crates/trnm-protocol/tests/support/native_pq_fixture.rs",
+        "sha256": "ec4b8732e4fa8dc151cad9679845213e3d47d7099d3feb4db885de1e5f55706d"
+      },
+      {
+        "bytes": 2496,
+        "path": "trillionnium/crates/trnm-protocol/tests/support/native_pq_quota_fixture.rs",
+        "sha256": "660d3efc76338a602240ed2e1062e5a9c91d370ecbc4a3a9039c076ed7f48b0f"
+      },
+      {
+        "bytes": 6531,
+        "path": "trillionnium/crates/trnm-protocol/tests/support/native_pq_task_fixture.rs",
+        "sha256": "f094d64efd1f64d01fc7362c54332f2cf14a284077513a779ac76c6b1739bcfa"
+      },
+      {
+        "bytes": 7659,
+        "path": "trillionnium/crates/trnm-protocol/tests/support/native_pq_task_fixture_v5.rs",
+        "sha256": "082efa18a67350bc7c5851a19f5c5ab1749ac35f94e8eb1f2254153add9dc707"
+      }
+    ],
+    "literal_include_files": [
+      "config/pon/work-profile-v1.json",
+      "evidence/pon-w1-complete-succinct-20261028/full-proof/header.bin",
+      "evidence/pon-w1-complete-succinct-20261028/full-proof/succinct.bin",
+      "evidence/pon-w1-verifier-hardening-20261028/real-lift-0000.bin",
+      "tests/fixtures/cpq1-content-v1/vectors.json",
+      "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/pq/tuf_tap21_mldsa65_v1.json",
+      "trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/mldsa_65_verify_test.json",
+      "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/public.der"
+    ],
+    "path_edges": [
+      {
+        "dependency": "trnm-w1-hardened-verifier",
+        "manifest": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "target": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml"
+      },
+      {
+        "dependency": "trnm-w1-zk-relation",
+        "manifest": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+        "target": "formal/pon-nakamoto-v1/w1_zkvm/relation/Cargo.toml"
+      },
+      {
+        "dependency": "trnm-w1-zk-relation",
+        "manifest": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.toml",
+        "target": "formal/pon-nakamoto-v1/w1_zkvm/relation/Cargo.toml"
+      },
+      {
+        "dependency": "trnm-crypto-primitives",
+        "manifest": "formal/pon-nakamoto-v1/w1_zkvm/relation/Cargo.toml",
+        "target": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml"
+      },
+      {
+        "dependency": "trnm-protocol",
+        "manifest": "formal/pon-nakamoto-v1/w1_zkvm/relation/Cargo.toml",
+        "target": "trillionnium/crates/trnm-protocol/Cargo.toml"
+      },
+      {
+        "dependency": "trnm-protocol",
+        "manifest": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+        "target": "trillionnium/crates/trnm-protocol/Cargo.toml"
+      }
+    ],
+    "scope": "all-local-path-crate-source-files-and-literal-includes; external-implementation-and-build-identity-unqualified",
+    "source_before_after_equal": true,
+    "source_files_checked": 134
+  },
+  "locked_package_mapping": {
+    "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.lock": {
+      "selected_packages": [
+        {
+          "checksum": "d836c6ad82f4ced7c61d5feedf905a17780312e393aa681d29cc0bbc5131672b",
+          "name": "risc0-binfmt",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.5"
+        },
+        {
+          "checksum": "7c731e12429eb4457e1ddc69c56ee7343a1e10b86e4aa55bc8f4d2b13734abb9",
+          "name": "risc0-circuit-keccak",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "4.0.6"
+        },
+        {
+          "checksum": "40dd640122abcc67d4d4e4f055c68cbc3ad2efb8589c65c2b23d354632971b60",
+          "name": "risc0-circuit-recursion",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "4.0.5"
+        },
+        {
+          "checksum": "cb11231aa4b74bcc0c8d16597893fbd7ea6f6a9ebbc35e16bfd06b467c7ee104",
+          "name": "risc0-circuit-rv32im",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "4.0.5"
+        },
+        {
+          "checksum": "d6eb2d2b2c6cac0e43cbb2202daacee1a2f24d0dfa03fd08887a11dc6defdcc1",
+          "name": "risc0-core",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.2"
+        },
+        {
+          "checksum": "b0ca702ea7d0162766defe7ed6a79bda4a747ad9e2684000a6edd14df0a6d1f3",
+          "name": "risc0-groth16",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.5"
+        },
+        {
+          "checksum": "b8b0b598ba7946354b10ca5c56e382de801e6c7fce9fccad0396ec436bc5072b",
+          "name": "risc0-zkos-v1compat",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "2.2.3"
+        },
+        {
+          "checksum": "21c0c921e5e2d44197940d387a45e29c6165e318b5a168fdfdbd50f50ba03678",
+          "name": "risc0-zkp",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.5"
+        },
+        {
+          "checksum": "a5d4f24ec767f71a1663a4d24cf9d02b6bfee44c64647cae677227817051007a",
+          "name": "risc0-zkvm",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.6"
+        },
+        {
+          "checksum": "2eb37a97ff7e8e4ee1b2a1c43ec143b4887759883c343507af9e4787a57914cd",
+          "name": "risc0-zkvm-platform",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "2.2.3"
+        },
+        {
+          "checksum": "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283",
+          "name": "sha2",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "0.10.9"
+        }
+      ],
+      "sha256": "3d6b7e7895169e638240a0ed835a5352d64a0ae44f4b56ba0a00acc2ec6b3865"
+    },
+    "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock": {
+      "selected_packages": [
+        {
+          "checksum": "d836c6ad82f4ced7c61d5feedf905a17780312e393aa681d29cc0bbc5131672b",
+          "name": "risc0-binfmt",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.5"
+        },
+        {
+          "checksum": "7c731e12429eb4457e1ddc69c56ee7343a1e10b86e4aa55bc8f4d2b13734abb9",
+          "name": "risc0-circuit-keccak",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "4.0.6"
+        },
+        {
+          "checksum": "40dd640122abcc67d4d4e4f055c68cbc3ad2efb8589c65c2b23d354632971b60",
+          "name": "risc0-circuit-recursion",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "4.0.5"
+        },
+        {
+          "checksum": "cb11231aa4b74bcc0c8d16597893fbd7ea6f6a9ebbc35e16bfd06b467c7ee104",
+          "name": "risc0-circuit-rv32im",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "4.0.5"
+        },
+        {
+          "checksum": "d6eb2d2b2c6cac0e43cbb2202daacee1a2f24d0dfa03fd08887a11dc6defdcc1",
+          "name": "risc0-core",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.2"
+        },
+        {
+          "checksum": "b0ca702ea7d0162766defe7ed6a79bda4a747ad9e2684000a6edd14df0a6d1f3",
+          "name": "risc0-groth16",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.5"
+        },
+        {
+          "checksum": "b8b0b598ba7946354b10ca5c56e382de801e6c7fce9fccad0396ec436bc5072b",
+          "name": "risc0-zkos-v1compat",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "2.2.3"
+        },
+        {
+          "checksum": "21c0c921e5e2d44197940d387a45e29c6165e318b5a168fdfdbd50f50ba03678",
+          "name": "risc0-zkp",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.5"
+        },
+        {
+          "checksum": "a5d4f24ec767f71a1663a4d24cf9d02b6bfee44c64647cae677227817051007a",
+          "name": "risc0-zkvm",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.6"
+        },
+        {
+          "checksum": "2eb37a97ff7e8e4ee1b2a1c43ec143b4887759883c343507af9e4787a57914cd",
+          "name": "risc0-zkvm-platform",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "2.2.3"
+        },
+        {
+          "checksum": "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283",
+          "name": "sha2",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "0.10.9"
+        }
+      ],
+      "sha256": "9756a0d8cb88c4f0e67f722dad933d30dcbe93d5bb2b6ca2be15f23fd0a3f2ef"
+    },
+    "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock": {
+      "selected_packages": [
+        {
+          "checksum": "d836c6ad82f4ced7c61d5feedf905a17780312e393aa681d29cc0bbc5131672b",
+          "name": "risc0-binfmt",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.5"
+        },
+        {
+          "checksum": "7c731e12429eb4457e1ddc69c56ee7343a1e10b86e4aa55bc8f4d2b13734abb9",
+          "name": "risc0-circuit-keccak",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "4.0.6"
+        },
+        {
+          "checksum": "40dd640122abcc67d4d4e4f055c68cbc3ad2efb8589c65c2b23d354632971b60",
+          "name": "risc0-circuit-recursion",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "4.0.5"
+        },
+        {
+          "checksum": "cb11231aa4b74bcc0c8d16597893fbd7ea6f6a9ebbc35e16bfd06b467c7ee104",
+          "name": "risc0-circuit-rv32im",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "4.0.5"
+        },
+        {
+          "checksum": "d6eb2d2b2c6cac0e43cbb2202daacee1a2f24d0dfa03fd08887a11dc6defdcc1",
+          "name": "risc0-core",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.2"
+        },
+        {
+          "checksum": "b0ca702ea7d0162766defe7ed6a79bda4a747ad9e2684000a6edd14df0a6d1f3",
+          "name": "risc0-groth16",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.5"
+        },
+        {
+          "checksum": "b8b0b598ba7946354b10ca5c56e382de801e6c7fce9fccad0396ec436bc5072b",
+          "name": "risc0-zkos-v1compat",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "2.2.3"
+        },
+        {
+          "checksum": "21c0c921e5e2d44197940d387a45e29c6165e318b5a168fdfdbd50f50ba03678",
+          "name": "risc0-zkp",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.5"
+        },
+        {
+          "checksum": "3fcce11648a9ff60b8e7af2f0ce7fbf8d25275ab6d414cc91b9da69ee75bc978",
+          "name": "risc0-zkvm",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "3.0.3"
+        },
+        {
+          "checksum": "2eb37a97ff7e8e4ee1b2a1c43ec143b4887759883c343507af9e4787a57914cd",
+          "name": "risc0-zkvm-platform",
+          "source": "registry+https://github.com/rust-lang/crates.io-index",
+          "version": "2.2.3"
+        },
+        {
+          "checksum": null,
+          "name": "sha2",
+          "source": "git+https://github.com/risc0/RustCrypto-hashes?rev=244dc3b08788f7a4ccce14c66896ae3b4f24c166#244dc3b08788f7a4ccce14c66896ae3b4f24c166",
+          "version": "0.10.8"
+        }
+      ],
+      "sha256": "03a3b7f6cc81a6e1678f2fd23b2b448f8f90931c258f4e66a7bcdc422447d2bf"
+    }
+  },
+  "native_binary_executed": false,
+  "open_obligations": [
+    {
+      "id": "latest_theorem_version_equivalence",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "complete_relation_and_compiler",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "all_27_recursion_program_semantics",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "control_padding_and_recursive_trace_size_reachability",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "relaxed_rbr_knowledge_soundness",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "committed_relation_monotonicity",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "merkle_multi_extractability",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "sponge_and_domain_separation_mapping",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "fiat_shamir_challenge_and_salt_mapping",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "finite_field_sampling_and_challenge_length",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "sequential_adaptive_composition",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "lifetime_global_quantum_budget",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "concrete_enabled_features_and_debug_exclusion",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "quantum_work_and_chainweight",
+      "state": "UNRESOLVED"
+    },
+    {
+      "id": "pq_signature_owner_authorization",
+      "state": "UNRESOLVED"
+    }
+  ],
+  "parameter_digest_independently_recomputed": "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013",
+  "profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
+  "project_files": [
+    {
+      "bytes": 5246,
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/profile.rs",
+      "sha256": "b4f4f35fc69f8846e465928052d1ee006d262d05baedfbce00703ea8fa11a6a9"
+    },
+    {
+      "bytes": 1282,
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/src/wire.rs",
+      "sha256": "fae4f60cca4bcd5aff132935307d3ea11de194765c6e3050adfaf7f346ef9cf3"
+    },
+    {
+      "bytes": 349,
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.toml",
+      "sha256": "9ed358e1e24b58505d5d37e0a88ef3538b2c6146c3303a87c33b19208d667d25"
+    },
+    {
+      "bytes": 38332,
+      "path": "formal/pon-nakamoto-v1/w1_hardened_verifier/Cargo.lock",
+      "sha256": "3d6b7e7895169e638240a0ed835a5352d64a0ae44f4b56ba0a00acc2ec6b3865"
+    },
+    {
+      "bytes": 11172,
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs",
+      "sha256": "5e102fcbe4881e3d163c7a8b65364304b14d080ae64f23b0d5032daa84208aa7"
+    },
+    {
+      "bytes": 284,
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/src/image.rs",
+      "sha256": "c972778fe557d3e1a23470423c46c899ade1633ba76cac48268129b2af5d1ddb"
+    },
+    {
+      "bytes": 498,
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.toml",
+      "sha256": "65263e60248f29008ff098d5fcf1f573a19da5a40f87ecdaa6d3cd5063c104ba"
+    },
+    {
+      "bytes": 46489,
+      "path": "formal/pon-nakamoto-v1/w1_v2_verifier/Cargo.lock",
+      "sha256": "9756a0d8cb88c4f0e67f722dad933d30dcbe93d5bb2b6ca2be15f23fd0a3f2ef"
+    },
+    {
+      "bytes": 445,
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/src/main.rs",
+      "sha256": "c2db185d338be3ab7c6256239b750445e084547de742221517f9fc9f12711468"
+    },
+    {
+      "bytes": 564,
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.toml",
+      "sha256": "48f1c4580ff7de989bdcf1055d12ed5128b105994e653e6d11a593c029bd2037"
+    },
+    {
+      "bytes": 46025,
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/methods/guest-v2/Cargo.lock",
+      "sha256": "03a3b7f6cc81a6e1678f2fd23b2b448f8f90931c258f4e66a7bcdc422447d2bf"
+    },
+    {
+      "bytes": 14597,
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/lib.rs",
+      "sha256": "aeee8bebc5b098744a34a568232fadb5a79963760d8e2e8b3fb6176683987322"
+    },
+    {
+      "bytes": 11159,
+      "path": "formal/pon-nakamoto-v1/w1_zkvm/relation/src/v2.rs",
+      "sha256": "9f31aec3b6d7f376164b58f3ab2f89a191716a560235f73c692b390d1c9fa45b"
+    },
+    {
+      "bytes": 104121,
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "sha256": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03"
+    },
+    {
+      "bytes": 3747,
+      "path": "trillionnium/crates/trnm-crypto-primitives/src/pon_work/artifacts.rs",
+      "sha256": "fd99053e94bb38b929b848898f4f2ad9f7d3ce33d48097e444337f6ed1d82919"
+    },
+    {
+      "bytes": 32654,
+      "path": "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "sha256": "ee443e739da946fc023f119e7f3b882f373b3787820295b29b182ef0ee3ef83b"
+    }
+  ],
+  "provider_build_identity_verified": false,
+  "qualification": {
+    "complete_w1_soundness_qualified": false,
+    "consensus_admission": false,
+    "post_quantum_soundness_qualified": false,
+    "pq_signature_qualification_inferred": false,
+    "production_qualified": false,
+    "quantum_work_qualified": false,
+    "security_bits_quantum": null
+  },
+  "result": "CURRENT_MAPPING_REPRODUCED_SECURITY_HOLD",
+  "reviewed_changes": {
+    "funded_service_wire": "Tags 2 and 5 also decode exact FundedServiceReservationV1 and FundedServiceDecisionV1; full local path-crate sources and literal includes are pinned. This is no theorem about all new wire behaviors.",
+    "grouped_factored_producer": "Expanded local closure includes the reviewed #824 exact B(Ax) preparation/execution and separate example selector. These two files do not call or change W1; no verifier/protocol/manifest/lock/include changes relative to #827 were observed. This inventory establishes no cost lower bound or consensus credit.",
+    "verifier_native_once": "New explicit native replay command; receipt verification dispatch and existing proof relation retained. Native execution is not performed by this mapping."
+  },
+  "saved_fixture_files": [
+    {
+      "bytes": 257014,
+      "path": "evidence/pon-w1-full-v2-20261105/succinct.bin",
+      "sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee"
+    },
+    {
+      "bytes": 318,
+      "path": "evidence/pon-w1-full-v2-20261105/header.bin",
+      "sha256": "7b96038f228a1eedccf7b29ffc54802aba691be7259e33937846c6bf6126d78f"
+    },
+    {
+      "bytes": 64,
+      "path": "evidence/pon-w1-full-v2-20261105/expected-artifacts.bin",
+      "sha256": "802adcdd951cfb4cd7271df22c3bca6af66fee9f40454c74f8b5ff2c98a1b683"
+    },
+    {
+      "bytes": 49506,
+      "path": "evidence/pon-w1-full-v2-20261105/input.bin",
+      "sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb"
+    },
+    {
+      "bytes": 375928,
+      "path": "evidence/pon-w1-full-v2-20261105/guest.bin",
+      "sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f"
+    },
+    {
+      "bytes": 198014,
+      "path": "evidence/pon-w1-full-v2-20261105/proof-result.json",
+      "sha256": "a2bbd9ed141b87823ea6d50322c0d65f706e32aca028d1b5ab19f1327c1194cc"
+    }
+  ],
+  "saved_v2": {
+    "both_parameter_fields_match": true,
+    "bytes": 257014,
+    "complete_native_work_replayed": false,
+    "control_inclusion_depth": 8,
+    "control_inclusion_index": 1,
+    "control_inclusion_matches_reconstructed_tree": true,
+    "final_control_id": "7a8f24092c34ed3eb81b3d0a0b796c588c615d3488ef9e61c21dbd1e4b83ea6e",
+    "fresh_cryptographic_verification": false,
+    "full_claim_digest_from_output": "ee723bb7fbf8883ce892809ec2248abca9cd8c269944eb0e2c669d36880f0f32",
+    "guest_elf_sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f",
+    "guest_elf_to_image_recomputed": false,
+    "guest_image_u32_le_hex": "7b8fb87437a9f1c308909d6b8e27655a3190ae04d2b11a2fa12ef111941c0dff",
+    "guest_image_words": [
+      1958252411,
+      3287394615,
+      1805488136,
+      1516578702,
+      78549041,
+      790278610,
+      301018785,
+      4279049364
+    ],
+    "hash_suite": "poseidon2",
+    "historical_rv32im_segments": 43,
+    "historical_segment_limit_po2": 18,
+    "inner_control_root_from_seal": "a54dc85ac99f851c92d7c96d7318af41dbe7c0194edfcc37eb4d422a998c1f56",
+    "journal_bytes": 16882,
+    "journal_sha256": "56a5fcd0a18fc4db36aa37583dc8f7f75fe8f811482eec36d9b7121bae6f07ee",
+    "outer_recursion_seal_po2_raw": 18,
+    "parameter_digest": "ece5e9b8ae2cd6ea6b1827b464ff0348f9a7f4decd269c0087fdfd75098da013",
+    "public_artifact_commitments_recomputed": true,
+    "receipt_kind": "Succinct",
+    "receipt_sha256": "6c72828c9d05a62175e08fa3e7e1d0d5e85e785ad96b5beb5ec7a2e2490c26ee",
+    "scope": "Fixed-byte partial metadata and public-identity reconstruction. Historical verification remains a separate record.",
+    "seal_words": 55667,
+    "work_id": "ccf544056c6df13a5ab4e6c021e587ff0008d92388270e64f72a6e2168a326cd"
+  },
+  "schema": "TRNM-W1-QROM-CURRENT-IMPLEMENTATION-AUDIT2",
+  "source_base_commit": "f6edf2d549ab2a6b83bda3945daf71aa0b025c80",
+  "source_binding_scope": "reviewed-local-path-crate-files-and-selected-mapping-inputs",
+  "stark_parameters": {
+    "FRI_FOLD_PO2": 4,
+    "FRI_MIN_DEGREE": 256,
+    "INV_RATE": 4,
+    "MAX_CYCLES_PO2": 24,
+    "MIN_CYCLES_PO2": 13,
+    "QUERIES": 50
+  },
+  "third_party_source_closure_verified": false,
+  "upstream_commit": "8c215e2f4ccdd935f0517bf05d90f1ae032840a9",
+  "upstream_selected_sources": [
+    {
+      "bytes": 10174,
+      "git_blob_sha1": "f433b1a53f5b830a205fd2df78e2b34974656c7b",
+      "matches_historical_selected_archive_source": null,
+      "path": "LICENSE",
+      "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+    },
+    {
+      "bytes": 5305,
+      "git_blob_sha1": "206dc0b6cb911aa687d8d3bf71e8671d94be8e9a",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/binfmt/src/hash.rs",
+      "sha256": "dc1439d9def4fff1d97d442ada4da4848109dfd31631120e8fb956f3c643eaed"
+    },
+    {
+      "bytes": 13225,
+      "git_blob_sha1": "cb50b4b4716a4e0bc78661e2b750256db8f94ec3",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/circuit/recursion/src/control_id.rs",
+      "sha256": "6fedf46fad3ca0ce3e537139be7873a43dd68fee5fc803d3e58604b4e9ae16cb"
+    },
+    {
+      "bytes": 1815,
+      "git_blob_sha1": "e1ab21d095cbf46a8aecd08ac2e87ea9ed5a1522",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/circuit/recursion/src/info.rs",
+      "sha256": "128c29a8ddf0560fb3a69c03fa1d959fab542d2fa09eae6794d28be871e345e9"
+    },
+    {
+      "bytes": 90720,
+      "git_blob_sha1": "b301d24c8b367a667902802549dcd1081777a8d3",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/circuit/recursion/src/taps.rs",
+      "sha256": "d32cbf5350d6f724cf3582ef92fb6c392f993b51ee89c5384f7ad79bab43ce83"
+    },
+    {
+      "bytes": 3411,
+      "git_blob_sha1": "7933ba3f245da082788f166cae10864409a641f1",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/circuit/rv32im/src/zirgen/info.rs",
+      "sha256": "4d7b76bc2843e55a4a0429c52542b94a2cd30120e7f6ca4ecad10a16494ddb30"
+    },
+    {
+      "bytes": 28372,
+      "git_blob_sha1": "989a827f26e34bfd81f670dc51db4a5ddfa7c6d7",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/core/src/field/baby_bear.rs",
+      "sha256": "df3e77d606dd74d78fb6b6f3dbbe72455c5ed5b091f7a74de8c049e85b857ff3"
+    },
+    {
+      "bytes": 12957,
+      "git_blob_sha1": "d193c13fec17d56fc7eb4522f818a0ff495dc4c3",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkp/src/adapter.rs",
+      "sha256": "1d1aca1dd7cc4c12477e0d887a3edfa0825b822efee671170ec667c7dd65ca1d"
+    },
+    {
+      "bytes": 8231,
+      "git_blob_sha1": "5b6304ac2fb5421e575d285825b8fbe3f81060dc",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkp/src/core/digest.rs",
+      "sha256": "15ea8c15627e5074eea6d0e71895bd006d28f0cfe9ddb2f2dd73de6cbcd22772"
+    },
+    {
+      "bytes": 4275,
+      "git_blob_sha1": "c75165452fa1115d977fa86876cb5da2a27d0439",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkp/src/core/hash/mod.rs",
+      "sha256": "c4cb4bcd5077bf65c3bb8cc148bb26e41cb4ca317e05325156e8cd5a090d99d9"
+    },
+    {
+      "bytes": 14258,
+      "git_blob_sha1": "0eedf1a38b71a3ce586ab05b51de2979da28e78e",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkp/src/core/hash/poseidon2/consts.rs",
+      "sha256": "5ee51bce046bce1306181a43136aa0731dcf976ab10e2e8d82db88711efdcc41"
+    },
+    {
+      "bytes": 13790,
+      "git_blob_sha1": "d5bd9ebd899c3847c57aa11c58c8a287600f08e8",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkp/src/core/hash/poseidon2/mod.rs",
+      "sha256": "a2993a2e29fa33345a6a9ce0b4f192efe7412746b92b172b0eed8ce78ee8471f"
+    },
+    {
+      "bytes": 2509,
+      "git_blob_sha1": "de17a70ab81f2e4661f877e13455a88974f4ac2c",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkp/src/core/hash/poseidon2/rng.rs",
+      "sha256": "8c5868a8b258896835e2c3c93a84cfe01167f1a446e4d74a3b7be94ae1bf8017"
+    },
+    {
+      "bytes": 18818,
+      "git_blob_sha1": "f21be6ee00d6157fb3d5df9ffac9eb101c1f9c44",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkp/src/core/hash/sha/mod.rs",
+      "sha256": "47ace16612d682d66f5c6e281b0d3a97688314566295692e06e4189015baf7ff"
+    },
+    {
+      "bytes": 1762,
+      "git_blob_sha1": "de0ffeb566be8ec5a85ef9e68b9376cdd8e85907",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkp/src/lib.rs",
+      "sha256": "107521d2426442fbc9358b7b9ae5650be92d670ea85e9a34aec7b9e9cc27dc6d"
+    },
+    {
+      "bytes": 3584,
+      "git_blob_sha1": "284852330817b91836fbf2fc14157ebadda7995f",
+      "matches_historical_selected_archive_source": null,
+      "path": "risc0/zkp/src/merkle.rs",
+      "sha256": "87bf97f1eb09235bce50b62c4a5fef5517400f6c57554853e9c8043f4b32c64a"
+    },
+    {
+      "bytes": 8222,
+      "git_blob_sha1": "e3fb2bc82dac618808124d5299f6958fbdcf6f46",
+      "matches_historical_selected_archive_source": null,
+      "path": "risc0/zkp/src/taps.rs",
+      "sha256": "f5f69bcbed730cc8acd43da89dd4e37ca7560b9eb991a37238482f3655f7e402"
+    },
+    {
+      "bytes": 5802,
+      "git_blob_sha1": "2eefff59b74e92586b1e0a314dbf4f2930d675e5",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkp/src/verify/fri.rs",
+      "sha256": "a601cfad5d01b294f934d697d6d832c57662e4778eac20ac549b1da53d11e377"
+    },
+    {
+      "bytes": 7173,
+      "git_blob_sha1": "b636147f6bf69e0a5062dc4db2dfa5c1aafcba2e",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkp/src/verify/merkle.rs",
+      "sha256": "267ab31c38f7502d9d0d3feebe7eb2fc2cbed9d3af4db66fde349e2c3b61a478"
+    },
+    {
+      "bytes": 21753,
+      "git_blob_sha1": "e7ddb1a285d85c1bb74e45540cf5f827eb89faff",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkp/src/verify/mod.rs",
+      "sha256": "003a67af89a7cfaeac9ff23808225cdc4d81c41d64956f20243574531b166c4f"
+    },
+    {
+      "bytes": 3473,
+      "git_blob_sha1": "762afe44b9665f1b6ae32ba588b985620791b8a8",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkp/src/verify/read_iop.rs",
+      "sha256": "40a7027486fbce5979bd045860e3014ebc1d40f242c4b71ce2adf5722b6d81bc"
+    },
+    {
+      "bytes": 45343,
+      "git_blob_sha1": "55cb42b41a558e440f871ad9c1c862e017a17961",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkvm/src/receipt.rs",
+      "sha256": "ec445670befb0fad19bfe46eede73e551de03d9f91fa1fb81c9149dc04912fed"
+    },
+    {
+      "bytes": 7725,
+      "git_blob_sha1": "f371b100d3d5192cfdc05be4f661270ceaca8871",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkvm/src/receipt/merkle.rs",
+      "sha256": "b3eeb7cc62bba1dfa9ba32a75b905510b4777b9f61004891163d8f43ee8072d6"
+    },
+    {
+      "bytes": 16709,
+      "git_blob_sha1": "f8b2142d41cc6a80787653fd8e07f5b2027bd948",
+      "matches_historical_selected_archive_source": true,
+      "path": "risc0/zkvm/src/receipt/succinct.rs",
+      "sha256": "8e0165b3210e30e77074763d71d85fd0595e4190b96725182f33665b7df90d60"
+    }
+  ],
+  "upstream_snapshot": {
+    "bytes": 69332,
+    "path": "evidence/pon-w1-qrom-implementation-20261107/upstream-sources.json.gz",
+    "sha256": "f6be3667106df6843f5f29c0954cdce8e2617da36c9c91a7a5198665675e0253"
+  },
+  "whole_repository_source_verified": false
+}

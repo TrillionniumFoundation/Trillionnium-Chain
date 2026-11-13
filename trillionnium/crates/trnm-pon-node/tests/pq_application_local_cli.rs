@@ -25,6 +25,60 @@ fn ordinary_npq6_submit_and_cold_status_execute_current_task_and_evaluator_roles
     let root = tempfile::tempdir().unwrap();
     let mut producer = app.open(&root.path().join("producer"));
     let samples = app.samples(&mut producer);
+    // Full, actually signed NPQ6 command/evidence envelopes still parse to the
+    // exact original packet bytes through the optimized once-only preflight.
+    for (index, packet) in samples.packets.iter().enumerate() {
+        let bytes = packet.encode_for_settings(&app.tls.settings).unwrap();
+        let decoded =
+            trnm_pon_node::Packet::decode_for_settings(&bytes, &app.tls.settings).unwrap();
+        assert_eq!(
+            decoded.encode_for_settings(&app.tls.settings).unwrap(),
+            bytes,
+            "signed packet {index}"
+        );
+    }
+    // The real signed sample must also retain the aggregate PQ verifier
+    // budget. Build an otherwise canonical outer frame directly because the
+    // encoder must correctly refuse to produce an over-budget packet.
+    let (two_witness_transaction, repetitions) = samples
+        .packets
+        .iter()
+        .flat_map(|packet| packet.transactions.iter())
+        .find_map(|tx| {
+            let decoded =
+                trnm_protocol::pq_native_accounts_v2::UnverifiedEnvelope::decode_for_profile(
+                    tx,
+                    trnm_protocol::pq_native_accounts_v2::AccountProfile::ApplicationV6,
+                )
+                .unwrap();
+            let cost = decoded.verification_count();
+            let repetitions =
+                trnm_protocol::pq_native_accounts_v2::APPLICATION_MAX_VERIFICATIONS / cost + 1;
+            (cost > 1
+                && repetitions
+                    <= trnm_protocol::pq_native_accounts_v2::APPLICATION_MAX_TRANSACTIONS
+                && tx.len() * repetitions
+                    <= trnm_protocol::pq_native_accounts_v2::MAX_TRANSACTION_BYTES)
+                .then_some((tx, repetitions))
+        })
+        .expect("real NPQ6 samples must include a repeatable multi-verification command");
+    let mut over_budget = Vec::new();
+    over_budget.extend(
+        trnm_protocol::pq_native_accounts_v2::AccountProfile::ApplicationV6.packet_prefix(),
+    );
+    over_budget.extend(samples.packets[0].header.encode());
+    over_budget.extend((repetitions as u16).to_le_bytes());
+    for _ in 0..repetitions {
+        over_budget.extend((two_witness_transaction.len() as u16).to_le_bytes());
+        over_budget.extend(two_witness_transaction);
+    }
+    over_budget.extend(&samples.packets[0].proof);
+    assert_eq!(
+        trnm_pon_node::Packet::decode_for_settings(&over_budget, &app.tls.settings)
+            .unwrap_err()
+            .to_string(),
+        "PQ_VERIFY_BUDGET"
+    );
     app.assert_task_and_evaluator_state(&producer, &samples);
     drop(producer);
     let directory = root.path().join("receiver");

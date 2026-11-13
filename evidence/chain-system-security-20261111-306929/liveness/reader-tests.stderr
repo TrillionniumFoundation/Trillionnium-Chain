@@ -1,0 +1,18 @@
+test_false_in_window_confirmation_is_refused (test_pq_root_campaign_readback.EvidenceReaderTests.test_false_in_window_confirmation_is_refused) ... ok
+test_forged_campaign_success_without_three_phases_is_refused (test_pq_root_campaign_readback.EvidenceReaderTests.test_forged_campaign_success_without_three_phases_is_refused) ... ok
+test_forged_phase_success_without_three_confirmations_is_refused (test_pq_root_campaign_readback.EvidenceReaderTests.test_forged_phase_success_without_three_confirmations_is_refused) ... ok
+test_import_success_without_rpc_is_refused (test_pq_root_campaign_readback.EvidenceReaderTests.test_import_success_without_rpc_is_refused) ... ok
+test_late_confirmation_cannot_be_relabelled_in_window (test_pq_root_campaign_readback.EvidenceReaderTests.test_late_confirmation_cannot_be_relabelled_in_window) ... ok
+test_missing_one_original_campaign_is_refused (test_pq_root_campaign_readback.EvidenceReaderTests.test_missing_one_original_campaign_is_refused) ... ok
+test_tampered_attacker_denominator_is_refused (test_pq_root_campaign_readback.EvidenceReaderTests.test_tampered_attacker_denominator_is_refused) ... ok
+test_tampered_cpu_and_memory_are_refused (test_pq_root_campaign_readback.EvidenceReaderTests.test_tampered_cpu_and_memory_are_refused) ... ok
+test_tampered_workload_is_refused (test_pq_root_campaign_readback.EvidenceReaderTests.test_tampered_workload_is_refused) ... ok
+test_three_repeated_confirmations_are_one_fixture_identity_not_paid_effects (test_pq_root_campaign_readback.EvidenceReaderTests.test_three_repeated_confirmations_are_one_fixture_identity_not_paid_effects) ... ok
+test_untrusted_parent_is_refused (test_pq_root_campaign_readback.EvidenceReaderTests.test_untrusted_parent_is_refused) ... ok
+test_zip_manifest_integrity_and_mutated_member (test_pq_root_campaign_readback.EvidenceReaderTests.test_zip_manifest_integrity_and_mutated_member) ... ok
+test_zip_member_not_listed_in_manifest_is_refused (test_pq_root_campaign_readback.EvidenceReaderTests.test_zip_member_not_listed_in_manifest_is_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.006s
+
+OK

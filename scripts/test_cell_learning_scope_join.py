@@ -21,6 +21,7 @@ import cell_adoption_readback as native
 import cell_learning_completion_join as completion
 import cell_learning_iteration_join as iteration
 import cell_learning_scope_join as scoped
+from test_cell_learning_iteration_join import MutationWriter
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "evidence/hepta-real-native-adoption-20261108/chain-reader"
@@ -104,6 +105,58 @@ class ScopedCompletedLearningTests(unittest.TestCase):
             with self.subTest(kind=type(raw).__name__), self.assertRaisesRegex(native.ReadbackRefusal, "LEARNING_ROOT_PROFILE_LIMIT"):
                 self.review(profile=raw)
 
+    def test_relabelled_checkpoint_headers_cannot_enter_the_scoped_join(self):
+        # These are invalid relabels of real HEPLCP02 exports. The explicit
+        # HEPLCP03 codec requires its own tag-8 outcome; a changed header alone
+        # cannot create it. HEPLCP04 remains a separate local-choice profile.
+        for case in self.cases:
+            initial, selection, completed, readback, frozen, expected, snapshot, _ = self.inputs(case)
+            profile = wire(fixture_profile(initial, snapshot))
+            for magic in (b"HEPLCP03", b"HEPLCP04"):
+                code = ("LEARNING_CHECKPOINT_TRAINER_NO_UPDATE_VERSION"
+                        if magic == b"HEPLCP03" else "LEARNING_CHECKPOINT_VERSION")
+                for location in ("selection", "completed"):
+                    changed_selection = magic + selection[8:] if location == "selection" else selection
+                    changed_completed = magic + completed[8:] if location == "completed" else completed
+                    with self.subTest(case=case, magic=magic, location=location), self.assertRaisesRegex(
+                            native.ReadbackRefusal, "^" + code + "$"):
+                        scoped.review_native_scoped_learning_completion(
+                            changed_selection, changed_completed, readback, profile,
+                            expected_root_profile_sha256=native.sha(profile),
+                            expected_selection_sha256=native.sha(changed_selection),
+                            expected_completed_sha256=native.sha(changed_completed),
+                            expected_readback_sha256=native.sha(readback), frozen=frozen, expected=expected)
+
+    def test_local_decision_tag_cannot_masquerade_as_old_selection(self):
+        # Change exactly the original Selection tag to 9 while keeping the 02
+        # header. This deliberately invalid wire is a refusal control only;
+        # it does not fabricate or authenticate a LocalDecisionV2 receipt.
+        for case in self.cases:
+            initial, selection, completed, readback, frozen, expected, snapshot, _ = self.inputs(case)
+            profile = wire(fixture_profile(initial, snapshot))
+            receipt = next(r for r in snapshot["receipts"] if r["observation"]["tag"] == 5)
+            prefix = MutationWriter()
+            prefix.identifier(receipt["operation_id"]); prefix.digest(receipt["predecessor"])
+            prefix.identifier(receipt["actor_id"]); prefix.digest(receipt["evidence_digest"])
+            prefix.number(receipt["observed_unix_seconds"], 8)
+            marker = bytes(prefix.raw) + b"\x05" + bytes.fromhex(
+                receipt["observation"]["candidate_bundle"] + receipt["observation"]["selection_digest"])
+            for location, raw in (("selection", selection), ("completed", completed)):
+                self.assertEqual(raw[:8], b"HEPLCP02")
+                self.assertEqual(raw.count(marker), 1)
+                tag_offset = raw.index(marker) + len(prefix.raw)
+                poisoned = raw[:tag_offset] + b"\x09" + raw[tag_offset + 1:]
+                changed_selection = poisoned if location == "selection" else selection
+                changed_completed = poisoned if location == "completed" else completed
+                with self.subTest(case=case, location=location), self.assertRaisesRegex(
+                        native.ReadbackRefusal, "LEARNING_CHECKPOINT_ENUM"):
+                    scoped.review_native_scoped_learning_completion(
+                        changed_selection, changed_completed, readback, profile,
+                        expected_root_profile_sha256=native.sha(profile),
+                        expected_selection_sha256=native.sha(changed_selection),
+                        expected_completed_sha256=native.sha(changed_completed),
+                        expected_readback_sha256=native.sha(readback), frozen=frozen, expected=expected)
+
     def test_legacy_unknown_or_unscoped_profiles_are_explicit_refusals(self):
         initial, _, _, _, _, _, snapshot, _ = self.inputs()
         profile = fixture_profile(initial, snapshot)
@@ -161,7 +214,9 @@ class ScopedCompletedLearningTests(unittest.TestCase):
         profile = fixture_profile(initial, snapshot)
         invalid = ((self.cases["no-update-v9"][0], "LEARNING_ROOT_ORIGINAL_ITERATION"),
                    (selection, "LEARNING_FREEZE_NOT_INITIAL"),
-                   (b"HEPLCP01" + initial[8:], "LEARNING_CHECKPOINT_VERSION"))
+                   (b"HEPLCP03" + initial[8:], "LEARNING_CHECKPOINT_TRAINER_NO_UPDATE_VERSION"),
+                   *((magic + initial[8:], "LEARNING_CHECKPOINT_VERSION")
+                     for magic in (b"HEPLCP01", b"HEPLCP04")))
         for raw, code in invalid:
             changed = dict(profile, initial_snapshot=base64.b64encode(raw).decode().rstrip("="))
             with self.subTest(code=code), self.assertRaisesRegex(native.ReadbackRefusal, code):

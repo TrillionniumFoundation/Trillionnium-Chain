@@ -1,0 +1,13 @@
+test_expected_refusal_is_not_relabelled_exit_zero (__main__.CommandReceiptTests.test_expected_refusal_is_not_relabelled_exit_zero) ... ok
+test_launch_failure_retains_attempt (__main__.CommandReceiptTests.test_launch_failure_retains_attempt) ... ok
+test_nonzero_is_retained_before_propagating_original_failure (__main__.CommandReceiptTests.test_nonzero_is_retained_before_propagating_original_failure) ... ok
+test_partial_timeout_bytes_preserved_without_extending_budget (__main__.CommandReceiptTests.test_partial_timeout_bytes_preserved_without_extending_budget) ... ok
+test_real_timeout_is_retained_and_not_a_completed_native_observation (__main__.CommandReceiptTests.test_real_timeout_is_retained_and_not_a_completed_native_observation) ... ok
+test_success_keeps_text_api_and_exact_separate_bytes (__main__.CommandReceiptTests.test_success_keeps_text_api_and_exact_separate_bytes) ... ok
+test_undecodable_output_keeps_original_bytes_and_failure (__main__.CommandReceiptTests.test_undecodable_output_keeps_original_bytes_and_failure) ... ok
+test_unexpected_negative_control_success_still_refuses (__main__.CommandReceiptTests.test_unexpected_negative_control_success_still_refuses) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.354s
+
+OK

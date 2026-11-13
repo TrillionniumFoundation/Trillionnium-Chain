@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "<string>", line 13, in <module>
+  File "<frozen runpy>", line 286, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/data/chain-abg-70ae-20261108/inputs/prepare_delivery_compact_retry.py", line 109, in <module>
+    assert raw_whitespace and all(p.startswith(PREFIX+'observations/') for p in raw_whitespace)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

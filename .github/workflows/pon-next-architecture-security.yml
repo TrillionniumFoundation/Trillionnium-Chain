@@ -115,6 +115,24 @@ jobs:
           printf '%s\n' "$status" > "$OUT/$label.exit"
           exit "$status"
           SH
+          cat > "$out/native-selector-label.py" <<'PY'
+          from pathlib import Path
+          import json, re, sys
+          prefix, selector, output = sys.argv[1:]
+          if prefix not in ("native-storage", "native-storage-component"):
+              raise SystemExit("invalid native artifact prefix")
+          if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*", selector) is None:
+              raise SystemExit("invalid ASCII Rust selector")
+          # Identifiers contain no hyphen; '-' reverses to '::'. The '--'
+          # prefix boundary cannot occur in a nonempty encoded Rust path.
+          label = prefix + "--" + selector.replace("::", "-")
+          record = {"schema": "trnm-native-selector-artifact-v1",
+                    "prefix": prefix, "selector": selector, "label": label}
+          with (Path(output) / (label + ".selector.json")).open("x", encoding="utf-8") as stream:
+              json.dump(record, stream, sort_keys=True)
+              stream.write("\n")
+          print(label)
+          PY
       - name: Checkout the immutable event source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -218,8 +236,9 @@ jobs:
             cell::version_retention::tests::shard_plan::capacity::retained_shard_plan_initial_128_profile_keeps_original_two_mib_wire_and_file_ceiling
           )
           for selector in "${required[@]}"; do
-            bash "$OUT/run-command.sh" "native-storage-component-$selector" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --lib "$selector" -- --exact --test-threads=1 || status=1
-            python3 -B scripts/ci/check_required_native_test.py "$OUT/native-storage-component-$selector.log" --test "$selector" || status=1
+            label="$(python3 -B "$OUT/native-selector-label.py" native-storage-component "$selector" "$OUT")"
+            bash "$OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --lib "$selector" -- --exact --test-threads=1 || status=1
+            python3 -B scripts/ci/check_required_native_test.py "$OUT/$label.log" --test "$selector" || status=1
           done
           exit "$status"
       - name: Run complete storage-owner module and exact new funding controls
@@ -246,8 +265,9 @@ jobs:
             store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies
           )
           for selector in "${required[@]}"; do
-            bash "$OUT/run-command.sh" "native-storage-$selector" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --test-threads=1 || status=1
-            python3 -B scripts/ci/check_required_native_test.py "$OUT/native-storage-$selector.log" --test "$selector" || status=1
+            label="$(python3 -B "$OUT/native-selector-label.py" native-storage "$selector" "$OUT")"
+            bash "$OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib "$selector" -- --exact --test-threads=1 || status=1
+            python3 -B scripts/ci/check_required_native_test.py "$OUT/$label.log" --test "$selector" || status=1
           done
           exit "$status"
       - name: Run the new packet observer and retained native packet-status controls
@@ -389,11 +409,81 @@ jobs:
           if not storage_components_passed or not sealed_python_passed:
               raise SystemExit("required storage convergence component stages did not succeed")
           PY
+      - name: Package complete raw observations without renaming members
+        if: ${{ always() && steps.reserve.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B - "$OUT" <<'PY'
+          from pathlib import Path, PurePosixPath
+          import hashlib, io, json, stat, sys, tarfile
+          root = Path(sys.argv[1])
+          if root.is_symlink() or not root.is_dir():
+              raise SystemExit("raw observation root must be a real directory")
+          root = root.resolve(strict=True)
+          destination = root.with_name(root.name + "-artifact")
+          destination.mkdir()
+          pending = destination / "raw-observations.tar.gz.partial"
+          records = []
+          def regular_bytes(path):
+              if not stat.S_ISREG(path.lstat().st_mode):
+                  raise SystemExit("non-regular observation: " + str(path))
+              return path.read_bytes()
+          def safe_member(name):
+              path = PurePosixPath(name)
+              return bool(name) and not path.is_absolute() and ".." not in path.parts
+          with tarfile.open(pending, "x:gz", format=tarfile.PAX_FORMAT) as archive:
+              for path in sorted(root.rglob("*")):
+                  mode = path.lstat().st_mode
+                  if stat.S_ISDIR(mode):
+                      continue
+                  name = path.relative_to(root).as_posix()
+                  if not safe_member(name):
+                      raise SystemExit("unsafe observation path: " + name)
+                  data = regular_bytes(path)
+                  member = tarfile.TarInfo(name)
+                  member.size = len(data)
+                  member.mode = stat.S_IMODE(mode)
+                  archive.addfile(member, io.BytesIO(data))
+                  records.append({"raw_relative_path": name, "archive_member": name,
+                                  "bytes": len(data), "sha256": hashlib.sha256(data).hexdigest()})
+          if not records:
+              raise SystemExit("no raw observations to archive")
+          expected = {record["archive_member"]: record for record in records}
+          with tarfile.open(pending, "r:gz") as archive:
+              members = archive.getmembers()
+              if len(members) != len(expected) or {member.name for member in members} != set(expected):
+                  raise SystemExit("archive member set differs from raw observations")
+              for member in members:
+                  if not member.isfile() or not safe_member(member.name):
+                      raise SystemExit("unsafe archive member: " + member.name)
+                  reader = archive.extractfile(member)
+                  if reader is None:
+                      raise SystemExit("missing archive member bytes: " + member.name)
+                  with reader:
+                      data = reader.read()
+                  record = expected[member.name]
+                  if (len(data) != record["bytes"]
+                          or hashlib.sha256(data).hexdigest() != record["sha256"]
+                          or data != regular_bytes(root / record["raw_relative_path"])):
+                      raise SystemExit("archive readback differs from raw observation: " + member.name)
+          archive_path = destination / "raw-observations.tar.gz"
+          pending.rename(archive_path)
+          manifest = {"schema": "pon-ci-raw-observation-archive-v1",
+                      "archive": archive_path.name,
+                      "archive_bytes": archive_path.stat().st_size,
+                      "archive_sha256": hashlib.sha256(archive_path.read_bytes()).hexdigest(),
+                      "member_count": len(records), "members": records}
+          (destination / "members.json").write_text(
+              json.dumps(manifest, sort_keys=True, indent=2) + "\n")
+          PY
       - name: Retain logs and failed or partial observations
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: next-architecture-${{ matrix.runner }}-${{ matrix.source }}-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/next-architecture-${{ matrix.source }}-${{ github.run_id }}-${{ github.run_attempt }}/
+          path: |
+            ${{ runner.temp }}/next-architecture-${{ matrix.source }}-${{ github.run_id }}-${{ github.run_attempt }}-artifact/raw-observations.tar.gz
+            ${{ runner.temp }}/next-architecture-${{ matrix.source }}-${{ github.run_id }}-${{ github.run_attempt }}-artifact/members.json
           if-no-files-found: error
           retention-days: 30

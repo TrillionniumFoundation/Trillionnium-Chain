@@ -26,6 +26,7 @@ hexadecimal = retained.hexadecimal
 sha = retained.sha
 load_report = retained.load_report
 wire = retained.wire
+# Share the same versioned native-domain oracle as the retained schedule reader.
 reference = retained.reference
 work_oracle = retained.work_oracle
 

@@ -1,0 +1,69 @@
+diff --git a/config/pon/pq-cross-branch-corpus-v1.json b/config/pon/pq-cross-branch-corpus-v1.json
+index 1267dc5f642..cdda85ff8ce 100644
+--- a/config/pon/pq-cross-branch-corpus-v1.json
++++ b/config/pon/pq-cross-branch-corpus-v1.json
+@@ -1455,7 +1455,7 @@
+     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/history_response.rs": "4f9895cf588d210a46094eac831d27496383d60c",
+     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/history_response_tests.rs": "54799a6f4d4e809b374ee2a5fcccbeff8a4fbcaf",
+     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/input_decode_tests.rs": "3cac5b5da7aaa706244e49ab11041d55b31ea390",
+-    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/output_reservation_tests.rs": "0525f4427d95b2b430234e9d2caac2bd1c827555",
++    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/output_reservation_tests.rs": "0c90eec073d298dd0b69fc43c3ed8810f1975ba9",
+     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity.rs": "eac61c693a0158e746f26c84d776e2e086ce5db5",
+     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity/verifier_cache.rs": "62484e2884da3bc72d820dc9865b567b15688de2",
+     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/pq_identity/verifier_cache_tests.rs": "32216f44db3a70aa66fb633b04ab9de06ec3a2c4",
+diff --git a/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/output_reservation_tests.rs b/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/output_reservation_tests.rs
+index 0525f4427d9..0c90eec073d 100644
+--- a/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/output_reservation_tests.rs
++++ b/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/output_reservation_tests.rs
+@@ -17,11 +17,11 @@ fn pq_identity(seed: u8) -> PqPublicIdentity {
+ 
+ enum Client {
+     Classical {
+-        caller: DevelopmentIdentity,
++        caller: Box<DevelopmentIdentity>,
+         server: String,
+     },
+     Pq {
+-        caller: PqPublicIdentity,
++        caller: Box<PqPublicIdentity>,
+         spki: Vec<u8>,
+         id: Hash,
+     },
+@@ -50,7 +50,7 @@ impl Running {
+         let (server, client) = if pq {
+             let identity = pq_identity(61);
+             let client = Client::Pq {
+-                caller: pq_identity(62),
++                caller: Box::new(pq_identity(62)),
+                 spki: identity.public_spki().to_vec(),
+                 id: digest(identity.public_key()).unwrap(),
+             };
+@@ -61,7 +61,7 @@ impl Running {
+         } else {
+             let identity = classical(61);
+             let client = Client::Classical {
+-                caller: classical(62),
++                caller: Box::new(classical(62)),
+                 server: identity.public_key().to_owned(),
+             };
+             (PublicServer::new(identity, policy).unwrap(), client)
+@@ -182,8 +182,7 @@ fn full_output_pool_closes_without_signed_response_and_recovers_after_release()
+         // no output reservation, no response signature or bytes may be made.
+         let error = run
+             .call(&Request::Head)
+-            .err()
+-            .expect("unreserved output must close");
++            .expect_err("unreserved output must close");
+         assert!(error.is(crate::ErrorCode::FrameEof), "{error}");
+         run.wait_for_output(1, 0, MAX_OUTPUT_BYTES);
+         let observed = run.metrics.lock().unwrap().clone();
+@@ -257,8 +256,7 @@ fn refusal_borrows_only_bounded_original_headroom_and_preserves_control_service(
+         .unwrap();
+         let error = run
+             .call(&history)
+-            .err()
+-            .expect("fallback headroom is bounded");
++            .expect_err("fallback headroom is bounded");
+         assert!(error.is(crate::ErrorCode::FrameEof), "{error}");
+         run.wait_for_output(1, 1, ordinary + REFUSAL_OUTPUT_HEADROOM);
+         if pq {

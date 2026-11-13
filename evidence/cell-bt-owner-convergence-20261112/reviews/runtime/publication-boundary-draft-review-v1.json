@@ -1,0 +1,46 @@
+{
+  "conclusions": [
+    "Transported model/environment bytes and separately pinned host-runtime files are clearly distinguished.",
+    "A changed private snapshot and environment generation require new operation/input/evidence identity. Earlier failed preflight is not promoted.",
+    "Actual whole-operation cgroup memory/CPU requirements are separated from worker RSS/wait4 observations and compiler memory.",
+    "Original input threads=4 and actual runtime_import behavior support four Torch intraop threads plus one interop thread.",
+    "The candidate remains HOLD and does not claim a fresh model operation, FinalUse, production activation, or persistent CURRENT adapter."
+  ],
+  "files": [
+    {
+      "bytes": 8709,
+      "path": "preparation/publication-docs-draft/CELL_BT_OWNER_CONVERGENCE_V1.md",
+      "sha256": "f12a421d165c0d09106df7d9e371fe509eb57311172d496859792c1890bf8499"
+    },
+    {
+      "bytes": 686,
+      "path": "preparation/publication-docs-draft/draft-identity.json",
+      "sha256": "1d969856d9e3c529c55875c333a787065488ada66eda3cceda74647c957a76c1"
+    },
+    {
+      "bytes": 2584,
+      "path": "preparation/publication-docs-draft/documented-runtime-and-resource-boundaries.patch",
+      "sha256": "69c3a2782cc18ff77efb8cdc98091d6900dab37695506d168d048b1846da0982"
+    }
+  ],
+  "h_called": false,
+  "input_identity": {
+    "max_snapshot_bytes": 536870912,
+    "runtime_rss_bytes": 8589934592,
+    "sha256": "fb6fe559317f7c3cd6ef504581b89e7d8229a7c700d3c71b61099a32d443cec9",
+    "threads": 4
+  },
+  "model_execution_claimed": false,
+  "repository_modified": false,
+  "reviewer": "release_acceptance",
+  "runtime_import_primary_source": {
+    "actual_statements": [
+      "torch.set_num_threads(plan['threads'])",
+      "torch.set_num_interop_threads(1)"
+    ],
+    "git_blob": "61ff601bb77f286fa9486f75c7a7dbaec0bcca14",
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/040fb0cf460a6db568f0b4ec5ba581add3f2d2ba/scripts/llm_runtime_pilot.py"
+  },
+  "schema": "trnm.bt-publication-boundary-draft-review.v1",
+  "status": "REVIEW_PASSED_DRAFT_NOT_APPLIED"
+}

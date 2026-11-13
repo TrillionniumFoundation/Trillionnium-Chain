@@ -70,7 +70,7 @@ class AuthorityEffectTests(unittest.TestCase):
         self.assertEqual({row['id']: row['effect_scope'] for row in result['routes']},
                          EXPECTED_SCOPES)
         self.assertEqual(result['source_revision'],
-                         '077ac4f33206de00a178553d9a0c729a20685088')
+                         '813620f387199bef3eae2493e2af07c70444db58')
         self.assertEqual(result['source_files_sha256'], self.original['source_files_sha256'])
         for name in ('coverage_complete', 'whole_chain_pq_qualified', 'production_activation',
                      'provenance_authenticated', 'call_graph_proved',
@@ -150,10 +150,16 @@ class AuthorityEffectTests(unittest.TestCase):
     def test_source_revision_schema_purpose_and_route_context_drift_refuse(self):
         for field, value in (('source_revision', '0' * 40),
                              ('source_revision', '893738947a50dc42819b56e632192de4f9f24fa0'),
+                             ('source_revision', '523bee8709645e7dbc3455f1dc74737f7067af62'),
+                             ('source_revision', 'b3bc526b96d3a8e2ad0be7faa4f00f11d9f7ea53'),
+                             ('source_revision', '813620f387199bef3eae2493e2af07c70444db58'),
+                             ('source_revision', '7f83ea843d6d1578a475a7a0c4dc026da564a795'),
+                             ('source_revision', 'ef6df12a042912664df64f2112c2b1c600dce9fa'),
                              ('source_revision', '88568e2511fcf166e6824947ac97b06b72104385'),
                              ('source_revision', '0f0592ace4b08a1d39e1ffad31beee76ddc4fd66'),
                              ('source_revision', '1f7ff4106f14e5b514d95a9faf2c5eea1233aea5'),
                              ('source_revision', '44e96b1a841a50613d0b93484c5e576caec9f81f'),
+                             ('source_revision', '893738947a50dc42819b56e632192de4f9f24fa0'),
                              ('schema', 'future-schema'),
                              ('purpose', 'production-qualification')):
             with self.subTest(field=field):

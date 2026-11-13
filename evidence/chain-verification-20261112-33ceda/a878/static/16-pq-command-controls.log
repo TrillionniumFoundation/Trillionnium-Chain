@@ -1,0 +1,23 @@
+test_bad_native_pin_refuses_before_the_child_runs (__main__.CommandRecords.test_bad_native_pin_refuses_before_the_child_runs) ... {"exit_code": null, "receipt": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a878584d10f13ea5cd6f35130033457658985b51-attempt1/tmp/trnm-pq-command-control-t8xaakmh/records/control.json", "status": "record_failed"}
+ok
+test_exact_source_and_log_are_recorded_without_an_acceptance_claim (__main__.CommandRecords.test_exact_source_and_log_are_recorded_without_an_acceptance_claim) ... {"exit_code": 0, "receipt": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a878584d10f13ea5cd6f35130033457658985b51-attempt1/tmp/trnm-pq-command-control-2wa74549/records/control.json", "status": "command_succeeded"}
+ok
+test_existing_receipt_is_not_replaced_by_a_later_success (__main__.CommandRecords.test_existing_receipt_is_not_replaced_by_a_later_success) ... {"exit_code": 3, "receipt": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a878584d10f13ea5cd6f35130033457658985b51-attempt1/tmp/trnm-pq-command-control-wtnk7mjb/records/control.json", "status": "command_failed"}
+ok
+test_explicit_native_pin_is_observed_on_the_owned_child (__main__.CommandRecords.test_explicit_native_pin_is_observed_on_the_owned_child) ... {"exit_code": 0, "receipt": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a878584d10f13ea5cd6f35130033457658985b51-attempt1/tmp/trnm-pq-command-control-e58w0nrr/records/control.json", "status": "command_succeeded"}
+ok
+test_pinned_child_failure_remains_a_native_failure (__main__.CommandRecords.test_pinned_child_failure_remains_a_native_failure) ... {"exit_code": 7, "receipt": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a878584d10f13ea5cd6f35130033457658985b51-attempt1/tmp/trnm-pq-command-control-gfre27ei/records/control.json", "status": "command_failed"}
+ok
+test_real_child_failure_and_stderr_are_preserved (__main__.CommandRecords.test_real_child_failure_and_stderr_are_preserved) ... {"exit_code": 7, "receipt": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a878584d10f13ea5cd6f35130033457658985b51-attempt1/tmp/trnm-pq-command-control-8038mhpc/records/control.json", "status": "command_failed"}
+ok
+test_script_pin_cannot_be_relabelled_as_the_interpreter (__main__.CommandRecords.test_script_pin_cannot_be_relabelled_as_the_interpreter) ... {"exit_code": null, "receipt": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a878584d10f13ea5cd6f35130033457658985b51-attempt1/tmp/trnm-pq-command-control-o1s474eb/records/control.json", "status": "record_failed"}
+ok
+test_successful_child_that_changes_raw_source_cannot_pass (__main__.CommandRecords.test_successful_child_that_changes_raw_source_cannot_pass) ... {"exit_code": 0, "receipt": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a878584d10f13ea5cd6f35130033457658985b51-attempt1/tmp/trnm-pq-command-control-u2bjvcta/records/control.json", "status": "record_failed"}
+ok
+test_unavailable_process_observation_keeps_the_native_exit_separate (__main__.CommandRecords.test_unavailable_process_observation_keeps_the_native_exit_separate) ... {"exit_code": 0, "receipt": "/home/qq/chain-verification-validation-33ceda-20261112/python-source-a878584d10f13ea5cd6f35130033457658985b51-attempt1/tmp/trnm-pq-command-control-yqm8noli/records/control.json", "status": "record_failed"}
+ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.534s
+
+OK

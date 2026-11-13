@@ -310,6 +310,8 @@ jobs:
                   or any(outcome != 'ok' for _, outcome in names)):
               raise SystemExit('legal-native-controls: retained, versioned, material and observer controls must each pass once')
           PY
+          python3 scripts/ci/test_w1_native_roster.py
+          python3 scripts/ci/check_w1_native_roster.py --profile legal-example "$OUT/legal-native-controls.log"
           cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_legal_strategy_v1 -- -D warnings 2>&1 | tee "$OUT/legal-clippy.log"
       - name: Execute all thirty original-budget legal strategy shards
         if: always() && steps.source.outcome == 'success'
@@ -450,7 +452,7 @@ jobs:
           # its parent control selects real SIGKILL cuts. It is not a skipped gate.
           expected = {"factorial-kernel-tests": (14, 0), "factorial-example-tests": (len(example_expected), 0),
               "header-binding-tests": (1, 0), "history-w1-tests": (5, 0),
-              "history-import-tests": (33, 1), "cpu-completion-tests": (11, 0)}
+              "history-import-tests": (36, 1), "cpu-completion-tests": (11, 0)}
           for name, counts in expected.items():
               text = (root / (name + ".log")).read_text()
               rows = re.findall(r'^test result: (\S+)\. ([0-9]+) passed; ([0-9]+) failed; ([0-9]+) ignored;', text, re.M)
@@ -498,12 +500,24 @@ jobs:
               rows = re.findall(r'^test ' + re.escape(selector) + r' \.\.\. ok$', history, re.M)
               if len(rows) != 1:
                   raise SystemExit(selector + ': exact deadline control did not execute once')
+          for name in (
+              'shared_detached_history_continues_from_real_deficit_without_new_credit',
+              'shared_detached_history_refill_keeps_original_resource_cancellation',
+              'shared_detached_history_refill_cannot_renew_original_deadline',
+          ):
+              selector = 'ingress::history_import::tests::detached_budget_controls::' + name
+              rows = re.findall(r'^test ' + re.escape(selector) + r' \.\.\. ok$', history, re.M)
+              if len(rows) != 1:
+                  raise SystemExit(selector + ': exact detached budget control did not execute once')
           codec_selector = ('ingress::history_import::tests::'
               'history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors')
           codec_rows = re.findall(r'^test ' + re.escape(codec_selector) + r' \.\.\. ok$', history, re.M)
           if len(codec_rows) != 1:
               raise SystemExit(codec_selector + ': exact codec control did not execute once')
           PYTEST
+          python3 scripts/ci/test_w1_native_roster.py
+          python3 scripts/ci/check_w1_native_roster.py --profile factorial-example "$OUT/factorial-example-tests.log"
+          python3 scripts/ci/check_w1_native_roster.py --profile history-import "$OUT/history-import-tests.log"
       - name: Prepare pinned provider required by native all-feature controls
         shell: bash
         run: bash scripts/ci/prepare_pq_provider.sh

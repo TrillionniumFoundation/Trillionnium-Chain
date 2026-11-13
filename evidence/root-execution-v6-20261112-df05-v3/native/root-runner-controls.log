@@ -1,0 +1,11 @@
+test_complete_native_targets_keep_features_locked_graph_and_no_filters (test_run_pq_root_witness_v5.WitnessRunnerControls.test_complete_native_targets_keep_features_locked_graph_and_no_filters) ... ok
+test_each_actual_name_success_summary_and_process_exit_is_required (test_run_pq_root_witness_v5.WitnessRunnerControls.test_each_actual_name_success_summary_and_process_exit_is_required) ... ok
+test_empty_truncated_duplicate_or_extra_inventories_refuse (test_run_pq_root_witness_v5.WitnessRunnerControls.test_empty_truncated_duplicate_or_extra_inventories_refuse) ... ok
+test_frozen_rosters_cover_every_native_source_test_without_ignores (test_run_pq_root_witness_v5.WitnessRunnerControls.test_frozen_rosters_cover_every_native_source_test_without_ignores) ... ok
+test_joint_roster_contains_fifty_distinct_required_methods (test_run_pq_root_witness_v5.WitnessRunnerControls.test_joint_roster_contains_fifty_distinct_required_methods) ... ok
+test_retained_receipt_target_cannot_claim_zero_tests_or_omit_replay_control (test_run_pq_root_witness_v5.WitnessRunnerControls.test_retained_receipt_target_cannot_claim_zero_tests_or_omit_replay_control) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.012s
+
+OK

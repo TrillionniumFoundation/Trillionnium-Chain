@@ -1,4 +1,4 @@
-# Four separate throughput observations
+# Four business throughput domains and their component observations
 
 These tools account for four different product questions. They do not grant
 production activation, an unconditional cryptographic security claim, a quantum
@@ -11,13 +11,16 @@ distinguishes new execution from historical readback.
 | Question | Useful numerator and interval | Evidence that is insufficient |
 | --- | --- | --- |
 | Independent transaction confirmation | Unique original transaction identities confirmed under the installed depth **and** cumulative-work rule, within the original common observation window; retain reorganization, failures, queues, late completion and risk obligations | SubmitACK, admission, History response, blocks, repeated fixtures, a depth-only snapshot, or incompatible local forks |
-| Cell distribution | Verified useful bytes for the complete declared release per original acquisition interval, with every member and every planned attempt retained; distinguish cold cache, provider topology and independent recovery | Advertised bytes, transport envelopes, one member, offline hash speed, or an unverified aggregate completion flag |
-| Model loading | Download, complete verification, decode, host/device transfer and first response with actual stage boundaries and a common complete interval | A download-complete handoff, a process Ready message, a model-load substage, or a CPU-only run relabeled as a GPU observation |
+| Independently useful computation | Unique tasks accepted by the independent task owner within a complete common observation window; retain preparation, training, evaluation, unsuccessful attempts, proof, propagation and recovery costs | Work/seal IDs, receiver fanout, operation labels, training receipts or self-declared usefulness without independent acceptance |
+| Complete weight-version access | Verified complete-release bytes per original acquisition interval, plus verification, decode, host/device transfer, load-to-first-response, failures and repair traffic; distinguish cold/hot caches and every planned attempt | Advertised bytes, one member, offline hash speed, a Ready or download-complete message, a model-load substage, or CPU-only work relabeled as GPU loading |
 | Model computation and adoption | Actual decoder-generated tokens or separately named forward operations per their matching execution interval; retain training cost, quality, NoUpdate and original next-task adoption evidence | Single-action logits relabeled as generated tokens, transport success relabeled as adoption, or training-stage cost relabeled as total iteration cost |
 
 The four numerators are not interchangeable. They are never summed into a
-single TPS. Rates computed from historical component observations remain
-descriptive observations of their exact source, binary, fixture and resources.
+single TPS. The original readers' separate Cell-distribution and model-loading
+projections remain separate components of weight-version access. Existing
+historical reports are not rewritten by this grouping. Rates computed from
+historical component observations remain descriptive observations of their
+exact source, binary, fixture and resources.
 
 ## Implemented readers
 
@@ -26,6 +29,8 @@ descriptive observations of their exact source, binary, fixture and resources.
 | [Transaction reader](../pon-native-fullpath-v1/transaction_throughput.py) | Layers exact PNX1 transaction identities and the installed depth/work distinction over the existing complete-path reader; separately reuses the original Host confirmation reader |
 | [Proof CPU reader](proof_cpu_metrics.py) | Recomputes the fixed eight-run #795 corpus from ten independently pinned original blobs, including GNU time user plus system CPU, wall time, failure diagnostics, planned denominator and repeated inputs |
 | [Cell/model reader](cell_model_metrics.py) | Projects 44 pinned original records covering the complete eleven-member release, transfer/refusal commands, three training rounds and 32+32 actual action-scoring forwards |
+| [Useful-task observation adapter](useful_task_metrics.py) | Imports the same pinned raw corpus, retains training and failed-command costs with source pointers, and explicitly withholds useful-task count/rate, full cost and net value when independent acceptance and a complete attempt census are missing |
+| [Complete-block cost readback](whole_block_cost_metrics.py) | Requires all 84 original native records, fixed warmups and alternating paired order; compares full M06 call wall time while keeping per-arm CPU and confirmed business TPS unknown |
 | [Host prerequisites](host_prerequisites.py) | Calls the unchanged original Host observer and validator; a prerequisite inspection never becomes an executed or qualified pressure campaign |
 | [Report reproduction](reproduce_reports.py) | Reproduces the committed projections byte for byte, rechecks original raw native records and preserves all HOLD decisions |
 
@@ -35,6 +40,24 @@ actual return status and incomplete output when a command times out or fails.
 It rethrows the original timeout; it does not grant another budget. CPU, RSS and
 process-family cleanup stay unknown unless independently observed. A normal
 command return is not by itself a successfully completed negative control.
+
+## Native execution continuation
+
+The [execution profile](EXECUTION_PROFILE_V1.md) keeps the original four-second
+service contract separate from the thirty-second 0/24/24 campaign. Its
+[execution report](execution_report.py) preserves both planned denominators,
+native error/owner times, queues and available CPU/I/O coverage. The independent
+[SQLite syscall reader](sqlite_syscall_profile.py) retains instrumented WAL
+write/sync attempts without claiming physical I/O or either throughput gate.
+
+The [useful-task observation contract](USEFUL_TASK_OBSERVATIONS_V1.md) identifies
+which original cost scopes are present and which are unknown. The
+[component-cost contract](COMPONENT_COST_OBSERVATIONS_V1.md) separates complete
+M06 execution and root encoding from the original Node business path. New
+request-cancellation observations separately retain the first flag-write time
+bracket, per-request worker return and all request-owner closure. Ordinary
+connection cleanup, process exit and reconciliation of durable effects remain
+different events; historical records without the extension stay unknown.
 
 ## Confirmation, forks and uncertainty
 
@@ -103,6 +126,8 @@ From a complete checkout, all readers use only the Python standard library:
 python3 -m unittest discover -s formal/pon-native-fullpath-v1 -p 'test_*.py' -v
 python3 formal/throughput-v1/test_proof_cpu_metrics.py -v
 python3 formal/throughput-v1/test_cell_model_metrics.py -v
+python3 formal/throughput-v1/test_useful_task_metrics.py -v
+python3 formal/throughput-v1/test_whole_block_cost_metrics.py -v
 python3 formal/throughput-v1/test_reproduce_reports.py -v
 python3 scripts/ci/test_smollm_command_receipts.py -v
 python3 formal/throughput-v1/reproduce_reports.py --output /tmp/throughput-reproduction-new

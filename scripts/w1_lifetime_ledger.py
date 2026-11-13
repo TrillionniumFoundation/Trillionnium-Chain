@@ -40,7 +40,11 @@ OUTPUT_SCHEMA = "TRNM-W1-LIFETIME-LEDGER-REPORT1"
 # of the child commit containing this ledger and its successor report. This is
 # selected source identity only; it does not identify an executed binary or
 # establish any proof, lifetime, consensus, or production qualification.
-SOURCE_BASE = "077ac4f33206de00a178553d9a0c729a20685088"
+# This successor adds the reviewed rejection of internally impossible Toffoli
+# decomposition depths. The preceding Rustix dependency pins remain unchanged.
+# Historical reports are retained; the other nineteen selected sources, ledger
+# arithmetic, unknown inputs and independent HOLD qualifications are unchanged.
+SOURCE_BASE = "1f2b0187d4522b5248294ddab318f34a63bdc5a3"
 MAX_INPUT_BYTES = 262144
 MAX_INTEGER_BITS = 512
 PHASES = (
@@ -114,21 +118,21 @@ GROUPS = {
     },
 }
 SOURCE_PINS = {
-    "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "410cfe7ac27b90887b1e2bac49ed1928b66fd4c70d0747e733df0bfeb9fb27e3",
-    "trillionnium/Cargo.lock": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
+    "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "caff7ff137c94e26a378a2a95ae029a21b1ee30a79d08a05b8c9e3b1f1810ab8",
+    "trillionnium/Cargo.lock": "53c4eab0fb3d2951894348de2b765e0a573e49acb5dbfe1fe805719ec868a136",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": "536270dab4fd54a243a10c90eff2a4269911ad1537196dc937b6e3a33082929b",
     "trillionnium/crates/trnm-protocol/src/pq_frame.rs": "9fd553c520759f05e0f81b5d740a25a045a8c0424349aa94ff786f74b881a429",
     "trillionnium/crates/trnm-protocol/src/crypto_profile.rs": "1913065a325e540797df6bf1b7319b331d76ac1c7c2ea1920d19a822e702654a",
     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs": "7c404502cbcc358b95cbf4f5ae88a1582e144562790913266eba599e5da8341d",
     "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs": "f8c65d541eeff28625f1028ab1ba1e9c8fa6dadc71cca39a1a7368da850b52cc",
     "trillionnium/crates/trnm-pon-node/src/store.rs": "d4623d65b74a5f7d875037dceeb1a9c3d2a4d957791d4b39514a14eb3a2b90ca",
-    "trillionnium/crates/trnm-pon-node/src/consensus.rs": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62",
+    "trillionnium/crates/trnm-pon-node/src/consensus.rs": "dbbd44790428ae0aff32d7305e062a6fc09ca0add0e3c4c077deefd8bfec760d",
     "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "33cb571d1338a949677092d0dc3f6c955cd8ad6d3524cee0cd5b528e1c146d03",
     "config/pon/devnet-v1.json": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
     "formal/pon-nakamoto-v1/work_query_bound.py": "d6b5c3b25f6cd8287de5b927f271d0436ffe736470eb914d02a8a17497ea0909",
     "formal/pon-nakamoto-v1/w1_quantum_oracle.py": "5a1a250680299561cb83b0b7d17ab57cf180e64277f981f5130cdf04e70aeb99",
     "formal/pon-nakamoto-v1/w1_quantum_restricted_oracle.py": "b590ed91d491577c494a667a9271410b420dc35b7088705ef99982c2abd3b702",
-    "formal/pon-nakamoto-v1/quantum_oracle_resources.py": "72879d40ff1583b514cb43ab10f1fd69edb60522f9c67997dfd200747977279f",
+    "formal/pon-nakamoto-v1/quantum_oracle_resources.py": "23a2f810685e5f352b3cc4b7b9e8b8ab76d6208122d7e2379ee9c9d51edf849a",
     "formal/pon-nakamoto-v1/quantum_resource_clock.py": "8d7257c315da4590e463b6bdb49434d284c0239681d6d8e50759dafda42c456a",
     "formal/pon-nakamoto-v1/quantum_daa_model.py": "4dd08a40f9719b6a8e310c65b63fc3af44b6d4fb6a6db83af296600334da747b",
     "formal/pon-nakamoto-v1/w1_hardened_verifier/src/main.rs": "53048b6a7fd413bfb25abee86c4b7868be1c28364d43f53dc1bb2e40b14ae4b5",

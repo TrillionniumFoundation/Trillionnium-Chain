@@ -1,0 +1,8 @@
+{
+  "path": "/workspace/scratch/227dcdfdc6e4/chain-adoption-target/debug/trnm-cell-adoption",
+  "sha256": "3b7b95af168502fe935522f5d906c4ef639ee86d138c597df4c1b7f9cc7f76c1",
+  "bytes": 61615072,
+  "source_runtime_commit": "68595a91127e14fd598b17215d7c2c3e4f8f2d62",
+  "profile": "test original unoptimized + debuginfo",
+  "note": "CLI binary passed 11 subprocess tests; no libtest execution claimed."
+}

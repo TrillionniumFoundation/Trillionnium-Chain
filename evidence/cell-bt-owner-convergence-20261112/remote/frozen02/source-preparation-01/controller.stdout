@@ -1,0 +1,24 @@
+{"exit_code": 0, "stage": "old-head"}
+{"exit_code": 0, "stage": "old-task-ref"}
+{"exit_code": 0, "stage": "old-index-path"}
+{"exit_code": 0, "stage": "old-refs-before"}
+{"exit_code": 1, "stage": "old-relevant-config"}
+{"actual_verified_bytes": 1792716670, "actual_verified_entries": 27584, "old_source_nonmatches": {"bytes": 13507, "path": "/home/qq/work/chain-bt-4a0b-frozen02-validation/source-preparation-01/old-source-nonmatches.json.gz", "sha256": "3dccb96239225e35380575686feffe29716fe397bd8ee73434f80b716e0c1f23"}}
+{"exit_code": 0, "stage": "independent-object-clone"}
+{"exit_code": 0, "stage": "new-shared-index"}
+{"exit_code": 0, "stage": "new-task-ref"}
+{"exit_code": 0, "stage": "new-tree-before-checkout"}
+{"exit_code": 0, "stage": "canonical-origin"}
+{"exit_code": 0, "stage": "full-checkout"}
+{"exit_code": 0, "stage": "new-head"}
+{"exit_code": 0, "stage": "new-origin"}
+{"exit_code": 0, "stage": "new-local-branches"}
+{"exit_code": 0, "stage": "new-relevant-config"}
+{"exit_code": 0, "stage": "new-index-flags"}
+{"exit_code": 0, "stage": "project-preflight"}
+{"exit_code": 0, "stage": "full-physical-source"}
+{"exit_code": 0, "stage": "new-status-after"}
+{"exit_code": 0, "stage": "new-index-flags-after"}
+{"exit_code": 0, "stage": "old-head-after"}
+{"exit_code": 0, "stage": "old-refs-after"}
+{"completed": true, "native_operation_started": false, "output": "/home/qq/work/chain-bt-4a0b-frozen02-validation/source-preparation-01", "passed": true}

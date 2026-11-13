@@ -1,0 +1,156 @@
+{"phase": "c3-prelaunch", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17", "tree": "21e970bfdb11ab64403d2af5f3c56536a2961f80"}
+{"bundle_sha256": "3f8ae755c3dc6d36245669e35b05a76eb2bf72371eb842d095813d3073acd250", "previous_commands": 68, "previous_completed": true, "target_quiescent": true}
+{"result": "PASS", "mode": "--audit", "project": "trillionnium-chain", "packages": 26, "branch": "fix/chain-cell-storage-four-gates-20261111-2bfb", "remote_policy_mutated": false}
+The bundle contains this ref:
+030de92be05bfd4f73e199098c12dfeaedf29b17 HEAD
+The bundle requires this ref:
+3592b85b04a2800791c342df6ab3d0cd903072f2 
+The bundle uses this hash algorithm: sha1
+/home/qq/work/cell-four-gates-c3-2bfb.bundle is okay
+Receiving objects:   8% (1/12)Receiving objects:  16% (2/12)Receiving objects:  25% (3/12)Receiving objects:  33% (4/12)Receiving objects:  41% (5/12)Receiving objects:  50% (6/12)Receiving objects:  58% (7/12)Receiving objects:  66% (8/12)Receiving objects:  75% (9/12)Receiving objects:  83% (10/12)Receiving objects:  91% (11/12)Receiving objects: 100% (12/12)Receiving objects: 100% (12/12), done.
+Resolving deltas:   0% (0/10)Resolving deltas:  10% (1/10)Resolving deltas:  20% (2/10)Resolving deltas:  30% (3/10)Resolving deltas:  40% (4/10)Resolving deltas:  50% (5/10)Resolving deltas:  60% (6/10)Resolving deltas:  70% (7/10)Resolving deltas:  80% (8/10)Resolving deltas:  90% (9/10)Resolving deltas: 100% (10/10)Resolving deltas: 100% (10/10), completed with 10 local objects.
+From /home/qq/work/cell-four-gates-c3-2bfb.bundle
+ * branch                HEAD       -> FETCH_HEAD
+Updating 3592b85b0..030de92be
+Fast-forward
+ config/pon/pq-cross-branch-corpus-v1.json                                      | 2 [32m+[m[31m-[m
+ trillionnium/crates/trnm-data-availability/src/cell/snapshot_schedule/tests.rs | 3 [32m++[m[31m-[m
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+{"clean": true, "phase": "c3-fast-forward-complete", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17", "tree": "21e970bfdb11ab64403d2af5f3c56536a2961f80"}
+{"argv": ["/usr/bin/python3", "-B", "/home/qq/work/chain-cell-four-gates-20261111-2bfb/scripts/ci/run_cell_storage_four_gates_v1.py", "--repo", "/home/qq/work/chain-cell-four-gates-20261111-2bfb", "--source", "030de92be05bfd4f73e199098c12dfeaedf29b17", "--lane", "candidate", "--output", "/home/qq/work/chain-cell-four-gates-2bfb-c3-full-gates", "--target", "/home/qq/work/chain-cell-four-gates-2bfb-target-c1", "--rust-bin", "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin", "--cargo-home", "/home/qq/.cargo", "--provider", "/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install", "--provider-sha256", "ed29dfe14c0686c876833e39fbeedb277846987f3728acc279c256b32259cf62"], "phase": "c3-candidate-launch", "preparation_lock_closed": true}
+{"started": "preflight", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "preflight", "exit_code": 0, "timed_out": false}
+{"started": "source-before", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "source-before", "exit_code": 0, "timed_out": false}
+{"started": "rustc-version", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "rustc-version", "exit_code": 0, "timed_out": false}
+{"started": "cargo-version", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "cargo-version", "exit_code": 0, "timed_out": false}
+{"started": "locked-graph", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "locked-graph", "exit_code": 0, "timed_out": false}
+{"started": "locked-all-feature-graph", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "locked-all-feature-graph", "exit_code": 0, "timed_out": false}
+{"started": "format", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "format", "exit_code": 0, "timed_out": false}
+{"started": "inventory", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "inventory", "exit_code": 0, "timed_out": false}
+{"started": "test_cell_discovery_v3_ci", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "test_cell_discovery_v3_ci", "exit_code": 0, "timed_out": false}
+{"started": "test_cell_storage_convergence_ci", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "test_cell_storage_convergence_ci", "exit_code": 0, "timed_out": false}
+{"started": "test_ci_source_integrity", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "test_ci_source_integrity", "exit_code": 0, "timed_out": false}
+{"started": "check_pq_research_integration", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "check_pq_research_integration", "exit_code": 0, "timed_out": false}
+{"started": "test_pq_research_integration", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "test_pq_research_integration", "exit_code": 0, "timed_out": false}
+{"started": "check_repository", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "check_repository", "exit_code": 0, "timed_out": false}
+{"started": "next-architecture-python", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "next-architecture-python", "exit_code": 0, "timed_out": false}
+{"started": "counterexample-fixture", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "counterexample-fixture", "exit_code": 0, "timed_out": false}
+{"started": "cell_complete_version_vector", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "cell_complete_version_vector", "exit_code": 0, "timed_out": false}
+{"started": "cell_discovery_epoch_v3_vector", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "cell_discovery_epoch_v3_vector", "exit_code": 0, "timed_out": false}
+{"started": "cell_version_content_vector", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "cell_version_content_vector", "exit_code": 0, "timed_out": false}
+{"started": "cell_version_retention_v3_vector", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "cell_version_retention_v3_vector", "exit_code": 0, "timed_out": false}
+{"started": "cell_storage_descriptor_reference", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "cell_storage_descriptor_reference", "exit_code": 0, "timed_out": false}
+{"started": "sealed-research-python-controls", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "sealed-research-python-controls", "exit_code": 0, "timed_out": false}
+{"started": "sealed-research-python-readback", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "sealed-research-python-readback", "exit_code": 0, "timed_out": false}
+{"started": "da-complete", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "da-complete", "exit_code": 0, "timed_out": false}
+{"started": "da-required-01", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "da-required-01", "exit_code": 0, "timed_out": false}
+{"started": "da-required-01-readback", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "da-required-01-readback", "exit_code": 0, "timed_out": false}
+{"started": "da-required-02", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "da-required-02", "exit_code": 0, "timed_out": false}
+{"started": "da-required-02-readback", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "da-required-02-readback", "exit_code": 0, "timed_out": false}
+{"started": "da-required-03", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "da-required-03", "exit_code": 0, "timed_out": false}
+{"started": "da-required-03-readback", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "da-required-03-readback", "exit_code": 0, "timed_out": false}
+{"started": "da-required-04", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "da-required-04", "exit_code": 0, "timed_out": false}
+{"started": "da-required-04-readback", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "da-required-04-readback", "exit_code": 0, "timed_out": false}
+{"started": "da-required-05", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "da-required-05", "exit_code": 0, "timed_out": false}
+{"started": "da-required-05-readback", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "da-required-05-readback", "exit_code": 0, "timed_out": false}
+{"started": "cell_sealed_research_next_use_v2-tests", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "cell_sealed_research_next_use_v2-tests", "exit_code": 0, "timed_out": false}
+{"started": "cell_sealed_research_paged_next_use_v1-tests", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "cell_sealed_research_paged_next_use_v1-tests", "exit_code": 0, "timed_out": false}
+{"started": "node-storage-default", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-storage-default", "exit_code": 0, "timed_out": false}
+{"started": "node-required-01", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-01", "exit_code": 0, "timed_out": false}
+{"started": "node-required-01-readback", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-01-readback", "exit_code": 0, "timed_out": false}
+{"started": "node-required-02", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-02", "exit_code": 0, "timed_out": false}
+{"started": "node-required-02-readback", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-02-readback", "exit_code": 0, "timed_out": false}
+{"started": "node-required-03", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-03", "exit_code": 0, "timed_out": false}
+{"started": "node-required-03-readback", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-03-readback", "exit_code": 0, "timed_out": false}
+{"started": "node-required-04", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-04", "exit_code": 0, "timed_out": false}
+{"started": "node-required-04-readback", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-04-readback", "exit_code": 0, "timed_out": false}
+{"started": "node-required-05", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-05", "exit_code": 0, "timed_out": false}
+{"started": "node-required-05-readback", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-05-readback", "exit_code": 0, "timed_out": false}
+{"started": "node-required-06", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-06", "exit_code": 0, "timed_out": false}
+{"started": "node-required-06-readback", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-06-readback", "exit_code": 0, "timed_out": false}
+{"started": "node-required-07", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-07", "exit_code": 0, "timed_out": false}
+{"started": "node-required-07-readback", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-07-readback", "exit_code": 0, "timed_out": false}
+{"started": "node-required-08", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-08", "exit_code": 0, "timed_out": false}
+{"started": "node-required-08-readback", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-08-readback", "exit_code": 0, "timed_out": false}
+{"started": "node-required-09", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-09", "exit_code": 0, "timed_out": false}
+{"started": "node-required-09-readback", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-09-readback", "exit_code": 0, "timed_out": false}
+{"started": "node-required-10", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-10", "exit_code": 0, "timed_out": false}
+{"started": "node-required-10-readback", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-10-readback", "exit_code": 0, "timed_out": false}
+{"started": "node-required-11", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-11", "exit_code": 0, "timed_out": false}
+{"started": "node-required-11-readback", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-11-readback", "exit_code": 0, "timed_out": false}
+{"started": "node-required-12", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-12", "exit_code": 0, "timed_out": false}
+{"started": "node-required-12-readback", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-12-readback", "exit_code": 0, "timed_out": false}
+{"started": "node-required-13", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-13", "exit_code": 0, "timed_out": false}
+{"started": "node-required-13-readback", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-required-13-readback", "exit_code": 0, "timed_out": false}
+{"started": "node-storage", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "node-storage", "exit_code": 0, "timed_out": false}
+{"started": "clippy-default-trnm-data-availability", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "clippy-default-trnm-data-availability", "exit_code": 0, "timed_out": false}
+{"started": "clippy-default-trnm-pon-node", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "clippy-default-trnm-pon-node", "exit_code": 0, "timed_out": false}
+{"started": "strict-clippy", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "strict-clippy", "exit_code": 0, "timed_out": false}
+{"started": "source-after", "source": "030de92be05bfd4f73e199098c12dfeaedf29b17"}
+{"completed": "source-after", "exit_code": 0, "timed_out": false}

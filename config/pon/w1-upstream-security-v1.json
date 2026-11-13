@@ -1,0 +1,47 @@
+{
+  "schema": "trnm-w1-upstream-security-v1",
+  "scope": "selected-source-upstream-withdrawal-only",
+  "observed_on": "2026-11-11",
+  "release": {
+    "url": "https://github.com/risc0/risc0/releases/tag/v3.1.0",
+    "tag": "v3.1.0",
+    "release_id": 441049704,
+    "published_at": "2026-11-10T23:26:01Z",
+    "affected_receipt_formats": [
+      "composite",
+      "succinct",
+      "Groth16",
+      "on-chain"
+    ],
+    "regeneration_required": true
+  },
+  "advisories": [
+    {
+      "id": "GHSA-g6qg-9j8p-7j87",
+      "url": "https://github.com/risc0/risc0/security/advisories/GHSA-g6qg-9j8p-7j87",
+      "affected_before": {
+        "risc0-zkvm": "3.1.0",
+        "risc0-circuit-recursion": "4.1.0",
+        "risc0-groth16": "3.0.6"
+      }
+    },
+    {
+      "id": "GHSA-qvmf-qrrq-p2w4",
+      "url": "https://github.com/risc0/zirgen/security/advisories/GHSA-qvmf-qrrq-p2w4",
+      "fixed_generator_release": "v3.1.0",
+      "regenerate": [
+        "circuits",
+        "recursion-programs",
+        "control-roots",
+        "Groth16-setups"
+      ]
+    }
+  ],
+  "selected_profile_id": "trnm-w1-risc0-3.0.6-poseidon2-join-v2",
+  "mapping_contract": {
+    "path": "config/pon/w1-qrom-implementation-current-v2.json",
+    "bytes": 44427,
+    "sha256": "8e4508d132ae2103f086025b7614a19ef30bae04a7fec17f5834897fa1c83d36"
+  },
+  "approved_current_profile_ids": []
+}

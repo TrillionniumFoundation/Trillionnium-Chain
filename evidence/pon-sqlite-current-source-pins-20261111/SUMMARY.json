@@ -1,0 +1,36 @@
+{
+  "implementation_commit": "6a749936ff53c3c344669290893ec89229923a37",
+  "implementation_tree": "94dac78a9990b8e59f84f26e0edbf0a1cd8893ad",
+  "before": {
+    "base": null,
+    "candidate": "6a749936ff53c3c344669290893ec89229923a37",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "6a749936ff53c3c344669290893ec89229923a37",
+    "tested_tree": "94dac78a9990b8e59f84f26e0edbf0a1cd8893ad",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2548336101,
+    "tracked_entries": 26709,
+    "tracked_worktree_verified": true
+  },
+  "after": {
+    "base": null,
+    "candidate": "6a749936ff53c3c344669290893ec89229923a37",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "6a749936ff53c3c344669290893ec89229923a37",
+    "tested_tree": "94dac78a9990b8e59f84f26e0edbf0a1cd8893ad",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2548336101,
+    "tracked_entries": 26709,
+    "tracked_worktree_verified": true
+  },
+  "command_count": 21,
+  "all_expected_outcomes_observed": true,
+  "historical_refusal_expected_exit_code": 2,
+  "native_runtime_rerun": false,
+  "host_business_campaign_passed": false,
+  "status": "HOLD_NO_GO"
+}

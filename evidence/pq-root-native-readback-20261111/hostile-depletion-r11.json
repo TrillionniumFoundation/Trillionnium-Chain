@@ -1,0 +1,134 @@
+{
+  "schema": "pq-root-original-hostile-depletion-readback-v1",
+  "source_pr": 890,
+  "source_head": "53e1b98a7955898b9feff4778f7136c0fd0199c8",
+  "source_tree": "094ccb0afc9e7ffbbcc83f85efb6ca4ad8d54aa0",
+  "actions_run": 43104547221,
+  "artifact_id": 13894656010,
+  "artifact_zip_sha256": "9a2c2250205c6a5fe18524451addf56115aafbf951d9a5c2fd3f6056988e437e",
+  "artifact_zip_bytes": 71025468,
+  "original_conditions": {
+    "campaigns": 3,
+    "phases_per_campaign": 3,
+    "phase_seconds": 30,
+    "attacker_processes": [
+      0,
+      24,
+      24
+    ],
+    "business_blocks": 21,
+    "receiver_cpu_max": "25000 100000",
+    "receiver_memory_max": "2147483648",
+    "swap_max": "0",
+    "pids_max": "256"
+  },
+  "observed": {
+    "complete_campaigns": 0,
+    "complete_phases": 0,
+    "window_confirmations": 3,
+    "planned_window_confirmations": 27,
+    "receiver_client_equal_phases": 0,
+    "hostile_phase_count": 6,
+    "hostile_phases_with_24_ready_actors": 6,
+    "hostile_phases_with_genuine_budget_depletion": 0,
+    "hostile_full_work_failed_observations": 13851,
+    "hostile_full_work_accepted_observations": 42,
+    "baseline_round0_transaction_identity_reused_across_three_runs": true
+  },
+  "per_phase": [
+    {
+      "run": 1,
+      "mode": "baseline",
+      "ready": 0,
+      "depletion": false,
+      "full_work_failed": 0,
+      "full_work_accepted": 13,
+      "in_window": 1,
+      "state_equal": false
+    },
+    {
+      "run": 1,
+      "mode": "from-zero",
+      "ready": 24,
+      "depletion": false,
+      "full_work_failed": 2366,
+      "full_work_accepted": 7,
+      "in_window": 0,
+      "state_equal": false
+    },
+    {
+      "run": 1,
+      "mode": "late-product",
+      "ready": 24,
+      "depletion": false,
+      "full_work_failed": 2278,
+      "full_work_accepted": 7,
+      "in_window": 0,
+      "state_equal": false
+    },
+    {
+      "run": 2,
+      "mode": "baseline",
+      "ready": 0,
+      "depletion": false,
+      "full_work_failed": 0,
+      "full_work_accepted": 14,
+      "in_window": 1,
+      "state_equal": false
+    },
+    {
+      "run": 2,
+      "mode": "from-zero",
+      "ready": 24,
+      "depletion": false,
+      "full_work_failed": 2349,
+      "full_work_accepted": 7,
+      "in_window": 0,
+      "state_equal": false
+    },
+    {
+      "run": 2,
+      "mode": "late-product",
+      "ready": 24,
+      "depletion": false,
+      "full_work_failed": 2259,
+      "full_work_accepted": 7,
+      "in_window": 0,
+      "state_equal": false
+    },
+    {
+      "run": 3,
+      "mode": "baseline",
+      "ready": 0,
+      "depletion": false,
+      "full_work_failed": 0,
+      "full_work_accepted": 13,
+      "in_window": 1,
+      "state_equal": false
+    },
+    {
+      "run": 3,
+      "mode": "from-zero",
+      "ready": 24,
+      "depletion": false,
+      "full_work_failed": 2353,
+      "full_work_accepted": 7,
+      "in_window": 0,
+      "state_equal": false
+    },
+    {
+      "run": 3,
+      "mode": "late-product",
+      "ready": 24,
+      "depletion": false,
+      "full_work_failed": 2246,
+      "full_work_accepted": 7,
+      "in_window": 0,
+      "state_equal": false
+    }
+  ],
+  "scope": "Retained original Actions ZIP report.json readback: not an external actor qualification, not a new campaign, not a cryptographic theorem, and not finality or unique external effects.",
+  "qualification": "HOLD_NO_GO",
+  "production_activation": false,
+  "actual_lifetime_failure_bound": null
+}

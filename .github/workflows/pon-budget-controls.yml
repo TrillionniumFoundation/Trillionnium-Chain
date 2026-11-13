@@ -1,0 +1,91 @@
+name: PoN original budget component controls
+on:
+  pull_request:
+    paths:
+      - trillionnium/**
+      - scripts/ci/run_pon_budget_controls.py
+      - scripts/ci/test_pon_budget_controls.py
+      - scripts/ci/check_required_native_test.py
+      - scripts/ci/replay_pinned_native.py
+      - scripts/ci/verify_ci_source.py
+      - scripts/project-preflight.sh
+      - scripts/ci/project_boundary.py
+      - rust-toolchain.toml
+      - .github/workflows/pon-budget-controls.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pon-budget-controls-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+env:
+  CI: "true"
+  CARGO_INCREMENTAL: "0"
+  CARGO_BUILD_JOBS: "1"
+  CARGO_TERM_COLOR: never
+  RUST_TEST_THREADS: "1"
+  PYTHONDONTWRITEBYTECODE: "1"
+jobs:
+  component-controls:
+    name: Original budget controls (${{ matrix.source }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        source: [budget-before-v2, pool-before-v2, pool-scan-before, fixed]
+    env:
+      DRIVER_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      SUBJECT_SHA: ${{ matrix.source == 'budget-before-v2' && '89fb2269b0dd306fbd32c36f464842c3d7daee2b' || matrix.source == 'pool-before-v2' && '84e68b4f7a9b2f48f9c47ed05c9a44229d186e30' || matrix.source == 'pool-scan-before' && 'ae657e262278ae4a058220f66a6a0495721eb9ad' || github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - name: Reserve fresh component observations
+        env:
+          SOURCE_MODE: ${{ matrix.source }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/pon-budget-controls-$SOURCE_MODE-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$out"
+          printf 'OUT=%s\n' "$out" >> "$GITHUB_ENV"
+          printf 'CARGO_HOME=%s/cargo-budget-controls-%s\n' "$RUNNER_TEMP" "$SOURCE_MODE" >> "$GITHUB_ENV"
+          printf 'CARGO_TARGET_DIR=%s/target-budget-controls-%s\n' "$RUNNER_TEMP" "$SOURCE_MODE" >> "$GITHUB_ENV"
+          printf 'driver=%s\nsubject=%s\nmode=%s\nscope=component-controls-only\n' \
+            "$DRIVER_SHA" "$SUBJECT_SHA" "$SOURCE_MODE" > "$out/request.txt"
+      - name: Checkout exact current control driver
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.DRIVER_SHA }}
+          path: driver
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Checkout exact independently measured source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SUBJECT_SHA }}
+          path: subject
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install the original pinned toolchain
+        run: rustup toolchain install 1.95.0 --profile minimal
+      - name: Require runner refusal controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B driver/scripts/ci/test_pon_budget_controls.py > "$OUT/runner-controls.stdout" 2> "$OUT/runner-controls.stderr"
+      - name: Build once and execute the exact assigned controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B driver/scripts/ci/run_pon_budget_controls.py \
+            --source "$GITHUB_WORKSPACE/subject" \
+            --driver-sha "$DRIVER_SHA" --source-sha "$SUBJECT_SHA" \
+            --mode "${{ matrix.source }}" --out "$OUT/native"
+      - name: Preserve actual binaries, source receipts and all failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pon-budget-controls-${{ matrix.source }}-${{ env.SUBJECT_SHA }}-${{ github.run_attempt }}
+          path: ${{ env.OUT }}/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 1

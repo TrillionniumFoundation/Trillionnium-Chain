@@ -4,6 +4,7 @@
 //! re-executed ONCE against that order's current state, never an unbounded retry loop.
 use crate::checkpoint_tile_policy_v1::PROFILE as CHECKPOINT_TASK_PROFILE;
 use crate::continuity_v1::{self, PROFILE as CONTINUITY_TASK_PROFILE};
+use crate::model_source_composition_v6 as source_composition;
 use crate::public_evaluation;
 use crate::qualified_task_lifecycle;
 use serde_json::{json, Value};
@@ -113,8 +114,8 @@ struct StateInputs<'a> {
     observer: Option<&'a dyn CanonicalTransitionObserver>,
     #[cfg(test)]
     // Retain the old full-speculation oracle for per-call differential tests.
-    // Production always skips nonce-conflicting repeated-sender predictions.
-    force_repeated_sender_speculation: bool,
+    // Production skips known account-conflicting predictions, never validation.
+    force_account_conflict_speculation: bool,
 }
 /// Caller-local observation only; no ledger byte or execution authority.
 /// Header context does not claim the separate parent State binding was read.
@@ -559,14 +560,28 @@ impl Config {
             public_evaluation::PROFILE | public_evaluation::QUORUM_PROFILE => {
                 let quorum_profile = policy == public_evaluation::QUORUM_PROFILE;
                 let evolution_profile = model_profile == crate::model_evolution_v5::PROFILE;
-                let policy: Value = serde_json::from_str(if quorum_profile && evolution_profile {
-                    include_str!("../../../../config/pon/public-evaluation-model-evolution-v5.json")
-                } else if quorum_profile {
-                    include_str!("../../../../config/pon/public-evaluation-quorum-v2.json")
-                } else {
-                    include_str!("../../../../config/pon/public-evaluation-native-v1.json")
-                })
-                .map_err(|_| "CONFIG")?;
+                let source_settlement_profile =
+                    model_profile == crate::model_composition_v6::PROFILE;
+                let source_composition_profile = model_profile == source_composition::PROFILE;
+                let policy: Value =
+                    serde_json::from_str(if quorum_profile && source_composition_profile {
+                        include_str!(
+                        "../../../../config/pon/public-evaluation-model-source-composition-v6.json"
+                    )
+                    } else if quorum_profile && evolution_profile {
+                        include_str!(
+                            "../../../../config/pon/public-evaluation-model-evolution-v5.json"
+                        )
+                    } else if quorum_profile && source_settlement_profile {
+                        include_str!(
+                            "../../../../config/pon/public-evaluation-source-composition-v6.json"
+                        )
+                    } else if quorum_profile {
+                        include_str!("../../../../config/pon/public-evaluation-quorum-v2.json")
+                    } else {
+                        include_str!("../../../../config/pon/public-evaluation-native-v1.json")
+                    })
+                    .map_err(|_| "CONFIG")?;
                 require(
                     policy["production_activation"] == false
                         && policy["independent_governance_accepted"] == false
@@ -591,8 +606,12 @@ impl Config {
                                 == public_evaluation::QUORUM_RECORD_NAMESPACE
                             && policy["development_evaluators"] == 4
                             && policy["native_model_profiles"]
-                                == if evolution_profile {
+                                == if source_composition_profile {
+                                    json!([source_composition::PROFILE])
+                                } else if evolution_profile {
                                     json!([crate::model_evolution_v5::PROFILE])
+                                } else if source_settlement_profile {
+                                    json!([crate::model_composition_v6::PROFILE])
                                 } else {
                                     json!([
                                         crate::model_evidence_v3::PROFILE,
@@ -611,7 +630,9 @@ impl Config {
                             model_profile,
                             crate::model_evidence_v3::PROFILE
                                 | crate::model_composition_v4::PROFILE
+                                | crate::model_composition_v6::PROFILE
                                 | crate::model_evolution_v5::PROFILE
+                                | source_composition::PROFILE
                         ),
                         "PUBLIC_EVAL_NATIVE_REPLAY_REQUIRED",
                     )?;
@@ -789,7 +810,9 @@ impl Config {
             }
             crate::integer_factor_candidate_v2::PROFILE
             | crate::model_evidence_v3::PROFILE
-            | crate::model_composition_v4::PROFILE => {
+            | crate::model_composition_v4::PROFILE
+            | crate::model_composition_v6::PROFILE
+            | source_composition::PROFILE => {
                 require(
                     matches!(
                         policy,
@@ -803,6 +826,8 @@ impl Config {
                             model_profile,
                             crate::model_evidence_v3::PROFILE
                                 | crate::model_composition_v4::PROFILE
+                                | crate::model_composition_v6::PROFILE
+                                | source_composition::PROFILE
                         ) && task_profile == "consensus-maintenance-continuity-dev-v1"),
                     "MODEL_PROFILE_TASK",
                 )?;
@@ -843,15 +868,21 @@ impl Config {
                 ] {
                     require(factor_policy[key] == expected, "CONFIG")?;
                 }
-                params["consensus_revision"] = json!(if model_profile
-                    == crate::model_composition_v4::PROFILE
-                {
-                    crate::model_composition_v4::REVISION.max(field(&params, "consensus_revision")?)
-                } else if model_profile == crate::model_evidence_v3::PROFILE {
-                    crate::model_evidence_v3::REVISION.max(field(&params, "consensus_revision")?)
-                } else {
-                    11
-                });
+                params["consensus_revision"] =
+                    json!(if model_profile == source_composition::PROFILE {
+                        source_composition::REVISION.max(field(&params, "consensus_revision")?)
+                    } else if model_profile == crate::model_composition_v6::PROFILE {
+                        crate::model_composition_v6::REVISION
+                            .max(field(&params, "consensus_revision")?)
+                    } else if model_profile == crate::model_composition_v4::PROFILE {
+                        crate::model_composition_v4::REVISION
+                            .max(field(&params, "consensus_revision")?)
+                    } else if model_profile == crate::model_evidence_v3::PROFILE {
+                        crate::model_evidence_v3::REVISION
+                            .max(field(&params, "consensus_revision")?)
+                    } else {
+                        11
+                    });
                 params["model_profile"] = json!(model_profile);
                 params["chain_label"] =
                     json!(format!("{}-{model_profile}", text(&params, "chain_label")?));
@@ -866,8 +897,14 @@ impl Config {
                 if model_profile == crate::model_evidence_v3::PROFILE {
                     crate::model_evidence_v3::install(&mut params)?;
                     model["native_admission_profile"] = json!(model_profile);
+                } else if model_profile == crate::model_composition_v6::PROFILE {
+                    crate::model_composition_v6::install(&mut params)?;
+                    model["native_admission_profile"] = json!(model_profile);
                 } else if model_profile == crate::model_composition_v4::PROFILE {
                     crate::model_composition_v4::install(&mut params)?;
+                    model["native_admission_profile"] = json!(model_profile);
+                } else if model_profile == source_composition::PROFILE {
+                    source_composition::install(&mut params)?;
                     model["native_admission_profile"] = json!(model_profile);
                 }
                 model
@@ -902,7 +939,9 @@ impl Config {
             crate::integer_factor_candidate_v2::PROFILE
                 | crate::model_evidence_v3::PROFILE
                 | crate::model_composition_v4::PROFILE
+                | crate::model_composition_v6::PROFILE
                 | crate::model_evolution_v5::PROFILE
+                | source_composition::PROFILE
         ) {
             let evolution = model_profile == crate::model_evolution_v5::PROFILE;
             for (key, expected) in [
@@ -990,7 +1029,20 @@ impl Config {
             ],
         );
         let family = hash(b"family", &[&canonical(&model)?]);
-        let plan = if model_profile == crate::model_evolution_v5::PROFILE {
+        let plan = if model_profile == source_composition::PROFILE {
+            hash(
+                b"plan",
+                &[
+                    b"native-integer-model-source-composition-plan-v6",
+                    &family,
+                    &hash32(text(&params, "factor_candidate_policy_hash")?)?,
+                    &hash32(text(&params, "evaluation_policy_hash")?)?,
+                    &hash32(text(&params, "model_evidence_policy_hash")?)?,
+                    &hash32(text(&params, "model_evidence_tasks_hash")?)?,
+                    &hash32(text(&params, "model_source_composition_policy_hash")?)?,
+                ],
+            )
+        } else if model_profile == crate::model_evolution_v5::PROFILE {
             hash(
                 b"plan",
                 &[
@@ -1000,6 +1052,19 @@ impl Config {
                     &hash32(text(&params, "model_evidence_policy_hash")?)?,
                     &hash32(text(&params, "model_evidence_tasks_hash")?)?,
                     &hash32(text(&params, "model_evolution_policy_hash")?)?,
+                ],
+            )
+        } else if model_profile == crate::model_composition_v6::PROFILE {
+            hash(
+                b"plan",
+                &[
+                    b"native-integer-source-composition-plan-v6",
+                    &family,
+                    &hash32(text(&params, "factor_candidate_policy_hash")?)?,
+                    &hash32(text(&params, "evaluation_policy_hash")?)?,
+                    &hash32(text(&params, "model_evidence_policy_hash")?)?,
+                    &hash32(text(&params, "model_evidence_tasks_hash")?)?,
+                    &hash32(text(&params, "model_source_policy_hash")?)?,
                 ],
             )
         } else if model_profile == crate::model_composition_v4::PROFILE {
@@ -1126,8 +1191,13 @@ impl Config {
             .as_str()
             .unwrap_or(LEGACY_TASK_PROFILE)
     }
+    /// A configured selector is sufficient to exclude the classical path, even
+    /// when its value is malformed or its native owner is unavailable. This is
+    /// a routing boundary, not proof that the selected PQ configuration is valid.
     pub fn is_pq_account_profile(&self) -> bool {
-        if pq_accounts_v2::enabled(self) {
+        if self.params.get("account_authorization_profile").is_some()
+            || pq_accounts_v2::enabled(self)
+        {
             return true;
         }
         #[cfg(feature = "pq-native-openssl")]
@@ -1432,6 +1502,18 @@ impl<'a> Payload<'a> {
 fn allocation_leaf(cid: Hash, payee: Hash, score: u64) -> Hash {
     hash(b"allocation-leaf", &[&cid, &payee, &score.to_le_bytes()])
 }
+fn allocation_leaf_for(cfg: &Config, cid: Hash, payee: Hash, score: u64) -> Hash {
+    if source_composition::enabled(cfg) {
+        source_composition::allocation_leaf(cfg, cid, payee, score)
+    } else if crate::model_composition_v6::enabled(cfg) {
+        hash(
+            b"source-allocation-leaf-v6",
+            &[&cid, &payee, &score.to_le_bytes()],
+        )
+    } else {
+        allocation_leaf(cid, payee, score)
+    }
+}
 fn pair(a: Hash, b: Hash) -> Hash {
     if a < b {
         hash(b"allocation-node", &[&a, &b])
@@ -1485,7 +1567,6 @@ struct Prepared {
 /// Read-only native admission check for exact PNX1 canonical context, selected tag,
 /// expiry and strict main signature. This grants no nonce, funds or execution fact.
 pub fn validate_main_envelope(raw: &[u8], height: u64, cfg: &Config) -> Result<Envelope> {
-    cfg.check_account_profile()?;
     require(
         !cfg.is_pq_account_profile(),
         "PQ_ACCOUNT_NATIVE_API_REQUIRED",
@@ -1494,6 +1575,39 @@ pub fn validate_main_envelope(raw: &[u8], height: u64, cfg: &Config) -> Result<E
         .legacy
         .ok_or("PQ_ACCOUNT_NATIVE_API_REQUIRED")
 }
+// This operation-local carrier binds the decoded canonical fields to the exact
+// borrowed input. The successful PNX1 decoder checks complete framing, every
+// payload rule, nonce/fee canonicality and the fixed 64-byte signature suffix.
+// Therefore its unsigned()/encode() bytes equal these slices exactly. Keep the
+// original decoder and all signature/profile/state checks; only avoid making
+// two more owned encodings for the mathematical signing and transaction hashes.
+struct DecodedLegacyEnvelope<'a> {
+    envelope: Envelope,
+    wire: &'a [u8],
+}
+impl<'a> DecodedLegacyEnvelope<'a> {
+    fn decode(wire: &'a [u8]) -> Result<Self> {
+        Ok(Self {
+            envelope: Envelope::decode(wire).map_err(|_| "ENCODING")?,
+            wire,
+        })
+    }
+
+    fn signing_digest(&self) -> Hash {
+        // decode() established len >= 159 and consumed this exact suffix.
+        let unsigned = &self.wire[..self.wire.len() - self.envelope.signature.len()];
+        hash(b"tx-sign", &[unsigned])
+    }
+
+    fn id(&self) -> Hash {
+        hash(b"tx-id", &[self.wire])
+    }
+}
+
+#[cfg(test)]
+#[path = "pon_executor/legacy_preparation_tests.rs"]
+mod legacy_preparation_tests;
+
 fn prepare(
     raw: &[u8],
     height: u64,
@@ -1529,7 +1643,8 @@ fn prepare(
     if let Some(policy) = &cfg.pq_accounts {
         return pq_accounts::prepare(raw, height, cfg, signatures, policy);
     }
-    let tx = Envelope::decode(raw).map_err(|_| "ENCODING")?;
+    let decoded = DecodedLegacyEnvelope::decode(raw)?;
+    let tx = &decoded.envelope;
     funded_service_v1::check_command(cfg, tx.tag, &tx.payload)?;
     require(
         !(18..=21).contains(&tx.tag) || qualified_task_lifecycle::enabled(cfg),
@@ -1587,11 +1702,11 @@ fn prepare(
     signatures.fetch_add(1, Ordering::Relaxed);
     verify_hex_strict(
         &sender,
-        &tx.signing_digest().map_err(|_| "ENCODING")?,
+        &decoded.signing_digest(),
         &hex::encode(tx.signature),
     )
     .map_err(|_| "SIGNATURE")?;
-    let transaction_id = tx.id().map_err(|_| "ENCODING")?.to_vec();
+    let transaction_id = decoded.id().to_vec();
     let command = ApplicationCommand {
         sender: tx.sender,
         nonce: tx.nonce,
@@ -1602,7 +1717,7 @@ fn prepare(
     Ok(Prepared {
         native_pq: None,
         command,
-        legacy: Some(tx),
+        legacy: Some(decoded.envelope),
         sender,
         encoded_len: raw.len(),
         transaction_id,
@@ -2127,10 +2242,16 @@ fn apply_authenticated_application(
             let supplied_root = p.h()?;
             let supplied_total = p.n()?;
             let count = p.byte()?;
-            if crate::model_composition_v4::enabled(cfg) {
+            if crate::model_composition_v4::enabled(cfg) || source_composition::enabled(cfg) {
                 require(
                     (2..=crate::model_composition_v4::MAX_COMPONENTS).contains(&usize::from(count)),
                     "MODEL_COMPOSITION_COUNT",
+                )?;
+            }
+            if crate::model_composition_v6::enabled(cfg) {
+                require(
+                    (1..=crate::model_composition_v6::MAX_COMPONENTS).contains(&usize::from(count)),
+                    "MODEL_SOURCE_COUNT",
                 )?;
             }
             if crate::model_evolution_v5::enabled(cfg) {
@@ -2185,7 +2306,10 @@ fn apply_authenticated_application(
                     )?);
                     let evaluation =
                         public_evaluation::hydrate(&o["public_evaluation"], cid, &records)?;
-                    if crate::model_composition_v4::enabled(cfg) {
+                    if crate::model_composition_v4::enabled(cfg)
+                        || crate::model_composition_v6::enabled(cfg)
+                        || source_composition::enabled(cfg)
+                    {
                         crate::model_composition_v4::component_allowed(
                             &evaluation,
                             height,
@@ -2203,11 +2327,18 @@ fn apply_authenticated_application(
                     text(&o, "status")? == "evaluated"
                         && o["parent"] == current
                         && (crate::model_composition_v4::enabled(cfg)
+                            || crate::model_composition_v6::enabled(cfg)
+                            || source_composition::enabled(cfg)
                             || field(&o, "score")? == score)
-                        && score > 0,
+                        && (score > 0 || source_composition::enabled(cfg)),
                     "EVIDENCE",
                 )?;
-                leaves.push(allocation_leaf(cid, hash32(text(&o, "owner")?)?, score));
+                leaves.push(allocation_leaf_for(
+                    cfg,
+                    cid,
+                    hash32(text(&o, "owner")?)?,
+                    score,
+                ));
                 total = add(total, score)?;
                 if crate::model_evidence_v3::enabled(cfg) {
                     evidence_allocations.push((cid, o.clone(), score));
@@ -2216,7 +2347,12 @@ fn apply_authenticated_application(
                 adopted.push((k, o));
             }
             require(
-                allocation_root(leaves)? == supplied_root && total == supplied_total,
+                (if source_composition::enabled(cfg) {
+                    source_composition::allocation_root(leaves)?
+                } else {
+                    allocation_root(leaves)?
+                }) == supplied_root
+                    && total == supplied_total,
                 "ROOT",
             )?;
             let composition_record = crate::model_evidence_v3::reserve_release(
@@ -2230,16 +2366,31 @@ fn apply_authenticated_application(
             )?;
             require(
                 release
-                    == hash(
-                        b"release",
-                        &[
-                            &parent,
-                            &bundle_id,
-                            &budget.to_le_bytes(),
-                            &supplied_root,
-                            &total.to_le_bytes(),
-                        ],
-                    ),
+                    == if source_composition::enabled(cfg) {
+                        source_composition::release_id(
+                            cfg,
+                            parent,
+                            bundle_id,
+                            budget,
+                            supplied_root,
+                            total,
+                        )
+                    } else {
+                        hash(
+                            if crate::model_composition_v6::enabled(cfg) {
+                                b"source-release-v6"
+                            } else {
+                                b"release"
+                            },
+                            &[
+                                &parent,
+                                &bundle_id,
+                                &budget.to_le_bytes(),
+                                &supplied_root,
+                                &total.to_le_bytes(),
+                            ],
+                        )
+                    },
                 "ROOT",
             )?;
             let rk = format!("release:{}", hex::encode(release));
@@ -2253,7 +2404,22 @@ fn apply_authenticated_application(
             s.debit(&sender, budget)?;
             let mut release_record = json!({"owner":sender,"remaining":budget,"budget":budget,"total":total,"root":hex::encode(supplied_root),"maturity":add(height,cfg.limit("reward_maturity_blocks")?)?,"bundle":hex::encode(bundle_id),"artifact":bundle["artifact"].clone(),"family":bundle["family"].clone(),"components_root":bundle["components_root"].clone(),"parent":hex::encode(parent),"leaf_count":count,"claims":{},"deadline":expiry,"status":"open"});
             if let Some(record) = composition_record {
-                release_record["model_composition_v4"] = record;
+                if source_composition::enabled(cfg) {
+                    release_record["schema"] = json!("native-model-source-release-v6");
+                    release_record["model_profile"] = json!(source_composition::PROFILE);
+                    release_record["network"] = json!(hex::encode(cfg.network));
+                    release_record["parameters"] = json!(hex::encode(cfg.parameters));
+                    release_record["allocation_domain"] = json!("source-allocation-v6");
+                    let record_key = source_composition::composition_key(bundle_id);
+                    require(s.get(&record_key).is_none(), "MODEL_SOURCE_DUPLICATE")?;
+                    release_record["model_composition_v6"] =
+                        source_composition::reference(&record)?;
+                    s.put(record_key, record);
+                } else if crate::model_composition_v6::enabled(cfg) {
+                    release_record["model_composition_v6"] = record;
+                } else {
+                    release_record["model_composition_v4"] = record;
+                }
             }
             s.put(rk, release_record);
             for (k, o) in adopted {
@@ -2265,6 +2431,16 @@ fn apply_authenticated_application(
         }
         9 => {
             let (rk, mut rel) = s.object("release:", p.h()?)?;
+            // Revision 17 retains its inline settlement record. The revision-18
+            // reference schema is checked only in its own configuration context.
+            if !crate::model_composition_v6::enabled(cfg) {
+                source_composition::check_release(cfg, &rel)?;
+            }
+            if source_composition::enabled(cfg) {
+                let key = text(&rel["model_composition_v6"], "record_key")?;
+                let record = s.get(key).ok_or("MODEL_SOURCE_RECORD_MISSING")?;
+                source_composition::check_record(cfg, &rel, &record)?;
+            }
             let cid = p.h()?;
             let score = p.n()?;
             let count = p.byte()?;
@@ -2279,16 +2455,29 @@ fn apply_authenticated_application(
             let leaves = field(&rel, "leaf_count")?;
             require(leaves > 0, "ROOT")?;
             require(count as u32 == 64 - (leaves - 1).leading_zeros(), "ROOT")?;
-            let mut leaf = allocation_leaf(cid, tx.sender, score);
+            let mut leaf = allocation_leaf_for(cfg, cid, tx.sender, score);
             for _ in 0..count {
-                leaf = pair(leaf, p.h()?);
+                let sibling = p.h()?;
+                leaf = if source_composition::enabled(cfg) {
+                    source_composition::pair(leaf, sibling)
+                } else {
+                    pair(leaf, sibling)
+                };
             }
             require(leaf == hash32(text(&rel, "root")?)?, "ROOT")?;
             let total = field(&rel, "total")?;
             require(total > 0, "ROOT")?;
-            let amount =
+            let amount = if crate::model_composition_v6::enabled(cfg) {
+                let record = &rel["model_composition_v6"];
+                require(
+                    field(record, "budget")? == field(&rel, "budget")?,
+                    "MODEL_SOURCE_RECORD",
+                )?;
+                crate::model_composition_v6::claim_amount(record, cid, tx.sender, score)?
+            } else {
                 u64::try_from((field(&rel, "budget")? as u128) * (score as u128) / (total as u128))
-                    .map_err(|_| "RANGE")?;
+                    .map_err(|_| "RANGE")?
+            };
             require(amount <= field(&rel, "remaining")?, "FUNDS")?;
             s.credit(&sender, amount)?;
             rel["remaining"] = json!(field(&rel, "remaining")? - amount);
@@ -2850,7 +3039,7 @@ pub fn execute_with_authenticated_state_input<E: Send>(
             growth: None,
             observer: None,
             #[cfg(test)]
-            force_repeated_sender_speculation: false,
+            force_account_conflict_speculation: false,
         },
     )
 }
@@ -2881,7 +3070,7 @@ pub fn execute_with_authenticated_obligation_input<E: Send>(
             growth: None,
             observer: None,
             #[cfg(test)]
-            force_repeated_sender_speculation: false,
+            force_account_conflict_speculation: false,
         },
     )
 }
@@ -2940,6 +3129,38 @@ pub(crate) fn execute_with_commitment_and_control<E: Send>(
         StateInputs::default(),
     )
 }
+// Conservative work hints, not decoded or authenticated access declarations.
+// A classical transfer reads/writes its sender and recipient accounts. Retain
+// those explicit account dependencies along with every earlier sender nonce,
+// so a common recipient or a funded next sender need not compute a stale patch.
+// The set borrows at most two account ids per already bounded transaction.
+fn account_conflict_hints(transactions: &[Vec<u8>]) -> Vec<bool> {
+    let mut touched = BTreeSet::new();
+    transactions
+        .iter()
+        .map(|raw| {
+            let sender = raw.get(36..68);
+            // PNX1's exact transfer frame: 95-byte prefix, 40-byte payload,
+            // 64-byte signature. Unknown frames retain only the old sender hint.
+            // Full decode, context, expiry and signature checks still run below;
+            // even a forged well-shaped frame can only suppress prediction.
+            let recipient = if raw.len() == 199
+                && raw.starts_with(b"PNX1")
+                && raw.get(92..95) == Some(&[1, 40, 0][..])
+            {
+                raw.get(95..127)
+            } else {
+                None
+            };
+            let conflict = sender.is_some_and(|account| touched.contains(account))
+                || recipient.is_some_and(|account| touched.contains(account));
+            touched.extend(sender);
+            touched.extend(recipient);
+            conflict
+        })
+        .collect()
+}
+
 fn execute_with_state_inputs<E: Send>(
     parent: &State,
     block: BlockExecution<'_>,
@@ -2955,7 +3176,7 @@ fn execute_with_state_inputs<E: Send>(
         growth,
         observer,
         #[cfg(test)]
-        force_repeated_sender_speculation,
+        force_account_conflict_speculation,
     } = inputs;
     let progress = control.progress;
     funded_service_v1::check_config(cfg)?;
@@ -3013,19 +3234,9 @@ fn execute_with_state_inputs<E: Send>(
                 .iter()
                 .all(|raw| raw.get(36..68) == transactions[0].get(36..68)));
     #[cfg(not(test))]
-    let force_repeated_sender_speculation = false;
-    let repeated_senders = if !serial_state && !force_repeated_sender_speculation {
-        let mut seen = BTreeSet::new();
-        transactions
-            .iter()
-            .map(|raw| {
-                // This is only a conservative work hint. Every envelope is still
-                // decoded/context/profile/expiry/signature checked below. A valid
-                // earlier transaction always advances this same account's nonce;
-                // an invalid earlier transaction ends canonical execution first.
-                raw.get(36..68).is_some_and(|sender| !seen.insert(sender))
-            })
-            .collect::<Vec<_>>()
+    let force_account_conflict_speculation = false;
+    let account_conflicts = if !serial_state && !force_account_conflict_speculation {
+        account_conflict_hints(transactions)
     } else {
         Vec::new()
     };
@@ -3043,7 +3254,7 @@ fn execute_with_state_inputs<E: Send>(
         // Prefix-capacity operations remain canonical: do not retain one full
         // prefix snapshot per transaction merely to parallelize shared budgets.
         let skip_state_prediction =
-            serial_state || repeated_senders.get(index).copied().unwrap_or(false);
+            serial_state || account_conflicts.get(index).copied().unwrap_or(false);
         let patch = if skip_state_prediction || range_command {
             None
         } else {
@@ -3133,7 +3344,7 @@ fn execute_with_state_inputs<E: Send>(
     } else {
         count
     };
-    let serial_conflict = serial_state || repeated_senders.iter().any(|repeated| *repeated);
+    let serial_conflict = serial_state || account_conflicts.iter().any(|conflict| *conflict);
     if serial_conflict && workers > 1 && !transactions.is_empty() {
         metrics.serial_conflict_batches = 1;
     }
@@ -3221,6 +3432,9 @@ fn execute_with_state_inputs<E: Send>(
 #[cfg(test)]
 #[path = "repeated_sender_tests.rs"]
 mod repeated_sender_tests;
+
+#[cfg(test)]
+mod account_conflict_tests;
 
 /// One original block prologue. Prefix previews retain its pre-reward successor,
 /// never a completed block with a second maturity, expiry or subsidy transition.

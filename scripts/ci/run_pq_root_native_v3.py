@@ -16,6 +16,7 @@ import subprocess
 import time
 
 from verify_ci_source import verify
+from ci_observation import run as run_observed
 
 ROOT = Path(__file__).resolve().parents[2]
 CRYPTO_STRUCTURE = (
@@ -134,11 +135,10 @@ def main() -> int:
         log = output / (name + ".log")
         start = time.monotonic()
         try:
-            with log.open("xb") as stream:
-                result = subprocess.run(argv, cwd=ROOT, stdout=stream, stderr=subprocess.STDOUT, timeout=1200)
-            code = result.returncode
-        except subprocess.TimeoutExpired:
-            code = 124
+            # Reuse the existing owner: clean its created group before hashing.
+            # Descendants that create new sessions remain outside its contract.
+            execution = run_observed(argv, log, cwd=ROOT, timeout=1200)
+            code = execution["exit_code"]
         except OSError as exception:
             code = 127
             with log.open("ab") as stream:

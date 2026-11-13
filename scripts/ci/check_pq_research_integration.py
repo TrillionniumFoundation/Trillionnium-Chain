@@ -62,7 +62,24 @@ COMPLETE_OWNER_SOURCE_DIRS = frozenset((
 # are not recreated by claiming their historical Git object identity. The
 # transport slice remains mandatory and separately bounded from whole-chain PQ.
 NATIVE_REQUIRED_PATHS = frozenset((
+    "config/pon/w1-lifetime-current-source-v2.json",
+    "config/pon/w1-qrom-closure-current-required-tests-v2.json",
+    "scripts/w1_lifetime_current_observation.py",
+    "scripts/ci/test_w1_lifetime_current_observation.py",
+    "scripts/ci/w1_qrom_closure_current_controls.py",
+    "scripts/ci/test_w1_qrom_closure_current_controls.py",
+    "docs/security/W1_LIFETIME_CURRENT_SOURCE_OBSERVATION_V2.md",
     "scripts/ci/pq_source_reader.py",
+    "config/pon/w1-stark-route-registry-v1.json",
+    "config/pon/w1-stark-literature-evidence-v1.json",
+    "scripts/w1_stark_field_certificates.py",
+    "scripts/w1_stark_route_audit.py",
+    "scripts/ci/test_w1_stark_field_certificates.py",
+    "scripts/ci/test_w1_stark_route_audit.py",
+    "scripts/w1_fri_query_replay.py",
+    "scripts/ci/test_w1_fri_ideal_sampler.py",
+    "docs/security/W1_STARK_ROUTE_INSTANCE_AUDIT_V1.md",
+    "docs/protocol/pon-nakamoto-v1/details/STARK_THREE_ROUTE_LITERATURE_20261109.md",
     "trillionnium/crates/trnm-protocol/src/crypto_profile.rs",
     "trillionnium/crates/trnm-protocol/src/crypto_profile/tests.rs",
     "trillionnium/crates/trnm-protocol/src/pq_legacy_profile.rs",
@@ -171,6 +188,7 @@ NATIVE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
     "trillionnium/crates/trnm-mvcc-fee/src/lib.rs",
     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+    "trillionnium/crates/trnm-mvcc-fee/tests/account_profile_boundary.rs",
     "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_arithmetic_tests.rs",
     "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs",
     "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation/quorum_v2.rs",
@@ -264,6 +282,10 @@ CONVERGENCE_REQUIRED_PATHS = frozenset((
     "scripts/ci/test_pq_chain_claim_guard.py",
     "scripts/ci/pq_lifetime_budget.py",
     "scripts/ci/test_pq_lifetime_budget.py",
+    "scripts/ci/hash_use_contract.py",
+    "scripts/ci/test_hash_use_contract.py",
+    "config/pon/hash-use-contract-v1.json",
+    "docs/security/HASH_USE_CONTRACT_V1.md",
     "config/pon/pq128-lifetime-budget-v1.json",
     "config/pon/pq128-source-lock-v1.json",
     "config/pon/pq128-lifetime-example-v1.json",
@@ -630,12 +652,22 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "evidence/pon-w1-lifetime-current-20261109/project-input.json",
     "evidence/pon-w1-lifetime-current-20261109/project-report.json",
     "evidence/pon-w1-lifetime-current-20261109/README.md",
+    "evidence/pon-w1-lifetime-current-20261111/project-input.json",
+    "evidence/pon-w1-lifetime-current-20261111/project-report.json",
+    "evidence/pon-w1-lifetime-current-20261111/README.md",
     "docs/security/W1_LIFETIME_AND_INDEPENDENT_ACCEPTANCE_20261107.md",
     "scripts/w1_qrom_semantics_audit.py",
     "scripts/ci/test_w1_qrom_semantics_audit.py",
     "evidence/pon-w1-qrom-semantics-20261107/report.json",
     "evidence/pon-w1-qrom-semantics-current-20261109/report.json",
     "evidence/pon-w1-qrom-semantics-current-20261109/README.md",
+))
+# Historical fixture controls must retain the original exact source contract.
+# Their success does not accept the current worktree as that historical source.
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    "scripts/w1_qrom_implementation_audit.py",
+    "scripts/ci/test_w1_qrom_implementation_audit.py",
+    "config/pon/w1-qrom-implementation-v1.json",
 ))
 NATIVE_REQUIRED_PATHS |= CONVERGENCE_REQUIRED_PATHS
 RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((
@@ -862,6 +894,92 @@ NATIVE_FALSE = frozenset((
     "physical_rollback_resistant",
 ))
 
+# New security observations require explicit source inventory entries even
+# where their filenames are outside the automatically scanned PQ namespace.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "scripts/ci/check_consensus_roster.py",
+    "scripts/ci/test_consensus_roster.py",
+    "scripts/ci/run_pq_root_witness_v5.py",
+    "scripts/ci/test_run_pq_root_witness_v5.py",
+    "scripts/ci/ci_observation.py",
+    "scripts/ci/test_ci_observation_process.py",
+    "formal/pon-nakamoto-v1/bounded_process.py",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5.rs",
+    "trillionnium/crates/trnm-pon-node/tests/root_witness_v5_native.rs",
+    "trillionnium/crates/trnm-pon-node/tests/root_witness_v5_durable_native.rs",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5/durable.rs",
+    "trillionnium/crates/trnm-pon-node/src/root_recovery_v3/witnessed_v5/provider_readback.rs",
+    "trillionnium/crates/trnm-pon-node/tests/root_witness_provider_v5_native.rs",
+    "trillionnium/crates/trnm-pon-node/tests/public_v3_distinct_invalid_work.rs",
+    "docs/security/ROOT_WITNESS_V5.md",
+    "evidence/pon-w1-lifetime-current-20261111/README.md",
+    "evidence/pon-w1-lifetime-current-20261111/project-input.json",
+    "evidence/pon-w1-lifetime-current-20261111/project-report.json",
+))
+
+# The convergence adds executable scope and historical/current separation.
+# Presence and pins remain source consistency, not whole-chain qualification.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "scripts/w1_qrom_historical_fixture.py",
+    "scripts/ci/w1_qrom_supplemental_controls.py",
+    "config/pon/w1-qrom-supplemental-tests-v1.json",
+    "evidence/pq-chain-convergence-20261111-d4d2/README.md",
+    "evidence/pq-chain-convergence-20261111-d4d2/lifetime-input.json",
+    "evidence/pq-chain-convergence-20261111-d4d2/lifetime-report.json",
+    "evidence/pq-live-retry-20261111-fa62381e/lifetime-input.json",
+    "evidence/pq-live-retry-20261111-fa62381e/lifetime-report.json",
+    "scripts/ci/test_w1_qrom_historical_fixture.py",
+    "trillionnium/crates/trnm-mvcc-fee/tests/account_development_scope.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/account_profile_scope_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/operator_mining_owner.rs",
+    "docs/security/ACCOUNT_AUTHORIZATION_DEVELOPMENT_BOUNDARY_20261110.md",
+))
+
+
+# Current upstream withdrawal and finite posterior calculations must not evade
+# inventory merely because their names do not start with the PQ prefix.
+# Selected V6 owner and policy inputs require explicit pins even without PQ
+# names. This slice is source integrity, not the full dependency closure or
+# qualification of the source attribution and valuation model.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "config/pon/model-source-composition-v6.json",
+    "config/pon/public-evaluation-model-source-composition-v6.json",
+    "config/pon/model-evidence-v3.json",
+    "trillionnium/crates/trnm-mvcc-fee/src/model_source_composition_v6.rs",
+    "trillionnium/crates/trnm-mvcc-fee/src/model_evidence_v3.rs",
+    "trillionnium/crates/trnm-pon-node/tests/model_source_composition_v6.rs",
+))
+
+# Current upstream withdrawal must remain in the original required inventory.
+# Source consistency does not approve migrated proofs or current use.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "config/pon/w1-upstream-security-v1.json",
+    "scripts/ci/w1_upstream_security.py",
+    "scripts/ci/test_w1_upstream_security.py",
+    "formal/pon-nakamoto-v1/quantum_posterior_policy.py",
+    "formal/pon-nakamoto-v1/test_quantum_posterior_policy.py",
+    "formal/pon-nakamoto-v1/test_quantum_resource_clock.py",
+    "formal/pon-nakamoto-v1/QUANTUM_POSTERIOR_POLICY_V1.md",
+    "evidence/pon-quantum-lifetime-20261111-e464/README.md",
+    "evidence/pon-quantum-lifetime-20261111-e464/resource-model-counterexample.json",
+    "evidence/pon-quantum-lifetime-20261111-e464/lifetime-input.json",
+    "evidence/pon-quantum-lifetime-20261111-e464/lifetime-report.json",
+    "evidence/pon-quantum-lifetime-20261111-e464/upstream-security-report.json",
+    "evidence/pon-quantum-lifetime-20261111-e464/proof-profile-binding-report.json",
+    "evidence/pon-quantum-lifetime-20261111-e464/persistent-request.json",
+    "evidence/pon-quantum-lifetime-20261111-e464/persistent-report.json",
+    "evidence/pon-quantum-lifetime-20261111-e464/refresh-request.json",
+    "evidence/pon-quantum-lifetime-20261111-e464/refresh-report.json",
+))
+
+# Account scope and durable retry provenance controls remain distinct from the
+# original 52-control PNQ2/PqWitnessV4 roster and its historical observations.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "config/pon/pq-system-supplemental-tests-v1.json",
+    "trillionnium/crates/trnm-pon-node/src/ingress/account_scope_tests.rs",
+))
+
 # V4 continuation inputs are mandatory source dependencies, not proof of
 # independently deployed custody, external effects or algorithm migration.
 NATIVE_REQUIRED_PATHS |= frozenset((
@@ -888,6 +1006,44 @@ NATIVE_REQUIRED_PATHS |= frozenset((
     "trillionnium/crates/trnm-pon-node/tests/root_effect_readback_v4_native.rs",
     "trillionnium/crates/trnm-pon-node/tests/root_budget_v4_native.rs",
     "trillionnium/crates/trnm-pon-node/tests/support/root_recovery_v3_fixture.rs",
+))
+
+# Complete declared content graphs and finite genesis-to-checkpoint state
+# histories are separate readback formats. Their mandatory source presence is
+# not loader completeness, historical provenance or migration authorization.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "docs/security/CONTENT_GRAPH_AND_HISTORY_READBACK_V1.md",
+    "scripts/ci/check_cell_content_graph_vectors_v3.py",
+    "tests/fixtures/cell-content-graph-v3/vectors.json",
+    "trillionnium/crates/trnm-data-availability/src/cell/content_graph_v3.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/content_graph_v3/tests.rs",
+    "trillionnium/crates/trnm-mvcc-fee/src/content_commitment_v1/history_v2.rs",
+    "trillionnium/crates/trnm-mvcc-fee/src/content_commitment_v1/history_v2/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/migration_history_v2.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/migration_history_v2/tests.rs",
+))
+
+# Preserve complete original observations and recovery refusals as source bytes.
+# Mandatory presence is not native execution or security/authority acceptance.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    "evidence/hash-content-closure-20261111-976f/README.md",
+    "evidence/hash-content-closure-20261111-976f/ai395-b-all-features-metadata-compact.json",
+    "evidence/hash-content-closure-20261111-976f/ai395-b-all-features-metadata-members.json",
+    "evidence/hash-content-closure-20261111-976f/ai395-b-all-features-metadata.tar.gz",
+    "evidence/hash-content-closure-20261111-976f/ai395-b-native-members.json",
+    "evidence/hash-content-closure-20261111-976f/ai395-b-native-observations.tar.xz",
+    "evidence/hash-content-closure-20261111-976f/ai395-b-native-summary.json",
+    "evidence/hash-content-closure-20261111-976f/ai395-b-python16-controls-compact.json",
+    "evidence/hash-content-closure-20261111-976f/ai395-b-python16-controls-members.json",
+    "evidence/hash-content-closure-20261111-976f/ai395-b-python16-controls.tar.gz",
+    "evidence/hash-content-closure-20261111-976f/cloud-b-observations-976f.archive.json",
+    "evidence/hash-content-closure-20261111-976f/cloud-b-observations-976f.tar.gz",
+    "evidence/hash-content-closure-20261111-976f/final-b-hash-purpose-preservation-review.json",
+    "evidence/hash-content-closure-20261111-976f/mac-pr927-body-update-public-summary.json",
+    "evidence/hash-content-closure-20261111-976f/mac-publication-public-summary-976f.json",
+    "evidence/hash-content-closure-20261111-976f/recovery-observations.tar.xz",
+    "evidence/hash-content-closure-20261111-976f/staging-manifest.json",
+    "evidence/hash-content-closure-20261111-976f/unpublished-cloud-c-observation.json",
 ))
 
 # These are bounded source contracts, not results of a cryptographic audit.
@@ -927,6 +1083,81 @@ NATIVE_V2_EXPECTED = {
     **{flag: False for flag in NATIVE_FALSE},
 }
 
+
+# Explicit selected-source coverage for the V6 settlement / joint DAA composition.
+# These byte records do not qualify incentives, consensus, resources or production.
+ECONOMICS_INTEGRATION_REQUIRED_PATHS = frozenset((
+    "config/pon/joint-consensus-qualification-v1.json",
+    "docs/development/INCENTIVE_LIABILITY_BOUNDARIES_20261112.md",
+    "docs/development/SOURCE_INCENTIVE_RESEARCH_CONTRACT_20261112.md",
+    "docs/protocol/pon-nakamoto-v1/details/CREDIT_CALIBRATION_DISTORTION_V1.md",
+    "docs/protocol/pon-nakamoto-v1/details/DYNAMIC_PARTICIPATION_V1.md",
+    "docs/protocol/pon-nakamoto-v1/details/JOINT_CONSENSUS_DAA_AUDIT_20261108.md",
+    "docs/protocol/pon-nakamoto-v1/details/JOINT_CONSENSUS_QUALIFICATION_V1.md",
+    "docs/protocol/pon-nakamoto-v1/details/JOINT_PRODUCTION_TAIL_V1.md",
+    "formal/pon-nakamoto-v1/README.md",
+    "formal/pon-nakamoto-v1/contracts/work-time-required-tests-v1.json",
+    "formal/pon-nakamoto-v1/dynamic_participation_v1.py",
+    "formal/pon-nakamoto-v1/experiments/joint_resource_competition_campaign.py",
+    "formal/pon-nakamoto-v1/experiments/quantum_adversarial_campaign.py",
+    "formal/pon-nakamoto-v1/experiments/quantum_network_campaign.py",
+    "formal/pon-nakamoto-v1/experiments/quantum_resource_clock_campaign.py",
+    "formal/pon-nakamoto-v1/experiments/w1_marked_domain_campaign.py",
+    "formal/pon-nakamoto-v1/joint_consensus_qualification.py",
+    "formal/pon-nakamoto-v1/joint_production_tail_v1.py",
+    "formal/pon-nakamoto-v1/native_risk_ledger.py",
+    "formal/pon-nakamoto-v1/quantum_adversarial_search.py",
+    "formal/pon-nakamoto-v1/quantum_network_sim.py",
+    "formal/pon-nakamoto-v1/test_branch_time_daa_v1.py",
+    "formal/pon-nakamoto-v1/test_dynamic_participation_v1.py",
+    "formal/pon-nakamoto-v1/test_joint_consensus_qualification.py",
+    "formal/pon-nakamoto-v1/test_joint_production_tail_v1.py",
+    "formal/pon-nakamoto-v1/test_joint_resource_competition_campaign.py",
+    "formal/pon-nakamoto-v1/test_native_risk_ledger.py",
+    "formal/pon-nakamoto-v1/test_quantum_network_sim.py",
+    "formal/pon-nakamoto-v1/test_quantum_probability_sampling.py",
+    "formal/pon-nakamoto-v1/w1_marked_domain.py",
+    "scripts/ci/test_pon_monotone_daa_reader.py",
+    "scripts/pon_monotone_daa_reader.py",
+    "trillionnium/crates/trnm-pon-node/tests/daa_joint_consensus.rs",
+    "trillionnium/crates/trnm-task-kernel/src/tests.rs",
+))
+NATIVE_REQUIRED_PATHS |= ECONOMICS_INTEGRATION_REQUIRED_PATHS
+
+
+# Preserve complete inputs of the independently retained research components.
+NATIVE_REQUIRED_PATHS |= frozenset(('config/pon/pq128-lifetime-composition-v2.json',
+ 'docs/research/W1_ORACLE_EVIDENCE_SCOPE_V1.md',
+ 'docs/security/PQ128_LIFETIME_COMPOSITION_V2.md',
+ 'docs/security/PQ_CONTENT_CHAIN_REVIEW_V1.md',
+ 'docs/security/RETAINED_RESEARCH_COMPONENTS_20261113.md',
+ 'docs/security/W1_P3_SAMPLING_CONDITIONAL_ACCOUNTING.md',
+ 'docs/security/W1_RISC0_DEEP_NAMED_EVENTS.md',
+ 'formal/pon-nakamoto-v1/COST_TAIL_TRANSFER_V1.md',
+ 'formal/pon-nakamoto-v1/FIXED_SUCCESS_QUERY_FRONTIER_V1.md',
+ 'formal/pon-nakamoto-v1/QUANTUM_BERNOULLI_SOURCE_AUDIT_V1.md',
+ 'formal/pon-nakamoto-v1/cost_tail_transfer.py',
+ 'formal/pon-nakamoto-v1/fixed_success_query_frontier.py',
+ 'formal/pon-nakamoto-v1/quantum_bernoulli_source_audit.py',
+ 'formal/pon-nakamoto-v1/test_cost_tail_transfer.py',
+ 'formal/pon-nakamoto-v1/test_fixed_success_query_frontier.py',
+ 'formal/pon-nakamoto-v1/test_quantum_bernoulli_source_audit.py',
+ 'formal/pon-nakamoto-v1/test_w1_quantum_evidence_scope.py',
+ 'formal/pon-nakamoto-v1/test_w1_quantum_native_bridge.py',
+ 'formal/pon-nakamoto-v1/w1_public_stark_research/Cargo.lock',
+ 'formal/pon-nakamoto-v1/w1_public_stark_research/security_model_audit/vendor_primary/p3-challenger-0.8.0.crate',
+ 'formal/pon-nakamoto-v1/w1_public_stark_research/security_model_audit/vendor_primary/p3-fri-0.8.0.crate',
+ 'formal/pon-nakamoto-v1/w1_quantum_evidence_scope.py',
+ 'formal/pon-nakamoto-v1/w1_quantum_native_bridge.py',
+ 'scripts/ci/pq_content_chain_review.py',
+ 'scripts/ci/pq_lifetime_composition.py',
+ 'scripts/ci/test_pq_content_chain_review.py',
+ 'scripts/ci/test_pq_lifetime_composition.py',
+ 'scripts/ci/test_retained_research_ci.py',
+ 'scripts/ci/test_w1_p3_sampling_audit.py',
+ 'scripts/ci/test_w1_risc0_deep_event_audit.py',
+ 'scripts/w1_p3_sampling_audit.py',
+ 'scripts/w1_risc0_deep_event_audit.py'))
 
 def is_pq_source(parts: tuple[str, ...]) -> bool:
     """Recognize pq.rs, cell_pq and operator_pq_auth as well as older prefixes."""

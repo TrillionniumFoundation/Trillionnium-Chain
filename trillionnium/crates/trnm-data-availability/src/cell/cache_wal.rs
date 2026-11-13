@@ -110,12 +110,12 @@ pub(super) fn prevent_close_checkpoint(connection: &Connection) -> CellResultV1<
 }
 
 pub(super) fn configure(connection: &Connection) -> CellResultV1<()> {
-    // Pin the reviewed SQLite 3.54.0 backend. walFrames, WAL restart and the
+    // Pin the reviewed SQLite 3.54.1 backend. walFrames, WAL restart and the
     // sector-size clamp match 3.51.3; unixShmMap widens length arithmetic to
     // i64 but keeps the same region rounding and extension policy. The original
     // frame/padding caps are unchanged; another pager needs source qualification.
     require(
-        rusqlite::version_number() == 3_054_000,
+        rusqlite::version_number() == 3_054_001,
         "cache WAL backend version",
     )?;
     prevent_close_checkpoint(connection)?;

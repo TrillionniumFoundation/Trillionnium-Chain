@@ -368,3 +368,228 @@ fn native_growth_v2_single_header_window_keeps_epoch_fences_before_and_after_pre
         assert_eq!(rows(&node.db), foreign_rows.into_inner().unwrap().unwrap());
     }
 }
+
+// Complete native packets preserve the old nonmonotone timestamp rule. The
+// current receiver must still defer the entire branch after a clock rollback.
+fn retained_clock_branch(node: &mut Node) -> Vec<GrowthPacket> {
+    let mut parent = node.settings.genesis();
+    let mut packets = Vec::new();
+    for timestamp in [11, 21, 301, 22, 23] {
+        let packet = node
+            .make_growth_consensus_maintenance(parent, vec![], public(3), timestamp, 4096)
+            .unwrap();
+        parent = node.admit_growth(&packet, 100_000).unwrap();
+        packets.push(packet);
+    }
+    packets
+}
+
+#[test]
+fn native_growth_v2_observed_clock_checks_ancestors_without_changing_work_or_history() {
+    let directory = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut node =
+        Node::open_with_permanent_account_growth_v2(directory.path(), settings.clone()).unwrap();
+    let packets = retained_clock_branch(&mut node);
+    let parent = packets.last().unwrap().id().unwrap();
+    let candidate = node
+        .make_growth_consensus_maintenance(parent, vec![], public(3), 24, 4096)
+        .unwrap();
+    // Candidate time alone passes. The old branch contains timestamp 301.
+    node.check_growth_header(&candidate, 24).unwrap();
+    let id = node.admit_growth(&candidate, 24).unwrap();
+    let work = node.record(id).unwrap().work;
+    let target = node.growth_expected_target(id).unwrap();
+    let raw = node.growth_packet(id).unwrap().encode().unwrap();
+
+    // Eligibility is branch-specific: an independent older branch stays usable.
+    let honest = node
+        .make_growth_consensus_maintenance(settings.genesis(), vec![], public(4), 12, 4096)
+        .unwrap();
+    let honest_id = node.admit_growth(&honest, 24).unwrap();
+    assert_eq!(node.activate_observed(honest_id, 24).unwrap(), honest_id);
+    let original = rows(&node.db);
+    let active = node.active().unwrap();
+    let boundary = 301 - settings.limit("future_skew_seconds").unwrap();
+    for clock in [24, boundary - 1, 0] {
+        assert_eq!(
+            node.check_observed_history(id, clock)
+                .unwrap_err()
+                .to_string(),
+            "TIME_DEFERRED"
+        );
+        assert_eq!(
+            node.activate_observed(id, clock).unwrap_err().to_string(),
+            "TIME_DEFERRED"
+        );
+        assert_eq!(node.active().unwrap(), active);
+        assert_eq!(rows(&node.db), original);
+    }
+    for clock in [boundary, boundary + 1, u64::MAX, 24, boundary] {
+        let result = node.check_observed_history(id, clock);
+        if clock == 24 {
+            assert_eq!(result.unwrap_err().to_string(), "TIME_DEFERRED");
+        } else {
+            result.unwrap();
+        }
+        assert_eq!(node.record(id).unwrap().work, work);
+        assert_eq!(node.growth_expected_target(id).unwrap(), target);
+        assert_eq!(node.growth_packet(id).unwrap().encode().unwrap(), raw);
+        assert_eq!(rows(&node.db), original);
+    }
+    node.check_observed_history(settings.genesis(), 0).unwrap();
+    assert_eq!(node.activate_observed(id, boundary).unwrap(), id);
+    let activated = rows(&node.db);
+    let active = node.active().unwrap();
+    drop(node);
+    let reopened = Node::open_with_permanent_account_growth_v2(directory.path(), settings).unwrap();
+    assert_eq!(reopened.active().unwrap(), active);
+    assert_eq!(rows(&reopened.db), activated);
+    assert_eq!(reopened.record(id).unwrap().work, work);
+    assert_eq!(reopened.growth_packet(id).unwrap().encode().unwrap(), raw);
+    assert_eq!(
+        reopened
+            .check_observed_history(id, 24)
+            .unwrap_err()
+            .to_string(),
+        "TIME_DEFERRED"
+    );
+    // A later clock rollback is not a state reorganization or a credit refund.
+    assert_eq!(reopened.active().unwrap(), active);
+    assert_eq!(rows(&reopened.db), activated);
+}
+
+#[test]
+fn native_growth_v2_observed_clock_preserves_each_original_resource_stop_and_read_scope() {
+    let directory = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut node =
+        Node::open_with_permanent_account_growth_v2(directory.path(), settings.clone()).unwrap();
+    let packets = retained_clock_branch(&mut node);
+    let tip = packets.last().unwrap().id().unwrap();
+    let original = rows(&node.db);
+    let mut total = 0;
+    node.check_observed_history_with_progress(tip, 100_000, &mut || {
+        total += 1;
+        Ok(())
+    })
+    .unwrap();
+    assert!(total >= packets.len());
+    for stop in [
+        "PUBLIC_REQUEST_CANCELLED",
+        "PUBLIC_REQUEST_DEADLINE",
+        "PUBLIC_MUTATION_CPU_BUDGET",
+    ] {
+        for cut in 0..total {
+            let mut calls = 0;
+            let error = node
+                .check_observed_history_with_progress(tip, 100_000, &mut || {
+                    let index = calls;
+                    calls += 1;
+                    if index == cut {
+                        Err(stop.into())
+                    } else {
+                        Ok(())
+                    }
+                })
+                .unwrap_err();
+            assert_eq!(error.to_string(), stop);
+            assert_eq!(calls, cut + 1);
+            assert_eq!(rows(&node.db), original);
+            assert!(node.db.is_autocommit());
+        }
+    }
+    let read = node.db.unchecked_transaction().unwrap();
+    node.check_observed_history(tip, 100_000).unwrap();
+    assert!(!node.db.is_autocommit());
+    read.rollback().unwrap();
+    assert_eq!(rows(&node.db), original);
+    assert_eq!(
+        node.check_observed_history([0xff; 32], 100_000)
+            .unwrap_err()
+            .to_string(),
+        "UNKNOWN_PARENT"
+    );
+}
+
+#[test]
+fn native_growth_v2_observed_clock_fences_foreign_epoch_but_preserves_cancellation() {
+    for clock in [24, 100_000] {
+        for cancel in [false, true] {
+            let directory = tempfile::tempdir().unwrap();
+            let settings = settings();
+            let mut node =
+                Node::open_with_permanent_account_growth_v2(directory.path(), settings).unwrap();
+            let packets = retained_clock_branch(&mut node);
+            let tip = packets.last().unwrap().id().unwrap();
+            let original = rows(&node.db);
+            let own_changes = node.db.total_changes();
+            let path = directory.path().join("native.sqlite");
+            let mut calls = 0;
+            let error = node
+                .check_observed_history_with_progress(tip, clock, &mut || {
+                    calls += 1;
+                    if calls == 3 {
+                        // A real foreign ABA leaves every logical row identical
+                        // but invalidates this owner's audited storage epoch.
+                        let foreign = Connection::open(&path)?;
+                        foreign.execute(
+                            "UPDATE active SET generation=generation+1 WHERE singleton=1",
+                            [],
+                        )?;
+                        foreign.execute(
+                            "UPDATE active SET generation=generation-1 WHERE singleton=1",
+                            [],
+                        )?;
+                        if cancel {
+                            return Err("PUBLIC_REQUEST_DEADLINE".into());
+                        }
+                    }
+                    Ok(())
+                })
+                .unwrap_err();
+            assert!(calls >= 3);
+            assert_eq!(
+                error.to_string(),
+                if cancel {
+                    "PUBLIC_REQUEST_DEADLINE"
+                } else {
+                    "GROWTH_STORAGE_EPOCH_CHANGED"
+                }
+            );
+            if cancel {
+                assert_eq!(calls, 3);
+            } else {
+                assert!(error.requires_owner_stop());
+            }
+            assert_eq!(node.db.total_changes(), own_changes);
+            assert_eq!(rows(&node.db), original);
+            assert!(node.db.is_autocommit());
+        }
+    }
+}
+
+#[test]
+fn native_growth_v2_observed_clock_checks_current_header_links_and_restores_exactly() {
+    let directory = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let mut node = Node::open_with_permanent_account_growth_v2(directory.path(), settings).unwrap();
+    let packets = retained_clock_branch(&mut node);
+    let tip = packets.last().unwrap().id().unwrap();
+    let original = rows(&node.db);
+    for sql in [
+        "UPDATE blocks SET parent=zeroblob(32) WHERE id=?",
+        "UPDATE blocks SET height=height+1 WHERE id=?",
+        "UPDATE blocks SET state_root=zeroblob(32) WHERE id=?",
+        "UPDATE blocks SET packet=zeroblob(length(packet)) WHERE id=?",
+    ] {
+        let transaction = node.db.unchecked_transaction().unwrap();
+        transaction.execute(sql, [tip.as_slice()]).unwrap();
+        let error = node.check_observed_history(tip, 100_000).unwrap_err();
+        assert!(error.requires_owner_stop(), "{error}");
+        assert!(!node.db.is_autocommit());
+        transaction.rollback().unwrap();
+        node.check_observed_history(tip, 100_000).unwrap();
+        assert_eq!(rows(&node.db), original);
+    }
+}

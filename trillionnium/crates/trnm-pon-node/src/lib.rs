@@ -90,10 +90,13 @@ pub use store::storage_service::{
     NativeCellRepairRequestV1, NativeCellRetentionRequestV1,
 };
 pub use store::storage_service::{
-    native_cell_shard_repair_subject_v1, NativeCellRetainedShardPlanReadbackV1,
-    NativeCellRetainedShardPlanRequestV1, NativeCellRetainedShardPlanTargetsV1,
-    NativeCellRetainedShardSlotReadbackV1, NativeCellRetainedShardVerificationBudgetV1,
-    NativeCellShardDamageV1, NativeCellShardEffectReadbackV1, NativeCellShardRecoveryActionV1,
+    native_cell_shard_repair_subject_v1, NativeCellPagedRetainedShardPlanReadbackV2,
+    NativeCellPagedRetainedShardPlanTargetsV2, NativeCellPagedShardRecoveryBudgetV2,
+    NativeCellPagedShardRecoveryReadbackV2, NativeCellRetainedShardPageReadbackV2,
+    NativeCellRetainedShardPlanReadbackV1, NativeCellRetainedShardPlanRequestV1,
+    NativeCellRetainedShardPlanTargetsV1, NativeCellRetainedShardSlotReadbackV1,
+    NativeCellRetainedShardVerificationBudgetV1, NativeCellShardDamageV1,
+    NativeCellShardEffectReadbackV1, NativeCellShardRecoveryActionV1,
     NativeCellShardRecoveryBudgetV1, NativeCellShardRecoveryCpuV1,
     NativeCellShardRecoveryFailureV1, NativeCellShardRecoveryLimitsV1,
     NativeCellShardRecoveryReadbackV1, NativeCellShardRecoveryRequestV1,
@@ -790,6 +793,18 @@ pub fn development_public(i: u64) -> Result<Hash> {
         .map_err(|_| Error::from("DEV_KEY"))?;
     digest(&trnm_crypto_primitives::public_key_hex(&key))
 }
+
+#[cfg(target_os = "linux")]
+pub use store::{
+    native_cell_shard_parent_group_subject_v3, NativeCellGroupedChildCpuV3,
+    NativeCellGroupedShardPlanReadbackV3, NativeCellGroupedShardRecoveryBudgetV3,
+    NativeCellGroupedShardRecoveryFailureV3, NativeCellGroupedShardRecoveryReadbackV3,
+    NativeCellGroupedShardRepairRequestV3, NativeCellGroupedShardStorageRequestV3,
+    NativeCellShardGroupChildV3, NativeCellShardGroupJournalConfigV3,
+    NativeCellShardGroupJournalV3, NativeCellShardGroupKindV3,
+    NativeCellShardParentGroupReadbackV3, NativeCellShardParentGroupV3,
+    NATIVE_CELL_SHARD_PARENT_GROUP_WIDTH_V3,
+};
 
 #[cfg(all(test, target_os = "linux"))]
 mod operator_continuous_test_support;

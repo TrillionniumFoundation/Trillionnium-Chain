@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "<string>", line 5, in <module>
+  File "verify_published_hepta_readbacks.py", line 237, in <module>
+  File "verify_published_hepta_readbacks.py", line 205, in main
+  File "verify_published_hepta_readbacks.py", line 61, in command
+  File "verify_published_hepta_readbacks.py", line 56, in require
+RuntimeError: read failed: ['/usr/bin/gh', 'pr', 'view', '6062', '--repo', 'TrillionniumFoundation/hepta-private-ci', '--json', 'number,url,state,isDraft,headRefName,baseRefName,headRefOid,baseRefOid,author']; exit=1; stderr=b'\n  body\n  changedFiles\n  closed\n  closedAt\n  comments\n  commits\n  createdAt\n  deletions\n  files\n  headRefName\n  headRefOid\n  headRepository\n  headRepositoryOwner\n  id\n  isCrossRepository\n  isDraft\n  labels\n  latestReviews\n  maintainerCanModify\n  mergeCommit\n  mergeStateStatus\n  mergeable\n  mergedAt\n  mergedBy\n  milestone\n  number\n  potentialMergeCommit\n  projectCards\n  projectItems\n  reactionGroups\n  reviewDecision\n  reviewRequests\n  reviews\n  state\n  statusCheckRollup\n  title\n  updatedAt\n  url\n'

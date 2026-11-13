@@ -64,6 +64,29 @@ fn require(ok: bool, code: &'static str) -> NativeBudgetResultV1<()> {
     }
 }
 
+/// Inspect the original OS path and each SQLite sidecar before opening a native
+/// journal. Existing regular WAL/SHM files are permitted for live handles and
+/// crash recovery. Inspection errors are not absence. The containing directory
+/// remains a trusted local boundary; this does not prevent concurrent path swaps.
+pub(crate) fn check_native_store_paths(
+    path: &Path,
+    code: &'static str,
+) -> NativeBudgetResultV1<()> {
+    for suffix in ["", "-journal", "-wal", "-shm"] {
+        let mut candidate = path.as_os_str().to_os_string();
+        candidate.push(suffix);
+        match std::fs::symlink_metadata(Path::new(&candidate)) {
+            Ok(metadata) => require(
+                metadata.is_file() && !metadata.file_type().is_symlink(),
+                code,
+            )?,
+            Err(cause) if cause.kind() == std::io::ErrorKind::NotFound => {}
+            Err(cause) => return Err(cause.into()),
+        }
+    }
+    Ok(())
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq, BorshSerialize, BorshDeserialize)]
 pub struct NativeBudgetAnchorV1 {
     pub network: NativeBudgetHashV1,
@@ -737,12 +760,7 @@ impl NativeBudgetStoreV1 {
             (1..=65_536).contains(&configuration.max_records),
             "BUDGET_RECORD_LIMIT",
         )?;
-        if let Ok(metadata) = path.symlink_metadata() {
-            require(
-                metadata.is_file() && !metadata.file_type().is_symlink(),
-                "BUDGET_STORE_FILE",
-            )?;
-        }
+        check_native_store_paths(path, "BUDGET_STORE_FILE")?;
         if let Some(parent) = path
             .parent()
             .filter(|parent| !parent.as_os_str().is_empty())

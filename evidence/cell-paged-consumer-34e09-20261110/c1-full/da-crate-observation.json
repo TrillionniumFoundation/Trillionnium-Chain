@@ -1,0 +1,21 @@
+{
+  "command": [
+    "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--jobs",
+    "2",
+    "-p",
+    "trnm-data-availability",
+    "--",
+    "--test-threads=1"
+  ],
+  "completed_at_utc": "2026-11-10T06:56:12.722179+00:00",
+  "elapsed_seconds": 148.3957361029461,
+  "exit_code": 0,
+  "failure": null,
+  "log_sha256": "9521d7259b495da8bd69cde7fe8a768885339e39fbe0cf5162e562c3d03edb4e",
+  "name": "da-crate",
+  "started_at_utc": "2026-11-10T06:53:44.326494+00:00"
+}

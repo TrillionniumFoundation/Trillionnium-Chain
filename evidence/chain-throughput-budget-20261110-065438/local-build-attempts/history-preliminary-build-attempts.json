@@ -1,0 +1,93 @@
+{
+  "schema": "history-preliminary-build-attempts-v1",
+  "committed_source_binding": false,
+  "source_scope": "preliminary candidate evolving from e4abb172147e941b62483652b0ceabaae4317624; not a clean frozen-source qualification",
+  "last_environment": {
+    "PATH_prepend": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin",
+    "RUSTC": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/bin/rustc",
+    "LD_LIBRARY_PATH": "/workspace/scratch/5778f0ffb5d4/toolchain/installed/lib",
+    "CARGO_TARGET_DIR": "/workspace/scratch/0654386882cd/target",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_INCREMENTAL": "0"
+  },
+  "argv": [
+    "cargo",
+    "test",
+    "--offline",
+    "--locked",
+    "-j",
+    "2",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "ingress::history_import::tests::detached_budget_controls::",
+    "--",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "attempts": [
+    {
+      "log": "history-fixed-attempt-01.log",
+      "bytes": 3013,
+      "sha256": "bdec8084adf2cec585585732136aad43e4532a122d74e87b14b7df50164cb52b",
+      "rustc_release": "1.96.0",
+      "exit_code": 130,
+      "outcome": "Stopped after identifying compiler differed from project 1.95.0 pin; no tests executed",
+      "native_tests_executed": false
+    },
+    {
+      "log": "history-fixed-attempt-02-rust195.log",
+      "bytes": 3575,
+      "sha256": "d906a269178ed7c3f56191bcc0efe555570676bce2989ee69285860e6a74a0ea",
+      "rustc_release": "1.95.0",
+      "exit_code": 130,
+      "outcome": "Stopped after SQLite build boundary refused relative RUSTC path; no tests executed",
+      "native_tests_executed": false
+    },
+    {
+      "log": "history-fixed-attempt-03-rust195.log",
+      "bytes": 1061,
+      "sha256": "0ea3f9800baa2469904f62722e59cc5288a7c898ea4edb0407fd0772ed41d6c3",
+      "rustc_release": "1.95.0",
+      "exit_code": 130,
+      "outcome": "Stopped after SQLite build boundary reported incomplete normal Cargo loader directories; no tests executed",
+      "native_tests_executed": false
+    },
+    {
+      "log": "history-fixed-attempt-04-rust195.log",
+      "bytes": 4371,
+      "sha256": "60c17f034584bdaf48beba9236867a0e050b31c11a8609a1e05d6d815ef87a0e",
+      "rustc_release": "1.95.0",
+      "exit_code": 101,
+      "outcome": "trnm-pon-node lib-test rustc process terminated by SIGKILL signal 9; no tests executed",
+      "native_tests_executed": false
+    },
+    {
+      "log": "history-typecheck-attempt-05-rust195.log",
+      "bytes": 6551,
+      "sha256": "127fc558faaad7929955da70f594e321eb0b9bbe3714a84cb0d93cb69a83abc0",
+      "rustc_release": "1.95.0",
+      "argv": [
+        "cargo",
+        "check",
+        "--offline",
+        "--locked",
+        "-j",
+        "1",
+        "-p",
+        "trnm-pon-node",
+        "--tests"
+      ],
+      "exit_code": 101,
+      "outcome": "The cargo check --tests lib-test rustc process (emit=dep-info,metadata) terminated by SIGKILL signal 9; full test type check did not complete; no native tests executed",
+      "typecheck_completed": false,
+      "native_tests_executed": false
+    }
+  ],
+  "passed": false,
+  "whole_business_liveness_qualified": false,
+  "native_tests_executed": false,
+  "full_test_typecheck_passed": false,
+  "signal_cause_qualified": false
+}

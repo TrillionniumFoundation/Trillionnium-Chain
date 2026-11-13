@@ -1,0 +1,22 @@
+{
+  "bytes": 558,
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "cwd": "/data/chain-root-operation-owned-20261112-df05-v4",
+  "elapsed_ns": 13814824716,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "log": "research-corpus.log",
+  "name": "research-corpus",
+  "process_exit_code": 0,
+  "sha256": "0c370d643214a2f56ca81806aab806048e3266b47ad43de7e15adfb734418bcc",
+  "source": "87943f6229d8785c3f431ede5eadba62b634ab8c",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "timed_out": false
+}

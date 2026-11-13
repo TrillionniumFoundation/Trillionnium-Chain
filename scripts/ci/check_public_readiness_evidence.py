@@ -496,7 +496,9 @@ def native_durable_schema(root):
                 # require explicit review; no historical fallback is allowed.
                 reviewed_bodies = {
                     'growth_observation_only': '63905b7095fe69d6036775847e604eae33faedbbfca5d8997664a68a5f889671',
-                    'observation_only': '088b58a4072271bb60772bfacab6cf06ec4052700cef46f92708453d8b9a07be',
+                    # Current body includes the M06 account-profile refusal before
+                    # namespace effects; deleting or bypassing it is not a legacy fallback.
+                    'observation_only': 'e89baea593c5a31e16760c3ad42854d9112775b2e51a8994262f06eee379f1d3',
                 }
                 require(sha(selected_body.encode()) == reviewed_bodies[observation_field],
                         'durable backend selected implementation')

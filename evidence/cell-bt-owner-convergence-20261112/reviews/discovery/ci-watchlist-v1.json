@@ -1,0 +1,163 @@
+{
+  "artifacts": {
+    "name_template": "next-architecture-${runner}-${source_kind}-${expected_source_sha}-${run_attempt}",
+    "readback": "Validate sha256sums and original job/step outcomes, including failed/partial retained logs; p2p-complete.exit must be 0.",
+    "required_files": [
+      "source-before.json",
+      "source-after.json",
+      "source.json",
+      "p2p-complete.log",
+      "p2p-complete.exit",
+      "stage-outcomes.json",
+      "sha256sums.txt",
+      "architecture.txt",
+      "rustc.txt",
+      "cargo.txt"
+    ],
+    "scope": "This workflow declares default-feature component observations and HOLD_NO_GO; optional native-PQ, independent custody, model efficacy, Hepta FinalUse, WAN throughput or production are not inferred from its green status."
+  },
+  "da_step": {
+    "additional_debug_suite_required": false,
+    "argv": [
+      "cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-data-availability",
+      "--",
+      "--test-threads=1"
+    ],
+    "cargo_profile": "release",
+    "default_features": true,
+    "environment": {
+      "CARGO_BUILD_JOBS": "2",
+      "CARGO_INCREMENTAL": "0",
+      "RUST_TEST_THREADS": "1"
+    },
+    "feature_arguments": [],
+    "id": "p2p",
+    "if_failed": "Retain the original failure block and all transport phase/byte/signature/rejection/provider-dial diagnostics. Do not extend original timeouts, change feature/profile/thread settings, or label prior failures fixed without evidence.",
+    "interpretation": "Require completed full-crate success and the named rows actually executed as ok. Frozen B had 789 passed / 0 failed; use the actual published-head log rather than substituting a filtered smoke pass or hardcoding a future count.",
+    "log_label": "p2p-complete",
+    "name": "Run the complete default-feature P2P crate",
+    "new_tcp_controls": [
+      "cell::discovery::equivocation_history_tests::tcp_complete_conflict_receipts_exclude_owner_before_any_provider_dial",
+      "cell::discovery::equivocation_history_tests::tcp_invalid_signature_cannot_turn_received_bytes_into_equivocation",
+      "cell::discovery::equivocation_history_tests::tcp_truncated_conflict_reply_does_not_establish_observed_equivocation",
+      "cell::discovery::equivocation_history_tests::tcp_truncated_first_reply_does_not_establish_observed_equivocation"
+    ],
+    "original_failure_test": "cell::discovery::equivocation_history_tests::tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation",
+    "require_full_crate": true,
+    "separate_debug_history_test_to_observe_in_release_log": "cell::discovery::pq::auth::tests::authenticated_v3_real_tcp_receipt_time_equivocation_survives_later_source_expiry"
+  },
+  "jobs": [
+    {
+      "architecture": "x86_64",
+      "name": "next architecture (ubuntu-24.04, prospective-merge)",
+      "priority": 1,
+      "reason": "Exact matrix axis of original failure job 130956234453",
+      "source_kind": "prospective-merge"
+    },
+    {
+      "architecture": "x86_64",
+      "name": "next architecture (ubuntu-24.04, head)",
+      "priority": 2,
+      "source_kind": "head"
+    },
+    {
+      "architecture": "aarch64",
+      "name": "next architecture (ubuntu-24.04-arm, prospective-merge)",
+      "priority": 3,
+      "source_kind": "prospective-merge"
+    },
+    {
+      "architecture": "aarch64",
+      "name": "next architecture (ubuntu-24.04-arm, head)",
+      "priority": 4,
+      "source_kind": "head"
+    }
+  ],
+  "original_failure_raw_log": {
+    "bytes": 411684,
+    "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43149864315/job/130956234453",
+    "path": "recovered-originals/validation/discovery/original-hosted-job-130956234453.log",
+    "sha256": "9bda7b6e6753c66eaebe16b4ad4a1235f39b47b2d12dd351ab706b7a0504c58d"
+  },
+  "original_run": {
+    "conclusion": "failure",
+    "event": "pull_request",
+    "head_sha": "040fb0cf460a6db568f0b4ec5ba581add3f2d2ba",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43149864315",
+    "id": 43149864315,
+    "jobs": [
+      {
+        "conclusion": "success",
+        "id": 130956233823,
+        "name": "next architecture (ubuntu-24.04, head)",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "id": 130956234127,
+        "name": "next architecture (ubuntu-24.04-arm, prospective-merge)",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "id": 130956234343,
+        "name": "next architecture (ubuntu-24.04-arm, head)",
+        "status": "completed"
+      },
+      {
+        "conclusion": "failure",
+        "id": 130956234453,
+        "name": "next architecture (ubuntu-24.04, prospective-merge)",
+        "status": "completed"
+      }
+    ],
+    "name": "PoN next architecture exact-source observations",
+    "path": ".github/workflows/pon-next-architecture-security.yml",
+    "run_attempt": 1,
+    "status": "completed"
+  },
+  "published_ci_results_observed": false,
+  "published_head_sha": null,
+  "published_pr_number": null,
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "run_identity_checks": [
+    "Read the actual final published PR number, head SHA and base SHA; require the selected pull_request run head_sha to equal that head.",
+    "Do not use successful checks from original 040, frozen B, a prior run attempt, or a different pull request as the published-head result.",
+    "For head jobs, source-before.json candidate and tested_commit equal the published head.",
+    "For prospective-merge jobs, candidate equals the published head, base equals the event base, tested_commit equals prospective_merge, and the original verifier validates ordered parents and the canonical merge tree.",
+    "Require tracked_worktree_verified=true and source-before.json/source-after.json/source.json equality. Final docs/evidence commits have their own tree and tracked counts; do not hardcode B's older complete-source stdout/hash or 27686 count.",
+    "Keep x86_64/ARM64 and head/prospective-merge records separate."
+  ],
+  "schema": "trnm.bt-post-publication-ci-watchlist.v1",
+  "scope": "Read-only follow-up on the actual published pull-request head; no workflow, rerun, compilation, or debug test was triggered by this review.",
+  "workflow": {
+    "concurrency_cancel_in_progress": false,
+    "event": "pull_request",
+    "job_id": "next-architecture",
+    "job_timeout_minutes": 90,
+    "matrix_fail_fast": false,
+    "name": "PoN next architecture exact-source observations",
+    "original_blob": "f9389e56ef8cf77d4bb3a284c12f26da8b9795b8",
+    "original_file_bytes": 25184,
+    "original_file_sha256": "f74ac4720072c6a47b20b999d16628c600bca51c55bb16ec146069c94bc3ecea",
+    "original_source": "040fb0cf460a6db568f0b4ec5ba581add3f2d2ba",
+    "path": ".github/workflows/pon-next-architecture-security.yml",
+    "relevant_automatic_path_filters": [
+      "trillionnium/crates/trnm-data-availability/**",
+      "trillionnium/crates/trnm-pon-node/**",
+      "trillionnium/Cargo.toml",
+      "trillionnium/Cargo.lock",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    ],
+    "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/040fb0cf460a6db568f0b4ec5ba581add3f2d2ba/.github/workflows/pon-next-architecture-security.yml"
+  },
+  "workflow_dispatch_or_rerun_requested": false
+}

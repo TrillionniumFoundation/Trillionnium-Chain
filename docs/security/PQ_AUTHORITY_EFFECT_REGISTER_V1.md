@@ -4,7 +4,9 @@
 
 The [register](../../config/pon/pq-authority-effects-v1.json) binds seven reviewed
 routes to the current reviewed source
-`893738947a50dc42819b56e632192de4f9f24fa0`. The
+`813620f387199bef3eae2493e2af07c70444db58`. The
+
+`b7e38fdc2e43c468692abc52aec03737f2df7f1b`. The
 [checker](../../scripts/ci/pq_authority_effect_register.py) enforces their exact
 effect scopes and source sets, and compares 44 actual regular files with a fixed
 reviewed SHA-256 lock. Successful checking reports `source_consistency: PASS`
@@ -15,8 +17,184 @@ The original register closed a source-recording gap in the earlier
 [cryptographic surface inventory](PQ_AUTHORITY_SURFACE_AUDIT_20261031.md): a
 classic transfer type is not interchangeable with the native account owner, and
 a signature, context comparison, downloaded artifact or certificate observation
-must not be recorded as a different downstream permission. No newly established
-classical bypass of a PQ owner is claimed.
+must not be recorded as a different downstream permission. That original source
+inventory did not itself establish a classical bypass of a PQ owner.
+
+## Retained pre-freeze V6 composition note
+
+The integrated V6 executor changes a selected authority source. Preserve the
+prior fixed 813620f lock and its source mismatch until the complete combination
+has a real Git commit. Then rebind all 44 selected paths from that exact commit,
+including the independent test literals. The newly retained stale-813 negative
+becomes applicable to that successor. No source, native or production claim is
+promoted by this temporary metadata state. Historical V6 observations below
+retain their original source identities.
+
+## Retained source-composition continuation, 2026-11-12
+
+The reviewed runtime checkpoint is `8cb8b743bccd93a5fac49a072990d18e0d4b4a21`, tree
+`ad9301c83be53df1937aa2b7eebf5aee131fbb99`. All 44 regular-file blobs were read with
+`git show` at that immutable checkpoint and compared with the actual checkout.
+The canonical lock SHA-256, including that checkpoint, is
+`d504cae561835c3e98c3078ceb6d306805d1b1a550074ce3c01f2b9516227001`.
+
+Forty-three curated pins retain the prior `813620f387199bef3eae2493e2af07c70444db58` bytes.
+Only `trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs` changes, from
+`4ed0629cd9a543ae58402a1fabc459993c8e0037fe47fd53dd29efa619516fb4` to
+`cd97b36dd9901b57156040b4afabfa1070f8b9f727fef7a301e11fa502092c90`. This dispatch change adds the separately named
+source-composition V6 configuration, complete-source release validation and
+the new allocation-leaf/release domains. Its claims read the frozen source
+payment record. Original PNX1 authentication, sender/nonce checks and
+transaction publication remain prerequisites; a record digest is not an
+independent grant of payment authority.
+
+The unchanged prior reader was executed against the changed checkout and
+returned `source lock hash mismatch` for that executor. The staged continuation
+retains this refusal, fixes the reviewed checkpoint and lock explicitly, and
+adds the prior `813620f` revision to the stale-context negative control. It
+retains all seven route definitions, the 44-path roster, account/network
+profile separation and all false qualification fields. New V6 implementation,
+policy and native-test files have separate source inventory/corpus coverage;
+this partial register does not become their transitive authority proof.
+
+This byte review supplies no native execution, public activation or PQ
+qualification. Earlier checkpoint identities and failed observations remain
+historical records.
+
+
+## Retained published runtime binding, 2026-11-12
+
+The reviewed source for that historical continuation is the published runtime checkpoint
+[`523bee8709645e7dbc3455f1dc74737f7067af62`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/523bee8709645e7dbc3455f1dc74737f7067af62),
+tree `5fdd5f7073a91d210c82411a37c8982d4159f29b`. Its commit identity differs
+from local Runtime A below, although their complete tree identities match.
+All 44 regular Git blobs were read again from this published revision and
+matched the working regular files. Every individual source pin is unchanged.
+The revision and canonical table digest are the only manifest/checker binding
+changes; the seven routes, their scopes, the source roster and false
+qualification fields remain unchanged.
+
+That historical canonical table SHA-256 is
+`55a8c300eaefddacfd812956cb445438501e6c91f76ae9bc87e0a33436c2e6c6`.
+The independent positive assertion selects the published revision, and the
+stale-context control now also rejects local Runtime A's `b3bc526` label.
+This is a fresh source review, not a new native execution result.
+
+The archived Python observation for former local Metadata B,
+`4d291c4d90e862498303ae2b4f2677b19b482faf`, retains that original identity.
+Its complete commit object and the former local native raw logs were lost
+when the old workspace was replaced. Neither that observation nor equality
+of Runtime A's tree transfers execution qualification to this published
+checkpoint or its metadata successor. The retained review below records
+the original local source and hashes without relabeling them.
+
+## Retained local Runtime A binding, 2026-11-12
+
+The retained local runtime checkpoint is
+`b3bc526b96d3a8e2ad0be7faa4f00f11d9f7ea53`,
+tree `5fdd5f7073a91d210c82411a37c8982d4159f29b`. Review checked the regular
+Git entry and `git show` bytes for all 44 declared paths against the working
+regular files. Forty-three pins retain the preceding
+`813620f387199bef3eae2493e2af07c70444db58` mapping. Only
+`trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs` changes:
+
+```text
+prior:    4ed0629cd9a543ae58402a1fabc459993c8e0037fe47fd53dd29efa619516fb4
+reviewed: 80b0295131ce48f2fdbd429e7d8cdcf56b37d4c610068dba8d6d4e15ae7829fb
+```
+
+That owner adds explicit V6 model-profile selection, policy and plan bindings,
+and V6 allocation/release checks within the existing release and reward
+application branches. The new V6 module, policies and related model owners are
+outside this 44-path register; binding the caller does not add those dependencies
+to its coverage or establish their correctness. Account and network selection,
+the seven curated routes and their declared effect scopes retain their existing
+boundaries.
+
+The canonical table SHA-256, including Runtime A's revision, is
+`b4abb4e57ebdb128e29e5ec202597dbd3c6a72a168a72b7017cb44d177d4d78a`.
+The checker and independent positive assertion fix this revision; the existing
+stale-context test also rejects the preceding `813620f` label. Before this
+metadata update, the actual reader on Runtime A returned exit 2 with
+`source lock hash mismatch` for `pon_executor.rs`. That refusal remains a failed
+observation of the old mapping. The metadata successor changes neither the
+44-path roster nor any qualification flag, and requires its own final-source
+checks. This review does not execute native tests, authenticate a deployed
+binary or establish complete authority coverage.
+
+
+## Retained SQLite candidate binding, 2026-11-12
+
+The reviewed source is `813620f387199bef3eae2493e2af07c70444db58`, tree
+`4670d4ca9354d862ed2a5b3061dcaa61c759004e`. All 44 regular-file blobs
+were read from that immutable checkpoint and compared with the actual checkout.
+The canonical lock SHA-256, including that source revision, is
+`3eef9a9a1431914cae0f25f49a009a6103cf30caf0bc5f189918ad71fe91b71d`.
+
+Forty-two file pins are unchanged from the prior fixed
+`7f83ea843d6d1578a475a7a0c4dc026da564a795` map. Only the portable
+Settlement `store.rs` and `tests.rs` pins change. The opener now uses
+`symlink_metadata`: an existing journal, WAL or SHM object, including a dangling
+symlink, is refused; only `NotFound` means absent, and other metadata errors
+are refused before SQLite opens the database. Its controls cover refused
+create/reopen without changing existing database, sidecar or target bytes,
+a real overlong-path metadata error, and clean create/reopen.
+
+This remains `portable-settlement-store-only`. It adds no Node consumer,
+PQ payment route, external-effect authority or general TOCTOU guarantee.
+All seven routes, the 44-path roster and false qualification fields remain
+unchanged. The checker and independent positive assertion bind this reviewed
+revision, while the existing stale-context control also rejects the prior
+`7f83ea8` revision. Older checkpoint identities and failures below remain
+historical records. This byte review does not execute or qualify native tests.
+
+## Combined-source binding pending freeze, 2026-11-12 America/New_York
+
+The integration working tree composes the reviewed SQLite opener repair and
+CMH2 module export from two distinct immutable sources. Neither historical
+revision below identifies the combined working tree. Preserve the original
+fixed authority lock and its refusal until the combined source has a real
+commit identity, then independently compare all 44 selected blobs before
+updating the manifest, checker lock and positive source assertion together.
+No authority, native execution or production qualification follows from this
+composition. The historical observations below keep their own source identities.
+
+## Retained CMH2 export mapping, 2026-11-11
+
+
+The 44 curated regular-file blobs were read with `git show` at runtime
+checkpoint `55c0d0ea1330d80120754718f2f47f6a4a709aa3`, tree
+`cd8c5c44bf2bd6a8eaa6dd350c0fe0238837c33a`, and compared with their actual checkout bytes.
+The canonical revision-plus-file lock is
+`5f2f63ef2e33951cfe8774c50cd15d0c9630cc9b130aeab1ed7d6342e078c8a6`. Forty-three file pins retain the previous reviewed values.
+Only `trnm-pon-node/src/store.rs` changes: one public module declaration
+exports the separate read-only CMH2 adapter. The seven route definitions,
+44-path roster, effect scopes, profile boundaries and false qualification
+fields remain unchanged. The old source lock actually refused that changed
+file; that observation is retained separately from this reviewed rebind.
+
+The new child module and its tests are covered by the content/history and
+corpus contracts. Their export does not turn this curated register into a
+complete call graph or give a readback migration, cutover or finality authority.
+The sections below retain earlier mappings and execution observations under
+their original source identities. This binding follow-up does not supply a
+native execution or change any original result.
+
+## Retained joint-source continuation
+
+That review derived all 44 regular Git blobs from runtime checkpoint
+`8add285b6c0a91d8b7812efe2d02c9342f74c91b`, tree `8aaa486aa4ccd4e41e33241fb4e7e273d3c3d5f6`. The canonical lock SHA-256 is
+`da8d605dead05faa1302c96d8bba1ff4f1e07cd5423390a34679f02dc73cecb9`. Compared with the previous checkpoint, only
+`pon_executor.rs` and `store.rs` change within this declared scope. They enforce
+the development-only configuration at state-root, execution and Node owner
+boundaries. Classical development execution remains separate from the explicit
+PQ owner. The preserved read-only classical API keeps its existing PQ-selector
+error precedence; all actual effects still check the complete scope first.
+
+The added account tests and owner wrappers are separately included in the
+native source inventory and corpus. This 44-path register does not claim to
+cover those additions, TLS or the V5 Root witness as a complete authority graph.
+Earlier checkpoint observations below retain their original source identities.
 
 ## The seven bounded routes
 
@@ -68,9 +246,84 @@ The portable consumption settlement store is separately scoped. Substituting
 for its bilateral authorization and durable state sources is refused by this
 register. Those additional owners still require their own qualification work.
 
-## Current cache close-policy mapping, 2026-11-09
+## Retained account-selector mapping, 2026-11-11
 
-The active source map uses the exact 44 regular-file blobs from checkpoint
+That source map used the exact 44 regular-file blobs from published
+runtime checkpoint `ef6df12a042912664df64f2112c2b1c600dce9fa`, tree
+`5e89951169fe2d5ef7418c3dc23984babda172ce`. Each of those 44 blobs is identical
+at the later metadata candidate `1f82449191360bd26313fd716de361f1d52bc813`.
+This binding follow-up does not claim its revised manifest, reader constants,
+tests or documentation were already present in the runtime checkpoint.
+
+Forty-three individual pins retain the prior cache close-policy values. The
+only changed curated source is
+[`pon_executor.rs`](../../trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs):
+
+```text
+prior:    e920bccd04d4ef884b9f870515534c036025b0294fce46ea546b40526238d72a
+reviewed: 11b3aa9238c71996c883232cb741a20c783912e852117462299edc28236fc718
+```
+
+The reviewed runtime now treats every present `account_authorization_profile`
+selector as excluding the classical route, and requires the selector to be
+absent when no native account owner is available. This source lock records
+that version; checking it does not execute native account tests. That checkpoint's
+canonical table digest, including the runtime checkpoint revision, is:
+
+```text
+44da90841315a63b1c61602bbd67c0200589bbcccaa839e886aa8e94275db595
+```
+
+The unchanged prior register refused `pon_executor.rs` in the actual
+[repository-truth job](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42937708694/job/130251772234)
+on `1f82449191360bd26313fd716de361f1d52bc813`. Its 18-method suite reported
+28 failures and three errors while consuming the stale source lock; that
+failure remains a prior observation. The existing suite updates its independent
+positive revision assertion and rejects the prior `8937389` revision in the
+existing stale-context control. The checker logic and source reader are
+unchanged; only the reviewed revision and aggregate lock constants are rebound.
+
+The seven routes, 44-path roster, profile boundaries, effect scopes and false
+qualification fields remain unchanged. `ingress/pq_network.rs`, the TLS child
+modules, Root recovery sources and the new account-profile test file remain
+outside this curated source set. Their separate changes do not expand this
+register into complete authority coverage or runtime qualification.
+
+## Current original-budget continuation mapping, 2026-11-11
+
+The active map binds the exact 44 regular-file blobs at source checkpoint
+`b7e38fdc2e43c468692abc52aec03737f2df7f1b`, tree
+`b75d318fc7b7b027a810f4a70a9cd91e0b3930f8`. The
+[continuation review](../../evidence/chain-throughput-budget-20261110-065438/source-lock-review/README.md)
+retains the old guard's refusal and
+[all 44 Git/source comparisons](../../evidence/chain-throughput-budget-20261110-065438/source-lock-review/publication-reanchor.json).
+Forty-two source fingerprints retain their preceding values. Two change:
+
+| Curated source | Reviewed change and retained boundary |
+| --- | --- |
+| `trnm-pon-node/src/ingress.rs` | Passes separate held and detached execution callbacks through the existing shared admission path. The detached callback is selected only after dropping the Node writer; original worker accounting, preparation, snapshot-capacity fallback, reacquisition and commit controls remain. No new account, reserve, deadline or authentication authority is created. |
+| `trnm-pon-node/src/store.rs` | Changes the existing `state_at_with_progress` method from private to `pub(crate)` so mining preparation can use the original cancellation callback while reading parent state. Its body and persistence semantics are unchanged. |
+
+The active canonical table digest, including this source revision, is:
+
+```text
+414662f49bd42d1026abb774a5d5862e8976a5faf1013142fab722acfe520f08
+```
+
+All seven routes, 44 paths, effect scopes, profile boundaries and false
+qualification fields remain unchanged. The positive revision assertion names
+this checkpoint; the existing stale-context control additionally refuses the
+preceding `8937389` and local pre-publication `9029f2a` labels. The History helper and mining source changes are
+reviewed in the implementation continuation and its source corpus/inventory;
+they are not silently added to this curated 44-path set. This map remains an
+incomplete dependency scope. It neither proves the original missed
+confirmation is repaired nor turns a source-consistency result into native,
+business, WAN or whole-chain acceptance. The updated map and reader are a
+follow-up to the named source checkpoint, not bytes claimed to pre-exist in it.
+
+## Retained cache close-policy mapping, 2026-11-09
+
+That source map used the exact 44 regular-file blobs from checkpoint
 `893738947a50dc42819b56e632192de4f9f24fa0`, tree
 `78945356aa750db9a85e96ffa5ee64249d38a1c2`. The checkpoint contains the two-file
 cache close-policy repair and the sole plan update. This binding follow-up
@@ -97,7 +350,9 @@ extracts `prevent_close_checkpoint` from the existing configuration sequence;
 the curated 44-path set. Its use does not make that set a complete dependency
 closure or change the discovery route's cache-only effect scope.
 
-The active canonical table digest, including the new checkpoint revision, is:
+That canonical table digest, including its checkpoint revision, was:
+
+The canonical table digest for that checkpoint was:
 
 ```text
 a3c5483479d5217c13946e173e4103316069eb42b43c335c6f7b44e783b73f1c

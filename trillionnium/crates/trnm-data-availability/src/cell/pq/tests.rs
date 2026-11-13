@@ -1,6 +1,31 @@
 use super::*;
 use zeroize::Zeroizing;
 
+#[test]
+fn retained_release_key_matches_fresh_verification_for_successive_valid_authorizations() {
+    let (key, pin, release, original) = fixture();
+    let pins = CellPqKeyPinsV2::new(vec![pin.clone()]).unwrap();
+    let roster_digest = pins.digest();
+    for sequence in [4, 5] {
+        let mut statement = original.statement().clone();
+        statement.sequence = sequence;
+        let signed = CellPqReleaseAuthorizationV2::sign(statement, &key).unwrap();
+        let mut current = expectation(&pin);
+        current.sequence = sequence;
+        current.now += sequence;
+        let fresh = signed.verify_at(&release, &current).unwrap();
+        let retained = signed
+            .verify_at_with_pins(&release, &current, &pins)
+            .unwrap();
+        assert_eq!(
+            fresh.release_at(&current).unwrap(),
+            retained.release_at(&current).unwrap()
+        );
+        assert_eq!(fresh.expires_at(), retained.expires_at());
+    }
+    assert_eq!(pins.digest(), roster_digest);
+}
+
 fn fixture() -> (
     PqNativeSigningKey,
     CellPqKeyPinV2,
@@ -210,4 +235,74 @@ fn selecting_old_content_requires_a_new_owner_approved_sequence() {
     let checked = renewed.verify_at(&release, &current).unwrap();
     assert_eq!(checked.release_at(&current).unwrap().id(), release.id());
     assert!(checked.release_at(&expectation(&pin)).is_err());
+}
+
+#[test]
+fn retained_verifier_matches_the_complete_pin_and_clones_share_only_public_expansion() {
+    let (_, pin, _, _) = fixture();
+    let keys = CellPqKeyPinsV2::new(vec![pin.clone()]).unwrap();
+    let cloned = keys.clone();
+    assert!(std::ptr::eq(
+        keys.verifier_for(&pin).unwrap(),
+        cloned.verifier_for(&pin).unwrap()
+    ));
+    for field in 0..7 {
+        let mut changed = pin.clone();
+        match field {
+            0 => changed.key_id[0] ^= 1,
+            1 => changed.spki[30] ^= 1,
+            2 => changed.generation += 1,
+            3 => changed.not_before += 1,
+            4 => changed.expires_at -= 1,
+            5 => changed.revoked_at = Some(900),
+            6 => changed.revoked_at = Some(0),
+            _ => unreachable!(),
+        }
+        assert!(keys.verifier_for(&changed).is_err(), "field {field}");
+    }
+}
+
+#[test]
+fn retained_release_verifier_rechecks_signature_authority_and_still_live_pin_changes() {
+    let (_, pin, release, auth) = fixture();
+    let keys = CellPqKeyPinsV2::new(vec![pin.clone()]).unwrap();
+    let expected = expectation(&pin);
+    let proof = auth
+        .verify_at_with_pins(&release, &expected, &keys)
+        .unwrap();
+    assert_eq!(proof.release_at(&expected).unwrap(), &release);
+    let mut bad_signature = auth.clone();
+    bad_signature.signature[0] ^= 1;
+    assert!(bad_signature
+        .verify_at_with_pins(&release, &expected, &keys)
+        .is_err());
+    let mut changed_message = auth.clone();
+    changed_message.statement.sequence += 1;
+    let mut next = expectation(&pin);
+    next.sequence += 1;
+    assert!(changed_message
+        .verify_at_with_pins(&release, &next, &keys)
+        .is_err());
+    for field in 0..3 {
+        let mut changed = pin.clone();
+        match field {
+            0 => changed.not_before += 1,
+            1 => changed.expires_at -= 1,
+            2 => changed.revoked_at = Some(900),
+            _ => unreachable!(),
+        }
+        // This current pin is valid on its own but cannot borrow a retained
+        // verifier from a roster carrying different authority metadata.
+        assert!(auth.verify_at(&release, &expectation(&changed)).is_ok());
+        assert!(auth
+            .verify_at_with_pins(&release, &expectation(&changed), &keys)
+            .is_err());
+    }
+    next = expectation(&pin);
+    next.sequence += 1;
+    assert!(proof.release_at(&next).is_err());
+    next = expectation(&pin);
+    next.now = 900;
+    assert!(proof.release_at(&next).is_err());
+    assert!(auth.verify_at_with_pins(&release, &expected, &keys).is_ok());
 }

@@ -1,0 +1,270 @@
+{
+  "base": "30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6",
+  "branch": "fix/chain-cell-storage-four-gates-20261111-2bfb",
+  "branch_ref": "refs/heads/fix/chain-cell-storage-four-gates-20261111-2bfb",
+  "clean": true,
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-convergence-f2568-20261109",
+      "elapsed_seconds": 0.003714309073984623,
+      "exit_code": 0,
+      "name": "original-before-head",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "symbolic-ref",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-convergence-f2568-20261109",
+      "elapsed_seconds": 0.0028465399518609047,
+      "exit_code": 0,
+      "name": "original-before-branch",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-convergence-f2568-20261109",
+      "elapsed_seconds": 0.09564393805339932,
+      "exit_code": 0,
+      "name": "original-before-status",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--git-path",
+        "config"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-convergence-f2568-20261109",
+      "elapsed_seconds": 0.003728582989424467,
+      "exit_code": 0,
+      "name": "original-before-config-path",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-convergence-f2568-20261109",
+      "elapsed_seconds": 0.11692534084431827,
+      "exit_code": 0,
+      "name": "original-preflight",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "repo",
+        "clone",
+        "TrillionniumFoundation/Trillionnium-Chain",
+        "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+        "--",
+        "--filter=blob:none",
+        "--no-checkout",
+        "--single-branch",
+        "--no-tags",
+        "--branch",
+        "fix/chain-cell-paged-release-34e09-20261110"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-convergence-f2568-20261109",
+      "elapsed_seconds": 10.260387239046395,
+      "exit_code": 0,
+      "name": "isolated-clone",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "cat-file",
+        "-e",
+        "30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6^{commit}"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+      "elapsed_seconds": 0.004108109977096319,
+      "exit_code": 0,
+      "name": "base-object",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "sparse-checkout",
+        "set",
+        "--no-cone",
+        "/*",
+        "!/evidence/"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+      "elapsed_seconds": 0.004200601018965244,
+      "exit_code": 0,
+      "name": "sparse-non-evidence",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--no-track",
+        "-b",
+        "fix/chain-cell-storage-four-gates-20261111-2bfb",
+        "30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+      "elapsed_seconds": 12.834247302031144,
+      "exit_code": 0,
+      "name": "checkout-exact-base",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--audit"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+      "elapsed_seconds": 0.0921501771081239,
+      "exit_code": 0,
+      "name": "isolated-preflight",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+      "elapsed_seconds": 0.0031891788821667433,
+      "exit_code": 0,
+      "name": "isolated-head",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "symbolic-ref",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+      "elapsed_seconds": 0.002966509899124503,
+      "exit_code": 0,
+      "name": "isolated-branch",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+      "elapsed_seconds": 0.44442547718062997,
+      "exit_code": 0,
+      "name": "isolated-status",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "sparse-checkout",
+        "list"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+      "elapsed_seconds": 0.003148048184812069,
+      "exit_code": 0,
+      "name": "isolated-sparse-patterns",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-convergence-f2568-20261109",
+      "elapsed_seconds": 0.0032812219578772783,
+      "exit_code": 0,
+      "name": "original-after-head",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "symbolic-ref",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-convergence-f2568-20261109",
+      "elapsed_seconds": 0.0031928601674735546,
+      "exit_code": 0,
+      "name": "original-after-branch",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-convergence-f2568-20261109",
+      "elapsed_seconds": 0.07664011302404106,
+      "exit_code": 0,
+      "name": "original-after-status",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "--git-path",
+        "config"
+      ],
+      "cwd": "/home/qian-qi/work/chain-cell-storage-convergence-f2568-20261109",
+      "elapsed_seconds": 0.0031953121069818735,
+      "exit_code": 0,
+      "name": "original-after-config-path",
+      "timed_out": false
+    }
+  ],
+  "completed": true,
+  "destination": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish",
+  "head": "30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6",
+  "original": "/home/qian-qi/work/chain-cell-storage-convergence-f2568-20261109",
+  "original_after": {
+    "branch": "refs/heads/fix/chain-cell-storage-convergence-f2568-20261109",
+    "clean": true,
+    "config_sha256": "9937b538772d7b9469be989e6e2fa09fa6d96d298cae745961f87d1797448f75",
+    "head": "0746a462e80067b78317597f2fa4bacf5e3db958",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "original_before": {
+    "branch": "refs/heads/fix/chain-cell-storage-convergence-f2568-20261109",
+    "clean": true,
+    "config_sha256": "9937b538772d7b9469be989e6e2fa09fa6d96d298cae745961f87d1797448f75",
+    "head": "0746a462e80067b78317597f2fa4bacf5e3db958",
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "original_unchanged": true,
+  "passed": true,
+  "scope": "isolated desktop publication preparation only; no push or PR",
+  "sparse_patterns": [
+    "/*",
+    "!/evidence/"
+  ]
+}\n

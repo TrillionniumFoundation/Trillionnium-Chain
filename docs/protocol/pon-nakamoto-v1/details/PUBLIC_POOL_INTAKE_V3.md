@@ -1,5 +1,34 @@
 # Public development intake V3 and the native local pool
 
+## Current consolidated resource and clock boundaries
+
+The current signed resource revision is `r19-native-completion-refusal-v1`.
+Its exact current and historical vectors are retained in
+[`public-resource-profile-vectors-v1.json`](../../../../config/pon/public-resource-profile-vectors-v1.json).
+The r12 and r13 discussions below describe their historical scheduling rules.
+The current completion priority requires the original native owner's full
+parent/task/M06/State/output relation, with the same 4,096-entry scheduling
+identity set and original CPU account. W1 verification alone does not grant
+completion priority. The refusal path reserves output from the original pool
+before encoding, within the existing 64 KiB partition of the 512 KiB control
+reserve. No CPU, worker, output, queue or deadline bound increases.
+
+Public Growth submissions check the retained parent's complete branch clock
+before W1 and before a duplicate return, then again under the reacquired
+original owner before checked admission. Both checks use the existing request
+CPU callback and absolute deadline. The current snapshot-bound Growth history
+walk remains authoritative. CLI admission and activation each observe current
+time afresh unless the caller explicitly supplies a fixed `--logical-now`.
+A current-time deferral changes eligibility and preserves already retained
+work. It does not revise historical target, chain work or block validity.
+
+These eligibility checks repair the existing clock boundaries and do not
+change the signed envelope schema or the current resource-profile bytes.
+Historical execution receipts retain their original source identities.
+Production activation and same-version service qualification remain false /
+HOLD_NO_GO.
+
+
 The current source selects signed resource revision **r13**, described in
 [Bounded completion replay and controlled existing recovery](#bounded-completion-replay-and-controlled-existing-recovery).
 The r10 contracts, vectors and earlier observations below remain historical;
@@ -1233,7 +1262,7 @@ unqualified. The required `trnmponpublic.slice` is still not deployed.
 
 ## Bounded completion replay and controlled existing recovery
 
-The current signed resource revision is **r13**. It retains r12's original
+The retained historical signed resource revision in this section is **r13**. It retains r12's original
 2,000,000,000 ns burst, 250,000,000 ns/s refill, 100,000,000 ns start reservation,
 two mutation owners, existing queues and absolute request deadlines. It adds no
 CPU allocation, worker, author preference or consensus validity rule.

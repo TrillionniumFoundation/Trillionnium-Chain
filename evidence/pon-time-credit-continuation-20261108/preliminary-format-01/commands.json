@@ -1,0 +1,42 @@
+[
+  {
+    "name": "preflight",
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "fmt",
+    "command": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "diff-stat",
+    "command": [
+      "git",
+      "diff",
+      "--stat"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "targets",
+    "command": [
+      "rg",
+      "--files",
+      "trillionnium/crates/trnm-pon-node/tests"
+    ],
+    "exit_code": 0
+  }
+]

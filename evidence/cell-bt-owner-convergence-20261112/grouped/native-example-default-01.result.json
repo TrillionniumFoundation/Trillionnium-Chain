@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "/workspace/scratch/4a0b199bc6c0/toolchain/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-pon-node",
+    "--example",
+    "cell_native_shard_research_next_use_v2",
+    "--",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "cwd": "/workspace/scratch/4a0b199bc6c0/chain-work",
+  "started_at": "2026-11-12T06:37:41.206201+00:00",
+  "ended_at": "2026-11-12T06:37:41.918074+00:00",
+  "elapsed_seconds": 0.7118810219999432,
+  "exit_code": 101,
+  "scope": "uncommitted integrated source; synthetic tests only; no real model operation",
+  "log": "native-example-default-01.log"
+}

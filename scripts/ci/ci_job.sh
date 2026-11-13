@@ -25,13 +25,34 @@ case "${1:?required job}" in
     python3 scripts/ci/test_pq_root_migration_review_v1.py
     python3 scripts/ci/pq_root_migration_review_v1.py
     python3 scripts/ci/test_run_pq_root_continuation_v4.py
+    python3 scripts/ci/test_run_pq_root_witness_v5.py
+    python3 scripts/ci/test_ci_observation_process.py
     python3 scripts/ci/test_authenticated_suite_count.py
     python3 scripts/ci/test_pq_chain_claim_guard.py
     # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.
     python3 scripts/ci/test_w1_qrom_current_implementation_audit.py
     python3 scripts/w1_qrom_current_implementation_audit.py
+    python3 scripts/ci/test_w1_upstream_security.py
+    python3 scripts/ci/w1_upstream_security.py
+    python3 scripts/ci/test_pq_proof_profile_binding.py
+    python3 scripts/ci/pq_proof_profile_binding.py
+    python3 scripts/ci/test_w1_qrom_current_ci.py
+    # Exact field/source correspondence does not discharge STARK/QROM obligations.
+    python3 scripts/ci/test_w1_stark_field_certificates.py
+    python3 scripts/w1_stark_field_certificates.py
+    python3 scripts/ci/test_w1_stark_route_audit.py
+    python3 scripts/w1_stark_route_audit.py
+    # Conditional iid counting does not establish the actual transcript distribution.
+    python3 scripts/ci/test_w1_fri_ideal_sampler.py
+    python3 scripts/w1_fri_query_replay.py --ideal-sampler-law
+    # Current lifetime source observation is separate from historical positive replay.
+    python3 scripts/ci/test_w1_lifetime_current_observation.py
+    python3 scripts/w1_lifetime_current_observation.py
+    python3 scripts/ci/test_w1_qrom_closure_current_controls.py
     python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
     python3 scripts/ci/pq_authority_surface_scan.py --summary-only
+    python3 scripts/ci/test_hash_use_contract.py
+    python3 scripts/ci/hash_use_contract.py
     python3 -m unittest discover -s scripts/ci -p 'test_pq_external_rollback_oracle.py' -v
     python3 -m unittest discover -s scripts/ci -p 'test_pq_quantum_daa_scenarios.py' -v
     # Public-input framing only: no seed proof or signature qualification.
@@ -54,11 +75,18 @@ case "${1:?required job}" in
     python3 formal/pon-nakamoto-v1/lifecycle_query_tests.py -v
     python3 formal/pon-nakamoto-v1/finite_joint_state_tests.py -v
     python3 formal/pon-nakamoto-v1/test_joint_consensus_boundaries.py -v
+    python3 formal/pon-nakamoto-v1/joint_consensus_qualification.py --check
+    python3 formal/pon-nakamoto-v1/test_joint_consensus_qualification.py
+    python3 formal/pon-nakamoto-v1/test_dynamic_participation_v1.py
+    python3 formal/pon-nakamoto-v1/test_joint_production_tail_v1.py
     python3 formal/pon-nakamoto-v1/certificate_event_coverage_tests.py -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_oracle_resources.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_network_sim.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_probability_sampling.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_joint_resource_competition_campaign.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_candidate_check_clock.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_adversarial_search.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_posterior_policy.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_resource_clock.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_oracle.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_marked_domain.py' -v
@@ -80,6 +108,9 @@ case "${1:?required job}" in
     python3 scripts/ci/test_capture_chain_hepta_identity.py
     python3 scripts/ci/test_chain_hepta_qualification.py
     python3 scripts/ci/test_chain_hepta_command_binding.py
+    python3 scripts/test_cell_learning_business_economics.py
+    python3 scripts/test_cell_learning_business_join.py
+    python3 scripts/test_cell_learning_training_no_update_join.py
     python3 scripts/ci/test_pon_daa_head_binding.py
     python3 -B scripts/ci/test_llm_hosted_once.py
     "${TRNM_RUNTIME_RELEASE_PYTHON:-python3}" scripts/test_llm_runtime_release.py
@@ -138,6 +169,7 @@ PY
     python3 scripts/ci/test_pon_w1_preparation_strategy_reader_v4.py
     python3 scripts/ci/test_pon_w1_rank_batch_reader_v5.py
     python3 scripts/ci/test_run_w1_rank_batch_v5.py
+    python3 scripts/ci/test_pon_w1_zero_paired_lazy_v1.py
     python3 scripts/ci/test_run_legacy_reorg_root_abba.py
     # These in-memory counterexamples use unchanged retained inputs, not a new hardware observation.
     python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54
@@ -146,6 +178,7 @@ PY
     python3 scripts/ci/test_pon_v3_cookie_cpu_study.py
     python3 scripts/ci/test_run_pon_w1_native_campaign.py
     python3 scripts/ci/test_read_validated_business_goodput.py
+    python3 scripts/ci/test_read_failed_native_campaign_zip.py
     python3 scripts/ci/test_pon_w1_cost_matrix_reader.py
     python3 scripts/ci/test_pon_w1_reused_cost_reader_v3.py
     python3 scripts/ci/test_run_w1_reused_cost_v3.py
@@ -160,6 +193,23 @@ PY
     python3 scripts/ci/test_run_account_execution_conformance.py
     python3 scripts/ci/report_current_implementation.py --check
     python3 scripts/ci/test_work_cost_report.py
+    # Retained source and arithmetic controls remain mandatory research-only gates.
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_evidence_scope.py' -v
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_w1_quantum_native_bridge.py' -v
+    python3 scripts/ci/test_w1_risc0_deep_event_audit.py
+    python3 scripts/w1_risc0_deep_event_audit.py --repo-root .
+    python3 scripts/ci/test_w1_p3_sampling_audit.py
+    python3 scripts/w1_p3_sampling_audit.py
+    python3 scripts/ci/test_pq_lifetime_composition.py
+    python3 scripts/ci/pq_lifetime_composition.py
+    python3 scripts/ci/test_pq_content_chain_review.py
+    python3 scripts/ci/pq_content_chain_review.py
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fixed_success_query_frontier.py' -v
+    python3 formal/pon-nakamoto-v1/fixed_success_query_frontier.py --check
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_cost_tail_transfer.py' -v
+    python3 formal/pon-nakamoto-v1/cost_tail_transfer.py --check
+    python3 formal/pon-nakamoto-v1/test_quantum_bernoulli_source_audit.py -v
+    python3 scripts/ci/test_retained_research_ci.py
     python3 scripts/test_qualification_runtime.py
     ;;
   protocol-contract)
@@ -176,6 +226,7 @@ PY
     python3 formal/pon-nakamoto-v1/test_pq_root_recovery_journal_native_v2.py -v
     python3 scripts/ci/run_pq_root_native_v3.py
     python3 scripts/ci/run_pq_root_continuation_v4.py
+    python3 scripts/ci/run_pq_root_witness_v5.py
     python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native"
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_lifecycle_cost_v4
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives -p trnm-checkpoint-types -p trnm-verification-profiles --all-targets --all-features
@@ -238,6 +289,8 @@ PY
     python3 formal/pon-nakamoto-v1/test_model_evolution_oracle.py -v
     python3 formal/pon-nakamoto-v1/test_model_task_windows_oracle.py -v
     python3 formal/pon-nakamoto-v1/test_work_utility.py
+    python3 formal/pon-nakamoto-v1/test_four_propositions_v1.py -v
+    python3 formal/pon-nakamoto-v1/test_four_propositions_w1_v2.py -v
     python3 formal/pon-nakamoto-v1/test_shared_cell_operator_v1.py
     python3 scripts/ci/test_shared_material_cost_v2.py
     python3 scripts/ci/test_shared_material_security_v1.py
@@ -290,6 +343,7 @@ PY
   fuzz-smoke)
     python3 scripts/ci/test_repository.py
     python3 formal/pon-nakamoto-v1/test_reference.py
+    python3 formal/pon-nakamoto-v1/test_native_consensus_reference_v1.py
     python3 formal/pon-nakamoto-v1/test_honest_rate_model.py -v
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives fixed_hash_text -- --nocapture
     python3 scripts/ci/run_fuzz_smoke.py
@@ -337,6 +391,9 @@ PY
       export TRNM_JOINT_DAA_EVIDENCE_DIR="$trnm_model_receipt_root/joint-daa"
       test ! -e "$TRNM_JOINT_DAA_EVIDENCE_DIR"
       test ! -L "$TRNM_JOINT_DAA_EVIDENCE_DIR"
+      export TRNM_MONOTONE_DAA_EVIDENCE_DIR="$trnm_model_receipt_root/monotone-daa"
+      test ! -e "$TRNM_MONOTONE_DAA_EVIDENCE_DIR"
+      test ! -L "$TRNM_MONOTONE_DAA_EVIDENCE_DIR"
       export TRNM_WORK_SCHEDULE_RESEARCH_DIR="$trnm_model_receipt_root/branch-work-schedule"
       test ! -e "$TRNM_WORK_SCHEDULE_RESEARCH_DIR"
       test ! -L "$TRNM_WORK_SCHEDULE_RESEARCH_DIR"
@@ -359,6 +416,11 @@ PY
       python3 scripts/pon_joint_daa_reader.py --raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR/pgh2-growth" --expected-report-sha256 "$(sha256sum "$TRNM_JOINT_DAA_EVIDENCE_DIR/pgh2-growth/joint-daa.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/joint-daa-pgh2-python.json"
       python3 scripts/ci/test_pon_joint_daa_reader.py --raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR/pgh2-growth"
       unset TRNM_JOINT_DAA_EVIDENCE_DIR
+      python3 scripts/pon_monotone_daa_reader.py --raw-dir "$TRNM_MONOTONE_DAA_EVIDENCE_DIR/pnh1-authenticated" --expected-report-sha256 "$(sha256sum "$TRNM_MONOTONE_DAA_EVIDENCE_DIR/pnh1-authenticated/monotone-daa.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/monotone-daa-pnh1-python.json"
+      python3 scripts/ci/test_pon_monotone_daa_reader.py --raw-dir "$TRNM_MONOTONE_DAA_EVIDENCE_DIR/pnh1-authenticated"
+      python3 scripts/pon_monotone_daa_reader.py --raw-dir "$TRNM_MONOTONE_DAA_EVIDENCE_DIR/pgh2-growth" --expected-report-sha256 "$(sha256sum "$TRNM_MONOTONE_DAA_EVIDENCE_DIR/pgh2-growth/monotone-daa.json" | cut -d ' ' -f 1)" > "$trnm_model_receipt_root/monotone-daa-pgh2-python.json"
+      python3 scripts/ci/test_pon_monotone_daa_reader.py --raw-dir "$TRNM_MONOTONE_DAA_EVIDENCE_DIR/pgh2-growth"
+      unset TRNM_MONOTONE_DAA_EVIDENCE_DIR
       python3 formal/pon-nakamoto-v1/test_zero_work.py --verify-prefix-export "$trnm_model_receipt_root/zero-paired-prefix" --output "$trnm_model_receipt_root/zero-paired-prefix-python"
       python3 formal/pon-nakamoto-v1/test_model_composition_oracle.py -v
       python3 formal/pon-nakamoto-v1/test_model_composition.py -v

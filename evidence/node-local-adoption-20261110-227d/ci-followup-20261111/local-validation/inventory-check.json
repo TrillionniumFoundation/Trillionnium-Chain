@@ -1,0 +1,24 @@
+{
+  "name": "inventory-check",
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/refresh_distributed_source_inventory.py",
+    "--check"
+  ],
+  "started_utc": "2026-11-11T04:11:39.958872+00:00",
+  "elapsed_seconds": 0.10680963699996937,
+  "exit_code": 0,
+  "source_before": {
+    "head": "eb32162449eab623f69bbd7016b694600cb382c5",
+    "tree": "c15f37e3f64456c9817019e8aec5d723a29549f0",
+    "status": ""
+  },
+  "source_after": {
+    "head": "eb32162449eab623f69bbd7016b694600cb382c5",
+    "tree": "c15f37e3f64456c9817019e8aec5d723a29549f0",
+    "status": ""
+  },
+  "log_bytes": 35,
+  "log_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+}

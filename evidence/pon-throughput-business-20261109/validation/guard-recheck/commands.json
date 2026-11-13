@@ -1,0 +1,54 @@
+[
+  {
+    "name": "pq-source-pins",
+    "argv": [
+      "python3",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "exit_code": 1,
+    "elapsed_ns": 104220038112,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "33aa5b9daa6b884820d66d65b7ae7426dbfaa1b0de0da81360fc80ad8553eaa7"
+  },
+  {
+    "name": "ci-contract",
+    "argv": [
+      "python3",
+      "scripts/ci/check_ci_contract.py"
+    ],
+    "exit_code": 0,
+    "elapsed_ns": 1515220439,
+    "stdout_sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "report-reproduction",
+    "argv": [
+      "python3",
+      "formal/throughput-v1/reproduce_reports.py",
+      "--output",
+      "/workspace/scratch/a0d4983b1065/validation/guard-recheck-20261109/reproduction"
+    ],
+    "exit_code": 0,
+    "elapsed_ns": 10284848229,
+    "stdout_sha256": "6a0f9ad1f855c82e2c22f88e15945715eb5fc03de363bc9e1fb1ab6c7695e7bf",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "useful-task-projection",
+    "argv": [
+      "python3",
+      "formal/throughput-v1/useful_task_metrics.py",
+      "--manifest",
+      "evidence/pon-throughput-20261108/cell-model/input-manifest.json",
+      "--manifest-sha256",
+      "9e3c64afcd03bb17ac8746d1146a98c78d214000ccaf71ed2aed0ea96a6a3d25",
+      "--output",
+      "/workspace/scratch/a0d4983b1065/validation/guard-recheck-20261109/useful-task-report.json"
+    ],
+    "exit_code": 1,
+    "elapsed_ns": 1175183393,
+    "stdout_sha256": "4035ae0e7dfba7112ccc868f3fa7c3ce028f730126c473d50e9cb7af587eed08",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

@@ -1,0 +1,19 @@
+{
+  "available_slots": [
+    0,
+    2,
+    4,
+    5
+  ],
+  "catalog_anchor": "435641330000000000000002475c50a2b8fc5698b619a00d262ad1777fb2c822f1c6ec726d80231be061657f",
+  "content": "1ae64d141b4fcb979c18c846d0795237400eff1ad76abfd8d972c8a35196efee16448d1652e920ddb1fc3d58c32c4a52fb089195d7f51f1f72647f37814c43bb",
+  "operation": "9c234088530666a943673af5c70a873e7bb706e13beddb6480469265789ef2fe",
+  "plan": "b720c67431e89af510d0e1215160f66df3b36192f546392a08c6f0ce11a3e067",
+  "profile": "676b97beb87759572fbc68cb7e490a552a7dea7df2e82ef2e9b25c6c123dd8d4",
+  "provider_capacity_bytes": 70414336,
+  "provider_obligations": 95,
+  "provider_wire_bytes": 70075104,
+  "schema": "trnm.cell-sealed-paged-custody-owner.v1",
+  "six_declared_local_slots_are_independent_operators": false,
+  "version": "76e318b243995ff788bdfc4ef317395a525eeb1c3d751b549c0791a4da4e51deb4366338fcd0330b816252c9bcf5195b4de3247408afdad3386d94bf34e879dd"
+}

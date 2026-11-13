@@ -15,6 +15,9 @@ type Observer = Box<dyn Fn(&str)>;
 #[path = "history_import_deadline_tests.rs"]
 mod deadline_controls;
 
+#[path = "history_import_detached_budget_tests.rs"]
+mod detached_budget_controls;
+
 thread_local! {
     static OBSERVER: RefCell<Option<Observer>> = RefCell::new(None);
 }
@@ -757,6 +760,24 @@ fn observed_history_retains_complete_native_path_and_real_w1_cancellation() {
         assert_eq!(snapshot.packet_capacity, 16);
         assert_eq!(snapshot.packets.len(), 1);
         assert_eq!(snapshot.packets[0].packet_id, Some(id));
+        let attribution = snapshot.native_attribution.as_ref().unwrap();
+        let page = attribution.page.as_ref().unwrap();
+        assert_eq!(page.owner_mode, Some("exclusive"));
+        assert_eq!(page.epoch_substeps.len(), 2);
+        assert!(page.epoch_substeps.iter().all(|step| {
+            step.span.completed && step.span.accepted == Some(true) && step.span.wall_ns.is_some()
+        }));
+        assert_eq!(page.cpu_waits.len(), 1);
+        assert_eq!(attribution.packets.len(), 1);
+        assert_eq!(attribution.packets[0].packet_index, 0);
+        assert_eq!(attribution.packets[0].packet_id, Some(id));
+        let wait = attribution.packets[0].attribution.cpu_waits[0];
+        // W1 can subsequently reject/cancel despite a real successful reserve.
+        assert_eq!(wait.span.accepted, Some(true));
+        assert_eq!(wait.reserve_granted, 1);
+        assert_eq!(wait.reserve_attempts, wait.reserve_returns);
+        let encoded = serde_json::to_value(&snapshot).unwrap();
+        assert_eq!(encoded["packets"][0].as_object().unwrap().len(), 3);
         let imported = snapshot.phases[SubmitPhase::HistoryImport as usize];
         assert!(imported.started && imported.completed);
         assert_eq!(imported.accepted, Some(!cancel));
@@ -811,6 +832,7 @@ fn observed_expired_history_keeps_failure_and_unentered_phases_null() {
     let snapshot = observation.snapshot();
     assert_eq!(snapshot.measurement_failures, 0);
     assert!(snapshot.packets.is_empty());
+    assert!(snapshot.native_attribution.is_none());
     for phase in &snapshot.phases {
         let entered = matches!(
             phase.phase,
@@ -1056,9 +1078,14 @@ fn shared_admission_owner_wait_observes_control_deadline_and_original_two_second
                 checked,
                 None,
                 &mut |_| Ok(()),
-                &trnm_mvcc_fee::pon_executor::ExecutionControl::new(&check, &()),
+                crate::ingress::SharedAdmissionExecution {
+                    held: &trnm_mvcc_fee::pon_executor::ExecutionControl::new(&check, &()),
+                    detached_progress: &check,
+                    before_writer: &|| Ok(()),
+                    activation_parent: None,
+                },
                 || Ok(clock),
-                None,
+                crate::ingress::AdmissionDispatchContext::default(),
             )
             .err()
             .unwrap()
@@ -1593,7 +1620,7 @@ fn shared_history_paid_deficit_refuses_without_waiting_under_original_writer() {
         let checked = WorkCheckedPacket::verify_with_progress(packet.clone(), &mut |_| {
             operation.history_checkpoint(false, &|| control.check())
         })?;
-        operation.history_work_verified(&checked)?;
+        operation.test_legacy_history_w1_only_priority(&checked)?;
         let held = writer.lock().unwrap();
         let mut boundaries = 0;
         // Real W1 CPU depletes the original cold account; no synthetic meter

@@ -1,0 +1,107 @@
+{
+  "count_depth_counterexample": {
+    "new_validation": "T_DEPTH_EXCEEDS_T_COUNT",
+    "old_validation": "ACCEPTED",
+    "t_depth_per_toffoli": 3,
+    "t_per_toffoli": 2,
+    "toffoli_decomposition_depth": 10
+  },
+  "independent_arithmetic": "100 + 100 + max(1, 3) + 7 + 100 = 310",
+  "input": {
+    "circuits": {
+      "diffusion": {
+        "direct_t_count": 0,
+        "direct_t_depth": 0,
+        "gate_count": 100,
+        "gate_depth": 100,
+        "logical_qubits": 100,
+        "provenance": "serial-data-stage",
+        "toffoli_count": 0,
+        "toffoli_depth": 0
+      },
+      "phase_marker": {
+        "direct_t_count": 0,
+        "direct_t_depth": 0,
+        "gate_count": 1,
+        "gate_depth": 1,
+        "logical_qubits": 100,
+        "provenance": "single-toffoli-stage",
+        "toffoli_count": 1,
+        "toffoli_depth": 1
+      },
+      "prepare": {
+        "direct_t_count": 0,
+        "direct_t_depth": 0,
+        "gate_count": 0,
+        "gate_depth": 0,
+        "logical_qubits": 100,
+        "provenance": "identity-preparation",
+        "toffoli_count": 0,
+        "toffoli_depth": 0
+      },
+      "winner_compute": {
+        "direct_t_count": 0,
+        "direct_t_depth": 0,
+        "gate_count": 100,
+        "gate_depth": 100,
+        "logical_qubits": 100,
+        "provenance": "serial-data-stage",
+        "toffoli_count": 0,
+        "toffoli_depth": 0
+      }
+    },
+    "classical": {
+      "per_completed_trial_candidate_check_ns": 20000,
+      "per_search_setup_ns": 10000,
+      "per_trial_reset_readout_ns": 1000,
+      "per_winner_proof_ns": 1000000000,
+      "per_winner_propagation_ns": 100000000,
+      "task_preprocessing_ns": 1000000
+    },
+    "classical_preprocessing": [
+      "fixed public matrices and their canonical task identity",
+      "public AB if useful after winner"
+    ],
+    "data_access_assumption": "all coherent loading and memory must be included in supplied stages",
+    "physical_models": [
+      {
+        "cycle_ns": "1000",
+        "data_physical_qubits_per_d2": 2,
+        "factories_per_instance": 2,
+        "factory_physical_qubits_per_d2": 100,
+        "factory_t_cycles_per_distance": 1,
+        "logical_error_prefactor": "0.1",
+        "logical_gate_cycles_per_distance": 1,
+        "magic_state_error": "0",
+        "maximum_distance": 101,
+        "name": "illustrative-p-0.0001",
+        "physical_error": "0.0001",
+        "t_depth_per_toffoli": 3,
+        "t_per_toffoli": 7,
+        "threshold": "0.01",
+        "toffoli_decomposition_depth": 1,
+        "total_failure_budget": "0.01"
+      }
+    ],
+    "schema": "trnm-quantum-oracle-resource-v1",
+    "scope": "HYPOTHETICAL_NON_W1_EXAMPLE",
+    "strategy": "fixed public task with per-challenge nonce search",
+    "workload": {
+      "completed_winners": 0,
+      "full_trials_per_search_instance": 1,
+      "independent_instances": 1,
+      "interrupted_iterations_per_search_instance": [],
+      "iterations_per_full_trial": 1,
+      "searches_per_task": 1,
+      "task_count": 1
+    }
+  },
+  "new_status": "T_DEPTH_EXCEEDS_DECOMPOSITION_DEPTH",
+  "old_cycles_per_distance": 308,
+  "old_status": "CONDITIONAL_ESTIMATE",
+  "scope": "Reject internally inconsistent caller models; no physical calibration, attacker lower bound or quantum security qualification.",
+  "source_commit": "6ac9a79c2fb37d6102c526c354fe2d448a9f4e6d",
+  "source_path": "formal/pon-nakamoto-v1/quantum_oracle_resources.py",
+  "source_sha256": "72879d40ff1583b514cb43ab10f1fd69edb60522f9c67997dfd200747977279f",
+  "stage_by_stage_serial_cycles_per_distance": 310
+}

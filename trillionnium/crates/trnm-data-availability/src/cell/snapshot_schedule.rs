@@ -191,7 +191,7 @@ fn read_policy(directory: &Path, deadline: Instant) -> CellResultV1<CellPeriodic
     #[cfg(unix)]
     {
         use std::os::unix::fs::OpenOptionsExt;
-        options.custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC);
+        options.custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC | libc::O_NONBLOCK);
     }
     let file = options.open(&path)?;
     let before = file.metadata()?;

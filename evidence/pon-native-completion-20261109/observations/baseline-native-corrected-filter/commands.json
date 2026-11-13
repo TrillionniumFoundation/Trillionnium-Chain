@@ -1,0 +1,82 @@
+[
+  {
+    "name": "preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "source_head": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+    "timeout_seconds": 30,
+    "exit_code": 0,
+    "elapsed_seconds": 0.16538338013924658,
+    "stdout": {
+      "bytes": 172,
+      "sha256": "4c58882a4134d8adc21e7bcf4a095a3d15d31c83a068667459aa26e612434295"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "original-native-invalid-priority",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "ingress::public_v3::scalar_cpu::completion_tests::same_valid_w1_native_invalid_packet_cannot_reacquire_completion_priority",
+      "--",
+      "--exact",
+      "--nocapture",
+      "--test-threads=1"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "source_head": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+    "timeout_seconds": 1500,
+    "exit_code": 0,
+    "elapsed_seconds": 1.2685292719397694,
+    "stdout": {
+      "bytes": 339,
+      "sha256": "d26a3d6cf50616d44309fbdf934d1a2f415aef3fa5161ee83f7e013d13dce682"
+    },
+    "stderr": {
+      "bytes": 188,
+      "sha256": "7e847532d33bf9ca64c9c6e0531c2d932ec2e849c22526f3060ed21627512a68"
+    }
+  },
+  {
+    "name": "source-after",
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+      "--output",
+      "/data/chain-abg-70ae-20261108/evidence/baseline-native-corrected-filter/source-after.json"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "source_head": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+    "timeout_seconds": 90,
+    "exit_code": 0,
+    "elapsed_seconds": 15.408629799960181,
+    "stdout": {
+      "bytes": 423,
+      "sha256": "2148a8a2079d54a84108d2d0e3f94a59fe22ca04d58673e9f5a86ebdd6864abe"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+]

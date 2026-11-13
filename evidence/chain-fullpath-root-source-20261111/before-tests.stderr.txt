@@ -1,0 +1,72 @@
+......................E.FF.F...F..........
+======================================================================
+ERROR: test_all_declared_actual_bytes_match_without_security_or_commit_attestation (__main__.ReviewedSourceTests.test_all_declared_actual_bytes_match_without_security_or_commit_attestation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/1cba2f8b51ac/dependency-work/scripts/ci/test_pq_root_dependency_register.py", line 432, in test_all_declared_actual_bytes_match_without_security_or_commit_attestation
+    report = register.inspect(self.root)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/1cba2f8b51ac/dependency-work/scripts/ci/pq_root_dependency_register.py", line 396, in inspect
+    require(digest == data["source_files_sha256"][path],
+  File "/workspace/scratch/1cba2f8b51ac/dependency-work/scripts/ci/pq_root_dependency_register.py", line 75, in require
+    raise RegisterError(message)
+pq_root_dependency_register.RegisterError: source hash mismatch: trillionnium/Cargo.lock
+
+======================================================================
+FAIL: test_cli_exit_zero_is_hold_and_bad_input_has_structured_refusal (__main__.ReviewedSourceTests.test_cli_exit_zero_is_hold_and_bad_input_has_structured_refusal)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/1cba2f8b51ac/dependency-work/scripts/ci/test_pq_root_dependency_register.py", line 517, in test_cli_exit_zero_is_hold_and_bad_input_has_structured_refusal
+    self.assertEqual(result.returncode, 0, result.stderr)
+AssertionError: 2 != 0 : {"reason": "source hash mismatch: trillionnium/Cargo.lock", "schema": "trnm-pq-root-dependency-register-result-v3", "status": "REFUSE"}
+
+
+======================================================================
+FAIL: test_missing_source_and_nonregular_source_refuse_without_hash_only_fallback (__main__.ReviewedSourceTests.test_missing_source_and_nonregular_source_refuse_without_hash_only_fallback)
+----------------------------------------------------------------------
+pq_root_dependency_register.RegisterError: source hash mismatch: trillionnium/Cargo.lock
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/1cba2f8b51ac/dependency-work/scripts/ci/test_pq_root_dependency_register.py", line 477, in test_missing_source_and_nonregular_source_refuse_without_hash_only_fallback
+    self.inspect_refuses("missing source")
+  File "/workspace/scratch/1cba2f8b51ac/dependency-work/scripts/ci/test_pq_root_dependency_register.py", line 423, in inspect_refuses
+    with self.assertRaisesRegex(register.RegisterError, pattern):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "missing source" does not match "source hash mismatch: trillionnium/Cargo.lock"
+
+======================================================================
+FAIL: test_oversize_source_is_refused_before_unbounded_read (__main__.ReviewedSourceTests.test_oversize_source_is_refused_before_unbounded_read)
+----------------------------------------------------------------------
+pq_root_dependency_register.RegisterError: source hash mismatch: trillionnium/Cargo.lock
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/1cba2f8b51ac/dependency-work/scripts/ci/test_pq_root_dependency_register.py", line 502, in test_oversize_source_is_refused_before_unbounded_read
+    self.inspect_refuses("oversize")
+  File "/workspace/scratch/1cba2f8b51ac/dependency-work/scripts/ci/test_pq_root_dependency_register.py", line 423, in inspect_refuses
+    with self.assertRaisesRegex(register.RegisterError, pattern):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "oversize" does not match "source hash mismatch: trillionnium/Cargo.lock"
+
+======================================================================
+FAIL: test_symlinked_source_refuses_even_when_bytes_match (__main__.ReviewedSourceTests.test_symlinked_source_refuses_even_when_bytes_match)
+----------------------------------------------------------------------
+pq_root_dependency_register.RegisterError: source hash mismatch: trillionnium/Cargo.lock
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/1cba2f8b51ac/dependency-work/scripts/ci/test_pq_root_dependency_register.py", line 486, in test_symlinked_source_refuses_even_when_bytes_match
+    self.inspect_refuses("symlink")
+  File "/workspace/scratch/1cba2f8b51ac/dependency-work/scripts/ci/test_pq_root_dependency_register.py", line 423, in inspect_refuses
+    with self.assertRaisesRegex(register.RegisterError, pattern):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "symlink" does not match "source hash mismatch: trillionnium/Cargo.lock"
+
+----------------------------------------------------------------------
+Ran 42 tests in 1.832s
+
+FAILED (failures=4, errors=1)

@@ -1,0 +1,36 @@
+{
+  "schema": "trnm.private-build-cache-release.v1",
+  "started_utc": "2026-11-11T01:46:16.543118+00:00",
+  "private_target": "/workspace/scratch/227dcdfdc6e4/chain-adoption-target",
+  "reason": "Release only this task-owned regenerable Cargo outputs after its original-profile validation completed, before Hepta exclusive build. Source, evidence, shared Cargo registry and Hepta target are retained.",
+  "before_disk": "Filesystem      Size  Used Avail Use% Mounted on\noverlay          63G   58G  2.3G  97% /workspace\n",
+  "tested_binaries": [
+    {
+      "path": "debug/trnm-cell-adoption",
+      "bytes": 61615424,
+      "sha256": "932d3358b8227b98d4945668b19113053549458e1d19f8c0cbae2b725a368211",
+      "tested_source_commit": "b9a38fd6d245e20849c7edd848dbbe18298cad7e"
+    },
+    {
+      "path": "debug/deps/trnm_data_availability-831f43839ce52b8a",
+      "bytes": 127484216,
+      "sha256": "d4e19eaa0029f43e320ee1b0dc282b87235afa1b366c03eadfabea6deb346af1",
+      "tested_source_commit": "b9a38fd6d245e20849c7edd848dbbe18298cad7e"
+    },
+    {
+      "path": "debug/deps/cell_adoption_cli-93c5335ddb3ac0b2",
+      "bytes": 63726096,
+      "sha256": "ff855b6080ceb2e2c78f0535f9968051762872833901c3a0db03b8e2e90fa9a5",
+      "tested_source_commit": "b9a38fd6d245e20849c7edd848dbbe18298cad7e"
+    },
+    {
+      "path": "debug/deps/trnm_release_bundle-2ec309a056a61302",
+      "bytes": 32651680,
+      "sha256": "6eb4108844370dd0ddcb0219ef6401e782d5d8e4e90bf5f2a1a636dd310657ce",
+      "tested_source_commit": "95a2a14771a655e8e59a0cb5fb7f37bf8f62cd13"
+    }
+  ],
+  "finished_utc": "2026-11-11T01:46:17.822757+00:00",
+  "removed": true,
+  "after_disk": "Filesystem      Size  Used Avail Use% Mounted on\noverlay          63G   55G  5.7G  91% /workspace\n"
+}

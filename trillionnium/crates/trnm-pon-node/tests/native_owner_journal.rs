@@ -69,6 +69,115 @@ fn assert_refused(root: &Path, options: NativeJournalOptions, expected: &str) {
 }
 
 #[test]
+fn live_sidecar_lock_replacement_refuses_checkpoint_and_native_work_without_append() {
+    let root = tempfile::tempdir().unwrap();
+    let mut owner = open(root.path(), NativeJournalOptions::default());
+    let journal = root.path().join("journal");
+    let before = fs::read(journal.join("journal.pnoj1")).unwrap();
+    fs::rename(journal.join("owner.lock"), journal.join("old-owner.lock")).unwrap();
+    fs::write(journal.join("owner.lock"), b"").unwrap();
+
+    assert!(
+        owner.checkpoint().is_err(),
+        "a replaced lock cannot retain a live lease"
+    );
+    assert!(owner.status().is_err());
+    assert!(owner.observe(100).is_err());
+    assert_eq!(fs::read(journal.join("journal.pnoj1")).unwrap(), before);
+    fs::remove_file(journal.join("owner.lock")).unwrap();
+    fs::rename(journal.join("old-owner.lock"), journal.join("owner.lock")).unwrap();
+    assert!(
+        owner.checkpoint().is_err(),
+        "restoring the lock cannot clear a detected loss"
+    );
+    assert!(owner.observe(100).is_err());
+    assert_eq!(fs::read(journal.join("journal.pnoj1")).unwrap(), before);
+}
+
+#[test]
+fn live_sidecar_directory_replacement_refuses_even_when_all_file_inodes_are_retained() {
+    use std::os::unix::fs::DirBuilderExt;
+
+    let root = tempfile::tempdir().unwrap();
+    let mut owner = open(root.path(), NativeJournalOptions::default());
+    let journal = root.path().join("journal");
+    let held = root.path().join("held-journal-directory");
+    let before = fs::read(journal.join("journal.pnoj1")).unwrap();
+    fs::rename(&journal, &held).unwrap();
+    fs::DirBuilder::new().mode(0o700).create(&journal).unwrap();
+    for name in ["owner.lock", "journal.pnoj1", "packets"] {
+        fs::rename(held.join(name), journal.join(name)).unwrap();
+    }
+
+    assert!(
+        owner.checkpoint().is_err(),
+        "the directory is part of the held lease"
+    );
+    assert!(owner.status().is_err());
+    assert!(owner.observe(100).is_err());
+    assert_eq!(fs::read(journal.join("journal.pnoj1")).unwrap(), before);
+    for name in ["owner.lock", "journal.pnoj1", "packets"] {
+        fs::rename(journal.join(name), held.join(name)).unwrap();
+    }
+    fs::remove_dir(&journal).unwrap();
+    fs::rename(&held, &journal).unwrap();
+    assert!(
+        owner.checkpoint().is_err(),
+        "restoring the directory cannot clear a detected loss"
+    );
+    assert!(owner.observe(100).is_err());
+    assert_eq!(fs::read(journal.join("journal.pnoj1")).unwrap(), before);
+}
+
+#[test]
+fn live_sidecar_lock_and_journal_hardlink_aliases_refuse_without_append() {
+    for name in ["owner.lock", "journal.pnoj1"] {
+        let root = tempfile::tempdir().unwrap();
+        let mut owner = open(root.path(), NativeJournalOptions::default());
+        let journal = root.path().join("journal");
+        let before = fs::read(journal.join("journal.pnoj1")).unwrap();
+        fs::hard_link(journal.join(name), root.path().join("outside-alias")).unwrap();
+
+        assert!(
+            owner.checkpoint().is_err(),
+            "a live {name} alias must refuse"
+        );
+        assert!(owner.status().is_err());
+        assert!(owner.observe(100).is_err());
+        assert_eq!(fs::read(journal.join("journal.pnoj1")).unwrap(), before);
+        fs::remove_file(root.path().join("outside-alias")).unwrap();
+        assert!(
+            owner.checkpoint().is_err(),
+            "removing an alias cannot clear a detected loss"
+        );
+        assert!(owner.observe(100).is_err());
+        assert_eq!(fs::read(journal.join("journal.pnoj1")).unwrap(), before);
+    }
+}
+
+#[test]
+fn cold_sidecar_lock_and_journal_hardlink_aliases_refuse_without_append() {
+    for name in ["owner.lock", "journal.pnoj1"] {
+        let root = tempfile::tempdir().unwrap();
+        open(root.path(), NativeJournalOptions::default())
+            .finish(100)
+            .unwrap();
+        let journal = root.path().join("journal");
+        let before = fs::read(journal.join("journal.pnoj1")).unwrap();
+        fs::hard_link(journal.join(name), root.path().join("outside-alias")).unwrap();
+
+        let result = JournaledNativeOwner::open(
+            &root.path().join("store"),
+            &journal,
+            settings(),
+            NativeJournalOptions::default(),
+        );
+        assert!(result.is_err(), "a cold {name} alias must refuse");
+        assert_eq!(fs::read(journal.join("journal.pnoj1")).unwrap(), before);
+    }
+}
+
+#[test]
 fn actual_legacy_and_authenticated_restart_preserve_unadmitted_output_identity() {
     for backend in [JournalBackend::Legacy, JournalBackend::AuthenticatedV1] {
         let root = tempfile::tempdir().unwrap();
@@ -377,6 +486,95 @@ fn input_artifact_budget_refuses_before_any_native_admission_intent() {
         1
     );
     owner.finish(100).unwrap();
+}
+
+#[test]
+fn cached_packet_replaced_by_fifo_refuses_before_admission_without_blocking() {
+    use std::process::Stdio;
+    use std::time::{Duration, Instant};
+
+    let root = tempfile::tempdir().unwrap();
+    let mut child = Command::new(std::env::current_exe().unwrap())
+        .args([
+            "--exact",
+            "native_journal_fifo_packet_child",
+            "--ignored",
+            "--nocapture",
+        ])
+        .env("TRNM_NATIVE_JOURNAL_FIFO_TEST_ROOT", root.path())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap();
+    let ready = root.path().join("fifo-open-ready");
+    let mut deadline = Instant::now() + Duration::from_secs(15);
+    let mut read_started = false;
+    let timed_out = loop {
+        if child.try_wait().unwrap().is_some() {
+            break false;
+        }
+        // Allow native setup its own budget. Once the cached artifact has
+        // become a FIFO, the regular-file refusal must return without a writer.
+        if !read_started && ready.exists() {
+            read_started = true;
+            deadline = Instant::now() + Duration::from_secs(1);
+        }
+        if Instant::now() >= deadline {
+            break true;
+        }
+        std::thread::sleep(Duration::from_millis(5));
+    };
+    if timed_out {
+        child.kill().unwrap();
+    }
+    // Reap even the deliberately timed-out original implementation. A FIFO
+    // regression must fail this test instead of hanging the entire test suite.
+    let output = child.wait_with_output().unwrap();
+    assert!(
+        !timed_out && output.status.success(),
+        "cached artifact refusal timed_out={timed_out}, read_started={read_started}, \
+         status={}, stdout={}, stderr={}",
+        output.status,
+        String::from_utf8_lossy(&output.stdout),
+        String::from_utf8_lossy(&output.stderr),
+    );
+}
+
+#[test]
+#[ignore = "owned subprocess helper, actually executed by the FIFO refusal test"]
+fn native_journal_fifo_packet_child() {
+    use std::os::unix::fs::FileTypeExt;
+
+    let root = std::path::PathBuf::from(
+        std::env::var_os("TRNM_NATIVE_JOURNAL_FIFO_TEST_ROOT")
+            .expect("explicit parent test directory required"),
+    );
+    let mut owner = open(&root, NativeJournalOptions::default());
+    let packet = make(&mut owner);
+    let before = owner.checkpoint().unwrap();
+    let journal = root.join("journal/journal.pnoj1");
+    let retained = fs::read(&journal).unwrap();
+    let artifact = root
+        .join("journal/packets")
+        .join(format!("{}.pnp1", digest(&packet.encode().unwrap())));
+    fs::remove_file(&artifact).unwrap();
+    rustix::fs::mkfifoat(
+        rustix::fs::CWD,
+        &artifact,
+        rustix::fs::Mode::RUSR | rustix::fs::Mode::WUSR,
+    )
+    .unwrap();
+    fs::write(root.join("fifo-open-ready"), b"ready").unwrap();
+    assert_eq!(
+        owner.admit(&packet, 100).unwrap_err().to_string(),
+        "OWNER_JOURNAL_ARTIFACT",
+    );
+    assert_eq!(owner.checkpoint().unwrap(), before);
+    assert_eq!(fs::read(&journal).unwrap(), retained);
+    assert!(fs::symlink_metadata(artifact)
+        .unwrap()
+        .file_type()
+        .is_fifo());
 }
 
 #[test]

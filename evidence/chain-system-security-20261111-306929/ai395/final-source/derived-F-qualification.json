@@ -1,0 +1,752 @@
+{
+  "schema": "trnm-final-source-gates-derived-qualification-v1",
+  "derivation_mode": "raw-only-parser-correction",
+  "source": "2d72fa3293989b01596ec8ce0ba3ff370dc4c584",
+  "tree": "ebc11e05eb0015ae5be58ca85ed764e06f4386be",
+  "native_qualification_source": "bac6b7659bd7e2d633e25c2da0add60f6a10c7fb",
+  "original_directory": "/home/qq/chain-system-security-native-receipts-20261112-306929/final-source-F-2d72fa329398",
+  "original_summary_path": "/home/qq/chain-system-security-native-receipts-20261112-306929/final-source-F-2d72fa329398/summary.json",
+  "original_summary_sha256": "e7461e37ddf48711faf23a3090e16558abe4e9ad9a076eddaaaa6060fe5610b7",
+  "original_summary_bytes": 10820,
+  "original_driver_path": "/home/qq/chain-system-security-final-source-gates-v2-20261112-306929.py",
+  "original_driver_sha256": "6c539b2f83037642a86d9ad9e3348397e99a22e66984f9e6eae01d5ca19de074",
+  "original_driver_exit_code": 1,
+  "original_all_gates_passed": false,
+  "original_python_controls_observed": 65,
+  "original_parser_false_preserved": true,
+  "parser_error": "v2 required OK at the end of the combined stream; six expected buffered fixture receipt JSON lines follow the source-integrity unittest OK summary",
+  "original_terminal_observations_sha256": "9c83223a51930d26b0dedd52e5375478ee8d1afe6b0b3191ff4ff58c2061e7d9",
+  "original_pty_output_sha256": "de6f63afd6d706c1e2eb3c30a37d706805c08f7dbf8af1b40fcee07001d49e72",
+  "original_pty_output_bytes": 16289,
+  "all_actual_commands_passed": true,
+  "actual_commands_verified": 10,
+  "python_controls_verified": 108,
+  "source_before_after_equal": true,
+  "source_identity": {
+    "schema": "trnm-ci-source-v1",
+    "kind": "head",
+    "tested_commit": "2d72fa3293989b01596ec8ce0ba3ff370dc4c584",
+    "tested_tree": "ebc11e05eb0015ae5be58ca85ed764e06f4386be",
+    "candidate": "2d72fa3293989b01596ec8ce0ba3ff370dc4c584",
+    "base": null,
+    "prospective_merge": null,
+    "tracked_worktree_verified": true,
+    "tracked_entries": 28758,
+    "tracked_bytes": 2595711115,
+    "tests_executed_by_identity_check": false
+  },
+  "protected_native_bytes_equal": true,
+  "original_files": [
+    {
+      "relative": "authority-and-root-controls-execution.json",
+      "bytes": 1072,
+      "sha256": "414ddfdde2885f73a001375b1a8eb379b8cf263f933e34a335cb10f9c7135c2b"
+    },
+    {
+      "relative": "authority-and-root-controls.driver.log",
+      "bytes": 194,
+      "sha256": "dd8b48569e97ddc17f900f99fca30ac530a07dbdd14b9fa6c009c270d2e60940"
+    },
+    {
+      "relative": "authority-current-execution.json",
+      "bytes": 786,
+      "sha256": "51794c1afde576774ff55a3a67eb36cb3b508284e1f2178064122b10f37d7970"
+    },
+    {
+      "relative": "authority-current.driver.log",
+      "bytes": 184,
+      "sha256": "be49f44fde9b45f0ede2d295aff695a5e67f5957206e0bda0e31934bf41858f4"
+    },
+    {
+      "relative": "cargo-format-execution.json",
+      "bytes": 884,
+      "sha256": "5e923930c233b6151cfc4ca23684c238fa07e04275ba7e6bac35639f5a40bc4e"
+    },
+    {
+      "relative": "cargo-format.driver.log",
+      "bytes": 179,
+      "sha256": "e408136835ec629d0800f0479326ca96bbfc22c65ae2af684aeb3ede667ec9f4"
+    },
+    {
+      "relative": "configuration.json",
+      "bytes": 1797,
+      "sha256": "fa86fa32cae722f8cb647f5a2f44ddf3da5afd310257e29ef0f94e7bfe6ed67a"
+    },
+    {
+      "relative": "corpus-current-execution.json",
+      "bytes": 777,
+      "sha256": "a75a61a20551dd6250c6271897ddb4d87eb5da75bcbe7f3005763ecc8c4723ed"
+    },
+    {
+      "relative": "corpus-current.driver.log",
+      "bytes": 181,
+      "sha256": "d1040611921e2443753ce09822ecd8c036d8d66571234f1cae01aa088a210955"
+    },
+    {
+      "relative": "locked-all-features-graph-execution.json",
+      "bytes": 963,
+      "sha256": "9f1c5e8b862242ce83a6bc7b11b1b93400004c42531973b52d074ce00df66223"
+    },
+    {
+      "relative": "locked-all-features-graph.driver.log",
+      "bytes": 192,
+      "sha256": "f209ed1225d08906fb333d3876c4d74aad60fe574a08fa0dbcca72512ab2966b"
+    },
+    {
+      "relative": "locked-default-graph-execution.json",
+      "bytes": 926,
+      "sha256": "481672e71a358f43ab8bf5a5c993cda6415aba0b831fff85419cdb73ab82fd11"
+    },
+    {
+      "relative": "locked-default-graph.driver.log",
+      "bytes": 187,
+      "sha256": "5568d02d6e09f15060367391b9f41d678c83e420a95206b1e3bccc9563c9012d"
+    },
+    {
+      "relative": "preflight-execution.json",
+      "bytes": 745,
+      "sha256": "fb6ad5f10ed9213966632f633cf331dc0ea1cc977fb7a6ea6464438f1a001c7d"
+    },
+    {
+      "relative": "preflight.driver.log",
+      "bytes": 176,
+      "sha256": "0b762f3176868f07911252e954cca0fcc792a0e96e6a3d5473c1478a2a45b7f9"
+    },
+    {
+      "relative": "protected-native-source-comparison.json",
+      "bytes": 1642834,
+      "sha256": "59a63df49bf1bd5a7c2b20b99c70365645c8b347d38b0e61cdb1661f24d96553"
+    },
+    {
+      "relative": "records/authority-and-root-controls.json",
+      "bytes": 2472,
+      "sha256": "13935d976752871613ffb011b6df7f7ce6d1873c400cd81c7144e2a21a83d22c"
+    },
+    {
+      "relative": "records/authority-and-root-controls.log",
+      "bytes": 12393,
+      "sha256": "1fb990e9a60017971d0f737996b951c2ec9259f0f0440806012472cce4e38f02"
+    },
+    {
+      "relative": "records/authority-current.json",
+      "bytes": 2360,
+      "sha256": "8e2b3a2ec0e8f4a443caf1e55c75b770132be163c990fa89ef79b1a3dbe1fc49"
+    },
+    {
+      "relative": "records/authority-current.log",
+      "bytes": 13223,
+      "sha256": "8565e4de7039edf86f292ac2f5630f918aaac37d2d518e1c83a83d323f77c630"
+    },
+    {
+      "relative": "records/cargo-format.json",
+      "bytes": 2466,
+      "sha256": "ecbca9d2fd9b373a72fbc1985932017de4de7d93ebd9ba5b2b19f842fef480ac"
+    },
+    {
+      "relative": "records/cargo-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "relative": "records/corpus-current.json",
+      "bytes": 2356,
+      "sha256": "60cf537c8b65ed8a669a2987d5e54b4480bb4f192efa89d465fc24557601ca85"
+    },
+    {
+      "relative": "records/corpus-current.log",
+      "bytes": 558,
+      "sha256": "3451e4144313119c9113c24e0c223125fb89b487c7df2f273658ced0015b6940"
+    },
+    {
+      "relative": "records/locked-all-features-graph.json",
+      "bytes": 2522,
+      "sha256": "f93532b3491cf1e1564b53d0fc43e4c028e6b278b9438837f95cabf756195a15"
+    },
+    {
+      "relative": "records/locked-all-features-graph.log",
+      "bytes": 861622,
+      "sha256": "8c7ce2896e95575452bad113beb9930b8abfa1680cd0ea4d39ad93dfd2b7ee80"
+    },
+    {
+      "relative": "records/locked-default-graph.json",
+      "bytes": 2495,
+      "sha256": "a12661ce183b35d21e682837ad9d10d4008be573dfdbd15405e1e4dbce76dcba"
+    },
+    {
+      "relative": "records/locked-default-graph.log",
+      "bytes": 846651,
+      "sha256": "71587c83f9ae755a99cf667c10ab580cc761f93e369e479e3e574c22c6bff109"
+    },
+    {
+      "relative": "records/preflight.json",
+      "bytes": 2333,
+      "sha256": "08257ae965aff320646b1e2c779837a3f806f19429ebde3414127f3a72b7322f"
+    },
+    {
+      "relative": "records/preflight.log",
+      "bytes": 172,
+      "sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127"
+    },
+    {
+      "relative": "records/repository-links.json",
+      "bytes": 2345,
+      "sha256": "1d0dbb9ac091e57c7314534bebf1e26fa0260e69e11eac34410043a768169d65"
+    },
+    {
+      "relative": "records/repository-links.log",
+      "bytes": 307,
+      "sha256": "20c60f90870b3cc043d20d9bdce7f6b81ba10ce71cc4e7ea2a60b4fdae7c340d"
+    },
+    {
+      "relative": "records/root-current.json",
+      "bytes": 2353,
+      "sha256": "10d7ac13248a80467ffff172f596f7c843b4dab848b0117d759b841ca7fd0081"
+    },
+    {
+      "relative": "records/root-current.log",
+      "bytes": 8202,
+      "sha256": "b071d58c3f7c2381556012c5ecb2b7f09bfd8535272c5faa27ebc7573587149a"
+    },
+    {
+      "relative": "records/source-rejection-controls.json",
+      "bytes": 2363,
+      "sha256": "276a041cc1f6c83f70a6e323fc2dc25c8b637a5b2ed78c9b881ee0aae6e5b8fd"
+    },
+    {
+      "relative": "records/source-rejection-controls.log",
+      "bytes": 6898,
+      "sha256": "e9bd8113dd6657f987f6867dc77c5b16765e9efbacaa178700b223d9134a6620"
+    },
+    {
+      "relative": "repository-links-execution.json",
+      "bytes": 771,
+      "sha256": "30514cf62b6e2e386391e9c3c900bf71f8707fc3dac8369a2e3d3108cdda7e9d"
+    },
+    {
+      "relative": "repository-links.driver.log",
+      "bytes": 183,
+      "sha256": "ef4517b30118886541ba48f95b7637ba44e61b19c5a1ae375b55957e109a4c02"
+    },
+    {
+      "relative": "root-current-execution.json",
+      "bytes": 770,
+      "sha256": "0f76991bab8a22a16a0ca21797977719636f54b39a3dabe60e12bca84d05d454"
+    },
+    {
+      "relative": "root-current.driver.log",
+      "bytes": 179,
+      "sha256": "d331c21616647bba732f53a0668714cb1a8d60911abb0c2a08674036d9a906ca"
+    },
+    {
+      "relative": "source-after.json",
+      "bytes": 423,
+      "sha256": "174bc1c9cca4d9a45c5ede9b2685fbb7e4b273daf248b6fd2284b098dd8d99bd"
+    },
+    {
+      "relative": "source-before.json",
+      "bytes": 423,
+      "sha256": "174bc1c9cca4d9a45c5ede9b2685fbb7e4b273daf248b6fd2284b098dd8d99bd"
+    },
+    {
+      "relative": "source-rejection-controls-execution.json",
+      "bytes": 962,
+      "sha256": "9315f6bf07e7937a83a27e8991032d9674d93c68a8c53a6937f87c0a4cfd40e8"
+    },
+    {
+      "relative": "source-rejection-controls.driver.log",
+      "bytes": 192,
+      "sha256": "39b10aacde39a5e96346d04cdf13ec6713f597cffc3d369d46be6e5dab0b9eb1"
+    },
+    {
+      "relative": "summary.json",
+      "bytes": 10820,
+      "sha256": "e7461e37ddf48711faf23a3090e16558abe4e9ad9a076eddaaaa6060fe5610b7"
+    }
+  ],
+  "command_bindings": [
+    {
+      "label": "preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "recorder_exit_code": 0,
+      "receipt_relative": "records/preflight.json",
+      "receipt_sha256": "08257ae965aff320646b1e2c779837a3f806f19429ebde3414127f3a72b7322f",
+      "log_relative": "records/preflight.log",
+      "log_bytes": 172,
+      "log_sha256": "f0944278df1c153c8bfdf4e5dcdfe29996a30d88f1f40c65879b38dc00479127"
+    },
+    {
+      "label": "authority-current",
+      "argv": [
+        "python3",
+        "scripts/ci/pq_authority_effect_register.py"
+      ],
+      "exit_code": 0,
+      "recorder_exit_code": 0,
+      "receipt_relative": "records/authority-current.json",
+      "receipt_sha256": "8e2b3a2ec0e8f4a443caf1e55c75b770132be163c990fa89ef79b1a3dbe1fc49",
+      "log_relative": "records/authority-current.log",
+      "log_bytes": 13223,
+      "log_sha256": "8565e4de7039edf86f292ac2f5630f918aaac37d2d518e1c83a83d323f77c630"
+    },
+    {
+      "label": "root-current",
+      "argv": [
+        "python3",
+        "scripts/ci/pq_root_dependency_register.py"
+      ],
+      "exit_code": 0,
+      "recorder_exit_code": 0,
+      "receipt_relative": "records/root-current.json",
+      "receipt_sha256": "10d7ac13248a80467ffff172f596f7c843b4dab848b0117d759b841ca7fd0081",
+      "log_relative": "records/root-current.log",
+      "log_bytes": 8202,
+      "log_sha256": "b071d58c3f7c2381556012c5ecb2b7f09bfd8535272c5faa27ebc7573587149a"
+    },
+    {
+      "label": "corpus-current",
+      "argv": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit_code": 0,
+      "recorder_exit_code": 0,
+      "receipt_relative": "records/corpus-current.json",
+      "receipt_sha256": "60cf537c8b65ed8a669a2987d5e54b4480bb4f192efa89d465fc24557601ca85",
+      "log_relative": "records/corpus-current.log",
+      "log_bytes": 558,
+      "log_sha256": "3451e4144313119c9113c24e0c223125fb89b487c7df2f273658ced0015b6940"
+    },
+    {
+      "label": "authority-and-root-controls",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "test_pq_authority_effect_register",
+        "test_pq_root_dependency_register",
+        "test_run_pq_root_witness_v5",
+        "-v"
+      ],
+      "exit_code": 0,
+      "recorder_exit_code": 0,
+      "receipt_relative": "records/authority-and-root-controls.json",
+      "receipt_sha256": "13935d976752871613ffb011b6df7f7ce6d1873c400cd81c7144e2a21a83d22c",
+      "log_relative": "records/authority-and-root-controls.log",
+      "log_bytes": 12393,
+      "log_sha256": "1fb990e9a60017971d0f737996b951c2ec9259f0f0440806012472cce4e38f02"
+    },
+    {
+      "label": "source-rejection-controls",
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "exit_code": 0,
+      "recorder_exit_code": 0,
+      "receipt_relative": "records/source-rejection-controls.json",
+      "receipt_sha256": "276a041cc1f6c83f70a6e323fc2dc25c8b637a5b2ed78c9b881ee0aae6e5b8fd",
+      "log_relative": "records/source-rejection-controls.log",
+      "log_bytes": 6898,
+      "log_sha256": "e9bd8113dd6657f987f6867dc77c5b16765e9efbacaa178700b223d9134a6620"
+    },
+    {
+      "label": "repository-links",
+      "argv": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "exit_code": 0,
+      "recorder_exit_code": 0,
+      "receipt_relative": "records/repository-links.json",
+      "receipt_sha256": "1d0dbb9ac091e57c7314534bebf1e26fa0260e69e11eac34410043a768169d65",
+      "log_relative": "records/repository-links.log",
+      "log_bytes": 307,
+      "log_sha256": "20c60f90870b3cc043d20d9bdce7f6b81ba10ce71cc4e7ea2a60b4fdae7c340d"
+    },
+    {
+      "label": "cargo-format",
+      "argv": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "recorder_exit_code": 0,
+      "receipt_relative": "records/cargo-format.json",
+      "receipt_sha256": "ecbca9d2fd9b373a72fbc1985932017de4de7d93ebd9ba5b2b19f842fef480ac",
+      "log_relative": "records/cargo-format.log",
+      "log_bytes": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "locked-default-graph",
+      "argv": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 0,
+      "recorder_exit_code": 0,
+      "receipt_relative": "records/locked-default-graph.json",
+      "receipt_sha256": "a12661ce183b35d21e682837ad9d10d4008be573dfdbd15405e1e4dbce76dcba",
+      "log_relative": "records/locked-default-graph.log",
+      "log_bytes": 846651,
+      "log_sha256": "71587c83f9ae755a99cf667c10ab580cc761f93e369e479e3e574c22c6bff109"
+    },
+    {
+      "label": "locked-all-features-graph",
+      "argv": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "exit_code": 0,
+      "recorder_exit_code": 0,
+      "receipt_relative": "records/locked-all-features-graph.json",
+      "receipt_sha256": "f93532b3491cf1e1564b53d0fc43e4c028e6b278b9438837f95cabf756195a15",
+      "log_relative": "records/locked-all-features-graph.log",
+      "log_bytes": 861622,
+      "log_sha256": "8c7ce2896e95575452bad113beb9930b8abfa1680cd0ea4d39ad93dfd2b7ee80"
+    }
+  ],
+  "suite_observations": {
+    "authority-and-root-controls": {
+      "expected_method_count": 65,
+      "observed_method_count": 65,
+      "exact_source_ast_inventory_equal": true,
+      "source_files": [
+        {
+          "path": "scripts/ci/test_pq_authority_effect_register.py",
+          "git_blob": "49e2bbfc36005b4e4aa76d5e1d4a446b08c67995",
+          "bytes": 14870,
+          "sha256": "11d3f2dc7ea30ee34839482ff19b6de28bc0168d3f78d26af72eea59a4dee577",
+          "methods": [
+            "test_pq_authority_effect_register.AuthorityEffectTests.test_changed_source_refuses_and_rehashing_manifest_is_not_provenance",
+            "test_pq_authority_effect_register.AuthorityEffectTests.test_cli_hold_and_fifo_refusal_have_machine_readable_exit_status",
+            "test_pq_authority_effect_register.AuthorityEffectTests.test_duplicate_json_fields_refuse_at_manifest_route_and_hash_levels",
+            "test_pq_authority_effect_register.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains",
+            "test_pq_authority_effect_register.AuthorityEffectTests.test_every_nonempty_route_source_category_is_required",
+            "test_pq_authority_effect_register.AuthorityEffectTests.test_false_claims_must_be_boolean_false_not_zero",
+            "test_pq_authority_effect_register.AuthorityEffectTests.test_json_syntax_numbers_unicode_and_size_are_bounded",
+            "test_pq_authority_effect_register.AuthorityEffectTests.test_manifest_source_and_directory_symlinks_refuse",
+            "test_pq_authority_effect_register.AuthorityEffectTests.test_other_real_settlement_module_is_not_this_bilateral_owner",
+            "test_pq_authority_effect_register.AuthorityEffectTests.test_oversize_source_and_unsafe_manifest_path_refuse",
+            "test_pq_authority_effect_register.AuthorityEffectTests.test_real_locked_files_have_exact_scopes_and_never_qualify",
+            "test_pq_authority_effect_register.AuthorityEffectTests.test_removing_both_real_native_path_and_pin_cannot_hide_it",
+            "test_pq_authority_effect_register.AuthorityEffectTests.test_reordered_rows_paths_and_hash_map_do_not_change_the_contract",
+            "test_pq_authority_effect_register.AuthorityEffectTests.test_scope_promotion_of_validator_comparator_cache_or_finality_refuses",
+            "test_pq_authority_effect_register.AuthorityEffectTests.test_source_lock_missing_extra_invalid_and_changed_hashes_refuse",
+            "test_pq_authority_effect_register.AuthorityEffectTests.test_source_revision_schema_purpose_and_route_context_drift_refuse",
+            "test_pq_authority_effect_register.AuthorityEffectTests.test_unknown_missing_duplicate_and_malformed_route_fields_refuse",
+            "test_pq_authority_effect_register.AuthorityEffectTests.test_unreviewed_files_do_not_make_the_partial_register_complete"
+          ],
+          "fixture_finish_report_methods": []
+        },
+        {
+          "path": "scripts/ci/test_pq_root_dependency_register.py",
+          "git_blob": "810480ce46d0e9de65f908331339e8f92e908dd5",
+          "bytes": 30148,
+          "sha256": "72f92b2c4a7ddacd7f51ff26e50de0c1e7b0cf482be822e7b9a76d823b1e7989",
+          "methods": [
+            "test_pq_root_dependency_register.FrozenRoleTests.test_checked_in_register_names_all_roles_without_promoting_any",
+            "test_pq_root_dependency_register.FrozenRoleTests.test_every_role_is_mandatory_and_unknown_roles_are_refused",
+            "test_pq_root_dependency_register.FrozenRoleTests.test_every_root_action_and_each_successor_action_remains_covered",
+            "test_pq_root_dependency_register.FrozenRoleTests.test_height_and_unix_expiry_profiles_cannot_be_silently_equated",
+            "test_pq_root_dependency_register.FrozenRoleTests.test_native_v4_readback_remains_separate_from_effect_entry",
+            "test_pq_root_dependency_register.FrozenRoleTests.test_native_v5_witness_role_hashes_and_unproved_custody_are_explicit",
+            "test_pq_root_dependency_register.FrozenRoleTests.test_or_fallback_threshold_and_roster_downgrades_are_refused",
+            "test_pq_root_dependency_register.FrozenRoleTests.test_python_provider_success_cannot_claim_native_provider_integration",
+            "test_pq_root_dependency_register.FrozenRoleTests.test_root_and_all_signing_roles_require_both_exact_families",
+            "test_pq_root_dependency_register.FrozenRoleTests.test_source_role_bindings_cannot_omit_native_owner_or_anchor",
+            "test_pq_root_dependency_register.FrozenRoleTests.test_successor_possession_requires_all_six_not_the_old_approval_threshold",
+            "test_pq_root_dependency_register.FrozenRoleTests.test_trusted_host_inputs_cannot_be_promoted_to_native_authority_proofs",
+            "test_pq_root_dependency_register.RefusalCapAndClaimTests.test_bool_int_aliases_and_extra_fields_are_refused_at_nested_boundaries",
+            "test_pq_root_dependency_register.RefusalCapAndClaimTests.test_default_verification_duration_is_not_a_universal_maximum",
+            "test_pq_root_dependency_register.RefusalCapAndClaimTests.test_even_zero_unknown_query_and_advice_cannot_be_smuggled",
+            "test_pq_root_dependency_register.RefusalCapAndClaimTests.test_local_refusal_limits_are_recorded_without_adversary_conversion",
+            "test_pq_root_dependency_register.RefusalCapAndClaimTests.test_native_per_operation_caps_cannot_turn_into_a_lifetime_bound",
+            "test_pq_root_dependency_register.RefusalCapAndClaimTests.test_no_security_coverage_provenance_or_activation_promotion_fields",
+            "test_pq_root_dependency_register.RefusalCapAndClaimTests.test_prior_fifteen_path_register_cannot_cover_this_new_component",
+            "test_pq_root_dependency_register.RefusalCapAndClaimTests.test_refusal_cap_telemetry_and_receipts_cannot_supply_query_budget",
+            "test_pq_root_dependency_register.RefusalCapAndClaimTests.test_refusal_semantics_and_query_units_cannot_be_relabelled",
+            "test_pq_root_dependency_register.RefusalCapAndClaimTests.test_unknown_domain_errors_and_open_obligations_cannot_be_promoted",
+            "test_pq_root_dependency_register.ReviewedSourceTests.test_actual_source_change_with_same_declared_hash_refuses",
+            "test_pq_root_dependency_register.ReviewedSourceTests.test_all_declared_actual_bytes_match_without_security_or_commit_attestation",
+            "test_pq_root_dependency_register.ReviewedSourceTests.test_ambiguous_json_and_oversized_manifest_refuse",
+            "test_pq_root_dependency_register.ReviewedSourceTests.test_cli_exit_zero_is_hold_and_bad_input_has_structured_refusal",
+            "test_pq_root_dependency_register.ReviewedSourceTests.test_missing_source_and_nonregular_source_refuse_without_hash_only_fallback",
+            "test_pq_root_dependency_register.ReviewedSourceTests.test_omitted_extra_or_rebound_source_paths_refuse",
+            "test_pq_root_dependency_register.ReviewedSourceTests.test_oversize_source_is_refused_before_unbounded_read",
+            "test_pq_root_dependency_register.ReviewedSourceTests.test_review_base_is_not_replaceable_with_current_head_or_short_alias",
+            "test_pq_root_dependency_register.ReviewedSourceTests.test_rewriting_source_and_its_manifest_hash_cannot_silently_regenerate_review",
+            "test_pq_root_dependency_register.ReviewedSourceTests.test_symlinked_manifest_and_checkout_ancestor_refuse",
+            "test_pq_root_dependency_register.ReviewedSourceTests.test_symlinked_source_refuses_even_when_bytes_match",
+            "test_pq_root_dependency_register.SharedHashAndEpochTests.test_actual_native_delegation_and_commitments_cannot_be_omitted",
+            "test_pq_root_dependency_register.SharedHashAndEpochTests.test_every_unobserved_query_channel_stays_explicit",
+            "test_pq_root_dependency_register.SharedHashAndEpochTests.test_missing_hash_use_cannot_be_hidden_by_rewriting_reverse_index",
+            "test_pq_root_dependency_register.SharedHashAndEpochTests.test_ml_dsa_requires_both_shake_primitives",
+            "test_pq_root_dependency_register.SharedHashAndEpochTests.test_public_hash_cannot_be_split_by_role_epoch_or_construction_alias",
+            "test_pq_root_dependency_register.SharedHashAndEpochTests.test_retired_successor_and_recovered_keys_cannot_be_excluded",
+            "test_pq_root_dependency_register.SharedHashAndEpochTests.test_role_keys_and_epochs_remain_unknown_not_single_roster_population",
+            "test_pq_root_dependency_register.SharedHashAndEpochTests.test_rotation_recovery_restart_and_role_change_never_reset_a_lifetime",
+            "test_pq_root_dependency_register.SharedHashAndEpochTests.test_sha512_scopes_include_native_python_and_slh_uses_together",
+            "test_pq_root_dependency_register.SharedHashAndEpochTests.test_slh_sha2_256s_requires_sha512_and_its_hmac_mgf_dependencies"
+          ],
+          "fixture_finish_report_methods": []
+        },
+        {
+          "path": "scripts/ci/test_run_pq_root_witness_v5.py",
+          "git_blob": "2eaf82ae5c930a98ae64a18ab031fd60cb66ad66",
+          "bytes": 4106,
+          "sha256": "dabaebdfa473877515dc38c1f0910098711ab0cf4524da846894f53543ab32ae",
+          "methods": [
+            "test_run_pq_root_witness_v5.WitnessRunnerControls.test_complete_native_targets_keep_features_locked_graph_and_no_filters",
+            "test_run_pq_root_witness_v5.WitnessRunnerControls.test_each_actual_name_success_summary_and_process_exit_is_required",
+            "test_run_pq_root_witness_v5.WitnessRunnerControls.test_empty_truncated_duplicate_or_extra_inventories_refuse",
+            "test_run_pq_root_witness_v5.WitnessRunnerControls.test_frozen_rosters_cover_every_native_source_test_without_ignores"
+          ],
+          "fixture_finish_report_methods": []
+        }
+      ],
+      "observed_method_ids": [
+        "test_pq_authority_effect_register.AuthorityEffectTests.test_changed_source_refuses_and_rehashing_manifest_is_not_provenance",
+        "test_pq_authority_effect_register.AuthorityEffectTests.test_cli_hold_and_fifo_refusal_have_machine_readable_exit_status",
+        "test_pq_authority_effect_register.AuthorityEffectTests.test_duplicate_json_fields_refuse_at_manifest_route_and_hash_levels",
+        "test_pq_authority_effect_register.AuthorityEffectTests.test_every_actual_source_file_is_required_even_when_its_pin_remains",
+        "test_pq_authority_effect_register.AuthorityEffectTests.test_every_nonempty_route_source_category_is_required",
+        "test_pq_authority_effect_register.AuthorityEffectTests.test_false_claims_must_be_boolean_false_not_zero",
+        "test_pq_authority_effect_register.AuthorityEffectTests.test_json_syntax_numbers_unicode_and_size_are_bounded",
+        "test_pq_authority_effect_register.AuthorityEffectTests.test_manifest_source_and_directory_symlinks_refuse",
+        "test_pq_authority_effect_register.AuthorityEffectTests.test_other_real_settlement_module_is_not_this_bilateral_owner",
+        "test_pq_authority_effect_register.AuthorityEffectTests.test_oversize_source_and_unsafe_manifest_path_refuse",
+        "test_pq_authority_effect_register.AuthorityEffectTests.test_real_locked_files_have_exact_scopes_and_never_qualify",
+        "test_pq_authority_effect_register.AuthorityEffectTests.test_removing_both_real_native_path_and_pin_cannot_hide_it",
+        "test_pq_authority_effect_register.AuthorityEffectTests.test_reordered_rows_paths_and_hash_map_do_not_change_the_contract",
+        "test_pq_authority_effect_register.AuthorityEffectTests.test_scope_promotion_of_validator_comparator_cache_or_finality_refuses",
+        "test_pq_authority_effect_register.AuthorityEffectTests.test_source_lock_missing_extra_invalid_and_changed_hashes_refuse",
+        "test_pq_authority_effect_register.AuthorityEffectTests.test_source_revision_schema_purpose_and_route_context_drift_refuse",
+        "test_pq_authority_effect_register.AuthorityEffectTests.test_unknown_missing_duplicate_and_malformed_route_fields_refuse",
+        "test_pq_authority_effect_register.AuthorityEffectTests.test_unreviewed_files_do_not_make_the_partial_register_complete",
+        "test_pq_root_dependency_register.FrozenRoleTests.test_checked_in_register_names_all_roles_without_promoting_any",
+        "test_pq_root_dependency_register.FrozenRoleTests.test_every_role_is_mandatory_and_unknown_roles_are_refused",
+        "test_pq_root_dependency_register.FrozenRoleTests.test_every_root_action_and_each_successor_action_remains_covered",
+        "test_pq_root_dependency_register.FrozenRoleTests.test_height_and_unix_expiry_profiles_cannot_be_silently_equated",
+        "test_pq_root_dependency_register.FrozenRoleTests.test_native_v4_readback_remains_separate_from_effect_entry",
+        "test_pq_root_dependency_register.FrozenRoleTests.test_native_v5_witness_role_hashes_and_unproved_custody_are_explicit",
+        "test_pq_root_dependency_register.FrozenRoleTests.test_or_fallback_threshold_and_roster_downgrades_are_refused",
+        "test_pq_root_dependency_register.FrozenRoleTests.test_python_provider_success_cannot_claim_native_provider_integration",
+        "test_pq_root_dependency_register.FrozenRoleTests.test_root_and_all_signing_roles_require_both_exact_families",
+        "test_pq_root_dependency_register.FrozenRoleTests.test_source_role_bindings_cannot_omit_native_owner_or_anchor",
+        "test_pq_root_dependency_register.FrozenRoleTests.test_successor_possession_requires_all_six_not_the_old_approval_threshold",
+        "test_pq_root_dependency_register.FrozenRoleTests.test_trusted_host_inputs_cannot_be_promoted_to_native_authority_proofs",
+        "test_pq_root_dependency_register.RefusalCapAndClaimTests.test_bool_int_aliases_and_extra_fields_are_refused_at_nested_boundaries",
+        "test_pq_root_dependency_register.RefusalCapAndClaimTests.test_default_verification_duration_is_not_a_universal_maximum",
+        "test_pq_root_dependency_register.RefusalCapAndClaimTests.test_even_zero_unknown_query_and_advice_cannot_be_smuggled",
+        "test_pq_root_dependency_register.RefusalCapAndClaimTests.test_local_refusal_limits_are_recorded_without_adversary_conversion",
+        "test_pq_root_dependency_register.RefusalCapAndClaimTests.test_native_per_operation_caps_cannot_turn_into_a_lifetime_bound",
+        "test_pq_root_dependency_register.RefusalCapAndClaimTests.test_no_security_coverage_provenance_or_activation_promotion_fields",
+        "test_pq_root_dependency_register.RefusalCapAndClaimTests.test_prior_fifteen_path_register_cannot_cover_this_new_component",
+        "test_pq_root_dependency_register.RefusalCapAndClaimTests.test_refusal_cap_telemetry_and_receipts_cannot_supply_query_budget",
+        "test_pq_root_dependency_register.RefusalCapAndClaimTests.test_refusal_semantics_and_query_units_cannot_be_relabelled",
+        "test_pq_root_dependency_register.RefusalCapAndClaimTests.test_unknown_domain_errors_and_open_obligations_cannot_be_promoted",
+        "test_pq_root_dependency_register.ReviewedSourceTests.test_actual_source_change_with_same_declared_hash_refuses",
+        "test_pq_root_dependency_register.ReviewedSourceTests.test_all_declared_actual_bytes_match_without_security_or_commit_attestation",
+        "test_pq_root_dependency_register.ReviewedSourceTests.test_ambiguous_json_and_oversized_manifest_refuse",
+        "test_pq_root_dependency_register.ReviewedSourceTests.test_cli_exit_zero_is_hold_and_bad_input_has_structured_refusal",
+        "test_pq_root_dependency_register.ReviewedSourceTests.test_missing_source_and_nonregular_source_refuse_without_hash_only_fallback",
+        "test_pq_root_dependency_register.ReviewedSourceTests.test_omitted_extra_or_rebound_source_paths_refuse",
+        "test_pq_root_dependency_register.ReviewedSourceTests.test_oversize_source_is_refused_before_unbounded_read",
+        "test_pq_root_dependency_register.ReviewedSourceTests.test_review_base_is_not_replaceable_with_current_head_or_short_alias",
+        "test_pq_root_dependency_register.ReviewedSourceTests.test_rewriting_source_and_its_manifest_hash_cannot_silently_regenerate_review",
+        "test_pq_root_dependency_register.ReviewedSourceTests.test_symlinked_manifest_and_checkout_ancestor_refuse",
+        "test_pq_root_dependency_register.ReviewedSourceTests.test_symlinked_source_refuses_even_when_bytes_match",
+        "test_pq_root_dependency_register.SharedHashAndEpochTests.test_actual_native_delegation_and_commitments_cannot_be_omitted",
+        "test_pq_root_dependency_register.SharedHashAndEpochTests.test_every_unobserved_query_channel_stays_explicit",
+        "test_pq_root_dependency_register.SharedHashAndEpochTests.test_missing_hash_use_cannot_be_hidden_by_rewriting_reverse_index",
+        "test_pq_root_dependency_register.SharedHashAndEpochTests.test_ml_dsa_requires_both_shake_primitives",
+        "test_pq_root_dependency_register.SharedHashAndEpochTests.test_public_hash_cannot_be_split_by_role_epoch_or_construction_alias",
+        "test_pq_root_dependency_register.SharedHashAndEpochTests.test_retired_successor_and_recovered_keys_cannot_be_excluded",
+        "test_pq_root_dependency_register.SharedHashAndEpochTests.test_role_keys_and_epochs_remain_unknown_not_single_roster_population",
+        "test_pq_root_dependency_register.SharedHashAndEpochTests.test_rotation_recovery_restart_and_role_change_never_reset_a_lifetime",
+        "test_pq_root_dependency_register.SharedHashAndEpochTests.test_sha512_scopes_include_native_python_and_slh_uses_together",
+        "test_pq_root_dependency_register.SharedHashAndEpochTests.test_slh_sha2_256s_requires_sha512_and_its_hmac_mgf_dependencies",
+        "test_run_pq_root_witness_v5.WitnessRunnerControls.test_complete_native_targets_keep_features_locked_graph_and_no_filters",
+        "test_run_pq_root_witness_v5.WitnessRunnerControls.test_each_actual_name_success_summary_and_process_exit_is_required",
+        "test_run_pq_root_witness_v5.WitnessRunnerControls.test_empty_truncated_duplicate_or_extra_inventories_refuse",
+        "test_run_pq_root_witness_v5.WitnessRunnerControls.test_frozen_rosters_cover_every_native_source_test_without_ignores"
+      ],
+      "single_unittest_summary": "Ran 65 tests in 0.300s\n\nOK\n",
+      "plain_ok_without_skips_failures_or_errors": true,
+      "buffered_fixture_output_allowed": false,
+      "buffered_fixture_receipts": [],
+      "fixture_results_are_not_test_failures": false,
+      "log_sha256": "1fb990e9a60017971d0f737996b951c2ec9259f0f0440806012472cce4e38f02",
+      "log_bytes": 12393
+    },
+    "source-rejection-controls": {
+      "expected_method_count": 43,
+      "observed_method_count": 43,
+      "exact_source_ast_inventory_equal": true,
+      "source_files": [
+        {
+          "path": "scripts/ci/test_ci_source_integrity.py",
+          "git_blob": "47bf35a471696e0fc1072ab2d4b6167490bfdf1c",
+          "bytes": 25907,
+          "sha256": "d46d92b789dc95798e5406a0ccd685e4449dbc38ab040d8035621268fa4f5f6e",
+          "methods": [
+            "__main__.TrackedSourceTests.test_actual_bytes_are_checked_even_if_status_reports_clean",
+            "__main__.TrackedSourceTests.test_assume_unchanged_cannot_hide_modified_source",
+            "__main__.TrackedSourceTests.test_executable_mode_checked_even_when_git_ignores_filemode",
+            "__main__.TrackedSourceTests.test_graft_file_is_rejected",
+            "__main__.TrackedSourceTests.test_hidden_index_flag_is_rejected_even_without_changes",
+            "__main__.TrackedSourceTests.test_intermediate_directory_symlink_rejected",
+            "__main__.TrackedSourceTests.test_new_native_c_bytes_are_verified_without_an_extension_allowlist",
+            "__main__.TrackedSourceTests.test_nonregular_file_rejected_without_waiting_for_fifo",
+            "__main__.TrackedSourceTests.test_prospective_merge_accepts_exact_ancestor_candidate_tree",
+            "__main__.TrackedSourceTests.test_prospective_merge_accepts_exact_diverged_combination",
+            "__main__.TrackedSourceTests.test_prospective_merge_ignores_environment_merge_driver",
+            "__main__.TrackedSourceTests.test_prospective_merge_ignores_local_union_attributes",
+            "__main__.TrackedSourceTests.test_prospective_merge_local_binary_attributes_cannot_reject_valid_tree",
+            "__main__.TrackedSourceTests.test_prospective_merge_never_executes_local_merge_driver",
+            "__main__.TrackedSourceTests.test_prospective_merge_rejects_injected_committed_source",
+            "__main__.TrackedSourceTests.test_prospective_merge_rejects_omitted_base_change",
+            "__main__.TrackedSourceTests.test_prospective_merge_rejects_unreviewed_conflict_resolution",
+            "__main__.TrackedSourceTests.test_receipt_reuses_raw_source_guard",
+            "__main__.TrackedSourceTests.test_regular_file_symlink_substitution_rejected",
+            "__main__.TrackedSourceTests.test_replacement_commit_cannot_relabel_different_source",
+            "__main__.TrackedSourceTests.test_same_size_stat_cached_change_is_rejected",
+            "__main__.TrackedSourceTests.test_skip_worktree_cannot_hide_modified_source",
+            "__main__.TrackedSourceTests.test_source_fence_checked_retains_actual_failed_observation",
+            "__main__.TrackedSourceTests.test_source_fence_clean_child_keeps_actual_success_and_bytes",
+            "__main__.TrackedSourceTests.test_source_fence_clean_commit_switch_during_command_is_rejected",
+            "__main__.TrackedSourceTests.test_source_fence_clean_wrong_head_cannot_start_child",
+            "__main__.TrackedSourceTests.test_source_fence_dirty_before_command_cannot_start_child",
+            "__main__.TrackedSourceTests.test_source_fence_dirty_source_preserves_primary_failure",
+            "__main__.TrackedSourceTests.test_source_fence_existing_fuzz_and_supply_callers_pin_every_command",
+            "__main__.TrackedSourceTests.test_source_fence_finish_clean_other_commit_cannot_borrow_pass",
+            "__main__.TrackedSourceTests.test_source_fence_finish_dirty_source_cannot_write_pass",
+            "__main__.TrackedSourceTests.test_source_fence_finish_requires_initial_pin",
+            "__main__.TrackedSourceTests.test_source_fence_finish_valid_source_never_upgrades_existing_failure",
+            "__main__.TrackedSourceTests.test_source_fence_index_hidden_child_mutation_still_refuses",
+            "__main__.TrackedSourceTests.test_source_fence_keeps_nonzero_primary_error_and_drift",
+            "__main__.TrackedSourceTests.test_source_fence_pin_is_clean_and_does_not_follow_later_changes",
+            "__main__.TrackedSourceTests.test_source_fence_timeout_and_source_failure_preserve_both",
+            "__main__.TrackedSourceTests.test_source_fence_zero_exit_with_real_dirty_source_is_not_success",
+            "__main__.TrackedSourceTests.test_staged_change_is_rejected",
+            "__main__.TrackedSourceTests.test_subdirectory_is_not_a_complete_source_root",
+            "__main__.TrackedSourceTests.test_tracked_symlink_target_change_rejected",
+            "__main__.TrackedSourceTests.test_untracked_configuration_cannot_hide_new_source",
+            "__main__.TrackedSourceTests.test_valid_raw_files_modes_and_symlink"
+          ],
+          "fixture_finish_report_methods": [
+            "__main__.TrackedSourceTests.test_source_fence_dirty_source_preserves_primary_failure",
+            "__main__.TrackedSourceTests.test_source_fence_finish_clean_other_commit_cannot_borrow_pass",
+            "__main__.TrackedSourceTests.test_source_fence_finish_dirty_source_cannot_write_pass",
+            "__main__.TrackedSourceTests.test_source_fence_finish_requires_initial_pin",
+            "__main__.TrackedSourceTests.test_source_fence_finish_valid_source_never_upgrades_existing_failure"
+          ]
+        }
+      ],
+      "observed_method_ids": [
+        "__main__.TrackedSourceTests.test_actual_bytes_are_checked_even_if_status_reports_clean",
+        "__main__.TrackedSourceTests.test_assume_unchanged_cannot_hide_modified_source",
+        "__main__.TrackedSourceTests.test_executable_mode_checked_even_when_git_ignores_filemode",
+        "__main__.TrackedSourceTests.test_graft_file_is_rejected",
+        "__main__.TrackedSourceTests.test_hidden_index_flag_is_rejected_even_without_changes",
+        "__main__.TrackedSourceTests.test_intermediate_directory_symlink_rejected",
+        "__main__.TrackedSourceTests.test_new_native_c_bytes_are_verified_without_an_extension_allowlist",
+        "__main__.TrackedSourceTests.test_nonregular_file_rejected_without_waiting_for_fifo",
+        "__main__.TrackedSourceTests.test_prospective_merge_accepts_exact_ancestor_candidate_tree",
+        "__main__.TrackedSourceTests.test_prospective_merge_accepts_exact_diverged_combination",
+        "__main__.TrackedSourceTests.test_prospective_merge_ignores_environment_merge_driver",
+        "__main__.TrackedSourceTests.test_prospective_merge_ignores_local_union_attributes",
+        "__main__.TrackedSourceTests.test_prospective_merge_local_binary_attributes_cannot_reject_valid_tree",
+        "__main__.TrackedSourceTests.test_prospective_merge_never_executes_local_merge_driver",
+        "__main__.TrackedSourceTests.test_prospective_merge_rejects_injected_committed_source",
+        "__main__.TrackedSourceTests.test_prospective_merge_rejects_omitted_base_change",
+        "__main__.TrackedSourceTests.test_prospective_merge_rejects_unreviewed_conflict_resolution",
+        "__main__.TrackedSourceTests.test_receipt_reuses_raw_source_guard",
+        "__main__.TrackedSourceTests.test_regular_file_symlink_substitution_rejected",
+        "__main__.TrackedSourceTests.test_replacement_commit_cannot_relabel_different_source",
+        "__main__.TrackedSourceTests.test_same_size_stat_cached_change_is_rejected",
+        "__main__.TrackedSourceTests.test_skip_worktree_cannot_hide_modified_source",
+        "__main__.TrackedSourceTests.test_source_fence_checked_retains_actual_failed_observation",
+        "__main__.TrackedSourceTests.test_source_fence_clean_child_keeps_actual_success_and_bytes",
+        "__main__.TrackedSourceTests.test_source_fence_clean_commit_switch_during_command_is_rejected",
+        "__main__.TrackedSourceTests.test_source_fence_clean_wrong_head_cannot_start_child",
+        "__main__.TrackedSourceTests.test_source_fence_dirty_before_command_cannot_start_child",
+        "__main__.TrackedSourceTests.test_source_fence_dirty_source_preserves_primary_failure",
+        "__main__.TrackedSourceTests.test_source_fence_existing_fuzz_and_supply_callers_pin_every_command",
+        "__main__.TrackedSourceTests.test_source_fence_finish_clean_other_commit_cannot_borrow_pass",
+        "__main__.TrackedSourceTests.test_source_fence_finish_dirty_source_cannot_write_pass",
+        "__main__.TrackedSourceTests.test_source_fence_finish_requires_initial_pin",
+        "__main__.TrackedSourceTests.test_source_fence_finish_valid_source_never_upgrades_existing_failure",
+        "__main__.TrackedSourceTests.test_source_fence_index_hidden_child_mutation_still_refuses",
+        "__main__.TrackedSourceTests.test_source_fence_keeps_nonzero_primary_error_and_drift",
+        "__main__.TrackedSourceTests.test_source_fence_pin_is_clean_and_does_not_follow_later_changes",
+        "__main__.TrackedSourceTests.test_source_fence_timeout_and_source_failure_preserve_both",
+        "__main__.TrackedSourceTests.test_source_fence_zero_exit_with_real_dirty_source_is_not_success",
+        "__main__.TrackedSourceTests.test_staged_change_is_rejected",
+        "__main__.TrackedSourceTests.test_subdirectory_is_not_a_complete_source_root",
+        "__main__.TrackedSourceTests.test_tracked_symlink_target_change_rejected",
+        "__main__.TrackedSourceTests.test_untracked_configuration_cannot_hide_new_source",
+        "__main__.TrackedSourceTests.test_valid_raw_files_modes_and_symlink"
+      ],
+      "single_unittest_summary": "Ran 43 tests in 1.847s\n\nOK\n",
+      "plain_ok_without_skips_failures_or_errors": true,
+      "buffered_fixture_output_allowed": true,
+      "buffered_fixture_receipts": [
+        {
+          "receipt": "/tmp/trnm-ci-raw-source-6k4uj8ss/.git/receipt",
+          "result": "FAIL"
+        },
+        {
+          "receipt": "/tmp/trnm-ci-raw-source-s6z68o0f/.git/receipt",
+          "result": "FAIL"
+        },
+        {
+          "receipt": "/tmp/trnm-ci-raw-source-d3zz0slf/.git/receipt",
+          "result": "FAIL"
+        },
+        {
+          "receipt": "/tmp/trnm-ci-raw-source-nfj0jj10/.git/receipt",
+          "result": "FAIL"
+        },
+        {
+          "receipt": "/tmp/trnm-ci-raw-source-yi8ek3q5/.git/receipt-PASS",
+          "result": "PASS"
+        },
+        {
+          "receipt": "/tmp/trnm-ci-raw-source-yi8ek3q5/.git/receipt-FAIL",
+          "result": "FAIL"
+        }
+      ],
+      "fixture_results_are_not_test_failures": true,
+      "log_sha256": "e9bd8113dd6657f987f6867dc77c5b16765e9efbacaa178700b223d9134a6620",
+      "log_bytes": 6898
+    }
+  },
+  "original_artifacts_unchanged": true,
+  "new_repository_test_execution": false,
+  "native_tests_executed": false,
+  "clippy_executed": false,
+  "status": "HOLD",
+  "production_activation": false
+}

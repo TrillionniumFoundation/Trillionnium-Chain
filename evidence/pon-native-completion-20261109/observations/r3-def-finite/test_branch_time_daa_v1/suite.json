@@ -1,0 +1,53 @@
+{
+  "actual_tests": 31,
+  "child_exit_scope": "This result is the unittest parent process. Existing child CLI negative/HOLD exits are asserted inside unchanged tests; no child exit is substituted for the parent result. Per-child output is not independently instrumented beyond the suite's raw logs.",
+  "command_result": {
+    "argv": [
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "formal/pon-nakamoto-v1",
+      "-p",
+      "test_branch_time_daa_v1.py",
+      "-v"
+    ],
+    "cwd": "/data/chain-abg-70ae-20261108/source",
+    "elapsed_seconds": 0.5668243449181318,
+    "env_overrides": {
+      "GIT_NO_LAZY_FETCH": "1",
+      "GIT_TERMINAL_PROMPT": "0",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONHASHSEED": "0"
+    },
+    "expected_source_commit": "ef025cbea963e3dee54ec4a17e3db7336c11409b",
+    "expected_source_tree": "8de2f7b477aa41b75e9818634fc3aaf04f12f4df",
+    "finished_utc": "2026-11-09T04:03:06.567483+00:00",
+    "label": "test_branch_time_daa_v1",
+    "launch_error": null,
+    "logs_directory": "/data/chain-abg-70ae-20261108/evidence/r3-def-finite/test_branch_time_daa_v1",
+    "outer_process_exit": 0,
+    "started_utc": "2026-11-09T04:03:06.000391+00:00",
+    "stderr": {
+      "bytes": 5638,
+      "sha256": "f0fc7fccc62bab7e2dd9fe22e79905b30043e04e3b7904a5a382f6320ddc09eb"
+    },
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timed_out": false,
+    "timeout_seconds": 180
+  },
+  "declared_child_semantics": null,
+  "expected_tests": 31,
+  "id": "test_branch_time_daa_v1",
+  "no_skips_or_expected_failures": true,
+  "pass": true,
+  "terminal_status_lines": [
+    "OK"
+  ],
+  "unittest_parent_exit": 0
+}

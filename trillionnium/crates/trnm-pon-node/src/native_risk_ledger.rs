@@ -221,9 +221,11 @@ impl NativePrefix {
             metadata.is_dir() && !metadata.file_type().is_symlink(),
             "RISK_LEDGER_NATIVE_PATH",
         )?;
+        // Inspect a special file without waiting for a FIFO writer. The opened
+        // descriptor must still be a regular file before any journal is read.
         let mut file = OpenOptions::new()
             .read(true)
-            .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
+            .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC | libc::O_NONBLOCK)
             .open(directory.join("journal.pnoj1"))?;
         ensure(file.metadata()?.is_file(), "RISK_LEDGER_NATIVE_PATH")?;
         let (frames, hashes): (Vec<Frame<Value>>, _) = read_wire(

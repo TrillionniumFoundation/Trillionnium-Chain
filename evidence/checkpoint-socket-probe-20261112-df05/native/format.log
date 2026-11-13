@@ -1,0 +1,12 @@
+Diff in /data/chain-checkpoint-probe-20261112-df05/trillionnium/crates/trnm-checkpoint-store/tests/socket_ownership.rs:284:
+         );
+         thread::sleep(Duration::from_millis(10));
+     }
+-    assert_eq!(fs::symlink_metadata(&socket).unwrap().ino(), original_socket);
++    assert_eq!(
++        fs::symlink_metadata(&socket).unwrap().ino(),
++        original_socket
++    );
+     assert_eq!(fs::read(&log).unwrap(), original_journal);
+     assert_eq!(fs::read(&lease).unwrap(), record);
+ }

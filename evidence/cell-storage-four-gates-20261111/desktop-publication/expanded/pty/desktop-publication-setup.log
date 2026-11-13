@@ -1,0 +1,37 @@
+{"started": "original-before-head"}
+{"completed": "original-before-head", "exit_code": 0, "timed_out": false}
+{"started": "original-before-branch"}
+{"completed": "original-before-branch", "exit_code": 0, "timed_out": false}
+{"started": "original-before-status"}
+{"completed": "original-before-status", "exit_code": 0, "timed_out": false}
+{"started": "original-before-config-path"}
+{"completed": "original-before-config-path", "exit_code": 0, "timed_out": false}
+{"started": "original-preflight"}
+{"completed": "original-preflight", "exit_code": 0, "timed_out": false}
+{"started": "isolated-clone"}
+{"completed": "isolated-clone", "exit_code": 0, "timed_out": false}
+{"started": "base-object"}
+{"completed": "base-object", "exit_code": 0, "timed_out": false}
+{"started": "sparse-non-evidence"}
+{"completed": "sparse-non-evidence", "exit_code": 0, "timed_out": false}
+{"started": "checkout-exact-base"}
+{"completed": "checkout-exact-base", "exit_code": 0, "timed_out": false}
+{"started": "isolated-preflight"}
+{"completed": "isolated-preflight", "exit_code": 0, "timed_out": false}
+{"started": "isolated-head"}
+{"completed": "isolated-head", "exit_code": 0, "timed_out": false}
+{"started": "isolated-branch"}
+{"completed": "isolated-branch", "exit_code": 0, "timed_out": false}
+{"started": "isolated-status"}
+{"completed": "isolated-status", "exit_code": 0, "timed_out": false}
+{"started": "isolated-sparse-patterns"}
+{"completed": "isolated-sparse-patterns", "exit_code": 0, "timed_out": false}
+{"started": "original-after-head"}
+{"completed": "original-after-head", "exit_code": 0, "timed_out": false}
+{"started": "original-after-branch"}
+{"completed": "original-after-branch", "exit_code": 0, "timed_out": false}
+{"started": "original-after-status"}
+{"completed": "original-after-status", "exit_code": 0, "timed_out": false}
+{"started": "original-after-config-path"}
+{"completed": "original-after-config-path", "exit_code": 0, "timed_out": false}
+{"scope": "isolated desktop publication preparation only; no push or PR", "original": "/home/qian-qi/work/chain-cell-storage-convergence-f2568-20261109", "destination": "/home/qian-qi/work/chain-cell-storage-four-gates-20261111-2bfb-publish", "base": "30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6", "branch": "fix/chain-cell-storage-four-gates-20261111-2bfb", "completed": true, "original_before": {"head": "0746a462e80067b78317597f2fa4bacf5e3db958", "branch": "refs/heads/fix/chain-cell-storage-convergence-f2568-20261109", "clean": true, "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "config_sha256": "9937b538772d7b9469be989e6e2fa09fa6d96d298cae745961f87d1797448f75"}, "passed": true, "head": "30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6", "branch_ref": "refs/heads/fix/chain-cell-storage-four-gates-20261111-2bfb", "clean": true, "sparse_patterns": ["/*", "!/evidence/"], "original_after": {"head": "0746a462e80067b78317597f2fa4bacf5e3db958", "branch": "refs/heads/fix/chain-cell-storage-convergence-f2568-20261109", "clean": true, "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "config_sha256": "9937b538772d7b9469be989e6e2fa09fa6d96d298cae745961f87d1797448f75"}, "original_unchanged": true}

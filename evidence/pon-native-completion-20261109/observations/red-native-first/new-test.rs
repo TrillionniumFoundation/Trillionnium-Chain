@@ -1,0 +1,387 @@
+//! Bounded in-process native-relation correctness controls, using only the
+//! original public/History dispatch APIs. These same test bytes run on the
+//! frozen predecessor for red and the strict native-completion patch for green.
+//! No transport client, open-ended work producer or acceptance load is added.
+use super::super::{
+    public_dispatch, MutationCpuMeasurement, PaidMutationCpuPermit, PublicDispatchObservation,
+    PublicMetrics, PublicPolicy, PublicServer, Request,
+};
+use super::*;
+use crate::ingress::{history_import, DevelopmentIdentity, Page};
+use crate::store::{growth::GrowthWorkCheckedPacket, WorkCheckedPacket};
+use crate::{GrowthPacket, Node, Packet, Settings};
+use trnm_crypto_primitives::pon_work;
+use trnm_protocol::pon_wire::Hash;
+
+fn ordinary_fixture() -> (tempfile::TempDir, Settings, Packet) {
+    let directory = tempfile::tempdir().unwrap();
+    let settings = Settings::development(Some(1_750_000_000)).unwrap();
+    let producer = Node::open(&directory.path().join("producer"), settings.clone(), 1).unwrap();
+    let packet = producer
+        .make(
+            settings.genesis(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            settings.genesis_time() + 2,
+            4096,
+        )
+        .unwrap();
+    WorkCheckedPacket::verify(packet.clone()).unwrap();
+    (directory, settings, packet)
+}
+
+fn prepared(proof: &[u8]) -> pon_work::PreparedTask {
+    let a: Vec<u32> = proof[4..4 + 4 * pon_work::CELLS]
+        .chunks_exact(4)
+        .map(|word| u32::from_le_bytes(word.try_into().unwrap()))
+        .collect();
+    let b: Vec<u32> = proof[4 + 4 * pon_work::CELLS..4 + 8 * pon_work::CELLS]
+        .chunks_exact(4)
+        .map(|word| u32::from_le_bytes(word.try_into().unwrap()))
+        .collect();
+    pon_work::PreparedTask::new(&a, &b).unwrap()
+}
+
+fn ordinary_candidates(original: &Packet) -> Vec<Packet> {
+    let task = prepared(&original.proof);
+    let mut candidates = Vec::new();
+    for state_mismatch in [true, false] {
+        let mut candidate = original.clone();
+        if state_mismatch {
+            candidate.header.state[0] ^= 1;
+        } else {
+            candidate.header.receipts[0] ^= 1;
+        }
+        for nonce in 0..4096 {
+            candidate.header.nonce = nonce;
+            candidate.proof = task.prove(candidate.header.challenge()).unwrap();
+            if pon_work::precheck_proof_statement(
+                candidate.header.challenge(),
+                candidate.header.work_task,
+                candidate.header.target,
+                &candidate.proof,
+            )
+            .is_ok()
+            {
+                break;
+            }
+        }
+        WorkCheckedPacket::verify(candidate.clone()).unwrap();
+        candidates.push(candidate);
+    }
+    assert_ne!(candidates[0].id().unwrap(), candidates[1].id().unwrap());
+    assert_ne!(candidates[0].id().unwrap(), original.id().unwrap());
+    assert_ne!(candidates[1].id().unwrap(), original.id().unwrap());
+    candidates.extend([original.clone(), original.clone()]);
+    candidates
+}
+
+fn public_sequence(node: Mutex<Node>, server: PublicServer, requests: Vec<(Request, Hash)>) {
+    let before = node.lock().unwrap().active().unwrap();
+    let domain = server.mutation_cpu_domain();
+    let stop = Arc::new(AtomicBool::new(false));
+    let metrics = Mutex::new(PublicMetrics::default());
+    let mut promotions = Vec::new();
+    for (index, (request, id)) in requests.into_iter().enumerate() {
+        let cancelled = Arc::new(AtomicBool::new(false));
+        // This local correctness control does not replace the frozen service
+        // campaign. Its limits are identical in the red and green runs.
+        let deadline = Instant::now() + Duration::from_secs(5);
+        let permit =
+            PaidMutationCpuPermit::acquire_before(&server, &metrics, deadline, &stop, &cancelled)
+                .unwrap();
+        permit
+            .live
+            .bind_public_request(deadline, stop.clone(), cancelled.clone())
+            .unwrap();
+        let measurement = MutationCpuMeasurement::for_permit(Some(&permit));
+        let result = public_dispatch(
+            &node,
+            request,
+            deadline,
+            &stop,
+            &cancelled,
+            &metrics,
+            PublicDispatchObservation {
+                observation: None,
+                mutation_cpu: Some(&measurement),
+                arithmetic_facts: None,
+                w1_rejection_cache: None,
+            },
+        );
+        promotions.push(server.mutation_cpu.lock().unwrap().verified_completions);
+        permit.finish(&measurement, &server, &metrics).unwrap();
+        if index < 2 {
+            assert!(
+                matches!(&result, Err(error) if error.to_string() == "ROOT"
+                    && !error.requires_owner_stop()),
+                "native output rejection changed: {result:?}"
+            );
+            assert_eq!(node.lock().unwrap().active().unwrap(), before);
+        } else {
+            assert_eq!(result.unwrap()["block"], hex::encode(id));
+            assert_eq!(node.lock().unwrap().active().unwrap().0, id);
+        }
+        assert_eq!(domain.observe_completion_work().unwrap().live_completions, 0);
+    }
+    let flow = domain.observe_actual_flow().unwrap().unwrap();
+    let registry = domain.observe_completion_work().unwrap();
+    let measured = metrics.into_inner().unwrap();
+    assert!(flow.balance_identity_verified);
+    assert_eq!(flow.booked_reservation_ns, 0);
+    assert_eq!(measured.mutation_cpu_clock_failures, 0);
+    assert!(measured.mutation_cpu_charged_ns > 0);
+    println!(
+        "native_completion_priority local_control promotions={promotions:?} retained={} paid_cpu_ns={} original_pressure_qualified=false",
+        registry.retained_identities, measured.mutation_cpu_charged_ns
+    );
+    assert_eq!(promotions, vec![0, 0, 1, 0]);
+    assert_eq!(registry.retained_identities, 1);
+}
+
+fn ordinary_public_sequence(held: bool) {
+    let (directory, settings, original) = ordinary_fixture();
+    let mut receiver = Node::open(&directory.path().join("receiver"), settings, 1).unwrap();
+    if held {
+        receiver.enable_local_root_rejection_cache().unwrap();
+    }
+    assert_eq!(receiver.detached_execution_supported(), !held);
+    let requests = ordinary_candidates(&original)
+        .into_iter()
+        .map(|candidate| {
+            (
+                Request::Submit {
+                    packet: hex::encode(candidate.encode().unwrap()),
+                },
+                candidate.id().unwrap(),
+            )
+        })
+        .collect();
+    let server = PublicServer::new(
+        DevelopmentIdentity::from_secret_hex(&hex::encode([73; 32])).unwrap(),
+        PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+    )
+    .unwrap();
+    public_sequence(Mutex::new(receiver), server, requests);
+}
+
+#[test]
+fn native_completion_priority_requires_full_relation_on_held_owner() {
+    ordinary_public_sequence(true);
+}
+
+#[test]
+fn native_completion_priority_requires_full_relation_on_detached_owner() {
+    ordinary_public_sequence(false);
+}
+
+#[test]
+fn native_completion_priority_requires_full_relation_on_growth_owner() {
+    let directory = tempfile::tempdir().unwrap();
+    let settings = Settings::development_with_profiles(
+        Some(1),
+        "native-public-evaluation-dev-v1",
+        trnm_mvcc_fee::continuity_v1::PROFILE,
+    )
+    .unwrap()
+    .with_permanent_account_growth_v2("native-completion-priority")
+    .unwrap();
+    let producer = Node::open_with_permanent_account_growth_v2(
+        &directory.path().join("producer"),
+        settings.clone(),
+    )
+    .unwrap();
+    let original = producer
+        .make_growth_consensus_maintenance(
+            settings.genesis(),
+            vec![],
+            crate::development_public(3).unwrap(),
+            11,
+            4096,
+        )
+        .unwrap();
+    let task = prepared(&original.proof);
+    let original_identity = GrowthWorkCheckedPacket::verify_with_progress(original.clone(), &|_| Ok(()))
+        .unwrap()
+        .completion_identity()
+        .unwrap();
+    let mut candidates: Vec<GrowthPacket> = Vec::new();
+    let mut identities = Vec::new();
+    for state_mismatch in [true, false] {
+        let mut candidate = original.clone();
+        if state_mismatch {
+            candidate.header.ledger.state[0] ^= 1;
+        } else {
+            candidate.header.ledger.receipts[0] ^= 1;
+        }
+        for nonce in 0..4096 {
+            candidate.header.ledger.nonce = nonce;
+            candidate.proof = task.prove(candidate.header.challenge()).unwrap();
+            if pon_work::precheck_proof_statement(
+                candidate.header.challenge(),
+                candidate.header.ledger.work_task,
+                candidate.header.ledger.target,
+                &candidate.proof,
+            )
+            .is_ok()
+            {
+                break;
+            }
+        }
+        let identity = GrowthWorkCheckedPacket::verify_with_progress(candidate.clone(), &|_| Ok(()))
+            .unwrap()
+            .completion_identity()
+            .unwrap();
+        assert_ne!(identity, original_identity);
+        identities.push(identity);
+        candidates.push(candidate);
+    }
+    assert_ne!(identities[0], identities[1]);
+    candidates.extend([original.clone(), original]);
+    let requests = candidates
+        .into_iter()
+        .map(|candidate| {
+            (
+                Request::GrowthSubmitV1 {
+                    packet: hex::encode(candidate.encode().unwrap()),
+                },
+                candidate.id().unwrap(),
+            )
+        })
+        .collect();
+    let receiver = Node::open_with_permanent_account_growth_v2(
+        &directory.path().join("receiver"),
+        settings,
+    )
+    .unwrap();
+    let server = PublicServer::new(
+        DevelopmentIdentity::from_secret_hex(&hex::encode([74; 32])).unwrap(),
+        PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+    )
+    .unwrap()
+    .with_native_growth()
+    .unwrap();
+    public_sequence(Mutex::new(receiver), server, requests);
+}
+
+fn page(settings: &Settings, candidate: &Packet) -> Page {
+    let id = candidate.id().unwrap();
+    Page {
+        schema: "pon-native-history-v1".into(),
+        network: hex::encode(settings.network()),
+        parameters: hex::encode(settings.parameters()),
+        genesis: hex::encode(settings.genesis()),
+        tip: hex::encode(id),
+        after: hex::encode(candidate.header.parent),
+        packets: vec![hex::encode(candidate.encode().unwrap())],
+        next: hex::encode(id),
+        complete: true,
+    }
+}
+
+fn history_sequence(shared: bool) {
+    let (directory, settings, original) = ordinary_fixture();
+    let mut receiver = Node::open(&directory.path().join("receiver"), settings.clone(), 1).unwrap();
+    let domain = receiver.remote_history_cpu_domain().unwrap();
+    assert_eq!(domain.observe_actual_flow().unwrap().unwrap().initial_credit_ns, 0);
+    let shared_receiver = Mutex::new(receiver);
+    let before = shared_receiver.lock().unwrap().active().unwrap();
+    let mut retained = Vec::new();
+    for (index, candidate) in ordinary_candidates(&original).into_iter().enumerate() {
+        // Earn ordinary idle refill before this semantic test's request; never
+        // assign credit or advance a fake clock. The separate cold control
+        // below starts immediately and keeps the original two-second bound.
+        let refill_end = Instant::now() + Duration::from_secs(5);
+        while domain
+            .observe_credit_freshness()
+            .unwrap()
+            .unwrap()
+            .projected_paid_credit_ns
+            < 1_000_000_000
+        {
+            assert!(Instant::now() < refill_end);
+            thread::sleep(Duration::from_millis(2));
+        }
+        let id = candidate.id().unwrap();
+        let receive = |owner| {
+            history_import::receive(
+                owner,
+                page(&settings, &candidate),
+                id,
+                settings.genesis(),
+                settings.genesis_time() + 10,
+                history_import::Control {
+                    deadline: Instant::now() + Duration::from_secs(5),
+                    resource: &|| Ok(()),
+                },
+            )
+        };
+        let result = if shared {
+            receive(history_import::Owner::Shared(&shared_receiver))
+        } else {
+            receive(history_import::Owner::Exclusive(&mut shared_receiver.lock().unwrap()))
+        };
+        let registry = domain.observe_completion_work().unwrap();
+        retained.push(registry.retained_identities);
+        assert_eq!(registry.live_completions, 0);
+        if index < 2 {
+            assert!(
+                matches!(&result, Err(error) if error.to_string() == "ROOT"
+                    && !error.requires_owner_stop()),
+                "native History output rejection changed: {result:?}"
+            );
+            assert_eq!(shared_receiver.lock().unwrap().active().unwrap(), before);
+        } else {
+            assert_eq!(result.unwrap(), id);
+            assert_eq!(shared_receiver.lock().unwrap().active().unwrap().0, id);
+        }
+    }
+    let flow = domain.observe_actual_flow().unwrap().unwrap();
+    println!(
+        "native_completion_priority History shared={shared} retained={retained:?} paid_cpu_ns={} initial_credit_ns={} original_pressure_qualified=false",
+        flow.paid_cpu_debit_ns, flow.initial_credit_ns
+    );
+    assert!(flow.balance_identity_verified);
+    assert_eq!(flow.booked_reservation_ns, 0);
+    assert!(flow.paid_cpu_debit_ns > 0);
+    assert_eq!(retained, vec![0, 0, 1, 1]);
+}
+
+#[test]
+fn native_completion_priority_requires_full_relation_on_shared_history() {
+    history_sequence(true);
+}
+
+#[test]
+fn native_completion_priority_requires_full_relation_on_exclusive_history() {
+    history_sequence(false);
+}
+
+#[test]
+fn native_completion_priority_cold_history_honest_original_deadline_control() {
+    let (directory, settings, original) = ordinary_fixture();
+    let mut receiver = Node::open(&directory.path().join("cold-receiver"), settings.clone(), 1).unwrap();
+    let domain = receiver.remote_history_cpu_domain().unwrap();
+    let start = Instant::now();
+    let result = history_import::receive(
+        history_import::Owner::Exclusive(&mut receiver),
+        page(&settings, &original),
+        original.id().unwrap(),
+        settings.genesis(),
+        settings.genesis_time() + 10,
+        history_import::Control {
+            deadline: start + Duration::from_secs(2),
+            resource: &|| Ok(()),
+        },
+    );
+    let flow = domain.observe_actual_flow().unwrap().unwrap();
+    println!(
+        "native_completion_priority cold_honest result={result:?} elapsed_ms={} flow={} original_multi_process_pressure_qualified=false",
+        start.elapsed().as_millis(), serde_json::to_string(&flow).unwrap()
+    );
+    assert_eq!(flow.initial_credit_ns, 0);
+    assert!(flow.balance_identity_verified);
+    assert_eq!(flow.booked_reservation_ns, 0);
+    assert_eq!(result.unwrap(), original.id().unwrap());
+    assert_eq!(receiver.active().unwrap().0, original.id().unwrap());
+}

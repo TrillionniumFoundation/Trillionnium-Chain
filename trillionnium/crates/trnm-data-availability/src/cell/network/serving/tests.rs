@@ -122,6 +122,50 @@ fn query(manifest: &CellManifestV1) -> Vec<u8> {
     query
 }
 
+#[test]
+fn normally_completed_workers_reuse_the_original_validated_cache_reader() {
+    let (_directory, path, manifest) = fixture();
+    let store = CellStoreV1::open_read_only(&path).unwrap();
+    let original_deadline = Instant::now() + Duration::from_secs(5);
+    let mut report = CellServeReportV1 {
+        peak_active_workers: 1,
+        ..CellServeReportV1::default()
+    };
+    let mut failure = None;
+    let mut readers = [Some(store)];
+    thread::scope(|scope| {
+        let mut active = [None];
+        for completed in 1..=2 {
+            let store = readers[0].take().unwrap();
+            let expected = manifest.clone();
+            active[0] = Some(scope.spawn(move || {
+                assert_eq!(store.manifest(expected.id()).unwrap(), Some(expected));
+                (store, true)
+            }));
+            while !active[0].as_ref().unwrap().is_finished() {
+                assert!(Instant::now() < original_deadline);
+                thread::yield_now();
+            }
+            reap_finished_workers(&mut active, &mut readers, &mut report, &mut failure);
+            assert!(active[0].is_none());
+            assert!(failure.is_none());
+            assert_eq!(report.completed_requests, completed);
+            assert_eq!(
+                readers[0]
+                    .as_ref()
+                    .unwrap()
+                    .manifest(manifest.id())
+                    .unwrap(),
+                Some(manifest.clone())
+            );
+        }
+    });
+    assert_eq!(report.peak_active_workers, 1);
+    assert_eq!(report.accepted_connections, 0);
+    assert_eq!(report.overloaded_connections, 0);
+    assert_eq!(report.sent_response_bytes, 0);
+}
+
 #[cfg(unix)]
 #[test]
 fn listener_wait_is_capped_by_the_original_deadline_and_idle_interval() {

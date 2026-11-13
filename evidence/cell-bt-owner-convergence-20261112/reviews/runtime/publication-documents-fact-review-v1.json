@@ -1,0 +1,97 @@
+{
+  "blocking_factual_or_implementation_findings": [],
+  "extra_tests_or_model_runs": false,
+  "h_called": false,
+  "historical_material_scope": {
+    "current_convergence_contract_has_different_bytes": true,
+    "draft_identity_is_historical": true,
+    "historical_draft_identity_recorded_bytes": 8709,
+    "historical_draft_identity_recorded_sha256": "f12a421d165c0d09106df7d9e371fe509eb57311172d496859792c1890bf8499",
+    "new_final_manifest_required_for_current_bytes": true,
+    "original_B_native_history_other_than_explicit_resource_wording_retained": true,
+    "pre_model_drafts_should_not_be_rewritten_as_current_success": true
+  },
+  "linked_file_availability_at_review": {
+    "interpretation": "These are expected material-collection/staging gaps at this review instant, not new execution failures. Final publication must include actual original linked files and their final manifest, not empty substitutes or summaries relabeled as raw.",
+    "missing_readme_targets": [
+      "model/observation.json"
+    ]
+  },
+  "local_source_mutations": false,
+  "numeric_crosschecks_passed": true,
+  "pending_publication_clarifications": [
+    {
+      "current_wording": "Runtime snapshot files are still independently pinned host dependencies, not all BT-delivered or sealed bytes.",
+      "document": "CELL_NATIVE_SHARD_RESEARCH_V2.md",
+      "requested_precision": "Say Host files described by the runtime snapshot. The snapshot JSON itself is one of the actual transferred and sealed environment members."
+    },
+    {
+      "document": "README.md actual operation section",
+      "requested_precision": "State actual bep52.transport_plan_includes_cts1=false: the CTS1 envelope remains an independent outer pin rather than a BEP52-plan-delivered member."
+    },
+    {
+      "document": "README.md and summary.json forward outcomes",
+      "requested_precision": "Add the actual raw observation reference and derive yes/yes from Q32 candidate scores, with arithmetic correctness true/false. Do not call this additional generated text or model quality improvement."
+    }
+  ],
+  "primary_actual_evidence": [
+    {
+      "bytes": 82443,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/model-native-result-readback/native-result.json",
+      "sha256": "7e69ad30d35e984cf8e7d871bce91f7ec50f5e7c530a29c584454eab79c262a0"
+    },
+    {
+      "bytes": 3710,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/model-frozen02-authoritative/native.stdout",
+      "sha256": "bf2e6e9a37e69e4ba6a4208cb73bf1fb164e6ce751ddf30d244336978e568a14"
+    },
+    {
+      "bytes": 2354,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/validation/durable-current-remote/model-forward-observations-readback/next-use-observations.json",
+      "sha256": "5cc5bf2bdd55158d6636689de9f72840b88cbc072a21dfd0ea70eb9a5768a097"
+    },
+    {
+      "bytes": 117420,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/publication-stage/evidence/cell-bt-owner-convergence-20261112/candidate-gate-coverage.json",
+      "sha256": "274c8356b6a0199501cbdbdbfff06d59a56133b75ab6873b06489c1daa40b30b"
+    }
+  ],
+  "publishable_scope": [
+    "One exact frozen-B loopback native operation passed original transfer/retention/repair/cold reconstruction, complete selection and sealed two-forward execution under actual 8-GiB/four-CPU limits and the original 300-second acceptance bound.",
+    "74 distinct candidate command requirements are covered across identified runs; this is not one original campaign retroactively marked passed.",
+    "Development M12 funding, historical child Done effects, current direct root/member payload custody, future retention and real settlement are separate. The latter qualifications remain expressly false.",
+    "Runtime snapshot metadata travelled as payload; host interpreter/native files are separately pinned and verified. Pathwise inventory bytes include aliases.",
+    "No claim of independent operators/WAN/PN5, persistent CURRENT, ordinary Adopt, original Hepta owner/FinalUse, installation, efficacy, real payment or production is added.",
+    "Desktop publication02 clone/source result is not inferred from a helper review or start response. Root must use its actual source receipts."
+  ],
+  "reviewed_at_utc": "2026-11-12T10:49:22.368053+00:00",
+  "reviewed_exact_files": [
+    {
+      "bytes": 17188,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/publication-stage/evidence/cell-bt-owner-convergence-20261112/README.md",
+      "sha256": "16dda13c493e681d658c844341b7ed9b6cbe849a82e6b665d96bbe723ad77c9b"
+    },
+    {
+      "bytes": 13933,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/publication-stage/evidence/cell-bt-owner-convergence-20261112/summary.json",
+      "sha256": "ef73a0e341d227204f38451a129cda29616ea60c0d148d144cca217f11a8ab7a"
+    },
+    {
+      "bytes": 10417,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/preparation/publication-docs-draft/CELL_BT_OWNER_CONVERGENCE_V1.md",
+      "sha256": "3935dc983d2e70cee4f65cbbd9cbca83fb672bf36caf8fb34c179f8f2f798066"
+    },
+    {
+      "bytes": 24962,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/preparation/publication-docs-draft/CELL_NATIVE_SHARD_RESEARCH_V2.md",
+      "sha256": "26f3318d7a4353b64e0adcf3f63b9e24f929eb0dd36910d8bab85f3351747b82"
+    },
+    {
+      "bytes": 3336,
+      "path": "/workspace/scratch/bt-owner-recovery-20261112-4a0b/preparation/publication-docs-draft/plan-prefix.txt",
+      "sha256": "72e29442891a727e4040426b9fff30c57eb1d900cf4aa1d801741746be3fd4d7"
+    }
+  ],
+  "reviewer": "release_acceptance",
+  "schema": "release_acceptance_publication_documents_fact_review_v1"
+}

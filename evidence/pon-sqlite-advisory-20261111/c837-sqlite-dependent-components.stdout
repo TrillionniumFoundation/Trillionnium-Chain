@@ -1,0 +1,2190 @@
+
+running 450 tests
+test cell::archive::tests::absolute_deadline_and_original_physical_exclusive_owner_are_preserved ... FAILED
+test cell::archive::tests::all_catalog_writer_waits_keep_the_original_deadline_and_preserve_roots ... FAILED
+test cell::archive::tests::codec_rejects_truncation_trailing_data_oversize_and_invalid_replica_before_side_effects ... FAILED
+test cell::archive::tests::collected_content_can_be_retained_under_new_funded_operations_without_rewinding_history ... FAILED
+test cell::archive::tests::complete_closure_is_physically_retained_and_rehydrates_original_cache_after_reopen ... FAILED
+test cell::archive::tests::contract_identity_freezes_owner_domain_replica_funding_repair_and_root ... FAILED
+test cell::archive::tests::corruption_invalidates_fresh_readback_and_missed_repair_deadline_never_reclaims_duty ... FAILED
+test cell::archive::tests::forged_status_cannot_make_reachable_objects_collectible ... FAILED
+test cell::archive::tests::impossible_new_release_capacity_refuses_before_catalog_or_physical_reservation ... FAILED
+test cell::archive::tests::lost_initial_copy_keeps_cost_and_requires_distinct_repair_before_release_ack ... FAILED
+test cell::archive::tests::lost_release_ack_reconciles_all_targets_without_any_source_or_cache ... FAILED
+test cell::archive::tests::lost_repair_ack_blocks_root_and_physical_gc_until_target_only_reconciliation ... FAILED
+test cell::archive::tests::missing_dependency_wrong_terms_or_shared_operation_alias_refuse_before_new_root_intent ... FAILED
+test cell::archive::tests::old_impossible_pending_intent_remains_readable_and_protected_without_migration ... FAILED
+test cell::archive::tests::partial_physical_reservation_keeps_complete_pending_root_across_restart ... FAILED
+test cell::archive::tests::physical_ack_and_recovered_tensor_plan_do_not_admit_hash_correct_invalid_dtype ... FAILED
+test cell::archive::tests::physical_reservation_contention_keeps_a_complete_pending_root_without_late_slots ... FAILED
+test cell::archive::tests::retired_root_history_still_consumes_capacity_and_cannot_rebind_object_identity ... FAILED
+test cell::archive::tests::shared_objects_survive_one_history_retirement_and_expiry_requires_explicit_root_retirement ... FAILED
+test cell::archive::tests::tca2_refuses_archived_tca1_wire_and_database_without_migration ... FAILED
+test cell::archive::tests::tensor_plan_cold_recovery_rehydrates_exact_tma_and_revalidates_without_sources ... FAILED
+test cell::archive::tests::tensor_plan_is_bound_to_exact_root_wire_commitment_and_persisted_identity ... FAILED
+test cell::archive::tests::terminal_physical_history_cannot_create_an_unfulfillable_new_root ... FAILED
+test cell::archive::tests::two_versions_share_base_and_tokenizer_while_only_the_retired_router_is_collectible ... FAILED
+test cell::archive::tests::unknown_schema_or_missing_catalog_never_opens_as_empty_archive ... ok
+test cell::archive::tests::unmaterialized_pending_members_keep_their_funding_and_future_history_capacity ... FAILED
+test cell::bep52::tests::a_valid_external_hash_never_replaces_the_internal_manifest_or_context_pin ... ok
+test cell::bep52::tests::alternate_bencoding_path_names_codecs_and_overlarge_metadata_fail_closed ... ok
+test cell::bep52::tests::boundary_file_lengths_and_exact_last_piece_lengths_verify ... ok
+test cell::bep52::tests::full_piece_layers_are_checked_even_when_infohash_is_unchanged ... ok
+test cell::bep52::tests::larger_chunks_and_empty_cells_are_explicitly_outside_this_profile ... ok
+test cell::bep52::tests::magnet_profile_rejects_ambiguous_topics_and_network_parameter_injection ... ok
+test cell::bep52::tests::maximum_declared_tree_has_bounded_metadata_and_fourteen_sibling_proof ... ok
+test cell::bep52::tests::non_power_of_two_tree_uses_zero_digest_padding_and_omits_padding_in_piece_layer ... ok
+test cell::bep52::tests::reordered_chunks_cross_index_replays_and_every_single_byte_proof_corruption_fail ... ok
+test cell::bep52::tests::short_single_leaf_has_unpadded_sha256_root_and_exact_bencoding ... ok
+test cell::bep52::tests::truncated_extra_and_hostile_proof_shapes_are_rejected_before_indexing ... ok
+test cell::bep52::tests::wholly_padded_upper_subtrees_are_hashes_of_zero_children_not_zero ... ok
+test cell::closure_tests::closure_bounds_longest_dependency_path_including_shared_subgraphs ... ok
+test cell::closure_tests::closure_checks_independent_owner_context_and_required_roles ... ok
+test cell::closure_tests::closure_decoder_rejects_truncation_suffix_oversize_and_inconsistent_membership ... ok
+test cell::closure_tests::closure_fetches_real_loopback_bytes_and_publishes_exact_non_authorizing_marker ... FAILED
+test cell::closure_tests::closure_loader_chunk_budget_stops_before_payload_and_never_publishes_marker ... FAILED
+test cell::closure_tests::closure_matches_independent_python_wire_and_existing_tcm_identities ... ok
+test cell::closure_tests::closure_preserves_owner_readme_names_but_refuses_case_fold_aliases ... ok
+test cell::closure_tests::closure_refuses_missing_duplicate_cyclic_and_unreachable_dependencies ... ok
+test cell::closure_tests::closure_refuses_path_traversal_platform_aliases_and_file_directory_conflicts ... ok
+test cell::closure_tests::closure_rejects_last_manifest_metadata_before_fetching_any_payload ... FAILED
+test cell::closure_tests::closure_shares_original_transport_budget_and_resumes_without_partial_marker ... FAILED
+test cell::content_v2::closure::tests::any_actual_payload_or_dependency_change_refuses_the_whole_closure ... ok
+test cell::content_v2::closure::tests::cancellation_after_last_dependency_bytes_still_refuses_complete_closure ... ok
+test cell::content_v2::closure::tests::closure_parser_rejects_every_truncation_tail_unknown_role_and_legacy_manifest ... ok
+test cell::content_v2::closure::tests::closure_reservations_are_cumulative_and_failed_late_reads_are_not_refunded ... ok
+test cell::content_v2::closure::tests::complete_dependency_closure_matches_independent_python_wire_and_readback ... ok
+test cell::content_v2::closure::tests::full_closure_observation_joins_actual_cpq1_release_signature_verification ... ok
+test cell::content_v2::closure::tests::legacy_digest_observations_and_sha512_wrappers_do_not_upgrade_dependencies ... ok
+test cell::content_v2::closure::tests::omitted_or_extra_dependency_bytes_never_produce_complete_readback ... ok
+test cell::content_v2::closure::tests::payload_only_pin_cannot_replace_the_complete_dependency_closure_pin ... ok
+test cell::content_v2::closure::tests::swapped_dependency_readers_or_claims_cannot_reuse_a_pinned_closure ... ok
+test cell::content_v2::closure::tests::wrong_dependency_purpose_or_profile_is_refused_at_construction_and_decode ... ok
+test cell::content_v2::closure::tests::zero_or_oversized_dependency_claims_cannot_stand_for_missing_content ... ok
+test cell::content_v2::tests::all_manifest_truncations_tails_and_legacy_formats_are_rejected ... ok
+test cell::content_v2::tests::changed_legacy_metadata_is_bound_but_does_not_select_the_expected_pin ... ok
+test cell::content_v2::tests::changed_real_payload_truncation_and_tail_refuse_readback ... ok
+test cell::content_v2::tests::complete_readback_uses_one_cumulative_budget_with_no_failed_read_refund ... ok
+test cell::content_v2::tests::exact_wire_and_full_readback_match_independent_python_vectors ... ok
+test cell::content_v2::tests::legacy_digest_bytes_and_sha512_digest_wrapping_do_not_verify_real_payload ... ok
+test cell::content_v2::tests::payload_constructor_and_decoder_reject_every_other_content_role ... ok
+test cell::content_v2::tests::payload_size_limits_apply_to_local_creation_and_untrusted_claims ... ok
+test cell::content_v2::tests::source_errors_and_cancellation_never_become_complete_readback ... ok
+test cell::content_v2::tests::wrong_manifest_role_instance_generation_or_profile_is_refused_before_payload_io ... ok
+test cell::custody::tests::cold_reopen_reobserves_bytes_and_does_not_accept_only_the_prior_report ... FAILED
+test cell::custody::tests::complementary_partial_archives_never_count_as_a_complete_replica ... FAILED
+test cell::custody::tests::complete_models_with_one_partial_environment_leave_the_whole_version_incomplete ... FAILED
+test cell::custody::tests::complete_payload_budget_is_reserved_before_any_partial_scan ... FAILED
+test cell::custody::tests::complete_version_counts_real_model_and_environment_on_the_same_archives ... FAILED
+test cell::custody::tests::complete_version_environment_cannot_obtain_a_fresh_budget_after_model_scans ... FAILED
+test cell::custody::tests::complete_version_refuses_to_splice_a_valid_environment_from_another_physical_store ... FAILED
+test cell::custody::tests::declared_domain_and_owner_aliases_and_absent_evidence_fail_closed ... FAILED
+test cell::custody::tests::expected_store_identifier_cannot_be_counted_twice_from_two_local_directories ... FAILED
+test cell::custody::tests::expired_original_observation_deadline_is_not_refreshed ... FAILED
+test cell::custody::tests::future_and_expired_promises_never_count_even_when_all_bytes_remain ... FAILED
+test cell::custody::tests::historical_ack_cannot_hide_corruption_and_failed_probes_are_not_refunded ... FAILED
+test cell::custody::tests::missed_fixed_repair_window_requires_replacement_without_extending_paid_terms ... FAILED
+test cell::custody::tests::origin_and_one_missing_provider_leave_one_debt_without_counting_a_cache ... FAILED
+test cell::custody::tests::policy_pin_rejects_changed_domain_and_continuation_owners_before_probe ... FAILED
+test cell::custody::tests::reachable_sponsor_is_never_treated_as_available_funds_or_paid_renewal ... FAILED
+test cell::custody::tests::same_payload_under_another_version_is_not_the_pinned_whole_release ... FAILED
+test cell::custody::tests::sponsor_disappearance_keeps_original_deadline_duty_and_full_coverage_target ... FAILED
+test cell::custody::tests::three_complete_target_readbacks_survive_source_and_cache_loss ... FAILED
+test cell::custody::tests::version_continuation_does_not_hide_missing_environment_or_its_lost_sponsor ... FAILED
+test cell::custody::tests::version_continuation_preserves_environment_probe_refusal_and_actual_reservations ... FAILED
+test cell::custody::tests::version_continuation_refuses_either_missing_component_observation ... FAILED
+test cell::custody::tests::version_continuation_retains_each_original_term_owner_and_component_size ... FAILED
+test cell::custody::tests::version_continuation_validates_one_bounded_sponsor_union_before_component_plans ... FAILED
+test cell::delta_network_tests::cancelled_delta_never_mutates_or_dials_and_new_attempt_keeps_original_pins ... FAILED
+test cell::delta_network_tests::delta_cancellation_interrupts_partial_tcp_response_without_retry_or_publication ... FAILED
+test cell::delta_network_tests::invalid_base_or_original_delta_budget_never_dials_or_publishes_target ... FAILED
+test cell::delta_network_tests::tcp_delta_fetch_downloads_only_the_absent_chunk_and_materializes_exact_target ... FAILED
+test cell::delta_tests::corrupt_base_fails_before_target_metadata_or_output_and_budget_covers_both_payloads ... FAILED
+test cell::delta_tests::delta_late_owner_event_preserves_published_target_but_refuses_success ... FAILED
+test cell::delta_tests::delta_metadata_contention_spends_original_deadline_without_a_late_write ... FAILED
+test cell::delta_tests::delta_reconstruction_requires_only_direct_base_even_after_many_version_steps ... FAILED
+test cell::delta_tests::malformed_delta_ranges_and_noncanonical_base_indices_are_refused ... FAILED
+test cell::delta_tests::valid_chunks_cannot_bypass_target_whole_payload_hash_or_owner_pins ... FAILED
+test cell::delta_tests::verified_delta_reuses_shared_base_and_publishes_full_exact_target ... FAILED
+test cell::discovery::directory::deadline_tests::lookup_commit_contention_keeps_original_deadline ... ok
+test cell::discovery::directory::deadline_tests::lookup_owner_contention_keeps_original_deadline ... ok
+test cell::discovery::directory::deadline_tests::lookup_writer_contention_keeps_original_deadline ... ok
+test cell::discovery::directory::deadline_tests::publish_commit_contention_keeps_original_deadline ... ok
+test cell::discovery::directory::deadline_tests::publish_owner_contention_keeps_original_deadline ... ok
+test cell::discovery::directory::deadline_tests::publish_writer_contention_keeps_original_deadline ... ok
+test cell::discovery::diversity_tests::real_tcp_low_owner_flood_keeps_later_bootstrap_provider_and_original_budgets ... ok
+test cell::discovery::diversity_tests::real_tcp_manifest_quota_flood_keeps_later_source_without_resetting_highwater_or_budget ... ok
+test cell::discovery::diversity_tests::real_tcp_receive_time_equivocation_survives_later_bootstrap_delay_and_expiry ... ok
+test cell::discovery::equivocation_history_tests::tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation ... FAILED
+test cell::discovery::pq::directory::deadline_tests::lookup_commit_contention_keeps_original_deadline ... ok
+test cell::discovery::pq::directory::deadline_tests::lookup_owner_contention_keeps_original_deadline ... ok
+test cell::discovery::pq::directory::deadline_tests::lookup_writer_contention_keeps_original_deadline ... ok
+test cell::discovery::pq::directory::deadline_tests::publish_commit_contention_keeps_original_deadline ... ok
+test cell::discovery::pq::directory::deadline_tests::publish_owner_contention_keeps_original_deadline ... ok
+test cell::discovery::pq::directory::deadline_tests::publish_writer_contention_keeps_original_deadline ... ok
+test cell::discovery::pq::tests::actual_mldsa_record_rejects_every_changed_field_classic_and_trailing_wire ... ok
+test cell::discovery::pq::tests::cpk2_roster_wire_is_canonical_and_revocation_bound ... ok
+test cell::discovery::pq::tests::fresh_schema_commits_key_roster_and_never_rewinds_with_expiry_or_restart ... ok
+test cell::discovery::pq::tests::invalid_signatures_consume_server_slots_without_publication ... ok
+test cell::discovery::pq::tests::pq_discovery_actual_response_exhaustion_stops_before_dial ... ok
+test cell::discovery::pq::tests::randomized_signatures_preserve_semantic_high_water_and_original_durable_bytes ... ok
+test cell::discovery::pq::tests::real_tcp_pq_discovery_fetch_and_withdrawal_share_persisted_high_water_and_budget ... FAILED
+test cell::discovery::pq::tests::real_tcp_pq_low_owner_flood_keeps_later_bootstrap_without_extra_budget ... ok
+test cell::discovery::pq::tests::real_tcp_pq_manifest_quota_flood_keeps_later_source_without_resetting_highwater_or_budget ... ok
+test cell::discovery::pq::tests::real_tcp_pq_receive_time_equivocation_survives_later_bootstrap_delay_and_expiry ... ok
+test cell::discovery::selection::tests::bootstrap_flood_cannot_take_all_slots_from_later_observed_sources ... ok
+test cell::discovery::selection::tests::dedup_uses_latest_current_expiry_without_losing_actual_source_provenance ... ok
+test cell::discovery::selection::tests::ipv4_and_ipv6_prefixes_and_ips_precede_additional_ports_of_low_keys ... ok
+test cell::discovery::selection::tests::one_network_fallbacks_survive_and_candidate_identity_is_not_peer_chosen ... ok
+test cell::discovery::sequence_tests::fixture_setup_wait_preserves_original_tcp_announcement_budget ... ok
+test cell::discovery::sequence_tests::tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial ... FAILED
+test cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication ... FAILED
+test cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint ... FAILED
+test cell::discovery::tests::bad_advertisement_cannot_trigger_an_unscoped_dial_or_grant_a_candidate ... ok
+test cell::discovery::tests::cached_advertisements_cannot_replace_an_actual_bootstrap_reply ... FAILED
+test cell::discovery::tests::canonical_record_binds_every_field_and_rejects_invalid_signature_time_and_encoding ... ok
+test cell::discovery::tests::discovery_actual_response_exhaustion_stops_before_dial ... ok
+test cell::discovery::tests::discovery_and_cell_requests_share_original_connection_and_actual_byte_budgets ... FAILED
+test cell::discovery::tests::expired_records_keep_highwater_across_restart_and_clock_rollback_fails_closed ... ok
+test cell::discovery::tests::explicit_scopes_reject_loopback_linklocal_multicast_mapped_and_unlisted_ports ... FAILED
+test cell::discovery::tests::first_manifest_read_preserves_cold_warm_status_and_exact_rejection_counts ... FAILED
+test cell::discovery::tests::fixed_512_identity_capacity_survives_expiry_and_never_evicts_for_new_keys ... ok
+test cell::discovery::tests::four_bootstraps_exhaust_exact_eight_attempts_and_64_validation_slots_without_referrals ... ok
+test cell::discovery::tests::live_schema_namespace_and_same_path_replacement_cannot_manufacture_publication_ack ... ok
+test cell::discovery::tests::lookup_rejects_old_signed_wire_with_retained_new_highwater_columns ... ok
+test cell::discovery::tests::oversized_and_partial_tcp_replies_debit_actual_bytes_and_do_not_reopen_attempts ... ok
+test cell::discovery::tests::owner_manifest_and_observed_source_limits_are_independent_permanent_caps ... ok
+test cell::discovery::tests::slowloris_retains_one_absolute_deadline_and_counts_partial_response_bytes ... ok
+test cell::discovery::tests::tcp_bootstrap_discovers_unconfigured_providers_and_repairs_after_origin_exit ... FAILED
+test cell::discovery::tests::tcp_publication_ack_requires_live_schema_and_actual_persisted_highwater ... ok
+test cell::discovery::vectors::signed_development_profile_has_an_independent_exact_encoding_vector ... ok
+test cell::erasure::tests::all_fifteen_four_shard_subsets_restore_real_non_aligned_chunk ... ok
+test cell::erasure::tests::all_padding_remainders_and_short_sources_are_reconstructed_exactly ... ok
+test cell::erasure::tests::corrupted_required_or_extra_shards_never_return_verified_source_bytes ... ok
+test cell::erasure::tests::every_field_product_matches_independent_polynomial_division ... ok
+test cell::erasure::tests::every_single_byte_wire_mutation_is_rejected_by_shape_or_pinned_recovery ... ok
+test cell::erasure::tests::exact_systematic_and_partial_shard_vectors_and_crs1_identity ... ok
+test cell::erasure::tests::full_four_mebibyte_chunk_recovers_with_two_missing_systematic_shards ... ok
+test cell::erasure::tests::insufficient_duplicate_and_reordered_shards_are_not_silently_reinterpreted ... ok
+test cell::erasure::tests::internal_context_object_and_chunk_pins_cannot_be_replaced_by_shard_headers ... ok
+test cell::erasure::tests::nonzero_padding_is_rejected_even_when_original_payload_hash_would_match ... ok
+test cell::erasure::tests::singular_matrix_is_an_error_and_does_not_claim_recovery ... ok
+test cell::erasure::tests::truncated_extra_oversized_and_hostile_headers_refuse_before_payload_copy ... ok
+test cell::model_root_tests::actual_direct_parent_roots_require_complete_matching_family_and_older_generation ... ok
+test cell::model_root_tests::independent_python_model_root_vector_and_every_truncated_prefix ... ok
+test cell::model_root_tests::model_root_fetch_uses_original_closure_checks_and_publishes_only_complete_exact_root ... FAILED
+test cell::model_root_tests::router_omission_lineage_alias_and_changed_owner_context_are_refused ... ok
+test cell::network::availability::tests::absence_and_interrupted_io_do_not_quarantine_or_renew_the_original_budget ... ok
+test cell::network::availability::tests::availability_probe_exhaustion_cannot_reset_connections_or_publish_partial_output ... FAILED
+test cell::network::availability::tests::complete_bad_chunk_is_quarantined_for_later_chunks_in_original_session ... FAILED
+test cell::network::availability::tests::default_server_retains_legacy_namespace_and_inventory_failure_allows_byte_fallback ... FAILED
+test cell::network::availability::tests::explicit_real_inventory_server_and_existing_downloader_verify_the_whole_payload ... FAILED
+test cell::network::availability::tests::inventory_response_body_spends_the_last_byte_without_a_fresh_payload_allowance ... FAILED
+test cell::network::availability::tests::malformed_inventory_padding_is_quarantined_and_oversize_page_never_dials ... ok
+test cell::network::availability::tests::rarest_observed_first_uses_real_pinned_chunks_and_one_original_budget ... FAILED
+test cell::network::availability::tests::wrong_manifest_quarantine_survives_into_the_same_session_payload_fetch ... FAILED
+test cell::network::availability::tests::zero_inventory_hints_cannot_hide_valid_chunks_from_the_original_fallback ... FAILED
+test cell::network::budget_tests::chunk_deadline_expiry_does_not_quarantine_peer_but_invalid_bytes_do ... ok
+test cell::network::budget_tests::concurrent_socket_reads_never_exceed_shared_budget ... ok
+test cell::network::budget_tests::fetch_persistence_and_corrupt_cache_repair_keep_original_deadline_under_writer_lock ... FAILED
+test cell::network::budget_tests::transient_retry_counts_partial_bytes_and_one_byte_short_cutoff ... ok
+test cell::network::budget_tests::transient_retry_does_not_repeat_invalid_frame_or_bad_chunk_digest ... ok
+test cell::network::budget_tests::transient_retry_keeps_original_connection_and_deadline_limits ... ok
+test cell::network::budget_tests::transient_retry_stops_after_two_real_early_closes ... ok
+test cell::network::budget_tests::writable_serving_cache_repair_keeps_original_request_deadline ... FAILED
+test cell::network::cancellation_tests::cancellation_keeps_partial_response_charge_without_retry_or_peer_quarantine ... ok
+test cell::network::cancellation_tests::cancellation_poll_timeouts_keep_original_partial_frame_and_request ... ok
+test cell::network::cancellation_tests::cancelled_budget_wait_preserves_unused_capacity_without_reviving_session ... ok
+test cell::network::cancellation_tests::observed_cancellation_remains_with_original_session_after_flag_reset ... ok
+test cell::network::dedup_tests::equal_chunk_digest_with_conflicting_lengths_fails_before_any_provider_request ... FAILED
+test cell::network::dedup_tests::repeated_content_still_rejects_wrong_full_payload_and_preserves_shared_cache ... FAILED
+test cell::network::dedup_tests::repeated_corrupt_cache_content_is_repaired_with_one_original_request ... FAILED
+test cell::network::dedup_tests::repeated_missing_chunks_use_one_request_per_object_with_serial_and_parallel_workers ... FAILED
+test cell::network::persistent::rarest_tests::v3_cancellation_after_inventory_remains_terminal_without_a_payload_frame ... FAILED
+test cell::network::persistent::rarest_tests::v3_claimed_inventory_never_admits_a_bad_chunk_or_partial_output ... FAILED
+test cell::network::persistent::rarest_tests::v3_empty_inventory_is_a_hint_and_cannot_hide_real_verified_chunks ... FAILED
+test cell::network::persistent::rarest_tests::v3_invalid_local_inventory_range_and_v2_profile_cannot_dial ... ok
+test cell::network::persistent::rarest_tests::v3_inventory_and_payload_keep_original_connection_and_session_deadlines ... FAILED
+test cell::network::persistent::rarest_tests::v3_inventory_frame_exhaustion_keeps_verified_prefix_for_explicit_resume ... FAILED
+test cell::network::persistent::rarest_tests::v3_inventory_spends_original_bytes_and_denies_a_fresh_payload_allowance ... FAILED
+test cell::network::persistent::rarest_tests::v3_partial_inventory_drops_connection_without_implicit_frame_retry ... ok
+test cell::network::persistent::rarest_tests::v3_partial_providers_schedule_rarest_chunks_first_with_two_reused_connections ... FAILED
+test cell::network::persistent::rarest_tests::v3_real_inventory_crosses_page_256_and_reuses_its_reservation_for_tail_chunk ... FAILED
+test cell::network::persistent::rarest_tests::v3_real_server_reuses_one_connection_for_manifest_inventory_and_verified_payload ... FAILED
+test cell::network::persistent::rarest_tests::v3_server_rejects_old_namespaces_and_invalid_inventory_before_object_bytes ... FAILED
+test cell::network::persistent::rarest_tests::v3_wrong_magic_or_noncanonical_inventory_quarantines_without_fallback ... ok
+test cell::network::persistent::tests::exhausted_response_budget_after_connection_wait_refuses_new_dial ... ok
+test cell::network::persistent::tests::exhausted_response_budget_after_connection_wait_refuses_reused_frame ... ok
+test cell::network::persistent::tests::exhausted_service_still_joins_an_already_admitted_incomplete_frame ... FAILED
+test cell::network::persistent::tests::interrupted_frame_discards_connection_and_only_explicit_retry_spends_new_allowances ... ok
+test cell::network::persistent::tests::invalid_persistent_limits_never_open_transport_or_mutate_the_cache ... FAILED
+test cell::network::persistent::tests::last_response_byte_closes_reused_connection_without_admitting_idle_frame ... FAILED
+test cell::network::persistent::tests::old_response_magic_is_rejected_without_namespace_fallback_or_redial ... ok
+test cell::network::persistent::tests::original_cancellation_stops_waiting_pool_request_without_new_frame_or_dial ... ok
+test cell::network::persistent::tests::quarantine_during_connection_wait_keeps_precedence_over_byte_exhaustion ... ok
+test cell::network::persistent::tests::real_manifest_and_two_chunks_reuse_one_connection_and_original_response_budget ... FAILED
+test cell::network::persistent::tests::request_connection_and_byte_exhaustion_each_refuse_output_and_keep_verified_prefix ... FAILED
+test cell::network::persistent::tests::reuse_keeps_original_connection_deadline_and_expired_session_cannot_redial ... ok
+test cell::network::persistent::tests::server_actual_egress_exhaustion_stops_intake_and_next_frame_without_shutdown ... FAILED
+test cell::network::persistent::tests::server_frame_and_byte_budgets_apply_across_reused_requests ... FAILED
+test cell::network::persistent::tests::server_rejects_old_magic_and_unknown_kind_without_serving_object_bytes ... FAILED
+test cell::network::persistent::tests::server_temporary_egress_reservation_refunds_before_real_tcp_response ... FAILED
+test cell::network::persistent::tests::temporary_response_reservation_after_connection_wait_is_not_exhaustion ... ok
+test cell::network::persistent::tests::zero_egress_service_does_not_accept_an_already_queued_connection ... FAILED
+test cell::network::serving::tests::active_limit_drops_overload_without_queue_or_extra_bytes ... FAILED
+test cell::network::serving::tests::bounded_corrupt_chunk_read_keeps_row_then_writable_fetch_repairs_exact_pin ... FAILED
+test cell::network::serving::tests::bounded_reader_rejects_real_discovery_and_retention_namespaces_unchanged ... ok
+test cell::network::serving::tests::concurrent_responses_share_exact_byte_budget_and_one_byte_short_cutoff ... FAILED
+test cell::network::serving::tests::double_worker_panic_is_joined_without_overwriting_the_first_error ... FAILED
+test cell::network::serving::tests::exhausted_serving_budget_refuses_before_fresh_payload_lookup ... FAILED
+test cell::network::serving::tests::four_workers_drop_fifth_socket_and_all_accepts_consume_the_cap ... FAILED
+test cell::network::serving::tests::half_request_does_not_block_honest_pinned_fetch ... FAILED
+test cell::network::serving::tests::invalid_limits_and_missing_or_foreign_cache_fail_without_creating_store ... ok
+test cell::network::serving::tests::listener_wait_is_capped_by_the_original_deadline_and_idle_interval ... ok
+test cell::network::serving::tests::original_overall_deadline_and_shutdown_join_all_admitted_workers ... FAILED
+test cell::network::serving::tests::positive_exhaustion_stops_intake_and_joins_admitted_half_request ... FAILED
+test cell::network::serving::tests::quiet_listener_wait_times_out_without_accepting_or_extending_the_deadline ... ok
+test cell::network::serving::tests::ready_callback_requires_capacity_and_cannot_renew_or_ignore_cancellation ... ok
+test cell::network::serving::tests::ready_listener_wait_leaves_the_socket_for_the_original_accept_path ... ok
+test cell::network::serving::tests::transient_chunk_capacity_refusal_uses_one_bounded_retry ... FAILED
+test cell::network::serving::tests::transient_manifest_capacity_refusal_uses_one_bounded_retry ... FAILED
+test cell::network::serving::tests::unread_large_response_keeps_absolute_deadline_and_exact_partial_write_charge ... FAILED
+test cell::network::serving::tests::zero_serving_byte_budget_admits_no_socket_or_payload_worker ... FAILED
+test cell::pq::tests::authority_roster_is_strict_bounded_and_commits_revocation ... ok
+test cell::pq::tests::cached_release_rechecks_current_retirement_rotation_scope_and_sequence ... ok
+test cell::pq::tests::release_current_authority_time_and_withdrawal_are_independent_gates ... ok
+test cell::pq::tests::selecting_old_content_requires_a_new_owner_approved_sequence ... ok
+test cell::pq::tests::signed_release_binds_every_byte_without_chunk_signatures ... ok
+test cell::pq::version::tests::cpv3_cached_publisher_observation_rechecks_current_owner_not_only_time ... FAILED
+test cell::pq::version::tests::cpv3_cannot_reuse_a_signature_for_same_files_with_other_dependency_edges ... FAILED
+test cell::pq::version::tests::cpv3_signs_complete_version_and_rejects_statement_signature_mutations ... FAILED
+test cell::pq::version::tests::cpv3_withdrawal_expiry_and_legacy_profile_have_no_fallback ... FAILED
+test cell::release::transport_tests::aggregate_frame_exhaustion_never_publishes_and_explicit_retry_uses_verified_prefix ... FAILED
+test cell::release::transport_tests::aggregate_response_budget_is_not_renewed_at_member_boundaries ... FAILED
+test cell::release::transport_tests::all_marker_profiles_fetch_two_members_through_one_persistent_connection ... FAILED
+test cell::release::transport_tests::explicit_rarest_release_profile_keeps_inventory_and_all_members_on_one_v1_budget ... FAILED
+test cell::release::transport_tests::persistent_release_and_prefetch_preflight_reject_aggregate_limits_before_payload ... FAILED
+test cell::release::transport_tests::rarest::v3_release_closure_model_and_tensor_keep_one_pool_and_aggregate_inventory_budget ... FAILED
+test cell::release::transport_tests::rarest::v3_release_inventory_cannot_renew_frames_at_member_boundary_and_resume_is_explicit ... FAILED
+test cell::release::transport_tests::rarest::v3_release_inventory_cannot_renew_response_bytes_at_member_boundary ... FAILED
+test cell::release::transport_tests::residency_prefetch_stops_payload_requests_when_original_owner_cancels ... FAILED
+test cell::release_tests::closure_prefetch_expired_original_deadline_opens_no_connections ... FAILED
+test cell::release_tests::closure_prefetch_rejects_changed_owner_generation_before_cache_or_network_work ... FAILED
+test cell::release_tests::closure_prefetch_repeat_is_fully_local_and_reuses_the_same_version ... FAILED
+test cell::release_tests::closure_prefetch_uses_real_transport_without_publishing_a_marker ... FAILED
+test cell::release_tests::pinned_release_reader_checks_root_pin_and_one_mib_file_bound ... FAILED
+test cell::release_tests::post_link_deadline_expiry_refuses_success_and_preserves_exact_marker ... FAILED
+test cell::release_tests::post_link_failure_preserves_complete_marker_for_same_identity_readback ... FAILED
+test cell::release_tests::release_fetch_collects_all_members_from_two_distinct_loopback_stores ... FAILED
+test cell::release_tests::release_fetch_expired_owner_deadline_opens_no_connections ... FAILED
+test cell::release_tests::release_fetch_missing_member_does_not_publish_a_subset_marker ... FAILED
+test cell::release_tests::release_fetch_never_overwrites_an_existing_marker_path ... FAILED
+test cell::release_tests::release_fetch_parallel_response_budget_is_exact_and_one_byte_short_is_typed ... FAILED
+test cell::release_tests::release_fetch_rejects_incompatible_member_context_before_chunks ... FAILED
+test cell::release_tests::release_fetch_reserves_two_member_chunk_total_before_any_chunk_download ... FAILED
+test cell::release_tests::release_fetch_reserves_two_member_payload_total_before_any_chunk_download ... FAILED
+test cell::release_tests::release_fetch_shares_connection_budget_and_resumes_verified_partial_cache ... FAILED
+test cell::release_tests::release_fetch_wrong_root_pin_opens_no_connections_and_publishes_nothing ... FAILED
+test cell::release_tests::release_marker_sync_keeps_original_deadline_and_cleans_up_after_cutoff ... FAILED
+test cell::residency::budget_task_tests::prefetch_deduplicates_exact_ram_needs_and_preserves_complete_transport_counts ... FAILED
+test cell::residency::budget_task_tests::prefetch_ram_capacity_refuses_after_metadata_before_any_payload_request ... FAILED
+test cell::residency::budget_task_tests::prefetch_readiness_does_not_refresh_connection_or_response_allowances ... FAILED
+test cell::residency::budget_task_tests::prefetch_reference_capacity_refuses_after_metadata_before_any_payload_request ... FAILED
+test cell::residency::budget_task_tests::task_cancellation_is_latched_and_does_not_promise_erasure_of_copied_public_bytes ... FAILED
+test cell::residency::budget_task_tests::task_cutoff_cannot_be_renewed_by_a_later_hot_lookup ... FAILED
+test cell::residency::budget_task_tests::task_lookup_rechecks_current_context_and_never_invokes_consumer_after_a_mismatch ... FAILED
+test cell::residency::budget_task_tests::task_working_set_enforces_all_aggregate_limits_and_nonzero_task_identity ... FAILED
+test cell::residency::budget_task_tests::task_working_set_is_complete_deduplicated_and_runs_with_no_disk_or_peer ... FAILED
+test cell::residency::budget_task_tests::task_working_set_refuses_missing_or_noncanonical_members_without_partial_readiness ... FAILED
+test cell::residency::tensor::tests::resident_correct_hash_invalid_later_tensor_file_returns_no_admission_or_selection_change ... FAILED
+test cell::residency::tensor::tests::resident_payload_reader_checks_cancellation_on_read_and_seek ... FAILED
+test cell::residency::tensor::tests::resident_tensor_admission_rejects_independent_pin_context_and_contract_transplants ... FAILED
+test cell::residency::tensor::tests::resident_tensor_cold_miss_and_wrong_selection_do_not_fetch_or_select ... FAILED
+test cell::residency::tensor::tests::resident_tensor_deadline_and_mid_admission_cancellation_preserve_residency_and_selection ... FAILED
+test cell::residency::tensor::tests::resident_tensor_views_preserve_unaligned_cross_chunk_elements_and_half_bits ... FAILED
+test cell::residency::tensor::tests::resident_tensors_admit_complete_real_containers_then_compute_without_disk_or_provider ... FAILED
+test cell::residency::tests::residency_byte_quota_refuses_new_release_without_evicting_hot_or_selected_bytes ... FAILED
+test cell::residency::tests::residency_cancellation_after_index_merge_rolls_back_only_new_chunks_and_retry_recharges ... FAILED
+test cell::residency::tests::residency_corrupt_cache_cannot_create_a_new_view_or_mutate_existing_immutable_bytes ... FAILED
+test cell::residency::tests::residency_deadline_after_index_merge_rolls_back_new_chunks_without_renewal ... FAILED
+test cell::residency::tests::residency_expired_or_cancelled_preparation_and_switch_preserve_the_old_selection ... FAILED
+test cell::residency::tests::residency_hits_recheck_exact_version_generation_profile_roles_and_loader_budgets ... FAILED
+test cell::residency::tests::residency_incomplete_prefetch_retains_old_selection_and_retry_only_prepares_bytes ... FAILED
+test cell::residency::tests::residency_known_closure_capacity_refuses_prefetch_before_any_peer_connection ... FAILED
+test cell::residency::tests::residency_local_selection_compare_and_swap_rejects_stale_and_aba_tickets ... FAILED
+test cell::residency::tests::residency_reference_budget_counts_shared_mappings_and_eviction_releases_all_unpinned_bytes ... FAILED
+test cell::residency::tests::residency_restart_reuses_fixed_disk_bytes_but_restores_no_local_selection_or_hot_pin ... FAILED
+test cell::residency::tests::residency_tcp_mid_download_cancellation_keeps_old_selection_and_explicit_retry ... FAILED
+test cell::residency::tests::residency_tcp_prefetch_then_100_local_reads_need_neither_provider_nor_disk_cache ... FAILED
+test cell::residency::tests::residency_two_versions_share_the_same_base_buffers_but_keep_distinct_file_mappings ... FAILED
+test cell::residency::tests::residency_valid_individual_chunks_do_not_bypass_the_ordered_payload_digest ... FAILED
+test cell::retention::tests::acknowledgement_after_commit_cancellation_keeps_exact_durable_ack ... FAILED
+test cell::retention::tests::acknowledgement_cannot_rewind_a_concurrent_retirement ... FAILED
+test cell::retention::tests::acknowledgement_initial_charge_wait_keeps_original_deadline ... FAILED
+test cell::retention::tests::acknowledgement_lost_ack_wait_keeps_original_deadline ... FAILED
+test cell::retention::tests::acknowledgement_reconciliation_wait_keeps_original_deadline ... FAILED
+test cell::retention::tests::acknowledgement_schema_change_cannot_debit_or_copy_initial_payload ... FAILED
+test cell::retention::tests::actual_capacity_is_allocated_before_ack_and_full_refusal_survives_reopen ... FAILED
+test cell::retention::tests::actual_thread_cpu_stops_large_repair_before_completion_and_never_redispatches_its_id ... FAILED
+test cell::retention::tests::contract_commitment_has_an_exact_vector_and_binds_every_immutable_term ... FAILED
+test cell::retention::tests::controlled_retention_copy_keeps_cache_deadline_and_irreversible_repair_charge ... FAILED
+test cell::retention::tests::corrupt_payload_and_failed_repair_keep_duty_and_irreversible_byte_cost ... FAILED
+test cell::retention::tests::expired_absolute_retirement_deadline_cannot_release_a_slot_without_a_successor ... FAILED
+test cell::retention::tests::expired_obligation_cannot_reclaim_a_healthy_target_with_an_unsettled_repair ... FAILED
+test cell::retention::tests::immutable_service_interval_and_exact_schema_survive_reopen_without_migration ... FAILED
+test cell::retention::tests::initial_partial_copy_cannot_be_redispatched_under_the_same_obligation ... FAILED
+test cell::retention::tests::interrupted_initial_copy_keeps_full_charge_and_requires_a_separate_repair ... FAILED
+test cell::retention::tests::lost_repair_ack_reconciles_actual_bytes_without_second_write_or_charge ... FAILED
+test cell::retention::tests::mandatory_successor_requires_fresh_verified_bytes_before_capacity_reuse ... FAILED
+test cell::retention::tests::missing_repair_intent_can_only_reconcile_a_complete_target_and_seals_its_id ... FAILED
+test cell::retention::tests::original_ids_and_limits_cannot_be_renamed_reopened_or_recycled ... FAILED
+test cell::retention::tests::pending_ack_never_claims_bytes_and_keeps_original_reservation ... FAILED
+test cell::retention::tests::real_process_death_after_payload_sync_recovers_ack_without_origin_or_new_capacity ... 
+running 1 test
+test cell::retention::tests::retention_process_child ... FAILED
+
+failures:
+
+failures:
+    cell::retention::tests::retention_process_child
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 449 filtered out; finished in 0.00s
+
+FAILED
+test cell::retention::tests::rejected_control_is_sticky_and_absolute_deadline_precedes_any_copy_intent ... FAILED
+test cell::retention::tests::repair_completion_reconciliation_writer_wait_keeps_original_deadline ... FAILED
+test cell::retention::tests::repair_completion_refuses_a_schema_change_after_payload_and_keeps_full_charge ... FAILED
+test cell::retention::tests::repair_completion_retry_writer_wait_keeps_original_deadline ... FAILED
+test cell::retention::tests::repair_intent_and_charge_must_survive_sqlite_suppression_before_payload ... FAILED
+test cell::retention::tests::repair_intent_writer_wait_keeps_original_deadline ... FAILED
+test cell::retention::tests::repair_post_commit_completion_refusal_reopens_without_copy_or_charge ... FAILED
+test cell::retention::tests::repair_post_commit_intent_refusal_keeps_debit_and_forbids_redispatch ... FAILED
+test cell::retention::tests::repair_post_commit_zero_byte_reconciliation_keeps_exact_identity ... FAILED
+test cell::retention::tests::repair_zero_byte_reconciliation_writer_wait_keeps_original_deadline ... FAILED
+test cell::retention::tests::retained_origin_bytes_rehydrate_existing_peer_protocol_after_cache_loss ... FAILED
+test cell::retention::tests::retention_population_preserves_original_deadline_during_cache_writer_contention ... FAILED
+test cell::retention::tests::retention_process_child ... ok
+test cell::retention::tests::retirement_after_commit_cancellation_keeps_the_retired_fact_for_exact_reconciliation ... FAILED
+test cell::retention::tests::retirement_writer_contention_keeps_the_original_deadline_and_persistent_duty ... FAILED
+test cell::retention::tests::sqlite_like_wildcard_cannot_hide_a_user_trigger_at_repair_or_reopen ... FAILED
+test cell::retention::tests::successful_noop_repair_keeps_its_identity_after_later_target_damage ... FAILED
+test cell::retention::tests::successor_future_service_window_cannot_release_current_bytes_early ... FAILED
+test cell::retention::tests::truncated_physical_backing_or_mutated_obligation_refuses_cold_open ... FAILED
+test cell::store::wal_tests::all_mutating_entries_and_corrupt_deletion_share_prewrite_reader_refusal ... FAILED
+test cell::store::wal_tests::caller_deadline_refuses_late_cache_commit_and_keeps_original_retry_atomic ... FAILED
+test cell::store::wal_tests::cold_writer_refuses_oversized_wal_or_shm_without_truncating_foreign_bytes ... FAILED
+test cell::store::wal_tests::held_reader_refuses_entire_eight_chunk_batch_then_original_retry_survives_cold_reopen ... FAILED
+test cell::store::wal_tests::killed_supported_writer_keeps_committed_prefix_and_retries_original_batch_after_recovery ... FAILED
+test cell::store::wal_tests::maximum_supported_image_cap_reads_back_exact_pager_limit_without_reserving_it ... FAILED
+test cell::store::wal_tests::repeated_real_dirty_transactions_keep_one_generation_wal_and_derived_shm_bounds ... FAILED
+test cell::store::wal_tests::writer_reasserts_pager_policy_and_preserves_committed_wal_after_close ... FAILED
+test cell::tensor_tests::tensor_contract_and_model_wire_reject_downgrades_suffixes_and_source_transplants ... ok
+test cell::tensor_tests::tensor_contract_rejects_shape_overflow_dimension_rank_and_noncanonical_rosters ... ok
+test cell::tensor_tests::tensor_contract_requires_all_base_and_adapter_files_but_not_tokenizer_bytes ... ok
+test cell::tensor_tests::tensor_correct_hash_garbage_and_oversized_or_invalid_header_are_refused ... ok
+test cell::tensor_tests::tensor_duplicate_names_escaped_aliases_fields_and_metadata_are_refused ... ok
+test cell::tensor_tests::tensor_entry_sequence_cannot_replace_required_named_object ... ok
+test cell::tensor_tests::tensor_exact_roster_dtype_and_shape_cannot_be_replaced_by_equal_sized_data ... ok
+test cell::tensor_tests::tensor_offsets_reject_overlap_holes_trailing_and_wrong_element_bytes ... ok
+test cell::tensor_tests::tensor_real_file_all_supported_dtypes_scalar_and_metadata_hash_are_verified ... ok
+test cell::tensor_tests::tensor_streams_whole_payload_in_bounded_chunks_and_expired_calls_read_nothing ... ok
+test cell::tests::batched_fetch_to_file_rejects_full_digest_after_valid_network_chunks ... FAILED
+test cell::tests::bounded_chunk_batch_rejects_bad_member_without_changing_prior_cache ... FAILED
+test cell::tests::bounded_chunk_batch_rolls_back_late_sql_abort_and_suppressed_row ... FAILED
+test cell::tests::cache_budget::actual_corrupt_chunk_deletion_returns_only_its_logical_cache_allowance ... FAILED
+test cell::tests::cache_budget::catalog_and_chunk_row_limits_apply_even_with_unused_byte_allowance ... FAILED
+test cell::tests::cache_budget::cold_open_rejects_counter_and_exact_trigger_corruption_without_reset ... FAILED
+test cell::tests::cache_budget::eight_member_quota_failure_rolls_back_all_rows_and_duplicate_batch_charges_once ... FAILED
+test cell::tests::cache_budget::foreign_catalog_count_and_large_strings_are_refused_without_database_rewrite ... FAILED
+test cell::tests::cache_budget::immutable_configuration_and_integer_bounds_cannot_reset_allowance ... FAILED
+test cell::tests::cache_budget::ordinary_authorized_fetches_share_one_persistent_quota_and_failed_fetch_keeps_charge ... FAILED
+test cell::tests::cache_budget::persistent_whole_cache_counts_catalog_payload_keys_and_exact_dedup ... FAILED
+test cell::tests::cache_budget::two_actual_writer_connections_serialize_capacity_and_shared_hash_dedup ... FAILED
+test cell::tests::cache_budget::unowned_database_with_literal_lookalike_prefix_is_not_claimed_or_rewritten ... FAILED
+test cell::tests::cache_catalog::automatic_index_metadata_and_oversized_non_null_sql_are_not_accepted_as_null ... FAILED
+test cell::tests::cache_catalog::foreign_database_containing_only_an_internal_sequence_is_not_claimed ... FAILED
+test cell::tests::cache_catalog::legitimate_two_automatic_indexes_and_payload_survive_both_cold_open_modes ... FAILED
+test cell::tests::cache_catalog::reserved_prefix_trigger_is_not_hidden_from_exact_cold_catalog_validation ... FAILED
+test cell::tests::cache_image::fourth_config_is_immutable_exact_finite_and_old_tcl2_is_not_migrated ... FAILED
+test cell::tests::cache_image::held_reader_with_real_changes_allows_wal_to_exceed_the_main_database_cap ... ok
+test cell::tests::cache_image::original_maximum_eight_by_four_mib_batch_remains_admissible ... FAILED
+test cell::tests::cache_image::original_tcl3_cache_is_refused_without_migration_or_reset ... FAILED
+test cell::tests::cache_image::overpage_padding_and_wrong_page_size_are_refused_without_cold_rewrite ... FAILED
+test cell::tests::cache_image::real_full_rolls_back_entire_eight_chunk_batch_and_survives_both_cold_modes ... FAILED
+test cell::tests::cache_image::two_real_writers_and_a_fresh_reopen_cannot_reset_the_page_cap ... FAILED
+test cell::tests::corrupt_network_supplier_is_rejected_and_honest_peer_completes_same_pin ... FAILED
+test cell::tests::corrupt_response_exhausts_bytes_before_honest_fallback_and_explicit_retry_recovers ... FAILED
+test cell::tests::deadline_materialization_rechecks_cache_payload_and_never_overwrites ... FAILED
+test cell::tests::exhausted_transport_budget_keeps_verified_chunks_for_retry ... FAILED
+test cell::tests::expired_cached_chunk_deadline_refuses_before_sql_or_hash ... FAILED
+test cell::tests::expired_chunk_batch_stops_before_digest_work_and_keeps_cache_unchanged ... FAILED
+test cell::tests::expired_manifest_fetch_refuses_local_hit_and_put_before_decode ... FAILED
+test cell::tests::expired_materialization_deadline_keeps_output_absent_and_legacy_api_works ... FAILED
+test cell::tests::failed_fetch_keeps_transport_phase_without_renewing_request_deadline ... FAILED
+test cell::tests::fetch_to_file_publishes_exact_network_bytes_without_replacing_existing_output ... FAILED
+test cell::tests::fetch_to_file_reuses_original_deadline_after_sync_and_before_publication ... FAILED
+test cell::tests::foreign_database_is_not_repurposed ... ok
+test cell::tests::manifest_header_and_body_obey_response_budget_before_cache_publication ... FAILED
+test cell::tests::missing_chunk_never_publishes_partial_payload_and_verified_cache_resumes ... FAILED
+test cell::tests::origin_offline_independent_replicas_multisource_and_corrupt_cache_repair ... FAILED
+test cell::tests::parallel_fetch_uses_exact_response_budget_and_cache_needs_no_network_bytes ... FAILED
+test cell::tests::release_manifest_rejects_unbound_identity_and_untrusted_wire_before_allocation ... ok
+test cell::tests::release_manifest_requires_complete_context_bound_closure ... FAILED
+test cell::tests::release_verification_reserves_aggregate_work_before_reading_payloads ... FAILED
+test cell::tests::slow_response_cannot_extend_absolute_deadline_and_honest_peer_keeps_pin ... FAILED
+test cell::tests::truncated_body_and_rejected_header_charge_only_received_bytes_before_fallback ... FAILED
+test cell::tests::wrong_pins_context_chunks_and_noncanonical_manifests_fail_closed ... FAILED
+test cell::version::tests::aggregate_and_per_owner_limits_are_checked_before_payload_reads ... FAILED
+test cell::version::tests::complete_version_covers_exact_canonical_manifest_set ... FAILED
+test cell::version::tests::complete_version_matches_independent_python_framing_vector ... FAILED
+test cell::version::tests::complete_version_roundtrip_and_actual_model_environment_readback ... FAILED
+test cell::version::tests::environment_binding_requires_exact_declared_runtime_closure ... FAILED
+test cell::version::tests::full_version_rejects_missing_environment_payload_after_successful_readback ... FAILED
+test cell::version::tests::same_release_files_with_different_dependency_graph_change_complete_commitment ... FAILED
+test cell::version::tests::version_loader_scope_and_original_deadline_fail_closed ... FAILED
+test cell::version::tests::version_wire_is_bounded_and_has_no_legacy_or_trailing_fallback ... FAILED
+test tests::admission_is_atomic_replay_safe_and_bounded ... ok
+test tests::attestation_and_certificate_reject_foreign_committed_context ... ok
+test tests::attestation_high_watermark_rejects_deleted_rows_and_sequence_reuse ... ok
+test tests::attestation_manifest_is_stable_across_certificate_retention_and_repair ... ok
+test tests::certified_batch_and_da_head_share_one_fresh_sqlite_snapshot ... ok
+test tests::durable_before_attest_survives_reopen_and_rejects_bad_signature ... ok
+test tests::open_existing_requires_precreated_regular_nonsymlink_store ... ok
+test tests::row_tamper_is_rejected_on_reopen ... ok
+test tests::schema_drift_and_sidecar_are_fail_closed_without_migration ... ok
+test tests::signed_full_range_retrieval_proof_repairs_exact_certified_bytes_and_reopens ... ok
+test tests::signed_full_range_retrieval_proof_time_chunk_and_store_binding_fail_closed ... ok
+test tests::signed_full_range_retrieval_rejects_active_committee_nonmember_responder ... ok
+test tests::signed_full_range_retrieval_rejects_certificate_author_key_outside_policy ... ok
+test tests::signed_full_range_retrieval_signatures_and_fresh_readback_fail_closed ... ok
+test tests::tamper_latches_unavailable_and_exact_repair_recovers ... ok
+test tests::typed_namespace_and_batch_derivation_are_deterministic ... ok
+test tests::under_quorum_and_signed_equivocation_are_distinct ... ok
+test tests::weighted_certificate_retrieval_retention_and_gc_close ... ok
+
+failures:
+
+---- cell::archive::tests::absolute_deadline_and_original_physical_exclusive_owner_are_preserved stdout ----
+
+thread 'cell::archive::tests::absolute_deadline_and_original_physical_exclusive_owner_are_preserved' (776067) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- cell::archive::tests::all_catalog_writer_waits_keep_the_original_deadline_and_preserve_roots stdout ----
+
+thread 'cell::archive::tests::all_catalog_writer_waits_keep_the_original_deadline_and_preserve_roots' (776068) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::archive::tests::codec_rejects_truncation_trailing_data_oversize_and_invalid_replica_before_side_effects stdout ----
+
+thread 'cell::archive::tests::codec_rejects_truncation_trailing_data_oversize_and_invalid_replica_before_side_effects' (776069) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::archive::tests::collected_content_can_be_retained_under_new_funded_operations_without_rewinding_history stdout ----
+
+thread 'cell::archive::tests::collected_content_can_be_retained_under_new_funded_operations_without_rewinding_history' (776070) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::archive::tests::complete_closure_is_physically_retained_and_rehydrates_original_cache_after_reopen stdout ----
+
+thread 'cell::archive::tests::complete_closure_is_physically_retained_and_rehydrates_original_cache_after_reopen' (776071) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::archive::tests::contract_identity_freezes_owner_domain_replica_funding_repair_and_root stdout ----
+
+thread 'cell::archive::tests::contract_identity_freezes_owner_domain_replica_funding_repair_and_root' (776072) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::archive::tests::corruption_invalidates_fresh_readback_and_missed_repair_deadline_never_reclaims_duty stdout ----
+
+thread 'cell::archive::tests::corruption_invalidates_fresh_readback_and_missed_repair_deadline_never_reclaims_duty' (776073) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::archive::tests::forged_status_cannot_make_reachable_objects_collectible stdout ----
+
+thread 'cell::archive::tests::forged_status_cannot_make_reachable_objects_collectible' (776074) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::archive::tests::impossible_new_release_capacity_refuses_before_catalog_or_physical_reservation stdout ----
+
+thread 'cell::archive::tests::impossible_new_release_capacity_refuses_before_catalog_or_physical_reservation' (776075) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::archive::tests::lost_initial_copy_keeps_cost_and_requires_distinct_repair_before_release_ack stdout ----
+
+thread 'cell::archive::tests::lost_initial_copy_keeps_cost_and_requires_distinct_repair_before_release_ack' (776076) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::archive::tests::lost_release_ack_reconciles_all_targets_without_any_source_or_cache stdout ----
+
+thread 'cell::archive::tests::lost_release_ack_reconciles_all_targets_without_any_source_or_cache' (776077) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::archive::tests::lost_repair_ack_blocks_root_and_physical_gc_until_target_only_reconciliation stdout ----
+
+thread 'cell::archive::tests::lost_repair_ack_blocks_root_and_physical_gc_until_target_only_reconciliation' (776078) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::archive::tests::missing_dependency_wrong_terms_or_shared_operation_alias_refuse_before_new_root_intent stdout ----
+
+thread 'cell::archive::tests::missing_dependency_wrong_terms_or_shared_operation_alias_refuse_before_new_root_intent' (776079) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::archive::tests::old_impossible_pending_intent_remains_readable_and_protected_without_migration stdout ----
+
+thread 'cell::archive::tests::old_impossible_pending_intent_remains_readable_and_protected_without_migration' (776080) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::archive::tests::partial_physical_reservation_keeps_complete_pending_root_across_restart stdout ----
+
+thread 'cell::archive::tests::partial_physical_reservation_keeps_complete_pending_root_across_restart' (776081) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::archive::tests::physical_ack_and_recovered_tensor_plan_do_not_admit_hash_correct_invalid_dtype stdout ----
+
+thread 'cell::archive::tests::physical_ack_and_recovered_tensor_plan_do_not_admit_hash_correct_invalid_dtype' (776082) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::archive::tests::physical_reservation_contention_keeps_a_complete_pending_root_without_late_slots stdout ----
+
+thread 'cell::archive::tests::physical_reservation_contention_keeps_a_complete_pending_root_without_late_slots' (776083) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::archive::tests::retired_root_history_still_consumes_capacity_and_cannot_rebind_object_identity stdout ----
+
+thread 'cell::archive::tests::retired_root_history_still_consumes_capacity_and_cannot_rebind_object_identity' (776084) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::archive::tests::shared_objects_survive_one_history_retirement_and_expiry_requires_explicit_root_retirement stdout ----
+
+thread 'cell::archive::tests::shared_objects_survive_one_history_retirement_and_expiry_requires_explicit_root_retirement' (776085) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::archive::tests::tca2_refuses_archived_tca1_wire_and_database_without_migration stdout ----
+
+thread 'cell::archive::tests::tca2_refuses_archived_tca1_wire_and_database_without_migration' (776086) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::archive::tests::tensor_plan_cold_recovery_rehydrates_exact_tma_and_revalidates_without_sources stdout ----
+
+thread 'cell::archive::tests::tensor_plan_cold_recovery_rehydrates_exact_tma_and_revalidates_without_sources' (776087) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::archive::tests::tensor_plan_is_bound_to_exact_root_wire_commitment_and_persisted_identity stdout ----
+
+thread 'cell::archive::tests::tensor_plan_is_bound_to_exact_root_wire_commitment_and_persisted_identity' (776088) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::archive::tests::terminal_physical_history_cannot_create_an_unfulfillable_new_root stdout ----
+
+thread 'cell::archive::tests::terminal_physical_history_cannot_create_an_unfulfillable_new_root' (776089) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::archive::tests::two_versions_share_base_and_tokenizer_while_only_the_retired_router_is_collectible stdout ----
+
+thread 'cell::archive::tests::two_versions_share_base_and_tokenizer_while_only_the_retired_router_is_collectible' (776090) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::archive::tests::unmaterialized_pending_members_keep_their_funding_and_future_history_capacity stdout ----
+
+thread 'cell::archive::tests::unmaterialized_pending_members_keep_their_funding_and_future_history_capacity' (776092) panicked at crates/trnm-data-availability/src/cell/archive_tests.rs:36:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::closure_tests::closure_fetches_real_loopback_bytes_and_publishes_exact_non_authorizing_marker stdout ----
+
+thread 'cell::closure_tests::closure_fetches_real_loopback_bytes_and_publishes_exact_non_authorizing_marker' (776108) panicked at crates/trnm-data-availability/src/cell/closure_tests.rs:365:66:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::closure_tests::closure_loader_chunk_budget_stops_before_payload_and_never_publishes_marker stdout ----
+
+thread 'cell::closure_tests::closure_loader_chunk_budget_stops_before_payload_and_never_publishes_marker' (776109) panicked at crates/trnm-data-availability/src/cell/closure_tests.rs:490:66:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::closure_tests::closure_rejects_last_manifest_metadata_before_fetching_any_payload stdout ----
+
+thread 'cell::closure_tests::closure_rejects_last_manifest_metadata_before_fetching_any_payload' (776114) panicked at crates/trnm-data-availability/src/cell/closure_tests.rs:415:66:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::closure_tests::closure_shares_original_transport_budget_and_resumes_without_partial_marker stdout ----
+
+thread 'cell::closure_tests::closure_shares_original_transport_budget_and_resumes_without_partial_marker' (776115) panicked at crates/trnm-data-availability/src/cell/closure_tests.rs:450:66:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::custody::tests::cold_reopen_reobserves_bytes_and_does_not_accept_only_the_prior_report stdout ----
+
+thread 'cell::custody::tests::cold_reopen_reobserves_bytes_and_does_not_accept_only_the_prior_report' (776138) panicked at crates/trnm-data-availability/src/cell/custody_tests.rs:66:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::custody::tests::complementary_partial_archives_never_count_as_a_complete_replica stdout ----
+
+thread 'cell::custody::tests::complementary_partial_archives_never_count_as_a_complete_replica' (776139) panicked at crates/trnm-data-availability/src/cell/custody_tests.rs:66:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::custody::tests::complete_models_with_one_partial_environment_leave_the_whole_version_incomplete stdout ----
+
+thread 'cell::custody::tests::complete_models_with_one_partial_environment_leave_the_whole_version_incomplete' (776140) panicked at crates/trnm-data-availability/src/cell/custody_tests.rs:66:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::custody::tests::complete_payload_budget_is_reserved_before_any_partial_scan stdout ----
+
+thread 'cell::custody::tests::complete_payload_budget_is_reserved_before_any_partial_scan' (776141) panicked at crates/trnm-data-availability/src/cell/custody_tests.rs:66:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::custody::tests::complete_version_counts_real_model_and_environment_on_the_same_archives stdout ----
+
+thread 'cell::custody::tests::complete_version_counts_real_model_and_environment_on_the_same_archives' (776142) panicked at crates/trnm-data-availability/src/cell/custody_tests.rs:66:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::custody::tests::complete_version_environment_cannot_obtain_a_fresh_budget_after_model_scans stdout ----
+
+thread 'cell::custody::tests::complete_version_environment_cannot_obtain_a_fresh_budget_after_model_scans' (776143) panicked at crates/trnm-data-availability/src/cell/custody_tests.rs:66:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::custody::tests::complete_version_refuses_to_splice_a_valid_environment_from_another_physical_store stdout ----
+
+thread 'cell::custody::tests::complete_version_refuses_to_splice_a_valid_environment_from_another_physical_store' (776144) panicked at crates/trnm-data-availability/src/cell/custody_tests.rs:66:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::custody::tests::declared_domain_and_owner_aliases_and_absent_evidence_fail_closed stdout ----
+
+thread 'cell::custody::tests::declared_domain_and_owner_aliases_and_absent_evidence_fail_closed' (776145) panicked at crates/trnm-data-availability/src/cell/custody_tests.rs:66:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::custody::tests::expected_store_identifier_cannot_be_counted_twice_from_two_local_directories stdout ----
+
+thread 'cell::custody::tests::expected_store_identifier_cannot_be_counted_twice_from_two_local_directories' (776146) panicked at crates/trnm-data-availability/src/cell/custody_tests.rs:66:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::custody::tests::expired_original_observation_deadline_is_not_refreshed stdout ----
+
+thread 'cell::custody::tests::expired_original_observation_deadline_is_not_refreshed' (776147) panicked at crates/trnm-data-availability/src/cell/custody_tests.rs:66:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::custody::tests::future_and_expired_promises_never_count_even_when_all_bytes_remain stdout ----
+
+thread 'cell::custody::tests::future_and_expired_promises_never_count_even_when_all_bytes_remain' (776148) panicked at crates/trnm-data-availability/src/cell/custody_tests.rs:66:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::custody::tests::historical_ack_cannot_hide_corruption_and_failed_probes_are_not_refunded stdout ----
+
+thread 'cell::custody::tests::historical_ack_cannot_hide_corruption_and_failed_probes_are_not_refunded' (776149) panicked at crates/trnm-data-availability/src/cell/custody_tests.rs:66:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::custody::tests::missed_fixed_repair_window_requires_replacement_without_extending_paid_terms stdout ----
+
+thread 'cell::custody::tests::missed_fixed_repair_window_requires_replacement_without_extending_paid_terms' (776150) panicked at crates/trnm-data-availability/src/cell/custody_tests.rs:66:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::custody::tests::origin_and_one_missing_provider_leave_one_debt_without_counting_a_cache stdout ----
+
+thread 'cell::custody::tests::origin_and_one_missing_provider_leave_one_debt_without_counting_a_cache' (776151) panicked at crates/trnm-data-availability/src/cell/custody_tests.rs:66:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::custody::tests::policy_pin_rejects_changed_domain_and_continuation_owners_before_probe stdout ----
+
+thread 'cell::custody::tests::policy_pin_rejects_changed_domain_and_continuation_owners_before_probe' (776152) panicked at crates/trnm-data-availability/src/cell/custody_tests.rs:66:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::custody::tests::reachable_sponsor_is_never_treated_as_available_funds_or_paid_renewal stdout ----
+
+thread 'cell::custody::tests::reachable_sponsor_is_never_treated_as_available_funds_or_paid_renewal' (776153) panicked at crates/trnm-data-availability/src/cell/custody_tests.rs:66:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::custody::tests::same_payload_under_another_version_is_not_the_pinned_whole_release stdout ----
+
+thread 'cell::custody::tests::same_payload_under_another_version_is_not_the_pinned_whole_release' (776154) panicked at crates/trnm-data-availability/src/cell/custody_tests.rs:66:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::custody::tests::sponsor_disappearance_keeps_original_deadline_duty_and_full_coverage_target stdout ----
+
+thread 'cell::custody::tests::sponsor_disappearance_keeps_original_deadline_duty_and_full_coverage_target' (776155) panicked at crates/trnm-data-availability/src/cell/custody_tests.rs:66:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::custody::tests::three_complete_target_readbacks_survive_source_and_cache_loss stdout ----
+
+thread 'cell::custody::tests::three_complete_target_readbacks_survive_source_and_cache_loss' (776156) panicked at crates/trnm-data-availability/src/cell/custody_tests.rs:66:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::custody::tests::version_continuation_does_not_hide_missing_environment_or_its_lost_sponsor stdout ----
+
+thread 'cell::custody::tests::version_continuation_does_not_hide_missing_environment_or_its_lost_sponsor' (776157) panicked at crates/trnm-data-availability/src/cell/custody_tests.rs:66:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::custody::tests::version_continuation_preserves_environment_probe_refusal_and_actual_reservations stdout ----
+
+thread 'cell::custody::tests::version_continuation_preserves_environment_probe_refusal_and_actual_reservations' (776158) panicked at crates/trnm-data-availability/src/cell/custody_tests.rs:66:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::custody::tests::version_continuation_refuses_either_missing_component_observation stdout ----
+
+thread 'cell::custody::tests::version_continuation_refuses_either_missing_component_observation' (776159) panicked at crates/trnm-data-availability/src/cell/custody_tests.rs:66:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::custody::tests::version_continuation_retains_each_original_term_owner_and_component_size stdout ----
+
+thread 'cell::custody::tests::version_continuation_retains_each_original_term_owner_and_component_size' (776160) panicked at crates/trnm-data-availability/src/cell/custody_tests.rs:66:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::custody::tests::version_continuation_validates_one_bounded_sponsor_union_before_component_plans stdout ----
+
+thread 'cell::custody::tests::version_continuation_validates_one_bounded_sponsor_union_before_component_plans' (776161) panicked at crates/trnm-data-availability/src/cell/custody_tests.rs:66:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::delta_network_tests::cancelled_delta_never_mutates_or_dials_and_new_attempt_keeps_original_pins stdout ----
+
+thread 'cell::delta_network_tests::cancelled_delta_never_mutates_or_dials_and_new_attempt_keeps_original_pins' (776162) panicked at crates/trnm-data-availability/src/cell/delta_network_tests.rs:73:85:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::delta_network_tests::delta_cancellation_interrupts_partial_tcp_response_without_retry_or_publication stdout ----
+
+thread 'cell::delta_network_tests::delta_cancellation_interrupts_partial_tcp_response_without_retry_or_publication' (776163) panicked at crates/trnm-data-availability/src/cell/delta_network_tests.rs:73:85:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::delta_network_tests::invalid_base_or_original_delta_budget_never_dials_or_publishes_target stdout ----
+
+thread 'cell::delta_network_tests::invalid_base_or_original_delta_budget_never_dials_or_publishes_target' (776164) panicked at crates/trnm-data-availability/src/cell/delta_network_tests.rs:73:85:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::delta_network_tests::tcp_delta_fetch_downloads_only_the_absent_chunk_and_materializes_exact_target stdout ----
+
+thread 'cell::delta_network_tests::tcp_delta_fetch_downloads_only_the_absent_chunk_and_materializes_exact_target' (776165) panicked at crates/trnm-data-availability/src/cell/delta_network_tests.rs:73:85:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::delta_tests::corrupt_base_fails_before_target_metadata_or_output_and_budget_covers_both_payloads stdout ----
+
+thread 'cell::delta_tests::corrupt_base_fails_before_target_metadata_or_output_and_budget_covers_both_payloads' (776166) panicked at crates/trnm-data-availability/src/cell/delta_tests.rs:163:52:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::delta_tests::delta_late_owner_event_preserves_published_target_but_refuses_success stdout ----
+
+thread 'cell::delta_tests::delta_late_owner_event_preserves_published_target_but_refuses_success' (776167) panicked at crates/trnm-data-availability/src/cell/delta_tests.rs:287:76:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::delta_tests::delta_metadata_contention_spends_original_deadline_without_a_late_write stdout ----
+
+thread 'cell::delta_tests::delta_metadata_contention_spends_original_deadline_without_a_late_write' (776168) panicked at crates/trnm-data-availability/src/cell/delta_tests.rs:116:52:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::delta_tests::delta_reconstruction_requires_only_direct_base_even_after_many_version_steps stdout ----
+
+thread 'cell::delta_tests::delta_reconstruction_requires_only_direct_base_even_after_many_version_steps' (776169) panicked at crates/trnm-data-availability/src/cell/delta_tests.rs:227:74:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::delta_tests::malformed_delta_ranges_and_noncanonical_base_indices_are_refused stdout ----
+
+thread 'cell::delta_tests::malformed_delta_ranges_and_noncanonical_base_indices_are_refused' (776170) panicked at crates/trnm-data-availability/src/cell/delta_tests.rs:84:72:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::delta_tests::valid_chunks_cannot_bypass_target_whole_payload_hash_or_owner_pins stdout ----
+
+thread 'cell::delta_tests::valid_chunks_cannot_bypass_target_whole_payload_hash_or_owner_pins' (776171) panicked at crates/trnm-data-availability/src/cell/delta_tests.rs:190:72:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::delta_tests::verified_delta_reuses_shared_base_and_publishes_full_exact_target stdout ----
+
+thread 'cell::delta_tests::verified_delta_reuses_shared_base_and_publishes_full_exact_target' (776172) panicked at crates/trnm-data-availability/src/cell/delta_tests.rs:52:79:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::discovery::equivocation_history_tests::tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation stdout ----
+
+thread 'cell::discovery::equivocation_history_tests::tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation' (776203) panicked at crates/trnm-data-availability/src/cell/discovery/equivocation_history_tests.rs:98:64:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::discovery::pq::tests::real_tcp_pq_discovery_fetch_and_withdrawal_share_persisted_high_water_and_budget stdout ----
+
+thread 'cell::discovery::pq::tests::real_tcp_pq_discovery_fetch_and_withdrawal_share_persisted_high_water_and_budget' (776225) panicked at crates/trnm-data-availability/src/cell/discovery/pq/tests.rs:333:59:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::discovery::sequence_tests::tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial stdout ----
+
+thread 'cell::discovery::sequence_tests::tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial' (776251) panicked at crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs:242:64:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+cell_sequence phase=setup_failed elapsed_ns=1217167
+
+---- cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication stdout ----
+
+thread 'cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication' (776252) panicked at crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs:242:64:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+cell_sequence phase=setup_failed elapsed_ns=623588
+
+---- cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint stdout ----
+
+thread 'cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint' (776253) panicked at crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs:242:64:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+cell_sequence phase=setup_failed elapsed_ns=812021
+
+---- cell::discovery::tests::cached_advertisements_cannot_replace_an_actual_bootstrap_reply stdout ----
+
+thread 'cell::discovery::tests::cached_advertisements_cannot_replace_an_actual_bootstrap_reply' (776256) panicked at crates/trnm-data-availability/src/cell/discovery/tests.rs:191:64:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::discovery::tests::discovery_and_cell_requests_share_original_connection_and_actual_byte_budgets stdout ----
+
+thread 'cell::discovery::tests::discovery_and_cell_requests_share_original_connection_and_actual_byte_budgets' (776261) panicked at crates/trnm-data-availability/src/cell/discovery/tests.rs:191:64:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::discovery::tests::explicit_scopes_reject_loopback_linklocal_multicast_mapped_and_unlisted_ports stdout ----
+
+thread 'cell::discovery::tests::explicit_scopes_reject_loopback_linklocal_multicast_mapped_and_unlisted_ports' (776263) panicked at crates/trnm-data-availability/src/cell/discovery/tests.rs:607:79:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::discovery::tests::first_manifest_read_preserves_cold_warm_status_and_exact_rejection_counts stdout ----
+
+thread 'cell::discovery::tests::first_manifest_read_preserves_cold_warm_status_and_exact_rejection_counts' (776264) panicked at crates/trnm-data-availability/src/cell/discovery/tests.rs:191:64:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::discovery::tests::tcp_bootstrap_discovers_unconfigured_providers_and_repairs_after_origin_exit stdout ----
+
+thread 'cell::discovery::tests::tcp_bootstrap_discovers_unconfigured_providers_and_repairs_after_origin_exit' (776278) panicked at crates/trnm-data-availability/src/cell/discovery/tests.rs:191:64:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::model_root_tests::model_root_fetch_uses_original_closure_checks_and_publishes_only_complete_exact_root stdout ----
+
+thread 'cell::model_root_tests::model_root_fetch_uses_original_closure_checks_and_publishes_only_complete_exact_root' (776296) panicked at crates/trnm-data-availability/src/cell/model_root_tests.rs:190:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::availability::tests::availability_probe_exhaustion_cannot_reset_connections_or_publish_partial_output stdout ----
+
+thread 'cell::network::availability::tests::availability_probe_exhaustion_cannot_reset_connections_or_publish_partial_output' (776301) panicked at crates/trnm-data-availability/src/cell/network/availability/tests.rs:31:59:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::availability::tests::complete_bad_chunk_is_quarantined_for_later_chunks_in_original_session stdout ----
+
+thread 'cell::network::availability::tests::complete_bad_chunk_is_quarantined_for_later_chunks_in_original_session' (776302) panicked at crates/trnm-data-availability/src/cell/network/availability/tests.rs:31:59:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::availability::tests::default_server_retains_legacy_namespace_and_inventory_failure_allows_byte_fallback stdout ----
+
+thread 'cell::network::availability::tests::default_server_retains_legacy_namespace_and_inventory_failure_allows_byte_fallback' (776303) panicked at crates/trnm-data-availability/src/cell/network/availability/tests.rs:31:59:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::availability::tests::explicit_real_inventory_server_and_existing_downloader_verify_the_whole_payload stdout ----
+
+thread 'cell::network::availability::tests::explicit_real_inventory_server_and_existing_downloader_verify_the_whole_payload' (776304) panicked at crates/trnm-data-availability/src/cell/network/availability/tests.rs:31:59:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::availability::tests::inventory_response_body_spends_the_last_byte_without_a_fresh_payload_allowance stdout ----
+
+thread 'cell::network::availability::tests::inventory_response_body_spends_the_last_byte_without_a_fresh_payload_allowance' (776305) panicked at crates/trnm-data-availability/src/cell/network/availability/tests.rs:31:59:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::availability::tests::rarest_observed_first_uses_real_pinned_chunks_and_one_original_budget stdout ----
+
+thread 'cell::network::availability::tests::rarest_observed_first_uses_real_pinned_chunks_and_one_original_budget' (776308) panicked at crates/trnm-data-availability/src/cell/network/availability/tests.rs:31:59:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::availability::tests::wrong_manifest_quarantine_survives_into_the_same_session_payload_fetch stdout ----
+
+thread 'cell::network::availability::tests::wrong_manifest_quarantine_survives_into_the_same_session_payload_fetch' (776309) panicked at crates/trnm-data-availability/src/cell/network/availability/tests.rs:31:59:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::availability::tests::zero_inventory_hints_cannot_hide_valid_chunks_from_the_original_fallback stdout ----
+
+thread 'cell::network::availability::tests::zero_inventory_hints_cannot_hide_valid_chunks_from_the_original_fallback' (776310) panicked at crates/trnm-data-availability/src/cell/network/availability/tests.rs:31:59:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::budget_tests::fetch_persistence_and_corrupt_cache_repair_keep_original_deadline_under_writer_lock stdout ----
+
+thread 'cell::network::budget_tests::fetch_persistence_and_corrupt_cache_repair_keep_original_deadline_under_writer_lock' (776341) panicked at crates/trnm-data-availability/src/cell/network.rs:1650:14:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::budget_tests::writable_serving_cache_repair_keeps_original_request_deadline stdout ----
+
+thread 'cell::network::budget_tests::writable_serving_cache_repair_keeps_original_request_deadline' (776353) panicked at crates/trnm-data-availability/src/cell/network.rs:1844:10:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::dedup_tests::equal_chunk_digest_with_conflicting_lengths_fails_before_any_provider_request stdout ----
+
+thread 'cell::network::dedup_tests::equal_chunk_digest_with_conflicting_lengths_fails_before_any_provider_request' (776361) panicked at crates/trnm-data-availability/src/cell/network/dedup_tests.rs:298:62:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::dedup_tests::repeated_content_still_rejects_wrong_full_payload_and_preserves_shared_cache stdout ----
+
+thread 'cell::network::dedup_tests::repeated_content_still_rejects_wrong_full_payload_and_preserves_shared_cache' (776362) panicked at crates/trnm-data-availability/src/cell/network/dedup_tests.rs:240:85:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::dedup_tests::repeated_corrupt_cache_content_is_repaired_with_one_original_request stdout ----
+
+thread 'cell::network::dedup_tests::repeated_corrupt_cache_content_is_repaired_with_one_original_request' (776363) panicked at crates/trnm-data-availability/src/cell/network/dedup_tests.rs:203:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::dedup_tests::repeated_missing_chunks_use_one_request_per_object_with_serial_and_parallel_workers stdout ----
+
+thread 'cell::network::dedup_tests::repeated_missing_chunks_use_one_request_per_object_with_serial_and_parallel_workers' (776364) panicked at crates/trnm-data-availability/src/cell/network/dedup_tests.rs:154:85:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::persistent::rarest_tests::v3_cancellation_after_inventory_remains_terminal_without_a_payload_frame stdout ----
+
+thread 'cell::network::persistent::rarest_tests::v3_cancellation_after_inventory_remains_terminal_without_a_payload_frame' (776365) panicked at crates/trnm-data-availability/src/cell/network/persistent/rarest_tests.rs:30:14:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::persistent::rarest_tests::v3_claimed_inventory_never_admits_a_bad_chunk_or_partial_output stdout ----
+
+thread 'cell::network::persistent::rarest_tests::v3_claimed_inventory_never_admits_a_bad_chunk_or_partial_output' (776366) panicked at crates/trnm-data-availability/src/cell/network/persistent/rarest_tests.rs:30:14:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::persistent::rarest_tests::v3_empty_inventory_is_a_hint_and_cannot_hide_real_verified_chunks stdout ----
+
+thread 'cell::network::persistent::rarest_tests::v3_empty_inventory_is_a_hint_and_cannot_hide_real_verified_chunks' (776367) panicked at crates/trnm-data-availability/src/cell/network/persistent/rarest_tests.rs:30:14:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::persistent::rarest_tests::v3_inventory_and_payload_keep_original_connection_and_session_deadlines stdout ----
+
+thread 'cell::network::persistent::rarest_tests::v3_inventory_and_payload_keep_original_connection_and_session_deadlines' (776369) panicked at crates/trnm-data-availability/src/cell/network/persistent/rarest_tests.rs:30:14:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::persistent::rarest_tests::v3_inventory_frame_exhaustion_keeps_verified_prefix_for_explicit_resume stdout ----
+
+thread 'cell::network::persistent::rarest_tests::v3_inventory_frame_exhaustion_keeps_verified_prefix_for_explicit_resume' (776370) panicked at crates/trnm-data-availability/src/cell/network/persistent/rarest_tests.rs:30:14:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::persistent::rarest_tests::v3_inventory_spends_original_bytes_and_denies_a_fresh_payload_allowance stdout ----
+
+thread 'cell::network::persistent::rarest_tests::v3_inventory_spends_original_bytes_and_denies_a_fresh_payload_allowance' (776371) panicked at crates/trnm-data-availability/src/cell/network/persistent/rarest_tests.rs:30:14:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::persistent::rarest_tests::v3_partial_providers_schedule_rarest_chunks_first_with_two_reused_connections stdout ----
+
+thread 'cell::network::persistent::rarest_tests::v3_partial_providers_schedule_rarest_chunks_first_with_two_reused_connections' (776374) panicked at crates/trnm-data-availability/src/cell/network/persistent/rarest_tests.rs:30:14:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::persistent::rarest_tests::v3_real_inventory_crosses_page_256_and_reuses_its_reservation_for_tail_chunk stdout ----
+
+thread 'cell::network::persistent::rarest_tests::v3_real_inventory_crosses_page_256_and_reuses_its_reservation_for_tail_chunk' (776375) panicked at crates/trnm-data-availability/src/cell/network/persistent/rarest_tests.rs:354:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::persistent::rarest_tests::v3_real_server_reuses_one_connection_for_manifest_inventory_and_verified_payload stdout ----
+
+thread 'cell::network::persistent::rarest_tests::v3_real_server_reuses_one_connection_for_manifest_inventory_and_verified_payload' (776376) panicked at crates/trnm-data-availability/src/cell/network/persistent/rarest_tests.rs:30:14:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::persistent::rarest_tests::v3_server_rejects_old_namespaces_and_invalid_inventory_before_object_bytes stdout ----
+
+thread 'cell::network::persistent::rarest_tests::v3_server_rejects_old_namespaces_and_invalid_inventory_before_object_bytes' (776377) panicked at crates/trnm-data-availability/src/cell/network/persistent/rarest_tests.rs:30:14:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::persistent::tests::exhausted_service_still_joins_an_already_admitted_incomplete_frame stdout ----
+
+thread 'cell::network::persistent::tests::exhausted_service_still_joins_an_already_admitted_incomplete_frame' (776390) panicked at crates/trnm-data-availability/src/cell/network/persistent/tests.rs:20:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::persistent::tests::invalid_persistent_limits_never_open_transport_or_mutate_the_cache stdout ----
+
+thread 'cell::network::persistent::tests::invalid_persistent_limits_never_open_transport_or_mutate_the_cache' (776393) panicked at crates/trnm-data-availability/src/cell/network/persistent/tests.rs:20:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::persistent::tests::last_response_byte_closes_reused_connection_without_admitting_idle_frame stdout ----
+
+thread 'cell::network::persistent::tests::last_response_byte_closes_reused_connection_without_admitting_idle_frame' (776394) panicked at crates/trnm-data-availability/src/cell/network/persistent/tests.rs:20:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::persistent::tests::real_manifest_and_two_chunks_reuse_one_connection_and_original_response_budget stdout ----
+
+thread 'cell::network::persistent::tests::real_manifest_and_two_chunks_reuse_one_connection_and_original_response_budget' (776402) panicked at crates/trnm-data-availability/src/cell/network/persistent/tests.rs:20:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::persistent::tests::request_connection_and_byte_exhaustion_each_refuse_output_and_keep_verified_prefix stdout ----
+
+thread 'cell::network::persistent::tests::request_connection_and_byte_exhaustion_each_refuse_output_and_keep_verified_prefix' (776403) panicked at crates/trnm-data-availability/src/cell/network/persistent/tests.rs:20:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::persistent::tests::server_actual_egress_exhaustion_stops_intake_and_next_frame_without_shutdown stdout ----
+
+thread 'cell::network::persistent::tests::server_actual_egress_exhaustion_stops_intake_and_next_frame_without_shutdown' (776406) panicked at crates/trnm-data-availability/src/cell/network/persistent/tests.rs:20:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::persistent::tests::server_frame_and_byte_budgets_apply_across_reused_requests stdout ----
+
+thread 'cell::network::persistent::tests::server_frame_and_byte_budgets_apply_across_reused_requests' (776407) panicked at crates/trnm-data-availability/src/cell/network/persistent/tests.rs:20:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::persistent::tests::server_rejects_old_magic_and_unknown_kind_without_serving_object_bytes stdout ----
+
+thread 'cell::network::persistent::tests::server_rejects_old_magic_and_unknown_kind_without_serving_object_bytes' (776408) panicked at crates/trnm-data-availability/src/cell/network/persistent/tests.rs:20:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::persistent::tests::server_temporary_egress_reservation_refunds_before_real_tcp_response stdout ----
+
+thread 'cell::network::persistent::tests::server_temporary_egress_reservation_refunds_before_real_tcp_response' (776409) panicked at crates/trnm-data-availability/src/cell/network/persistent/tests.rs:20:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::persistent::tests::zero_egress_service_does_not_accept_an_already_queued_connection stdout ----
+
+thread 'cell::network::persistent::tests::zero_egress_service_does_not_accept_an_already_queued_connection' (776413) panicked at crates/trnm-data-availability/src/cell/network/persistent/tests.rs:20:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::serving::tests::active_limit_drops_overload_without_queue_or_extra_bytes stdout ----
+
+thread 'cell::network::serving::tests::active_limit_drops_overload_without_queue_or_extra_bytes' (776414) panicked at crates/trnm-data-availability/src/cell/network/serving/tests.rs:62:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::serving::tests::bounded_corrupt_chunk_read_keeps_row_then_writable_fetch_repairs_exact_pin stdout ----
+
+thread 'cell::network::serving::tests::bounded_corrupt_chunk_read_keeps_row_then_writable_fetch_repairs_exact_pin' (776415) panicked at crates/trnm-data-availability/src/cell/network/serving/tests.rs:62:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::serving::tests::concurrent_responses_share_exact_byte_budget_and_one_byte_short_cutoff stdout ----
+
+thread 'cell::network::serving::tests::concurrent_responses_share_exact_byte_budget_and_one_byte_short_cutoff' (776417) panicked at crates/trnm-data-availability/src/cell/network/serving/tests.rs:62:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::serving::tests::double_worker_panic_is_joined_without_overwriting_the_first_error stdout ----
+
+thread 'cell::network::serving::tests::double_worker_panic_is_joined_without_overwriting_the_first_error' (776418) panicked at crates/trnm-data-availability/src/cell/network/serving/tests.rs:62:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::serving::tests::exhausted_serving_budget_refuses_before_fresh_payload_lookup stdout ----
+
+thread 'cell::network::serving::tests::exhausted_serving_budget_refuses_before_fresh_payload_lookup' (776419) panicked at crates/trnm-data-availability/src/cell/network/serving/tests.rs:62:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::serving::tests::four_workers_drop_fifth_socket_and_all_accepts_consume_the_cap stdout ----
+
+thread 'cell::network::serving::tests::four_workers_drop_fifth_socket_and_all_accepts_consume_the_cap' (776420) panicked at crates/trnm-data-availability/src/cell/network/serving/tests.rs:62:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::serving::tests::half_request_does_not_block_honest_pinned_fetch stdout ----
+
+thread 'cell::network::serving::tests::half_request_does_not_block_honest_pinned_fetch' (776421) panicked at crates/trnm-data-availability/src/cell/network/serving/tests.rs:62:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::serving::tests::original_overall_deadline_and_shutdown_join_all_admitted_workers stdout ----
+
+thread 'cell::network::serving::tests::original_overall_deadline_and_shutdown_join_all_admitted_workers' (776424) panicked at crates/trnm-data-availability/src/cell/network/serving/tests.rs:62:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::serving::tests::positive_exhaustion_stops_intake_and_joins_admitted_half_request stdout ----
+
+thread 'cell::network::serving::tests::positive_exhaustion_stops_intake_and_joins_admitted_half_request' (776425) panicked at crates/trnm-data-availability/src/cell/network/serving/tests.rs:62:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::serving::tests::transient_chunk_capacity_refusal_uses_one_bounded_retry stdout ----
+
+thread 'cell::network::serving::tests::transient_chunk_capacity_refusal_uses_one_bounded_retry' (776429) panicked at crates/trnm-data-availability/src/cell/network/serving/tests.rs:62:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::serving::tests::transient_manifest_capacity_refusal_uses_one_bounded_retry stdout ----
+
+thread 'cell::network::serving::tests::transient_manifest_capacity_refusal_uses_one_bounded_retry' (776430) panicked at crates/trnm-data-availability/src/cell/network/serving/tests.rs:62:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::serving::tests::unread_large_response_keeps_absolute_deadline_and_exact_partial_write_charge stdout ----
+
+thread 'cell::network::serving::tests::unread_large_response_keeps_absolute_deadline_and_exact_partial_write_charge' (776431) panicked at crates/trnm-data-availability/src/cell/network/serving/tests.rs:62:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::network::serving::tests::zero_serving_byte_budget_admits_no_socket_or_payload_worker stdout ----
+
+thread 'cell::network::serving::tests::zero_serving_byte_budget_admits_no_socket_or_payload_worker' (776432) panicked at crates/trnm-data-availability/src/cell/network/serving/tests.rs:62:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::pq::version::tests::cpv3_cached_publisher_observation_rechecks_current_owner_not_only_time stdout ----
+
+thread 'cell::pq::version::tests::cpv3_cached_publisher_observation_rechecks_current_owner_not_only_time' (776438) panicked at crates/trnm-data-availability/src/cell/version/tests.rs:40:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::pq::version::tests::cpv3_cannot_reuse_a_signature_for_same_files_with_other_dependency_edges stdout ----
+
+thread 'cell::pq::version::tests::cpv3_cannot_reuse_a_signature_for_same_files_with_other_dependency_edges' (776439) panicked at crates/trnm-data-availability/src/cell/version/tests.rs:40:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::pq::version::tests::cpv3_signs_complete_version_and_rejects_statement_signature_mutations stdout ----
+
+thread 'cell::pq::version::tests::cpv3_signs_complete_version_and_rejects_statement_signature_mutations' (776440) panicked at crates/trnm-data-availability/src/cell/version/tests.rs:40:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::pq::version::tests::cpv3_withdrawal_expiry_and_legacy_profile_have_no_fallback stdout ----
+
+thread 'cell::pq::version::tests::cpv3_withdrawal_expiry_and_legacy_profile_have_no_fallback' (776441) panicked at crates/trnm-data-availability/src/cell/version/tests.rs:40:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release::transport_tests::aggregate_frame_exhaustion_never_publishes_and_explicit_retry_uses_verified_prefix stdout ----
+
+thread 'cell::release::transport_tests::aggregate_frame_exhaustion_never_publishes_and_explicit_retry_uses_verified_prefix' (776442) panicked at crates/trnm-data-availability/src/cell/release/transport_tests.rs:57:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release::transport_tests::aggregate_response_budget_is_not_renewed_at_member_boundaries stdout ----
+
+thread 'cell::release::transport_tests::aggregate_response_budget_is_not_renewed_at_member_boundaries' (776443) panicked at crates/trnm-data-availability/src/cell/release/transport_tests.rs:57:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release::transport_tests::all_marker_profiles_fetch_two_members_through_one_persistent_connection stdout ----
+
+thread 'cell::release::transport_tests::all_marker_profiles_fetch_two_members_through_one_persistent_connection' (776444) panicked at crates/trnm-data-availability/src/cell/release/transport_tests.rs:57:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release::transport_tests::explicit_rarest_release_profile_keeps_inventory_and_all_members_on_one_v1_budget stdout ----
+
+thread 'cell::release::transport_tests::explicit_rarest_release_profile_keeps_inventory_and_all_members_on_one_v1_budget' (776445) panicked at crates/trnm-data-availability/src/cell/release/transport_tests.rs:57:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release::transport_tests::persistent_release_and_prefetch_preflight_reject_aggregate_limits_before_payload stdout ----
+
+thread 'cell::release::transport_tests::persistent_release_and_prefetch_preflight_reject_aggregate_limits_before_payload' (776446) panicked at crates/trnm-data-availability/src/cell/release/transport_tests.rs:57:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release::transport_tests::rarest::v3_release_closure_model_and_tensor_keep_one_pool_and_aggregate_inventory_budget stdout ----
+
+thread 'cell::release::transport_tests::rarest::v3_release_closure_model_and_tensor_keep_one_pool_and_aggregate_inventory_budget' (776447) panicked at crates/trnm-data-availability/src/cell/release/transport_tests.rs:57:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release::transport_tests::rarest::v3_release_inventory_cannot_renew_frames_at_member_boundary_and_resume_is_explicit stdout ----
+
+thread 'cell::release::transport_tests::rarest::v3_release_inventory_cannot_renew_frames_at_member_boundary_and_resume_is_explicit' (776448) panicked at crates/trnm-data-availability/src/cell/release/transport_tests.rs:57:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release::transport_tests::rarest::v3_release_inventory_cannot_renew_response_bytes_at_member_boundary stdout ----
+
+thread 'cell::release::transport_tests::rarest::v3_release_inventory_cannot_renew_response_bytes_at_member_boundary' (776449) panicked at crates/trnm-data-availability/src/cell/release/transport_tests.rs:57:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release::transport_tests::residency_prefetch_stops_payload_requests_when_original_owner_cancels stdout ----
+
+thread 'cell::release::transport_tests::residency_prefetch_stops_payload_requests_when_original_owner_cancels' (776450) panicked at crates/trnm-data-availability/src/cell/release/transport_tests.rs:57:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release_tests::closure_prefetch_expired_original_deadline_opens_no_connections stdout ----
+
+thread 'cell::release_tests::closure_prefetch_expired_original_deadline_opens_no_connections' (776451) panicked at crates/trnm-data-availability/src/cell/release_tests.rs:105:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release_tests::closure_prefetch_rejects_changed_owner_generation_before_cache_or_network_work stdout ----
+
+thread 'cell::release_tests::closure_prefetch_rejects_changed_owner_generation_before_cache_or_network_work' (776452) panicked at crates/trnm-data-availability/src/cell/release_tests.rs:105:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release_tests::closure_prefetch_repeat_is_fully_local_and_reuses_the_same_version stdout ----
+
+thread 'cell::release_tests::closure_prefetch_repeat_is_fully_local_and_reuses_the_same_version' (776453) panicked at crates/trnm-data-availability/src/cell/release_tests.rs:105:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release_tests::closure_prefetch_uses_real_transport_without_publishing_a_marker stdout ----
+
+thread 'cell::release_tests::closure_prefetch_uses_real_transport_without_publishing_a_marker' (776454) panicked at crates/trnm-data-availability/src/cell/release_tests.rs:105:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release_tests::pinned_release_reader_checks_root_pin_and_one_mib_file_bound stdout ----
+
+thread 'cell::release_tests::pinned_release_reader_checks_root_pin_and_one_mib_file_bound' (776455) panicked at crates/trnm-data-availability/src/cell/release_tests.rs:105:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release_tests::post_link_deadline_expiry_refuses_success_and_preserves_exact_marker stdout ----
+
+thread 'cell::release_tests::post_link_deadline_expiry_refuses_success_and_preserves_exact_marker' (776456) panicked at crates/trnm-data-availability/src/cell/release_tests.rs:105:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release_tests::post_link_failure_preserves_complete_marker_for_same_identity_readback stdout ----
+
+thread 'cell::release_tests::post_link_failure_preserves_complete_marker_for_same_identity_readback' (776457) panicked at crates/trnm-data-availability/src/cell/release_tests.rs:105:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release_tests::release_fetch_collects_all_members_from_two_distinct_loopback_stores stdout ----
+
+thread 'cell::release_tests::release_fetch_collects_all_members_from_two_distinct_loopback_stores' (776458) panicked at crates/trnm-data-availability/src/cell/release_tests.rs:105:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release_tests::release_fetch_expired_owner_deadline_opens_no_connections stdout ----
+
+thread 'cell::release_tests::release_fetch_expired_owner_deadline_opens_no_connections' (776459) panicked at crates/trnm-data-availability/src/cell/release_tests.rs:105:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release_tests::release_fetch_missing_member_does_not_publish_a_subset_marker stdout ----
+
+thread 'cell::release_tests::release_fetch_missing_member_does_not_publish_a_subset_marker' (776460) panicked at crates/trnm-data-availability/src/cell/release_tests.rs:105:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release_tests::release_fetch_never_overwrites_an_existing_marker_path stdout ----
+
+thread 'cell::release_tests::release_fetch_never_overwrites_an_existing_marker_path' (776461) panicked at crates/trnm-data-availability/src/cell/release_tests.rs:105:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release_tests::release_fetch_parallel_response_budget_is_exact_and_one_byte_short_is_typed stdout ----
+
+thread 'cell::release_tests::release_fetch_parallel_response_budget_is_exact_and_one_byte_short_is_typed' (776462) panicked at crates/trnm-data-availability/src/cell/release_tests.rs:105:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release_tests::release_fetch_rejects_incompatible_member_context_before_chunks stdout ----
+
+thread 'cell::release_tests::release_fetch_rejects_incompatible_member_context_before_chunks' (776463) panicked at crates/trnm-data-availability/src/cell/release_tests.rs:105:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release_tests::release_fetch_reserves_two_member_chunk_total_before_any_chunk_download stdout ----
+
+thread 'cell::release_tests::release_fetch_reserves_two_member_chunk_total_before_any_chunk_download' (776464) panicked at crates/trnm-data-availability/src/cell/release_tests.rs:105:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release_tests::release_fetch_reserves_two_member_payload_total_before_any_chunk_download stdout ----
+
+thread 'cell::release_tests::release_fetch_reserves_two_member_payload_total_before_any_chunk_download' (776465) panicked at crates/trnm-data-availability/src/cell/release_tests.rs:105:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release_tests::release_fetch_shares_connection_budget_and_resumes_verified_partial_cache stdout ----
+
+thread 'cell::release_tests::release_fetch_shares_connection_budget_and_resumes_verified_partial_cache' (776466) panicked at crates/trnm-data-availability/src/cell/release_tests.rs:105:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release_tests::release_fetch_wrong_root_pin_opens_no_connections_and_publishes_nothing stdout ----
+
+thread 'cell::release_tests::release_fetch_wrong_root_pin_opens_no_connections_and_publishes_nothing' (776467) panicked at crates/trnm-data-availability/src/cell/release_tests.rs:105:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::release_tests::release_marker_sync_keeps_original_deadline_and_cleans_up_after_cutoff stdout ----
+
+thread 'cell::release_tests::release_marker_sync_keeps_original_deadline_and_cleans_up_after_cutoff' (776468) panicked at crates/trnm-data-availability/src/cell/release_tests.rs:105:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::budget_task_tests::prefetch_deduplicates_exact_ram_needs_and_preserves_complete_transport_counts stdout ----
+
+thread 'cell::residency::budget_task_tests::prefetch_deduplicates_exact_ram_needs_and_preserves_complete_transport_counts' (776469) panicked at crates/trnm-data-availability/src/cell/residency/budget_task_tests.rs:307:66:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::budget_task_tests::prefetch_ram_capacity_refuses_after_metadata_before_any_payload_request stdout ----
+
+thread 'cell::residency::budget_task_tests::prefetch_ram_capacity_refuses_after_metadata_before_any_payload_request' (776470) panicked at crates/trnm-data-availability/src/cell/residency/budget_task_tests.rs:247:66:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::budget_task_tests::prefetch_readiness_does_not_refresh_connection_or_response_allowances stdout ----
+
+thread 'cell::residency::budget_task_tests::prefetch_readiness_does_not_refresh_connection_or_response_allowances' (776471) panicked at crates/trnm-data-availability/src/cell/residency/budget_task_tests.rs:351:70:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::budget_task_tests::prefetch_reference_capacity_refuses_after_metadata_before_any_payload_request stdout ----
+
+thread 'cell::residency::budget_task_tests::prefetch_reference_capacity_refuses_after_metadata_before_any_payload_request' (776472) panicked at crates/trnm-data-availability/src/cell/residency/budget_task_tests.rs:247:66:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::budget_task_tests::task_cancellation_is_latched_and_does_not_promise_erasure_of_copied_public_bytes stdout ----
+
+thread 'cell::residency::budget_task_tests::task_cancellation_is_latched_and_does_not_promise_erasure_of_copied_public_bytes' (776473) panicked at crates/trnm-data-availability/src/cell/residency/budget_task_tests.rs:571:91:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::budget_task_tests::task_cutoff_cannot_be_renewed_by_a_later_hot_lookup stdout ----
+
+thread 'cell::residency::budget_task_tests::task_cutoff_cannot_be_renewed_by_a_later_hot_lookup' (776474) panicked at crates/trnm-data-availability/src/cell/residency/budget_task_tests.rs:609:91:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::budget_task_tests::task_lookup_rechecks_current_context_and_never_invokes_consumer_after_a_mismatch stdout ----
+
+thread 'cell::residency::budget_task_tests::task_lookup_rechecks_current_context_and_never_invokes_consumer_after_a_mismatch' (776475) panicked at crates/trnm-data-availability/src/cell/residency/budget_task_tests.rs:528:91:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::budget_task_tests::task_working_set_enforces_all_aggregate_limits_and_nonzero_task_identity stdout ----
+
+thread 'cell::residency::budget_task_tests::task_working_set_enforces_all_aggregate_limits_and_nonzero_task_identity' (776476) panicked at crates/trnm-data-availability/src/cell/residency/budget_task_tests.rs:482:91:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::budget_task_tests::task_working_set_is_complete_deduplicated_and_runs_with_no_disk_or_peer stdout ----
+
+thread 'cell::residency::budget_task_tests::task_working_set_is_complete_deduplicated_and_runs_with_no_disk_or_peer' (776477) panicked at crates/trnm-data-availability/src/cell/residency/budget_task_tests.rs:400:91:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::budget_task_tests::task_working_set_refuses_missing_or_noncanonical_members_without_partial_readiness stdout ----
+
+thread 'cell::residency::budget_task_tests::task_working_set_refuses_missing_or_noncanonical_members_without_partial_readiness' (776478) panicked at crates/trnm-data-availability/src/cell/residency/budget_task_tests.rs:451:91:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::tensor::tests::resident_correct_hash_invalid_later_tensor_file_returns_no_admission_or_selection_change stdout ----
+
+thread 'cell::residency::tensor::tests::resident_correct_hash_invalid_later_tensor_file_returns_no_admission_or_selection_change' (776479) panicked at crates/trnm-data-availability/src/cell/residency/tensor/tests.rs:407:78:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::tensor::tests::resident_payload_reader_checks_cancellation_on_read_and_seek stdout ----
+
+thread 'cell::residency::tensor::tests::resident_payload_reader_checks_cancellation_on_read_and_seek' (776480) panicked at crates/trnm-data-availability/src/cell/residency/tensor/tests.rs:535:78:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::tensor::tests::resident_tensor_admission_rejects_independent_pin_context_and_contract_transplants stdout ----
+
+thread 'cell::residency::tensor::tests::resident_tensor_admission_rejects_independent_pin_context_and_contract_transplants' (776481) panicked at crates/trnm-data-availability/src/cell/residency/tensor/tests.rs:337:78:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::tensor::tests::resident_tensor_cold_miss_and_wrong_selection_do_not_fetch_or_select stdout ----
+
+thread 'cell::residency::tensor::tests::resident_tensor_cold_miss_and_wrong_selection_do_not_fetch_or_select' (776482) panicked at crates/trnm-data-availability/src/cell/residency/tensor/tests.rs:494:78:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::tensor::tests::resident_tensor_deadline_and_mid_admission_cancellation_preserve_residency_and_selection stdout ----
+
+thread 'cell::residency::tensor::tests::resident_tensor_deadline_and_mid_admission_cancellation_preserve_residency_and_selection' (776483) panicked at crates/trnm-data-availability/src/cell/residency/tensor/tests.rs:442:78:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::tensor::tests::resident_tensor_views_preserve_unaligned_cross_chunk_elements_and_half_bits stdout ----
+
+thread 'cell::residency::tensor::tests::resident_tensor_views_preserve_unaligned_cross_chunk_elements_and_half_bits' (776484) panicked at crates/trnm-data-availability/src/cell/residency/tensor/tests.rs:287:78:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::tensor::tests::resident_tensors_admit_complete_real_containers_then_compute_without_disk_or_provider stdout ----
+
+thread 'cell::residency::tensor::tests::resident_tensors_admit_complete_real_containers_then_compute_without_disk_or_provider' (776485) panicked at crates/trnm-data-availability/src/cell/residency/tensor/tests.rs:244:52:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::tests::residency_byte_quota_refuses_new_release_without_evicting_hot_or_selected_bytes stdout ----
+
+thread 'cell::residency::tests::residency_byte_quota_refuses_new_release_without_evicting_hot_or_selected_bytes' (776486) panicked at crates/trnm-data-availability/src/cell/residency_tests.rs:581:91:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::tests::residency_cancellation_after_index_merge_rolls_back_only_new_chunks_and_retry_recharges stdout ----
+
+thread 'cell::residency::tests::residency_cancellation_after_index_merge_rolls_back_only_new_chunks_and_retry_recharges' (776487) panicked at crates/trnm-data-availability/src/cell/residency_tests.rs:891:91:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::tests::residency_corrupt_cache_cannot_create_a_new_view_or_mutate_existing_immutable_bytes stdout ----
+
+thread 'cell::residency::tests::residency_corrupt_cache_cannot_create_a_new_view_or_mutate_existing_immutable_bytes' (776488) panicked at crates/trnm-data-availability/src/cell/residency_tests.rs:745:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::tests::residency_deadline_after_index_merge_rolls_back_new_chunks_without_renewal stdout ----
+
+thread 'cell::residency::tests::residency_deadline_after_index_merge_rolls_back_new_chunks_without_renewal' (776489) panicked at crates/trnm-data-availability/src/cell/residency_tests.rs:961:91:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::tests::residency_expired_or_cancelled_preparation_and_switch_preserve_the_old_selection stdout ----
+
+thread 'cell::residency::tests::residency_expired_or_cancelled_preparation_and_switch_preserve_the_old_selection' (776490) panicked at crates/trnm-data-availability/src/cell/residency_tests.rs:653:91:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::tests::residency_hits_recheck_exact_version_generation_profile_roles_and_loader_budgets stdout ----
+
+thread 'cell::residency::tests::residency_hits_recheck_exact_version_generation_profile_roles_and_loader_budgets' (776491) panicked at crates/trnm-data-availability/src/cell/residency_tests.rs:484:91:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::tests::residency_incomplete_prefetch_retains_old_selection_and_retry_only_prepares_bytes stdout ----
+
+thread 'cell::residency::tests::residency_incomplete_prefetch_retains_old_selection_and_retry_only_prepares_bytes' (776492) panicked at crates/trnm-data-availability/src/cell/residency_tests.rs:691:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::tests::residency_known_closure_capacity_refuses_prefetch_before_any_peer_connection stdout ----
+
+thread 'cell::residency::tests::residency_known_closure_capacity_refuses_prefetch_before_any_peer_connection' (776493) panicked at crates/trnm-data-availability/src/cell/residency_tests.rs:620:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::tests::residency_local_selection_compare_and_swap_rejects_stale_and_aba_tickets stdout ----
+
+thread 'cell::residency::tests::residency_local_selection_compare_and_swap_rejects_stale_and_aba_tickets' (776494) panicked at crates/trnm-data-availability/src/cell/residency_tests.rs:533:91:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::tests::residency_reference_budget_counts_shared_mappings_and_eviction_releases_all_unpinned_bytes stdout ----
+
+thread 'cell::residency::tests::residency_reference_budget_counts_shared_mappings_and_eviction_releases_all_unpinned_bytes' (776495) panicked at crates/trnm-data-availability/src/cell/residency_tests.rs:857:91:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::tests::residency_restart_reuses_fixed_disk_bytes_but_restores_no_local_selection_or_hot_pin stdout ----
+
+thread 'cell::residency::tests::residency_restart_reuses_fixed_disk_bytes_but_restores_no_local_selection_or_hot_pin' (776496) panicked at crates/trnm-data-availability/src/cell/residency_tests.rs:828:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::tests::residency_tcp_mid_download_cancellation_keeps_old_selection_and_explicit_retry stdout ----
+
+thread 'cell::residency::tests::residency_tcp_mid_download_cancellation_keeps_old_selection_and_explicit_retry' (776497) panicked at crates/trnm-data-availability/src/cell/residency_tests.rs:1032:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::tests::residency_tcp_prefetch_then_100_local_reads_need_neither_provider_nor_disk_cache stdout ----
+
+thread 'cell::residency::tests::residency_tcp_prefetch_then_100_local_reads_need_neither_provider_nor_disk_cache' (776498) panicked at crates/trnm-data-availability/src/cell/residency_tests.rs:382:66:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::tests::residency_two_versions_share_the_same_base_buffers_but_keep_distinct_file_mappings stdout ----
+
+thread 'cell::residency::tests::residency_two_versions_share_the_same_base_buffers_but_keep_distinct_file_mappings' (776499) panicked at crates/trnm-data-availability/src/cell/residency_tests.rs:446:91:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::residency::tests::residency_valid_individual_chunks_do_not_bypass_the_ordered_payload_digest stdout ----
+
+thread 'cell::residency::tests::residency_valid_individual_chunks_do_not_bypass_the_ordered_payload_digest' (776500) panicked at crates/trnm-data-availability/src/cell/residency_tests.rs:784:91:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::acknowledgement_after_commit_cancellation_keeps_exact_durable_ack stdout ----
+
+thread 'cell::retention::tests::acknowledgement_after_commit_cancellation_keeps_exact_durable_ack' (776501) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::acknowledgement_cannot_rewind_a_concurrent_retirement stdout ----
+
+thread 'cell::retention::tests::acknowledgement_cannot_rewind_a_concurrent_retirement' (776502) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::acknowledgement_initial_charge_wait_keeps_original_deadline stdout ----
+
+thread 'cell::retention::tests::acknowledgement_initial_charge_wait_keeps_original_deadline' (776503) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::acknowledgement_lost_ack_wait_keeps_original_deadline stdout ----
+
+thread 'cell::retention::tests::acknowledgement_lost_ack_wait_keeps_original_deadline' (776504) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::acknowledgement_reconciliation_wait_keeps_original_deadline stdout ----
+
+thread 'cell::retention::tests::acknowledgement_reconciliation_wait_keeps_original_deadline' (776505) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::acknowledgement_schema_change_cannot_debit_or_copy_initial_payload stdout ----
+
+thread 'cell::retention::tests::acknowledgement_schema_change_cannot_debit_or_copy_initial_payload' (776506) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::actual_capacity_is_allocated_before_ack_and_full_refusal_survives_reopen stdout ----
+
+thread 'cell::retention::tests::actual_capacity_is_allocated_before_ack_and_full_refusal_survives_reopen' (776507) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::actual_thread_cpu_stops_large_repair_before_completion_and_never_redispatches_its_id stdout ----
+
+thread 'cell::retention::tests::actual_thread_cpu_stops_large_repair_before_completion_and_never_redispatches_its_id' (776508) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::contract_commitment_has_an_exact_vector_and_binds_every_immutable_term stdout ----
+
+thread 'cell::retention::tests::contract_commitment_has_an_exact_vector_and_binds_every_immutable_term' (776509) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::controlled_retention_copy_keeps_cache_deadline_and_irreversible_repair_charge stdout ----
+
+thread 'cell::retention::tests::controlled_retention_copy_keeps_cache_deadline_and_irreversible_repair_charge' (776510) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::corrupt_payload_and_failed_repair_keep_duty_and_irreversible_byte_cost stdout ----
+
+thread 'cell::retention::tests::corrupt_payload_and_failed_repair_keep_duty_and_irreversible_byte_cost' (776511) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::expired_absolute_retirement_deadline_cannot_release_a_slot_without_a_successor stdout ----
+
+thread 'cell::retention::tests::expired_absolute_retirement_deadline_cannot_release_a_slot_without_a_successor' (776512) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::expired_obligation_cannot_reclaim_a_healthy_target_with_an_unsettled_repair stdout ----
+
+thread 'cell::retention::tests::expired_obligation_cannot_reclaim_a_healthy_target_with_an_unsettled_repair' (776513) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::immutable_service_interval_and_exact_schema_survive_reopen_without_migration stdout ----
+
+thread 'cell::retention::tests::immutable_service_interval_and_exact_schema_survive_reopen_without_migration' (776514) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::initial_partial_copy_cannot_be_redispatched_under_the_same_obligation stdout ----
+
+thread 'cell::retention::tests::initial_partial_copy_cannot_be_redispatched_under_the_same_obligation' (776515) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::interrupted_initial_copy_keeps_full_charge_and_requires_a_separate_repair stdout ----
+
+thread 'cell::retention::tests::interrupted_initial_copy_keeps_full_charge_and_requires_a_separate_repair' (776516) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::lost_repair_ack_reconciles_actual_bytes_without_second_write_or_charge stdout ----
+
+thread 'cell::retention::tests::lost_repair_ack_reconciles_actual_bytes_without_second_write_or_charge' (776517) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::mandatory_successor_requires_fresh_verified_bytes_before_capacity_reuse stdout ----
+
+thread 'cell::retention::tests::mandatory_successor_requires_fresh_verified_bytes_before_capacity_reuse' (776518) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::missing_repair_intent_can_only_reconcile_a_complete_target_and_seals_its_id stdout ----
+
+thread 'cell::retention::tests::missing_repair_intent_can_only_reconcile_a_complete_target_and_seals_its_id' (776519) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::original_ids_and_limits_cannot_be_renamed_reopened_or_recycled stdout ----
+
+thread 'cell::retention::tests::original_ids_and_limits_cannot_be_renamed_reopened_or_recycled' (776520) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::pending_ack_never_claims_bytes_and_keeps_original_reservation stdout ----
+
+thread 'cell::retention::tests::pending_ack_never_claims_bytes_and_keeps_original_reservation' (776521) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::real_process_death_after_payload_sync_recovers_ack_without_origin_or_new_capacity stdout ----
+
+thread 'cell::retention::tests::real_process_death_after_payload_sync_recovers_ack_without_origin_or_new_capacity' (776522) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:496:5:
+assertion `left == right` failed
+  left: Some(101)
+ right: Some(91)
+
+---- cell::retention::tests::rejected_control_is_sticky_and_absolute_deadline_precedes_any_copy_intent stdout ----
+
+thread 'cell::retention::tests::rejected_control_is_sticky_and_absolute_deadline_precedes_any_copy_intent' (776525) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::repair_completion_reconciliation_writer_wait_keeps_original_deadline stdout ----
+
+thread 'cell::retention::tests::repair_completion_reconciliation_writer_wait_keeps_original_deadline' (776526) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::repair_completion_refuses_a_schema_change_after_payload_and_keeps_full_charge stdout ----
+
+thread 'cell::retention::tests::repair_completion_refuses_a_schema_change_after_payload_and_keeps_full_charge' (776527) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::repair_completion_retry_writer_wait_keeps_original_deadline stdout ----
+
+thread 'cell::retention::tests::repair_completion_retry_writer_wait_keeps_original_deadline' (776528) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::repair_intent_and_charge_must_survive_sqlite_suppression_before_payload stdout ----
+
+thread 'cell::retention::tests::repair_intent_and_charge_must_survive_sqlite_suppression_before_payload' (776529) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::repair_intent_writer_wait_keeps_original_deadline stdout ----
+
+thread 'cell::retention::tests::repair_intent_writer_wait_keeps_original_deadline' (776530) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::repair_post_commit_completion_refusal_reopens_without_copy_or_charge stdout ----
+
+thread 'cell::retention::tests::repair_post_commit_completion_refusal_reopens_without_copy_or_charge' (776531) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::repair_post_commit_intent_refusal_keeps_debit_and_forbids_redispatch stdout ----
+
+thread 'cell::retention::tests::repair_post_commit_intent_refusal_keeps_debit_and_forbids_redispatch' (776532) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::repair_post_commit_zero_byte_reconciliation_keeps_exact_identity stdout ----
+
+thread 'cell::retention::tests::repair_post_commit_zero_byte_reconciliation_keeps_exact_identity' (776533) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::repair_zero_byte_reconciliation_writer_wait_keeps_original_deadline stdout ----
+
+thread 'cell::retention::tests::repair_zero_byte_reconciliation_writer_wait_keeps_original_deadline' (776534) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::retained_origin_bytes_rehydrate_existing_peer_protocol_after_cache_loss stdout ----
+
+thread 'cell::retention::tests::retained_origin_bytes_rehydrate_existing_peer_protocol_after_cache_loss' (776535) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::retention_population_preserves_original_deadline_during_cache_writer_contention stdout ----
+
+thread 'cell::retention::tests::retention_population_preserves_original_deadline_during_cache_writer_contention' (776536) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::retirement_after_commit_cancellation_keeps_the_retired_fact_for_exact_reconciliation stdout ----
+
+thread 'cell::retention::tests::retirement_after_commit_cancellation_keeps_the_retired_fact_for_exact_reconciliation' (776538) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::retirement_writer_contention_keeps_the_original_deadline_and_persistent_duty stdout ----
+
+thread 'cell::retention::tests::retirement_writer_contention_keeps_the_original_deadline_and_persistent_duty' (776539) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::sqlite_like_wildcard_cannot_hide_a_user_trigger_at_repair_or_reopen stdout ----
+
+thread 'cell::retention::tests::sqlite_like_wildcard_cannot_hide_a_user_trigger_at_repair_or_reopen' (776540) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::successful_noop_repair_keeps_its_identity_after_later_target_damage stdout ----
+
+thread 'cell::retention::tests::successful_noop_repair_keeps_its_identity_after_later_target_damage' (776541) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::successor_future_service_window_cannot_release_current_bytes_early stdout ----
+
+thread 'cell::retention::tests::successor_future_service_window_cannot_release_current_bytes_early' (776542) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::retention::tests::truncated_physical_backing_or_mutated_obligation_refuses_cold_open stdout ----
+
+thread 'cell::retention::tests::truncated_physical_backing_or_mutated_obligation_refuses_cold_open' (776543) panicked at crates/trnm-data-availability/src/cell/retention/tests.rs:32:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::store::wal_tests::all_mutating_entries_and_corrupt_deletion_share_prewrite_reader_refusal stdout ----
+
+thread 'cell::store::wal_tests::all_mutating_entries_and_corrupt_deletion_share_prewrite_reader_refusal' (776544) panicked at crates/trnm-data-availability/src/cell/cache_wal_tests.rs:226:52:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::store::wal_tests::caller_deadline_refuses_late_cache_commit_and_keeps_original_retry_atomic stdout ----
+
+thread 'cell::store::wal_tests::caller_deadline_refuses_late_cache_commit_and_keeps_original_retry_atomic' (776545) panicked at crates/trnm-data-availability/src/cell/cache_wal_tests.rs:45:52:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::store::wal_tests::cold_writer_refuses_oversized_wal_or_shm_without_truncating_foreign_bytes stdout ----
+
+thread 'cell::store::wal_tests::cold_writer_refuses_oversized_wal_or_shm_without_truncating_foreign_bytes' (776546) panicked at crates/trnm-data-availability/src/cell/cache_wal_tests.rs:329:49:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::store::wal_tests::held_reader_refuses_entire_eight_chunk_batch_then_original_retry_survives_cold_reopen stdout ----
+
+thread 'cell::store::wal_tests::held_reader_refuses_entire_eight_chunk_batch_then_original_retry_survives_cold_reopen' (776547) panicked at crates/trnm-data-availability/src/cell/cache_wal_tests.rs:171:52:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::store::wal_tests::killed_supported_writer_keeps_committed_prefix_and_retries_original_batch_after_recovery stdout ----
+
+thread 'cell::store::wal_tests::killed_supported_writer_keeps_committed_prefix_and_retries_original_batch_after_recovery' (776548) panicked at crates/trnm-data-availability/src/cell/cache_wal_tests.rs:388:9:
+child exited before uncommitted transaction
+
+---- cell::store::wal_tests::maximum_supported_image_cap_reads_back_exact_pager_limit_without_reserving_it stdout ----
+
+thread 'cell::store::wal_tests::maximum_supported_image_cap_reads_back_exact_pager_limit_without_reserving_it' (776551) panicked at crates/trnm-data-availability/src/cell/cache_wal_tests.rs:150:51:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::store::wal_tests::repeated_real_dirty_transactions_keep_one_generation_wal_and_derived_shm_bounds stdout ----
+
+thread 'cell::store::wal_tests::repeated_real_dirty_transactions_keep_one_generation_wal_and_derived_shm_bounds' (776552) panicked at crates/trnm-data-availability/src/cell/cache_wal_tests.rs:284:52:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::store::wal_tests::writer_reasserts_pager_policy_and_preserves_committed_wal_after_close stdout ----
+
+thread 'cell::store::wal_tests::writer_reasserts_pager_policy_and_preserves_committed_wal_after_close' (776553) panicked at crates/trnm-data-availability/src/cell/cache_wal_tests.rs:92:52:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::batched_fetch_to_file_rejects_full_digest_after_valid_network_chunks stdout ----
+
+thread 'cell::tests::batched_fetch_to_file_rejects_full_digest_after_valid_network_chunks' (776564) panicked at crates/trnm-data-availability/src/cell/tests.rs:1039:66:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::bounded_chunk_batch_rejects_bad_member_without_changing_prior_cache stdout ----
+
+thread 'cell::tests::bounded_chunk_batch_rejects_bad_member_without_changing_prior_cache' (776565) panicked at crates/trnm-data-availability/src/cell/tests.rs:938:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::bounded_chunk_batch_rolls_back_late_sql_abort_and_suppressed_row stdout ----
+
+thread 'cell::tests::bounded_chunk_batch_rolls_back_late_sql_abort_and_suppressed_row' (776566) panicked at crates/trnm-data-availability/src/cell/tests.rs:983:62:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::cache_budget::actual_corrupt_chunk_deletion_returns_only_its_logical_cache_allowance stdout ----
+
+thread 'cell::tests::cache_budget::actual_corrupt_chunk_deletion_returns_only_its_logical_cache_allowance' (776567) panicked at crates/trnm-data-availability/src/cell/cache_budget_tests.rs:322:50:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::cache_budget::catalog_and_chunk_row_limits_apply_even_with_unused_byte_allowance stdout ----
+
+thread 'cell::tests::cache_budget::catalog_and_chunk_row_limits_apply_even_with_unused_byte_allowance' (776568) panicked at crates/trnm-data-availability/src/cell/cache_budget_tests.rs:355:82:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::cache_budget::cold_open_rejects_counter_and_exact_trigger_corruption_without_reset stdout ----
+
+thread 'cell::tests::cache_budget::cold_open_rejects_counter_and_exact_trigger_corruption_without_reset' (776569) panicked at crates/trnm-data-availability/src/cell/cache_budget_tests.rs:190:54:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::cache_budget::eight_member_quota_failure_rolls_back_all_rows_and_duplicate_batch_charges_once stdout ----
+
+thread 'cell::tests::cache_budget::eight_member_quota_failure_rolls_back_all_rows_and_duplicate_batch_charges_once' (776570) panicked at crates/trnm-data-availability/src/cell/cache_budget_tests.rs:103:50:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::cache_budget::foreign_catalog_count_and_large_strings_are_refused_without_database_rewrite stdout ----
+
+thread 'cell::tests::cache_budget::foreign_catalog_count_and_large_strings_are_refused_without_database_rewrite' (776571) panicked at crates/trnm-data-availability/src/cell/cache_budget_tests.rs:222:47:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::cache_budget::immutable_configuration_and_integer_bounds_cannot_reset_allowance stdout ----
+
+thread 'cell::tests::cache_budget::immutable_configuration_and_integer_bounds_cannot_reset_allowance' (776572) panicked at crates/trnm-data-availability/src/cell/cache_budget_tests.rs:264:50:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::cache_budget::ordinary_authorized_fetches_share_one_persistent_quota_and_failed_fetch_keeps_charge stdout ----
+
+thread 'cell::tests::cache_budget::ordinary_authorized_fetches_share_one_persistent_quota_and_failed_fetch_keeps_charge' (776573) panicked at crates/trnm-data-availability/src/cell/cache_budget_tests.rs:377:61:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::cache_budget::persistent_whole_cache_counts_catalog_payload_keys_and_exact_dedup stdout ----
+
+thread 'cell::tests::cache_budget::persistent_whole_cache_counts_catalog_payload_keys_and_exact_dedup' (776574) panicked at crates/trnm-data-availability/src/cell/cache_budget_tests.rs:33:50:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::cache_budget::two_actual_writer_connections_serialize_capacity_and_shared_hash_dedup stdout ----
+
+thread 'cell::tests::cache_budget::two_actual_writer_connections_serialize_capacity_and_shared_hash_dedup' (776575) panicked at crates/trnm-data-availability/src/cell/cache_budget_tests.rs:144:47:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::cache_budget::unowned_database_with_literal_lookalike_prefix_is_not_claimed_or_rewritten stdout ----
+
+thread 'cell::tests::cache_budget::unowned_database_with_literal_lookalike_prefix_is_not_claimed_or_rewritten' (776576) panicked at crates/trnm-data-availability/src/cell/cache_budget_tests.rs:495:5:
+assertion failed: matches!(CellStoreV1::open(&path, cache_config()),
+    Err(CellErrorV1::Invalid("foreign cache database")))
+
+---- cell::tests::cache_catalog::automatic_index_metadata_and_oversized_non_null_sql_are_not_accepted_as_null stdout ----
+
+thread 'cell::tests::cache_catalog::automatic_index_metadata_and_oversized_non_null_sql_are_not_accepted_as_null' (776577) panicked at crates/trnm-data-availability/src/cell/cache_catalog_tests.rs:155:62:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::cache_catalog::foreign_database_containing_only_an_internal_sequence_is_not_claimed stdout ----
+
+thread 'cell::tests::cache_catalog::foreign_database_containing_only_an_internal_sequence_is_not_claimed' (776578) panicked at crates/trnm-data-availability/src/cell/cache_catalog_tests.rs:86:5:
+assertion failed: matches!(CellStoreV1::open(&path, cache_config()),
+    Err(CellErrorV1::Invalid("foreign cache database")))
+
+---- cell::tests::cache_catalog::legitimate_two_automatic_indexes_and_payload_survive_both_cold_open_modes stdout ----
+
+thread 'cell::tests::cache_catalog::legitimate_two_automatic_indexes_and_payload_survive_both_cold_open_modes' (776579) panicked at crates/trnm-data-availability/src/cell/cache_catalog_tests.rs:17:57:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::cache_catalog::reserved_prefix_trigger_is_not_hidden_from_exact_cold_catalog_validation stdout ----
+
+thread 'cell::tests::cache_catalog::reserved_prefix_trigger_is_not_hidden_from_exact_cold_catalog_validation' (776580) panicked at crates/trnm-data-availability/src/cell/cache_catalog_tests.rs:17:57:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::cache_image::fourth_config_is_immutable_exact_finite_and_old_tcl2_is_not_migrated stdout ----
+
+thread 'cell::tests::cache_image::fourth_config_is_immutable_exact_finite_and_old_tcl2_is_not_migrated' (776581) panicked at crates/trnm-data-availability/src/cell/cache_image_tests.rs:183:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::cache_image::original_maximum_eight_by_four_mib_batch_remains_admissible stdout ----
+
+thread 'cell::tests::cache_image::original_maximum_eight_by_four_mib_batch_remains_admissible' (776583) panicked at crates/trnm-data-availability/src/cell/cache_image_tests.rs:289:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::cache_image::original_tcl3_cache_is_refused_without_migration_or_reset stdout ----
+
+thread 'cell::tests::cache_image::original_tcl3_cache_is_refused_without_migration_or_reset' (776584) panicked at crates/trnm-data-availability/src/cell/cache_image_tests.rs:370:5:
+assertion failed: matches!(CellStoreV1::open(&path, image_config()),
+    Err(CellErrorV1::Invalid("cache namespace")))
+
+---- cell::tests::cache_image::overpage_padding_and_wrong_page_size_are_refused_without_cold_rewrite stdout ----
+
+thread 'cell::tests::cache_image::overpage_padding_and_wrong_page_size_are_refused_without_cold_rewrite' (776585) panicked at crates/trnm-data-availability/src/cell/cache_image_tests.rs:140:55:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::cache_image::real_full_rolls_back_entire_eight_chunk_batch_and_survives_both_cold_modes stdout ----
+
+thread 'cell::tests::cache_image::real_full_rolls_back_entire_eight_chunk_batch_and_survives_both_cold_modes' (776586) panicked at crates/trnm-data-availability/src/cell/cache_image_tests.rs:49:50:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::cache_image::two_real_writers_and_a_fresh_reopen_cannot_reset_the_page_cap stdout ----
+
+thread 'cell::tests::cache_image::two_real_writers_and_a_fresh_reopen_cannot_reset_the_page_cap' (776587) panicked at crates/trnm-data-availability/src/cell/cache_image_tests.rs:91:51:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::corrupt_network_supplier_is_rejected_and_honest_peer_completes_same_pin stdout ----
+
+thread 'cell::tests::corrupt_network_supplier_is_rejected_and_honest_peer_completes_same_pin' (776588) panicked at crates/trnm-data-availability/src/cell/tests.rs:428:66:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::corrupt_response_exhausts_bytes_before_honest_fallback_and_explicit_retry_recovers stdout ----
+
+thread 'cell::tests::corrupt_response_exhausts_bytes_before_honest_fallback_and_explicit_retry_recovers' (776589) panicked at crates/trnm-data-availability/src/cell/tests.rs:517:59:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::deadline_materialization_rechecks_cache_payload_and_never_overwrites stdout ----
+
+thread 'cell::tests::deadline_materialization_rechecks_cache_payload_and_never_overwrites' (776590) panicked at crates/trnm-data-availability/src/cell/tests.rs:857:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::exhausted_transport_budget_keeps_verified_chunks_for_retry stdout ----
+
+thread 'cell::tests::exhausted_transport_budget_keeps_verified_chunks_for_retry' (776591) panicked at crates/trnm-data-availability/src/cell/tests.rs:460:59:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::expired_cached_chunk_deadline_refuses_before_sql_or_hash stdout ----
+
+thread 'cell::tests::expired_cached_chunk_deadline_refuses_before_sql_or_hash' (776592) panicked at crates/trnm-data-availability/src/cell/tests.rs:1141:58:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::expired_chunk_batch_stops_before_digest_work_and_keeps_cache_unchanged stdout ----
+
+thread 'cell::tests::expired_chunk_batch_stops_before_digest_work_and_keeps_cache_unchanged' (776593) panicked at crates/trnm-data-availability/src/cell/tests.rs:1173:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::expired_manifest_fetch_refuses_local_hit_and_put_before_decode stdout ----
+
+thread 'cell::tests::expired_manifest_fetch_refuses_local_hit_and_put_before_decode' (776594) panicked at crates/trnm-data-availability/src/cell/tests.rs:1208:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::expired_materialization_deadline_keeps_output_absent_and_legacy_api_works stdout ----
+
+thread 'cell::tests::expired_materialization_deadline_keeps_output_absent_and_legacy_api_works' (776595) panicked at crates/trnm-data-availability/src/cell/tests.rs:762:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::failed_fetch_keeps_transport_phase_without_renewing_request_deadline stdout ----
+
+thread 'cell::tests::failed_fetch_keeps_transport_phase_without_renewing_request_deadline' (776596) panicked at crates/trnm-data-availability/src/cell/tests.rs:1081:86:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::fetch_to_file_publishes_exact_network_bytes_without_replacing_existing_output stdout ----
+
+thread 'cell::tests::fetch_to_file_publishes_exact_network_bytes_without_replacing_existing_output' (776597) panicked at crates/trnm-data-availability/src/cell/tests.rs:909:59:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::fetch_to_file_reuses_original_deadline_after_sync_and_before_publication stdout ----
+
+thread 'cell::tests::fetch_to_file_reuses_original_deadline_after_sync_and_before_publication' (776598) panicked at crates/trnm-data-availability/src/cell/tests.rs:785:66:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::manifest_header_and_body_obey_response_budget_before_cache_publication stdout ----
+
+thread 'cell::tests::manifest_header_and_body_obey_response_budget_before_cache_publication' (776600) panicked at crates/trnm-data-availability/src/cell/tests.rs:592:59:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::missing_chunk_never_publishes_partial_payload_and_verified_cache_resumes stdout ----
+
+thread 'cell::tests::missing_chunk_never_publishes_partial_payload_and_verified_cache_resumes' (776601) panicked at crates/trnm-data-availability/src/cell/tests.rs:167:86:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::origin_offline_independent_replicas_multisource_and_corrupt_cache_repair stdout ----
+
+thread 'cell::tests::origin_offline_independent_replicas_multisource_and_corrupt_cache_repair' (776602) panicked at crates/trnm-data-availability/src/cell/tests.rs:107:66:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::parallel_fetch_uses_exact_response_budget_and_cache_needs_no_network_bytes stdout ----
+
+thread 'cell::tests::parallel_fetch_uses_exact_response_budget_and_cache_needs_no_network_bytes' (776603) panicked at crates/trnm-data-availability/src/cell/tests.rs:490:59:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::release_manifest_requires_complete_context_bound_closure stdout ----
+
+thread 'cell::tests::release_manifest_requires_complete_context_bound_closure' (776605) panicked at crates/trnm-data-availability/src/cell/tests.rs:233:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::release_verification_reserves_aggregate_work_before_reading_payloads stdout ----
+
+thread 'cell::tests::release_verification_reserves_aggregate_work_before_reading_payloads' (776606) panicked at crates/trnm-data-availability/src/cell/tests.rs:285:86:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::slow_response_cannot_extend_absolute_deadline_and_honest_peer_keeps_pin stdout ----
+
+thread 'cell::tests::slow_response_cannot_extend_absolute_deadline_and_honest_peer_keeps_pin' (776607) panicked at crates/trnm-data-availability/src/cell/tests.rs:638:66:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::truncated_body_and_rejected_header_charge_only_received_bytes_before_fallback stdout ----
+
+thread 'cell::tests::truncated_body_and_rejected_header_charge_only_received_bytes_before_fallback' (776608) panicked at crates/trnm-data-availability/src/cell/tests.rs:558:59:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::tests::wrong_pins_context_chunks_and_noncanonical_manifests_fail_closed stdout ----
+
+thread 'cell::tests::wrong_pins_context_chunks_and_noncanonical_manifests_fail_closed' (776609) panicked at crates/trnm-data-availability/src/cell/tests.rs:195:84:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::version::tests::aggregate_and_per_owner_limits_are_checked_before_payload_reads stdout ----
+
+thread 'cell::version::tests::aggregate_and_per_owner_limits_are_checked_before_payload_reads' (776610) panicked at crates/trnm-data-availability/src/cell/version/tests.rs:40:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::version::tests::complete_version_covers_exact_canonical_manifest_set stdout ----
+
+thread 'cell::version::tests::complete_version_covers_exact_canonical_manifest_set' (776611) panicked at crates/trnm-data-availability/src/cell/version/tests.rs:40:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::version::tests::complete_version_matches_independent_python_framing_vector stdout ----
+
+thread 'cell::version::tests::complete_version_matches_independent_python_framing_vector' (776612) panicked at crates/trnm-data-availability/src/cell/version/tests.rs:40:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::version::tests::complete_version_roundtrip_and_actual_model_environment_readback stdout ----
+
+thread 'cell::version::tests::complete_version_roundtrip_and_actual_model_environment_readback' (776613) panicked at crates/trnm-data-availability/src/cell/version/tests.rs:40:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::version::tests::environment_binding_requires_exact_declared_runtime_closure stdout ----
+
+thread 'cell::version::tests::environment_binding_requires_exact_declared_runtime_closure' (776614) panicked at crates/trnm-data-availability/src/cell/version/tests.rs:40:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::version::tests::full_version_rejects_missing_environment_payload_after_successful_readback stdout ----
+
+thread 'cell::version::tests::full_version_rejects_missing_environment_payload_after_successful_readback' (776615) panicked at crates/trnm-data-availability/src/cell/version/tests.rs:40:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::version::tests::same_release_files_with_different_dependency_graph_change_complete_commitment stdout ----
+
+thread 'cell::version::tests::same_release_files_with_different_dependency_graph_change_complete_commitment' (776616) panicked at crates/trnm-data-availability/src/cell/version/tests.rs:40:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::version::tests::version_loader_scope_and_original_deadline_fail_closed stdout ----
+
+thread 'cell::version::tests::version_loader_scope_and_original_deadline_fail_closed' (776617) panicked at crates/trnm-data-availability/src/cell/version/tests.rs:40:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+---- cell::version::tests::version_wire_is_bounded_and_has_no_legacy_or_trailing_fallback stdout ----
+
+thread 'cell::version::tests::version_wire_is_bounded_and_has_no_legacy_or_trailing_fallback' (776618) panicked at crates/trnm-data-availability/src/cell/version/tests.rs:40:6:
+called `Result::unwrap()` on an `Err` value: Invalid("cache WAL backend version")
+
+
+failures:
+    cell::archive::tests::absolute_deadline_and_original_physical_exclusive_owner_are_preserved
+    cell::archive::tests::all_catalog_writer_waits_keep_the_original_deadline_and_preserve_roots
+    cell::archive::tests::codec_rejects_truncation_trailing_data_oversize_and_invalid_replica_before_side_effects
+    cell::archive::tests::collected_content_can_be_retained_under_new_funded_operations_without_rewinding_history
+    cell::archive::tests::complete_closure_is_physically_retained_and_rehydrates_original_cache_after_reopen
+    cell::archive::tests::contract_identity_freezes_owner_domain_replica_funding_repair_and_root
+    cell::archive::tests::corruption_invalidates_fresh_readback_and_missed_repair_deadline_never_reclaims_duty
+    cell::archive::tests::forged_status_cannot_make_reachable_objects_collectible
+    cell::archive::tests::impossible_new_release_capacity_refuses_before_catalog_or_physical_reservation
+    cell::archive::tests::lost_initial_copy_keeps_cost_and_requires_distinct_repair_before_release_ack
+    cell::archive::tests::lost_release_ack_reconciles_all_targets_without_any_source_or_cache
+    cell::archive::tests::lost_repair_ack_blocks_root_and_physical_gc_until_target_only_reconciliation
+    cell::archive::tests::missing_dependency_wrong_terms_or_shared_operation_alias_refuse_before_new_root_intent
+    cell::archive::tests::old_impossible_pending_intent_remains_readable_and_protected_without_migration
+    cell::archive::tests::partial_physical_reservation_keeps_complete_pending_root_across_restart
+    cell::archive::tests::physical_ack_and_recovered_tensor_plan_do_not_admit_hash_correct_invalid_dtype
+    cell::archive::tests::physical_reservation_contention_keeps_a_complete_pending_root_without_late_slots
+    cell::archive::tests::retired_root_history_still_consumes_capacity_and_cannot_rebind_object_identity
+    cell::archive::tests::shared_objects_survive_one_history_retirement_and_expiry_requires_explicit_root_retirement
+    cell::archive::tests::tca2_refuses_archived_tca1_wire_and_database_without_migration
+    cell::archive::tests::tensor_plan_cold_recovery_rehydrates_exact_tma_and_revalidates_without_sources
+    cell::archive::tests::tensor_plan_is_bound_to_exact_root_wire_commitment_and_persisted_identity
+    cell::archive::tests::terminal_physical_history_cannot_create_an_unfulfillable_new_root
+    cell::archive::tests::two_versions_share_base_and_tokenizer_while_only_the_retired_router_is_collectible
+    cell::archive::tests::unmaterialized_pending_members_keep_their_funding_and_future_history_capacity
+    cell::closure_tests::closure_fetches_real_loopback_bytes_and_publishes_exact_non_authorizing_marker
+    cell::closure_tests::closure_loader_chunk_budget_stops_before_payload_and_never_publishes_marker
+    cell::closure_tests::closure_rejects_last_manifest_metadata_before_fetching_any_payload
+    cell::closure_tests::closure_shares_original_transport_budget_and_resumes_without_partial_marker
+    cell::custody::tests::cold_reopen_reobserves_bytes_and_does_not_accept_only_the_prior_report
+    cell::custody::tests::complementary_partial_archives_never_count_as_a_complete_replica
+    cell::custody::tests::complete_models_with_one_partial_environment_leave_the_whole_version_incomplete
+    cell::custody::tests::complete_payload_budget_is_reserved_before_any_partial_scan
+    cell::custody::tests::complete_version_counts_real_model_and_environment_on_the_same_archives
+    cell::custody::tests::complete_version_environment_cannot_obtain_a_fresh_budget_after_model_scans
+    cell::custody::tests::complete_version_refuses_to_splice_a_valid_environment_from_another_physical_store
+    cell::custody::tests::declared_domain_and_owner_aliases_and_absent_evidence_fail_closed
+    cell::custody::tests::expected_store_identifier_cannot_be_counted_twice_from_two_local_directories
+    cell::custody::tests::expired_original_observation_deadline_is_not_refreshed
+    cell::custody::tests::future_and_expired_promises_never_count_even_when_all_bytes_remain
+    cell::custody::tests::historical_ack_cannot_hide_corruption_and_failed_probes_are_not_refunded
+    cell::custody::tests::missed_fixed_repair_window_requires_replacement_without_extending_paid_terms
+    cell::custody::tests::origin_and_one_missing_provider_leave_one_debt_without_counting_a_cache
+    cell::custody::tests::policy_pin_rejects_changed_domain_and_continuation_owners_before_probe
+    cell::custody::tests::reachable_sponsor_is_never_treated_as_available_funds_or_paid_renewal
+    cell::custody::tests::same_payload_under_another_version_is_not_the_pinned_whole_release
+    cell::custody::tests::sponsor_disappearance_keeps_original_deadline_duty_and_full_coverage_target
+    cell::custody::tests::three_complete_target_readbacks_survive_source_and_cache_loss
+    cell::custody::tests::version_continuation_does_not_hide_missing_environment_or_its_lost_sponsor
+    cell::custody::tests::version_continuation_preserves_environment_probe_refusal_and_actual_reservations
+    cell::custody::tests::version_continuation_refuses_either_missing_component_observation
+    cell::custody::tests::version_continuation_retains_each_original_term_owner_and_component_size
+    cell::custody::tests::version_continuation_validates_one_bounded_sponsor_union_before_component_plans
+    cell::delta_network_tests::cancelled_delta_never_mutates_or_dials_and_new_attempt_keeps_original_pins
+    cell::delta_network_tests::delta_cancellation_interrupts_partial_tcp_response_without_retry_or_publication
+    cell::delta_network_tests::invalid_base_or_original_delta_budget_never_dials_or_publishes_target
+    cell::delta_network_tests::tcp_delta_fetch_downloads_only_the_absent_chunk_and_materializes_exact_target
+    cell::delta_tests::corrupt_base_fails_before_target_metadata_or_output_and_budget_covers_both_payloads
+    cell::delta_tests::delta_late_owner_event_preserves_published_target_but_refuses_success
+    cell::delta_tests::delta_metadata_contention_spends_original_deadline_without_a_late_write
+    cell::delta_tests::delta_reconstruction_requires_only_direct_base_even_after_many_version_steps
+    cell::delta_tests::malformed_delta_ranges_and_noncanonical_base_indices_are_refused
+    cell::delta_tests::valid_chunks_cannot_bypass_target_whole_payload_hash_or_owner_pins
+    cell::delta_tests::verified_delta_reuses_shared_base_and_publishes_full_exact_target
+    cell::discovery::equivocation_history_tests::tcp_higher_sequence_cannot_hide_observed_earlier_sequence_equivocation
+    cell::discovery::pq::tests::real_tcp_pq_discovery_fetch_and_withdrawal_share_persisted_high_water_and_budget
+    cell::discovery::sequence_tests::tcp_equal_sequence_endpoint_equivocation_disqualifies_the_identity_without_any_dial
+    cell::discovery::sequence_tests::tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication
+    cell::discovery::sequence_tests::tcp_two_bootstraps_newer_owner_sequence_never_dials_superseded_endpoint
+    cell::discovery::tests::cached_advertisements_cannot_replace_an_actual_bootstrap_reply
+    cell::discovery::tests::discovery_and_cell_requests_share_original_connection_and_actual_byte_budgets
+    cell::discovery::tests::explicit_scopes_reject_loopback_linklocal_multicast_mapped_and_unlisted_ports
+    cell::discovery::tests::first_manifest_read_preserves_cold_warm_status_and_exact_rejection_counts
+    cell::discovery::tests::tcp_bootstrap_discovers_unconfigured_providers_and_repairs_after_origin_exit
+    cell::model_root_tests::model_root_fetch_uses_original_closure_checks_and_publishes_only_complete_exact_root
+    cell::network::availability::tests::availability_probe_exhaustion_cannot_reset_connections_or_publish_partial_output
+    cell::network::availability::tests::complete_bad_chunk_is_quarantined_for_later_chunks_in_original_session
+    cell::network::availability::tests::default_server_retains_legacy_namespace_and_inventory_failure_allows_byte_fallback
+    cell::network::availability::tests::explicit_real_inventory_server_and_existing_downloader_verify_the_whole_payload
+    cell::network::availability::tests::inventory_response_body_spends_the_last_byte_without_a_fresh_payload_allowance
+    cell::network::availability::tests::rarest_observed_first_uses_real_pinned_chunks_and_one_original_budget
+    cell::network::availability::tests::wrong_manifest_quarantine_survives_into_the_same_session_payload_fetch
+    cell::network::availability::tests::zero_inventory_hints_cannot_hide_valid_chunks_from_the_original_fallback
+    cell::network::budget_tests::fetch_persistence_and_corrupt_cache_repair_keep_original_deadline_under_writer_lock
+    cell::network::budget_tests::writable_serving_cache_repair_keeps_original_request_deadline
+    cell::network::dedup_tests::equal_chunk_digest_with_conflicting_lengths_fails_before_any_provider_request
+    cell::network::dedup_tests::repeated_content_still_rejects_wrong_full_payload_and_preserves_shared_cache
+    cell::network::dedup_tests::repeated_corrupt_cache_content_is_repaired_with_one_original_request
+    cell::network::dedup_tests::repeated_missing_chunks_use_one_request_per_object_with_serial_and_parallel_workers
+    cell::network::persistent::rarest_tests::v3_cancellation_after_inventory_remains_terminal_without_a_payload_frame
+    cell::network::persistent::rarest_tests::v3_claimed_inventory_never_admits_a_bad_chunk_or_partial_output
+    cell::network::persistent::rarest_tests::v3_empty_inventory_is_a_hint_and_cannot_hide_real_verified_chunks
+    cell::network::persistent::rarest_tests::v3_inventory_and_payload_keep_original_connection_and_session_deadlines
+    cell::network::persistent::rarest_tests::v3_inventory_frame_exhaustion_keeps_verified_prefix_for_explicit_resume
+    cell::network::persistent::rarest_tests::v3_inventory_spends_original_bytes_and_denies_a_fresh_payload_allowance
+    cell::network::persistent::rarest_tests::v3_partial_providers_schedule_rarest_chunks_first_with_two_reused_connections
+    cell::network::persistent::rarest_tests::v3_real_inventory_crosses_page_256_and_reuses_its_reservation_for_tail_chunk
+    cell::network::persistent::rarest_tests::v3_real_server_reuses_one_connection_for_manifest_inventory_and_verified_payload
+    cell::network::persistent::rarest_tests::v3_server_rejects_old_namespaces_and_invalid_inventory_before_object_bytes
+    cell::network::persistent::tests::exhausted_service_still_joins_an_already_admitted_incomplete_frame
+    cell::network::persistent::tests::invalid_persistent_limits_never_open_transport_or_mutate_the_cache
+    cell::network::persistent::tests::last_response_byte_closes_reused_connection_without_admitting_idle_frame
+    cell::network::persistent::tests::real_manifest_and_two_chunks_reuse_one_connection_and_original_response_budget
+    cell::network::persistent::tests::request_connection_and_byte_exhaustion_each_refuse_output_and_keep_verified_prefix
+    cell::network::persistent::tests::server_actual_egress_exhaustion_stops_intake_and_next_frame_without_shutdown
+    cell::network::persistent::tests::server_frame_and_byte_budgets_apply_across_reused_requests
+    cell::network::persistent::tests::server_rejects_old_magic_and_unknown_kind_without_serving_object_bytes
+    cell::network::persistent::tests::server_temporary_egress_reservation_refunds_before_real_tcp_response
+    cell::network::persistent::tests::zero_egress_service_does_not_accept_an_already_queued_connection
+    cell::network::serving::tests::active_limit_drops_overload_without_queue_or_extra_bytes
+    cell::network::serving::tests::bounded_corrupt_chunk_read_keeps_row_then_writable_fetch_repairs_exact_pin
+    cell::network::serving::tests::concurrent_responses_share_exact_byte_budget_and_one_byte_short_cutoff
+    cell::network::serving::tests::double_worker_panic_is_joined_without_overwriting_the_first_error
+    cell::network::serving::tests::exhausted_serving_budget_refuses_before_fresh_payload_lookup
+    cell::network::serving::tests::four_workers_drop_fifth_socket_and_all_accepts_consume_the_cap
+    cell::network::serving::tests::half_request_does_not_block_honest_pinned_fetch
+    cell::network::serving::tests::original_overall_deadline_and_shutdown_join_all_admitted_workers
+    cell::network::serving::tests::positive_exhaustion_stops_intake_and_joins_admitted_half_request
+    cell::network::serving::tests::transient_chunk_capacity_refusal_uses_one_bounded_retry
+    cell::network::serving::tests::transient_manifest_capacity_refusal_uses_one_bounded_retry
+    cell::network::serving::tests::unread_large_response_keeps_absolute_deadline_and_exact_partial_write_charge
+    cell::network::serving::tests::zero_serving_byte_budget_admits_no_socket_or_payload_worker
+    cell::pq::version::tests::cpv3_cached_publisher_observation_rechecks_current_owner_not_only_time
+    cell::pq::version::tests::cpv3_cannot_reuse_a_signature_for_same_files_with_other_dependency_edges
+    cell::pq::version::tests::cpv3_signs_complete_version_and_rejects_statement_signature_mutations
+    cell::pq::version::tests::cpv3_withdrawal_expiry_and_legacy_profile_have_no_fallback
+    cell::release::transport_tests::aggregate_frame_exhaustion_never_publishes_and_explicit_retry_uses_verified_prefix
+    cell::release::transport_tests::aggregate_response_budget_is_not_renewed_at_member_boundaries
+    cell::release::transport_tests::all_marker_profiles_fetch_two_members_through_one_persistent_connection
+    cell::release::transport_tests::explicit_rarest_release_profile_keeps_inventory_and_all_members_on_one_v1_budget
+    cell::release::transport_tests::persistent_release_and_prefetch_preflight_reject_aggregate_limits_before_payload
+    cell::release::transport_tests::rarest::v3_release_closure_model_and_tensor_keep_one_pool_and_aggregate_inventory_budget
+    cell::release::transport_tests::rarest::v3_release_inventory_cannot_renew_frames_at_member_boundary_and_resume_is_explicit
+    cell::release::transport_tests::rarest::v3_release_inventory_cannot_renew_response_bytes_at_member_boundary
+    cell::release::transport_tests::residency_prefetch_stops_payload_requests_when_original_owner_cancels
+    cell::release_tests::closure_prefetch_expired_original_deadline_opens_no_connections
+    cell::release_tests::closure_prefetch_rejects_changed_owner_generation_before_cache_or_network_work
+    cell::release_tests::closure_prefetch_repeat_is_fully_local_and_reuses_the_same_version
+    cell::release_tests::closure_prefetch_uses_real_transport_without_publishing_a_marker
+    cell::release_tests::pinned_release_reader_checks_root_pin_and_one_mib_file_bound
+    cell::release_tests::post_link_deadline_expiry_refuses_success_and_preserves_exact_marker
+    cell::release_tests::post_link_failure_preserves_complete_marker_for_same_identity_readback
+    cell::release_tests::release_fetch_collects_all_members_from_two_distinct_loopback_stores
+    cell::release_tests::release_fetch_expired_owner_deadline_opens_no_connections
+    cell::release_tests::release_fetch_missing_member_does_not_publish_a_subset_marker
+    cell::release_tests::release_fetch_never_overwrites_an_existing_marker_path
+    cell::release_tests::release_fetch_parallel_response_budget_is_exact_and_one_byte_short_is_typed
+    cell::release_tests::release_fetch_rejects_incompatible_member_context_before_chunks
+    cell::release_tests::release_fetch_reserves_two_member_chunk_total_before_any_chunk_download
+    cell::release_tests::release_fetch_reserves_two_member_payload_total_before_any_chunk_download
+    cell::release_tests::release_fetch_shares_connection_budget_and_resumes_verified_partial_cache
+    cell::release_tests::release_fetch_wrong_root_pin_opens_no_connections_and_publishes_nothing
+    cell::release_tests::release_marker_sync_keeps_original_deadline_and_cleans_up_after_cutoff
+    cell::residency::budget_task_tests::prefetch_deduplicates_exact_ram_needs_and_preserves_complete_transport_counts
+    cell::residency::budget_task_tests::prefetch_ram_capacity_refuses_after_metadata_before_any_payload_request
+    cell::residency::budget_task_tests::prefetch_readiness_does_not_refresh_connection_or_response_allowances
+    cell::residency::budget_task_tests::prefetch_reference_capacity_refuses_after_metadata_before_any_payload_request
+    cell::residency::budget_task_tests::task_cancellation_is_latched_and_does_not_promise_erasure_of_copied_public_bytes
+    cell::residency::budget_task_tests::task_cutoff_cannot_be_renewed_by_a_later_hot_lookup
+    cell::residency::budget_task_tests::task_lookup_rechecks_current_context_and_never_invokes_consumer_after_a_mismatch
+    cell::residency::budget_task_tests::task_working_set_enforces_all_aggregate_limits_and_nonzero_task_identity
+    cell::residency::budget_task_tests::task_working_set_is_complete_deduplicated_and_runs_with_no_disk_or_peer
+    cell::residency::budget_task_tests::task_working_set_refuses_missing_or_noncanonical_members_without_partial_readiness
+    cell::residency::tensor::tests::resident_correct_hash_invalid_later_tensor_file_returns_no_admission_or_selection_change
+    cell::residency::tensor::tests::resident_payload_reader_checks_cancellation_on_read_and_seek
+    cell::residency::tensor::tests::resident_tensor_admission_rejects_independent_pin_context_and_contract_transplants
+    cell::residency::tensor::tests::resident_tensor_cold_miss_and_wrong_selection_do_not_fetch_or_select
+    cell::residency::tensor::tests::resident_tensor_deadline_and_mid_admission_cancellation_preserve_residency_and_selection
+    cell::residency::tensor::tests::resident_tensor_views_preserve_unaligned_cross_chunk_elements_and_half_bits
+    cell::residency::tensor::tests::resident_tensors_admit_complete_real_containers_then_compute_without_disk_or_provider
+    cell::residency::tests::residency_byte_quota_refuses_new_release_without_evicting_hot_or_selected_bytes
+    cell::residency::tests::residency_cancellation_after_index_merge_rolls_back_only_new_chunks_and_retry_recharges
+    cell::residency::tests::residency_corrupt_cache_cannot_create_a_new_view_or_mutate_existing_immutable_bytes
+    cell::residency::tests::residency_deadline_after_index_merge_rolls_back_new_chunks_without_renewal
+    cell::residency::tests::residency_expired_or_cancelled_preparation_and_switch_preserve_the_old_selection
+    cell::residency::tests::residency_hits_recheck_exact_version_generation_profile_roles_and_loader_budgets
+    cell::residency::tests::residency_incomplete_prefetch_retains_old_selection_and_retry_only_prepares_bytes
+    cell::residency::tests::residency_known_closure_capacity_refuses_prefetch_before_any_peer_connection
+    cell::residency::tests::residency_local_selection_compare_and_swap_rejects_stale_and_aba_tickets
+    cell::residency::tests::residency_reference_budget_counts_shared_mappings_and_eviction_releases_all_unpinned_bytes
+    cell::residency::tests::residency_restart_reuses_fixed_disk_bytes_but_restores_no_local_selection_or_hot_pin
+    cell::residency::tests::residency_tcp_mid_download_cancellation_keeps_old_selection_and_explicit_retry
+    cell::residency::tests::residency_tcp_prefetch_then_100_local_reads_need_neither_provider_nor_disk_cache
+    cell::residency::tests::residency_two_versions_share_the_same_base_buffers_but_keep_distinct_file_mappings
+    cell::residency::tests::residency_valid_individual_chunks_do_not_bypass_the_ordered_payload_digest
+    cell::retention::tests::acknowledgement_after_commit_cancellation_keeps_exact_durable_ack
+    cell::retention::tests::acknowledgement_cannot_rewind_a_concurrent_retirement
+    cell::retention::tests::acknowledgement_initial_charge_wait_keeps_original_deadline
+    cell::retention::tests::acknowledgement_lost_ack_wait_keeps_original_deadline
+    cell::retention::tests::acknowledgement_reconciliation_wait_keeps_original_deadline
+    cell::retention::tests::acknowledgement_schema_change_cannot_debit_or_copy_initial_payload
+    cell::retention::tests::actual_capacity_is_allocated_before_ack_and_full_refusal_survives_reopen
+    cell::retention::tests::actual_thread_cpu_stops_large_repair_before_completion_and_never_redispatches_its_id
+    cell::retention::tests::contract_commitment_has_an_exact_vector_and_binds_every_immutable_term
+    cell::retention::tests::controlled_retention_copy_keeps_cache_deadline_and_irreversible_repair_charge
+    cell::retention::tests::corrupt_payload_and_failed_repair_keep_duty_and_irreversible_byte_cost
+    cell::retention::tests::expired_absolute_retirement_deadline_cannot_release_a_slot_without_a_successor
+    cell::retention::tests::expired_obligation_cannot_reclaim_a_healthy_target_with_an_unsettled_repair
+    cell::retention::tests::immutable_service_interval_and_exact_schema_survive_reopen_without_migration
+    cell::retention::tests::initial_partial_copy_cannot_be_redispatched_under_the_same_obligation
+    cell::retention::tests::interrupted_initial_copy_keeps_full_charge_and_requires_a_separate_repair
+    cell::retention::tests::lost_repair_ack_reconciles_actual_bytes_without_second_write_or_charge
+    cell::retention::tests::mandatory_successor_requires_fresh_verified_bytes_before_capacity_reuse
+    cell::retention::tests::missing_repair_intent_can_only_reconcile_a_complete_target_and_seals_its_id
+    cell::retention::tests::original_ids_and_limits_cannot_be_renamed_reopened_or_recycled
+    cell::retention::tests::pending_ack_never_claims_bytes_and_keeps_original_reservation
+    cell::retention::tests::real_process_death_after_payload_sync_recovers_ack_without_origin_or_new_capacity
+    cell::retention::tests::rejected_control_is_sticky_and_absolute_deadline_precedes_any_copy_intent
+    cell::retention::tests::repair_completion_reconciliation_writer_wait_keeps_original_deadline
+    cell::retention::tests::repair_completion_refuses_a_schema_change_after_payload_and_keeps_full_charge
+    cell::retention::tests::repair_completion_retry_writer_wait_keeps_original_deadline
+    cell::retention::tests::repair_intent_and_charge_must_survive_sqlite_suppression_before_payload
+    cell::retention::tests::repair_intent_writer_wait_keeps_original_deadline
+    cell::retention::tests::repair_post_commit_completion_refusal_reopens_without_copy_or_charge
+    cell::retention::tests::repair_post_commit_intent_refusal_keeps_debit_and_forbids_redispatch
+    cell::retention::tests::repair_post_commit_zero_byte_reconciliation_keeps_exact_identity
+    cell::retention::tests::repair_zero_byte_reconciliation_writer_wait_keeps_original_deadline
+    cell::retention::tests::retained_origin_bytes_rehydrate_existing_peer_protocol_after_cache_loss
+    cell::retention::tests::retention_population_preserves_original_deadline_during_cache_writer_contention
+    cell::retention::tests::retirement_after_commit_cancellation_keeps_the_retired_fact_for_exact_reconciliation
+    cell::retention::tests::retirement_writer_contention_keeps_the_original_deadline_and_persistent_duty
+    cell::retention::tests::sqlite_like_wildcard_cannot_hide_a_user_trigger_at_repair_or_reopen
+    cell::retention::tests::successful_noop_repair_keeps_its_identity_after_later_target_damage
+    cell::retention::tests::successor_future_service_window_cannot_release_current_bytes_early
+    cell::retention::tests::truncated_physical_backing_or_mutated_obligation_refuses_cold_open
+    cell::store::wal_tests::all_mutating_entries_and_corrupt_deletion_share_prewrite_reader_refusal
+    cell::store::wal_tests::caller_deadline_refuses_late_cache_commit_and_keeps_original_retry_atomic
+    cell::store::wal_tests::cold_writer_refuses_oversized_wal_or_shm_without_truncating_foreign_bytes
+    cell::store::wal_tests::held_reader_refuses_entire_eight_chunk_batch_then_original_retry_survives_cold_reopen
+    cell::store::wal_tests::killed_supported_writer_keeps_committed_prefix_and_retries_original_batch_after_recovery
+    cell::store::wal_tests::maximum_supported_image_cap_reads_back_exact_pager_limit_without_reserving_it
+    cell::store::wal_tests::repeated_real_dirty_transactions_keep_one_generation_wal_and_derived_shm_bounds
+    cell::store::wal_tests::writer_reasserts_pager_policy_and_preserves_committed_wal_after_close
+    cell::tests::batched_fetch_to_file_rejects_full_digest_after_valid_network_chunks
+    cell::tests::bounded_chunk_batch_rejects_bad_member_without_changing_prior_cache
+    cell::tests::bounded_chunk_batch_rolls_back_late_sql_abort_and_suppressed_row
+    cell::tests::cache_budget::actual_corrupt_chunk_deletion_returns_only_its_logical_cache_allowance
+    cell::tests::cache_budget::catalog_and_chunk_row_limits_apply_even_with_unused_byte_allowance
+    cell::tests::cache_budget::cold_open_rejects_counter_and_exact_trigger_corruption_without_reset
+    cell::tests::cache_budget::eight_member_quota_failure_rolls_back_all_rows_and_duplicate_batch_charges_once
+    cell::tests::cache_budget::foreign_catalog_count_and_large_strings_are_refused_without_database_rewrite
+    cell::tests::cache_budget::immutable_configuration_and_integer_bounds_cannot_reset_allowance
+    cell::tests::cache_budget::ordinary_authorized_fetches_share_one_persistent_quota_and_failed_fetch_keeps_charge
+    cell::tests::cache_budget::persistent_whole_cache_counts_catalog_payload_keys_and_exact_dedup
+    cell::tests::cache_budget::two_actual_writer_connections_serialize_capacity_and_shared_hash_dedup
+    cell::tests::cache_budget::unowned_database_with_literal_lookalike_prefix_is_not_claimed_or_rewritten
+    cell::tests::cache_catalog::automatic_index_metadata_and_oversized_non_null_sql_are_not_accepted_as_null
+    cell::tests::cache_catalog::foreign_database_containing_only_an_internal_sequence_is_not_claimed
+    cell::tests::cache_catalog::legitimate_two_automatic_indexes_and_payload_survive_both_cold_open_modes
+    cell::tests::cache_catalog::reserved_prefix_trigger_is_not_hidden_from_exact_cold_catalog_validation
+    cell::tests::cache_image::fourth_config_is_immutable_exact_finite_and_old_tcl2_is_not_migrated
+    cell::tests::cache_image::original_maximum_eight_by_four_mib_batch_remains_admissible
+    cell::tests::cache_image::original_tcl3_cache_is_refused_without_migration_or_reset
+    cell::tests::cache_image::overpage_padding_and_wrong_page_size_are_refused_without_cold_rewrite
+    cell::tests::cache_image::real_full_rolls_back_entire_eight_chunk_batch_and_survives_both_cold_modes
+    cell::tests::cache_image::two_real_writers_and_a_fresh_reopen_cannot_reset_the_page_cap
+    cell::tests::corrupt_network_supplier_is_rejected_and_honest_peer_completes_same_pin
+    cell::tests::corrupt_response_exhausts_bytes_before_honest_fallback_and_explicit_retry_recovers
+    cell::tests::deadline_materialization_rechecks_cache_payload_and_never_overwrites
+    cell::tests::exhausted_transport_budget_keeps_verified_chunks_for_retry
+    cell::tests::expired_cached_chunk_deadline_refuses_before_sql_or_hash
+    cell::tests::expired_chunk_batch_stops_before_digest_work_and_keeps_cache_unchanged
+    cell::tests::expired_manifest_fetch_refuses_local_hit_and_put_before_decode
+    cell::tests::expired_materialization_deadline_keeps_output_absent_and_legacy_api_works
+    cell::tests::failed_fetch_keeps_transport_phase_without_renewing_request_deadline
+    cell::tests::fetch_to_file_publishes_exact_network_bytes_without_replacing_existing_output
+    cell::tests::fetch_to_file_reuses_original_deadline_after_sync_and_before_publication
+    cell::tests::manifest_header_and_body_obey_response_budget_before_cache_publication
+    cell::tests::missing_chunk_never_publishes_partial_payload_and_verified_cache_resumes
+    cell::tests::origin_offline_independent_replicas_multisource_and_corrupt_cache_repair
+    cell::tests::parallel_fetch_uses_exact_response_budget_and_cache_needs_no_network_bytes
+    cell::tests::release_manifest_requires_complete_context_bound_closure
+    cell::tests::release_verification_reserves_aggregate_work_before_reading_payloads
+    cell::tests::slow_response_cannot_extend_absolute_deadline_and_honest_peer_keeps_pin
+    cell::tests::truncated_body_and_rejected_header_charge_only_received_bytes_before_fallback
+    cell::tests::wrong_pins_context_chunks_and_noncanonical_manifests_fail_closed
+    cell::version::tests::aggregate_and_per_owner_limits_are_checked_before_payload_reads
+    cell::version::tests::complete_version_covers_exact_canonical_manifest_set
+    cell::version::tests::complete_version_matches_independent_python_framing_vector
+    cell::version::tests::complete_version_roundtrip_and_actual_model_environment_readback
+    cell::version::tests::environment_binding_requires_exact_declared_runtime_closure
+    cell::version::tests::full_version_rejects_missing_environment_payload_after_successful_readback
+    cell::version::tests::same_release_files_with_different_dependency_graph_change_complete_commitment
+    cell::version::tests::version_loader_scope_and_original_deadline_fail_closed
+    cell::version::tests::version_wire_is_bounded_and_has_no_legacy_or_trailing_fallback
+
+test result: FAILED. 165 passed; 285 failed; 0 ignored; 0 measured; 0 filtered out; finished in 13.86s
+

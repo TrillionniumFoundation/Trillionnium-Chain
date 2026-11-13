@@ -92,6 +92,29 @@ CA custody, a witness-backed CLI or all-listener private-task confidentiality.
 
 ## Protocol and replay boundary
 
+### Complete key pins after identity lookup
+
+The native client constructor and both TLS admission roles compare the complete
+canonical ML-DSA SPKI with the independently configured verifier key after the
+legacy 32-byte identity lookup. The identifier locates the policy entry; it
+cannot substitute a different complete key. TLS peer checks finish before any
+application request is dispatched.
+
+Three required native controls cover client construction, both local TLS roles,
+and an actual mutual TLS exchange in both peer directions. The alias controls
+deliberately alter private test policy state while retaining valid certificates
+and signatures. They establish the behavior under a conditional identifier
+alias; they do not construct a SHA-256 collision or establish an existing
+remote exploit. The peer control requires zero operation records and zero
+inbound application signature attempts after refusal.
+
+The controls are selected by exact name through the existing binary registry
+and execution readback in the TLS required-test manifest. Their source presence
+is not a completed native execution. This strengthening preserves existing
+signed domains, persisted schemas, profile identifiers and consensus rules.
+
+### Fresh transport namespace
+
 The new policy is `native-pq-network-tls13-owner-v1`. It has new canonical owner
 bytes, policy/context/operation/response digest domains, `PQT1`/`PQS1` framing and
 a separate signed response schema. The TPQ1 signature/encoding contract itself

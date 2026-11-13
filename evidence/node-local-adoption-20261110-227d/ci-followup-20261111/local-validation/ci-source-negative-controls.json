@@ -1,0 +1,23 @@
+{
+  "name": "ci-source-negative-controls",
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/test_ci_source_integrity.py"
+  ],
+  "started_utc": "2026-11-11T04:11:39.955836+00:00",
+  "elapsed_seconds": 4.582649898000454,
+  "exit_code": 0,
+  "source_before": {
+    "head": "eb32162449eab623f69bbd7016b694600cb382c5",
+    "tree": "c15f37e3f64456c9817019e8aec5d723a29549f0",
+    "status": ""
+  },
+  "source_after": {
+    "head": "eb32162449eab623f69bbd7016b694600cb382c5",
+    "tree": "c15f37e3f64456c9817019e8aec5d723a29549f0",
+    "status": ""
+  },
+  "log_bytes": 6898,
+  "log_sha256": "d9c3a65128412ce90ea173dd5a30be5d7f06e4bfc7cc3823bf42094cc7364b52"
+}

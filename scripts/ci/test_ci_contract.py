@@ -36,6 +36,9 @@ from check_ci_contract import (ROOT, validate, check_inline_source_pins, CONTINU
                                NODE_EXAMPLE_BUILD, ACCOUNT_ARCHIVE_ORACLE, ACCOUNT_EXECUTION_ORACLE)
 from check_ci_contract import (check_pq_release_authority_controls, PQ_RELEASE_WORKFLOW,
                                PQ_RELEASE_MANIFEST, PQ_RELEASE_GROUPS, PQ_ROOT_HARNESS_FILES)
+from check_ci_contract import (check_pq_system_required_controls, PQ_SYSTEM_REQUIRED_MANIFEST,
+                               PQ_SYSTEM_SUPPLEMENTAL_MANIFEST, PQ_SYSTEM_REQUIRED_STEP,
+                               PQ_SYSTEM_SUPPLEMENTAL_STEP, PQ_CHECKPOINT_OWNERSHIP_STEP)
 from check_cross_arch_cost import (COST_JOB_OVERHEAD_SECONDS, COST_JOB_TIMEOUT_MINUTES,
                                    cost_job_budget_seconds, rejection_job_budget_seconds)
 from report_current_implementation import DESTINATION, markdown, projection, validate as current_validate
@@ -142,6 +145,26 @@ class InlineSourcePinTests(unittest.TestCase):
                 for name, data in logs.items():
                     self.assertIn(hashlib.sha256(data).hexdigest() + '  ' + str(output / name), checksums)
                 self.assertTrue((output / 'SCOPE.txt').is_file())
+
+
+class NativeConsensusOracleLaneTests(unittest.TestCase):
+    def setUp(self):
+        self.script = (ROOT / 'scripts/ci/ci_job.sh').read_text()
+        self.lanes = {'repository-truth', 'protocol-contract', 'fuzz-smoke',
+                      'rust-baseline', 'external-evidence-contract'}
+
+    def test_native_domain_and_historical_oracles_both_execute(self):
+        check_independent_conformance(self.script, self.lanes)
+
+    def test_native_domain_oracle_cannot_be_omitted_skipped_or_swallowed(self):
+        command = '    python3 formal/pon-nakamoto-v1/test_native_consensus_reference_v1.py\n'
+        for replacement in ('', '    true\n', command * 2,
+                            '    if false; then\n' + command + '    fi\n',
+                            command.rstrip() + ' || true\n',
+                            command.rstrip() + ' &\n',
+                            command.replace('test_native_', 'test_missing_')):
+            with self.subTest(replacement=replacement), self.assertRaises(ValueError):
+                check_independent_conformance(self.script.replace(command, replacement), self.lanes)
 
 
 class EvaluationQuorumLaneTests(unittest.TestCase):
@@ -323,6 +346,8 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
         for file in ('run_pq_root_native_v3.py', 'test_run_pq_root_native_v3.py',
                      'test_pq_root_dependency_register.py', 'pq_root_dependency_register.py',
                      'run_pq_root_continuation_v4.py', 'test_run_pq_root_continuation_v4.py',
+                     'run_pq_root_witness_v5.py', 'test_run_pq_root_witness_v5.py',
+                     'test_ci_observation_process.py',
                      'test_authenticated_suite_count.py',
                      'test_pq_root_custody_review_v1.py', 'pq_root_custody_review_v1.py',
                      'test_pq_root_custody_review_v2.py', 'pq_root_custody_review_v2.py',
@@ -381,6 +406,7 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                                for suite in suites[2:])
         native_block += '    python3 scripts/ci/run_pq_root_native_v3.py\n'
         native_block += '    python3 scripts/ci/run_pq_root_continuation_v4.py\n'
+        native_block += '    python3 scripts/ci/run_pq_root_witness_v5.py\n'
         host = ('    python3 scripts/ci/run_from_zero_host.py -- '
                 'python3 scripts/ci/run_from_zero_native.py --out '
                 '"${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/from-zero-native"\n')
@@ -732,7 +758,8 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                      'test_useful_cell_multimodal_execution_v3.py',
                      'test_useful_cell_multimodal_relation_v3.py',
                      'test_lifecycle_cost_v1.py', 'test_cell_lottery_cost_audit_v1.py',
-                     'test_service_work_settlement_v1.py'):
+                     'test_service_work_settlement_v1.py', 'test_four_propositions_v1.py',
+                     'test_four_propositions_w1_v2.py'):
             command = '    python3 formal/pon-nakamoto-v1/' + name + ' -v\n'
             self.assertEqual(self.script.count(command), 1)
             variants = {
@@ -847,17 +874,27 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             check_independent_conformance(moved, self.lanes)
 
-    def test_native_joint_daa_requires_both_fresh_profiles_and_current_report_digests(self):
+    def _assert_native_daa_requires_both_fresh_profiles_and_current_report_digests(
+            self, selector, report_filename):
         lines = [line + '\n' for line in self.script.splitlines()
-                 if 'TRNM_JOINT_DAA_EVIDENCE_DIR' in line]
+                 if selector in line]
         self.assertEqual(len(lines), 8)
         for command in lines:
             for replacement in ('', command * 2):
                 with self.subTest(command=command, replacement=replacement), self.assertRaises(ValueError):
                     check_independent_conformance(self.script.replace(command, replacement), self.lanes)
+            moved = self.script.replace(command, '').replace(
+                '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command)
+            with self.subTest(command=command, moved=True), self.assertRaises(ValueError):
+                check_independent_conformance(moved, self.lanes)
+        for leaked in ('    export ' + selector + '=/tmp/stale-other-run\n',
+                       '    unset ' + selector + '\n'):
+            changed = self.script.replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + leaked)
+            with self.subTest(leaked=leaked), self.assertRaises(ValueError):
+                check_independent_conformance(changed, self.lanes)
         for profile, other in [('pnh1-authenticated', 'pgh2-growth'),
                                ('pgh2-growth', 'pnh1-authenticated')]:
-            raw_argument = '--raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR/' + profile + '"'
+            raw_argument = '--raw-dir "$' + selector + '/' + profile + '"'
             commands = [line for line in lines if 'python3 ' in line and raw_argument in line]
             self.assertEqual(len(commands), 2)
             for command in commands:
@@ -866,15 +903,15 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
                     '      if false; then\n' + command + '      fi\n',
                     command.rstrip() + ' || true\n',
                     command.replace(raw_argument, '--raw-dir "/tmp/stale-other-run"'),
-                    command.replace(raw_argument, '--raw-dir "$TRNM_JOINT_DAA_EVIDENCE_DIR"'),
+                    command.replace(raw_argument, '--raw-dir "$' + selector + '"'),
                     command.replace(raw_argument, raw_argument.replace(profile, other)),
                 )
                 for replacement in replacements:
                     with self.subTest(profile=profile, replacement=replacement), self.assertRaises(ValueError):
                         check_independent_conformance(self.script.replace(command, replacement), self.lanes)
             reader = next(command for command in commands if '--expected-report-sha256' in command)
-            digest = ('$(sha256sum "$TRNM_JOINT_DAA_EVIDENCE_DIR/' + profile
-                      + '/joint-daa.json" | cut -d \' \' -f 1)')
+            digest = ('$(sha256sum "$' + selector + '/' + profile
+                      + '/' + report_filename + '" | cut -d \' \' -f 1)')
             self.assertIn(digest, reader)
             replacements = [reader.replace(digest, value)
                             for value in ('0' * 64, '$(printf stale-prior-report)',
@@ -883,6 +920,14 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             for replacement in replacements:
                 with self.subTest(profile=profile, replacement=replacement), self.assertRaises(ValueError):
                     check_independent_conformance(self.script.replace(reader, replacement), self.lanes)
+
+    def test_native_joint_daa_requires_both_fresh_profiles_and_current_report_digests(self):
+        self._assert_native_daa_requires_both_fresh_profiles_and_current_report_digests(
+            'TRNM_JOINT_DAA_EVIDENCE_DIR', 'joint-daa.json')
+
+    def test_native_monotone_daa_requires_both_fresh_profiles_and_current_report_digests(self):
+        self._assert_native_daa_requires_both_fresh_profiles_and_current_report_digests(
+            'TRNM_MONOTONE_DAA_EVIDENCE_DIR', 'monotone-daa.json')
 
     def test_cost_counterexamples_require_their_real_input_arguments(self):
         for command in [COST_BOUNDARY_READERS.splitlines(keepends=True)[0],
@@ -1418,7 +1463,8 @@ class CiContractTests(unittest.TestCase):
                      'test_useful_cell_multimodal_execution_v3.py',
                      'test_useful_cell_multimodal_relation_v3.py',
                      'test_lifecycle_cost_v1.py', 'test_cell_lottery_cost_audit_v1.py',
-                     'test_service_work_settlement_v1.py'):
+                     'test_service_work_settlement_v1.py', 'test_four_propositions_v1.py',
+                     'test_four_propositions_w1_v2.py'):
             path = self.root / 'formal/pon-nakamoto-v1' / name
             command = next(line.strip() for line in script.splitlines()
                            if line.strip() == 'python3 formal/pon-nakamoto-v1/' + name + ' -v')
@@ -2704,12 +2750,49 @@ class MergedQualificationLaneTests(unittest.TestCase):
             '    python3 scripts/ci/test_pq_root_migration_review_v1.py\n',
             '    python3 scripts/ci/pq_root_migration_review_v1.py\n',
             '    python3 scripts/ci/test_run_pq_root_continuation_v4.py\n',
+            '    python3 scripts/ci/test_run_pq_root_witness_v5.py\n',
+            '    python3 scripts/ci/test_ci_observation_process.py\n',
             '    python3 scripts/ci/test_authenticated_suite_count.py\n',
         ), '    python3 scripts/ci/test_pq_chain_claim_guard.py\n'),
         'qrom_current_source': ('repository-truth', '    python3 scripts/ci/test_pq_chain_claim_guard.py\n    # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.\n', (
             '    python3 scripts/ci/test_w1_qrom_current_implementation_audit.py\n',
             '    python3 scripts/w1_qrom_current_implementation_audit.py\n',
+        ), '    python3 scripts/ci/test_w1_upstream_security.py\n'),
+        'upstream_security': ('repository-truth', '    python3 scripts/w1_qrom_current_implementation_audit.py\n', (
+            '    python3 scripts/ci/test_w1_upstream_security.py\n',
+            '    python3 scripts/ci/w1_upstream_security.py\n',
+            '    python3 scripts/ci/test_pq_proof_profile_binding.py\n',
+            '    python3 scripts/ci/pq_proof_profile_binding.py\n',
+            '    python3 scripts/ci/test_w1_qrom_current_ci.py\n',
+        ), '    # Exact field/source correspondence does not discharge STARK/QROM obligations.\n    python3 scripts/ci/test_w1_stark_field_certificates.py\n'),
+        'stark_routes_and_fields': ('repository-truth', '    python3 scripts/ci/test_w1_qrom_current_ci.py\n    # Exact field/source correspondence does not discharge STARK/QROM obligations.\n', (
+            '    python3 scripts/ci/test_w1_stark_field_certificates.py\n',
+            '    python3 scripts/w1_stark_field_certificates.py\n',
+            '    python3 scripts/ci/test_w1_stark_route_audit.py\n',
+            '    python3 scripts/w1_stark_route_audit.py\n',
+        ), '    # Conditional iid counting does not establish the actual transcript distribution.\n    python3 scripts/ci/test_w1_fri_ideal_sampler.py\n'),
+        'conditional_sampler': ('repository-truth', '    python3 scripts/w1_stark_route_audit.py\n    # Conditional iid counting does not establish the actual transcript distribution.\n', (
+            '    python3 scripts/ci/test_w1_fri_ideal_sampler.py\n',
+            '    python3 scripts/w1_fri_query_replay.py --ideal-sampler-law\n',
+        ), '    # Current lifetime source observation is separate from historical positive replay.\n    python3 scripts/ci/test_w1_lifetime_current_observation.py\n'),
+        'lifetime_current_source': ('repository-truth', '    python3 scripts/w1_fri_query_replay.py --ideal-sampler-law\n    # Current lifetime source observation is separate from historical positive replay.\n', (
+            '    python3 scripts/ci/test_w1_lifetime_current_observation.py\n',
+            '    python3 scripts/w1_lifetime_current_observation.py\n',
+            '    python3 scripts/ci/test_w1_qrom_closure_current_controls.py\n',
         ), "    python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v\n"),
+        'posterior_policy': ('repository-truth',
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_adversarial_search.py' -v\n", (
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_posterior_policy.py' -v\n",
+        ), "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_resource_clock.py' -v\n"),
+        'hash_use_contract': ('repository-truth', '    python3 scripts/ci/pq_authority_surface_scan.py --summary-only\n', (
+            '    python3 scripts/ci/test_hash_use_contract.py\n',
+            '    python3 scripts/ci/hash_use_contract.py\n',
+        ), "    python3 -m unittest discover -s scripts/ci -p 'test_pq_external_rollback_oracle.py' -v\n"),
+        'failed_campaign_diagnostics': ('repository-truth',
+            '    python3 scripts/ci/test_run_pon_w1_native_campaign.py\n', (
+                '    python3 scripts/ci/test_read_validated_business_goodput.py\n',
+                '    python3 scripts/ci/test_read_failed_native_campaign_zip.py\n',
+            ), '    python3 scripts/ci/test_pon_w1_cost_matrix_reader.py\n'),
         'fixed_probability': ('repository-truth',
                               "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_work_scale_contract.py' -v\n", (
             "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fixed_probability_contract.py' -v\n",
@@ -2719,10 +2802,27 @@ class MergedQualificationLaneTests(unittest.TestCase):
             '    python3 formal/pon-nakamoto-v1/fixed_probability_contract.py\n',
             '    python3 formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py --check\n',
         ), '    python3 formal/pon-nakamoto-v1/stateful_tail.py\n'),
+        'joint_consensus_qualification': ('repository-truth',
+            '    python3 formal/pon-nakamoto-v1/test_joint_consensus_boundaries.py -v\n', (
+            '    python3 formal/pon-nakamoto-v1/joint_consensus_qualification.py --check\n',
+            '    python3 formal/pon-nakamoto-v1/test_joint_consensus_qualification.py\n',
+            '    python3 formal/pon-nakamoto-v1/test_dynamic_participation_v1.py\n',
+            '    python3 formal/pon-nakamoto-v1/test_joint_production_tail_v1.py\n',
+        ), '    python3 formal/pon-nakamoto-v1/certificate_event_coverage_tests.py -v\n'),
+        'joint_resource_competition': ('repository-truth',
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_network_sim.py' -v\n", (
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_probability_sampling.py' -v\n",
+            "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_joint_resource_competition_campaign.py' -v\n",
+        ), "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_quantum_candidate_check_clock.py' -v\n"),
         'completion': ('external-evidence-contract', '    python3 scripts/ci/test_invariant_evidence.py\n', (
             '    python3 scripts/ci/check_completion_evidence.py --historical\n',
             '    python3 scripts/ci/test_completion_evidence.py\n',
         ), '    python3 scripts/ci/check_evaluation_bundle_evidence.py --historical\n'),
+        'learning_business': ('repository-truth', '    python3 scripts/ci/test_chain_hepta_command_binding.py\n', (
+            '    python3 scripts/test_cell_learning_business_economics.py\n',
+            '    python3 scripts/test_cell_learning_business_join.py\n',
+            '    python3 scripts/test_cell_learning_training_no_update_join.py\n',
+        ), '    python3 scripts/ci/test_pon_daa_head_binding.py\n'),
     }
 
     def setUp(self):
@@ -2780,11 +2880,37 @@ class MergedQualificationLaneTests(unittest.TestCase):
     def test_current_mapping_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('qrom_current_source')
 
+    def test_upstream_security_controls_cannot_be_skipped_or_suppressed(self):
+        self.reject_command_mutations('upstream_security')
+
+    def test_posterior_policy_controls_cannot_be_skipped_or_suppressed(self):
+        self.reject_command_mutations('posterior_policy')
+
+    def test_hash_use_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('hash_use_contract')
+    def test_stark_route_field_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('stark_routes_and_fields')
+
+    def test_conditional_sampler_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('conditional_sampler')
+
+    def test_current_lifetime_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('lifetime_current_source')
+
     def test_fixed_probability_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('fixed_probability')
 
+    def test_joint_consensus_qualification_commands_cannot_be_omitted_moved_or_skipped(self):
+        self.reject_command_mutations('joint_consensus_qualification')
+
+    def test_joint_resource_commands_cannot_be_omitted_moved_or_skipped(self):
+        self.reject_command_mutations('joint_resource_competition')
+
     def test_completion_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('completion')
+
+    def test_learning_business_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('learning_business')
 
     def test_complete_groups_cannot_reorder_duplicate_or_hide_in_shell_conditions(self):
         self.checked(self.script)
@@ -2795,6 +2921,8 @@ class MergedQualificationLaneTests(unittest.TestCase):
                     '    if false; then\n' + block + '    fi\n',
                     '    if\n' + block + '    then :; fi\n',
                     '    {\n' + block + '    } || true\n'):
+                if replacement == block:  # Reversing a one-command group changes nothing.
+                    continue
                 with self.subTest(group=name, replacement=replacement):
                     with self.assertRaises(ValueError):
                         self.checked(self.script.replace(block, replacement, 1))
@@ -2936,6 +3064,299 @@ class CellCurrentApiReadbackTests(unittest.TestCase):
                          "7326da0ad2c31fe599300d928fde84129ce83de0b072ef3bb46799d424aca3eb")
         self.assertIn("(line 364)", self.EXACT_CASE)
         self.assertEqual(self.observed.count(self.EXACT_CASE), 1)
+
+
+
+class PqSystemSupplementalControlTests(unittest.TestCase):
+    """Exercise selection and failure propagation with explicit shell test doubles."""
+
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        for relative in (PQ_RELEASE_WORKFLOW, PQ_SYSTEM_REQUIRED_MANIFEST,
+                         PQ_SYSTEM_SUPPLEMENTAL_MANIFEST,
+                         'scripts/ci/check_required_native_test.py'):
+            target = self.root / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(ROOT / relative, target)
+        self.workflow = (self.root / PQ_RELEASE_WORKFLOW).read_text()
+        self.retained = json.loads((self.root / PQ_SYSTEM_REQUIRED_MANIFEST).read_text())
+        self.supplement = json.loads((self.root / PQ_SYSTEM_SUPPLEMENTAL_MANIFEST).read_text())
+
+    def write_manifest(self, relative, value):
+        (self.root / relative).write_text(json.dumps(value, indent=2) + '\n')
+
+    # Independent expectations for the actual hosted step, including its
+    # unchanged two migration controls. These shell doubles never execute Rust.
+    CHECKPOINT_CASES = (
+        'rejected_nonprivate_socket_parent_does_not_unlink_existing_listener',
+        'different_admitted_journal_cannot_replace_a_live_checkpoint_endpoint',
+        'copied_lease_record_cannot_replace_a_live_checkpoint_endpoint',
+        'connect_only_probe_preserves_live_owner_and_journal',
+        'complete_checkpoint_request_rejects_a_copied_lease_replacement',
+    )
+    PROBE_CASES = (
+        'socket_owner_v1::tests::saturated_copied_lease_refuses_without_unlink_and_allows_dead_recovery',
+        'socket_owner_v1::tests::endpoint_lease_prevents_live_socket_replacement_and_permits_owner_restart',
+        'socket_owner_v1::probe_policy_tests::connected_listener_is_not_stale',
+        'socket_owner_v1::probe_policy_tests::explicit_refusal_is_only_recovery_case',
+        'socket_owner_v1::probe_policy_tests::every_other_error_stays_refused',
+        'socket_owner_v1::probe_policy_tests::linux_eagain_and_einprogress_are_not_dead_listener',
+        'socket_owner_v1::unsupported_probe_tests::other_unix_policy_never_probes_or_authorizes_replacement',
+    )
+    HANDOFF_CASES = (
+        'store::pq_migration_inventory::handoff_tests::admitted_restricted_source_handoff_preserves_nonce_liability_and_claim_on_cold_open',
+        'store::pq_migration_inventory::handoff_tests::admitted_source_handoff_refuses_wrong_registry_pins_and_unsupported_source_rows',
+    )
+
+    def test_checkpoint_step_cannot_drop_original_or_new_controls_or_ignore_failure(self):
+        step = PQ_CHECKPOINT_OWNERSHIP_STEP
+        changes = [
+            ('missing-step', ''),
+            ('duplicate-step', step + step),
+            ('disabled', step.replace(
+                "!cancelled() && steps.pq_build.outcome == 'success'", 'false')),
+            ('substring', step.replace(' -- --exact ', ' -- ')),
+            ('readback', step.replace('python3 scripts/ci/check_required_native_test.py', 'true')),
+            ('swallow', step.replace('failed=1', 'failed=0')),
+        ]
+        changes.extend((name, step.replace(name, 'renamed_' + name, 1))
+                       for name in (*self.CHECKPOINT_CASES, *self.PROBE_CASES))
+        for label, changed_step in changes:
+            with self.subTest(label=label):
+                changed = self.workflow.replace(step, changed_step, 1)
+                self.assertNotEqual(changed, self.workflow)
+                (self.root / PQ_RELEASE_WORKFLOW).write_text(changed)
+                with self.assertRaisesRegex(ValueError, 'PQ checkpoint'):
+                    check_pq_system_required_controls(self.root)
+
+    def run_checkpoint_shell(self, mode='pass', failure_selector=None):
+        out = Path(tempfile.mkdtemp(prefix='synthetic-checkpoint-' + mode + '-',
+                                    dir=self.root))
+        (out / 'selection.json').write_text(json.dumps({
+            'migration': self.HANDOFF_CASES,
+            'checkpoint': self.CHECKPOINT_CASES,
+            'probe': self.PROBE_CASES,
+        }))
+        (out / 'run-command.sh').write_text(
+            'set -euo pipefail\npython3 "$PQ_OUT/synthetic-command.py" "$@"\n')
+        (out / 'synthetic-command.py').write_text(r'''
+import json, os, sys
+from pathlib import Path
+out = Path(os.environ['PQ_OUT'])
+groups = json.loads((out / 'selection.json').read_text())
+names = [*groups['migration'], *groups['checkpoint'], *groups['probe']]
+label, *command = sys.argv[1:]
+selector = command[command.index('--') - 1]
+if selector in groups['migration']:
+    target = ['trnm-pon-node', '--lib', '--all-features']
+    expected_label = 'migration-' + selector.rsplit('::', 1)[-1]
+elif selector in groups['probe']:
+    target = ['trnm-checkpoint-store', '--lib']
+    expected_label = 'checkpoint-probe-' + selector.rsplit('::', 1)[-1]
+else:
+    target = ['trnm-checkpoint-store', '--test', 'socket_ownership']
+    expected_label = 'checkpoint-' + selector
+expected = ['cargo', '+1.95.0', 'test', '--locked', '--manifest-path',
+            'trillionnium/Cargo.toml', '-p', *target, selector,
+            '--', '--exact', '--show-output', '--test-threads=1']
+assert command == expected and selector in names
+assert label == expected_label
+with (out / 'calls.jsonl').open('a') as calls:
+    calls.write(json.dumps({'label': label, 'selector': selector}) + '\n')
+mode = os.environ['TRNM_PQ_SYNTHETIC_MODE'] if selector == os.environ['TRNM_PQ_FAILURE_SELECTOR'] else 'pass'
+if mode == 'failed-command':
+    raise SystemExit(1)
+name = 'wrong_control' if mode == 'wrong-name' else selector
+raw = f'running 1 test\ntest {name} ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s\n'
+if mode == 'zero':
+    raw = 'running 0 tests\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s\n'
+(out / (label + '.log')).write_text(raw)
+''')
+        body = textwrap.dedent(PQ_CHECKPOINT_OWNERSHIP_STEP.split('        run: |\n', 1)[1])
+        result = subprocess.run(
+            ['bash', '-c', body], cwd=self.root, capture_output=True, text=True,
+            env={**os.environ, 'PQ_OUT': str(out), 'TRNM_PQ_SYNTHETIC_MODE': mode,
+                 'TRNM_PQ_FAILURE_SELECTOR': failure_selector or self.CHECKPOINT_CASES[-1]})
+        calls = [json.loads(line) for line in (out / 'calls.jsonl').read_text().splitlines()]
+        return result, calls, out
+
+    def test_checkpoint_shell_selects_ownership_and_bounded_probe_controls_once(self):
+        result, calls, out = self.run_checkpoint_shell()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual([row['selector'] for row in calls],
+                         [*self.HANDOFF_CASES, *self.CHECKPOINT_CASES, *self.PROBE_CASES])
+        for row in calls:
+            readback = json.loads((out / (row['label'] + '-execution.json')).read_text())
+            self.assertEqual(readback['test'], row['selector'])
+            self.assertEqual(readback['executed_tests'], 1)
+            self.assertEqual(readback['scope'], 'named-libtest-execution-only')
+
+    def test_checkpoint_fencing_and_probe_command_or_readback_failure_is_fatal(self):
+        for selector in (self.CHECKPOINT_CASES[-1], self.PROBE_CASES[-1]):
+            for mode in ('zero', 'wrong-name', 'failed-command'):
+                with self.subTest(selector=selector, mode=mode):
+                    result, calls, _ = self.run_checkpoint_shell(mode, selector)
+                    self.assertNotEqual(result.returncode, 0)
+                    self.assertEqual([row['selector'] for row in calls],
+                                     [*self.HANDOFF_CASES, *self.CHECKPOINT_CASES, *self.PROBE_CASES])
+
+    def test_retains_52_and_separately_requires_eleven_without_claiming_execution(self):
+        self.assertEqual(check_pq_system_required_controls(self.root), {
+            'retained_meaningful_controls': 52, 'supplemental_meaningful_controls': 11,
+            'selected_meaningful_controls': 63, 'tests_executed': False})
+
+    def test_original_roster_name_count_order_and_scope_cannot_change(self):
+        mutations = (
+            ('remove', lambda value: value['tests'].pop()),
+            ('rename', lambda value: value['tests'].__setitem__(0, 'a::renamed')),
+            ('duplicate', lambda value: value['tests'].__setitem__(0, value['tests'][1])),
+            ('reorder', lambda value: value['tests'].reverse()),
+            ('counter', lambda value: value.__setitem__('expected_meaningful_controls', 59)),
+            ('qualification', lambda value: value.__setitem__('whole_chain_quantum_security_qualified', True)),
+            ('child', lambda value: value.__setitem__('child_process_harnesses_not_counted', [])),
+        )
+        for label, mutate in mutations:
+            with self.subTest(label=label):
+                value = json.loads(json.dumps(self.retained))
+                mutate(value)
+                self.write_manifest(PQ_SYSTEM_REQUIRED_MANIFEST, value)
+                with self.assertRaisesRegex(ValueError, 'PQ system'):
+                    check_pq_system_required_controls(self.root)
+
+    def test_supplement_requires_exact_full_names_and_separate_unchanged_budgets(self):
+        mutations = (
+            ('missing', lambda value: value['tests'].pop()),
+            ('empty', lambda value: value['tests'].__setitem__(0, '')),
+            ('short', lambda value: value['tests'].__setitem__(0, value['tests'][0].rsplit('::', 1)[1])),
+            ('duplicate', lambda value: value['tests'].__setitem__(0, value['tests'][1])),
+            ('retained', lambda value: value['tests'].__setitem__(0, self.retained['tests'][0])),
+            ('child', lambda value: value['tests'].__setitem__(0, self.retained['child_process_harnesses_not_counted'][0])),
+            ('counter', lambda value: value.__setitem__('expected_meaningful_controls', 6)),
+            ('bool-counter', lambda value: value.__setitem__('expected_meaningful_controls', True)),
+            ('retained-counter', lambda value: value.__setitem__('retained_meaningful_controls', 59)),
+            ('budget', lambda value: value.__setitem__('original_business_budgets_changed', True)),
+            ('qualification', lambda value: value.__setitem__('whole_chain_quantum_security_qualified', True)),
+        )
+        for label, mutate in mutations:
+            with self.subTest(label=label):
+                value = json.loads(json.dumps(self.supplement))
+                mutate(value)
+                self.write_manifest(PQ_SYSTEM_SUPPLEMENTAL_MANIFEST, value)
+                with self.assertRaisesRegex(ValueError, 'PQ system supplement'):
+                    check_pq_system_required_controls(self.root)
+
+    def test_prior_seven_only_cannot_satisfy_extended_pq_account_roster(self):
+        # Preserve the old observation scope: neither its seven-name list nor
+        # a matching old counter proves execution of the four added controls.
+        prior = json.loads(json.dumps(self.supplement))
+        prior['tests'] = prior['tests'][:7]
+        for count in (7, 11):
+            with self.subTest(declared_count=count):
+                prior['expected_meaningful_controls'] = count
+                self.write_manifest(PQ_SYSTEM_SUPPLEMENTAL_MANIFEST, prior)
+                with self.assertRaisesRegex(ValueError, 'PQ system supplement'):
+                    check_pq_system_required_controls(self.root)
+
+    def test_hosted_supplement_cannot_skip_duplicate_filter_or_ignore_readback(self):
+        step = PQ_SYSTEM_SUPPLEMENTAL_STEP
+        mutations = (
+            ('remove', self.workflow.replace(step, '', 1)),
+            ('duplicate', self.workflow.replace(step, step + step, 1)),
+            ('disabled', self.workflow.replace(step, step.replace(
+                "if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}", 'if: false'), 1)),
+            ('substring', self.workflow.replace(step, step.replace(' -- --exact ', ' -- '), 1)),
+            ('readback', self.workflow.replace(step, step.replace(
+                'python3 scripts/ci/check_required_native_test.py', 'true'), 1)),
+            ('swallow', self.workflow.replace(step, step.replace('failed=1', 'failed=0'), 1)),
+            ('trigger', self.workflow.replace(
+                '      - ' + PQ_SYSTEM_SUPPLEMENTAL_MANIFEST + '\n', '', 1)),
+            ('retained-step', self.workflow.replace(PQ_SYSTEM_REQUIRED_STEP, '', 1)),
+            ('budget', self.workflow.replace(
+                '    timeout-minutes: 90\n', '    timeout-minutes: 120\n', 1)),
+        )
+        for label, text in mutations:
+            with self.subTest(label=label):
+                self.assertNotEqual(text, self.workflow)
+                (self.root / PQ_RELEASE_WORKFLOW).write_text(text)
+                with self.assertRaisesRegex(ValueError, 'PQ'):
+                    check_pq_system_required_controls(self.root)
+
+    def run_supplemental_shell(self, mode='pass'):
+        # Execute the actual workflow body and real transcript reader. The
+        # command recorder below is deliberately a test double, never Rust
+        # execution evidence.
+        out = self.root / ('synthetic-' + mode)
+        out.mkdir()
+        (out / 'run-command.sh').write_text(
+            'set -euo pipefail\npython3 "$PQ_OUT/synthetic-command.py" "$@"\n')
+        (out / 'synthetic-command.py').write_text(r'''
+import json, os, sys
+from pathlib import Path
+out = Path(os.environ['PQ_OUT'])
+names = json.loads(Path('config/pon/pq-system-supplemental-tests-v1.json').read_text())['tests']
+label, *command = sys.argv[1:]
+selector = command[10]
+expected = ['cargo', '+1.95.0', 'test', '--locked', '--manifest-path',
+            'trillionnium/Cargo.toml', '-p', 'trnm-pon-node', '--lib',
+            '--all-features', selector, '--', '--exact', '--show-output', '--test-threads=1']
+assert command == expected and selector in names
+assert label == f'native-supplemental-{names.index(selector):02d}'
+with (out / 'calls.jsonl').open('a') as calls:
+    calls.write(json.dumps({'label': label, 'selector': selector, 'command': command}) + '\n')
+mode = os.environ['TRNM_PQ_SYNTHETIC_MODE'] if selector == names[0] else 'pass'
+if mode == 'failed-command':
+    raise SystemExit(1)
+name = 'wrong::control' if mode == 'wrong-name' else selector
+raw = f'running 1 test\ntest {name} ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s\n'
+if mode == 'zero':
+    raw = 'running 0 tests\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s\n'
+elif mode == 'duplicate':
+    raw += raw
+elif mode == 'ignored':
+    raw = raw.replace('1 passed; 0 failed; 0 ignored', '0 passed; 0 failed; 1 ignored')
+(out / (label + '.log')).write_text(raw)
+''')
+        body = textwrap.dedent(PQ_SYSTEM_SUPPLEMENTAL_STEP.split('        run: |\n', 1)[1])
+        result = subprocess.run(
+            ['bash', '-c', body], cwd=self.root, capture_output=True, text=True,
+            env={**os.environ, 'PQ_OUT': str(out), 'TRNM_PQ_SYNTHETIC_MODE': mode})
+        calls_path = out / 'calls.jsonl'
+        calls = [json.loads(line) for line in calls_path.read_text().splitlines()] if calls_path.exists() else []
+        return result, calls, out
+
+    def test_workflow_body_selects_each_full_name_once_and_reads_back_every_run(self):
+        result, calls, out = self.run_supplemental_shell()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual([row['selector'] for row in calls], self.supplement['tests'])
+        self.assertEqual(len({row['label'] for row in calls}), 11)
+        for row in calls:
+            readback = json.loads((out / (row['label'] + '-execution.json')).read_text())
+            self.assertEqual(readback['test'], row['selector'])
+            self.assertEqual(readback['executed_tests'], 1)
+            self.assertEqual(readback['scope'], 'named-libtest-execution-only')
+
+    def test_real_reader_failures_and_command_failure_fail_after_attempting_all_controls(self):
+        for mode in ('zero', 'duplicate', 'wrong-name', 'ignored', 'failed-command'):
+            with self.subTest(mode=mode):
+                result, calls, _ = self.run_supplemental_shell(mode)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertEqual([row['selector'] for row in calls], self.supplement['tests'])
+
+    def test_invalid_selector_lists_stop_before_any_native_command(self):
+        for label, names in (
+                ('empty', [''] + self.supplement['tests'][1:]),
+                ('duplicate', [self.supplement['tests'][1]] + self.supplement['tests'][1:]),
+                ('missing', self.supplement['tests'][:-1]),
+                ('retained', [self.retained['tests'][0]] + self.supplement['tests'][1:])):
+            with self.subTest(label=label):
+                value = json.loads(json.dumps(self.supplement))
+                value['tests'] = names
+                self.write_manifest(PQ_SYSTEM_SUPPLEMENTAL_MANIFEST, value)
+                result, calls, _ = self.run_supplemental_shell(label)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertEqual(calls, [])
 
 
 if __name__ == '__main__':

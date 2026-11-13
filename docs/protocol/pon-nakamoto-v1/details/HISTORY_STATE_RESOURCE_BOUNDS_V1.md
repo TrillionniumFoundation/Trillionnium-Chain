@@ -320,8 +320,14 @@ keys rather than treating a small SQLite main file as total disk consumption.
 Cold open still selects the heaviest retained candidate, resumes any recorded
 intent, checks actual active State/root and active-tip index, and preserves the
 selected backend's retained-history verification. The current heaviest selection
-orders retained blocks without a dedicated chainwork-order index. A historical
-State without a retained snapshot can walk back to genesis and apply/check every
+uses the existing `work_order` index on `(chainwork DESC,height,id)`, matching
+`recovery_target`'s exact ordering, including its height/id tie rules. A
+[source-extracted SQL observation](../../../../evidence/chain-throughput-budget-20261110-065438/recovery-order/README.md)
+checks that query plan and complete selected ID against an independent sort;
+it is not a native recovery or throughput measurement. This indexed candidate
+lookup does not bound intent recovery, active-State/root/index checks or retained
+history verification. A historical State without a retained snapshot can walk
+back to genesis and apply/check every
 needed delta/root; an old side branch has no promised snapshot distance. Reorg
 and authenticated verification can still traverse the actual required ancestry.
 There is no constant-time recovery or global H/B bound derived from this reader.

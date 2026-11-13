@@ -1,0 +1,32 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "c2d67c5cf1ebb4caac525802362d5746b8fd957d",
+    "--output",
+    "/home/qian-qi/work/chain-pon-outcome-7612-fixed-task-c1/source-after.json"
+  ],
+  "cwd": "/home/qian-qi/work/chain-pon-outcome-7612-publish",
+  "elapsed_seconds": 18.767491,
+  "exact_test_required": false,
+  "exactly_one_test_passed": null,
+  "execution_error": null,
+  "exit_code": 0,
+  "finished_utc": "2026-11-12T00:24:52.771233+00:00",
+  "interrupted": false,
+  "label": "source-after",
+  "observation_accepted": true,
+  "source_report_sha256": "70633ed61ecc9d567f520ec023c45662e2d6fded76dd03657586a2dd73bb601a",
+  "sqlite_unqualified_diagnostic": false,
+  "started_utc": "2026-11-12T00:24:34.003744+00:00",
+  "stderr": "source-after.stderr",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout": "source-after.stdout",
+  "stdout_sha256": "70633ed61ecc9d567f520ec023c45662e2d6fded76dd03657586a2dd73bb601a",
+  "test_harness_counts": [],
+  "timed_out": false
+}

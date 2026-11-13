@@ -1,9 +1,12 @@
 # Account authorization and development boundary
 
 Status: **development hardening / production admission remains closed**.
-This increment continues the existing #847 integration candidate from
-`df927b6ffaecff293b9e9428e3ba516f47cd101a`. Its implementation and execution
-receipts must be attributed to their own committed source. The
+This increment continues the existing #894 candidate from
+`31543fb6dde565b62b47436e0b1d399b6d0bd772`. It forward-ports the account boundary
+from local source `077ac4f33206de00a178553d9a0c729a20685088` while retaining
+#894's selector refusal, complete TLS key pins and live Root history checks.
+Its implementation and execution receipts must be attributed to their own
+committed source. The
 [sole development plan](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
 and [whole-chain claim guard](WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md) remain
 authoritative. No deployed network, asset, account, key or service is migrated
@@ -56,6 +59,13 @@ classical by deleting its public selector. In the classical branch,
 `account_authorization_profile` and any `native_pq_*` field must be absent.
 Explicit `null` is not absence. An orphan, unknown or incomplete PQ declaration
 is rejected rather than interpreted as an invitation to use Ed25519.
+
+The read-only classical `validate_main_envelope` API retains its existing
+error order: a selected PQ owner returns `PQ_ACCOUNT_NATIVE_API_REQUIRED`
+before inspecting its configuration. An unselected classical route still
+rechecks the development scope through `prepare`. Actual execution and state
+roots use the precise shared configuration refusal before any state effect;
+the retained routing error grants no authorization.
 
 The Node uses the same check for initialization, reopening and live namespace
 operations. Public owner wrappers that accept already constructed Settings

@@ -1,0 +1,29 @@
+{
+  "publication": {
+    "exit_code": 0,
+    "job_id": "1a1cff1cde7-2564-1af1",
+    "operation_key": "chain-checkpoint-probe-native-publication-20261112-df05-v2",
+    "output_complete": true,
+    "output_durable": true,
+    "runtime_idempotency_key": "chain-checkpoint-probe-native-publication-20261112-df05-v2",
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "timed_out": false
+  },
+  "publication_receipt": {
+    "bytes": 700,
+    "sha256": "6e7fd34fe5da34b4281864888ac01ce5c2a490990ae66d7026f6e4cc142e5b63"
+  },
+  "schema": "checkpoint-probe-format-prior-owner-closure-v1",
+  "validation": {
+    "exit_code": 0,
+    "job_id": "1a1cfe86859-2564-1ae2",
+    "operation_key": "chain-checkpoint-probe-native-validation-20261112-df05-v2",
+    "output_complete": true,
+    "output_durable": true,
+    "runtime_idempotency_key": "chain-checkpoint-probe-native-validation-20261112-df05-v2",
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "timed_out": false
+  }
+}

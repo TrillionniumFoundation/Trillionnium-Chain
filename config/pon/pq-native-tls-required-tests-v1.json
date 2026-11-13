@@ -1,7 +1,7 @@
 {
   "schema": "trnm-pq-native-tls-required-tests-v1",
   "expected_controls": {
-    "lib": 13,
+    "lib": 16,
     "cli": 4,
     "feature-off": 1
   },
@@ -11,6 +11,9 @@
   "whole_chain_quantum_security_qualified": false,
   "scopes": {
     "lib": [
+      "ingress::pq_network::canonical_tests::pq_client_requires_complete_key_pin_after_identity_lookup",
+      "ingress::pq_network::tls::tests::tls_local_identity_requires_complete_key_pin_for_both_roles",
+      "ingress::pq_network::tls::tests::actual_tls_peer_identity_alias_refuses_before_application_dispatch_in_both_directions",
       "ingress::pq_network::tls::tests::real_tls_node_submit_lost_ack_exact_receipt_and_cold_reopen",
       "ingress::pq_network::tls::tests::tls_required_policy_refuses_plaintext_before_io_and_old_ledger_reopen",
       "ingress::pq_network::tls::tests::tls_peer_cannot_relay_another_rostered_signers_request_into_node",

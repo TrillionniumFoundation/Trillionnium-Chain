@@ -29,6 +29,7 @@ mod legacy_reorg_observation_tests;
 #[cfg(test)]
 mod legacy_reorg_root_tests;
 pub mod mempool;
+pub mod migration_history_v2;
 pub(crate) mod native_authenticated;
 pub mod native_budget;
 pub mod native_owner_observation;
@@ -1029,6 +1030,23 @@ pub(crate) struct WorkCheckedPacket {
     work: pon_work::VerifiedWork,
     owner_permit: Option<OwnerPacketPermit>,
 }
+
+/// Scheduling evidence constructed only by the original native admission
+/// owner after complete W1, parent/task binding, execution, output and original
+/// transactional readback checks, before the original durable commit.
+/// Its exact bytes remain privately borrowed by that admission. This is not
+/// commit authority: current-owner, epoch, time and transactional fences still
+/// run, and a later failure retains the original paid scheduling identity.
+pub(crate) struct NativeAdmissionCompletion<'a> {
+    domain: &'static [u8],
+    packet: &'a [u8],
+}
+impl NativeAdmissionCompletion<'_> {
+    pub(crate) fn identity(&self) -> Hash {
+        hash(self.domain, &[self.packet])
+    }
+}
+
 impl WorkCheckedPacket {
     pub(crate) fn verify_with_facts(
         packet: Packet,
@@ -1094,6 +1112,7 @@ impl WorkCheckedPacket {
     /// Exact, domain-separated identity of the private fully verified packet.
     /// This is only a local scheduling key; it confers no admission, task or
     /// payment authority. Canonical transaction/proof bytes are all committed.
+    #[cfg(test)]
     pub(crate) fn completion_identity(&self) -> Result<Hash> {
         Ok(hash(
             b"public-v3-complete-work-identity-v1",
@@ -1102,6 +1121,7 @@ impl WorkCheckedPacket {
     }
     /// The original History owner supplies its immutable ledger settings after
     /// checking the actual parent. Input bytes cannot select a weaker codec.
+    #[cfg(test)]
     pub(crate) fn completion_identity_for_context(
         &self,
         context: &crate::pq_application_v6::PacketCodecContext,
@@ -3209,6 +3229,8 @@ impl Node {
             .map_err(|error| Error::from(error).local_integrity())?
         {
             if state.len().is_multiple_of(256) {
+                #[cfg(test)]
+                crate::mining::pool_run_control_tests::state_rows(state.len());
                 progress()?;
             }
             let key: String = (|| -> Result<_> {
@@ -3937,7 +3959,7 @@ impl Node {
     pub fn state_at(&self, tip: Hash) -> Result<State> {
         self.state_at_with_progress(tip, &mut || Ok(()))
     }
-    fn state_at_with_progress(
+    pub(crate) fn state_at_with_progress(
         &self,
         tip: Hash,
         progress: &mut dyn FnMut() -> Result<()>,
@@ -4947,7 +4969,19 @@ impl Node {
         observed_now: u64,
         control: &ExecutionControl<'_, Error>,
     ) -> Result<Hash> {
-        self.admit_work_checked_with_parent(checked, observed_now, control, None)
+        self.admit_work_checked_with_completion(checked, observed_now, control, None)
+    }
+
+    /// Reuse the caller's original paid operation. Only complete native output
+    /// may acquire completion priority; this does not add a permit or replay.
+    pub(crate) fn admit_work_checked_with_completion(
+        &mut self,
+        checked: WorkCheckedPacket,
+        observed_now: u64,
+        control: &ExecutionControl<'_, Error>,
+        completion_cpu: Option<&crate::ingress::public_v3::ServiceMutationCpuCheckpoint>,
+    ) -> Result<Hash> {
+        self.admit_work_checked_with_parent(checked, observed_now, control, None, completion_cpu)
     }
 
     fn admit_work_checked_with_parent(
@@ -4956,6 +4990,7 @@ impl Node {
         observed_now: u64,
         control: &ExecutionControl<'_, Error>,
         prepared_parent: Option<CheckedAdmissionParent>,
+        completion_cpu: Option<&crate::ingress::public_v3::ServiceMutationCpuCheckpoint>,
     ) -> Result<Hash> {
         let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
             self.authenticated_arithmetic
@@ -5109,6 +5144,7 @@ impl Node {
             },
             control,
             None,
+            completion_cpu,
         )
     }
 
@@ -5120,6 +5156,7 @@ impl Node {
         admission: AdmissionPersistence,
         control: &ExecutionControl<'_, Error>,
         detached_fence: Option<detached_admission::CommitFence>,
+        completion_cpu: Option<&crate::ingress::public_v3::ServiceMutationCpuCheckpoint>,
     ) -> Result<Hash> {
         let AdmissionPersistence {
             packet,
@@ -5361,6 +5398,21 @@ impl Node {
             }),
         };
         transaction_result?;
+        if let Some(cpu) = completion_cpu {
+            // The original BEGIN IMMEDIATE transaction still protects every
+            // successful parent/successor, output, readback and owner-scope
+            // check. Hash these already encoded exact bytes; never reconstruct
+            // State or replay W1/M06 to acquire this scheduling-only benefit.
+            let complete = NativeAdmissionCompletion {
+                domain: if self.settings.packet_codec_context().is_pq() {
+                    b"public-pq-history-complete-work-identity-v1"
+                } else {
+                    b"public-v3-complete-work-identity-v1"
+                },
+                packet: &bytes,
+            };
+            cpu.native_admission_complete(&complete)?;
+        }
         let commit_observation = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
             self.authenticated_arithmetic
                 .history
@@ -5762,12 +5814,35 @@ impl Node {
         a: &[u32],
         b: &[u32],
     ) -> Result<crate::mining::PreparedCandidate> {
+        self.prepare_from_matrices_controlled(
+            parent,
+            transactions,
+            miner,
+            timestamp,
+            a,
+            b,
+            &ExecutionControl::new(&|_| Ok(()), &()),
+        )
+    }
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn prepare_from_matrices_controlled(
+        &self,
+        parent: Hash,
+        transactions: Vec<Vec<u8>>,
+        miner: Hash,
+        timestamp: u64,
+        a: &[u32],
+        b: &[u32],
+        control: &ExecutionControl<'_, Error>,
+    ) -> Result<crate::mining::PreparedCandidate> {
+        let mut progress = || (control.progress)(ExecutionProgress::BeforeParentBinding);
+        progress()?;
         self.ready()?;
         let height = self.record(parent)?.height.checked_add(1).ok_or("HEIGHT")?;
         let task = pon_work::task_id(a, b).map_err(|_| Error::from("WORK_TASK"))?;
-        let actual = self.state_at(parent)?;
+        let actual = self.state_at_with_progress(parent, &mut progress)?;
         let registered_task = self.eligible_work_task_from_state(&actual, task, height)?;
-        self.prepare_from_checked_parent(
+        self.prepare_from_checked_parent_controlled(
             parent,
             transactions,
             miner,
@@ -5776,6 +5851,7 @@ impl Node {
             b,
             &actual,
             &registered_task,
+            control,
         )
     }
     #[allow(clippy::too_many_arguments)]
@@ -6651,7 +6727,7 @@ impl Node {
     pub fn check_observed_history(&self, tip: Hash, observed_now: u64) -> Result<()> {
         self.check_observed_history_with_progress(tip, observed_now, &mut || Ok(()))
     }
-    fn check_observed_history_with_progress(
+    pub(crate) fn check_observed_history_with_progress(
         &self,
         tip: Hash,
         observed_now: u64,
@@ -9272,3 +9348,15 @@ mod fixed_blob_read_tests {
         );
     }
 }
+
+#[cfg(target_os = "linux")]
+pub use storage_service::{
+    native_cell_shard_parent_group_subject_v3, NativeCellGroupedChildCpuV3,
+    NativeCellGroupedShardPlanReadbackV3, NativeCellGroupedShardRecoveryBudgetV3,
+    NativeCellGroupedShardRecoveryFailureV3, NativeCellGroupedShardRecoveryReadbackV3,
+    NativeCellGroupedShardRepairRequestV3, NativeCellGroupedShardStorageRequestV3,
+    NativeCellShardGroupChildV3, NativeCellShardGroupJournalConfigV3,
+    NativeCellShardGroupJournalV3, NativeCellShardGroupKindV3,
+    NativeCellShardParentGroupReadbackV3, NativeCellShardParentGroupV3,
+    NATIVE_CELL_SHARD_PARENT_GROUP_WIDTH_V3,
+};

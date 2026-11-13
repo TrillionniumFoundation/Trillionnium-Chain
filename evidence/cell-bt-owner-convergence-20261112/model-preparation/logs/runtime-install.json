@@ -1,0 +1,36 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "uv",
+        "venv",
+        "--python",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.1283888959997057
+    },
+    {
+      "argv": [
+        "uv",
+        "pip",
+        "sync",
+        "--native-tls",
+        "--python",
+        "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-venv/bin/python",
+        "--require-hashes",
+        "--only-binary",
+        ":all:",
+        "--link-mode",
+        "copy",
+        "/workspace/scratch/4a0b199bc6c0/model-preparation/runtime-requirements.txt"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 58.79627578700001
+    }
+  ],
+  "complete": true,
+  "model_loaded": false,
+  "model_executed": false
+}

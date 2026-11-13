@@ -1,0 +1,9 @@
+
+running 4 tests
+test store::growth::tests::header_window::native_growth_v2_observed_clock_checks_ancestors_without_changing_work_or_history ... ok
+test store::growth::tests::header_window::native_growth_v2_observed_clock_checks_current_header_links_and_restores_exactly ... ok
+test store::growth::tests::header_window::native_growth_v2_observed_clock_fences_foreign_epoch_but_preserves_cancellation ... ok
+test store::growth::tests::header_window::native_growth_v2_observed_clock_preserves_each_original_resource_stop_and_read_scope ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 1189 filtered out; finished in 3.53s
+

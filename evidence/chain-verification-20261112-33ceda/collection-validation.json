@@ -1,0 +1,29 @@
+{
+  "added_groups": {
+    "570/native": 72,
+    "570/source-reconstruction": 46
+  },
+  "all_original_source_and_destination_hashes_verified": true,
+  "counterfactual_assertions_reviewed": 5,
+  "counterfactual_exact_failures": 5,
+  "counterfactual_original_status_unchanged": true,
+  "external_gap_collected": false,
+  "full_path_cpu_qualified": false,
+  "index_sha256": "2030a87777866636b7af90f85ee7868b95109f292f526452fcf82d753440d340",
+  "json_originals_parsed": true,
+  "killable_worker_qualified": false,
+  "no_env_files": true,
+  "no_staged_elf": true,
+  "original_bytes": 11947653,
+  "original_files": 808,
+  "pending_remote_groups": [],
+  "publication_source_qualification_inherited": false,
+  "readme_sha256": "2561a46cedebe1b37710c32176eb269376241605b97d90564dbbf89a7994604c",
+  "schema": "chain-evidence-collection-validation-v1",
+  "sha256sum_exit": 0,
+  "status": "READY_FOR_PUBLICATION_SOURCE_REVALIDATION",
+  "sustained_goodput_qualified": false,
+  "v4_native_tests_passed": 89,
+  "v4_original_commands_passed": 19,
+  "v4_strict_clippy_exit": 0
+}

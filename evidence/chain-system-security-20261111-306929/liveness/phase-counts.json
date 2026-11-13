@@ -1,0 +1,493 @@
+{
+  "checkpoint_and_import_cpu_overlap": true,
+  "native_execution_performed": false,
+  "original_archive_sha256": "9a2c2250205c6a5fe18524451addf56115aafbf951d9a5c2fd3f6056988e437e",
+  "original_source": "53e1b98a7955898b9feff4778f7136c0fd0199c8",
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "report_pins": [
+    {
+      "bytes": 42734769,
+      "path": "run-1-raw/report.json",
+      "sha256": "914ae3aa324d1424cbd4753d7cdd9629ea6a6f4e93c64266149d39e5e34caa0b"
+    },
+    {
+      "bytes": 42323973,
+      "path": "run-2-raw/report.json",
+      "sha256": "6dc67a5b9c1fc1e972071f9e83f9c03bddc6850871238d1cbc538eba67183e45"
+    },
+    {
+      "bytes": 42103268,
+      "path": "run-3-raw/report.json",
+      "sha256": "c1d151a10d20e154e2407d1a371d7345359a20df2cffdb6efb09a24c309a64bc"
+    }
+  ],
+  "rows": [
+    {
+      "attackers": 0,
+      "checkpoint_calling_thread_cpu_ns": {
+        "known_count": 7,
+        "known_sum": 4626497168,
+        "unknown_count": 0
+      },
+      "checkpoint_calls": {
+        "known_count": 7,
+        "known_sum": 83075,
+        "unknown_count": 0
+      },
+      "confirmation_ended_ns": [
+        28005193220
+      ],
+      "confirmations_in_window": 1,
+      "history_import_errors": {},
+      "history_import_succeeded": 7,
+      "history_imports": 7,
+      "history_owner_modes": [
+        "exclusive"
+      ],
+      "history_rpc_ok": 7,
+      "importer_calling_thread_cpu_ns": {
+        "known_count": 7,
+        "known_sum": 5451936638,
+        "unknown_count": 0
+      },
+      "mode": "baseline",
+      "original_depletion_observed": false,
+      "original_seconds": 30,
+      "phase_passed": false,
+      "receiver_accepted_records": 13,
+      "receiver_accepted_records_matching_original_honest_body": 13,
+      "receiver_client_state_equal": false,
+      "receiver_full_work_accepted": 13,
+      "receiver_full_work_failed": 0,
+      "receiver_measurement_failures": 0,
+      "receiver_records_not_retained": 0,
+      "receiver_unmatched_accepted_records": 0,
+      "run": 1,
+      "submissions_without_in_window_ack": [
+        {
+          "dispatch_accepted": [
+            false
+          ],
+          "durable_or_external_effect_inferred": false,
+          "error": "IO: Resource temporarily unavailable (os error 11)",
+          "full_work_accepted": [
+            null
+          ],
+          "height": 18,
+          "matched_receiver_records": 1,
+          "returned_after_window": true,
+          "status": "error"
+        }
+      ],
+      "submit_acknowledged_in_window": 13,
+      "submit_attempts": 14,
+      "transaction_ids": [
+        "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+      ]
+    },
+    {
+      "attackers": 24,
+      "checkpoint_calling_thread_cpu_ns": {
+        "known_count": 5,
+        "known_sum": 2412020289,
+        "unknown_count": 0
+      },
+      "checkpoint_calls": {
+        "known_count": 5,
+        "known_sum": 36288,
+        "unknown_count": 0
+      },
+      "confirmation_ended_ns": [],
+      "confirmations_in_window": 0,
+      "history_import_errors": {
+        "PUBLIC_REQUEST_DEADLINE": 1
+      },
+      "history_import_succeeded": 4,
+      "history_imports": 5,
+      "history_owner_modes": [
+        "exclusive"
+      ],
+      "history_rpc_ok": 5,
+      "importer_calling_thread_cpu_ns": {
+        "known_count": 5,
+        "known_sum": 2814171069,
+        "unknown_count": 0
+      },
+      "mode": "from-zero",
+      "original_depletion_observed": false,
+      "original_seconds": 30,
+      "phase_passed": false,
+      "receiver_accepted_records": 7,
+      "receiver_accepted_records_matching_original_honest_body": 7,
+      "receiver_client_state_equal": false,
+      "receiver_full_work_accepted": 7,
+      "receiver_full_work_failed": 2366,
+      "receiver_measurement_failures": 0,
+      "receiver_records_not_retained": 0,
+      "receiver_unmatched_accepted_records": 0,
+      "run": 1,
+      "submissions_without_in_window_ack": [],
+      "submit_acknowledged_in_window": 7,
+      "submit_attempts": 7,
+      "transaction_ids": []
+    },
+    {
+      "attackers": 24,
+      "checkpoint_calling_thread_cpu_ns": {
+        "known_count": 4,
+        "known_sum": 2344869149,
+        "unknown_count": 0
+      },
+      "checkpoint_calls": {
+        "known_count": 4,
+        "known_sum": 35131,
+        "unknown_count": 0
+      },
+      "confirmation_ended_ns": [],
+      "confirmations_in_window": 0,
+      "history_import_errors": {
+        "PUBLIC_REQUEST_DEADLINE": 1
+      },
+      "history_import_succeeded": 3,
+      "history_imports": 4,
+      "history_owner_modes": [
+        "exclusive"
+      ],
+      "history_rpc_ok": 4,
+      "importer_calling_thread_cpu_ns": {
+        "known_count": 4,
+        "known_sum": 2752405565,
+        "unknown_count": 0
+      },
+      "mode": "late-product",
+      "original_depletion_observed": false,
+      "original_seconds": 30,
+      "phase_passed": false,
+      "receiver_accepted_records": 7,
+      "receiver_accepted_records_matching_original_honest_body": 7,
+      "receiver_client_state_equal": false,
+      "receiver_full_work_accepted": 7,
+      "receiver_full_work_failed": 2278,
+      "receiver_measurement_failures": 0,
+      "receiver_records_not_retained": 0,
+      "receiver_unmatched_accepted_records": 0,
+      "run": 1,
+      "submissions_without_in_window_ack": [],
+      "submit_acknowledged_in_window": 7,
+      "submit_attempts": 7,
+      "transaction_ids": []
+    },
+    {
+      "attackers": 0,
+      "checkpoint_calling_thread_cpu_ns": {
+        "known_count": 7,
+        "known_sum": 4566444193,
+        "unknown_count": 0
+      },
+      "checkpoint_calls": {
+        "known_count": 7,
+        "known_sum": 83074,
+        "unknown_count": 0
+      },
+      "confirmation_ended_ns": [
+        27900482073
+      ],
+      "confirmations_in_window": 1,
+      "history_import_errors": {},
+      "history_import_succeeded": 7,
+      "history_imports": 7,
+      "history_owner_modes": [
+        "exclusive"
+      ],
+      "history_rpc_ok": 7,
+      "importer_calling_thread_cpu_ns": {
+        "known_count": 7,
+        "known_sum": 5393324215,
+        "unknown_count": 0
+      },
+      "mode": "baseline",
+      "original_depletion_observed": false,
+      "original_seconds": 30,
+      "phase_passed": false,
+      "receiver_accepted_records": 14,
+      "receiver_accepted_records_matching_original_honest_body": 14,
+      "receiver_client_state_equal": false,
+      "receiver_full_work_accepted": 14,
+      "receiver_full_work_failed": 0,
+      "receiver_measurement_failures": 0,
+      "receiver_records_not_retained": 0,
+      "receiver_unmatched_accepted_records": 0,
+      "run": 2,
+      "submissions_without_in_window_ack": [
+        {
+          "dispatch_accepted": [
+            false
+          ],
+          "durable_or_external_effect_inferred": false,
+          "error": "IO: Resource temporarily unavailable (os error 11)",
+          "full_work_accepted": [
+            true
+          ],
+          "height": 18,
+          "matched_receiver_records": 1,
+          "returned_after_window": true,
+          "status": "error"
+        }
+      ],
+      "submit_acknowledged_in_window": 13,
+      "submit_attempts": 14,
+      "transaction_ids": [
+        "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+      ]
+    },
+    {
+      "attackers": 24,
+      "checkpoint_calling_thread_cpu_ns": {
+        "known_count": 5,
+        "known_sum": 2386500157,
+        "unknown_count": 0
+      },
+      "checkpoint_calls": {
+        "known_count": 5,
+        "known_sum": 36196,
+        "unknown_count": 0
+      },
+      "confirmation_ended_ns": [],
+      "confirmations_in_window": 0,
+      "history_import_errors": {
+        "PUBLIC_REQUEST_DEADLINE": 1
+      },
+      "history_import_succeeded": 4,
+      "history_imports": 5,
+      "history_owner_modes": [
+        "exclusive"
+      ],
+      "history_rpc_ok": 5,
+      "importer_calling_thread_cpu_ns": {
+        "known_count": 5,
+        "known_sum": 2793783265,
+        "unknown_count": 0
+      },
+      "mode": "from-zero",
+      "original_depletion_observed": false,
+      "original_seconds": 30,
+      "phase_passed": false,
+      "receiver_accepted_records": 7,
+      "receiver_accepted_records_matching_original_honest_body": 7,
+      "receiver_client_state_equal": false,
+      "receiver_full_work_accepted": 7,
+      "receiver_full_work_failed": 2349,
+      "receiver_measurement_failures": 0,
+      "receiver_records_not_retained": 0,
+      "receiver_unmatched_accepted_records": 0,
+      "run": 2,
+      "submissions_without_in_window_ack": [],
+      "submit_acknowledged_in_window": 7,
+      "submit_attempts": 7,
+      "transaction_ids": []
+    },
+    {
+      "attackers": 24,
+      "checkpoint_calling_thread_cpu_ns": {
+        "known_count": 4,
+        "known_sum": 2318722474,
+        "unknown_count": 0
+      },
+      "checkpoint_calls": {
+        "known_count": 4,
+        "known_sum": 34480,
+        "unknown_count": 0
+      },
+      "confirmation_ended_ns": [],
+      "confirmations_in_window": 0,
+      "history_import_errors": {
+        "PUBLIC_REQUEST_DEADLINE": 1
+      },
+      "history_import_succeeded": 3,
+      "history_imports": 4,
+      "history_owner_modes": [
+        "exclusive"
+      ],
+      "history_rpc_ok": 4,
+      "importer_calling_thread_cpu_ns": {
+        "known_count": 4,
+        "known_sum": 2719053315,
+        "unknown_count": 0
+      },
+      "mode": "late-product",
+      "original_depletion_observed": false,
+      "original_seconds": 30,
+      "phase_passed": false,
+      "receiver_accepted_records": 7,
+      "receiver_accepted_records_matching_original_honest_body": 7,
+      "receiver_client_state_equal": false,
+      "receiver_full_work_accepted": 7,
+      "receiver_full_work_failed": 2259,
+      "receiver_measurement_failures": 0,
+      "receiver_records_not_retained": 0,
+      "receiver_unmatched_accepted_records": 0,
+      "run": 2,
+      "submissions_without_in_window_ack": [],
+      "submit_acknowledged_in_window": 7,
+      "submit_attempts": 7,
+      "transaction_ids": []
+    },
+    {
+      "attackers": 0,
+      "checkpoint_calling_thread_cpu_ns": {
+        "known_count": 7,
+        "known_sum": 4573257036,
+        "unknown_count": 0
+      },
+      "checkpoint_calls": {
+        "known_count": 7,
+        "known_sum": 83052,
+        "unknown_count": 0
+      },
+      "confirmation_ended_ns": [
+        28208363602
+      ],
+      "confirmations_in_window": 1,
+      "history_import_errors": {},
+      "history_import_succeeded": 7,
+      "history_imports": 7,
+      "history_owner_modes": [
+        "exclusive"
+      ],
+      "history_rpc_ok": 7,
+      "importer_calling_thread_cpu_ns": {
+        "known_count": 7,
+        "known_sum": 5435204541,
+        "unknown_count": 0
+      },
+      "mode": "baseline",
+      "original_depletion_observed": false,
+      "original_seconds": 30,
+      "phase_passed": false,
+      "receiver_accepted_records": 13,
+      "receiver_accepted_records_matching_original_honest_body": 13,
+      "receiver_client_state_equal": false,
+      "receiver_full_work_accepted": 13,
+      "receiver_full_work_failed": 0,
+      "receiver_measurement_failures": 0,
+      "receiver_records_not_retained": 0,
+      "receiver_unmatched_accepted_records": 0,
+      "run": 3,
+      "submissions_without_in_window_ack": [
+        {
+          "dispatch_accepted": [
+            false
+          ],
+          "durable_or_external_effect_inferred": false,
+          "error": "IO: Resource temporarily unavailable (os error 11)",
+          "full_work_accepted": [
+            true
+          ],
+          "height": 17,
+          "matched_receiver_records": 1,
+          "returned_after_window": true,
+          "status": "error"
+        }
+      ],
+      "submit_acknowledged_in_window": 12,
+      "submit_attempts": 13,
+      "transaction_ids": [
+        "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+      ]
+    },
+    {
+      "attackers": 24,
+      "checkpoint_calling_thread_cpu_ns": {
+        "known_count": 4,
+        "known_sum": 2344720343,
+        "unknown_count": 0
+      },
+      "checkpoint_calls": {
+        "known_count": 4,
+        "known_sum": 35122,
+        "unknown_count": 0
+      },
+      "confirmation_ended_ns": [],
+      "confirmations_in_window": 0,
+      "history_import_errors": {
+        "PUBLIC_REQUEST_DEADLINE": 1
+      },
+      "history_import_succeeded": 3,
+      "history_imports": 4,
+      "history_owner_modes": [
+        "exclusive"
+      ],
+      "history_rpc_ok": 4,
+      "importer_calling_thread_cpu_ns": {
+        "known_count": 4,
+        "known_sum": 2750100624,
+        "unknown_count": 0
+      },
+      "mode": "from-zero",
+      "original_depletion_observed": false,
+      "original_seconds": 30,
+      "phase_passed": false,
+      "receiver_accepted_records": 7,
+      "receiver_accepted_records_matching_original_honest_body": 7,
+      "receiver_client_state_equal": false,
+      "receiver_full_work_accepted": 7,
+      "receiver_full_work_failed": 2353,
+      "receiver_measurement_failures": 0,
+      "receiver_records_not_retained": 0,
+      "receiver_unmatched_accepted_records": 0,
+      "run": 3,
+      "submissions_without_in_window_ack": [],
+      "submit_acknowledged_in_window": 7,
+      "submit_attempts": 7,
+      "transaction_ids": []
+    },
+    {
+      "attackers": 24,
+      "checkpoint_calling_thread_cpu_ns": {
+        "known_count": 4,
+        "known_sum": 2309290602,
+        "unknown_count": 0
+      },
+      "checkpoint_calls": {
+        "known_count": 4,
+        "known_sum": 34432,
+        "unknown_count": 0
+      },
+      "confirmation_ended_ns": [],
+      "confirmations_in_window": 0,
+      "history_import_errors": {
+        "PUBLIC_REQUEST_DEADLINE": 1
+      },
+      "history_import_succeeded": 3,
+      "history_imports": 4,
+      "history_owner_modes": [
+        "exclusive"
+      ],
+      "history_rpc_ok": 4,
+      "importer_calling_thread_cpu_ns": {
+        "known_count": 4,
+        "known_sum": 2706883036,
+        "unknown_count": 0
+      },
+      "mode": "late-product",
+      "original_depletion_observed": false,
+      "original_seconds": 30,
+      "phase_passed": false,
+      "receiver_accepted_records": 7,
+      "receiver_accepted_records_matching_original_honest_body": 7,
+      "receiver_client_state_equal": false,
+      "receiver_full_work_accepted": 7,
+      "receiver_full_work_failed": 2246,
+      "receiver_measurement_failures": 0,
+      "receiver_records_not_retained": 0,
+      "receiver_unmatched_accepted_records": 0,
+      "run": 3,
+      "submissions_without_in_window_ack": [],
+      "submit_acknowledged_in_window": 7,
+      "submit_attempts": 7,
+      "transaction_ids": []
+    }
+  ],
+  "schema": "chain-security-original-phase-counts-v1"
+}

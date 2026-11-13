@@ -1,0 +1,5 @@
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-pon-outcome-7612-publish/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 35.44s
+     Running tests/outcome_role_separation.rs (/home/qian-qi/work/chain-pon-outcome-7612-qualified-target/debug/deps/outcome_role_separation-8dd4b06409438133)
+native role separation: 76 W1 blocks; miner=0 author=3 provider=1 payer=2; completed zero-score candidate; NoGain service credit=2000; model-author credit=10000; cold reopen; controlled inputs only

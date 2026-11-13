@@ -1,0 +1,313 @@
+{
+  "scope": "read-only extraction of original hosted artifact; no campaign rerun",
+  "run_id": 42943021545,
+  "job_id": 130269083155,
+  "source_commit": "31543fb6dde565b62b47436e0b1d399b6d0bd772",
+  "source_tree": "e4bb1a47660f93b2e6e29ce4626146098d15e21c",
+  "zip_sha256": "43a748dd6ed47f2e28f63e550028a65ed54895f5951ba94a01f81f4640b558e7",
+  "runs": [
+    {
+      "run": 1,
+      "source_artifact_path": "run-1-raw/report.json",
+      "economics_complete": true,
+      "finite_experiment_criteria_met": false,
+      "best_observed_cold_legal_method": "maintenance-limb",
+      "phases": [
+        {
+          "mode": "baseline",
+          "finite_phase_criteria_met": false,
+          "all_signed_rounds_confirmed_in_window": false,
+          "actor_reports_successful_without_cap_or_kill": true,
+          "genuine_budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "receiver_client_state_equal": false,
+          "observer_complete": true,
+          "full_work_accepted": 14,
+          "full_work_failed": 0,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "attacker_processes_requested": 0,
+          "attacker_processes_ready": 0,
+          "confirmation_rounds_observed": 2,
+          "confirmation_rounds_in_window": 1,
+          "submission_count": 14,
+          "successful_submissions": 14,
+          "confirmation_rounds": [
+            {
+              "round": 0,
+              "confirmed": true,
+              "duration_ns": 22494706413
+            },
+            {
+              "round": 1,
+              "confirmed": false,
+              "duration_ns": 6639952938
+            }
+          ],
+          "cpu_budget_refusals": 0
+        },
+        {
+          "mode": "from-zero",
+          "finite_phase_criteria_met": false,
+          "all_signed_rounds_confirmed_in_window": false,
+          "actor_reports_successful_without_cap_or_kill": true,
+          "genuine_budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "receiver_client_state_equal": false,
+          "observer_complete": true,
+          "full_work_accepted": 7,
+          "full_work_failed": 2730,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "attacker_processes_requested": 24,
+          "attacker_processes_ready": 24,
+          "confirmation_rounds_observed": 1,
+          "confirmation_rounds_in_window": 0,
+          "submission_count": 7,
+          "successful_submissions": 7,
+          "confirmation_rounds": [
+            {
+              "round": 0,
+              "confirmed": false,
+              "duration_ns": 29001810037
+            }
+          ],
+          "cpu_budget_refusals": 0
+        },
+        {
+          "mode": "late-product",
+          "finite_phase_criteria_met": false,
+          "all_signed_rounds_confirmed_in_window": false,
+          "actor_reports_successful_without_cap_or_kill": true,
+          "genuine_budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "receiver_client_state_equal": false,
+          "observer_complete": true,
+          "full_work_accepted": 7,
+          "full_work_failed": 2667,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "attacker_processes_requested": 24,
+          "attacker_processes_ready": 24,
+          "confirmation_rounds_observed": 1,
+          "confirmation_rounds_in_window": 0,
+          "submission_count": 7,
+          "successful_submissions": 7,
+          "confirmation_rounds": [
+            {
+              "round": 0,
+              "confirmed": false,
+              "duration_ns": 29002998904
+            }
+          ],
+          "cpu_budget_refusals": 0
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "source_artifact_path": "run-2-raw/report.json",
+      "economics_complete": true,
+      "finite_experiment_criteria_met": false,
+      "best_observed_cold_legal_method": "maintenance-limb",
+      "phases": [
+        {
+          "mode": "baseline",
+          "finite_phase_criteria_met": false,
+          "all_signed_rounds_confirmed_in_window": false,
+          "actor_reports_successful_without_cap_or_kill": true,
+          "genuine_budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "receiver_client_state_equal": false,
+          "observer_complete": true,
+          "full_work_accepted": 14,
+          "full_work_failed": 0,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "attacker_processes_requested": 0,
+          "attacker_processes_ready": 0,
+          "confirmation_rounds_observed": 2,
+          "confirmation_rounds_in_window": 1,
+          "submission_count": 14,
+          "successful_submissions": 14,
+          "confirmation_rounds": [
+            {
+              "round": 0,
+              "confirmed": true,
+              "duration_ns": 22588807789
+            },
+            {
+              "round": 1,
+              "confirmed": false,
+              "duration_ns": 6485949323
+            }
+          ],
+          "cpu_budget_refusals": 0
+        },
+        {
+          "mode": "from-zero",
+          "finite_phase_criteria_met": false,
+          "all_signed_rounds_confirmed_in_window": false,
+          "actor_reports_successful_without_cap_or_kill": true,
+          "genuine_budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "receiver_client_state_equal": false,
+          "observer_complete": true,
+          "full_work_accepted": 7,
+          "full_work_failed": 2692,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "attacker_processes_requested": 24,
+          "attacker_processes_ready": 24,
+          "confirmation_rounds_observed": 1,
+          "confirmation_rounds_in_window": 0,
+          "submission_count": 7,
+          "successful_submissions": 7,
+          "confirmation_rounds": [
+            {
+              "round": 0,
+              "confirmed": false,
+              "duration_ns": 29064802426
+            }
+          ],
+          "cpu_budget_refusals": 0
+        },
+        {
+          "mode": "late-product",
+          "finite_phase_criteria_met": false,
+          "all_signed_rounds_confirmed_in_window": false,
+          "actor_reports_successful_without_cap_or_kill": true,
+          "genuine_budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "receiver_client_state_equal": false,
+          "observer_complete": true,
+          "full_work_accepted": 7,
+          "full_work_failed": 2610,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "attacker_processes_requested": 24,
+          "attacker_processes_ready": 24,
+          "confirmation_rounds_observed": 1,
+          "confirmation_rounds_in_window": 0,
+          "submission_count": 7,
+          "successful_submissions": 7,
+          "confirmation_rounds": [
+            {
+              "round": 0,
+              "confirmed": false,
+              "duration_ns": 29085585171
+            }
+          ],
+          "cpu_budget_refusals": 0
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "source_artifact_path": "run-3-raw/report.json",
+      "economics_complete": true,
+      "finite_experiment_criteria_met": false,
+      "best_observed_cold_legal_method": "maintenance-limb",
+      "phases": [
+        {
+          "mode": "baseline",
+          "finite_phase_criteria_met": false,
+          "all_signed_rounds_confirmed_in_window": false,
+          "actor_reports_successful_without_cap_or_kill": true,
+          "genuine_budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "receiver_client_state_equal": false,
+          "observer_complete": true,
+          "full_work_accepted": 14,
+          "full_work_failed": 0,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "attacker_processes_requested": 0,
+          "attacker_processes_ready": 0,
+          "confirmation_rounds_observed": 2,
+          "confirmation_rounds_in_window": 1,
+          "submission_count": 14,
+          "successful_submissions": 14,
+          "confirmation_rounds": [
+            {
+              "round": 0,
+              "confirmed": true,
+              "duration_ns": 22594019639
+            },
+            {
+              "round": 1,
+              "confirmed": false,
+              "duration_ns": 6406211221
+            }
+          ],
+          "cpu_budget_refusals": 0
+        },
+        {
+          "mode": "from-zero",
+          "finite_phase_criteria_met": false,
+          "all_signed_rounds_confirmed_in_window": false,
+          "actor_reports_successful_without_cap_or_kill": true,
+          "genuine_budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "receiver_client_state_equal": false,
+          "observer_complete": true,
+          "full_work_accepted": 7,
+          "full_work_failed": 2701,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "attacker_processes_requested": 24,
+          "attacker_processes_ready": 24,
+          "confirmation_rounds_observed": 1,
+          "confirmation_rounds_in_window": 0,
+          "submission_count": 7,
+          "successful_submissions": 7,
+          "confirmation_rounds": [
+            {
+              "round": 0,
+              "confirmed": false,
+              "duration_ns": 29003166044
+            }
+          ],
+          "cpu_budget_refusals": 0
+        },
+        {
+          "mode": "late-product",
+          "finite_phase_criteria_met": false,
+          "all_signed_rounds_confirmed_in_window": false,
+          "actor_reports_successful_without_cap_or_kill": true,
+          "genuine_budget_depletion_observed": false,
+          "depletion_at_ns": null,
+          "receiver_client_state_equal": false,
+          "observer_complete": true,
+          "full_work_accepted": 7,
+          "full_work_failed": 2629,
+          "verifier_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "attacker_processes_requested": 24,
+          "attacker_processes_ready": 24,
+          "confirmation_rounds_observed": 1,
+          "confirmation_rounds_in_window": 0,
+          "submission_count": 7,
+          "successful_submissions": 7,
+          "confirmation_rounds": [
+            {
+              "round": 0,
+              "confirmed": false,
+              "duration_ns": 29009296038
+            }
+          ],
+          "cpu_budget_refusals": 0
+        }
+      ]
+    }
+  ]
+}

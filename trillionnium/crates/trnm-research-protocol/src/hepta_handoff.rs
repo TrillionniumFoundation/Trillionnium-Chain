@@ -330,15 +330,15 @@ impl SignedHeptaAdmissionV1 {
         if version != HEPTA_HANDOFF_VERSION as u64 {
             return Err(CanonicalDecodeError::UnsupportedVersion(version).into());
         }
-        let encoding = decoder.text()?;
+        let encoding = decoder.text_bounded::<64>()?;
         if encoding != CANONICAL_ENCODING {
             return Err(HeptaHandoffError::EncodingMismatch(encoding));
         }
-        let chain_id = decoder.text()?;
-        let signer_did = decoder.text()?;
+        let chain_id = decoder.text_bounded::<64>()?;
+        let signer_did = decoder.text_bounded::<192>()?;
         let public_key = decoder.bytes_exact()?;
         let admission = HeptaArtifactAdmissionV1::decode(&mut decoder)?;
-        let signature = decoder.bytes()?.to_vec();
+        let signature = decoder.bytes_exact::<64>()?.to_vec();
         decoder.finish()?;
         let signed = Self {
             chain_id,

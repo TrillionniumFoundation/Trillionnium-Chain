@@ -10,6 +10,8 @@ use super::{
 #[cfg(test)]
 mod input_decode_tests;
 mod intake;
+#[cfg(test)]
+mod output_reservation_tests;
 mod pq_identity;
 use intake::{ConnectionLease, ListenerIntake};
 pub use pq_identity::{call_public_history_pq_v4, PqPublicIdentity, PQ_HISTORY_PROFILE};
@@ -29,7 +31,7 @@ pub use request_observation::{
     PublicRequestObservation, PublicRequestObservationSnapshot, PublicRequestObserver, SubmitPhase,
     SubmitPhaseObservation, MAX_REQUEST_OBSERVATION_RECORDS,
 };
-use request_observation::{ConnectionObservation, TaskObservation, ThreadCpuStamp};
+use request_observation::{ConnectionObservation, ReactorIoStamp, TaskObservation, ThreadCpuStamp};
 #[cfg(test)]
 use scalar_cpu::ScopedWorkerInterval;
 use scalar_cpu::{
@@ -113,6 +115,11 @@ const MAX_PAID_BODY_BYTES: usize = 8 * 1024 * 1024;
 // Reservations partition the existing totals; they add no socket/worker/queue.
 const READ_BODY_RESERVE: usize = 128 * 1024;
 const CONTROL_OUTPUT_RESERVE: usize = 512 * 1024;
+// A refusal may borrow only this slice of the existing control reserve. It is
+// still charged to the one output pool, leaving 448 KiB for control responses.
+const REFUSAL_OUTPUT_HEADROOM: usize = 64 * 1024;
+const CLASSICAL_REFUSAL_FRAME: usize = 2 * 1024;
+const PQ_REFUSAL_FRAME: usize = 8 * 1024;
 const MAX_MUTATING_GRANTS: usize = 8;
 const MAX_READ_GRANTS: usize = 8;
 const MAX_SPENT: usize = 1024;
@@ -439,7 +446,7 @@ impl PublicPolicy {
         }
     }
     pub fn id(self) -> Hash {
-        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r14/reorg-lifecycle-v1-reserve25ms-same-original-account-before-intent/cancel-only-unpublished-staging-two-metadata-updates-no-active-state-audit-nonce-write/zero-busy-wait-sql-authorizer-and20000-vdbe-ops/cleanup-paid-original-scope-no-new-deadline/continuous-four-ceilings-headroom/same-live-operation-mining-continuous/no-resume-unpermitted-target/reclaim-unused-staging-only-next-original-native-intent/max-one-inactive-copy/shared64-unpaid-input-idle250ms-pressure-cancel-no-slot-refund/hello-and-incomplete-solution-only/server-owed-and-paid-protected/no-deadline-renewal/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8-exact-nanosecond-fraction-full-bucket-discards-surplus/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-m05-cooperative-noise-row-tile-final-m06-envelope-prepare-canonical-apply-precommit-deadline-cancel-deep-state-root-history-sqlite-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-paid-body-digest-and-canonical-decode-through-signed-response-charge-outer-plus-all-scoped-worker-thread-intervals-once-work-body-response-nested-no-double-debit/scoped-start-end-same-thread-all-started-joined-exact-counts-panic-cancel-partial-spawn/unknown-scoped-clock-disables-future-mutations/sequential-pool-preview-no-scoped-workers/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-m05-m06-boundary-cooperative-deep-stages-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling/live-same-thread-owner-and-scoped-progress-increments/global-immediate-debit/original-full-outer-plus-children-minus-paid-residual-once/unverified-sticky-request-budget-cancel/full-native-W1-completion-priority-within-original-shared-bucket/no-new-probe-starts-until-verified-request-settles/existing-probes-own-original-start-quantum-only/verified-owner-scoped-checkpoints-await-original-refill-original-absolute-task-deadline-stop-cancel/no-added-credit-or-worker-or-identity-preference/complete-work-key-domain-public-v3-complete-work-identity-v1-canonical-whole-packet-sha256/fixed4096-digests131072bytes-per-shared-live-cpu-owner-epoch/atomic-claim-and-promotion-paid-hash-max4096-exact-probes/monotone-no-ttl-no-eviction-unknown-cancel-failure-success-retain/listener-clones-share-epoch/process-restart-clears-keys-original-zero-credit-no-permanent-once/repeat-or-capacity-full-only-denies-extra-priority-ordinary-paid-validation-and-recovery-continue/no-general-distinct-valid-W1-fairness/existing-packet-no-promotion-cooperative-history-each-row-reorg-steps-delta-rows-precommit/exact-stored-pending-intent-target-can-resume-original-time-owner-state-checks/committed-partial-staging-termination-by-original-reserved-owner-no-active-state-rewrite/unknown-live-clock-denies-future/deep-root-and-sql-no-preemption/native-durable-outcome-preserved/controlled-pool-full-prefix-cancel-propagation-reconcile-relation-only-blocking/precommit-only-fences",&[self.bits],&self.lifetime_ms.to_le_bytes(),&MUTATION_CPU_BURST_NS.to_le_bytes(),&MUTATION_CPU_REFILL_NS_PER_SECOND.to_le_bytes(),&MUTATION_CPU_START_RESERVE_NS.to_le_bytes(),&(MUTATION_CPU_WORKERS as u32).to_le_bytes()])
+        hash(b"public-protected-profile-v3",&[PROFILE.as_bytes(),b"resource-revision-r19-native-completion-refusal-v1/output-refusal-reserved-original-pool-before-encoding/fallback-frame-classical2048-pq8192-factor4/refusal-headroom65536-within-original-control524288/control-floor458752/no-output-reserve-no-signature-no-bytes/local-capacity-no-native-dispatch/reorg-lifecycle-v1-reserve25ms-same-original-account-before-intent/cancel-only-unpublished-staging-two-metadata-updates-no-active-state-audit-nonce-write/zero-busy-wait-sql-authorizer-and20000-vdbe-ops/cleanup-paid-original-scope-no-new-deadline/continuous-four-ceilings-headroom/same-live-operation-mining-continuous/no-resume-unpermitted-target/reclaim-unused-staging-only-next-original-native-intent/max-one-inactive-copy/shared64-unpaid-input-idle250ms-pressure-cancel-no-slot-refund/hello-and-incomplete-solution-only/server-owed-and-paid-protected/no-deadline-renewal/connection-local-ready-fifo-challenge-and-grant-split-read-mutation/pending64-no-extra-queue-or-worker/hello-wait-original-accept2s/paid-grant-wait-original-cookie-expiry-no-renewal/spent-reserve-once/lane-and-body-together-rollback-on-full/bounded-paid-enqueue-fifo-by-connection-with-unchanged-absolute-work-and-total-deadlines/hello108/solution108/conn64/paid-raw-json-canonical8MiB-factor3/read-body-reserve131072/output-conservative32MiB/control-output-reserve524288/grants-mutation8-read8-held-until-connection-and-task-release/queueproof2-read2/workers2-read1/spent1024-no-live-eviction/packet1048576/body2097216/read512/response2101248/history1/error2KiB/hello2s/challenge2s/solution-policy/body5s/work10s/output5s/overall30s/quantum64KiB/derived-jump-v1-levels63-sql1024-local-integrity-only/challenge128-burst32-read-reserve8-exact-nanosecond-fraction-full-bucket-discards-surplus/await-write-half-close-cancels-request-operation-stage-fences/ops1-block-2-head-3-history-4-poolbundle-5-poolsnapshot/poolraw159..2048-members1..16-sum32768-body66048-contextpin64hex/scalarstatus16KiB-no-reconcile-cachegc4scalars-localdiagnostic/no-guest-policy-prune-reset/shared-node-miner-operatorenabled/service72h-m05-cooperative-noise-row-tile-final-m06-envelope-prepare-canonical-apply-precommit-deadline-cancel-deep-state-root-history-sqlite-nonpreemptive/no-durable-guest-rows/global-paid-mutation-thread-cpu-bucket-reserve-before-paid-body-digest-and-canonical-decode-through-signed-response-charge-outer-plus-all-scoped-worker-thread-intervals-once-work-body-response-nested-no-double-debit/scoped-start-end-same-thread-all-started-joined-exact-counts-panic-cancel-partial-spawn/unknown-scoped-clock-disables-future-mutations/sequential-pool-preview-no-scoped-workers/read-not-charged/clock-unavailable-disables-future-mutations/native-success-preserved/two-inflight-m05-m06-boundary-cooperative-deep-stages-nonpreemptive-debt-no-caller-reset/available-plus-outstanding-start-reserves-ceiling/live-same-thread-owner-and-scoped-progress-increments/global-immediate-debit/original-full-outer-plus-children-minus-paid-residual-once/unverified-sticky-request-budget-cancel/full-native-W1-parent-task-M06-State-receipts-completion-priority-within-original-shared-bucket/held-detached-growth-History-original-owner-only-completion-token/precommit-only-no-added-W1-State-or-M06-replay/current-epoch-clock-BEGIN-IMMEDIATE-commit-fences-unchanged/no-new-probe-starts-until-verified-request-settles/existing-probes-own-original-start-quantum-only/verified-owner-scoped-checkpoints-await-original-refill-original-absolute-task-deadline-stop-cancel/no-added-credit-or-worker-or-identity-preference/complete-work-key-domain-public-v3-complete-work-identity-v1-canonical-whole-packet-sha256/fixed4096-digests131072bytes-per-shared-live-cpu-owner-epoch/atomic-claim-and-promotion-paid-hash-max4096-exact-probes/monotone-no-ttl-no-eviction-unknown-cancel-failure-success-retain/listener-clones-share-epoch/process-restart-clears-keys-original-zero-credit-no-permanent-once/repeat-or-capacity-full-only-denies-extra-priority-ordinary-paid-validation-and-recovery-continue/no-general-distinct-valid-native-work-fairness/existing-packet-no-promotion-cooperative-history-each-row-reorg-steps-delta-rows-precommit/exact-stored-pending-intent-target-can-resume-original-time-owner-state-checks/committed-partial-staging-termination-by-original-reserved-owner-no-active-state-rewrite/unknown-live-clock-denies-future/deep-root-and-sql-no-preemption/native-durable-outcome-preserved/controlled-pool-full-prefix-cancel-propagation-reconcile-relation-only-blocking/precommit-only-fences",&[self.bits],&self.lifetime_ms.to_le_bytes(),&MUTATION_CPU_BURST_NS.to_le_bytes(),&MUTATION_CPU_REFILL_NS_PER_SECOND.to_le_bytes(),&MUTATION_CPU_START_RESERVE_NS.to_le_bytes(),&(MUTATION_CPU_WORKERS as u32).to_le_bytes()])
     }
 }
 #[derive(Default, Clone, Debug, Serialize)]
@@ -516,6 +523,8 @@ pub struct PublicMetrics {
     pub connections_closed_on_shutdown: usize,
     pub response_write_failures: u64,
     pub output_serialization_failures: u64,
+    pub output_admission_refusals: u64,
+    pub output_refusal_reservations: u64,
     pub peak_connections: usize,
     pub peak_paid_body_bytes: usize,
     pub peak_mutating_grants: usize,
@@ -1409,7 +1418,25 @@ struct Connection {
 }
 impl Drop for Connection {
     fn drop(&mut self) {
-        self.cancelled.store(true, Ordering::Release);
+        cancel_request_observed(
+            &self.cancelled,
+            self.observation.as_ref(),
+            "connection_cleanup",
+            "cleanup",
+        );
+    }
+}
+fn cancel_request_observed(
+    cancelled: &AtomicBool,
+    observation: Option<&ConnectionObservation>,
+    source: &'static str,
+    phase: &'static str,
+) {
+    if let Some(record) = observation {
+        record.cancel_request(cancelled, source, phase);
+    } else {
+        // No new clocks, allocations or observer atomics when disabled.
+        cancelled.store(true, Ordering::Release);
     }
 }
 fn record_stage_error(
@@ -1453,7 +1480,7 @@ fn record_stage_error(
 // worker-side response checks cannot cover settlement, send or queue delay.
 fn apply_finished_connection(
     connections: &mut BTreeMap<u64, Connection>,
-    done: Finished,
+    mut done: Finished,
     metrics: &Mutex<PublicMetrics>,
     now: Instant,
     service_end: Instant,
@@ -1470,6 +1497,11 @@ fn apply_finished_connection(
         matches!(conn.stage, Stage::Await),
         "PUBLIC_COMPLETION_STATE",
     )?;
+    // Defense at the final owner boundary: even an internal worker mistake
+    // cannot move materialized response bytes into Output without its permit.
+    if done.permit.is_none() && done.bytes.is_ok() {
+        done.bytes = Err(crate::Error::new(crate::ErrorCode::PublicBufferCapacity));
+    }
     let refusal = if stop.load(Ordering::Acquire) {
         Some(("shutdown", "PUBLIC_REQUEST_CANCELLED", false))
     } else if conn.cancelled.load(Ordering::Acquire) {
@@ -1480,12 +1512,18 @@ fn apply_finished_connection(
         None
     };
     if let Some((phase, code, expired)) = refusal {
-        conn.cancelled.store(true, Ordering::Release);
+        cancel_request_observed(
+            &conn.cancelled,
+            conn.observation.as_ref(),
+            "completion_refusal",
+            phase,
+        );
         if let Some(record) = &conn.observation {
             record.terminal_error(phase, &code.into());
         }
         let id = done.id;
-        let serialization_failed = done.bytes.is_err();
+        let output_admission_refused = done.permit.is_none();
+        let serialization_failed = done.bytes.is_err() && !output_admission_refused;
         // The native result/CPU observations remain factual. Dispose of bytes,
         // output allowance and TaskObservation before closing the connection.
         // Expiry/cancellation remains the primary resource refusal. An actual
@@ -1494,6 +1532,12 @@ fn apply_finished_connection(
         drop(done);
         drop(connections.remove(&id));
         let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+        if output_admission_refused {
+            m.output_admission_refusals += 1;
+            *m.retained_phase_errors
+                .entry("output_admission".into())
+                .or_default() += 1;
+        }
         if serialization_failed {
             m.output_serialization_failures += 1;
             *m.retained_phase_errors.entry("output".into()).or_default() += 1;
@@ -1508,15 +1552,28 @@ fn apply_finished_connection(
         return Ok(());
     }
     if let Err(error) = &done.bytes {
+        let output_admission_refused = done.permit.is_none();
+        let phase = if output_admission_refused {
+            "output_admission"
+        } else {
+            "serialization"
+        };
         if let Some(record) = &conn.observation {
-            record.terminal_error("serialization", error);
+            record.terminal_error(phase, error);
         }
         let id = done.id;
         drop(done);
         drop(connections.remove(&id));
         let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
-        m.output_serialization_failures += 1;
-        *m.retained_phase_errors.entry("output".into()).or_default() += 1;
+        if output_admission_refused {
+            m.output_admission_refusals += 1;
+            *m.retained_phase_errors
+                .entry("output_admission".into())
+                .or_default() += 1;
+        } else {
+            m.output_serialization_failures += 1;
+            *m.retained_phase_errors.entry("output".into()).or_default() += 1;
+        }
         return Ok(());
     }
     let bytes = done.bytes?;
@@ -1604,9 +1661,17 @@ fn read_available_observed(
     phase: usize,
 ) -> Result<bool> {
     let before = bytes.len();
+    let attempt = observation.map(|record| (record, ReactorIoStamp::start()));
     let result = read_available(socket, bytes, expected);
-    if let Some(record) = observation {
-        record.frame(phase, bytes.len() - before, 0, matches!(&result, Ok(true)));
+    if let Some((record, stamp)) = attempt {
+        let sample = stamp.finish(result.is_err());
+        record.frame_attempt(
+            phase,
+            bytes.len() - before,
+            0,
+            matches!(&result, Ok(true)),
+            sample,
+        );
     }
     result
 }
@@ -1618,9 +1683,17 @@ fn write_available_observed(
     phase: usize,
 ) -> Result<bool> {
     let before = *cursor;
+    let attempt = observation.map(|record| (record, ReactorIoStamp::start()));
     let result = write_available(socket, bytes, cursor);
-    if let Some(record) = observation {
-        record.frame(phase, 0, *cursor - before, matches!(&result, Ok(true)));
+    if let Some((record, stamp)) = attempt {
+        let sample = stamp.finish(result.is_err());
+        record.frame_attempt(
+            phase,
+            0,
+            *cursor - before,
+            matches!(&result, Ok(true)),
+            sample,
+        );
     }
     result
 }
@@ -1657,6 +1730,8 @@ fn caller_write_half_alive(
     socket: &TcpStream,
     cancelled: &AtomicBool,
     metrics: &Mutex<PublicMetrics>,
+    observation: Option<&ConnectionObservation>,
+    phase: &'static str,
 ) -> Result<()> {
     let open = match caller_write_half_open(socket, true) {
         Ok(open) => open,
@@ -1664,7 +1739,7 @@ fn caller_write_half_alive(
             // A complete request has no further client frame. In particular,
             // one unread byte must not hide a FIN from every later peek. Keep
             // the original task/CPU obligations until their owners settle.
-            cancelled.store(true, Ordering::Release);
+            cancel_request_observed(cancelled, observation, "peer_input_failure", phase);
             return Err(error);
         }
     };
@@ -1673,7 +1748,7 @@ fn caller_write_half_alive(
             .lock()
             .map_err(|_| "PUBLIC_METRICS")?
             .disconnected_await_requests += 1;
-        cancelled.store(true, Ordering::Release);
+        cancel_request_observed(cancelled, observation, "peer_write_closed", phase);
         return Err("PUBLIC_EOF".into());
     }
     Ok(())
@@ -1693,12 +1768,17 @@ fn caller_write_half_open(socket: &TcpStream, body_complete: bool) -> Result<boo
         _ => Ok(true),
     }
 }
-fn pending_alive(conn: &Connection, stop: &AtomicBool) -> Result<()> {
+fn pending_alive(conn: &Connection, stop: &AtomicBool, phase: &'static str) -> Result<()> {
     task_alive(conn.deadline, stop, &conn.cancelled)?;
     // Pending Challenge/Ready input may already contain the next legal frame.
     // It is not trailing input until the declared body has been fully read.
     if !caller_write_half_open(&conn.socket, false)? {
-        conn.cancelled.store(true, Ordering::Release);
+        cancel_request_observed(
+            &conn.cancelled,
+            conn.observation.as_ref(),
+            "pending_peer_write_closed",
+            phase,
+        );
         return Err("PUBLIC_EOF".into());
     }
     Ok(())
@@ -1882,11 +1962,10 @@ fn public_dispatch_submit(
                 m.work_failed += 1;
             }
             drop(m);
-            let checked = result?;
-            if let Some(live) = live_cpu.and_then(|cpu| cpu.live.as_ref()) {
-                live.work_verified(&checked)?;
-            }
-            Ok(checked)
+            // W1 alone grants no completion priority. The original native
+            // owner signals its full parent/task/State/output relation through
+            // this same operation's checkpoint at the precommit boundary.
+            result
         },
         &ExecutionControl::new(
             &|_| {
@@ -2294,6 +2373,10 @@ fn serve_public_protected_v3_inner(
             let kernel_for_worker = host_kernel.as_ref();
             workers.push(scope.spawn(move || -> Result<()> {
                 loop {
+                    // Its drop is last in this iteration, after the dequeued
+                    // Task, scoped native work, CPU settlement and output handoff.
+                    // It measures this request's worker return, not process exit.
+                    let mut _worker_observation = None;
                     // Retain FIFO admission order while an already-dequeued
                     // task awaits CPU. Release before any native dispatch. The
                     // separate read queue and active workers remain independent.
@@ -2301,6 +2384,10 @@ fn serve_public_protected_v3_inner(
                     let task = dequeue_order.as_ref().unwrap().try_recv();
                     match task {
                         Ok(mut task) => {
+                            _worker_observation = task
+                                .observation
+                                .as_ref()
+                                .and_then(TaskObservation::worker_scope);
                             metrics.lock().map_err(|_| "PUBLIC_METRICS")?.tasks_dequeued += 1;
                             let alive = task_alive(task.deadline, &stop, &task.cancelled);
                             if let Some(record) = &task.observation {
@@ -2330,6 +2417,7 @@ fn serve_public_protected_v3_inner(
                             let mut accounting = None;
                             let mut read_cpu = None;
                             let mut dispatch_started = false;
+                            let mut refusal_frame_maximum = None;
                             let (permit, outcome) = match permit {
                                 Ok(permit) => {
                                     let cpu_permit = if mutating_operation(task.cookie.op) {
@@ -2451,7 +2539,39 @@ fn serve_public_protected_v3_inner(
                                     // Accounting failure after native dispatch never rewrites outcome.
                                     (Some(permit), outcome)
                                 }
-                                Err(e) => (None, Err(e)),
+                                Err(e) => {
+                                    // A failed large-response reservation grants no
+                                    // native dispatch or unaccounted signed output.
+                                    // Only the exact local capacity refusal may use
+                                    // a small part of the same original output pool.
+                                    if e.kind() == crate::ErrorKind::Capacity
+                                        && e.is(crate::ErrorCode::PublicBufferCapacity)
+                                    {
+                                        let maximum = if server.identity.is_pq() {
+                                            PQ_REFUSAL_FRAME
+                                        } else {
+                                            CLASSICAL_REFUSAL_FRAME
+                                        };
+                                        refusal_frame_maximum = Some(maximum);
+                                        match BufferPermit::acquire(
+                                            output_pool.clone(),
+                                            maximum * 4,
+                                            MAX_OUTPUT_BYTES - CONTROL_OUTPUT_RESERVE
+                                                + REFUSAL_OUTPUT_HEADROOM,
+                                        ) {
+                                            Ok(permit) => {
+                                                metrics
+                                                    .lock()
+                                                    .map_err(|_| "PUBLIC_METRICS")?
+                                                    .output_refusal_reservations += 1;
+                                                (Some(permit), Err(e))
+                                            }
+                                            Err(error) => (None, Err(error)),
+                                        }
+                                    } else {
+                                        (None, Err(e))
+                                    }
+                                }
                             };
                             let reserved = *output_pool.lock().map_err(|_| "PUBLIC_BUFFER_POOL")?;
                             let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
@@ -2480,6 +2600,14 @@ fn serve_public_protected_v3_inner(
                                 // native success remains success in the observation.
                                 drop(outcome);
                                 None
+                            } else if permit.is_none() {
+                                // No serialization, signature, or response bytes
+                                // without a live reservation. The reactor closes
+                                // this local refusal and retains no validity fact.
+                                drop(outcome);
+                                Some(Err(crate::Error::new(
+                                    crate::ErrorCode::PublicBufferCapacity,
+                                )))
                             } else {
                                 // Output memory was reserved before admission. Keep
                                 // the CPU permit until this bounded signed response
@@ -2490,13 +2618,17 @@ fn serve_public_protected_v3_inner(
                                     task.observation.as_ref(),
                                     SubmitPhase::ResponseEncoding,
                                     || {
-                                        response(
+                                        let bytes = response(
                                             server,
                                             settings,
                                             &task.cookie,
                                             outcome,
                                             &response_progress,
-                                        )
+                                        )?;
+                                        if let Some(maximum) = refusal_frame_maximum {
+                                            ensure(bytes.len() <= maximum, "PUBLIC_OUTPUT_LIMIT")?;
+                                        }
+                                        Ok(bytes)
                                     },
                                 );
                                 // Fault injection cannot skip the actual signing work.
@@ -2724,7 +2856,7 @@ fn serve_public_protected_v3_inner(
                                 Ok(Stage::WaitChallenge { hello, pending })
                             }
                             Stage::WaitChallenge { hello, pending } => {
-                                pending_alive(conn, &stop)?;
+                                pending_alive(conn, &stop, phase)?;
                                 if !heads.is_head(PendingKind::Challenge, hello.op, *id)
                                     || !intake.try_challenge(hello.op, Instant::now())?
                                 {
@@ -2868,7 +3000,7 @@ fn serve_public_protected_v3_inner(
                                 Ok(Stage::WaitGrant { cookie, pending })
                             }
                             Stage::WaitGrant { cookie, pending } => {
-                                pending_alive(conn, &stop)?;
+                                pending_alive(conn, &stop, phase)?;
                                 if !heads.is_head(PendingKind::Grant, cookie.op, *id) {
                                     return Ok(Stage::WaitGrant { cookie, pending });
                                 }
@@ -2894,7 +3026,7 @@ fn serve_public_protected_v3_inner(
                                     )?,
                                     256,
                                 )?;
-                                pending_alive(conn, &stop)?;
+                                pending_alive(conn, &stop, phase)?;
                                 conn.permit = Some(permit);
                                 conn.lane_permit = Some(Arc::new(lane));
                                 {
@@ -3008,9 +3140,13 @@ fn serve_public_protected_v3_inner(
                             }
                             Stage::Enqueue(task) => {
                                 task_alive(task.deadline, &stop, &task.cancelled)?;
-                                if let Err(error) =
-                                    caller_write_half_alive(&conn.socket, &conn.cancelled, &metrics)
-                                {
+                                if let Err(error) = caller_write_half_alive(
+                                    &conn.socket,
+                                    &conn.cancelled,
+                                    &metrics,
+                                    conn.observation.as_ref(),
+                                    phase,
+                                ) {
                                     if !error.is(crate::ErrorCode::PublicTrailingInput) {
                                         metrics
                                             .lock()
@@ -3032,7 +3168,13 @@ fn serve_public_protected_v3_inner(
                                 // close from shutdown(Write): either EOF cancels
                                 // queued/owner-waiting work. The ordinary client keeps
                                 // both halves open. This is no ledger verdict.
-                                caller_write_half_alive(&conn.socket, &conn.cancelled, &metrics)?;
+                                caller_write_half_alive(
+                                    &conn.socket,
+                                    &conn.cancelled,
+                                    &metrics,
+                                    conn.observation.as_ref(),
+                                    phase,
+                                )?;
                                 Ok(Stage::Await)
                             }
                             mut output @ Stage::Output { .. } => {
@@ -3380,6 +3522,10 @@ fn call_public_authenticated(
     let result = (|| -> Result<PublicReply> {
         if !pq {
             super::require_classical_network_settings(settings)?;
+        } else {
+            // PQ transport authentication does not validate the caller's current
+            // account scope. Reject damaged configuration before network IO.
+            settings.app.check_account_profile()?;
         }
         if let Some(deadline) = outer_deadline {
             ensure(Instant::now() < deadline, "PUBLIC_CLIENT_DEADLINE")?;
@@ -4163,9 +4309,16 @@ mod tests {
         let (mut socket, _) = listener.accept().unwrap();
         let observer = PublicRequestObserver::new(1).unwrap();
         let record = observer.connection().unwrap();
+        socket.set_nonblocking(true).unwrap();
+        let mut bytes = Vec::new();
+        assert!(
+            !read_available_observed(&mut socket, &mut bytes, HELLO_BYTES, Some(&record), 0)
+                .unwrap()
+        );
+        assert!(bytes.is_empty());
+        socket.set_nonblocking(false).unwrap();
         client.write_all(&[1, 2, 3, 4, 5]).unwrap();
         client.shutdown(Shutdown::Write).unwrap();
-        let mut bytes = Vec::new();
         assert!(
             !read_available_observed(&mut socket, &mut bytes, HELLO_BYTES, Some(&record), 0)
                 .unwrap()
@@ -4202,6 +4355,37 @@ mod tests {
         assert_eq!(row.application_bytes_written, Some(output.len() as u64));
         assert_eq!(row.dispatch_thread_cpu_ns, None);
         assert_eq!(row.full_work_thread_cpu_ns, None);
+        assert!(!row.reactor_io.observation_failed);
+        let reads = row.reactor_io.frames[0];
+        assert_eq!(
+            (
+                reads.calls_returned,
+                reads.progressed_calls,
+                reads.no_progress_calls,
+                reads.failed_calls
+            ),
+            (3, 1, 1, 1)
+        );
+        let writes = row.reactor_io.frames[5];
+        assert_eq!(
+            (
+                writes.calls_returned,
+                writes.progressed_calls,
+                writes.no_progress_calls,
+                writes.failed_calls
+            ),
+            (2, 2, 0, 0)
+        );
+        for frame in [reads, writes] {
+            assert_eq!(frame.wall_ns, Some(frame.wall_ns_known_sum));
+            assert_eq!(frame.wall_unknown_calls, 0);
+            if frame.thread_cpu_unknown_calls == 0 {
+                assert_eq!(frame.thread_cpu_ns, Some(frame.thread_cpu_ns_known_sum));
+            } else {
+                assert_eq!(frame.thread_cpu_ns, None);
+                assert!(frame.thread_cpu_unknown_calls <= frame.calls_returned);
+            }
+        }
     }
     #[test]
     fn request_observer_retains_partial_output_bytes_after_actual_write_error() {
@@ -4233,6 +4417,11 @@ mod tests {
         assert_eq!(row.application_bytes_written, Some(IO_QUANTUM as u64));
         assert!(!row.frames[5].complete);
         assert_eq!(row.physical_network_bytes, None);
+        let io = row.reactor_io.frames[5];
+        assert_eq!(
+            (io.calls_returned, io.progressed_calls, io.failed_calls),
+            (2, 1, 1)
+        );
     }
     #[test]
     fn paid_mutation_body_budget_preserves_signed_read_service_with_rotating_callers() {
@@ -4545,6 +4734,17 @@ mod tests {
             assert!(phase.wall_ns.is_some());
             assert!(row.cpu_settlement.unwrap().budget_settled);
             let actual = row.cpu_settlement.unwrap();
+            let signal = row.cancellation.first_flag_transition.unwrap();
+            assert_eq!(signal.source, "peer_write_closed");
+            assert_eq!(signal.phase, "work");
+            assert!(row.cancellation.observed_signal_calls >= 1);
+            assert!(row.cancellation.worker_entered && row.cancellation.worker_returned);
+            let signal_before = signal.before_ns.unwrap();
+            let signal_after = signal.after_ns.unwrap();
+            assert!(row.cancellation.worker_entered_ns.unwrap() <= signal_before);
+            assert!(signal_before <= signal_after);
+            assert!(signal_after <= row.lifecycle.connection_closed_ns.unwrap());
+            assert!(row.cancellation.worker_returned_ns.unwrap() >= phase.ended_ns.unwrap());
             assert_eq!(actual.owner_cpu_ns, row.dispatch_thread_cpu_ns);
             assert_eq!(
                 actual.total_cpu_ns,
@@ -4561,6 +4761,10 @@ mod tests {
             .collect();
         assert_eq!(skipped.len(), 1);
         assert!(skipped[0].cpu_settlement.is_none());
+        let signal = skipped[0].cancellation.first_flag_transition.unwrap();
+        assert_eq!(signal.source, "peer_write_closed");
+        assert!(skipped[0].cancellation.worker_entered && skipped[0].cancellation.worker_returned);
+        assert!(skipped[0].cancellation.worker_returned_ns.unwrap() >= signal.before_ns.unwrap());
         assert!(
             !skipped[0]
                 .submit_phases
@@ -4568,6 +4772,26 @@ mod tests {
                 .find(|phase| phase.phase == SubmitPhase::CpuSettle)
                 .unwrap()
                 .started
+        );
+        assert!(snapshot
+            .records
+            .iter()
+            .all(|row| row.cancellation.worker_returned));
+        assert_eq!(
+            snapshot
+                .records
+                .iter()
+                .filter(|row| row
+                    .cancellation
+                    .first_flag_transition
+                    .is_some_and(|event| event.source == "connection_cleanup"))
+                .count(),
+            2,
+            "the successful Head and Submit cleanup are not cancellation successes"
+        );
+        println!(
+            "TRNM_PUBLIC_CANCELLATION_SNAPSHOT {}",
+            serde_json::to_string(&snapshot).unwrap()
         );
     }
     #[test]
@@ -4684,7 +4908,7 @@ mod tests {
             socket.set_nonblocking(true).unwrap();
             let cancelled = AtomicBool::new(false);
             let metrics = Mutex::new(PublicMetrics::default());
-            caller_write_half_alive(&socket, &cancelled, &metrics).unwrap();
+            caller_write_half_alive(&socket, &cancelled, &metrics, None, "work").unwrap();
             assert!(!cancelled.load(Ordering::Acquire));
             caller.write_all(b"X").unwrap();
             if half_close {
@@ -4699,7 +4923,8 @@ mod tests {
             assert_eq!(socket.peek(&mut [0; 1]).unwrap(), 1);
             socket.set_nonblocking(true).unwrap();
             assert!(caller_write_half_open(&socket, false).unwrap());
-            let error = caller_write_half_alive(&socket, &cancelled, &metrics).unwrap_err();
+            let error =
+                caller_write_half_alive(&socket, &cancelled, &metrics, None, "work").unwrap_err();
             assert!(error.is(crate::ErrorCode::PublicTrailingInput));
             assert_eq!(error.kind(), crate::ErrorKind::Transport);
             assert!(cancelled.load(Ordering::Acquire));
@@ -5487,9 +5712,13 @@ mod tests {
 
     #[test]
     fn paid_envelope_resource_profile_has_fresh_exact_signed_commitment() {
-        // Fixed independent r14 SHA-256/length-framing vector for development
+        // Fixed independent r19 SHA-256/length-framing vector for development
         // bits=16 and lifetime=2000 ms; the policy numbers themselves did not change.
         assert_eq!(
+            hex::encode(PublicPolicy::development().id()),
+            "33ad551362c92985fdd794b4117898abf9ae800b2a5cd482af025014c66b4ff4"
+        );
+        assert_ne!(
             hex::encode(PublicPolicy::development().id()),
             "82033cc655921f7217f7dba8f844aa5d06a455cceda851af530e91f7672f9ec8"
         );
@@ -6814,7 +7043,7 @@ mod tests {
         assert!(m.mutation_cpu_unavailable_after_shutdown);
     }
     #[test]
-    fn resource_revision_r14_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
+    fn resource_revision_r19_rejects_signed_old_cookies_and_preserves_control_output_reserve() {
         let s = Settings::development(Some(1)).unwrap();
         let server = server();
         assert_eq!(
@@ -6822,14 +7051,17 @@ mod tests {
             PublicPolicy::new(8, Duration::from_secs(2)).unwrap()
         );
         assert_eq!((server.policy.bits, server.policy.lifetime_ms), (8, 2000));
-        // Preserve exact r10, r11, r12 AND r13 as validly signed predecessor inputs;
-        // r14 must reject them even with a correct current server MAC/signature.
+        // Preserve exact r10-r15 and r18 signed predecessor inputs;
+        // combined r19 rejects them under the unchanged current signature checks.
         assert_eq!(scalar_cpu::COMPLETION_WORK_CAPACITY, 4096);
         for (bits, current_profile, predecessor_profiles) in [
             (
                 8,
-                "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+                "0f3f0e42d13eb44419c55538198d7bee00206d62c067287e0b9dada7e9d19751",
                 [
+                    "17d393fcb34624a7dda51a5b8385c6e8deddd4177693379ce431d2a48ad9c332",
+                    "85ec5559c48860c02834a89f84a6dc779482c8c8ae09045e8cd161348e91290d",
+                    "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
                     "c110c3ccb1e229c3a85f4819b1e087fa819c865b50f8bd3ab78d3b8f45206cb2",
                     "98db0a0a3cf84367cc62b293ace125ecfed37798b45c74e1382c9e625d3955b0",
                     "0d262ab290e74fa827b89bf11b581053eff9c347d54f511899315d4362febadc",
@@ -6838,8 +7070,11 @@ mod tests {
             ),
             (
                 16,
-                "82033cc655921f7217f7dba8f844aa5d06a455cceda851af530e91f7672f9ec8",
+                "33ad551362c92985fdd794b4117898abf9ae800b2a5cd482af025014c66b4ff4",
                 [
+                    "def48acb27beeb6950013850e2306d8bc97f18571485c34226a6ae5563492e4d",
+                    "272ea19faf73fd12ca83f43b1854fe6bfdf293848bf593a5f7f69797e88219c7",
+                    "82033cc655921f7217f7dba8f844aa5d06a455cceda851af530e91f7672f9ec8",
                     "e171d2942b8abfd95351036464b5451b4562f0854f4b43b2de59c4e486bda176",
                     "0b32dc1c5cb3cd32f127792c2437a7e06afdee24dfd145e6c147ae9effc93973",
                     "1141ff9f730ab723f9499215ae7396ef3c26020973c8ab345179bd78b31da9e7",
@@ -6848,8 +7083,11 @@ mod tests {
             ),
             (
                 12,
-                "ffdf6e0653a4c1cb89fd92414ddc75052a100c75423b51b4cf86fed6d9c39258",
+                "648bca6f6241e5f31e2fe13f414a60cfcb9d3b030885ab3a2127ba7f425c64c6",
                 [
+                    "bcb405a632ccea135df5e2fb41b03a5ec3be74f262a77f77b9c082a446b1b255",
+                    "986444aaad4ce993ecbf565af7e599bf32ddeac4b195eb2502da3d3135ba276b",
+                    "ffdf6e0653a4c1cb89fd92414ddc75052a100c75423b51b4cf86fed6d9c39258",
                     "af74a97fd543741369cf58b5e58a16f33ea74d71bb4d4641ab4700827bac1607",
                     "56f683ca9a56a872747f58899c2734763303ad547cabf88d24a18c3994517d15",
                     "dfdba7a8bfc98ff3019425222a7d66d1e7d75dd164fad5eda3d9a54d61e5e5ce",
@@ -7532,7 +7770,7 @@ mod tests {
             // Deterministically enter the inner check after the original
             // deadline. No sleep or public timeout/budget change is needed.
             conn.deadline = Instant::now() - Duration::from_nanos(1);
-            let error = pending_alive(conn, &f.stop).unwrap_err();
+            let error = pending_alive(conn, &f.stop, conn.stage.phase()).unwrap_err();
             assert!(error.is(crate::ErrorCode::PublicRequestDeadline));
             f.finish_error(error, Instant::now(), true);
         }
@@ -7556,7 +7794,7 @@ mod tests {
                 conn.deadline = Instant::now() - Duration::from_nanos(1);
                 conn.cancelled.store(true, Ordering::Release);
             }
-            let error = pending_alive(conn, &f.stop).unwrap_err();
+            let error = pending_alive(conn, &f.stop, conn.stage.phase()).unwrap_err();
             let expected = match case {
                 "stop" => crate::ErrorCode::PublicRequestDeadline,
                 "eof" => crate::ErrorCode::PublicEof,
@@ -8860,6 +9098,42 @@ mod completion_deadline_tests {
             assert_eq!(m.work_failed, 0);
             assert_eq!(m.mutation_cpu_charged_ns, 0);
         }
+    }
+
+    #[test]
+    fn unreserved_completion_bytes_close_without_output_or_native_outcome_rewrite() {
+        let now = Instant::now();
+        let mut f = Fixture::new(now + Duration::from_secs(10), now + Duration::from_secs(30));
+        let mut done = f.finished(Ok(vec![1, 2, 3]));
+        // Model a worker regression after successful native dispatch: bytes
+        // exist, but their original output owner no longer holds a permit.
+        // The final owner must close locally, not deliver unreserved output.
+        drop(done.permit.take());
+        assert_eq!(*f.intake.output_pool.lock().unwrap(), 0);
+        apply_finished_connection(
+            &mut f.connections,
+            done,
+            &f.metrics,
+            now,
+            now + Duration::from_secs(60),
+            &AtomicBool::new(false),
+        )
+        .unwrap();
+        f.assert_released();
+        let m = f.metrics.lock().unwrap();
+        assert_eq!(m.output_admission_refusals, 1);
+        assert_eq!(m.output_serialization_failures, 0);
+        assert_eq!(m.delivered_response_frames, 0);
+        assert_eq!(m.expired_connections, 0);
+        assert_eq!(m.abandoned_tasks, 0);
+        assert_eq!(m.retained_phase_errors.get("output_admission"), Some(&1));
+        assert!(!m.retained_phase_errors.contains_key("output"));
+        let snapshot = f.observer.snapshot();
+        let row = &snapshot.records[0];
+        assert_eq!(row.terminal_phase, Some("output_admission"));
+        assert_eq!(row.terminal_error_code, Some("PUBLIC_BUFFER_CAPACITY"));
+        let diagnostic = serde_json::to_value(row.error_diagnostics.terminal).unwrap();
+        assert_eq!(diagnostic["kind"], "capacity");
     }
 
     #[test]

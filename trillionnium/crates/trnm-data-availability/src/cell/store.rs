@@ -16,6 +16,11 @@ use super::{
 
 static OUTPUT_SEQUENCE: AtomicU64 = AtomicU64::new(0);
 
+mod discard;
+
+#[cfg(test)]
+#[path = "cache_manifest_chunk_batch_tests.rs"]
+mod manifest_chunk_batch_tests;
 #[cfg(test)]
 #[path = "cache_wal_tests.rs"]
 mod wal_tests;
@@ -296,6 +301,85 @@ impl CellStoreV1 {
             }
             // synchronous=FULL is unchanged. No network operation or wait occurs
             // inside this transaction; a failure rolls back this batch only.
+            Ok(())
+        })
+    }
+
+    /// Stage complete one-chunk manifests under the caller's absolute deadline.
+    /// Both internal batch entry points share the same prevalidation and FULL
+    /// transaction, including the combined wire/payload and quota bounds.
+    pub(super) fn put_single_chunk_manifests_with_deadline(
+        &self,
+        entries: &[(CellDigestV1, &[u8], &[u8])],
+        deadline: Instant,
+    ) -> CellResultV1<()> {
+        self.put_manifest_chunk_batch_with_deadline(entries, Some(deadline))
+    }
+
+    /// Atomically cache a bounded set of complete single-chunk cells. All
+    /// manifest pins and full payloads are checked before taking the writer
+    /// permit; a later member or quota failure cannot publish a prefix.
+    pub(super) fn put_manifest_chunk_batch_with_deadline(
+        &self,
+        cells: &[(CellDigestV1, &[u8], &[u8])],
+        deadline: Option<Instant>,
+    ) -> CellResultV1<()> {
+        check_data_deadline(deadline)?;
+        require(
+            !cells.is_empty() && cells.len() <= MAX_CHUNK_COMMIT_BATCH,
+            "manifest chunk commit batch bound",
+        )?;
+        let bytes = cells
+            .iter()
+            .try_fold(0_usize, |total, (_, wire, payload)| {
+                total
+                    .checked_add(wire.len())
+                    .and_then(|total| total.checked_add(payload.len()))
+                    .ok_or(CellErrorV1::Invalid("manifest chunk commit batch bytes"))
+            })?;
+        require(
+            bytes <= MAX_CHUNK_COMMIT_BATCH * MAX_CHUNK_BYTES as usize,
+            "manifest chunk commit batch bytes",
+        )?;
+        let mut manifests = Vec::with_capacity(cells.len());
+        for (pinned, wire, payload) in cells {
+            check_data_deadline(deadline)?;
+            let manifest = CellManifestV1::decode(wire)?;
+            require(manifest.id() == *pinned, "manifest digest")?;
+            require(
+                manifest.chunks().len() == 1
+                    && manifest.payload_sha256() == manifest.chunks()[0].sha256,
+                "single-chunk manifest payload",
+            )?;
+            verify_chunk_with_deadline(&manifest.chunks()[0], payload, deadline)?;
+            manifests.push(manifest);
+        }
+        self.write_with_deadline(deadline, |transaction| {
+            let mut write_manifest = transaction.prepare_cached(
+                "INSERT INTO cell_manifests_v1(id, wire) VALUES (?1, ?2)
+                 ON CONFLICT(id) DO UPDATE SET wire = excluded.wire",
+            )?;
+            let mut write_chunk = transaction.prepare_cached(
+                "INSERT INTO cell_chunks_v1(hash, bytes) VALUES (?1, ?2)
+                 ON CONFLICT(hash) DO UPDATE SET bytes = excluded.bytes",
+            )?;
+            for ((pinned, wire, payload), manifest) in cells.iter().zip(&manifests) {
+                check_data_deadline(deadline)?;
+                require(
+                    write_manifest.execute(params![pinned.as_slice(), wire])? == 1,
+                    "cache manifest write",
+                )?;
+                require(
+                    write_chunk
+                        .execute(params![manifest.chunks()[0].sha256.as_slice(), payload])?
+                        == 1,
+                    "cache chunk write",
+                )?;
+            }
+            // The existing two-table quota triggers and FULL pager are retained.
+            // The shared writer retains the original five-second cap, checks
+            // the caller's absolute deadline before COMMIT and does not wait
+            // for network or payload construction while holding the writer.
             Ok(())
         })
     }

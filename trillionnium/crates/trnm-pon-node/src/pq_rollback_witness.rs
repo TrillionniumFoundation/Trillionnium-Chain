@@ -515,6 +515,9 @@ pub struct DurableWitness {
     binding: WitnessBinding,
     signer: PqNativeSigningKey,
     known_head: Option<Checkpoint>,
+    // Only this live owner can authenticate the predecessor of an exact retry.
+    // A retained current-head pin does not authenticate restored predecessor bytes.
+    retry_from: Option<Checkpoint>,
     commit_uncertain: bool,
 }
 impl DurableWitness {
@@ -570,6 +573,7 @@ impl DurableWitness {
             binding,
             signer,
             known_head: Some(initial),
+            retry_from: None,
             commit_uncertain: false,
         };
         owner.check_storage()?;
@@ -580,6 +584,8 @@ impl DurableWitness {
     /// an independently durable monotonic authority, never from this SQLite
     /// database or a sibling file restored with it. A newer or older on-disk
     /// checkpoint requires explicit external reconciliation, not auto-adoption.
+    /// Cold recovery authenticates Current and a fresh successor CAS, never a
+    /// historical CAS retry from unauthenticated database predecessor metadata.
     pub fn open_existing(
         path: &Path,
         binding: WitnessBinding,
@@ -620,6 +626,7 @@ impl DurableWitness {
             binding,
             signer,
             known_head: Some(expected),
+            retry_from: None,
             commit_uncertain: false,
         };
         owner.read_head()?;
@@ -729,7 +736,9 @@ impl DurableWitness {
                             )?;
                             if current == next {
                                 ensure(
-                                    old_seq == previous.sequence && old_root == previous.root,
+                                    self.retry_from == Some(previous)
+                                        && old_seq == previous.sequence
+                                        && old_root == previous.root,
                                     "PQ_WITNESS_RETRY_CONFLICT",
                                 )?;
                             } else {
@@ -751,6 +760,9 @@ impl DurableWitness {
                                 observation.mark(test_observation::Mark::CasCommitted);
                             }
                             self.known_head = Some(next);
+                            if current != next {
+                                self.retry_from = Some(previous);
+                            }
                             self.commit_uncertain = false;
                             Ok::<_, Error>(next)
                         })()

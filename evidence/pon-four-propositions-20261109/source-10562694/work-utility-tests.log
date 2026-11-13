@@ -1,0 +1,20 @@
+test_attempt_and_verification_replay_cannot_reset_costs (__main__.UsefulOutputTests.test_attempt_and_verification_replay_cannot_reset_costs) ... ok
+test_changed_output_or_reused_consumer_operation_reject (__main__.UsefulOutputTests.test_changed_output_or_reused_consumer_operation_reject) ... ok
+test_cost_retry_stages_charge_every_invocation (__main__.UsefulOutputTests.test_cost_retry_stages_charge_every_invocation) ... ok
+test_duplicate_AB_wrapper_new_signer_nonce_and_function_do_not_add_useful_output (__main__.UsefulOutputTests.test_duplicate_AB_wrapper_new_signer_nonce_and_function_do_not_add_useful_output) ... ok
+test_invalid_reorg_leaves_accepted_history_intact (__main__.UsefulOutputTests.test_invalid_reorg_leaves_accepted_history_intact) ... ok
+test_missing_cost_stage_blocks_adoption_and_unknown_gpu_is_not_zero (__main__.UsefulOutputTests.test_missing_cost_stage_blocks_adoption_and_unknown_gpu_is_not_zero) ... ok
+test_rejected_attempt_costs_are_not_dropped (__main__.UsefulOutputTests.test_rejected_attempt_costs_are_not_dropped) ... ok
+test_reorg_does_not_erase_prior_adoption_or_cost_history (__main__.UsefulOutputTests.test_reorg_does_not_erase_prior_adoption_or_cost_history) ... ok
+test_returned_events_cannot_mutate_retained_adoption_history (__main__.UsefulOutputTests.test_returned_events_cannot_mutate_retained_adoption_history) ... ok
+test_same_output_reexecution_on_new_branch_cannot_double_historical_credit (__main__.UsefulOutputTests.test_same_output_reexecution_on_new_branch_cannot_double_historical_credit) ... ok
+test_stale_verified_attempt_cannot_be_adopted_but_all_costs_remain (__main__.UsefulOutputTests.test_stale_verified_attempt_cannot_be_adopted_but_all_costs_remain) ... ok
+test_total_cost_overflow_rejects_without_losing_existing_history (__main__.UsefulOutputTests.test_total_cost_overflow_rejects_without_losing_existing_history) ... ok
+test_unknown_numeric_aliases_and_unbounded_histories_reject (__main__.UsefulOutputTests.test_unknown_numeric_aliases_and_unbounded_histories_reject) ... ok
+test_verification_alone_is_not_actual_downstream_adoption (__main__.UsefulOutputTests.test_verification_alone_is_not_actual_downstream_adoption) ... ok
+test_zero_and_negative_gain_cannot_be_relabelled_useful (__main__.UsefulOutputTests.test_zero_and_negative_gain_cannot_be_relabelled_useful) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.027s
+
+OK

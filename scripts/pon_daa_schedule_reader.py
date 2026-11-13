@@ -17,7 +17,7 @@ import sys
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'formal' / 'pon-nakamoto-v1'))
 import contract_wire as wire
-import reference
+import native_consensus_reference_v1 as reference
 import work_oracle
 
 NAMES = ('ordinary', 'lower-clamp', 'upper-clamp')

@@ -1,0 +1,60 @@
+{
+  "source_commit": "9029f2ab2c6382aaaf096b841a20fbf335f4b172",
+  "scope": "Exact Git diff of the three changed declared sources; store prior content is identical in both old locks",
+  "diffs": [
+    {
+      "path": "consensus-test-continuation.patch",
+      "argv": [
+        "git",
+        "diff",
+        "--full-index",
+        "66b7064be597039ce871b5b12ad5568850a2dd46",
+        "9029f2ab2c6382aaaf096b841a20fbf335f4b172",
+        "--",
+        "trillionnium/crates/trnm-pon-node/src/consensus.rs"
+      ],
+      "bytes": 2173,
+      "sha256": "4adfa43c0f0b2f127de4f6f20e2d1a01cafc9c685ca9cf66ce8f5101c4518589",
+      "delivery_path": "consensus-test-continuation.patch.gz",
+      "delivery_encoding": "gzip; decompressed bytes match original path/size/SHA256",
+      "delivery_bytes": 824,
+      "delivery_sha256": "01ed1a9a12c5556d058efdc6431fa5ef9d37aee8a7d3a8df7b203da5d4ebe139"
+    },
+    {
+      "path": "store-progress-visibility.patch",
+      "argv": [
+        "git",
+        "diff",
+        "--full-index",
+        "66b7064be597039ce871b5b12ad5568850a2dd46",
+        "9029f2ab2c6382aaaf096b841a20fbf335f4b172",
+        "--",
+        "trillionnium/crates/trnm-pon-node/src/store.rs"
+      ],
+      "bytes": 630,
+      "sha256": "033818439e0ac46c54ccae99415253ad48ceb91b588c56be10aa124e369ce0aa",
+      "delivery_path": "store-progress-visibility.patch.gz",
+      "delivery_encoding": "gzip; decompressed bytes match original path/size/SHA256",
+      "delivery_bytes": 324,
+      "delivery_sha256": "07eae66a0caf33182697b62c194993dfeea78261d5d24bebdf6f6c2dfe12b4f6"
+    },
+    {
+      "path": "shared-admission-controls.patch",
+      "argv": [
+        "git",
+        "diff",
+        "--full-index",
+        "893738947a50dc42819b56e632192de4f9f24fa0",
+        "9029f2ab2c6382aaaf096b841a20fbf335f4b172",
+        "--",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs"
+      ],
+      "bytes": 3170,
+      "sha256": "c4271619254c2eb661f4426d41dbaac1a2b3aa4003ab960683badbca55017ac6",
+      "delivery_path": "shared-admission-controls.patch.gz",
+      "delivery_encoding": "gzip; decompressed bytes match original path/size/SHA256",
+      "delivery_bytes": 1196,
+      "delivery_sha256": "1cda0d92f5d46ee015c32755b4e37999f3dd959beeac786fc7a41954d54a30f1"
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+[
+  {
+    "name": "composition-tests",
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_lifetime_composition.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 1.9459697980000783,
+    "source_parent": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+    "source_state": "staged-candidate"
+  },
+  {
+    "name": "composition-current",
+    "argv": [
+      "python3",
+      "scripts/ci/pq_lifetime_composition.py",
+      "--root",
+      "."
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.11580538099951809,
+    "source_parent": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+    "source_state": "staged-candidate"
+  },
+  {
+    "name": "legacy-budget-tests",
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_lifetime_budget.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.6168515629997273,
+    "source_parent": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+    "source_state": "staged-candidate"
+  },
+  {
+    "name": "legacy-budget-current",
+    "argv": [
+      "python3",
+      "scripts/ci/pq_lifetime_budget.py"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.09391321700059052,
+    "source_parent": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+    "source_state": "staged-candidate"
+  },
+  {
+    "name": "root-register-tests",
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_root_dependency_register.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.7216149530013354,
+    "source_parent": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+    "source_state": "staged-candidate"
+  },
+  {
+    "name": "root-register-current",
+    "argv": [
+      "python3",
+      "scripts/ci/pq_root_dependency_register.py"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.1173900899993896,
+    "source_parent": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+    "source_state": "staged-candidate"
+  },
+  {
+    "name": "claim-guard-tests",
+    "argv": [
+      "python3",
+      "scripts/ci/test_pq_chain_claim_guard.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.77510292199986,
+    "source_parent": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+    "source_state": "staged-candidate"
+  },
+  {
+    "name": "claim-guard-current",
+    "argv": [
+      "python3",
+      "scripts/ci/pq_chain_claim_guard.py"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.1360758930004522,
+    "source_parent": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+    "source_state": "staged-candidate"
+  }
+]

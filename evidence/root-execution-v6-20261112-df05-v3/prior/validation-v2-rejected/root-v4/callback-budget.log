@@ -1,0 +1,15 @@
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: normal Cargo loader directory set incomplete: missing=["/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib"]; observed=["/data/chain-root-operation-v6-df05-target-v2/debug", "/data/chain-root-operation-v6-df05-target-v2/debug/deps", "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib"]; allowed=["/data/chain-root-operation-v6-df05-target-v2/debug", "/data/chain-root-operation-v6-df05-target-v2/debug/deps", "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib", "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib"]
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-root-operation-recovered-20261112-df05/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.81s
+     Running tests/root_budget_v4_native.rs (/data/chain-root-operation-v6-df05-target-v2/debug/deps/root_budget_v4_native-e21dc895d7c993c6)
+
+running 6 tests
+test native_budget_v4_transport_error_cannot_hide_budget_replacement ... ok
+test native_budget_v4_transport_error_latches_observed_external_cancellation ... ok
+test native_budget_v4_unmodified_transport_error_is_preserved ... ok
+test native_budget_v4_unmodified_writer_error_is_preserved ... ok
+test native_budget_v4_writer_error_cannot_hide_budget_replacement ... ok
+test native_budget_v4_writer_error_latches_observed_external_cancellation ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 15.15s
+

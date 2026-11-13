@@ -8,6 +8,8 @@ import textwrap
 import unittest
 from pathlib import Path
 
+from check_w1_native_roster import ROSTERS
+
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW = ROOT / '.github/workflows/pon-w1-work-security.yml'
 SOURCE = ROOT / 'trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs'
@@ -16,7 +18,7 @@ EXAMPLES = ROOT / 'trillionnium/crates/trnm-pon-node/examples'
 MATERIAL_SOURCE = ROOT / 'trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs'
 COUNTS = {'factorial-kernel-tests': (14, 0), 'factorial-example-tests': (11, 0),
           'header-binding-tests': (1, 0), 'history-w1-tests': (5, 0),
-          'history-import-tests': (33, 1), 'cpu-completion-tests': (11, 0)}
+          'history-import-tests': (36, 1), 'cpu-completion-tests': (11, 0)}
 HISTORY = [
     'deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline',
     'deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu',
@@ -26,6 +28,9 @@ HISTORY = [
     'deadline_controls::history_control_resource_expiry_refuses_late_success',
     'deadline_controls::history_control_resource_expiry_keeps_original_resource_error',
     'deadline_controls::history_owner_resource_expiry_never_invokes_exclusive_or_shared_action',
+    'detached_budget_controls::shared_detached_history_continues_from_real_deficit_without_new_credit',
+    'detached_budget_controls::shared_detached_history_refill_keeps_original_resource_cancellation',
+    'detached_budget_controls::shared_detached_history_refill_cannot_renew_original_deadline',
 ]
 
 
@@ -70,6 +75,23 @@ class NativeGateTests(unittest.TestCase):
             for name, content in self.logs.items():
                 (Path(directory) / (name + '.log')).write_text(content)
             return subprocess.run([sys.executable, '-c', self.code, directory], capture_output=True).returncode
+
+    def test_fixture_counts_match_frozen_complete_named_rosters(self):
+        for suite, profile in [('factorial-example-tests', 'factorial-example'),
+                               ('history-import-tests', 'history-import')]:
+            roster = ROSTERS[profile]
+            ignored = len(roster['ignored'])
+            self.assertEqual(COUNTS[suite], (len(roster['names']) - ignored, ignored))
+
+    def test_previous_incomplete_positive_fixture_is_refused(self):
+        for suite, old_passes, ignored in [('factorial-example-tests', 6, 0),
+                                          ('history-import-tests', 28, 1)]:
+            original = self.logs[suite]
+            self.logs[suite] = original.replace(
+                f'test result: ok. {COUNTS[suite][0]} passed;',
+                f'test result: ok. {old_passes} passed;', 1)
+            self.assertNotEqual(self.run_gate(), 0)
+            self.logs[suite] = original
 
     def test_complete_roster_passes(self):
         self.assertEqual(self.run_gate(), 0)

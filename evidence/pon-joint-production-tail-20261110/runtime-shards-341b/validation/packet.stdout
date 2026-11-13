@@ -1,0 +1,1 @@
+{"actual_joint_obligations_closed": 0, "native_risk_bounds": null, "qualification": "HOLD_NO_GO", "receipt_consistency": "PASS", "source341b_quality_lanes": "failure", "source341b_repository_lanes": "success", "source341b_runtime_lanes": "success", "whole_ci_pass": false}

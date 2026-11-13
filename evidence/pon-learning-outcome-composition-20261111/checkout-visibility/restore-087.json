@@ -1,0 +1,24 @@
+{
+  "actual_oid": "701e353ac0023e9a3f7400842711ea529039bf52",
+  "bytes": 7113456,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "701e353ac0023e9a3f7400842711ea529039bf52"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 7113456,
+  "expected_oid": "701e353ac0023e9a3f7400842711ea529039bf52",
+  "finished_at": "2026-11-12T01:41:58.011667+00:00",
+  "path": "evidence/pq-m15-native-followthrough-20261107/hosted-gate-failures.tar.gz",
+  "path_base64": "ZXZpZGVuY2UvcHEtbTE1LW5hdGl2ZS1mb2xsb3d0aHJvdWdoLTIwMjYxMTA3L2hvc3RlZC1nYXRlLWZhaWx1cmVzLnRhci5neg==",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "122759362de9d2f2967596b6315520392f54d94b94d53e93a204fde73a5e91cd",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:57.830282+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

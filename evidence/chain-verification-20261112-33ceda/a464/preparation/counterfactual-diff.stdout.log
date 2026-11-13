@@ -1,0 +1,194 @@
+diff --git a/trillionnium/crates/trnm-pon-node/src/ingress.rs b/trillionnium/crates/trnm-pon-node/src/ingress.rs
+index a597271b478..714c0f746d7 100644
+--- a/trillionnium/crates/trnm-pon-node/src/ingress.rs
++++ b/trillionnium/crates/trnm-pon-node/src/ingress.rs
+@@ -601,22 +601,11 @@ fn begin_authenticated_dispatch(
+ }
+ 
+ fn authenticated_dispatch_needs_retry(error: &Error) -> bool {
+-    // These local refusals leave the exact request's admission incomplete.
+-    // A missing parent, future timestamp or changed admission epoch can become
+-    // admissible without changing the signed request. Caching that observation
+-    // as terminal would prevent its original durable nonce from recovering.
+-    // Other Capacity/StaleContext codes retain their original policy; neither
+-    // a local-integrity override nor remote text grants retry authority.
++    // Only this local capacity refusal leaves native admission incomplete.
++    // Other Capacity codes can express an actual profile/state limit, and a
++    // local-integrity override must never become a retry from its wire text.
+     error.kind() == crate::ErrorKind::Cancelled
+         || (error.kind() == crate::ErrorKind::Capacity && error.is(ErrorCode::PublicQueueBusy))
+-        || (error.kind() == crate::ErrorKind::StaleContext
+-            && [
+-                ErrorCode::UnknownParent,
+-                ErrorCode::TimeDeferred,
+-                ErrorCode::AdmissionHeaderEpochChanged,
+-            ]
+-            .into_iter()
+-            .any(|code| error.is(code)))
+ }
+ 
+ fn verify_authenticated_response(
+diff --git a/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs b/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs
+index 9fb24a952a4..f2813293cd5 100644
+--- a/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs
++++ b/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs
+@@ -1462,7 +1462,7 @@ fn record_stage_error(
+ // worker-side response checks cannot cover settlement, send or queue delay.
+ fn apply_finished_connection(
+     connections: &mut BTreeMap<u64, Connection>,
+-    mut done: Finished,
++    done: Finished,
+     metrics: &Mutex<PublicMetrics>,
+     now: Instant,
+     service_end: Instant,
+@@ -1479,11 +1479,6 @@ fn apply_finished_connection(
+         matches!(conn.stage, Stage::Await),
+         "PUBLIC_COMPLETION_STATE",
+     )?;
+-    // Defense at the final owner boundary: even an internal worker mistake
+-    // cannot move materialized response bytes into Output without its permit.
+-    if done.permit.is_none() && done.bytes.is_ok() {
+-        done.bytes = Err(crate::Error::new(crate::ErrorCode::PublicBufferCapacity));
+-    }
+     let refusal = if stop.load(Ordering::Acquire) {
+         Some(("shutdown", "PUBLIC_REQUEST_CANCELLED", false))
+     } else if conn.cancelled.load(Ordering::Acquire) {
+@@ -1499,8 +1494,7 @@ fn apply_finished_connection(
+             record.terminal_error(phase, &code.into());
+         }
+         let id = done.id;
+-        let output_admission_refused = done.permit.is_none();
+-        let serialization_failed = done.bytes.is_err() && !output_admission_refused;
++        let serialization_failed = done.bytes.is_err();
+         // The native result/CPU observations remain factual. Dispose of bytes,
+         // output allowance and TaskObservation before closing the connection.
+         // Expiry/cancellation remains the primary resource refusal. An actual
+@@ -1509,12 +1503,6 @@ fn apply_finished_connection(
+         drop(done);
+         drop(connections.remove(&id));
+         let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+-        if output_admission_refused {
+-            m.output_admission_refusals += 1;
+-            *m.retained_phase_errors
+-                .entry("output_admission".into())
+-                .or_default() += 1;
+-        }
+         if serialization_failed {
+             m.output_serialization_failures += 1;
+             *m.retained_phase_errors.entry("output".into()).or_default() += 1;
+@@ -1529,28 +1517,15 @@ fn apply_finished_connection(
+         return Ok(());
+     }
+     if let Err(error) = &done.bytes {
+-        let output_admission_refused = done.permit.is_none();
+-        let phase = if output_admission_refused {
+-            "output_admission"
+-        } else {
+-            "serialization"
+-        };
+         if let Some(record) = &conn.observation {
+-            record.terminal_error(phase, error);
++            record.terminal_error("serialization", error);
+         }
+         let id = done.id;
+         drop(done);
+         drop(connections.remove(&id));
+         let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+-        if output_admission_refused {
+-            m.output_admission_refusals += 1;
+-            *m.retained_phase_errors
+-                .entry("output_admission".into())
+-                .or_default() += 1;
+-        } else {
+-            m.output_serialization_failures += 1;
+-            *m.retained_phase_errors.entry("output".into()).or_default() += 1;
+-        }
++        m.output_serialization_failures += 1;
++        *m.retained_phase_errors.entry("output".into()).or_default() += 1;
+         return Ok(());
+     }
+     let bytes = done.bytes?;
+@@ -2364,7 +2339,6 @@ fn serve_public_protected_v3_inner(
+                             let mut accounting = None;
+                             let mut read_cpu = None;
+                             let mut dispatch_started = false;
+-                            let mut refusal_frame_maximum = None;
+                             let (permit, outcome) = match permit {
+                                 Ok(permit) => {
+                                     let cpu_permit = if mutating_operation(task.cookie.op) {
+@@ -2486,39 +2460,7 @@ fn serve_public_protected_v3_inner(
+                                     // Accounting failure after native dispatch never rewrites outcome.
+                                     (Some(permit), outcome)
+                                 }
+-                                Err(e) => {
+-                                    // A failed large-response reservation grants no
+-                                    // native dispatch or unaccounted signed output.
+-                                    // Only the exact local capacity refusal may use
+-                                    // a small part of the same original output pool.
+-                                    if e.kind() == crate::ErrorKind::Capacity
+-                                        && e.is(crate::ErrorCode::PublicBufferCapacity)
+-                                    {
+-                                        let maximum = if server.identity.is_pq() {
+-                                            PQ_REFUSAL_FRAME
+-                                        } else {
+-                                            CLASSICAL_REFUSAL_FRAME
+-                                        };
+-                                        refusal_frame_maximum = Some(maximum);
+-                                        match BufferPermit::acquire(
+-                                            output_pool.clone(),
+-                                            maximum * 4,
+-                                            MAX_OUTPUT_BYTES - CONTROL_OUTPUT_RESERVE
+-                                                + REFUSAL_OUTPUT_HEADROOM,
+-                                        ) {
+-                                            Ok(permit) => {
+-                                                metrics
+-                                                    .lock()
+-                                                    .map_err(|_| "PUBLIC_METRICS")?
+-                                                    .output_refusal_reservations += 1;
+-                                                (Some(permit), Err(e))
+-                                            }
+-                                            Err(error) => (None, Err(error)),
+-                                        }
+-                                    } else {
+-                                        (None, Err(e))
+-                                    }
+-                                }
++                                Err(e) => (None, Err(e)),
+                             };
+                             let reserved = *output_pool.lock().map_err(|_| "PUBLIC_BUFFER_POOL")?;
+                             let mut m = metrics.lock().map_err(|_| "PUBLIC_METRICS")?;
+@@ -2547,14 +2489,6 @@ fn serve_public_protected_v3_inner(
+                                 // native success remains success in the observation.
+                                 drop(outcome);
+                                 None
+-                            } else if permit.is_none() {
+-                                // No serialization, signature, or response bytes
+-                                // without a live reservation. The reactor closes
+-                                // this local refusal and retains no validity fact.
+-                                drop(outcome);
+-                                Some(Err(crate::Error::new(
+-                                    crate::ErrorCode::PublicBufferCapacity,
+-                                )))
+                             } else {
+                                 // Output memory was reserved before admission. Keep
+                                 // the CPU permit until this bounded signed response
+@@ -2565,17 +2499,13 @@ fn serve_public_protected_v3_inner(
+                                     task.observation.as_ref(),
+                                     SubmitPhase::ResponseEncoding,
+                                     || {
+-                                        let bytes = response(
++                                        response(
+                                             server,
+                                             settings,
+                                             &task.cookie,
+                                             outcome,
+                                             &response_progress,
+-                                        )?;
+-                                        if let Some(maximum) = refusal_frame_maximum {
+-                                            ensure(bytes.len() <= maximum, "PUBLIC_OUTPUT_LIMIT")?;
+-                                        }
+-                                        Ok(bytes)
++                                        )
+                                     },
+                                 );
+                                 // Fault injection cannot skip the actual signing work.

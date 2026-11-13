@@ -1,0 +1,7 @@
+# Original-budget before source with settled-flow observations
+
+The immutable before source is [89fb2269b0dd306fbd32c36f464842c3d7daee2b](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/89fb2269b0dd306fbd32c36f464842c3d7daee2b), tree `c4cd82ed0004709192eff1563d90423bd5641e99`, with the ordinary-pool before source as parent. It deliberately restores G0's original budget production, adds the same test-only before-epoch-close observation and exact V2 History test bytes, and preserves the inherited pool observation hooks. It is an experimental negative-control snapshot, not a deployable production successor.
+
+The source packet proves that removing the declared test-only insertions restores the relevant G0 production bytes exactly. The original existing History tests retain their old private API. The shared seven budget controls compile against the actual old API; there is no compatibility implementation or stub of the new handoff method. The five new scalar handoff controls belong only to the fixed arm.
+
+`source-packet.tar.xz` retains the complete reconstructing script, original/replacement files, literal patch, exact test pins and actual patch/apply/byte-compare receipts. Extract it into an empty directory before following the original README. `archive-manifest.json` records verified preservation of every member. Construction and static byte comparison are not native execution.

@@ -1,0 +1,31 @@
+{
+  "changed_da_library_input_files": [],
+  "changed_workspace_source_files": [
+    "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/bep52.rs",
+    "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs"
+  ],
+  "command": [
+    "/workspace/scratch/a6fe7c2e72c7/pq-validation/rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--jobs",
+    "2",
+    "-p",
+    "trnm-data-availability",
+    "--lib",
+    "--",
+    "--test-threads=2"
+  ],
+  "completed_at_utc": "2026-11-09T14:19:05.181225+00:00",
+  "da_library_inputs_unchanged": true,
+  "elapsed_seconds": 193.1619919370005,
+  "exit_code": 101,
+  "log_sha256": "0835359f557232d49b2aa36b534cc611595422d10fcdde7e22fd80d086a3df7b",
+  "source_end_manifest_sha256": "b22d8b1754b5b5b48010fc21d2fae3ac536ee85002f080b46ed878ed177c408e",
+  "source_start_manifest_sha256": "f817a948c74f2a70f9e995b6d449a5948bb78ab933c7a2667596bb8703f8a402",
+  "started_at_utc": "2026-11-09T14:15:51.464523+00:00",
+  "test_result_lines": [
+    "test result: FAILED. 759 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 136.19s"
+  ]
+}

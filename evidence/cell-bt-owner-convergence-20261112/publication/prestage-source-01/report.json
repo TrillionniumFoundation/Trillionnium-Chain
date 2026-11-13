@@ -1,0 +1,54 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "/bin/bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "name": "preflight",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/prestage-source-01/preflight.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 175,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/prestage-source-01/preflight.stdout",
+        "sha256": "bae1200b490be725f9f1a05aa7c7df2242759ea68bb3abebc8cef19d81001902"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "031d442dd0acb693afcfaf42f9cc4db446ba52cb"
+      ],
+      "exit_code": 1,
+      "name": "full-physical-source",
+      "stderr": {
+        "bytes": 883,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/prestage-source-01/full-physical-source.stderr",
+        "sha256": "d4f6fddbd5f1b8ed9acc687adf92f113038381534319d9482ffac7d9008008ce"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qian-qi/chain-bt-owner-convergence-20261112-4a0b-publication-control/prestage-source-01/full-physical-source.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "completed": true,
+  "error": "AssertionError: ('full-physical-source', 1)",
+  "finished_unix_ns": 1794479472999804156,
+  "github_write_performed": false,
+  "passed": false,
+  "schema": "trnm.bt-publication-prestage-current-source.v1",
+  "source": "031d442dd0acb693afcfaf42f9cc4db446ba52cb",
+  "started_unix_ns": 1794479470432523215,
+  "tree": "a897ba4c74897a05ceb364f098b1bfe32c850213"
+}

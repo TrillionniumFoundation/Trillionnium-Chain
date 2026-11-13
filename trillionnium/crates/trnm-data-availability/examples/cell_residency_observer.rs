@@ -3,7 +3,9 @@
 //! These synthetic files are not tensors or a model. The ordinary Hepta loader,
 //! CURRENT, FinalUse, device allocation and inference are not exercised. The
 //! provider is stopped and joined before the 1,000 local accesses. Counts below
-//! are byte-path observations, not latency percentiles or a WAN throughput gate.
+//! are byte-path observations. The additive latency record times actual verified
+//! local byte use with a monotonic clock; its repeated hot reads are one finite
+//! host run, not independent requests, model inference or a WAN throughput gate.
 
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
@@ -285,6 +287,7 @@ fn observe() -> Result<Value, Box<dyn Error>> {
 
     let provider = Provider::start(&source_path)?;
     let peers = [provider.address];
+    let cold_started = Instant::now();
     let cache = CellStoreV1::open(&temporary.path().join("consumer.sqlite"), cache_config())?;
     require(cache.cache_usage()?.chunk_rows == 0, "cold cache not empty")?;
     let mut resident = CellResidencyV1::new(residency_config())?;
@@ -307,6 +310,7 @@ fn observe() -> Result<Value, Box<dyn Error>> {
             && cold.release.connection_attempts > 0,
         "cold acquisition counters",
     )?;
+    let cold_to_resident_ns = cold_started.elapsed().as_nanos();
     resident.pin_hot(&expected_a)?;
     let selected_a = resident.select_local(
         None,
@@ -315,8 +319,14 @@ fn observe() -> Result<Value, Box<dyn Error>> {
         &cancelled,
     )?;
 
+    resident.with_selected(&expected_a, download_deadline, |view| {
+        verify_files(view.files(), &closure_a)
+    })??;
+    let cold_to_first_use_ns = cold_started.elapsed().as_nanos();
+
     // The explicit routing hint owns this preparation. It does not select B.
     // Both downloads share the one original absolute window above.
+    let prefetch_started = Instant::now();
     let prefetched = resident
         .prefetch(
             &cache,
@@ -334,6 +344,7 @@ fn observe() -> Result<Value, Box<dyn Error>> {
             && resident.selection() == Some(selected_a),
         "route prefetch shared-base/selection counters",
     )?;
+    let prefetch_to_resident_ns = prefetch_started.elapsed().as_nanos();
     let served = provider.finish()?;
 
     let local_deadline = Instant::now() + OPERATION_WINDOW;
@@ -356,16 +367,24 @@ fn observe() -> Result<Value, Box<dyn Error>> {
         "resident deduplication accounting",
     )?;
     let mut hot_bytes = 0;
+    let mut hot_samples_ns = Vec::with_capacity(HOT_ACCESSES as usize);
+    let hot_started = Instant::now();
     for _ in 0..HOT_ACCESSES {
+        let access_started = Instant::now();
         hot_bytes += resident.with_selected(&expected_a, local_deadline, |view| {
             verify_files(view.files(), &closure_a)
         })??;
+        hot_samples_ns.push(access_started.elapsed().as_nanos());
     }
+    let hot_wall_ns = hot_started.elapsed().as_nanos();
+    let selection_started = Instant::now();
     let selected_b =
         resident.select_local(Some(selected_a), &expected_b, local_deadline, &cancelled)?;
     resident.with_selected(&expected_b, local_deadline, |view| {
         verify_files(view.files(), &closure_b)
     })??;
+    let prefetched_selection_to_use_ns = selection_started.elapsed().as_nanos();
+    let resident_hit_started = Instant::now();
     let already_resident = resident.prefetch(
         &cache,
         &closure_b,
@@ -379,12 +398,16 @@ fn observe() -> Result<Value, Box<dyn Error>> {
         "resident hit attempted acquisition",
     )?;
 
+    let resident_hit_ns = resident_hit_started.elapsed().as_nanos();
+
     // A fresh manager can prepare the fixed disk version with no peer argument.
+    let disk_warm_started = Instant::now();
     let mut disk_warm = CellResidencyV1::new(residency_config())?;
     disk_warm.prepare_cached(&cache, &closure_a, &expected_a, local_deadline, &cancelled)?;
     disk_warm.with_local(&expected_a, local_deadline, |view| {
         verify_files(view.files(), &closure_a)
     })??;
+    let disk_warm_to_use_ns = disk_warm_started.elapsed().as_nanos();
     let cold_miss = rejection(disk_warm.with_local(&expected_b, local_deadline, |_| ()))?;
     let stale_selection = rejection(resident.select_local(
         Some(selected_a),
@@ -443,6 +466,17 @@ fn observe() -> Result<Value, Box<dyn Error>> {
         verify_files(view.files(), &closure_b)
     })??;
 
+    let mut sorted_hot_ns = hot_samples_ns.clone();
+    sorted_hot_ns.sort_unstable();
+    require(
+        hot_samples_ns.len() == HOT_ACCESSES as usize
+            && cold_to_first_use_ns >= cold_to_resident_ns
+            && hot_samples_ns.iter().sum::<u128>() <= hot_wall_ns,
+        "complete ordered monotonic latency observations",
+    )?;
+    let nearest_rank =
+        |percent: usize| sorted_hot_ns[(sorted_hot_ns.len() * percent).div_ceil(100) - 1];
+
     Ok(json!({
         "schema": "cell-residency-byte-observation-v1",
         "result": "PASS",
@@ -479,8 +513,25 @@ fn observe() -> Result<Value, Box<dyn Error>> {
             "cancelled_switch": cancelled_switch, "hot_eviction": hot_eviction,
             "selected_eviction": selected_eviction,
             "wrong_generation": wrong_version, "resident_quota": quota_rejection},
+        "latency_observation_v1": {
+            "clock": "std::time::Instant monotonic wall clock",
+            "first_use_definition": "every file of the complete pinned closure fully rehashed in its first local callback; cold/prefetched use is selected, disk-warm use is explicitly pinned",
+            "cold_start_definition": "before opening empty consumer CAS; source fixture and loopback provider already prepared; host page cache unspecified",
+            "cold_request_to_complete_resident_ns": cold_to_resident_ns,
+            "cold_request_to_first_verified_local_use_ns": cold_to_first_use_ns,
+            "route_prefetch_to_complete_resident_ns": prefetch_to_resident_ns,
+            "prefetched_selection_to_first_verified_local_use_ns": prefetched_selection_to_use_ns,
+            "disk_warm_prepare_and_first_verified_local_use_ns": disk_warm_to_use_ns,
+            "resident_hit_prefetch_ns": resident_hit_ns,
+            "hot_complete_readback": {"sample_count": hot_samples_ns.len(),
+                "samples_ns": hot_samples_ns, "wall_ns": hot_wall_ns,
+                "minimum_ns": sorted_hot_ns[0], "median_nearest_rank_ns": nearest_rank(50),
+                "p95_nearest_rank_ns": nearest_rank(95), "maximum_ns": sorted_hot_ns[sorted_hot_ns.len() - 1],
+                "sampling_scope": "1000 sequential full-payload checks in one process; not independent request-tail qualification"},
+            "wan_measured": false, "model_forward_measured": false
+        },
         "scope": "synthetic byte staging; explicit route hint; loopback TCP; no model forward",
-        "exclusions": "no real router predictor, tensors, GPU allocation, CURRENT, FinalUse, KV/activation transport, distributed inference, WAN or latency percentile qualification; observer source hash alone is not the full build receipt"
+        "exclusions": "no real router predictor, tensors, GPU allocation, CURRENT, FinalUse, KV/activation transport, distributed inference, WAN or service-tail qualification; observer source hash alone is not the full build receipt"
     }))
 }
 

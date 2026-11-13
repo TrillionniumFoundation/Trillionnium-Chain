@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "cargo",
+    "fmt",
+    "--all",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--",
+    "--check"
+  ],
+  "returncode": 124
+}

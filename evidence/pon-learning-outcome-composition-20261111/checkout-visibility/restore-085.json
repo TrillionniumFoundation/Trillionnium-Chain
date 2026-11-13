@@ -1,0 +1,24 @@
+{
+  "actual_oid": "56351d34b7bf4894d7e69ac08d9fc23eb78dfb84",
+  "bytes": 4955682,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "56351d34b7bf4894d7e69ac08d9fc23eb78dfb84"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 4955682,
+  "expected_oid": "56351d34b7bf4894d7e69ac08d9fc23eb78dfb84",
+  "finished_at": "2026-11-12T01:41:57.702275+00:00",
+  "path": "evidence/pon-w1-work-security-ci-followup-20261101/initial-ci/service-head.zip",
+  "path_base64": "ZXZpZGVuY2UvcG9uLXcxLXdvcmstc2VjdXJpdHktY2ktZm9sbG93dXAtMjAyNjExMDEvaW5pdGlhbC1jaS9zZXJ2aWNlLWhlYWQuemlw",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "6805eb3194b9a706c66d4a98f95d7b60253c7c0798654f7728b413ab7f184c00",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:41:57.575521+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

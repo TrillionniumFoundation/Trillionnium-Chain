@@ -1,0 +1,11 @@
+[fix/chain-native-completion-20261108-70ae 29ac3c8e86] fix(pon): require complete native admission for completion priority
+ 24 files changed, 2784 insertions(+), 107 deletions(-)
+ create mode 100644 evidence/pon-native-completion-20261109/README.md
+ create mode 100644 evidence/pon-native-completion-20261109/review/ag-closure-matrix-review.md
+ create mode 100644 evidence/pon-native-completion-20261109/review/b-peer-review.json
+ create mode 100644 evidence/pon-native-completion-20261109/review/def-call-sites.txt
+ create mode 100644 evidence/pon-native-completion-20261109/review/def-python-commands.json
+ create mode 100644 evidence/pon-native-completion-20261109/review/def-review.json
+ create mode 100644 evidence/pon-native-completion-20261109/review/unbound-helper-guard-manifest.json
+ create mode 100644 trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs
+ create mode 100644 trillionnium/crates/trnm-pon-node/src/store/detached_admission/prepared_held_native_completion_tests.rs

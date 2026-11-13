@@ -7,11 +7,19 @@ on:
       - scripts/test_cell_learning_scope_join.py
       - scripts/cell_learning_iteration_join.py
       - scripts/cell_learning_completion_join.py
+      - scripts/cell_learning_business_join.py
+      - scripts/cell_learning_business_economics.py
+      - scripts/test_cell_learning_business_join.py
+      - scripts/test_cell_learning_business_economics.py
+      - scripts/test_cell_learning_training_no_update_join.py
       - scripts/ci/pq_proof_profile_binding.py
       - scripts/ci/test_pq_proof_profile_binding.py
+      - scripts/ci/w1_upstream_security.py
+      - scripts/ci/test_w1_upstream_security.py
       - scripts/ci/audit_native_campaign_outcomes.py
       - scripts/ci/test_audit_native_campaign_outcomes.py
       - config/pon/pq-proof-profile-binding-v1.json
+      - config/pon/w1-upstream-security-v1.json
       - config/pon/w1-qrom-implementation-current-v2.json
       - config/pon/pq128-lifetime-budget-v1.json
       - evidence/**
@@ -57,11 +65,12 @@ jobs:
           case "$SUITE" in
             scope)
               python3 scripts/test_cell_learning_scope_join.py -v
+              python3 scripts/test_cell_learning_training_no_update_join.py -v
               ;;
             proof-profile)
               python3 scripts/ci/test_pq_proof_profile_binding.py -v
               python3 scripts/ci/pq_proof_profile_binding.py \
-                --expected-profile-descriptor-sha256 5cb35b39dda38d096620e70909bea0cc380464ac2166eddfed83469537deb031
+                --expected-profile-descriptor-sha256 0d47e23d395d6332a0bdf1c9093cf5b19816aad9841e3db6e8cb24f53e0f18b3
               ;;
             campaign-reader)
               python3 scripts/ci/test_audit_native_campaign_outcomes.py -v

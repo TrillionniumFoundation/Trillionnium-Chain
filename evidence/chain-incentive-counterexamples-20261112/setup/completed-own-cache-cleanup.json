@@ -1,0 +1,21 @@
+{
+  "scope": "own completed incremental caches after public_evaluation and Node-genesis-split processes exited zero; no Cargo/native process active in this target",
+  "removed": [
+    {
+      "directory": "/workspace/scratch/3069292387f3/incentive-target/debug/incremental/trnm_pon_node-3fehx5znbfhas",
+      "bytes": 354040038
+    },
+    {
+      "directory": "/workspace/scratch/3069292387f3/incentive-target/debug/incremental/model_composition_v4-2n463dph7q9tz",
+      "bytes": 16998998
+    },
+    {
+      "directory": "/workspace/scratch/3069292387f3/incentive-target/debug/incremental/public_evaluation-1m9wr1vdbzee8",
+      "bytes": 10053164
+    },
+    {
+      "directory": "/workspace/scratch/3069292387f3/incentive-target/debug/incremental/trnm_pon_node-1as7rqklv5g5j",
+      "bytes": 26288454
+    }
+  ]
+}

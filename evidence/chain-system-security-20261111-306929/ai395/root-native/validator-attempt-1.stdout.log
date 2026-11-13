@@ -1,0 +1,51 @@
+{
+  "schema": "trnm-root-native-two-stage-archive-verification-v1",
+  "scope": "archive revalidation only; no Rust commands executed",
+  "source": "bac6b7659bd7e2d633e25c2da0add60f6a10c7fb",
+  "tree": "371c3f55de7940e276496efe2008b537ba4d8268",
+  "archives": [
+    {
+      "file": "root-native-original-observations.tar.gz",
+      "bytes": 17803,
+      "sha256": "7a9b68550e584ac4868e6682ce2269df9d6191e0ac92debb1f7363a56f6982d1",
+      "members": 41,
+      "uncompressed_bytes": 106039,
+      "max_member_bytes": 11836,
+      "whole_source_command_receipts": 6,
+      "raw_log_bindings": 9
+    },
+    {
+      "file": "root-v4-full-original-observations.tar.gz",
+      "bytes": 9153,
+      "sha256": "52ad50744d78a873f6b770b975b8abb62c6f9ecd99d183862ee40c20e5cc9d11",
+      "members": 18,
+      "uncompressed_bytes": 49522,
+      "max_member_bytes": 6903,
+      "whole_source_command_receipts": 1,
+      "raw_log_bindings": 4
+    }
+  ],
+  "initial_v5_methods": 37,
+  "initial_selected_v4_provider_methods": 14,
+  "initial_v4_complete_inventory_field_means_selected_provider_only": true,
+  "initial_selected_provider_outer_1200_timeout_enforced": false,
+  "full_original_v4_methods": 29,
+  "full_original_v4_timeout_seconds_per_target": 1200,
+  "method_executions": 80,
+  "repeated_methods": 14,
+  "unique_methods": 66,
+  "all_method_names_reparsed_from_raw_logs": true,
+  "all_native_results_zero_failed_ignored_filtered": true,
+  "workspace_all_targets_all_features_strict_clippy_passed": true,
+  "whole_tracked_source_receipts_equal": true,
+  "provider_receipts_equal": true,
+  "archive_bytes_and_members_verified": true,
+  "no_files_extracted": true,
+  "native_binary_hashes_are_after_execution_not_live_inode_attestation": true,
+  "native_qualification_applies_only_to": "bac6b7659bd7e2d633e25c2da0add60f6a10c7fb",
+  "status": "HOLD",
+  "production_activation": false,
+  "independent_custody_verified": false,
+  "actual_external_effects_verified": false,
+  "native_m15_production_integration_complete": false
+}

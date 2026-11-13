@@ -1,0 +1,23 @@
+{
+  "schema": "pon-original-campaign-artifact-readback-v1",
+  "source": "7d6567b92575d1d84766afd49d0720b6f197b0e0",
+  "run_id": 42938943169,
+  "job_id": 130255827002,
+  "artifact_id": 13820807612,
+  "zip_bytes": 83977458,
+  "zip_sha256": "f06c618a51693b79fd8d7b7c910b5ce3dad96c1ee73901535688766f57b93b1a",
+  "independent_hash_recomputed": true,
+  "whole_campaigns_passed": 0,
+  "whole_campaigns_scheduled": 3,
+  "phases_passed": 0,
+  "phases_scheduled": 9,
+  "timely_confirmation_rounds": 3,
+  "planned_confirmation_rounds": 27,
+  "distinct_timely_transaction_identities": 1,
+  "honest_submission_attempts": 84,
+  "honest_acknowledgements": 84,
+  "honest_receiver_full_work_acceptances": 84,
+  "history_owner_mode": "exclusive",
+  "reexecuted_on_current_source": false,
+  "production_activation": false
+}

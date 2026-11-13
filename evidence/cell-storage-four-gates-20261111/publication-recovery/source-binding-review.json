@@ -1,0 +1,33 @@
+{
+  "all_other_fields_unchanged": true,
+  "changed": [
+    {
+      "after": "2b8203f977fea7e6b49f891529c00adf20205a4f",
+      "before": "b449f2aa01546e169d227c81f3db199aa8e43f18",
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    },
+    {
+      "after": "a30aa7495e0fede8631ef92e8cb3e0746772915a",
+      "before": "e1676932877a87c0cb0c0e08ef813d608ca6ecf6",
+      "path": "docs/development/specs/pon/CELL_STORAGE_FOUR_GATE_CONTINUATION_V1.md"
+    },
+    {
+      "after": "de08d9498d01dbf150e763995c29f69e6c22933f",
+      "before": "3091f8efebaf7f7d1d232a7100d241e7963c8ed6",
+      "path": ".github/workflows/codeql-real-exact-source.yml"
+    },
+    {
+      "after": "f9389e56ef8cf77d4bb3a284c12f26da8b9795b8",
+      "before": "27adab1aa9913d811d9bb1fb549589a0a95b6965",
+      "path": ".github/workflows/pon-next-architecture-security.yml"
+    },
+    {
+      "after": "e3f6c5bd7f7547a6a6524baadff1549d90ee5e14",
+      "before": "da4ffd67bfeffe39f529c32af1ab086f700ba6f5",
+      "path": "scripts/ci/test_cell_storage_convergence_ci.py"
+    }
+  ],
+  "preserved_pins": 989,
+  "required_paths": 902,
+  "total_pins": 994
+}

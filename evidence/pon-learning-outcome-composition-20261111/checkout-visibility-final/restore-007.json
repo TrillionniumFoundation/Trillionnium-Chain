@@ -1,0 +1,24 @@
+{
+  "actual_oid": "eb2efdd08898ccbf41ae4c4f2a3d9c53fe9d11de",
+  "bytes": 3901732,
+  "command": [
+    "/usr/bin/git",
+    "--no-replace-objects",
+    "cat-file",
+    "blob",
+    "eb2efdd08898ccbf41ae4c4f2a3d9c53fe9d11de"
+  ],
+  "entry_created": true,
+  "existing_path_replaced": false,
+  "exit_code": 0,
+  "expected_bytes": 3901732,
+  "expected_oid": "eb2efdd08898ccbf41ae4c4f2a3d9c53fe9d11de",
+  "finished_at": "2026-11-12T01:55:10.007519+00:00",
+  "path": "evidence/chain-six-full-20261108/archives/proof-owner-history.tar.xz",
+  "path_base64": "ZXZpZGVuY2UvY2hhaW4tc2l4LWZ1bGwtMjAyNjExMDgvYXJjaGl2ZXMvcHJvb2Ytb3duZXItaGlzdG9yeS50YXIueHo=",
+  "result": "RESTORED_EXACT_HEAD_BLOB",
+  "sha256": "5cc328353efb2222419f51fbdb97511a987dc164d0b1e719e58c36ca9f730b84",
+  "source_head": "04f5b5515774aab6663bb80cf7831fe07367ba81",
+  "started_at": "2026-11-12T01:55:09.969476+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

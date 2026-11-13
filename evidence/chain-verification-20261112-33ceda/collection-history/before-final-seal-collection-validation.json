@@ -1,0 +1,26 @@
+{
+  "added_groups": {
+    "570/preparation": 27,
+    "97aa/fixture-fix": 17,
+    "97aa/native": 124
+  },
+  "external_gap_collected": false,
+  "index_sha256": "c75ec8dcd2f730c58e1b62dc10232f962cc8579204a6590c03de8b5a2eecad83",
+  "json_originals_parsed": true,
+  "no_env_files": true,
+  "no_staged_elf": true,
+  "original_bytes": 11763709,
+  "original_files": 690,
+  "pending_remote_groups": [
+    "570/native",
+    "570/source-reconstruction"
+  ],
+  "readme_sha256": "9d5c2d484c1429180bd49de842d1798c0643032f8d3881a222d2abf2bd80d571",
+  "schema": "chain-evidence-collection-validation-v1",
+  "sha256sum_exit": 0,
+  "v4_driver_summary_bytes": 20037,
+  "v4_driver_summary_sha256": "a98b50e6d998b0f7385d47c61e544fd2c346055fea316878113a8ae34ed961a1",
+  "v4_native_tests_passed": 89,
+  "v4_original_commands_passed": 19,
+  "v4_strict_clippy_exit": 0
+}

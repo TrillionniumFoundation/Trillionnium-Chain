@@ -1,0 +1,180 @@
+[
+  {
+    "name": "preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.11367657990194857,
+    "stdout": {
+      "bytes": 172,
+      "sha256": "4c58882a4134d8adc21e7bcf4a095a3d15d31c83a068667459aa26e612434295"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "apply-check",
+    "argv": [
+      "git",
+      "apply",
+      "--check",
+      "--whitespace=error",
+      "/data/chain-abg-70ae-20261108/inputs/r2-current-pins-and-codec-scope.patch"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.00570831703953445,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "apply",
+    "argv": [
+      "git",
+      "apply",
+      "--whitespace=error",
+      "/data/chain-abg-70ae-20261108/inputs/r2-current-pins-and-codec-scope.patch"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.008409121073782444,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "diff-check",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.027842398965731263,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "fmt",
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 19.778341143159196,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "precommit-preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.08717777882702649,
+    "stdout": {
+      "bytes": 172,
+      "sha256": "4c58882a4134d8adc21e7bcf4a095a3d15d31c83a068667459aa26e612434295"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "stage",
+    "argv": [
+      "git",
+      "add",
+      "--",
+      ".github/workflows/pon-recent-batch-acceptance.yml",
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.057759076124057174,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "commit",
+    "argv": [
+      "git",
+      "commit",
+      "-F",
+      "/data/chain-abg-70ae-20261108/inputs/r2-source-commit-message.txt"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.08754552900791168,
+    "stdout": {
+      "bytes": 171,
+      "sha256": "41e8232581e8104dd66873037cbd54b808de4d194cb67265f36e1e5dbe8b7962"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "name": "source-before",
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "843d7c3c0b58b5b0491f686df6a7fd3c26991d6c",
+      "--output",
+      "/data/chain-abg-70ae-20261108/evidence/r2-freeze/source-before.json"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 10.231375969946384,
+    "stdout": {
+      "bytes": 423,
+      "sha256": "bf433725273b50643c859a3aea408d80d931b5ba0103d2ebba161d3e77dd6b51"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+]

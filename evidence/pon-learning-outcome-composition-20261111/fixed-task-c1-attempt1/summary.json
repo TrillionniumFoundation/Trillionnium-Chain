@@ -1,0 +1,10 @@
+{
+  "failed_commands": [
+    "node-single-output-owner"
+  ],
+  "failure": null,
+  "model_efficacy_certified": false,
+  "production_activation": false,
+  "result": "FAIL",
+  "source_head": "c2d67c5cf1ebb4caac525802362d5746b8fd957d"
+}

@@ -7,11 +7,11 @@
 //! The target must retain its own execution fence, especially if both local
 //! databases are restored. Legacy V1 claims are never retyped or migrated here.
 use super::{
-    encoded, hex_string, require, NativeBudgetAnchorV1, NativeBudgetConfigV1, NativeBudgetErrorV1,
-    NativeBudgetHashV1 as Hash, NativeBudgetLaneV1, NativeBudgetReplayV1, NativeBudgetResourcesV1,
-    NativeBudgetResultV1 as Result, NativeFundingOwnerV1, NativeFundingSourceV1,
-    NativePaymentObservationV1, NativePaymentQueryV1, NativePaymentReadbackV1,
-    NativeResourceOutcomeV1,
+    check_native_store_paths, encoded, hex_string, require, NativeBudgetAnchorV1,
+    NativeBudgetConfigV1, NativeBudgetErrorV1, NativeBudgetHashV1 as Hash, NativeBudgetLaneV1,
+    NativeBudgetReplayV1, NativeBudgetResourcesV1, NativeBudgetResultV1 as Result,
+    NativeFundingOwnerV1, NativeFundingSourceV1, NativePaymentObservationV1, NativePaymentQueryV1,
+    NativePaymentReadbackV1, NativeResourceOutcomeV1,
 };
 use borsh::{BorshDeserialize, BorshSerialize};
 use rusqlite::{params, Connection, OptionalExtension, TransactionBehavior};
@@ -605,12 +605,7 @@ impl NativeTaskOperationStoreV2 {
                 .contains(&[0; 32]),
             "TASK_OPERATION_CONFIGURATION_V2",
         )?;
-        if let Ok(metadata) = path.symlink_metadata() {
-            require(
-                metadata.is_file() && !metadata.file_type().is_symlink(),
-                "TASK_OPERATION_FILE_V2",
-            )?;
-        }
+        check_native_store_paths(path, "TASK_OPERATION_FILE_V2")?;
         if let Some(parent) = path
             .parent()
             .filter(|parent| !parent.as_os_str().is_empty())

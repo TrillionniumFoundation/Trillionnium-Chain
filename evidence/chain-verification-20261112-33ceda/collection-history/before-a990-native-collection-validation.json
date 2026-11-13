@@ -1,0 +1,17 @@
+{
+  "external_gap_collected": false,
+  "index_sha256": "2e485c77a2b5930b6bfd11c2134405c4a10390eba1a1eb75f5268b3ba4d5daa8",
+  "json_originals_parsed": true,
+  "native_test_claim": false,
+  "no_env_files": true,
+  "no_staged_elf": true,
+  "original_bytes": 4198009,
+  "original_files": 398,
+  "pending_remote_groups": [
+    "a990/native",
+    "a464/native"
+  ],
+  "readme_sha256": "e0dd5d4343223369e555ad920f832de82372024a7f49dc9828ed9878e159de01",
+  "schema": "chain-evidence-collection-validation-v1",
+  "sha256sum_exit": 0
+}

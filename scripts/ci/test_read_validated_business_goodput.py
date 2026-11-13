@@ -134,6 +134,108 @@ class GoodputJoinTests(unittest.TestCase):
         self.assertIsNone(out["successful_round_latency_p95_ns"])
         self.assertIsNone(out["successful_round_latency_p99_ns"])
 
+    def test_scheduled_completion_retains_delay_before_actual_round_entry(self):
+        doc = fixture()
+        phase = doc["phases"][0]
+        # Preserve the same 150 ns actual-start-to-round-end duration while
+        # shifting two rounds two seconds behind their original 5/9s schedule.
+        # The importer-local observation clock remains unchanged.
+        for number in (1, 2):
+            for row in (phase["confirmations"][number], phase["history"][number],
+                        phase["history"][number]["client_import"],
+                        phase["history"][number]["client_confirmation"]):
+                for key in ("started_ns", "ended_ns"):
+                    row[key] += 2_000_000_000
+        out = self.output(doc)
+        fixed = out["fixed_schedule_completion"]
+        self.assertEqual(out["successful_round_latency_p50_nearest_rank_ns"], 150)
+        self.assertEqual(fixed["successful_scheduled_round_latency_p50_nearest_rank_ns"],
+                         2_000_000_150)
+        self.assertEqual([row["scheduled_ns"] for row in fixed["outcomes"]],
+                         [1_000_000_000, 5_000_000_000, 9_000_000_000])
+        self.assertEqual([row["start_delay_ns"] for row in fixed["outcomes"]],
+                         [0, 2_000_000_000, 2_000_000_000])
+        self.assertEqual(out["validated_goodput_per_second"], {"numerator": 3, "denominator": 40})
+        self.assertFalse(out["finite_phase_criteria_met"])
+
+    def test_fixed_schedule_rejects_a_round_entered_before_its_scheduled_time(self):
+        doc = fixture()
+        doc["phases"][0]["confirmations"][1]["started_ns"] -= 1
+        with self.assertRaisesRegex(ValueError, "round precedes original fixed schedule"):
+            self.output(doc)
+
+    def test_duplicate_or_reordered_rounds_cannot_fill_scheduled_denominator(self):
+        for indices in ((0, 0, 2), (1, 0, 2), (0, 2, 1)):
+            with self.subTest(indices=indices):
+                doc = fixture()
+                for row, number in zip(doc["phases"][0]["confirmations"], indices):
+                    row["round"] = number
+                with self.assertRaisesRegex(ValueError, "ordered original scheduled rounds"):
+                    self.output(doc)
+
+    def test_fixed_schedule_missing_round_has_identity_and_unknown_timing(self):
+        doc = fixture()
+        phase = doc["phases"][0]
+        missing_transaction = phase["confirmations"][-1]["transaction"]
+        phase["confirmations"].pop()
+        phase["all_signed_rounds_confirmed_in_window"] = False
+        out = self.output(doc)
+        fixed = out["fixed_schedule_completion"]
+        self.assertEqual(fixed["planned_rounds"], 3)
+        self.assertEqual(fixed["planned_outcome_counts"], {"unobserved": 1, "validated": 2})
+        self.assertEqual(fixed["rounds_without_observed_on_time_validation"], 1)
+        row = fixed["outcomes"][-1]
+        self.assertEqual(row["transaction"], missing_transaction)
+        self.assertEqual(row["scheduled_ns"], 9_000_000_000)
+        self.assertEqual(row["state"], "unobserved")
+        for key in ("started_ns", "ended_ns", "start_delay_ns", "round_end_from_schedule_ns",
+                    "on_time_validated_round_end_from_schedule_ns"):
+            self.assertIsNone(row[key])
+        self.assertIsNone(out["validated_goodput_per_second"])
+
+    def test_fixed_schedule_keeps_late_observed_elapsed_without_confirmation_credit(self):
+        doc = fixture()
+        phase = doc["phases"][0]
+        phase["confirmations"][-1].update(ended_ns=reader.WINDOW_NS + 1,
+                                          confirmed_inside_pressure_window=False)
+        phase["all_signed_rounds_confirmed_in_window"] = False
+        out = self.output(doc)
+        fixed = out["fixed_schedule_completion"]
+        row = fixed["outcomes"][-1]
+        self.assertEqual(row["state"], "late_or_window_refused")
+        self.assertEqual(row["round_end_from_schedule_ns"], 21_000_000_001)
+        self.assertIsNone(row["on_time_validated_round_end_from_schedule_ns"])
+        self.assertEqual(fixed["on_time_validated_rounds"], 2)
+        self.assertEqual(fixed["rounds_without_observed_on_time_validation"], 1)
+        self.assertEqual(out["unique_validated_business_observed"], 2)
+
+    def test_fixed_schedule_does_not_turn_missing_validation_or_null_observation_into_latency(self):
+        doc = fixture()
+        phase = doc["phases"][0]
+        phase["history"] = []
+        phase["confirmations"][-1].update(observation=None, confirmed_inside_pressure_window=False)
+        phase["all_signed_rounds_confirmed_in_window"] = False
+        fixed = self.output(doc)["fixed_schedule_completion"]
+        self.assertEqual(fixed["planned_outcome_counts"],
+                         {"unknown": 1, "validation_evidence_missing": 2})
+        self.assertEqual(fixed["rounds_without_observed_on_time_validation"], 3)
+        self.assertEqual(fixed["successful_scheduled_round_latency_samples"], 0)
+        self.assertIsNone(fixed["successful_scheduled_round_latency_p50_nearest_rank_ns"])
+        self.assertTrue(all(row["on_time_validated_round_end_from_schedule_ns"] is None
+                            for row in fixed["outcomes"]))
+
+    def test_fixed_schedule_rounds_remain_distinct_from_unique_business_and_population_tails(self):
+        out = self.output(fixture(repeated_transaction=True))
+        fixed = out["fixed_schedule_completion"]
+        self.assertEqual(out["unique_validated_business_observed"], 1)
+        self.assertEqual(fixed["on_time_validated_rounds"], 3)
+        self.assertEqual(fixed["planned_outcome_counts"], {"validated": 3})
+        for key in ("successful_scheduled_round_latency_p95_ns", "successful_scheduled_round_latency_p99_ns",
+                    "all_planned_confirmation_p95_ns", "all_planned_confirmation_p99_ns"):
+            self.assertIsNone(fixed[key])
+        self.assertTrue(fixed["scope"]["counts_are_rounds_not_unique_business_effects"])
+        self.assertFalse(fixed["scope"]["original_confirmation_criteria_changed"])
+
     def test_missing_scheduled_rounds_remain_in_denominator_and_block_definitive_rate(self):
         doc = fixture()
         phase = doc["phases"][0]
@@ -351,6 +453,13 @@ class GoodputJoinTests(unittest.TestCase):
         self.assertEqual(out["unobserved_rounds"], 3)
         self.assertEqual(out["startup_or_campaign_error"], "original refusal")
         self.assertIsNone(out["validated_goodput_per_second"])
+        fixed = out["fixed_schedule_completion"]
+        self.assertEqual(fixed["planned_outcome_counts"], {"unobserved": 3})
+        self.assertEqual(fixed["rounds_without_observed_on_time_validation"], 3)
+        self.assertEqual([row["scheduled_ns"] for row in fixed["outcomes"]],
+                         [1_000_000_000, 5_000_000_000, 9_000_000_000])
+        self.assertTrue(all(row["started_ns"] is None and row["ended_ns"] is None
+                            for row in fixed["outcomes"]))
 
     def test_unsupported_positive_qualification_is_not_imported(self):
         doc = fixture()

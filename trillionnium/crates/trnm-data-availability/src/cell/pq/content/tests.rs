@@ -7,6 +7,49 @@ use crate::cell::{
 use trnm_protocol::pq_frame::ml_dsa_65_key_id_from_spki;
 use zeroize::Zeroizing;
 
+#[test]
+fn cpv4_retained_key_preserves_two_normal_scans_in_one_original_session() {
+    let (_dir, store, content) = captured();
+    let (key, pin) = key();
+    let pins = CellPqKeyPinsV2::new(vec![pin.clone()]).unwrap();
+    let model = owner(content.version().model().closure(), CellFileRoleV1::Base);
+    let environment = owner(
+        content.version().environment(),
+        CellFileRoleV1::Configuration,
+    );
+    let original = auth(&content, &key);
+    let initial = expected(&content, &pin, &model, &environment);
+    let fresh = original
+        .verify_cached_at(&content, &store, &initial, &mut session(1))
+        .unwrap();
+    let per_scan = fresh.usage();
+    let mut retained_session = session(2);
+    let original_deadline = retained_session.deadline();
+    for (count, sequence) in [4, 5].into_iter().enumerate() {
+        let mut statement = original.statement().clone();
+        statement.sequence = sequence;
+        let signed = CellPqContentAuthorizationV4::sign(statement, &key).unwrap();
+        let mut current = expected(&content, &pin, &model, &environment);
+        current.authority.sequence = sequence;
+        current.authority.now += sequence;
+        let retained = signed
+            .verify_cached_at_with_pins(&content, &store, &current, &mut retained_session, &pins)
+            .unwrap();
+        assert_eq!(retained.content_at(&current).unwrap(), &content);
+        let scans = count as u64 + 1;
+        assert_eq!(retained.usage().attempted_scans, scans as u32);
+        assert_eq!(
+            retained.usage().reserved_payload_bytes,
+            scans * per_scan.reserved_payload_bytes
+        );
+        assert_eq!(
+            retained.usage().reserved_chunks,
+            scans * per_scan.reserved_chunks
+        );
+        assert_eq!(retained_session.deadline(), original_deadline);
+    }
+}
+
 fn key() -> (PqNativeSigningKey, CellPqKeyPinV2) {
     let seed = Zeroizing::new([93; 32]);
     let spki = PqNativeSigningKey::public_spki_from_seed(&seed);
@@ -253,4 +296,86 @@ fn cpv4_requires_full_spki_commitment_and_refuses_withdrawal_before_readback() {
         .verify_cached_at(&content, &store, &expected, &mut budget)
         .is_err());
     assert_eq!(budget.usage().attempted_scans, 0);
+}
+
+#[test]
+fn cpv4_retained_verifier_rechecks_signature_pin_and_current_observation() {
+    let (_dir, store, content) = captured();
+    let (key, pin) = key();
+    let keys = CellPqKeyPinsV2::new(vec![pin.clone()]).unwrap();
+    let model = owner(content.version().model().closure(), CellFileRoleV1::Base);
+    let environment = owner(
+        content.version().environment(),
+        CellFileRoleV1::Configuration,
+    );
+    let current = expected(&content, &pin, &model, &environment);
+    let signed = auth(&content, &key);
+    let proof = signed
+        .verify_cached_at_with_pins(&content, &store, &current, &mut session(1), &keys)
+        .unwrap();
+    assert_eq!(proof.content_at(&current).unwrap(), &content);
+    let mut bad = signed.clone();
+    bad.signature[0] ^= 1;
+    let mut budget = session(1);
+    assert!(bad
+        .verify_cached_at_with_pins(&content, &store, &current, &mut budget, &keys)
+        .is_err());
+    assert_eq!(budget.usage().attempted_scans, 0);
+    bad = signed.clone();
+    bad.statement.signer_spki_sha512[63] ^= 1;
+    assert!(bad
+        .verify_cached_at_with_pins(&content, &store, &current, &mut budget, &keys)
+        .is_err());
+    assert_eq!(budget.usage().attempted_scans, 0);
+    let mut changed = pin.clone();
+    changed.expires_at -= 1;
+    let changed_view = expected(&content, &changed, &model, &environment);
+    assert!(signed
+        .verify_cached_at(&content, &store, &changed_view, &mut session(1))
+        .is_ok());
+    assert!(signed
+        .verify_cached_at_with_pins(&content, &store, &changed_view, &mut budget, &keys)
+        .is_err());
+    assert_eq!(budget.usage().attempted_scans, 0);
+    let mut next = expected(&content, &pin, &model, &environment);
+    next.authority.sequence += 1;
+    assert!(proof.content_at(&next).is_err());
+    assert!(signed
+        .verify_cached_at_with_pins(&content, &store, &current, &mut session(1), &keys.clone())
+        .is_ok());
+}
+
+#[test]
+fn cpv4_retained_verifier_keeps_complete_failed_readback_reservations_and_deadline() {
+    let (dir, store, content) = captured();
+    let (key, pin) = key();
+    let keys = CellPqKeyPinsV2::new(vec![pin.clone()]).unwrap();
+    let model = owner(content.version().model().closure(), CellFileRoleV1::Base);
+    let environment = owner(
+        content.version().environment(),
+        CellFileRoleV1::Configuration,
+    );
+    let current = expected(&content, &pin, &model, &environment);
+    let signed = auth(&content, &key);
+    let mut budget = session(2);
+    let deadline = budget.deadline();
+    signed
+        .verify_cached_at_with_pins(&content, &store, &current, &mut budget, &keys)
+        .unwrap();
+    assert_eq!(budget.usage().attempted_scans, 1);
+    assert_eq!(budget.usage().reserved_payload_bytes, 4 * 32769);
+    let db = rusqlite::Connection::open(dir.path().join("cache.sqlite")).unwrap();
+    db.execute("DELETE FROM cell_chunks_v1", []).unwrap();
+    assert!(signed
+        .verify_cached_at_with_pins(&content, &store, &current, &mut budget, &keys)
+        .is_err());
+    assert_eq!(budget.usage().attempted_scans, 2);
+    assert_eq!(budget.usage().reserved_payload_bytes, 8 * 32769);
+    assert_eq!(budget.usage().reserved_chunks, 24);
+    assert_eq!(budget.deadline(), deadline);
+    assert!(signed
+        .verify_cached_at_with_pins(&content, &store, &current, &mut budget, &keys)
+        .is_err());
+    assert_eq!(budget.usage().attempted_scans, 2);
+    assert_eq!(budget.deadline(), deadline);
 }

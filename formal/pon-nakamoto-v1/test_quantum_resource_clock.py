@@ -200,6 +200,20 @@ class ResourceClockControls(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "NO_DISTANCE_FOR_CAMPAIGN"):
             bind(case, replace(request, physical_models=(model,)))
 
+    def test_impossible_toffoli_model_refused_before_clock_binding(self):
+        case, request = premise()
+        for changes, error in (
+                ({"toffoli_decomposition_depth": 1}, "T_DEPTH_EXCEEDS_DECOMPOSITION_DEPTH"),
+                ({"t_per_toffoli": 2}, "T_DEPTH_EXCEEDS_T_COUNT")):
+            model = replace(request.physical_models[0], **changes)
+            with self.subTest(changes=changes), self.assertRaisesRegex(ValueError, error):
+                bind(case, replace(request, physical_models=(model,)))
+        model = replace(request.physical_models[0], t_per_toffoli=3,
+                        t_depth_per_toffoli=3, toffoli_decomposition_depth=3)
+        report = bind(case, replace(request, physical_models=(model,))).certificate
+        self.assertFalse(report["fault_tolerant_schedule_verified"])
+        self.assertFalse(report["cheapest_miner_or_lower_bound"])
+
     def test_campaign_rederives_clocks_and_replays_trace(self):
         _, request = premise()
         record = campaign.observe(request, request.physical_models[0].name, 10**30, 17, 2)

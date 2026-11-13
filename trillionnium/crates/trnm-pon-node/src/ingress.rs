@@ -370,7 +370,12 @@ fn require_classical_network_settings(settings: &Settings) -> Result<()> {
     ensure(
         !settings.app.is_pq_account_profile(),
         "AUTH_CLASSICAL_FOR_PQ_PROFILE",
-    )
+    )?;
+    // The retained Settings identity does not validate mutable application
+    // fields. Refuse damaged development scope and orphan native_pq_ markers
+    // before signing, authentication, admission work or any socket operation.
+    settings.app.check_account_profile()?;
+    Ok(())
 }
 
 fn require_classical_network_owner(node: &Node) -> Result<()> {
@@ -596,11 +601,22 @@ fn begin_authenticated_dispatch(
 }
 
 fn authenticated_dispatch_needs_retry(error: &Error) -> bool {
-    // Only this local capacity refusal leaves native admission incomplete.
-    // Other Capacity codes can express an actual profile/state limit, and a
-    // local-integrity override must never become a retry from its wire text.
+    // These local refusals leave the exact request's admission incomplete.
+    // A missing parent, future timestamp or changed admission epoch can become
+    // admissible without changing the signed request. Caching that observation
+    // as terminal would prevent its original durable nonce from recovering.
+    // Other Capacity/StaleContext codes retain their original policy; neither
+    // a local-integrity override nor remote text grants retry authority.
     error.kind() == crate::ErrorKind::Cancelled
         || (error.kind() == crate::ErrorKind::Capacity && error.is(ErrorCode::PublicQueueBusy))
+        || (error.kind() == crate::ErrorKind::StaleContext
+            && [
+                ErrorCode::UnknownParent,
+                ErrorCode::TimeDeferred,
+                ErrorCode::AdmissionHeaderEpochChanged,
+            ]
+            .into_iter()
+            .any(|code| error.is(code)))
 }
 
 fn verify_authenticated_response(
@@ -1294,8 +1310,18 @@ struct SubmitDispatchContext<'a> {
     termination_cpu: Option<&'a public_v3::ServiceMutationCpuCheckpoint>,
 }
 
+#[derive(Default)]
+struct AdmissionDispatchContext<'a> {
+    observation: Option<&'a public_v3::request_observation::TaskObservation>,
+    completion_cpu: Option<&'a public_v3::ServiceMutationCpuCheckpoint>,
+}
+
 #[path = "ingress/execution_observation.rs"]
 mod execution_observation;
+
+#[cfg(test)]
+#[path = "ingress/submit_activation_history_tests.rs"]
+mod submit_activation_history_tests;
 
 fn observe_submit_phase<T>(
     observation: Option<&public_v3::request_observation::TaskObservation>,
@@ -1311,20 +1337,61 @@ fn observe_submit_phase<T>(
 }
 
 /// Reuse the caller's original CPU operation, worker accounting and absolute
-/// cancellation control. There is no reservation/refill/account construction
-/// here. One bounded snapshot slot keeps M06 memory concurrency at one owner.
+/// cancellation control. This creates no new account, reservation or refill
+/// source. One bounded snapshot slot keeps M06 memory concurrency at one owner.
+struct SharedAdmissionExecution<'a, 'b> {
+    held: &'a trnm_mvcc_fee::pon_executor::ExecutionControl<'b, Error>,
+    // Selected only after dropping the original Node writer. Preparation,
+    // capacity fallback, reacquisition and commit always use `held`.
+    detached_progress:
+        &'a (dyn Fn(trnm_mvcc_fee::pon_executor::ExecutionProgress) -> Result<()> + Sync),
+    // Selected only after successful detached execution has joined workers,
+    // before acquiring the writer. Held/fallback paths never call this.
+    before_writer: &'a (dyn Fn() -> Result<()> + Sync),
+    // Submit requests activation under its current clock. History import keeps
+    // its separate historical-validity contract and passes None.
+    activation_parent: Option<Hash>,
+}
+
+impl SharedAdmissionExecution<'_, '_> {
+    fn check_activation_parent(
+        &self,
+        owner: &Node,
+        observed_now: u64,
+        progress: &mut dyn FnMut(u64) -> Result<()>,
+    ) -> Result<()> {
+        if let Some(parent) = self.activation_parent {
+            // Complete W1 has already succeeded. Keep the original held CPU,
+            // cancellation and deadline owner through this O(history) read.
+            // No rejected or cheap-prechecked proof can invoke this scan.
+            owner.check_observed_history_with_progress(parent, observed_now, &mut || {
+                progress(0)?;
+                (self.held.progress)(
+                    trnm_mvcc_fee::pon_executor::ExecutionProgress::BeforeHeaderContext,
+                )
+            })?;
+        }
+        Ok(())
+    }
+}
+
 fn admit_shared_checked<'a>(
     node: &'a Mutex<Node>,
     checked: WorkCheckedPacket,
     permit: Option<crate::store::OwnerPacketPermit>,
     progress: &mut dyn FnMut(u64) -> Result<()>,
-    control: &trnm_mvcc_fee::pon_executor::ExecutionControl<'_, Error>,
+    execution: SharedAdmissionExecution<'_, '_>,
     clock: impl Fn() -> Result<u64>,
-    observation: Option<&public_v3::request_observation::TaskObservation>,
+    context: AdmissionDispatchContext<'_>,
 ) -> Result<(MutexGuard<'a, Node>, Hash, u64)> {
+    let AdmissionDispatchContext {
+        observation,
+        completion_cpu,
+    } = context;
     use crate::store::{DetachedExecutionLease, PreparedSharedAdmission};
     use public_v3::SubmitPhase;
     use trnm_mvcc_fee::pon_executor::ExecutionProgress;
+    let control = execution.held;
     let wait_end = Instant::now() + Duration::from_secs(2);
     let (mut owner, lease): (MutexGuard<'a, Node>, Option<DetachedExecutionLease>) =
         observe_submit_phase(observation, SubmitPhase::AdmissionOwnerWait, || loop {
@@ -1357,13 +1424,21 @@ fn admit_shared_checked<'a>(
         })?;
     observe_submit_phase(observation, SubmitPhase::Admission, || {
         let observed_now = clock()?;
+        execution.check_activation_parent(&owner, observed_now, progress)?;
         let checked = owner.attach_owner_work(checked, permit)?;
         let Some(lease) = lease else {
             let id = execution_observation::run(
                 observation,
                 control,
                 execution_observation::Scope::Held,
-                |control| owner.admit_work_checked_with_control(checked, observed_now, control),
+                |control| {
+                    owner.admit_work_checked_with_completion(
+                        checked,
+                        observed_now,
+                        control,
+                        completion_cpu,
+                    )
+                },
             )?;
             return Ok((owner, id, observed_now));
         };
@@ -1386,16 +1461,22 @@ fn admit_shared_checked<'a>(
                     observation,
                     control,
                     execution_observation::Scope::PreparedHeld,
-                    |control| owner.admit_held_prepared(*checked, observed_now, control),
+                    |control| {
+                        owner.admit_held_prepared(*checked, observed_now, control, completion_cpu)
+                    },
                 )?;
                 Ok((owner, id, observed_now))
             }
             PreparedSharedAdmission::Execute(prepared) => {
                 drop(owner);
+                let detached = trnm_mvcc_fee::pon_executor::ExecutionControl::new(
+                    execution.detached_progress,
+                    control.worker_accounting,
+                );
                 let executed = observe_submit_phase(observation, SubmitPhase::Execution, || {
                     execution_observation::run(
                         observation,
-                        control,
+                        &detached,
                         execution_observation::Scope::DetachedExecution,
                         |control| prepared.execute(control),
                     )
@@ -1404,6 +1485,7 @@ fn admit_shared_checked<'a>(
                 // never additional CPU or an additional request deadline.
                 let mut owner =
                     observe_submit_phase(observation, SubmitPhase::CommitOwnerWait, || {
+                        (execution.before_writer)()?;
                         progress(0)?;
                         let mut reacquisition = |amount| {
                             progress(amount)?;
@@ -1413,7 +1495,8 @@ fn admit_shared_checked<'a>(
                     })?;
                 let observed_now = clock()?;
                 let id = observe_submit_phase(observation, SubmitPhase::Commit, || {
-                    owner.commit_shared_admission(executed, observed_now, control)
+                    execution.check_activation_parent(&owner, observed_now, progress)?;
+                    owner.commit_shared_admission(executed, observed_now, control, completion_cpu)
                 })?;
                 Ok((owner, id, observed_now))
             }
@@ -1469,6 +1552,7 @@ fn dispatch_shared_submit_with_execution_observation(
         ..
     } = context;
     let packet = observe_submit_phase(observation, SubmitPhase::Decode, decode)?;
+    let activation_parent = packet.header.parent;
     let owner_permit = {
         let mut owner = observe_submit_phase(observation, SubmitPhase::ContextOwnerWait, || {
             lock_owner(node, progress)
@@ -1528,9 +1612,19 @@ fn dispatch_shared_submit_with_execution_observation(
         checked,
         owner_permit,
         progress,
-        control,
+        SharedAdmissionExecution {
+            held: control,
+            detached_progress: control.progress,
+            // Public submit retains its existing progress checks below; only
+            // History supplies the original-account writer preparation wait.
+            before_writer: &|| Ok(()),
+            activation_parent: Some(activation_parent),
+        },
         now,
-        observation,
+        AdmissionDispatchContext {
+            observation,
+            completion_cpu: termination_cpu,
+        },
     )?;
     observe_submit_phase(observation, SubmitPhase::SubmitResult, || {
         submit_result_with_progress(
@@ -2872,6 +2966,9 @@ pub fn sync_from_public_history_pq_v4(
     )
     .into())
 }
+
+#[cfg(test)]
+mod account_scope_tests;
 
 #[cfg(test)]
 mod tests {

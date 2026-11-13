@@ -1,0 +1,170 @@
+{
+  "archive": {
+    "bytes": 4993378,
+    "manifest_member": "MANIFEST.json",
+    "manifest_sha256": "2c5527c9a691fcdb325729c479149de67b148aab5be17ece9ccc4ef9c14a787c",
+    "original_inputs_unchanged_during_packaging": true,
+    "path": "work-time-recovery.tar.gz",
+    "retained_directories": 8,
+    "retained_original_files": 137,
+    "sha256": "6ca719903024582514448e447b84a676919d475eb21c8cd9030aed0eb09108ea"
+  },
+  "attempt_01": {
+    "archive_prefix": "work-time-attempt-01/",
+    "cause_scope": "setUpClass checkout of the exact b16 historical source exited 128; original runner suppressed checkout stderr. Separate probes retain their own actual stderr.",
+    "existing_stage_directory_preserved": true,
+    "exit_record": {
+      "exit_code": 1
+    },
+    "reference_errors": 1,
+    "reference_tests_run": 0,
+    "status": "FAILED"
+  },
+  "attempt_02": {
+    "archive_prefixes": [
+      "work-time-attempt-02/",
+      "work-time-attempt-02-launch/"
+    ],
+    "exit_code": null,
+    "statement": "The command-start record and incomplete original files are retained unchanged. The exec session could not be resumed after temporary environment unavailability. No success, failure, or test count is inferred.",
+    "status": "UNKNOWN_NO_COMPLETION_RECORD"
+  },
+  "attempt_03": {
+    "archive_prefixes": [
+      "work-time-attempt-03/",
+      "work-time-attempt-03-launch/"
+    ],
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/run_work_time_contract_v1.py",
+      "--output-dir",
+      "/workspace/scratch/7f73fe002713/daa-final-validation/work-time-attempt-03",
+      "--campaign",
+      "--frozen-baseline-source",
+      "/workspace/scratch/7f73fe002713/frozen-work-baseline"
+    ],
+    "campaign": {
+      "catalog-generate": {
+        "exit_code": 0,
+        "passed": true,
+        "stage": "catalog-generate"
+      },
+      "catalog-replay": {
+        "exit_code": 0,
+        "passed": true,
+        "stage": "catalog-replay"
+      }
+    },
+    "completed_at_utc": "2026-11-12T00:33:54.290526+00:00",
+    "cwd": "/workspace/scratch/7f73fe002713/chain-daa",
+    "elapsed_wall_ns": 185986148342,
+    "environment_overrides": {},
+    "exit_code": 0,
+    "inherited_environment": {
+      "GIT_ALTERNATE_OBJECT_DIRECTORIES": null,
+      "GIT_CONFIG_COUNT": null,
+      "GIT_CONFIG_GLOBAL": null,
+      "GIT_CONFIG_NOSYSTEM": null,
+      "GIT_CONFIG_SYSTEM": null,
+      "GIT_NO_LAZY_FETCH": null,
+      "GIT_NO_REPLACE_OBJECTS": null,
+      "GIT_OBJECT_DIRECTORY": null,
+      "GIT_OPTIONAL_LOCKS": null,
+      "GIT_REPLACE_REF_BASE": null,
+      "PATH": "/home/agent/.codex/tmp/arg0-linux/codex-arg0QYFhWV:/opt/codex/codex-path:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/opt/codex/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/agent/.local/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "PYTHONDONTWRITEBYTECODE": null,
+      "PYTHONPATH": null
+    },
+    "named_tests": {
+      "errors": 0,
+      "expected_failures": 0,
+      "failed": 0,
+      "required": 106,
+      "skipped": 0,
+      "started": 106,
+      "successful": 106,
+      "tests_run": 106,
+      "unexpected_successes": 0
+    },
+    "original_current_contract": {
+      "error": {
+        "message": "SOURCE_BYTES:config/pon/pq-cross-branch-corpus-v1.json",
+        "type": "ValueError"
+      },
+      "matched": false
+    },
+    "reference_tests": {
+      "errors": 0,
+      "expected_failures": 0,
+      "failures": 0,
+      "required": 13,
+      "skipped": 0,
+      "started": 13,
+      "successful": 13,
+      "tests_run": 13,
+      "unexpected_successes": 0
+    },
+    "retained_stderr_scope": "The original stderr includes output from intentional graft/non-repository negative controls. Their recorded tests pass; stderr is not filtered.",
+    "source_and_contract_guards": {
+      "current-research-source-after": {
+        "passed": true,
+        "stage": "current-research-source-after"
+      },
+      "frozen-contract-after": {
+        "passed": true,
+        "stage": "frozen-contract-after"
+      },
+      "frozen-contract-before": {
+        "passed": true,
+        "stage": "frozen-contract-before"
+      }
+    },
+    "source_and_controls_unchanged": true,
+    "source_commit": "d23488c5f9b4a6696c3799b12f14b8af0a1b81fc",
+    "source_tree": "72b106b4458299c37da146b0218b8f5276195b6d",
+    "started_at_utc": "2026-11-12T00:30:48.304455+00:00",
+    "status": "RESEARCH_CONTROLS_PASSED",
+    "timed_out": false
+  },
+  "current_native_cost_qualified": false,
+  "git_availability_repair": {
+    "advertised_closure_missing_after": 0,
+    "alternate_object_environment_used": false,
+    "archive_prefixes": [
+      "git-object-repair/",
+      "git-object-recovery-attempt-03/"
+    ],
+    "contract_root_objects_first_import": 98,
+    "local_auxiliary_ref": "refs/heads/task-local/frozen-w1-b16-7f73",
+    "local_auxiliary_ref_published": false,
+    "local_auxiliary_ref_target": "b16bae2824e6c8236ef2011fc93a74df3ac7f039",
+    "minimal_default_environment_contract_check": "PASS: detached exact b16/49392edc; 1747 entries and 27613671 bytes checked",
+    "objects_imported_from_existing_local_baseline": 149,
+    "real_b16_shallow_boundary_added_by_normal_local_depth_one_fetch": true,
+    "remaining_advertised_closure_objects_second_import": 51,
+    "shallow_file_manually_edited": false
+  },
+  "key_sha256": {
+    "contract-after.json": "7b929384173d092b0001b7b31e315deac97ad6753cd7270cb0a423d911f0591f",
+    "contract-before.json": "7b929384173d092b0001b7b31e315deac97ad6753cd7270cb0a423d911f0591f",
+    "execution.json": "52d7ef5a954870909af9bc466afd96fe754bb787c884d4f7a3b38fe9f67f6bdf",
+    "named-controls.json": "41f5f3ead0a9a6b9c5f149f1074820992093aad1552d8e33f08dd8d582aa8b0f",
+    "reference-controls.json": "229e746ab791dc813a901bfc528f1930a9524275e55c2b22e8c0f2ea80c20f06",
+    "research-source-after.json": "6d2f8a8ab76cc2d3f8ed5e591c72e7b2897697aedc11751dcff8966b64bf1ea5",
+    "research-source-before.json": "6d2f8a8ab76cc2d3f8ed5e591c72e7b2897697aedc11751dcff8966b64bf1ea5"
+  },
+  "qualification": {
+    "all_legal_algorithm_cost_lower_bound": false,
+    "joint_cp_cq_cg_proof": false,
+    "lifetime_security_bound": null,
+    "native_time_daa_upgrade": false,
+    "production_activation": false,
+    "real_hepta_product_loop": false,
+    "same_iteration_deployment": false,
+    "variable_u_native_relation": false
+  },
+  "qualification_status": "HOLD_NO_GO",
+  "schema": "pon-work-time-recovery-summary-v1",
+  "scope": "Current research controls replay a separately verified fixed historical W1 contract. This is not native execution or joint consensus security qualification."
+}

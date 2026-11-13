@@ -1,0 +1,310 @@
+Diff in /data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs:37:
+     let checked =
+         WorkCheckedPacket::verify_with_progress(packet.clone(), &mut |_| operation.checkpoint())
+             .unwrap();
+-    operation.live.test_legacy_w1_only_priority(&checked).unwrap();
++    operation
++        .live
++        .test_legacy_w1_only_priority(&checked)
++        .unwrap();
+ }
+ 
+ #[test]
+Diff in /data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs:434:
+                     })
+                     .unwrap();
+                     barrier.wait();
+-                    operation.live.test_legacy_w1_only_priority(&checked).unwrap();
++                    operation
++                        .live
++                        .test_legacy_w1_only_priority(&checked)
++                        .unwrap();
+                     let promoted = operation.live.state.lock().unwrap().verified_completion;
+                     barrier.wait();
+                     assert_eq!(domain.budget.lock().unwrap().verified_completions, 1);
+Diff in /data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs:717:
+         operation.history_checkpoint(false, &|| Ok(()))
+     })
+     .unwrap();
+-    operation.test_legacy_history_w1_only_priority(&checked).unwrap();
++    operation
++        .test_legacy_history_w1_only_priority(&checked)
++        .unwrap();
+     let saw_real_deficit = AtomicBool::new(false);
+     let resource = || {
+         ensure(Instant::now() < deadline, "PUBLIC_REQUEST_DEADLINE")?;
+Diff in /data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs:122:
+             assert_eq!(result.unwrap()["block"], hex::encode(id));
+             assert_eq!(node.lock().unwrap().active().unwrap().0, id);
+         }
+-        assert_eq!(domain.observe_completion_work().unwrap().live_completions, 0);
++        assert_eq!(
++            domain.observe_completion_work().unwrap().live_completions,
++            0
++        );
+     }
+     let flow = domain.observe_actual_flow().unwrap().unwrap();
+     let registry = domain.observe_completion_work().unwrap();
+Diff in /data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs:201:
+         )
+         .unwrap();
+     let task = prepared(&original.proof);
+-    let original_identity = GrowthWorkCheckedPacket::verify_with_progress(original.clone(), &|_| Ok(()))
+-        .unwrap()
+-        .completion_identity()
+-        .unwrap();
++    let original_identity =
++        GrowthWorkCheckedPacket::verify_with_progress(original.clone(), &|_| Ok(()))
++            .unwrap()
++            .completion_identity()
++            .unwrap();
+     let mut candidates: Vec<GrowthPacket> = Vec::new();
+     let mut identities = Vec::new();
+     for state_mismatch in [true, false] {
+Diff in /data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs:228:
+                 break;
+             }
+         }
+-        let identity = GrowthWorkCheckedPacket::verify_with_progress(candidate.clone(), &|_| Ok(()))
+-            .unwrap()
+-            .completion_identity()
+-            .unwrap();
++        let identity =
++            GrowthWorkCheckedPacket::verify_with_progress(candidate.clone(), &|_| Ok(()))
++                .unwrap()
++                .completion_identity()
++                .unwrap();
+         assert_ne!(identity, original_identity);
+         identities.push(identity);
+         candidates.push(candidate);
+Diff in /data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs:249:
+             )
+         })
+         .collect();
+-    let receiver = Node::open_with_permanent_account_growth_v2(
+-        &directory.path().join("receiver"),
+-        settings,
+-    )
+-    .unwrap();
++    let receiver =
++        Node::open_with_permanent_account_growth_v2(&directory.path().join("receiver"), settings)
++            .unwrap();
+     let server = PublicServer::new(
+         DevelopmentIdentity::from_secret_hex(&hex::encode([74; 32])).unwrap(),
+         PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+Diff in /data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs:283:
+     let (directory, settings, original) = ordinary_fixture();
+     let mut receiver = Node::open(&directory.path().join("receiver"), settings.clone(), 1).unwrap();
+     let domain = receiver.remote_history_cpu_domain().unwrap();
+-    assert_eq!(domain.observe_actual_flow().unwrap().unwrap().initial_credit_ns, 0);
++    assert_eq!(
++        domain
++            .observe_actual_flow()
++            .unwrap()
++            .unwrap()
++            .initial_credit_ns,
++        0
++    );
+     let shared_receiver = Mutex::new(receiver);
+     let before = shared_receiver.lock().unwrap().active().unwrap();
+     let mut retained = Vec::new();
+Diff in /data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs:319:
+         let result = if shared {
+             receive(history_import::Owner::Shared(&shared_receiver))
+         } else {
+-            receive(history_import::Owner::Exclusive(&mut shared_receiver.lock().unwrap()))
++            receive(history_import::Owner::Exclusive(
++                &mut shared_receiver.lock().unwrap(),
++            ))
+         };
+         let registry = domain.observe_completion_work().unwrap();
+         retained.push(registry.retained_identities);
+Diff in /data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs:360:
+ #[test]
+ fn native_completion_priority_cold_history_honest_original_deadline_control() {
+     let (directory, settings, original) = ordinary_fixture();
+-    let mut receiver = Node::open(&directory.path().join("cold-receiver"), settings.clone(), 1).unwrap();
++    let mut receiver =
++        Node::open(&directory.path().join("cold-receiver"), settings.clone(), 1).unwrap();
+     let domain = receiver.remote_history_cpu_domain().unwrap();
+     let start = Instant::now();
+     let result = history_import::receive(
+Diff in /data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node/src/store/detached_admission/prepared_held_native_completion_tests.rs:47:
+         }
+         assert_eq!(promotions, vec![0, 1, 0]);
+         let observed = original.observe_completion_work().unwrap();
+-        assert_eq!((observed.retained_identities, observed.live_completions), (1, 0));
++        assert_eq!(
++            (observed.retained_identities, observed.live_completions),
++            (1, 0)
++        );
+         let flow = original.observe_actual_flow().unwrap().unwrap();
+         assert!(flow.balance_identity_verified);
+         assert_eq!(flow.booked_reservation_ns, 0);
+Diff in /data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs:139:
+             assert_eq!(bindings(&node), before_bindings + 1);
+         }
+         let id = node
+-            .commit_shared_admission(outcome, 1000, &ExecutionControl::new(&|_| Ok(()), &()), None)
++            .commit_shared_admission(
++                outcome,
++                1000,
++                &ExecutionControl::new(&|_| Ok(()), &()),
++                None,
++            )
+             .unwrap();
+         node.activate_observed(id, 1000).unwrap();
+         let mut reference = open(reference_directory.path(), &settings, authenticated);
+Diff in /data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs:205:
+     let candidate = packet(&node, settings.genesis(), 1, 1, 1001, 0);
+     let outcome = executed(&node, &candidate);
+     assert!(other
+-        .commit_shared_admission(outcome, 1000, &ExecutionControl::new(&|_| Ok(()), &()), None)
++        .commit_shared_admission(
++            outcome,
++            1000,
++            &ExecutionControl::new(&|_| Ok(()), &()),
++            None
++        )
+         .unwrap_err()
+         .is(crate::ErrorCode::OwnerDetachedExecutionContext));
+     let outcome = executed(&node, &candidate);
+Diff in /data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs:212:
+     drop(node);
+     node = open(a.path(), &settings, true);
+     assert!(node
+-        .commit_shared_admission(outcome, 1000, &ExecutionControl::new(&|_| Ok(()), &()), None)
++        .commit_shared_admission(
++            outcome,
++            1000,
++            &ExecutionControl::new(&|_| Ok(()), &()),
++            None
++        )
+         .unwrap_err()
+         .is(crate::ErrorCode::OwnerDetachedExecutionContext));
+     let outcome = executed(&node, &candidate);
+Diff in /data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs:219:
+     node.mark_ordinary_public_service_epoch_unknown();
+     assert!(node
+-        .commit_shared_admission(outcome, 1000, &ExecutionControl::new(&|_| Ok(()), &()), None)
++        .commit_shared_admission(
++            outcome,
++            1000,
++            &ExecutionControl::new(&|_| Ok(()), &()),
++            None
++        )
+         .unwrap_err()
+         .is(crate::ErrorCode::OwnerPublicServiceUncleanEpoch));
+     assert!(node.packet(candidate.id().unwrap()).is_err());
+Diff in /data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs:242:
+     let mut outcome = executed(&node, &candidate);
+     outcome.admission.packet.header.target[0] ^= 1;
+     assert_eq!(
+-        node.commit_shared_admission(outcome, 1000, &ExecutionControl::new(&|_| Ok(()), &()), None)
+-            .unwrap_err()
+-            .to_string(),
++        node.commit_shared_admission(
++            outcome,
++            1000,
++            &ExecutionControl::new(&|_| Ok(()), &()),
++            None
++        )
++        .unwrap_err()
++        .to_string(),
+         "TARGET"
+     );
+     let outcome = executed(&node, &candidate);
+Diff in /data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs:251:
+     node.enable_local_root_rejection_cache().unwrap();
+     assert!(node
+-        .commit_shared_admission(outcome, 1000, &ExecutionControl::new(&|_| Ok(()), &()), None)
++        .commit_shared_admission(
++            outcome,
++            1000,
++            &ExecutionControl::new(&|_| Ok(()), &()),
++            None
++        )
+         .unwrap_err()
+         .is(crate::ErrorCode::OwnerDetachedExecutionUnsupported));
+     assert!(node
+Diff in /data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs:277:
+             .execute("DELETE FROM metadata WHERE key='detached-fault'", [])
+             .unwrap();
+         let error = node
+-            .commit_shared_admission(outcome, 1000, &ExecutionControl::new(&|_| Ok(()), &()), None)
++            .commit_shared_admission(
++                outcome,
++                1000,
++                &ExecutionControl::new(&|_| Ok(()), &()),
++                None,
++            )
+             .unwrap_err();
+         assert!(error.is(crate::ErrorCode::StorageContext) && error.requires_owner_stop());
+         assert!(node.packet(candidate.id().unwrap()).is_err());
+Diff in /data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs:333:
+         let competing_id = node.admit(&competing, 1000).unwrap();
+         node.activate_observed(competing_id, 1000).unwrap();
+         let id = node
+-            .commit_shared_admission(outcome, 1000, &ExecutionControl::new(&|_| Ok(()), &()), None)
++            .commit_shared_admission(
++                outcome,
++                1000,
++                &ExecutionControl::new(&|_| Ok(()), &()),
++                None,
++            )
+             .unwrap();
+         assert_eq!(id, candidate.id().unwrap());
+         assert_eq!(node.read_active().unwrap().0, competing_id);
+Diff in /data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs:369:
+             .unwrap_err()
+             .is(crate::ErrorCode::StoragePacket));
+         let error = node
+-            .commit_shared_admission(outcome, 1000, &ExecutionControl::new(&|_| Ok(()), &()), None)
++            .commit_shared_admission(
++                outcome,
++                1000,
++                &ExecutionControl::new(&|_| Ok(()), &()),
++                None,
++            )
+             .unwrap_err();
+         assert_eq!(error.to_string(), "REORG_IN_PROGRESS");
+         assert!(node.packet(candidate.id().unwrap()).is_err());
+Diff in /data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs:429:
+         let outcome = executed(&node, &candidate);
+         node.db.execute_batch("CREATE TRIGGER detached_skip BEFORE INSERT ON deltas BEGIN SELECT RAISE(IGNORE); END;").unwrap();
+         let error = node
+-            .commit_shared_admission(outcome, 1000, &ExecutionControl::new(&|_| Ok(()), &()), None)
++            .commit_shared_admission(
++                outcome,
++                1000,
++                &ExecutionControl::new(&|_| Ok(()), &()),
++                None,
++            )
+             .unwrap_err();
+         assert!(error.requires_owner_stop());
+         assert!(node.packet(candidate.id().unwrap()).is_err());
+Diff in /data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs:969:
+     let started = Instant::now();
+     let cpu = process_cpu_ns();
+     let id = node
+-        .commit_shared_admission(outcome, 1000, &ExecutionControl::new(&|_| Ok(()), &()), None)
++        .commit_shared_admission(
++            outcome,
++            1000,
++            &ExecutionControl::new(&|_| Ok(()), &()),
++            None,
++        )
+         .unwrap();
+     let commit_cpu = process_cpu_ns() - cpu;
+     let commit_wall = started.elapsed().as_nanos();
+Diff in /data/chain-abg-70ae-20261108/source/trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs:1044:
+             .execute("DELETE FROM metadata WHERE key='held-epoch-control'", [])
+             .unwrap();
+         assert!(prepared.parent.epoch != Some(node.admission_state_epoch().unwrap()));
+-        let id = node.admit_held_prepared(prepared, 1000, &control, None).unwrap();
++        let id = node
++            .admit_held_prepared(prepared, 1000, &control, None)
++            .unwrap();
+         assert_eq!(id, candidate.id().unwrap());
+         if authenticated {
+             let after = node.native_history_arithmetic_observation();

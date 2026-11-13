@@ -1,0 +1,21 @@
+{
+  "bytes": 179,
+  "command": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "cwd": "/home/qian-qi/work/chain-root-operation-recovered-20261112-df05",
+  "elapsed_ns": 20056014095,
+  "executed": true,
+  "exit_code": 0,
+  "expected_source": "92934b64f80ee9b20bcc070a08ca0966b7c5741d",
+  "log": "preflight.log",
+  "name": "preflight",
+  "process_exit_code": 0,
+  "sha256": "3f0aa477749d77aa9ff46ad288f4b34bc44e6a5b04d8e7be9d7d8bd9d603e5bb",
+  "source": "92934b64f80ee9b20bcc070a08ca0966b7c5741d",
+  "source_after_verified": true,
+  "source_before_verified": true,
+  "source_verified": true,
+  "timed_out": false
+}
