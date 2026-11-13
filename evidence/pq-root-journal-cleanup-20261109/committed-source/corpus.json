@@ -1,0 +1,21 @@
+{
+  "name": "corpus",
+  "argv": [
+    "python3",
+    "scripts/ci/check_pq_research_integration.py"
+  ],
+  "cwd": "/workspace/scratch/ab60bfa410b1/root-cleanup",
+  "started_utc": "2026-11-09T14:02:50.129539+00:00",
+  "tested_commit": "0f6598454b0d743259579e7e193b1158e5c9353d",
+  "tested_tree": "b3cab76d5cf4321d94a6b8c64f578717d749c83e",
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "elapsed_seconds": 2.552514761000566,
+  "returncode": 0,
+  "log": "/workspace/scratch/ab60bfa410b1/root-cleanup-validation/exact-commit/corpus.log",
+  "log_sha256": "dac8828ba9f935f602a9adf11eef8bb79ad23edea7b890b661ab11d1dd55d1a6",
+  "head_after": "0f6598454b0d743259579e7e193b1158e5c9353d",
+  "tree_after": "b3cab76d5cf4321d94a6b8c64f578717d749c83e",
+  "finished_utc": "2026-11-09T14:02:52.710707+00:00"
+}

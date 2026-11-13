@@ -1,0 +1,139 @@
+{
+  "base_commit": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+  "branch": "fix/chain-root-journal-cleanup-ab60-20261109",
+  "earlier_failed_commands": [
+    "ci-contract",
+    "ci-contract-controls",
+    "corpus"
+  ],
+  "earlier_missing_input_cause": "sparse checkout omitted original tests/evidence paths",
+  "external_github_objects_created_by_subagent": false,
+  "files": {
+    "config/pon/pq-cross-branch-corpus-v1.json": {
+      "bytes": 142655,
+      "git_blob": "2f12307f9cc68dffc19a57876bfe16cd680fbe86",
+      "sha256": "7e37fc3a958999719afb5c398e6c0af8e71c04c27eaf70f6ecedda408ec54323"
+    },
+    "config/pon/pq-root-dependency-register-v3.json": {
+      "bytes": 38842,
+      "git_blob": "44706ea68e2bdbe007f0396fb5ba41f1f96bcbd6",
+      "sha256": "e08bbb32e610ccc84f3fb2e9d301ceabb6c109a10c466684c637ed59c18636c0"
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "bytes": 650490,
+      "git_blob": "49c50e47356ffbb5b72dd6ec35bc3a795274b9f3",
+      "sha256": "e3af299dd93b839b00fd1887687872d35d72b70af2147838db26de16e67b6ed1"
+    },
+    "docs/security/PQ_ROOT_SQLITE_LIFETIME_20261109.md": {
+      "bytes": 5843,
+      "git_blob": "221a7d4554d6a0045bd86a48e5494fd4e2a5f382",
+      "sha256": "bd809bfcd79795e43c57b7422754872d522e1c0588fd44e9b15986be25c0027f"
+    },
+    "formal/pon-nakamoto-v1/pq_root_recovery_journal_v2.py": {
+      "bytes": 31569,
+      "git_blob": "572381f170204bf450bbd555517d791b90aae6cd",
+      "sha256": "d0895cd96fc3b9eef6ffd7e90fb7bd27c27a76e7017cc6671ac471beb7c17569"
+    },
+    "formal/pon-nakamoto-v1/test_pq_root_journal_cleanup.py": {
+      "bytes": 5666,
+      "git_blob": "a2609d529afcc2bc346a597aca831bbaa5c5c89d",
+      "sha256": "dd9d483f06b6af8d983ef28afba01c0b3758586db41d8e31107b12208396198b"
+    },
+    "scripts/ci/check_ci_contract.py": {
+      "bytes": 71530,
+      "git_blob": "7740b14524a999dc13cdb51c4654ed52e6e9c769",
+      "sha256": "95ef3d46d14d2f77af2abc85500c8b1e93f35b9500694f2346317228f3350401"
+    },
+    "scripts/ci/ci_job.sh": {
+      "bytes": 26723,
+      "git_blob": "2333a0dd46137e2dd9ca16495138b69bee1b1d26",
+      "sha256": "0422057f11d19eb1045a79ca677013b91a46ffd2ca51a4bbfe9b3c1243b142fe"
+    },
+    "scripts/ci/pq_root_dependency_register.py": {
+      "bytes": 20574,
+      "git_blob": "2e4ccbf24e1e5a0e356a7b382ade7144600c62b8",
+      "sha256": "c3cf1463100d26875888e44569a0e0e12be3e0f85fabf553227718e81aa94d79"
+    },
+    "scripts/ci/test_ci_contract.py": {
+      "bytes": 99768,
+      "git_blob": "4f3d6f300b805b8720a6c03a7df94b91e7b09532",
+      "sha256": "b52b4e11194eeec2a47bda57a024cea1f057663bd266e63cb55735e49d814f2b"
+    }
+  },
+  "full_mandatory_gates_run": false,
+  "historical_evidence_and_qualification_diff_empty": true,
+  "index_lock_present": false,
+  "index_lock_recovery_record": "index-lock-recovery.json",
+  "interrupted_observation_record": "interrupted-readback.json",
+  "native_protocol_block_byte_equal_to_base": true,
+  "native_root_suites_rerun": false,
+  "observed_at_utc": "2026-11-09T13:41:28.865281+00:00",
+  "passed_observations": {
+    "ci-contract-controls-resumed": {
+      "log": "ci-contract-controls-resumed.log",
+      "log_sha256": "3f973aa843ccb2c9847864a672d5300ed8c063a83a65f318a09fd6c49870eff2",
+      "record": "ci-contract-controls-resumed.json",
+      "tests": 109
+    },
+    "ci-contract-restored": {
+      "log": "ci-contract-restored.log",
+      "log_sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54",
+      "record": "ci-contract-restored.json"
+    },
+    "cleanup": {
+      "log": "cleanup.log",
+      "log_sha256": "4a074fa58fbc7ab4084d0e704dfa99ceeb2a4004d77e6457a5233ca42c6d9914",
+      "record": "cleanup.json",
+      "tests": 4
+    },
+    "corpus-controls-resumed": {
+      "log": "corpus-controls-resumed.log",
+      "log_sha256": "8d96b8fd6bf5110ac8c7a86c11cfa1b91e39926bd0313dbe6717d61036edd43d",
+      "record": "corpus-controls-resumed.json",
+      "tests": 55
+    },
+    "corpus-restored": {
+      "log": "corpus-restored.log",
+      "log_sha256": "dac8828ba9f935f602a9adf11eef8bb79ad23edea7b890b661ab11d1dd55d1a6",
+      "record": "corpus-restored.json"
+    },
+    "dependency-controls": {
+      "log": "dependency-controls.log",
+      "log_sha256": "b12f83ef98f9a98a00d4c08b5eb8864c9f930dd528d83f002b18650ce960ad86",
+      "record": "dependency-controls.json",
+      "tests": 42
+    },
+    "dependency-register": {
+      "log": "dependency-register.log",
+      "log_sha256": "120fb16a7aec016bf46fe67fe2c1fd7271aad58015fe2234bb95bf08c4a62cc1",
+      "record": "dependency-register.json"
+    },
+    "diff-check-final": {
+      "log": "diff-check-final.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "record": "diff-check-final.json"
+    },
+    "historical-evidence-unchanged": {
+      "log": "historical-evidence-unchanged.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "record": "historical-evidence-unchanged.json"
+    },
+    "source-controls": {
+      "log": "source-controls.log",
+      "log_sha256": "5d35a38eb3039789dbb0f72cbe7c3446b3417046da32f3319dbc6ba9429f2a39",
+      "record": "source-controls.json",
+      "tests": 43
+    }
+  },
+  "peer_static_review": {
+    "basis": "agent message: native/protocol/release AST constants unchanged; CI diff only the new selector; eight changed/new corpus pins byte matched; no history rewrite or P0 promotion",
+    "blocking_issue_reported": false,
+    "native_tests_executed": false,
+    "reviewer": "/root/integration_review"
+  },
+  "production_activation": false,
+  "schema": "trnm-root-journal-cleanup-working-tree-observation-v1",
+  "source_scope": "explicit-ten-file-working-tree-not-committed-full-source-execution",
+  "whole_chain_p0_closed": false,
+  "whole_chain_pq_qualified": false
+}

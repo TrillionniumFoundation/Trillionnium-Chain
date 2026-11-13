@@ -1,0 +1,12 @@
+{
+  "name": "ci-contract-restored",
+  "argv": [
+    "python3",
+    "scripts/ci/check_ci_contract.py"
+  ],
+  "started_utc": "2026-11-09T13:29:45.625497+00:00",
+  "elapsed_seconds": 1.2041892260003806,
+  "returncode": 0,
+  "log": "/workspace/scratch/ab60bfa410b1/root-cleanup-validation/ci-contract-restored.log",
+  "log_sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54"
+}

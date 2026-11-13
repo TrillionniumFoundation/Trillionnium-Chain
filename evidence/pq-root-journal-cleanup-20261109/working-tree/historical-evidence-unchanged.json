@@ -1,0 +1,17 @@
+{
+  "name": "historical-evidence-unchanged",
+  "argv": [
+    "git",
+    "diff",
+    "--exit-code",
+    "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+    "--",
+    "evidence",
+    "qualification"
+  ],
+  "started_utc": "2026-11-09T13:38:46.510995+00:00",
+  "elapsed_seconds": 0.03091392500027723,
+  "returncode": 0,
+  "log": "/workspace/scratch/ab60bfa410b1/root-cleanup-validation/historical-evidence-unchanged.log",
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

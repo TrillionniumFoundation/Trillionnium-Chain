@@ -1,0 +1,21 @@
+{
+  "name": "source-controls",
+  "argv": [
+    "python3",
+    "scripts/ci/test_ci_source_integrity.py"
+  ],
+  "cwd": "/workspace/scratch/ab60bfa410b1/root-cleanup",
+  "started_utc": "2026-11-09T14:02:49.960346+00:00",
+  "tested_commit": "0f6598454b0d743259579e7e193b1158e5c9353d",
+  "tested_tree": "b3cab76d5cf4321d94a6b8c64f578717d749c83e",
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "elapsed_seconds": 31.301389553000263,
+  "returncode": 0,
+  "log": "/workspace/scratch/ab60bfa410b1/root-cleanup-validation/exact-commit/source-controls.log",
+  "log_sha256": "ce97f30af569bd6759ad23ed2aa76f9064dab5ebbf6507ff234fa50385af598b",
+  "head_after": "0f6598454b0d743259579e7e193b1158e5c9353d",
+  "tree_after": "b3cab76d5cf4321d94a6b8c64f578717d749c83e",
+  "finished_utc": "2026-11-09T14:03:21.301347+00:00"
+}

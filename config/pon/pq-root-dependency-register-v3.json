@@ -1340,7 +1340,7 @@
     "formal/pon-nakamoto-v1/pq_openssl_backend.py": "ac9217a8238ecb5ade4e877670b8f01243b20fe1f231c0eba7fbc1832a8c05c3",
     "formal/pon-nakamoto-v1/pq_operation_budget.py": "e4bca5d0d47b2d1f41822876df8771ee9b23665d5ea753b53b99562a4e143f4c",
     "formal/pon-nakamoto-v1/pq_root_effect_readback_v2.py": "dabe1e55940366aa4a344ea130b622f65e6ec6a90492128e7c17045d16c59cfe",
-    "formal/pon-nakamoto-v1/pq_root_recovery_journal_v2.py": "b163c732775bcd79a132462782609fd81008ac30df3b03c5201996411bfc3519",
+    "formal/pon-nakamoto-v1/pq_root_recovery_journal_v2.py": "d0895cd96fc3b9eef6ffd7e90fb7bd27c27a76e7017cc6671ac471beb7c17569",
     "formal/pon-nakamoto-v1/pq_root_recovery_policy_v1.py": "0060409241ef656831f64be61fbb965347ede7a7e67db465f18da031995bfce9",
     "formal/pon-nakamoto-v1/pq_root_recovery_signatures_v2.py": "3031dc21e27dd492fa37c17ca4413dae0632f5fbf072f4c5a90c9183021a175f",
     "scripts/ci/pq_lifetime_budget.py": "eba31bee86b025a55c45cf8a86ad95bb85db1221af9c1ccd38799666e512555e",

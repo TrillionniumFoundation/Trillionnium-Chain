@@ -123,10 +123,10 @@ def _database(path, create=False):
     else:
         require(path.is_file(), "database:missing")
     connection = sqlite3.connect(path.as_uri() + "?mode=rw", uri=True, timeout=0)
-    connection.execute("PRAGMA journal_mode=DELETE")
-    connection.execute("PRAGMA synchronous=FULL")
-    connection.execute("PRAGMA foreign_keys=ON")
     try:
+        connection.execute("PRAGMA journal_mode=DELETE")
+        connection.execute("PRAGMA synchronous=FULL")
+        connection.execute("PRAGMA foreign_keys=ON")
         with connection:
             yield connection
     finally:

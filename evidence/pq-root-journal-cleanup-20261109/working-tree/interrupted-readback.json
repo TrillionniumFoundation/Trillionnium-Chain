@@ -1,0 +1,11 @@
+{
+  "observed_at_utc": "2026-11-09T13:35:51.285444+00:00",
+  "sessions": {
+    "32210": "corpus-controls",
+    "46684": "original-input-hydration",
+    "55447": "ci-contract-controls-restored"
+  },
+  "result": "UNRECORDED_COMPLETION",
+  "readback_error": "exec-server transport disconnected; failed to resume exec-server session: recovery timed out after 45s",
+  "execution_success_inferred": false
+}

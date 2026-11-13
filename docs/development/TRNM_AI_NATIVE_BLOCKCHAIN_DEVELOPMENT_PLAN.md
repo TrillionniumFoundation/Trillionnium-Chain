@@ -14444,3 +14444,23 @@ Status: **HOLD; draft only; native full suite failed**. Native checkpoint `8d8c0
 C1 `11c9562252d3cf56b423c7756569be0c669d9606` keeps its initial node green failure (3 passed / 1 failed) and initial offline dependency failure. The corrected node counterfactual changes only the old node owner plus its test declaration over C1 dependencies: red 0 passed / 4 failed, C2 green 4 passed / 0 failed. Settlement red remains 2 passed / 6 failed and C2 green 8 passed / 0 failed; C2 settlement completed 77 library plus 2 documentation tests and crypto completed 196 library tests. Exact commands, environments and all original streams are in the [native evidence](../../evidence/pon-followthrough-20261110-685a/README.md). The separately collected exact-BASE two-test control observed large-parent 1/0 (both backends) and inactive-page 0/1 with `PUBLIC_MUTATION_CPU_BUDGET`. Its different build/environment and refill observations do not establish a single cause for the C2 failures or replace the failed full suite.
 
 The child integrates the exact CI roster/artifact/QROM-current registrations, preserves the historical QROM lane, rebinds selected source surveys to C2, retains every previous corpus dependency and adds the new implementation inputs. Its actual source/corpus/ledger/CI/repository/Markdown/format checks are separate controller receipts on the eventual child commit; this entry does not assert those checks or hosted CI passed. All false/null qualification fields, existing historical evidence and open work-cost/service/consensus/model-benefit obligations remain unchanged. No activation is authorized by this observation.
+### 2026-11-09 V2 SQLite initialization cleanup continuation
+
+Continue from PR #837 delivery `44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0`
+with the [SQLite lifetime correction](../security/PQ_ROOT_SQLITE_LIFETIME_20261109.md).
+Move the three V2 journal initialization PRAGMAs into the existing connection
+cleanup scope, preserving transaction, persistence and authority semantics.
+Four real-SQLite component tests check initialization errors, commit, body
+rollback and deferred commit failure; their local working-tree invocation
+passes 4/4. Make the direct-file suite mandatory in the repository-truth root
+structure prefix, with parser controls for missing, duplicate, skipped,
+swallowed or relocated execution. Keep every original native selector and Host
+gate unchanged. Deliberately re-freeze current source/dependency pins after
+review; never regenerate them during acceptance.
+
+This continuation has not rerun native suites or the full mandatory lanes.
+The prior 42/42 local commands, original hosted 0/3 campaign and retained
+ResourceWarnings remain tied to their recorded sources. The cleanup does not
+uniquely attribute those warnings, close any whole-chain P0, certify independent
+operators or enable production. Results on this PR #837 continuation are not
+source integration or acceptance on the separate PR #835 candidate.

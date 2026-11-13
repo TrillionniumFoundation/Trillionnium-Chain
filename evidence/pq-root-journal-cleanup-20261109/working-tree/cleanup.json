@@ -1,0 +1,13 @@
+{
+  "name": "cleanup",
+  "argv": [
+    "python3",
+    "formal/pon-nakamoto-v1/test_pq_root_journal_cleanup.py",
+    "-v"
+  ],
+  "started_utc": "2026-11-09T13:27:21.532019+00:00",
+  "elapsed_seconds": 0.27986992800015287,
+  "returncode": 0,
+  "log": "/workspace/scratch/ab60bfa410b1/root-cleanup-validation/cleanup.log",
+  "log_sha256": "4a074fa58fbc7ab4084d0e704dfa99ceeb2a4004d77e6457a5233ca42c6d9914"
+}

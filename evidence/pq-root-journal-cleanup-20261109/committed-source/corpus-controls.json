@@ -1,0 +1,21 @@
+{
+  "name": "corpus-controls",
+  "argv": [
+    "python3",
+    "scripts/ci/test_pq_research_integration.py"
+  ],
+  "cwd": "/workspace/scratch/ab60bfa410b1/root-cleanup",
+  "started_utc": "2026-11-09T14:02:50.056469+00:00",
+  "tested_commit": "0f6598454b0d743259579e7e193b1158e5c9353d",
+  "tested_tree": "b3cab76d5cf4321d94a6b8c64f578717d749c83e",
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "elapsed_seconds": 359.80366229599895,
+  "returncode": 0,
+  "log": "/workspace/scratch/ab60bfa410b1/root-cleanup-validation/exact-commit/corpus-controls.log",
+  "log_sha256": "2e6a9986e100eb38ff5a24e442ab6e5be45504aeb29abc9c0d94e0c76b9d07c5",
+  "head_after": "0f6598454b0d743259579e7e193b1158e5c9353d",
+  "tree_after": "b3cab76d5cf4321d94a6b8c64f578717d749c83e",
+  "finished_utc": "2026-11-09T14:08:49.908854+00:00"
+}

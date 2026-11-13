@@ -727,6 +727,13 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "evidence/pon-w1-qrom-current-20261110-685a/historical/current-tests.py",
     "evidence/pon-w1-qrom-current-20261110-685a/historical/current-mapping.md.txt",
 ))
+# SQLite journal connection cleanup must remain part of the merged source set.
+# Its local controls do not qualify native root recovery or external custody.
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    'docs/security/PQ_ROOT_SQLITE_LIFETIME_20261109.md',
+    'formal/pon-nakamoto-v1/test_pq_root_journal_cleanup.py',
+))
+
 NATIVE_REQUIRED_PATHS |= CONVERGENCE_REQUIRED_PATHS
 RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-checkpoint-store/Cargo.toml",

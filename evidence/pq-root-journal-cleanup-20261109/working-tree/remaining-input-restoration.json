@@ -1,0 +1,46 @@
+{
+  "base": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+  "restored_originals": [
+    {
+      "path": "evidence/pon-six-workpackages-20261106/next/service/ABBA_PROTOCOL.md",
+      "bytes": 3977,
+      "git_blob": "6db7eee0430976d8a4378451138fc22b48542d52"
+    },
+    {
+      "path": "evidence/pon-six-workpackages-20261106/next/service/run_reorg_abba.py",
+      "bytes": 14923,
+      "git_blob": "7d6677b44033b70cbcf3f68200b451d39da42972"
+    },
+    {
+      "path": "evidence/pon-six-workpackages-20261106/next/service/test_run_reorg_abba.py",
+      "bytes": 4853,
+      "git_blob": "0d68a86ada09f73624fbc2fe157d7a6a78ca6484"
+    },
+    {
+      "path": "evidence/pon-six-workpackages-20261106/strategy/package_raw.py",
+      "bytes": 13018,
+      "git_blob": "12c295b27d2f71549d360150c7be0bd088ce2403"
+    },
+    {
+      "path": "evidence/pon-six-workpackages-20261106/strategy/run_campaign.py",
+      "bytes": 13233,
+      "git_blob": "49b1c04ff3fd30ad0b21cb9ebcdb55f4290b50be"
+    },
+    {
+      "path": "evidence/pon-six-workpackages-20261106/strategy/summarize_costs.py",
+      "bytes": 6893,
+      "git_blob": "35a27f3c775fb2edb1ed8e38203cf479d03927a8"
+    },
+    {
+      "path": "evidence/pq-root-continuation-v4-20261109/README.md",
+      "bytes": 14181,
+      "git_blob": "a4316b6a5ea994027daeaa36529838a79800a47b"
+    },
+    {
+      "path": "qualification/full-pq-r3/README.md",
+      "bytes": 4368,
+      "git_blob": "66d63977a072bc53b4843361163b528d822cc1a2"
+    }
+  ],
+  "index_lock_present": true
+}
