@@ -281,9 +281,7 @@ fn dht(
                             io::ErrorKind::WouldBlock
                                 | io::ErrorKind::TimedOut
                                 | io::ErrorKind::Interrupted
-                        ) =>
-                    {
-                    }
+                        ) => {}
                     Err(error) => return Err(error.into()),
                 }
             };
