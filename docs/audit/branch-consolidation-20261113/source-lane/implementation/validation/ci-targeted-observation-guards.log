@@ -1,0 +1,8 @@
+test_actual_merged_lanes_keep_all_original_controls (__main__.MergedQualificationLaneTests.test_actual_merged_lanes_keep_all_original_controls) ... ok
+test_independent_literals_keep_original_neighbors_and_unique_commands (__main__.MergedQualificationLaneTests.test_independent_literals_keep_original_neighbors_and_unique_commands) ... ok
+test_native_observation_guard_commands_cannot_change_position_multiplicity_or_failure_policy (__main__.MergedQualificationLaneTests.test_native_observation_guard_commands_cannot_change_position_multiplicity_or_failure_policy) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 11.900s
+
+OK

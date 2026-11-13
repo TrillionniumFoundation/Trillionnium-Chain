@@ -1,0 +1,18 @@
+{
+  "original_head": "e42f85ed5b1d0b4c9ebcfd8d5bd3247becb74959",
+  "selected_parent": "bd62de08bbb338c51afb42a4a7de8d5ffbf0f703",
+  "integrated": [
+    "bounded16KiB ciphertext buffer with original absolute deadline on cache hits and pre-parse durable debit",
+    "coalesced bounded write and TCP_NODELAY",
+    "at most16 redacted refusal observations per server with first typed/BIO cause",
+    "four named original control functions and original16 retained"
+  ],
+  "archived_alternative": [
+    "explicit pinned-endpoint transport PQE1/PQR1 with distinct endpoint policy/context/operation/response domains",
+    "pinned-endpoint CLI config and new selector",
+    "endpoint-only source-IP/listener policy and associated endpoint tests"
+  ],
+  "selection_reason": "Current selected ordinary TLS interface and CLI remain the explicit loopback TLS profile. The alternative is a new signed/stored network namespace, not a fix required by that profile. Original head/history retains it; no equivalent endpoint coverage claimed.",
+  "fixture_composition": "use same pq_network::tls_fixtures factoring as CI durable outbound port",
+  "validation": "pending exact-source all-features compile/native execution; no physical cost or WAN qualification"
+}

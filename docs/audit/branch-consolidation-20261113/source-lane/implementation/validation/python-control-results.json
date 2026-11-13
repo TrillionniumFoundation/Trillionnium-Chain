@@ -1,0 +1,72 @@
+[
+  {
+    "path": "scripts/ci/test_w1_factorial_native_gate.py",
+    "returncode": 0,
+    "seconds": 24.716,
+    "log": "/workspace/scratch/415d5ba2202d/source-audit/implementation/validation/test_w1_factorial_native_gate.log",
+    "tail": "....................\n----------------------------------------------------------------------\nRan 20 tests in 24.427s\n\nOK\n"
+  },
+  {
+    "path": "scripts/ci/test_w1_native_roster.py",
+    "returncode": 0,
+    "seconds": 0.315,
+    "log": "/workspace/scratch/415d5ba2202d/source-audit/implementation/validation/test_w1_native_roster.log",
+    "tail": "......\n----------------------------------------------------------------------\nRan 6 tests in 0.003s\n\nOK\n"
+  },
+  {
+    "path": "scripts/ci/test_prepare_artifact_upload.py",
+    "returncode": 0,
+    "seconds": 0.9,
+    "log": "/workspace/scratch/415d5ba2202d/source-audit/implementation/validation/test_prepare_artifact_upload.log",
+    "tail": "........\n----------------------------------------------------------------------\nRan 8 tests in 0.358s\n\nOK\n"
+  },
+  {
+    "path": "scripts/ci/test_cell_storage_convergence_ci.py",
+    "returncode": 0,
+    "seconds": 3.511,
+    "log": "/workspace/scratch/415d5ba2202d/source-audit/implementation/validation/test_cell_storage_convergence_ci.log",
+    "tail": ".........................\n----------------------------------------------------------------------\nRan 25 tests in 3.255s\n\nOK\n"
+  },
+  {
+    "path": "scripts/ci/test_fresh_rejection_report.py",
+    "returncode": 0,
+    "seconds": 29.144,
+    "log": "/workspace/scratch/415d5ba2202d/source-audit/implementation/validation/test_fresh_rejection_report.log",
+    "tail": "..........................\n----------------------------------------------------------------------\nRan 26 tests in 28.752s\n\nOK\n"
+  },
+  {
+    "path": "scripts/test_llm_inherited_runtime.py",
+    "returncode": 0,
+    "seconds": 0.246,
+    "log": "/workspace/scratch/415d5ba2202d/source-audit/implementation/validation/test_llm_inherited_runtime.log",
+    "tail": "......\n----------------------------------------------------------------------\nRan 6 tests in 0.031s\n\nOK\n"
+  },
+  {
+    "path": "scripts/test_llm_parent_material.py",
+    "returncode": 0,
+    "seconds": 5.752,
+    "log": "/workspace/scratch/415d5ba2202d/source-audit/implementation/validation/test_llm_parent_material.log",
+    "tail": "...........\n----------------------------------------------------------------------\nRan 11 tests in 4.958s\n\nOK\n"
+  },
+  {
+    "path": "scripts/test_llm_inherited_operation.py",
+    "returncode": 0,
+    "seconds": 1.281,
+    "log": "/workspace/scratch/415d5ba2202d/source-audit/implementation/validation/test_llm_inherited_operation.log",
+    "tail": ".................\n----------------------------------------------------------------------\nRan 17 tests in 0.845s\n\nOK\n"
+  },
+  {
+    "path": "scripts/test_llm_frozen_evaluation.py",
+    "returncode": 0,
+    "seconds": 0.61,
+    "log": "/workspace/scratch/415d5ba2202d/source-audit/implementation/validation/test_llm_frozen_evaluation.log",
+    "tail": "..........................\n----------------------------------------------------------------------\nRan 26 tests in 0.145s\n\nOK\n"
+  },
+  {
+    "path": "scripts/test_run_learning_service_development.py",
+    "returncode": 0,
+    "seconds": 2.488,
+    "log": "/workspace/scratch/415d5ba2202d/source-audit/implementation/validation/test_run_learning_service_development.log",
+    "tail": "........................\n----------------------------------------------------------------------\nRan 24 tests in 2.201s\n\nOK\n"
+  }
+]

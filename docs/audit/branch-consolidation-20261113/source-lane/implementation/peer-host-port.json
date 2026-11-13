@@ -1,0 +1,9 @@
+{
+  "original_head": "ad4abb67776d799b29a14caf824afe2709eb1149",
+  "selected_parent": "572b9d6ec008b54cfb6e4184c59c2a21d0904bc8",
+  "finding": "Current CLI already requires the fixed kernel owner when polling is configured; standalone library polling only checked the shared logical CPU domain. It did not retain/check an actual Host owner for a configured nonloopback peer.",
+  "fix": "Retain the original fixed Host owner before remote RPC; check it before/after RPC and through current scoped History resource callbacks, including W1/M06/activation and successful-return fence. Preserve current absolute deadlines, sealed admission, typed errors and original CPU domain. Do not restore older detached verifier or optional CPU path.",
+  "test": "Retain original nonloopback_pinned_peer_needs_original_physical_host_owner control; no network request is made by this control. Existing local fixtures keep their explicit None Host.",
+  "qualifications": "unchanged false; loopback developer library behavior remains original; ordinary public CLI still requires Host even with loopback peer",
+  "status": "source integrated, formatting/build pending"
+}

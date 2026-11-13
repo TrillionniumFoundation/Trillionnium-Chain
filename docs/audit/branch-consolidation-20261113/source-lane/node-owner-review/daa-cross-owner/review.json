@@ -1,0 +1,13 @@
+{
+  "selected_source": "11a2cba1953f4aaee97e8ed169fcfd9a1517da23",
+  "heads": [
+    "7621af958bf0e2ed9f0ae0f1761f0723536dbaee",
+    "84a0c697a3178eaee31ff9f60851a42c479b73f9"
+  ],
+  "cross_owner_patch_sha256": {
+    "84a0c697.patch": "d5d2fa041fe0429b28529da22092429180277608f54547829c73a4a1d7c62bf3",
+    "compatible-q4-only.patch": "4f05dd55666c1b8c3b762f1e7974a8e8dc31a65a218e952c3c3a43b4ea9db9c3",
+    "7621af958b.patch": "d5d2fa041fe0429b28529da22092429180277608f54547829c73a4a1d7c62bf3"
+  },
+  "narrow_patch_status": "prepared_not_applied_not_executed"
+}

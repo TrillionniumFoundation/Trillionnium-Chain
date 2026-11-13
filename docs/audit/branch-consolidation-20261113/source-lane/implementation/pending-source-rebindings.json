@@ -1,0 +1,268 @@
+{
+  "pq_corpus": {
+    "changed_pinned_files": [
+      {
+        "path": ".github/workflows/pon-w1-work-security.yml",
+        "before": "888d3654c786d9c686db535ada62642ed23329c5",
+        "after": "f1ea17ef43bf7a3067da95adc4b30d0f071d2530"
+      },
+      {
+        "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "before": "87ac637b0ae6feade29e70afa45bf6f1db88b100",
+        "after": "fa07061996e0280d856eae5ef8e10d65bc6b01aa"
+      },
+      {
+        "path": "scripts/ci/check_ci_contract.py",
+        "before": "5bd62c41d2b7ba730f8a3efe8621b6182961fd86",
+        "after": "c06c02dbbf463f7b23e8b0b61d82885e360336ab"
+      },
+      {
+        "path": "scripts/ci/check_pq_research_integration.py",
+        "before": "4c66c4d52cb65621e152045d39b017d51ec474f0",
+        "after": "4dae1e527edf38cbb6d2167e253876734a05f60a"
+      },
+      {
+        "path": "scripts/ci/ci_job.sh",
+        "before": "794be82fb2d1a54418f6db1e1e5ff3770f20d59e",
+        "after": "2d01c37903252b7c6f90589e0669cb726ed63152"
+      },
+      {
+        "path": "scripts/ci/test_ci_contract.py",
+        "before": "c8a8b06c06a188fd78a4660b001f1899dd02acf5",
+        "after": "4ae78a5da2fe4ec6a8ccf8f9415650a1bff958e4"
+      },
+      {
+        "path": "scripts/ci/test_w1_factorial_native_gate.py",
+        "before": "60f8b723c9516e270f563344bbcd1215fe29e91d",
+        "after": "2d6bb157a99288d8bc75da0894a72840ca9359d5"
+      },
+      {
+        "path": "scripts/llm_inherited_runtime.py",
+        "before": "c3e577ef34f7406d4083b08bc72bba4c86d3c03d",
+        "after": "dd1fb473b7290a9c241d0f24394d05109d785400"
+      },
+      {
+        "path": "scripts/llm_parent_material.py",
+        "before": "f8169dddce53778d08fc4c5ee4d2872890d4c62f",
+        "after": "172b8bafefc4ac09840682d3aaf200686104025d"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+        "before": "eaa3c4579c2ebee63e1e627a834e3a021d316bb1",
+        "after": "25c4d609e23a6344825b3fe62174affe1808a011"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+        "before": "aafd91425cbde49bbb368f47f5c4a17c3b2b85bf",
+        "after": "597346406af6329e1b518fa164c563b1e58341c3"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/main.rs",
+        "before": "dfbf2dafcbe214035ff63bc16663829465858c2f",
+        "after": "d6bdf9157cb6b4da408d6e6e2166d05dd2b912f2"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "before": "6ef5f01142a33eace66256dd6ecc81d34681d194",
+        "after": "a1b349768df8c6867f0926622ad2a90cf1104099"
+      },
+      {
+        "path": "trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
+        "before": "15c3b284f74120bd818c382a96698a97e25cfec1",
+        "after": "7c2efcb189f7908b8923f95207a892ae36cfe423"
+      },
+      {
+        "path": "trillionnium/crates/trnm-service-settlement/src/native_budget/tests.rs",
+        "before": "461a6e1bb2e0925ba5057f15d5f74284a0a52379",
+        "after": "fda3fd2e03f0b72ab0fb99f8d5728c0a0bc49d5f"
+      },
+      {
+        "path": "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs",
+        "before": "5733879dc58a68ccbd295c98d0bd9682907a5c23",
+        "after": "c3cca207207d1dd89b5319684345e096a3abf9ab"
+      },
+      {
+        "path": "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs",
+        "before": "6ed51433bc9fea5dc9104196994136377d1840ea",
+        "after": "55c14e9883f9a8ccf626c37f11cbd68b52987b16"
+      }
+    ],
+    "new_required_paths": [
+      "config/pon/local-resource-owner-v1.json",
+      "docs/development/specs/pon/REAL_LEARNING_SERVICE_ITERATION_V1.md",
+      "docs/research/PON_FRESH_REJECTION_COST_V1.md",
+      "evidence/pon-w1-lifetime-current-20261110-685a/README.md",
+      "evidence/pon-w1-lifetime-current-20261110-685a/project-input.json",
+      "evidence/pon-w1-lifetime-current-20261110-685a/project-report.json",
+      "evidence/pon-w1-qrom-current-20261110-685a/README.md",
+      "evidence/pon-w1-qrom-current-20261110-685a/current-report.json",
+      "evidence/pon-w1-qrom-current-20261110-685a/historical/current-auditor.py",
+      "evidence/pon-w1-qrom-current-20261110-685a/historical/current-mapping.md.txt",
+      "evidence/pon-w1-qrom-current-20261110-685a/historical/current-tests.py",
+      "evidence/pon-w1-qrom-current-20261110-685a/historical/current-v2.json",
+      "evidence/pon-w1-qrom-current-20261110-685a/prior-v2-on-c2.command.json",
+      "evidence/pon-w1-qrom-current-20261110-685a/prior-v2-on-c2.stderr.log",
+      "evidence/pon-w1-qrom-current-20261110-685a/prior-v2-on-c2.stdout.log",
+      "evidence/pon-w1-qrom-current-20261110-685a/source-binding.json",
+      "scripts/ci/prepare_artifact_upload.py",
+      "scripts/ci/test_fresh_rejection_report.py",
+      "scripts/ci/test_prepare_artifact_upload.py",
+      "scripts/ci/w1_native_controls.py",
+      "scripts/llm_frozen_evaluation.py",
+      "scripts/llm_inherited_operation.py",
+      "scripts/pon_fresh_rejection_report.py",
+      "scripts/run_learning_service_development.py",
+      "scripts/test_llm_frozen_evaluation.py",
+      "scripts/test_llm_inherited_operation.py",
+      "scripts/test_run_learning_service_development.py",
+      "trillionnium/crates/trnm-crypto-primitives/examples/pon_fresh_rejection_cost.rs",
+      "trillionnium/crates/trnm-pon-node/examples/learning_service_recovery_probe.rs",
+      "trillionnium/crates/trnm-pon-node/examples/learning_service_round.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/learning_service_receipt.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/learning_service_recovery_binding.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/learning_service_recovery_probe_unix.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/learning_service_round_unix.rs",
+      "trillionnium/crates/trnm-pon-node/src/packet_observer_cli.rs",
+      "trillionnium/crates/trnm-pon-node/src/packet_observer_cli/owned.rs",
+      "trillionnium/crates/trnm-pon-node/src/resource_owner_v1.rs",
+      "trillionnium/crates/trnm-pon-node/src/resource_owner_v1_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs"
+    ],
+    "required_unpinned_paths": [
+      "config/pon/local-resource-owner-v1.json",
+      "docs/development/specs/pon/REAL_LEARNING_SERVICE_ITERATION_V1.md",
+      "docs/research/PON_FRESH_REJECTION_COST_V1.md",
+      "evidence/pon-w1-lifetime-current-20261110-685a/README.md",
+      "evidence/pon-w1-lifetime-current-20261110-685a/project-input.json",
+      "evidence/pon-w1-lifetime-current-20261110-685a/project-report.json",
+      "evidence/pon-w1-qrom-current-20261110-685a/README.md",
+      "evidence/pon-w1-qrom-current-20261110-685a/current-report.json",
+      "evidence/pon-w1-qrom-current-20261110-685a/historical/current-auditor.py",
+      "evidence/pon-w1-qrom-current-20261110-685a/historical/current-mapping.md.txt",
+      "evidence/pon-w1-qrom-current-20261110-685a/historical/current-tests.py",
+      "evidence/pon-w1-qrom-current-20261110-685a/historical/current-v2.json",
+      "evidence/pon-w1-qrom-current-20261110-685a/prior-v2-on-c2.command.json",
+      "evidence/pon-w1-qrom-current-20261110-685a/prior-v2-on-c2.stderr.log",
+      "evidence/pon-w1-qrom-current-20261110-685a/prior-v2-on-c2.stdout.log",
+      "evidence/pon-w1-qrom-current-20261110-685a/source-binding.json",
+      "scripts/ci/prepare_artifact_upload.py",
+      "scripts/ci/test_fresh_rejection_report.py",
+      "scripts/ci/test_prepare_artifact_upload.py",
+      "scripts/ci/w1_native_controls.py",
+      "scripts/llm_frozen_evaluation.py",
+      "scripts/llm_inherited_operation.py",
+      "scripts/pon_fresh_rejection_report.py",
+      "scripts/run_learning_service_development.py",
+      "scripts/test_llm_frozen_evaluation.py",
+      "scripts/test_llm_inherited_operation.py",
+      "scripts/test_run_learning_service_development.py",
+      "trillionnium/crates/trnm-crypto-primitives/examples/pon_fresh_rejection_cost.rs",
+      "trillionnium/crates/trnm-pon-node/examples/learning_service_recovery_probe.rs",
+      "trillionnium/crates/trnm-pon-node/examples/learning_service_round.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/learning_service_receipt.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/learning_service_recovery_binding.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/learning_service_recovery_probe_unix.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/learning_service_round_unix.rs",
+      "trillionnium/crates/trnm-pon-node/src/packet_observer_cli.rs",
+      "trillionnium/crates/trnm-pon-node/src/packet_observer_cli/owned.rs",
+      "trillionnium/crates/trnm-pon-node/src/resource_owner_v1.rs",
+      "trillionnium/crates/trnm-pon-node/src/resource_owner_v1_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs"
+    ]
+  },
+  "config/pon/pq-authority-effects-v1.json": {
+    "changed_pins": [
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "before": "df2e303798678fe0b7437cf707bdc1d9cd6559ece47fcf2dd8c7ba8de0b29a17",
+        "after": "0bdf3cef09fc2302035797fa223d8a8aefa3018a2eb05d4b9dbe17352ed6fdf3"
+      }
+    ]
+  },
+  "config/pon/pq128-source-lock-v1.json": {
+    "changed_pins": [
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+        "before": "df2e303798678fe0b7437cf707bdc1d9cd6559ece47fcf2dd8c7ba8de0b29a17",
+        "after": "0bdf3cef09fc2302035797fa223d8a8aefa3018a2eb05d4b9dbe17352ed6fdf3"
+      },
+      {
+        "path": "trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
+        "before": "04f10f76d9f3bcdbe2df1b0bf3182d3e5d66a8f3974982a3491f156e50ba7c68",
+        "after": "ca9cbdcf910d777d703793fcb0667426f3003c7c76b4c99feb750dc01815fe81"
+      }
+    ]
+  },
+  "config/pon/w1-qrom-implementation-current-v2.json": {
+    "changed_pins": [
+      {
+        "json_location": "/local_path_closure/files/24",
+        "path": "trillionnium/Cargo.lock",
+        "before": {
+          "sha256": "53c4eab0fb3d2951894348de2b765e0a573e49acb5dbfe1fe805719ec868a136",
+          "bytes": 40597
+        },
+        "after": {
+          "bytes": 42127,
+          "sha256": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e",
+          "blob": "19530b3bce6b679ae87cb5b92b0578faf781c0b3"
+        }
+      },
+      {
+        "json_location": "/local_path_closure/files/26",
+        "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+        "before": {
+          "sha256": "caff7ff137c94e26a378a2a95ae029a21b1ee30a79d08a05b8c9e3b1f1810ab8",
+          "bytes": 924
+        },
+        "after": {
+          "bytes": 924,
+          "sha256": "ab2554b1c8ec1010735fa55ed1b16d45376f4936885dc3cc6f0121917250256d",
+          "blob": "6e4cb1a2b5acf68497ce58b97e23619a279b333c"
+        }
+      },
+      {
+        "json_location": "/local_path_closure/files/54",
+        "path": "trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+        "before": {
+          "sha256": "74f11c99984a0c199f6b1a882206dc887440a3c69668dd3833054eb0e98fd32c",
+          "bytes": 8117
+        },
+        "after": {
+          "bytes": 10395,
+          "sha256": "4dc3fd4c60ee7548adb5b50f8658a8ff9529dcbbeae98bb590f03458a707f0a6",
+          "blob": "f50612b986af3e71823ed60e4c48b1e44edcabbd"
+        }
+      },
+      {
+        "json_location": "/local_path_closure/files/110",
+        "path": "trillionnium/crates/trnm-protocol/src/lib.rs",
+        "before": {
+          "sha256": "b965065ca4915d57e61af480ef6cfb8f775465c8ad0e4dec0b2895e110946b86",
+          "bytes": 15774
+        },
+        "after": {
+          "bytes": 17379,
+          "sha256": "0ed69ce0a7e4868186038042708eb134633f7707c08e939e9eb6ff5b5c7ca844",
+          "blob": "1485a8b672009e69c57c0bf9963cf6ed8e9ad896"
+        }
+      }
+    ]
+  },
+  "config/pon/w1-lifetime-current-source-v2.json": {
+    "changed_pins": [
+      {
+        "json_location": "/historical_reader",
+        "path": "scripts/w1_lifetime_ledger.py",
+        "before": {
+          "sha256": "7e494ba406c63442dfbd17147d006b967cb07d7f6c886ce5779a0f2f05fceef6"
+        },
+        "after": {
+          "bytes": 38130,
+          "sha256": "08ef5bf8d8f15c504e8061badc02a05c6a0bb81aa7a1fe5cde47a84cbdea73fc",
+          "blob": "2945322e1c69d5edc528f1e610a66a998b9412f7"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,36 @@
+test_journal_cleanup_cannot_disappear_duplicate_skip_swallow_or_move (test_ci_contract.EvaluationQuorumLaneTests.test_journal_cleanup_cannot_disappear_duplicate_skip_swallow_or_move) ... ok
+test_actual_merged_lanes_keep_all_original_controls (test_ci_contract.MergedQualificationLaneTests.test_actual_merged_lanes_keep_all_original_controls) ... ERROR
+test_independent_literals_keep_original_neighbors_and_unique_commands (test_ci_contract.MergedQualificationLaneTests.test_independent_literals_keep_original_neighbors_and_unique_commands) ... ERROR
+
+======================================================================
+ERROR: test_actual_merged_lanes_keep_all_original_controls (test_ci_contract.MergedQualificationLaneTests.test_actual_merged_lanes_keep_all_original_controls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/415d5ba2202d/implementation-fixes/scripts/ci/test_ci_contract.py", line 2903, in test_actual_merged_lanes_keep_all_original_controls
+    self.checked(self.script)
+  File "/workspace/scratch/415d5ba2202d/implementation-fixes/scripts/ci/test_ci_contract.py", line 2900, in checked
+    check_independent_conformance(script, self.required)
+  File "/workspace/scratch/415d5ba2202d/implementation-fixes/scripts/ci/check_ci_contract.py", line 1651, in check_independent_conformance
+    require(repository_commands == expected_repository_commands,
+  File "/workspace/scratch/415d5ba2202d/implementation-fixes/scripts/ci/check_ci_contract.py", line 1691, in require
+    raise ValueError('CI contract: ' + message)
+ValueError: CI contract: repository-truth controls must retain a straight-line command sequence
+
+======================================================================
+ERROR: test_independent_literals_keep_original_neighbors_and_unique_commands (test_ci_contract.MergedQualificationLaneTests.test_independent_literals_keep_original_neighbors_and_unique_commands)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/415d5ba2202d/implementation-fixes/scripts/ci/test_ci_contract.py", line 2906, in test_independent_literals_keep_original_neighbors_and_unique_commands
+    self.checked(self.script)
+  File "/workspace/scratch/415d5ba2202d/implementation-fixes/scripts/ci/test_ci_contract.py", line 2900, in checked
+    check_independent_conformance(script, self.required)
+  File "/workspace/scratch/415d5ba2202d/implementation-fixes/scripts/ci/check_ci_contract.py", line 1651, in check_independent_conformance
+    require(repository_commands == expected_repository_commands,
+  File "/workspace/scratch/415d5ba2202d/implementation-fixes/scripts/ci/check_ci_contract.py", line 1691, in require
+    raise ValueError('CI contract: ' + message)
+ValueError: CI contract: repository-truth controls must retain a straight-line command sequence
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.322s
+
+FAILED (errors=2)
