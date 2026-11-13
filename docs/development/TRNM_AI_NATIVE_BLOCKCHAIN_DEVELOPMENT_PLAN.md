@@ -9066,7 +9066,6 @@ pass. The initial generated-table drift errors remain recorded alongside the
 subsequent correction; full public and scientific acceptance remains open.
 
 
-<<<<<<< HEAD
 ### 2026-11-03 current PQ admission and verifier composition
 
 Continue existing #698 on top of #688 at
@@ -14490,7 +14489,7 @@ latency/failure distributions; and ordinary Hepta FinalUse/cold recovery. Six
 declared provider names and local successful downloads do not close them. No
 consensus, funding, model-quality, production or whole-chain PQ qualification
 is granted by these component changes.
-=======
+
 ## 2026-11-04 — Frozen 44d owner, retained readiness, and generated fuzz ASM lock
 
 The #699 successor preserves the entire frozen owner `a10c39025cdc03d3265b031d6547b11e0350da2c` tree. Its production source is exactly `44d3def32f515b98fc41f074fe1b88e97f046191`; a10 only corrects the original branch-encoding module count and its corpus pin. The ordered parents are the previous #699 head `c806dd9ab640e87ca3fc507a8aeada53c2053990` and a10. The existing rendezvous readiness test overlay remains `6a9660b4cd43fcb480a6f6859b01f60eff766312`. No owner ref, main ref, production deadline, resource limit, or ignored diagnostic is changed.
@@ -14506,4 +14505,3 @@ The DA ACK/deadline independent review is bound to the two exact 44d source file
 The previous c806 original artifacts were independently read back in run 41777955458 / job 126402598642 and durably checkpointed at `8b30c42f783a0d2c1d7148989ecd314a6a8ea532`. They retain 3/27 planned campaign confirmations, 0/18 pressure confirmations, and 0/6 original four-second root passes. Eight c806 CPU job statuses are successful, but they do not qualify this successor or the protocol/DA/performance gates. Nested Host costs and SQL observation samples are not added together or represented as a full business-cost proof.
 
 Exact source readbacks, the actual generator log, original branch-count failure logs, peer review, commands, hashes, and composition boundaries are in `qualification/frozen-44d-lock-composition-20261104/`. The new source remains **DRAFT / SHADOW_ONLY / DENY_ALL / HOLD_NO_GO** until its own original head and prospective-merge gates meet every original requirement.
->>>>>>> e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29
