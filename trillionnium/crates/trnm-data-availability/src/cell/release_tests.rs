@@ -884,3 +884,50 @@ fn closure_prefetch_rejects_changed_owner_generation_before_cache_or_network_wor
     assert_eq!(usage.chunk_rows, 0);
     assert_eq!(usage.manifest_rows, 0);
 }
+
+#[test]
+fn release_fetch_reuses_observed_peer_failures_within_original_connection_budget() {
+    let fixture = Fixture::new();
+    let empty_path = fixture.path("empty.sqlite");
+    let empty_store = CellStoreV1::open(&empty_path, cache_config()).unwrap();
+    drop(empty_store);
+    let empty = Peer::start(&empty_path);
+    let available = Peer::start(&fixture.origin_path);
+    let receiver = fixture.cache("receiver.sqlite");
+    let output = fixture.path("complete.tcr");
+    let mut reservation = limits();
+    // Two actual manifests and four actual chunks, plus one observed empty
+    // provider. The single worker makes the session's request order explicit.
+    // No request, byte or absolute-time reservation is renewed after a miss.
+    reservation.peer.max_connections = 7;
+    reservation.peer.parallelism = 1;
+    let result = fetch_release_to_file(
+        &receiver,
+        &fixture.release,
+        fixture.release.id(),
+        &[empty.address, available.address],
+        reservation,
+        &output,
+    );
+    let empty_requests = empty.finish();
+    let available_requests = available.finish();
+    let report = result.unwrap_or_else(|error| {
+        panic!(
+            "complete release failed: {error}; empty_requests={empty_requests}, available_requests={available_requests}"
+        )
+    });
+    assert_eq!(empty_requests, 1);
+    assert_eq!(available_requests, 6);
+    assert_eq!(report.connection_attempts, 7);
+    assert_eq!(report.rejected_responses, 1);
+    assert_eq!(report.downloaded_chunks, 4);
+    assert_eq!(report.downloaded_bytes, 40_000);
+    assert_eq!(
+        report.received_response_bytes,
+        fixture.successful_response_bytes() + 9
+    );
+    receiver
+        .verify_release_complete(&fixture.release, limits().release)
+        .unwrap();
+    assert_eq!(fs::read(&output).unwrap(), fixture.release.encode());
+}
