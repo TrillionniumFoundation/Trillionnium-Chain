@@ -1,0 +1,778 @@
+{
+  "scope": "Isolated research references; not installed DAA or consensus authority",
+  "qualification_granted": false,
+  "files": [
+    {
+      "path": "formal/pon-nakamoto-v1/daa_reference_c/test_extreme_differential.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7b83682d230e513a8168253f0296ed147f853ce2",
+      "heads": [
+        "beca44084947a4d0d468171eca335fe6e5001457"
+      ],
+      "destination": "formal/pon-nakamoto-v1/daa_reference_c/test_extreme_differential.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_w1_maintenance_daa_archive_reader.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ef8e905e67d13ba628b08d0981dcac88573ef030",
+      "heads": [
+        "523d7e86c132ef3be1685a095951cfffc1a8481b"
+      ],
+      "destination": "formal/pon-nakamoto-v1/test_w1_maintenance_daa_archive_reader.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_w1_maintenance_daa_proof_research.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "50b717fd77cf7880d7f34d3b4731d16b4f5bf5d7",
+      "heads": [
+        "523d7e86c132ef3be1685a095951cfffc1a8481b"
+      ],
+      "destination": "formal/pon-nakamoto-v1/test_w1_maintenance_daa_proof_research.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_maintenance_daa_archive_reader.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e0bb08e695eee0ea3863dd316ce99bb1c45fcdf8",
+      "heads": [
+        "523d7e86c132ef3be1685a095951cfffc1a8481b"
+      ],
+      "destination": "formal/pon-nakamoto-v1/w1_maintenance_daa_archive_reader.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_maintenance_daa_proof_research.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f8adadf3fe820c10e14e87d4839f9539162e656e",
+      "heads": [
+        "523d7e86c132ef3be1685a095951cfffc1a8481b"
+      ],
+      "destination": "formal/pon-nakamoto-v1/w1_maintenance_daa_proof_research.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_reference_go/main.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6a5ae1632b1ad0dfa99f68cfcdbd9c67f0fc77c6",
+      "heads": [
+        "523d7e86c132ef3be1685a095951cfffc1a8481b"
+      ],
+      "destination": "formal/pon-nakamoto-v1/w1_reference_go/main.go"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_reference_go/main_test.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "844c923c5ff6f381c850af981cddc7dd98138f0c",
+      "heads": [
+        "523d7e86c132ef3be1685a095951cfffc1a8481b"
+      ],
+      "destination": "formal/pon-nakamoto-v1/w1_reference_go/main_test.go"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/daa_equal_work_recovery.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "848fe5c6d65130ec5ee34ff32578b55f39566287",
+      "heads": [
+        "c13c9f6b46f8d9564a37f61935a5eccd2a5514e2"
+      ],
+      "destination": "formal/pon-nakamoto-v1/daa_equal_work_recovery.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_daa_equal_work_recovery.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "844ab29a2d467357d47ff4055fbd3fdf600a323a",
+      "heads": [
+        "c13c9f6b46f8d9564a37f61935a5eccd2a5514e2"
+      ],
+      "destination": "formal/pon-nakamoto-v1/test_daa_equal_work_recovery.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/daa_reference_c/main.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d082e6d4a15002d496fbf13de7a66d61732f32fb",
+      "heads": [
+        "3cd83e3f8c6b6d9291a6be2ff6cb7bc78734deef"
+      ],
+      "destination": "formal/pon-nakamoto-v1/daa_reference_c/main.c"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_asert_c_oracle.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b5b67d50af854ac930db265aec387cf5fc87f10d",
+      "heads": [
+        "3cd83e3f8c6b6d9291a6be2ff6cb7bc78734deef"
+      ],
+      "destination": "formal/pon-nakamoto-v1/test_asert_c_oracle.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/q4_reference_go/main.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ce2663e8ab9368a8d3e822c8b716081fc36bb3b2",
+      "heads": [
+        "b44b94e049d141748e1b7922012b9def64ce1a51"
+      ],
+      "destination": "formal/pon-nakamoto-v1/q4_standalone_go/main.go"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/q4_reference_go/main_test.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ca96c3460dbcfc006914259a3dfbb99cafad61bd",
+      "heads": [
+        "b44b94e049d141748e1b7922012b9def64ce1a51"
+      ],
+      "destination": "formal/pon-nakamoto-v1/q4_standalone_go/main_test.go"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/daa_asert_c_oracle_v1.c",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "98efbbd0efae56710da9f5d7a5020e36a7dcf5af",
+      "heads": [
+        "51b1fbb854a6ffc6ecf3fbd5ca4ae7c4481a93f1"
+      ],
+      "destination": "formal/pon-nakamoto-v1/daa_asert_c_oracle_v1.c"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_daa_asert_c_oracle_v1.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1d37e09486c3e66240cb45d9521a80a40ab92bfe",
+      "heads": [
+        "51b1fbb854a6ffc6ecf3fbd5ca4ae7c4481a93f1"
+      ],
+      "destination": "formal/pon-nakamoto-v1/test_daa_asert_c_oracle_v1.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/daa_w1_fork_go_replay/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "56807c57bbe6216b76871b54c8424e0edd191387",
+      "heads": [
+        "4e233cbd87286598d9bf9af4758d63d83cba4e15"
+      ],
+      "destination": "formal/pon-nakamoto-v1/daa_w1_fork_go_replay/README.md"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/daa_w1_fork_go_replay/main.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "893cf928c3847fe13acd227d0062980febe9cfc7",
+      "heads": [
+        "4e233cbd87286598d9bf9af4758d63d83cba4e15"
+      ],
+      "destination": "formal/pon-nakamoto-v1/daa_w1_fork_go_replay/main.go"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/daa_w1_fork_go_replay/main_test.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "16b632eb8c2e4a1aca2ff908bf8f78008743a7da",
+      "heads": [
+        "4e233cbd87286598d9bf9af4758d63d83cba4e15"
+      ],
+      "destination": "formal/pon-nakamoto-v1/daa_w1_fork_go_replay/main_test.go"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/daa_w1_fork_replay.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2d34e9714523c6565610d652db53ab701b658b0e",
+      "heads": [
+        "4e233cbd87286598d9bf9af4758d63d83cba4e15"
+      ],
+      "destination": "formal/pon-nakamoto-v1/daa_w1_fork_replay.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_daa_w1_fork_replay.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "66aa7a3b128d57286b9e01a197dfb61e9f889cc1",
+      "heads": [
+        "4e233cbd87286598d9bf9af4758d63d83cba4e15"
+      ],
+      "destination": "formal/pon-nakamoto-v1/test_daa_w1_fork_replay.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/daa_timewarp_beam_research.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1b89cf54d953b35e358009eb7a50bc79b72196ec",
+      "heads": [
+        "5b08f8cd4b7ac4dc48e5c6489850590c76a7920c"
+      ],
+      "destination": "formal/pon-nakamoto-v1/daa_timewarp_beam_research.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/daa_timewarp_go/main.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e7df072f1be023c147fc00287fbc8eb1536c320d",
+      "heads": [
+        "5b08f8cd4b7ac4dc48e5c6489850590c76a7920c"
+      ],
+      "destination": "formal/pon-nakamoto-v1/daa_timewarp_go/main.go"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/run_daa_timewarp_go_negative.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "085b79094cdae044dd86771ea496ffb15b763449",
+      "heads": [
+        "5b08f8cd4b7ac4dc48e5c6489850590c76a7920c"
+      ],
+      "destination": "formal/pon-nakamoto-v1/run_daa_timewarp_go_negative.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_daa_timewarp_beam_research.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6e97ae17ee71bc353b0a9d2e66fb21c3120450a2",
+      "heads": [
+        "5b08f8cd4b7ac4dc48e5c6489850590c76a7920c"
+      ],
+      "destination": "formal/pon-nakamoto-v1/test_daa_timewarp_beam_research.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/timewarp_beam_80.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6ba01a9b96c4b90537c343454300751c8e00fe6f",
+      "heads": [
+        "5b08f8cd4b7ac4dc48e5c6489850590c76a7920c"
+      ],
+      "destination": "formal/pon-nakamoto-v1/timewarp_beam_80.json"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_daa_go_error_parity.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5e2f76b1b154e1048381c64acf6bbf8af5063407",
+      "heads": [
+        "980d47dcf0764e1fe7ec7364783795e2f0ec37e6",
+        "10c16943c8d70d23b75a54373d502f99feb6bc57"
+      ],
+      "destination": "formal/pon-nakamoto-v1/test_daa_go_error_parity.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/daa_confirmation_risk.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "24e9af98083cfada3909f8732989ecfe78e1db10",
+      "heads": [
+        "12d2b89e66cdd07674eadeaacda91109bae4b5d6"
+      ],
+      "destination": "formal/pon-nakamoto-v1/daa_confirmation_risk.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_daa_confirmation_risk.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "168fbf8636fb074d367cf55095f7054fe68b0c45",
+      "heads": [
+        "12d2b89e66cdd07674eadeaacda91109bae4b5d6"
+      ],
+      "destination": "formal/pon-nakamoto-v1/test_daa_confirmation_risk.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_w1_go_differential.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d5ab3ad30caf834dc3416e300cd1aab9f8cdd31b",
+      "heads": [
+        "fa7924fc9283b716f09966bc91789d2620c2a7b3"
+      ],
+      "destination": "formal/pon-nakamoto-v1/test_w1_go_differential.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_verify_go/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "13321be19e815905706dfeb0a282740a98b61a04",
+      "heads": [
+        "fa7924fc9283b716f09966bc91789d2620c2a7b3"
+      ],
+      "destination": "formal/pon-nakamoto-v1/w1_verify_go/README.md"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_verify_go/main.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cf99557391968f9a1eccfb925682bb827a8200f9",
+      "heads": [
+        "fa7924fc9283b716f09966bc91789d2620c2a7b3"
+      ],
+      "destination": "formal/pon-nakamoto-v1/w1_verify_go/main.go"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_verify_go/main_test.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fae5ec2cfbe758cf1e399df966d876d8f5a2dcb0",
+      "heads": [
+        "fa7924fc9283b716f09966bc91789d2620c2a7b3"
+      ],
+      "destination": "formal/pon-nakamoto-v1/w1_verify_go/main_test.go"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/daa_lease_network_aggregate_v1.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3b86412dba6763c4a03cbc818c23b9ab1fe53448",
+      "heads": [
+        "889fbec835e0435248b0852ab80a40a166bd2c83"
+      ],
+      "destination": "formal/pon-nakamoto-v1/daa_lease_network_aggregate_v1.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/daa_lease_network_sim_v1.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "faa5b2230d95cf2fe9c0b1dbb9b8b45f3efae082",
+      "heads": [
+        "889fbec835e0435248b0852ab80a40a166bd2c83"
+      ],
+      "destination": "formal/pon-nakamoto-v1/daa_lease_network_sim_v1.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_daa_lease_network_aggregate_v1.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "02ad152797c11728478e030e06755767547cc0fc",
+      "heads": [
+        "889fbec835e0435248b0852ab80a40a166bd2c83"
+      ],
+      "destination": "formal/pon-nakamoto-v1/test_daa_lease_network_aggregate_v1.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_daa_lease_network_sim_v1.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ea582001fa3ecb1776f9ad405689d4e875968bcf",
+      "heads": [
+        "889fbec835e0435248b0852ab80a40a166bd2c83"
+      ],
+      "destination": "formal/pon-nakamoto-v1/test_daa_lease_network_sim_v1.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/q4_research_go/verify_q4_vectors.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f770d1c79c2eff6e9bd1d48e7f6d5d50a7b90546",
+      "heads": [
+        "26a4096865e692e0e7f8a00810ae7f346af25447"
+      ],
+      "destination": "formal/pon-nakamoto-v1/q4_research_go/verify_q4_vectors.go"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/q4_signed_renewal_research.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f1258581ec211af7d9b3db51a05bdeb2b80aeb39",
+      "heads": [
+        "26a4096865e692e0e7f8a00810ae7f346af25447"
+      ],
+      "destination": "formal/pon-nakamoto-v1/q4_signed_renewal_research.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/q4_signed_vectors_v1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d9e776e38751ee27307a086e57fb7d92056aed13",
+      "heads": [
+        "26a4096865e692e0e7f8a00810ae7f346af25447"
+      ],
+      "destination": "formal/pon-nakamoto-v1/q4_signed_vectors_v1.json"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_q4_signed_renewal_research.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a961a9430854e647a39711a8d3997bb001b9995f",
+      "heads": [
+        "26a4096865e692e0e7f8a00810ae7f346af25447"
+      ],
+      "destination": "formal/pon-nakamoto-v1/test_q4_signed_renewal_research.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_falsification_go/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "123f5fcd5d3812ae0a8a861b2b9e16bd8eddc17e",
+      "heads": [
+        "c0f3595dcc471eb77387910b8712bbc73040e741"
+      ],
+      "destination": "formal/pon-nakamoto-v1/w1_falsification_go/README.md"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_falsification_go/cmd/w1oracle/main.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6b161d9e7feae5139c12a74caed03ba569e0076b",
+      "heads": [
+        "c0f3595dcc471eb77387910b8712bbc73040e741"
+      ],
+      "destination": "formal/pon-nakamoto-v1/w1_falsification_go/cmd/w1oracle/main.go"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_falsification_go/go.mod",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6d3447066bfcff5f6ae05d49c4ebffe217b1ebad",
+      "heads": [
+        "c0f3595dcc471eb77387910b8712bbc73040e741"
+      ],
+      "destination": "formal/pon-nakamoto-v1/w1_falsification_go/go.mod"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_falsification_go/work.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1e45e895a8c94d2b7e897bac2daadeaa36d71fdc",
+      "heads": [
+        "c0f3595dcc471eb77387910b8712bbc73040e741"
+      ],
+      "destination": "formal/pon-nakamoto-v1/w1_falsification_go/work.go"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_falsification_go/work_test.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "63857244a01bc854f8136c386bf25876bd13cb53",
+      "heads": [
+        "c0f3595dcc471eb77387910b8712bbc73040e741"
+      ],
+      "destination": "formal/pon-nakamoto-v1/w1_falsification_go/work_test.go"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_go_diff.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5d7b7d0c07391747809fc5e23382362dd6a86d75",
+      "heads": [
+        "c0f3595dcc471eb77387910b8712bbc73040e741"
+      ],
+      "destination": "formal/pon-nakamoto-v1/w1_go_diff.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/daa_go_batch_differential.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "09ad9afec786692c5ea5a266fd4d2ffb53ccddcf",
+      "heads": [
+        "375d61cac084a84cd974e8616211db0a6ab3e4b3"
+      ],
+      "destination": "formal/pon-nakamoto-v1/daa_go_batch_differential.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/daa_oracle_go/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9b4fb4d83d17f2e9bc2d9aec45bbb08471b199db",
+      "heads": [
+        "375d61cac084a84cd974e8616211db0a6ab3e4b3"
+      ],
+      "destination": "formal/pon-nakamoto-v1/daa_oracle_go/README.md"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/daa_oracle_go/asert.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a3ff961100baed9f96b00ed8ed6ef7d073bd8777",
+      "heads": [
+        "375d61cac084a84cd974e8616211db0a6ab3e4b3"
+      ],
+      "destination": "formal/pon-nakamoto-v1/daa_oracle_go/asert.go"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/daa_oracle_go/asert_test.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "da5005220772526dc9449608047df41a2b6c9cb9",
+      "heads": [
+        "375d61cac084a84cd974e8616211db0a6ab3e4b3"
+      ],
+      "destination": "formal/pon-nakamoto-v1/daa_oracle_go/asert_test.go"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/daa_oracle_go/cmd/daaoracle/main.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2db0a056f3cb4bd007680c3422092890c3e2219a",
+      "heads": [
+        "375d61cac084a84cd974e8616211db0a6ab3e4b3"
+      ],
+      "destination": "formal/pon-nakamoto-v1/daa_oracle_go/cmd/daaoracle/main.go"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/daa_oracle_go/go.mod",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3190355f8a48883b49890d0df80be640905d0b15",
+      "heads": [
+        "375d61cac084a84cd974e8616211db0a6ab3e4b3"
+      ],
+      "destination": "formal/pon-nakamoto-v1/daa_oracle_go/go.mod"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/q4_reference_go/cmd/q4reference/main.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "776909a2e66eaadb99246fccdbc416db4fda1199",
+      "heads": [
+        "936b169e2577eb1c859f0aa77b3dfc5be6175802"
+      ],
+      "destination": "formal/pon-nakamoto-v1/q4_reference_go/cmd/q4reference/main.go"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/q4_reference_go/go.mod",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d25777a2a9c1a5e5cbcbdc8a7888235665e09bf4",
+      "heads": [
+        "936b169e2577eb1c859f0aa77b3dfc5be6175802"
+      ],
+      "destination": "formal/pon-nakamoto-v1/q4_reference_go/go.mod"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/q4_reference_go/q4-reference-development-vector.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "95dd39f65c9e7e928d02bd6839906d96f4a518b5",
+      "heads": [
+        "936b169e2577eb1c859f0aa77b3dfc5be6175802"
+      ],
+      "destination": "formal/pon-nakamoto-v1/q4_reference_go/q4-reference-development-vector.json"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/q4_reference_go/verify.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e9162697bd799869d3e792aeef3e09b2e3096372",
+      "heads": [
+        "936b169e2577eb1c859f0aa77b3dfc5be6175802"
+      ],
+      "destination": "formal/pon-nakamoto-v1/q4_reference_go/verify.go"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/q4_reference_go/verify_test.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "337566b02ddf4ffaf46d72c82242701c5110060e",
+      "heads": [
+        "936b169e2577eb1c859f0aa77b3dfc5be6175802"
+      ],
+      "destination": "formal/pon-nakamoto-v1/q4_reference_go/verify_test.go"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/daa_cpp_differential.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a49beb8884dcac80c95fcf73a413d7ca2b5ff0ab",
+      "heads": [
+        "e49af5c5f0d06a4d60894560d767bb16d802a1c6"
+      ],
+      "destination": "formal/pon-nakamoto-v1/daa_cpp_differential.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/daa_cpp_oracle.cpp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "64bb9547b5f366d4cdca1be011efa26f2bfdcd4f",
+      "heads": [
+        "e49af5c5f0d06a4d60894560d767bb16d802a1c6"
+      ],
+      "destination": "formal/pon-nakamoto-v1/daa_cpp_oracle.cpp"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_daa_cpp_differential.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "57c7ca2b8301cf43de78590b8e0cf370282daa0f",
+      "heads": [
+        "e49af5c5f0d06a4d60894560d767bb16d802a1c6"
+      ],
+      "destination": "formal/pon-nakamoto-v1/test_daa_cpp_differential.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/pon_selfish_mining_research.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d4dec82c27f85885e4b3c7417e90c820d4dc4505",
+      "heads": [
+        "36fc4781c6a6ebce90c87f7b078b76c2f5f5a50f"
+      ],
+      "destination": "formal/pon-nakamoto-v1/pon_selfish_mining_research.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_pon_selfish_mining_research.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "77aa44f40741697e05504e813f5209e7c590e1f9",
+      "heads": [
+        "36fc4781c6a6ebce90c87f7b078b76c2f5f5a50f"
+      ],
+      "destination": "formal/pon-nakamoto-v1/test_pon_selfish_mining_research.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/q4_signed_wire_oracle_v1.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "221fd99c92831d0722b3182c98a6d18ac3ae82d8",
+      "heads": [
+        "be9b7a66989c78af2b71db4e8f59ededfc9ca89e"
+      ],
+      "destination": "formal/pon-nakamoto-v1/q4_signed_wire_oracle_v1.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/q4_signed_wire_vectors_v1.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c68dc3bb4e8f2d4cfec674dc53ce21b453ed984c",
+      "heads": [
+        "be9b7a66989c78af2b71db4e8f59ededfc9ca89e"
+      ],
+      "destination": "formal/pon-nakamoto-v1/q4_signed_wire_vectors_v1.json"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/q4_wire_go_mutation_test.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f2c7be36dcedb2d2bf053773af1bbb7cac60b66d",
+      "heads": [
+        "be9b7a66989c78af2b71db4e8f59ededfc9ca89e"
+      ],
+      "destination": "formal/pon-nakamoto-v1/q4_wire_go_mutation_test.go"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/q4_wire_go_probe.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a1b5f84e7ea6f31456d3f94a0436f93810421aa4",
+      "heads": [
+        "be9b7a66989c78af2b71db4e8f59ededfc9ca89e"
+      ],
+      "destination": "formal/pon-nakamoto-v1/q4_wire_go_probe.go"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/q4_wire_go_probe_test.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "38f76731f1f4d28ddd82e56e6cdac97006cdfd0e",
+      "heads": [
+        "be9b7a66989c78af2b71db4e8f59ededfc9ca89e"
+      ],
+      "destination": "formal/pon-nakamoto-v1/q4_wire_go_probe_test.go"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_q4_signed_wire_mutation_v1.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7410ba5e0ae58af9b2a29315b43fda59ee684df3",
+      "heads": [
+        "be9b7a66989c78af2b71db4e8f59ededfc9ca89e"
+      ],
+      "destination": "formal/pon-nakamoto-v1/test_q4_signed_wire_mutation_v1.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_q4_signed_wire_oracle_v1.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1fdafce9217d2a9caeab1b6968724d8f8948a263",
+      "heads": [
+        "be9b7a66989c78af2b71db4e8f59ededfc9ca89e"
+      ],
+      "destination": "formal/pon-nakamoto-v1/test_q4_signed_wire_oracle_v1.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/daa_indexed_shadow_oracle.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "41df577186751706f10e46bdfbd1f345cad8e5dc",
+      "heads": [
+        "8a624a4797e9c61e9d8af10a0a4e6255fb193010"
+      ],
+      "destination": "formal/pon-nakamoto-v1/daa_indexed_shadow_oracle.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_daa_indexed_shadow_oracle.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "662a0f7f225d9caf4f2b19aea0d7a1e17341c215",
+      "heads": [
+        "8a624a4797e9c61e9d8af10a0a4e6255fb193010"
+      ],
+      "destination": "formal/pon-nakamoto-v1/test_daa_indexed_shadow_oracle.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/daa_incremental_summary.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "eb34a03da2a9e4137e13d0069f03b9d312507ec3",
+      "heads": [
+        "0f06260763a105c3149c870f9ad7e0dc9775e040"
+      ],
+      "destination": "formal/pon-nakamoto-v1/daa_incremental_summary.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/test_daa_incremental_summary.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3c6aa974348c460bd0a0e50efd70b98d0d345ebb",
+      "heads": [
+        "0f06260763a105c3149c870f9ad7e0dc9775e040"
+      ],
+      "destination": "formal/pon-nakamoto-v1/test_daa_incremental_summary.py"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/work_go_prepared.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3f8cfd49e1d83005862a548db73dfd695618cd5e",
+      "heads": [
+        "bf659750ceb9492aaed7c74b1fc17a1c9576efe5"
+      ],
+      "destination": "formal/pon-nakamoto-v1/work_go_prepared.go"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/work_go_prepared_long_test.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7a3b77a7f7a5afaa625eca5c947d0affa55d011a",
+      "heads": [
+        "bf659750ceb9492aaed7c74b1fc17a1c9576efe5"
+      ],
+      "destination": "formal/pon-nakamoto-v1/work_go_prepared_long_test.go"
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/work_go_prepared_test.go",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "203de34bf37772e3f90de68830200f7e45aa5fca",
+      "heads": [
+        "bf659750ceb9492aaed7c74b1fc17a1c9576efe5"
+      ],
+      "destination": "formal/pon-nakamoto-v1/work_go_prepared_test.go"
+    },
+    {
+      "original_blob": "f249edbfd6819645d766ab312fc1fa85545be88f",
+      "destination": "formal/pon-nakamoto-v1/q4_standalone_go/README.md",
+      "documentation_path_adjusted": true
+    },
+    {
+      "original_blob": "1ec318156a286b614edd5440876e7487cb9db007",
+      "destination": "formal/pon-nakamoto-v1/q4_reference_go/README.md",
+      "documentation_path_adjusted": false
+    }
+  ],
+  "module_separation": "The standalone package main and modular q4reference implementations retain separate directories."
+}
