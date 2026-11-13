@@ -103,6 +103,54 @@ class CampaignTests(unittest.TestCase):
                 path.write_text(raw)
                 with self.assertRaises(ValueError):load(path)
 
+    def test_from_zero_nonce_cost_and_zero_success_controls_are_complete(self):
+        if REPORT['schema']!='public-v3-local-mixed-service-v3':
+            self.skipTest('historical v2 has no from-zero experiment')
+        self.assertGreaterEqual(validate_report(REPORT)['from_zero_rejections'],2)
+        def change(r,section,key,value):
+            r['phases'][0]['from_zero_fixture'][section][key]=value
+        cases=[
+            lambda r:change(r,'search','budget',4095),
+            lambda r:change(r,'search','winners',False),
+            lambda r:r['phases'][0]['from_zero_fixture']['search']['attempts'].pop(0),
+            lambda r:change(r,'empty_search','per_winner_ns',0),
+            lambda r:change(r,'exhausted_search','per_winner_ns',0),
+            lambda r:change(r,'exhausted_search','attempts',[]),
+            lambda r:r['phases'][0]['from_zero_fixture'].__setitem__('construction_ns',1),
+            lambda r:r['phases'][0]['from_zero_fixture'].__setitem__('packet',r['phases'][0]['false_transcript_fixture']['reference_packet']),
+            lambda r:r['phases'][0]['from_zero_fixture']['audit_verifications'][0].__setitem__('transcript_tiles',0),
+            lambda r:r['phases'][0].__setitem__('from_zero_rejections',0),
+        ]
+        for index,mutate in enumerate(cases):
+            with self.subTest(index=index):
+                report=copy.deepcopy(REPORT);mutate(report)
+                with self.assertRaises(ValueError):validate_report(report)
+
+    def test_receiver_cost_requires_complete_matching_actual_body_and_nested_cpu(self):
+        if REPORT['schema']!='public-v3-local-mixed-service-v3':
+            self.skipTest('historical v2 has no receiver capture')
+        def work(r):
+            return next(x for x in r['phases'][0]['server_observations']['records'] if x['full_work_started'])
+        def duplicate_connection(r):
+            rows=r['phases'][0]['server_observations']['records'];rows[1]['connection_id']=rows[0]['connection_id']
+        def substitute_body(r):
+            for row in r['phases'][0]['server_observations']['records']:
+                if row['full_work_started']:row['body_digest']=[255]*32
+        cases=[duplicate_connection,substitute_body,
+            lambda r:r['phases'][0]['server_observations'].__setitem__('records_not_retained',1),
+            lambda r:r['phases'][0]['server_observations'].__setitem__('cpu_intervals_are_nested_not_additive',False),
+            lambda r:work(r).__setitem__('full_work_thread_cpu_ns',None),
+            lambda r:work(r).__setitem__('full_work_thread_cpu_ns',work(r)['dispatch_thread_cpu_ns']+1),
+            lambda r:work(r).__setitem__('application_bytes_read',0),
+            lambda r:work(r).__setitem__('complete',False),
+            lambda r:r['phases'][0]['server_metrics'].__setitem__('mutation_cpu_charged_ns',1),
+            lambda r:r['phases'][0].__setitem__('resource_observations_complete',False),
+        ]
+        for index,mutate in enumerate(cases):
+            with self.subTest(index=index):
+                report=copy.deepcopy(REPORT);mutate(report)
+                with self.assertRaises(ValueError):validate_report(report)
+
 if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('--report',required=True)
     args=parser.parse_args();REPORT=load(Path(args.report))
