@@ -486,6 +486,12 @@ PY
     cargo clippy --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features -- -D warnings
     ;;
   external-evidence-contract)
+    python3 scripts/ci/test_pon_decentralization_audit.py -v
+    python3 scripts/ci/test_pon_decentralization_evidence.py -v
+    python3 scripts/ci/test_pon_wan_evidence.py -v
+    python3 scripts/ci/test_pon_wan_control_domains.py -v
+    python3 scripts/ci/test_pon_p0_p6_evidence_gate.py -v
+    python3 scripts/ci/test_pon_admission_price_model.py -v
     python3 scripts/ci/prepare_evidence_sources.py
     python3 scripts/ci/test_evidence_sources.py
     python3 scripts/ci/check_repository.py

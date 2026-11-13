@@ -221,6 +221,7 @@ COST_BOUNDARY_READERS = ('    python3 scripts/ci/test_pon_w1_budget_readers.py -
                          '    python3 scripts/ci/test_pon_public_v3_phase_read.py\n'
                          '    python3 scripts/ci/test_pon_public_v3_policy_read.py\n'
                          '    python3 scripts/ci/test_pon_v3_cookie_cpu_study.py\n'
+                         '    python3 scripts/ci/test_pon_w1_entrypoint_ownership.py\n'
                          '    python3 scripts/ci/test_run_pon_w1_native_campaign.py\n')
 CURRENT_READER_COMMANDS = (
     'python3 scripts/ci/test_read_validated_business_goodput.py',
@@ -260,6 +261,10 @@ ORIGINAL_CAMPAIGN_READER = r'''    python3 scripts/ci/test_read_original_native_
       --expected-tree 521ae87a28060d545979069b189eebbc74a71fd8 --retained-subset
 '''
 NODE_EXAMPLE_BUILD = '    cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --bins --examples\n'
+NODE_POST_BUILD_CONTROLS = (
+    '    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib daa_research_tests -- --test-threads=1\n'
+    '    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib maintenance_recovers_signed_task_registration_and_policy_confirmation_after_revoke -- --test-threads=1\n'
+)
 ACCOUNT_ARCHIVE_ORACLE = ('    python3 formal/pon-nakamoto-v1/test_account_archive_oracle.py -v\n'
                           '    python3 scripts/ci/run_account_archive_conformance.py\n')
 ACCOUNT_EXECUTION_ORACLE = ('    python3 formal/pon-nakamoto-v1/test_account_execution_oracle.py -v\n'
@@ -487,8 +492,11 @@ PROTOCOL_CONTRACT_BLOCK = PQ_MIGRATION_CONFORMANCE_PREFIX + ROOT_RECOVERY_NATIVE
     cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-transport proof_admission --all-targets
     python3 formal/pon-nakamoto-v1/test_contracts.py
     python3 formal/pon-nakamoto-v1/test_invariants.py
+    python3 -B formal/pon-nakamoto-v1/test_daa_lease_research.py -v
     cargo fetch --locked --manifest-path trillionnium/Cargo.toml
     cargo build --offline --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --bins --examples
+    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib daa_research_tests -- --test-threads=1
+    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib maintenance_recovers_signed_task_registration_and_policy_confirmation_after_revoke -- --test-threads=1
     python3 formal/pon-nakamoto-v1/test_account_archive_oracle.py -v
     python3 scripts/ci/run_account_archive_conformance.py
     python3 formal/pon-nakamoto-v1/test_account_execution_oracle.py -v
@@ -554,6 +562,7 @@ PROTOCOL_CONTRACT_BLOCK = PQ_MIGRATION_CONFORMANCE_PREFIX + ROOT_RECOVERY_NATIVE
     python3 formal/pon-nakamoto-v1/test_client_confirmation.py
     python3 formal/pon-nakamoto-v1/test_native_session.py
     python3 formal/pon-nakamoto-v1/test_work_precheck.py
+    python3 formal/pon-nakamoto-v1/test_w2d_product_projection.py
     TRNM_NATIVE_WORK="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io" TRNM_NATIVE_SESSION="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute_session" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_client_confirmation.py
     TRNM_NATIVE_WORK="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io" TRNM_NATIVE_SESSION="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute_session" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_contracts.py
     TRNM_NATIVE_WORK="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_work_io" TRNM_NATIVE_SESSION="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute_session" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_invariants.py
@@ -571,6 +580,7 @@ PROTOCOL_CONTRACT_BLOCK = PQ_MIGRATION_CONFORMANCE_PREFIX + ROOT_RECOVERY_NATIVE
     python3 formal/pon-nakamoto-v1/test_cell_lottery_cost_audit_v1.py -v
     python3 formal/pon-nakamoto-v1/test_service_work_settlement_v1.py -v
     python3 formal/pon-nakamoto-v1/test_work_backend.py
+    python3 formal/pon-nakamoto-v1/test_w1_structured_cost.py
     python3 formal/pon-nakamoto-v1/test_strict_signature.py
     TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_native_execution.py
     TRNM_NATIVE_EXECUTOR="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_contracts.py
@@ -916,6 +926,7 @@ PY
     python3 scripts/ci/test_pon_public_v3_phase_read.py
     python3 scripts/ci/test_pon_public_v3_policy_read.py
     python3 scripts/ci/test_pon_v3_cookie_cpu_study.py
+    python3 scripts/ci/test_pon_w1_entrypoint_ownership.py
     python3 scripts/ci/test_run_pon_w1_native_campaign.py
     python3 scripts/ci/test_read_validated_business_goodput.py
     python3 scripts/ci/test_read_failed_native_campaign_zip.py
@@ -955,7 +966,22 @@ PY
 
 # Independent literal for the existing external lane. A command inside a false
 # branch or an errexit-suppressing shell condition is not an executed control.
-EXTERNAL_EVIDENCE_CONTRACT_BLOCK = '''    python3 scripts/ci/prepare_evidence_sources.py
+RESEARCH_EVIDENCE_CONTROLS = (
+    '    python3 scripts/ci/test_pon_decentralization_audit.py -v\n'
+    '    python3 scripts/ci/test_pon_decentralization_evidence.py -v\n'
+    '    python3 scripts/ci/test_pon_wan_evidence.py -v\n'
+    '    python3 scripts/ci/test_pon_wan_control_domains.py -v\n'
+    '    python3 scripts/ci/test_pon_p0_p6_evidence_gate.py -v\n'
+    '    python3 scripts/ci/test_pon_admission_price_model.py -v\n'
+)
+
+EXTERNAL_EVIDENCE_CONTRACT_BLOCK = '''    python3 scripts/ci/test_pon_decentralization_audit.py -v
+    python3 scripts/ci/test_pon_decentralization_evidence.py -v
+    python3 scripts/ci/test_pon_wan_evidence.py -v
+    python3 scripts/ci/test_pon_wan_control_domains.py -v
+    python3 scripts/ci/test_pon_p0_p6_evidence_gate.py -v
+    python3 scripts/ci/test_pon_admission_price_model.py -v
+    python3 scripts/ci/prepare_evidence_sources.py
     python3 scripts/ci/test_evidence_sources.py
     python3 scripts/ci/check_repository.py
     python3 scripts/ci/test_repository.py EvidenceBoundaryTests
@@ -1470,6 +1496,10 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
     pairs = re.findall(r'(?ms)^  ([a-z][a-z0-9-]*)\)\n(.*?)(?=^    ;;$)', script)
     lanes = dict(pairs)
     require(len(pairs) == len(lanes) and set(lanes) == required, 'exact five executable lane selectors')
+    evidence_commands = code_lines(RESEARCH_EVIDENCE_CONTROLS)
+    require(code_lines(lanes['external-evidence-contract'])[:len(evidence_commands)] == evidence_commands
+            and all(code_lines(script).count(command) == 1 for command in evidence_commands),
+            'declared-control, original WAN and retained research evidence controls must execute once, first and without fallback in external-evidence-contract')
     pq_commands = code_lines(PQ_MIGRATION_CONFORMANCE_PREFIX)
     require(code_lines(lanes['protocol-contract'])[:len(pq_commands)] == pq_commands
             and all(code_lines(script).count(command) == 1 for command in pq_commands),
@@ -1571,13 +1601,13 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
                                (ORIGINAL_CAMPAIGN_READER, 'repository-truth', 'original campaign source-pinned reader controls')]:
         require(block in lanes[lane] and all(script.count(command) == 1 for command in block.splitlines(keepends=True)),
                 label + ' must execute once in their original lane')
-    require(NODE_EXAMPLE_BUILD + ACCOUNT_ARCHIVE_ORACLE in lanes['protocol-contract'] and
+    require(NODE_EXAMPLE_BUILD + NODE_POST_BUILD_CONTROLS + ACCOUNT_ARCHIVE_ORACLE in lanes['protocol-contract'] and
             script.count(ACCOUNT_ARCHIVE_ORACLE) == 1,
             'native archive vectors and the independent read-only oracle must execute after their actual release build')
-    require(NODE_EXAMPLE_BUILD + ACCOUNT_ARCHIVE_ORACLE + ACCOUNT_EXECUTION_ORACLE in lanes['protocol-contract'] and
+    require(NODE_EXAMPLE_BUILD + NODE_POST_BUILD_CONTROLS + ACCOUNT_ARCHIVE_ORACLE + ACCOUNT_EXECUTION_ORACLE in lanes['protocol-contract'] and
             script.count(ACCOUNT_EXECUTION_ORACLE) == 1,
             'native account execution, complete state witness and independent JSON oracles must execute once after the actual Node release build')
-    require(NODE_EXAMPLE_BUILD + ACCOUNT_ARCHIVE_ORACLE + ACCOUNT_EXECUTION_ORACLE +
+    require(NODE_EXAMPLE_BUILD + NODE_POST_BUILD_CONTROLS + ACCOUNT_ARCHIVE_ORACLE + ACCOUNT_EXECUTION_ORACLE +
             GSC2_SYNTHETIC_ORACLE in lanes['protocol-contract'],
             'GSC2 synthetic counterexamples must follow the unchanged native archive/execution oracle sequence')
     expected = ('    cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check\n'
