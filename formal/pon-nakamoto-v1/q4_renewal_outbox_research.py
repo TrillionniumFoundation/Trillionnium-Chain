@@ -21,6 +21,7 @@ EVENT_DOMAIN = b'TRNM-Q4-OUTBOX-EVENT-V1\0'
 UINT64 = (1 << 64) - 1
 ZERO = bytes(32)
 TX_BYTES = 1187  # historical PNX1(tag22) envelope length, NOT signature verification
+MAX_STORED_FIELD_BYTES = 4096  # research-only local readback bound
 
 class OutboxError(ValueError):
     pass
@@ -171,6 +172,8 @@ class RenewalOutbox:
             except BaseException:
                 self.db.execute('ROLLBACK')
                 raise
+            self._verify_sqlite_schema()
+            self._check_stored_blob_budget()
             actual = dict(self.db.execute('SELECT key,value FROM q4_outbox_meta_v1'))
             if actual != dict([('schema',SCHEMA),('network',self.context[0]),('parameters',self.context[1]),('genesis',self.context[2])]):
                 raise OutboxError('CONTEXT_MISMATCH')
@@ -243,8 +246,31 @@ class RenewalOutbox:
         if indexes != {'q4_outbox_once_v1': required}:
             raise OutboxError('SCHEMA_DRIFT')
 
+    def _check_stored_blob_budget(self) -> None:
+        """Check SQL field lengths before loading an untrusted stored large row.
+
+        Runs in the same SQLite read/write snapshot as the original outbox
+        fence. This is a local per-field bound, not a file/WAL/RSS quota.
+        """
+        for table, columns in (
+            ('q4_outbox_meta_v1', ('key', 'value')),
+            ('q4_outbox_intents_v1', ('id', 'operation_id', 'packet_id', 'wire')),
+            ('q4_outbox_events_v1', ('intent_id', 'kind', 'observation', 'prev', 'digest')),
+        ):
+            predicate = ' OR '.join(f'length({field}) > ?' for field in columns)
+            if self.db.execute(
+                f'SELECT 1 FROM {table} WHERE {predicate} LIMIT 1',
+                (MAX_STORED_FIELD_BYTES,) * len(columns),
+            ).fetchone() is not None:
+                raise OutboxError('STORAGE_BLOB_BUDGET')
+
     def _audit_snapshot(self) -> int:
         self._verify_sqlite_schema()
+        self._check_stored_blob_budget()
+        if self.db.execute('SELECT COUNT(*) FROM q4_outbox_intents_v1').fetchone()[0] > self.max_intents:
+            raise OutboxError('INTENT_BUDGET')
+        if self.db.execute('SELECT COUNT(*) FROM q4_outbox_events_v1').fetchone()[0] > self.max_events:
+            raise OutboxError('EVENT_BUDGET')
         pinned = dict([('schema',SCHEMA),('network',self.context[0]),
                        ('parameters',self.context[1]),('genesis',self.context[2])])
         actual = dict(self.db.execute('SELECT key,value FROM q4_outbox_meta_v1'))

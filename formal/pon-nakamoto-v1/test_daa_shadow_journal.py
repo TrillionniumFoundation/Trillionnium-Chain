@@ -62,6 +62,21 @@ class ShadowJournalTests(unittest.TestCase):
         with self.assertRaisesRegex(JournalError, 'DATABASE_SCHEMA_DRIFT'):
             ShadowJournal(self.path, CTX, GEN)
 
+    def test_oversized_durable_metadata_refuses_hot_reads_and_cold_open(self):
+        with ShadowJournal(self.path, CTX, GEN) as db:
+            header, packet = candidate(GEN, 1)
+            db.append(header, packet)
+            with sqlite3.connect(self.path) as external:
+                external.execute("UPDATE daa_shadow_meta_v1 "
+                                 "SET value=zeroblob(65536) WHERE key='context'")
+            for action in (lambda: db.audit(), lambda: db.get(header.block_id),
+                           lambda: db.activate(GEN, GEN)):
+                with self.assertRaisesRegex(JournalError, 'DATABASE_BLOB_BUDGET'):
+                    action()
+                self.assertFalse(db.db.in_transaction)
+        with self.assertRaisesRegex(JournalError, 'DATABASE_BLOB_BUDGET'):
+            ShadowJournal(self.path, CTX, GEN)
+
     def test_sqlite_ephemeral_targets_refused_before_shadow_open(self):
         for target in (':memory:', 'file::memory:?cache=shared'):
             with self.subTest(target=target):
