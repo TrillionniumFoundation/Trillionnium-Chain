@@ -2229,6 +2229,153 @@ def check_pq_system_required_controls(root: Path) -> dict:
             'selected_meaningful_controls': 63, 'tests_executed': False}
 
 
+PQ_DURABLE_OUTBOUND_MANIFEST = 'config/pon/pq-durable-outbound-required-tests-v1.json'
+PQ_DURABLE_OUTBOUND_NAMES_SHA256 = 'e6ff1d23bb00a98d970750d85ccbd291a313a468823f47a06735c5d815785df7'
+PQ_DURABLE_OUTBOUND_TYPE_CONTROL = {'selector': 'ingress::pq_network::outbound::DurablePqOutbound::record_verified_reply', 'expected_diagnostic': 'E0308', 'expected_type': '&VerifiedPqReply', 'found_type': '&PqResponse', 'scope': 'sealed-reply-type-boundary-only'}
+PQ_DURABLE_OUTBOUND_STEPS = r'''      - name: Execute original durable outbound controls from the actual registry
+        if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash "$PQ_OUT/run-command.sh" outbound-registry cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features -- --list
+          python3 - "$PQ_OUT" <<'PYOUTBOUND'
+          import json, re, sys
+          from pathlib import Path
+          value = json.loads(Path('config/pon/pq-durable-outbound-required-tests-v1.json').read_text())
+          assert value['schema'] == 'trnm-pq-durable-outbound-required-tests-v1'
+          assert value['scope'] == 'explicit-loopback-outbound-and-sealed-reply-only'
+          assert all(value.get(key) is False for key in ('whole_chain_quantum_security_qualified',
+              'original_business_budgets_changed', 'complete_pq_parent_recovery',
+              'public_wan_accepted', 'independent_custody_accepted'))
+          tests = value['tests']
+          prefix = 'ingress::pq_network::outbound::tests::'
+          assert type(value['expected_meaningful_controls']) is int and value['expected_meaningful_controls'] == 9
+          assert isinstance(tests, list) and len(tests) == len(set(tests)) == 9
+          assert all(isinstance(name, str) and re.fullmatch(re.escape(prefix) + r'[A-Za-z_][A-Za-z0-9_]*', name) for name in tests)
+          root = Path(sys.argv[1])
+          names = re.findall(r'^([A-Za-z0-9_:]+): test$', (root / 'outbound-registry.log').read_text(), re.M)
+          assert len(names) == len(set(names)) and set(name for name in names if name.startswith(prefix)) == set(tests)
+          (root / 'outbound-tests.tsv').write_text(''.join(f'outbound-{i:02d}\t{name}\n' for i, name in enumerate(tests)))
+          PYOUTBOUND
+          failed=0
+          while IFS=$'\t' read -r label selector; do
+            if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features "$selector" -- --exact --show-output --test-threads=1; then
+              failed=1
+            elif ! python3 scripts/ci/check_required_native_test.py "$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then
+              failed=1
+            fi
+          done < "$PQ_OUT/outbound-tests.tsv"
+          test "$failed" = 0
+      - name: Require the sealed outbound reply type boundary
+        if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          manifest=config/pon/pq-durable-outbound-required-tests-v1.json
+          selector=ingress::pq_network::outbound::DurablePqOutbound::record_verified_reply
+          bash "$PQ_OUT/run-command.sh" outbound-sealed-api cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --doc --all-features "$selector" -- --show-output --test-threads=1
+          # --show-output preserves the compiler diagnostic of a passing compile-fail.
+          # The reader requires the actual type mismatch, so wrong imports cannot pass.
+          readback='import json, re, sys
+          from pathlib import Path
+
+          EXPECTED = {
+              "selector": "ingress::pq_network::outbound::DurablePqOutbound::record_verified_reply",
+              "expected_diagnostic": "E0308",
+              "expected_type": "&VerifiedPqReply",
+              "found_type": "&PqResponse",
+              "scope": "sealed-reply-type-boundary-only",
+          }
+
+          def validate(text):
+              names = re.findall(r"^test .+ - " + re.escape(EXPECTED["selector"]) +
+                  r" \(line [0-9]+\) - compile fail \.\.\. ok$", text, re.M)
+              all_names = re.findall(r"^test .+ \.\.\. (?:ok|FAILED|ignored)$", text, re.M)
+              running = re.findall(r"^running ([0-9]+) tests?$", text, re.M)
+              summaries = re.findall(r"^test result: (ok|FAILED)\. ([0-9]+) passed; ([0-9]+) failed; ([0-9]+) ignored; ([0-9]+) measured; ([0-9]+) filtered out;", text, re.M)
+              errors = re.findall(r"^error\[(E[0-9]+)\]:", text, re.M)
+              valid = (len(names) == len(all_names) == 1 and running == ["1"]
+                  and len(summaries) == 1 and summaries[0][0] == "ok"
+                  and tuple(map(int, summaries[0][1:5])) == (1, 0, 0, 0)
+                  and errors == [EXPECTED["expected_diagnostic"]]
+                  and re.search(r"expected (?:reference )?`" + re.escape(EXPECTED["expected_type"]) + "`", text)
+                  and re.search(r"found (?:reference )?`" + re.escape(EXPECTED["found_type"]) + "`", text))
+              if not valid:
+                  raise ValueError("sealed reply control must prove the named E0308 type mismatch")
+              return {"result": "PASS", "test": EXPECTED["selector"], "executed_tests": 1,
+                  "diagnostic_codes": errors, "scope": EXPECTED["scope"],
+                  "counted_in_library_controls": False, "complete_pq_parent_recovery": False,
+                  "whole_chain_quantum_security_qualified": False}
+
+          value = json.loads(Path(sys.argv[1]).read_text())
+          if (value.get("schema") != "trnm-pq-durable-outbound-required-tests-v1"
+                  or type(value.get("expected_compile_fail_controls")) is not int
+                  or value["expected_compile_fail_controls"] != 1
+                  or value.get("compile_fail_controls") != [EXPECTED]
+                  or any(value.get(key) is not False for key in ("whole_chain_quantum_security_qualified",
+                      "original_business_budgets_changed", "complete_pq_parent_recovery",
+                      "public_wan_accepted", "independent_custody_accepted"))):
+              raise SystemExit("sealed reply required-control manifest invalid")
+          print(json.dumps(validate(Path(sys.argv[2]).read_text()), sort_keys=True))
+          '
+          bash "$PQ_OUT/run-command.sh" outbound-sealed-api-readback python3 -c "$readback" "$manifest" "$PQ_OUT/outbound-sealed-api.log"
+'''
+
+
+def check_pq_durable_outbound_controls(root: Path) -> dict:
+    """Check additive 9+1 source selection, without claiming execution."""
+    for relative in (PQ_RELEASE_WORKFLOW, PQ_DURABLE_OUTBOUND_MANIFEST):
+        source = root / relative
+        require(source.is_file() and not source.is_symlink(),
+                'PQ outbound control requires regular source: ' + relative)
+    value = json.loads((root / PQ_DURABLE_OUTBOUND_MANIFEST).read_text())
+    false_flags = ('whole_chain_quantum_security_qualified',
+                   'original_business_budgets_changed', 'complete_pq_parent_recovery',
+                   'public_wan_accepted', 'independent_custody_accepted')
+    require(isinstance(value, dict)
+            and set(value) == {'schema', 'scope', 'expected_meaningful_controls', 'tests',
+                              'expected_compile_fail_controls', 'compile_fail_controls', *false_flags}
+            and value.get('schema') == 'trnm-pq-durable-outbound-required-tests-v1'
+            and value.get('scope') == 'explicit-loopback-outbound-and-sealed-reply-only'
+            and type(value.get('expected_meaningful_controls')) is int
+            and value['expected_meaningful_controls'] == 9
+            and type(value.get('expected_compile_fail_controls')) is int
+            and value['expected_compile_fail_controls'] == 1
+            and value.get('compile_fail_controls') == [PQ_DURABLE_OUTBOUND_TYPE_CONTROL]
+            and all(value.get(key) is False for key in false_flags),
+            'PQ outbound scope, exact counters and sealed type control must be retained')
+    names = value.get('tests')
+    require(isinstance(names, list) and len(names) == 9
+            and all(isinstance(name, str) and re.fullmatch(
+                r'ingress::pq_network::outbound::tests::[A-Za-z_][A-Za-z0-9_]*', name)
+                for name in names)
+            and len(set(names)) == 9
+            and hashlib.sha256(('\n'.join(names) + '\n').encode()).hexdigest()
+                == PQ_DURABLE_OUTBOUND_NAMES_SHA256,
+            'PQ outbound nine reviewed full names and order must be retained')
+    text = (root / PQ_RELEASE_WORKFLOW).read_text()
+    header, separator, body = text.partition('\njobs:\n')
+    require(bool(separator), 'PQ outbound workflow needs explicit jobs mapping')
+    paths = re.findall(r'^      - ([A-Za-z0-9_./*-]+)$', header, re.M)
+    for relative in (PQ_DURABLE_OUTBOUND_MANIFEST, PQ_RELEASE_WORKFLOW, 'trillionnium/**',
+                     'scripts/ci/check_ci_contract.py', 'scripts/ci/test_ci_contract.py',
+                     'scripts/ci/check_required_native_test.py',
+                     'scripts/ci/record_pq_native_command.py'):
+        require(paths.count(relative) == 1,
+                'PQ outbound workflow must trigger on its exact sources: ' + relative)
+    pairs = re.findall(r'(?ms)^  ([a-z][a-z0-9-]*):\n(.*?)(?=^  [a-z][a-z0-9-]*:\n|\Z)', body)
+    jobs = dict(pairs)
+    job = jobs.get('native', '')
+    require(len(jobs) == len(pairs) and job.startswith(PQ_SYSTEM_JOB_HEADER)
+            and 'continue-on-error' not in job and not re.search(r'^    if:', job, re.M),
+            'PQ outbound controls must retain both native runners and exact head/merge sources')
+    require(text.count(PQ_DURABLE_OUTBOUND_STEPS) == job.count(PQ_DURABLE_OUTBOUND_STEPS) == 1
+            and PQ_CHECKPOINT_OWNERSHIP_STEP + PQ_DURABLE_OUTBOUND_STEPS in job,
+            'PQ outbound registry, exact executions and named E0308 readback must follow retained checkpoint owners')
+    return {'native_controls': 9, 'sealed_type_controls': 1,
+            'complete_pq_parent_recovery': False, 'tests_executed': False}
+
+
 def validate(root: Path = ROOT) -> dict:
     # Discovery can exit successfully with zero tests when a pattern disappears.
     # These mandatory files are executed explicitly and must also exist at review.
@@ -2247,6 +2394,7 @@ def validate(root: Path = ROOT) -> dict:
     inline_source_pins = check_inline_source_pins(root)
     pq_release_authority_controls = check_pq_release_authority_controls(root)
     pq_system_controls = check_pq_system_required_controls(root)
+    pq_outbound_controls = check_pq_durable_outbound_controls(root)
     check_from_zero_host_callsites(root)
     check_w1_postwin_workflow((root / '.github/workflows/pon-w1-transparent-profile.yml').read_text())
     text = (root / WORKFLOW).read_text()
@@ -2525,6 +2673,7 @@ def validate(root: Path = ROOT) -> dict:
             'w1_actual_reuse_v3_cells': 4, 'inline_source_pins': inline_source_pins,
             'pq_release_authority_controls': pq_release_authority_controls,
             'pq_system_controls': pq_system_controls,
+            'pq_outbound_controls': pq_outbound_controls,
             'tests_executed': False}
 
 

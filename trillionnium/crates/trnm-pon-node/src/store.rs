@@ -4249,7 +4249,7 @@ impl Node {
         )?;
         let is_ancestor = crate::ancestry_index::contains(
             &self.db,
-            self.ancestry_context(),
+            self.ancestry_context()?,
             parent,
             context.anchor_block,
             crate::ancestry_index::READ_SQL_BUDGET,

@@ -150,5 +150,53 @@ class NativeRosterTests(unittest.TestCase):
         self.assertNotIn('continue-on-error: true', text)
 
 
+class DurableOutboundRosterTests(unittest.TestCase):
+    def run_selector(self, *, value=None, names=None):
+        manifest = json.loads((ROOT / 'config/pon/pq-durable-outbound-required-tests-v1.json').read_text())
+        selected = manifest if value is None else value
+        registry = manifest['tests'] if names is None else names
+        script = heredoc(PQ, 'python3 - "$PQ_OUT" <<\'PYOUTBOUND\'\n', '          PYOUTBOUND\n')
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'config/pon').mkdir(parents=True)
+            (root / 'config/pon/pq-durable-outbound-required-tests-v1.json').write_text(json.dumps(selected))
+            (root / 'outbound-registry.log').write_text(''.join(name + ': test\n' for name in registry))
+            result = subprocess.run([sys.executable, '-c', script, str(root)], cwd=root,
+                                    text=True, capture_output=True, timeout=10)
+            output = root / 'outbound-tests.tsv'
+            return result, output.read_text() if output.exists() else None
+
+    def test_exact_nine_controls_preserve_all_original_rosters(self):
+        result, output = self.run_selector()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        manifest = json.loads((ROOT / 'config/pon/pq-durable-outbound-required-tests-v1.json').read_text())
+        self.assertEqual([line.split('\t')[1] for line in output.splitlines()], manifest['tests'])
+        for path, expected in (('pq-system-required-tests-v1.json', 52),
+                               ('pq-system-supplemental-tests-v1.json', 11)):
+            retained = json.loads((ROOT / 'config/pon' / path).read_text())
+            self.assertEqual(len(retained['tests']), expected)
+            self.assertTrue(set(retained['tests']).isdisjoint(manifest['tests']))
+
+    def test_missing_duplicate_or_unreviewed_registered_control_refused(self):
+        names = json.loads((ROOT / 'config/pon/pq-durable-outbound-required-tests-v1.json').read_text())['tests']
+        for registry in (names[:-1], names + [names[0]],
+                         names + ['ingress::pq_network::outbound::tests::unreviewed']):
+            with self.subTest(registry=registry):
+                result, output = self.run_selector(names=registry)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIsNone(output)
+
+    def test_invalid_roster_count_name_or_qualification_refused(self):
+        manifest = json.loads((ROOT / 'config/pon/pq-durable-outbound-required-tests-v1.json').read_text())
+        changes = [dict(manifest, expected_meaningful_controls=True),
+                   dict(manifest, tests=manifest['tests'][:-1] + ['--ignored']),
+                   dict(manifest, whole_chain_quantum_security_qualified=True)]
+        for value in changes:
+            with self.subTest(value=value):
+                result, output = self.run_selector(value=value)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIsNone(output)
+
+
 if __name__ == '__main__':
     unittest.main()
