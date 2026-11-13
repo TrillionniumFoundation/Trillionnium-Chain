@@ -1,0 +1,13 @@
+
+running 8 tests
+test native_budget::task_operation_v2::tests::payment_readback_rejects_same_generation_anchor_changes_without_rewriting_no_gain_fee ... ok
+test native_budget::tests::completed_effect_readback_rejects_stale_or_changed_owner_after_restart ... ok
+test native_budget::tests::native_payment_readback_rejects_new_generation_append_and_preserves_unknown ... ok
+test native_budget::tests::native_payment_readback_rejects_same_generation_append_from_second_connection ... ok
+test native_budget::tests::completed_effect_readback_rejects_new_generation_append_and_preserves_unknown ... ok
+test native_budget::tests::completed_effect_readback_rejects_same_generation_append_from_second_connection ... ok
+test native_generation_budget_v2::tests::payment_readback_rejects_new_generation_append_and_retains_unknown_after_reopen ... ok
+test native_generation_budget_v2::tests::payment_readback_rejects_same_generation_append_from_second_connection ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 69 filtered out; finished in 0.12s
+

@@ -1,0 +1,411 @@
+{
+  "checks": [
+    {
+      "argv": [
+        "cargo",
+        "metadata",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1"
+      ],
+      "label": "locked-offline-graph",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "rustc",
+        "-Vv"
+      ],
+      "label": "rustc-version",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "cargo",
+        "-V"
+      ],
+      "label": "cargo-version",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_pq_research_integration.py",
+        "-v"
+      ],
+      "label": "test_pq_research_integration",
+      "timeout": 3600
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_source_integrity.py",
+        "-v"
+      ],
+      "label": "test_ci_source_integrity",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_ci_contract.py",
+        "-v"
+      ],
+      "label": "test_ci_contract",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_w1_factorial_native_gate.py",
+        "-v"
+      ],
+      "label": "test_w1_factorial_native_gate",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_prepare_artifact_upload.py",
+        "-v"
+      ],
+      "label": "test_prepare_artifact_upload",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_cell_storage_convergence_ci.py",
+        "-v"
+      ],
+      "label": "test_cell_storage_convergence_ci",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_cell_discovery_v3_ci.py",
+        "-v"
+      ],
+      "label": "test_cell_discovery_v3_ci",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_fresh_rejection_report.py",
+        "-v"
+      ],
+      "label": "test_fresh_rejection_report",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_w1_qrom_current_ci.py",
+        "-v"
+      ],
+      "label": "test_w1_qrom_current_ci",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_pq_authority_effect_register.py",
+        "-v"
+      ],
+      "label": "test_pq_authority_effect_register",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_pq_lifetime_budget.py",
+        "-v"
+      ],
+      "label": "test_pq_lifetime_budget",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_w1_lifetime_ledger.py",
+        "-v"
+      ],
+      "label": "test_w1_lifetime_ledger",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/test_w1_lifecycle_cost_v4.py",
+        "-v"
+      ],
+      "label": "test_w1_lifecycle_cost_v4",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "label": "corpus",
+      "timeout": 3600
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "label": "ci-contract",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/w1_qrom_current_ci.py",
+        "named",
+        "--repo-root",
+        "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+        "--out",
+        "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-validation-01/qrom-current"
+      ],
+      "label": "qrom-current-named",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/w1_qrom_current_ci.py",
+        "drift",
+        "--repo-root",
+        "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+        "--out",
+        "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-validation-01/qrom-current"
+      ],
+      "label": "qrom-historical-drift",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/w1_qrom_current_implementation_audit.py",
+        "--repo-root",
+        "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+        "--output",
+        "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-validation-01/qrom-current/implementation.json"
+      ],
+      "label": "qrom-current-implementation",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/pq_authority_effect_register.py"
+      ],
+      "label": "authority-register",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/pq_lifetime_budget.py"
+      ],
+      "label": "pq128-lifetime",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/w1_lifetime_ledger.py",
+        "--input",
+        "evidence/pon-w1-lifetime-current-20261110-685a/project-input.json"
+      ],
+      "label": "w1-lifetime-report",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "cmp",
+        "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-validation-01/w1-lifetime-report.stdout.log",
+        "/home/qian-qi/chain-pon-followthrough-20261110-685a/evidence/pon-w1-lifetime-current-20261110-685a/project-report.json"
+      ],
+      "label": "w1-lifetime-report-identical",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "label": "distributed-inventory",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ],
+      "label": "repository-and-markdown-links",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "a715b2c8e89732ce356ebae67f978ef232156c04",
+        "8ab052065ae8307b1ab2c9d42b0dca229a5a3b9d",
+        "--",
+        ".",
+        ":(exclude)evidence/**"
+      ],
+      "label": "source-diff-whitespace",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "label": "format",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-mvcc-fee",
+        "--lib",
+        "--",
+        "--test-threads=1"
+      ],
+      "label": "mvcc-library",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-mvcc-fee",
+        "--test",
+        "evaluation_quorum_v2",
+        "--",
+        "--test-threads=1"
+      ],
+      "label": "evaluation-quorum-v2",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work",
+        "--",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "label": "cancel-exact",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "confirmation_chainwork_tests",
+        "--",
+        "--test-threads=1"
+      ],
+      "label": "confirmation-four",
+      "timeout": 1800
+    },
+    {
+      "argv": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--locked",
+        "--offline",
+        "-p",
+        "trnm-mvcc-fee",
+        "-p",
+        "trnm-pon-node",
+        "-p",
+        "trnm-service-settlement",
+        "-p",
+        "trnm-crypto-primitives",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "label": "four-owner-strict-clippy",
+      "timeout": 1800
+    }
+  ],
+  "checks_already_passed": false,
+  "full_node_suite_executed": false,
+  "hosted_ci_observed_complete": false,
+  "native_full_suite_passed": false,
+  "parent_test_results_reused": false,
+  "schema": "pon-upstream-union-validation-plan-v1",
+  "security_status": "HOLD",
+  "source": "8ab052065ae8307b1ab2c9d42b0dca229a5a3b9d"
+}

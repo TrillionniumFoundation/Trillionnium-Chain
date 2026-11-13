@@ -1,0 +1,14 @@
+
+running 9 tests
+test classic_retained_closure_preserves_legal_appeals_and_late_conflicts ... ok
+test classic_retained_closure_recounts_aborts_and_accepts_complete_zero_score ... ok
+test classic_retained_closure_rejects_substituted_summary_at_use_and_restore ... ok
+test fresh_profile_refuses_attested_models_and_cross_version_replay ... ok
+test independent_reference_vectors_match_native_domains_counts_and_records ... ok
+test quorum_retained_closure_cannot_authorize_adoption_before_its_height ... ok
+test quorum_retained_closure_preserves_nonempty_history_after_more_conflicts ... ok
+test quorum_retained_closure_rejects_substituted_summary_at_use_and_restore ... ok
+test retained_reveals_recheck_commitments_at_restore_close_and_adoption ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.52s
+

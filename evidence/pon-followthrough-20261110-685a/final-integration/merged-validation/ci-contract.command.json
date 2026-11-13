@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/check_ci_contract.py"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794311068978336991,
+  "exit_code": 0,
+  "interrupted": false,
+  "label": "ci-contract",
+  "process_exit_code": 0,
+  "recorder_error": null,
+  "start_unix_ns": 1794311068763329764,
+  "stderr": {
+    "bytes": 0,
+    "file": "ci-contract.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 431,
+    "file": "ci-contract.stdout.log",
+    "sha256": "334cc2b26ed99ad5f867ee9b65f3047e23afcfae056d4ba9c852b0a201e2dbeb"
+  },
+  "timed_out": false,
+  "timeout_seconds": 1800
+}

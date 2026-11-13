@@ -1,0 +1,29 @@
+{
+  "actual_conflict_paths": [
+    ".github/workflows/pon-w1-work-security.yml",
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "scripts/ci/test_w1_factorial_native_gate.py"
+  ],
+  "first_parent": "a715b2c8e89732ce356ebae67f978ef232156c04",
+  "merge_tests_executed": false,
+  "second_parent": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+  "second_parent_tree": "a883a05b590fb8b0113b3715f4294eee7a00275b",
+  "source_before_tree": "cc44e4c526d9b52d04697169a9b1d3eeb5079451",
+  "upstream_added_evidence_count": 196,
+  "upstream_non_evidence_paths": [
+    ".github/workflows/pon-w1-work-security.yml",
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "docs/protocol/pon-nakamoto-v1/details/NATIVE_EVALUATION_QUORUM_V2.md",
+    "docs/research/PON_W1_LIFECYCLE_COST_V4.md",
+    "scripts/ci/test_w1_factorial_native_gate.py",
+    "scripts/ci/test_w1_lifecycle_cost_v4.py",
+    "scripts/pon_w1_lifecycle_cost_v4.py",
+    "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs",
+    "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation/quorum_v2.rs",
+    "trillionnium/crates/trnm-mvcc-fee/tests/evaluation_quorum_v2.rs",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+  ]
+}

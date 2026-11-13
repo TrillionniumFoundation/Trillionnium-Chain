@@ -1,0 +1,8 @@
+{
+  "complete": false,
+  "no_automatic_rollback": true,
+  "published": false,
+  "reason": "RuntimeError('integrate actual exit 2')",
+  "recorded_unix_ns": 1794308588579077703,
+  "security_status": "HOLD"
+}

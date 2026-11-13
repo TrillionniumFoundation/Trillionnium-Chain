@@ -1,0 +1,1 @@
+{"schema": "TRNM-W1-QROM-CURRENT-IMPLEMENTATION-AUDIT2", "result": "INPUT_REJECTED", "reason": "local Rust source inventory differs", "production_qualified": false, "security_bits_quantum": null}

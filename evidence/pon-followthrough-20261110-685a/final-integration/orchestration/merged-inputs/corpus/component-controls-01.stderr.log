@@ -1,0 +1,14 @@
+.F........
+======================================================================
+FAIL: test_double_deletion_and_reordered_or_unknown_addition_refuse (__main__.CorpusUnionControls.test_double_deletion_and_reordered_or_unknown_addition_refuse) (kind=1011)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/pon-continuation-685a/upstream-union-corpus/test_prepare_union_corpus.py", line 62, in test_double_deletion_and_reordered_or_unknown_addition_refuse
+    with self.assertRaises(u.Refusal):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Refusal not raised
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.358s
+
+FAILED (failures=1)

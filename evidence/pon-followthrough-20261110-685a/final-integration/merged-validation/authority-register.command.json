@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/pq_authority_effect_register.py"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794311076569111304,
+  "exit_code": 0,
+  "interrupted": false,
+  "label": "authority-register",
+  "process_exit_code": 0,
+  "recorder_error": null,
+  "start_unix_ns": 1794311076453715724,
+  "stderr": {
+    "bytes": 0,
+    "file": "authority-register.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 13223,
+    "file": "authority-register.stdout.log",
+    "sha256": "b2193f3318f3ada8896d14081e44916c64e91bca0c5d96fb67d22b866acb5ad4"
+  },
+  "timed_out": false,
+  "timeout_seconds": 1800
+}

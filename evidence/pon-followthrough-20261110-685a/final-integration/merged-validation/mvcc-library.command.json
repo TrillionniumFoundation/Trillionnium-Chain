@@ -1,0 +1,57 @@
+{
+  "argv": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-mvcc-fee",
+    "--lib",
+    "--",
+    "--test-threads=1"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794311318208504385,
+  "exit_code": 0,
+  "interrupted": false,
+  "label": "mvcc-library",
+  "native_observation": {
+    "all_reported_harness_summaries": [
+      {
+        "failed": 0,
+        "filtered": 0,
+        "ignored": 9,
+        "measured": 0,
+        "outcome": "ok",
+        "passed": 153
+      }
+    ],
+    "command_exit_code": 0,
+    "successful_selected_target_observed": true,
+    "terminal_harness": {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 9,
+      "measured": 0,
+      "outcome": "ok",
+      "passed": 153
+    }
+  },
+  "process_exit_code": 0,
+  "recorder_error": null,
+  "start_unix_ns": 1794311126232420911,
+  "stderr": {
+    "bytes": 816,
+    "file": "mvcc-library.stderr.log",
+    "sha256": "4336da3db4eecce733b42ea4cee43f862df289d28e7c20655e32aaab0b9a17f0"
+  },
+  "stdout": {
+    "bytes": 19288,
+    "file": "mvcc-library.stdout.log",
+    "sha256": "3adbda1cfe6323d5591ee136a0025f8233268929ec34dcf114e9fe34ce7648d6"
+  },
+  "timed_out": false,
+  "timeout_seconds": 1800
+}

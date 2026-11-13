@@ -1,0 +1,31 @@
+# C3 验证后固化到 evidence-only C4 的输入
+
+仅在实际 C3 结果产生后选择文件。新增目录建议为
+`evidence/pon-followthrough-20261110-685a/integration/`；C2 原始 `native/`
+及 C3 已绑定的配置、源码、corpus 和三组 ledger 均不修改。
+
+| 必须保留的成员 | 来源和用途 |
+|---|---|
+| `committed-source.json`、最终 `summary.json`、`status.json`、`state.json` | controller OUT；保留实际 C2、C3、tree、阶段及完成状态。不能把仅 prepare/commit 完成当作验证完成。 |
+| 完整 `commands.json` 以及其中每条记录引用的全部 stdout/stderr | controller OUT；包含所有实际执行、非零退出与重试。按记录引用闭包核验，不能只发布最后一轮成功日志。 |
+| 所有 `validation-XX-summary.json`、`validation-XX-planned-checks.json`、`validation-XX-source-before.json`、`validation-XX-source-after.json` | 区分计划、实际命令、未完成尝试和原始 source verifier 括号。未产生的文件不补造。 |
+| `validation-XX-qrom-current/` 的所有实际观测文件 | 包括精确名单、named 结果、历史 reader 的原始拒绝及 current auditor 结果。不要添加本地伪造的 workflow outcomes。 |
+| `authority-pq128/`、`qrom-successor/` 的实际 `*.command.json`、所有被引用原始日志、review/result/failure/report 文件；`w1-ledger-receipt.json` | 关闭外层 controller 日志不能覆盖的子进程证据引用。旧 source guard 的 exit 2 拒绝必须继续保留。 |
+| `input-manifest.json`、`patch-predictions.json`、`corpus-path-plan.json`、`corpus-receipt.json`、`raw-whitespace-exclusions.json`、`native-source-delta.json` | 说明用了哪些冻结输入、F staged tree 与 C2 的差别、保留的旧 corpus 范围、精确 raw 文件空白例外，以及 C2→C3 唯一 Rust delta/Cargo与owner字节一致性。 |
+| 所有实际 `failure*.json` | 保留初次失败，不因后续通过而覆盖或删去。 |
+| controller、它实际调用的 helper 和 patch 的原字节快照及逐文件 SHA256 | 保留外部编排程序身份，使用独立 `orchestration/` 子目录和精确成员清单。移动的历史 Markdown 使用 `.md.txt` 保存原字节，避免原相对链接变成新导航链接。 |
+| root 随后执行的 C3 native 原始命令、source-before/after、工具链/graph、stdout/stderr、summary | 与 C2 全量原生套件分开记录。仅当真实 Git delta 是 generated inventory 且其余 Cargo/owner bytes相同，按原参数执行 3 crate `--all-targets` strict Clippy、locked offline graph和source bracket；不重复或补计 4/8/3 focused/full suites。 |
+
+为选定的全部文件生成新的精确成员清单：相对路径、原来源、bytes、SHA256、
+Git blob；逐字节复制后重新核验。对这些明确成员使用 `git add -f --`，
+再对实际 staged tree 和 C4 commit 执行逐项 `git ls-tree`/blob 核验，
+防止 `*.log` 被忽略。不复制 `patch-preview.index`、Cargo target、二进制、
+Git 对象库或旧 ZIP。`refreshed-corpus.json` 已由 C3 的受控 corpus 路径和
+receipt 绑定，可直接引用 C3 原文件，无需再复制一份作为新的 source 声明。
+
+C4 README 写清三层来源：**C2 全量 native**、**C3 集成检查及随后实际 native**、
+**C4 仅证据固化**。README 不提前嵌入尚未产生的自身 C4 SHA。
+发布前逐项确认 `C3..C4` 只新增明确 evidence 成员、没有修改任何 C3 文件；
+再用原始 `verify_ci_source.py --kind head` 记录真实 C4 身份，并运行必要的
+repository/Markdown 链接检查。C4 的身份核验不代表重新执行了 C3 或 C2 的测试。
+全部资格仍为 HOLD/false/null；真实失败或未完成阶段照实进入最终说明。

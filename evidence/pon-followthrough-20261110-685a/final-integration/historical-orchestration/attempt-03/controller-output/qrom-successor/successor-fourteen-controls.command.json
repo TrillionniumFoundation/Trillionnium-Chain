@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/home/qian-qi/chain-pon-followthrough-20261110-685a/scripts/ci/test_w1_qrom_current_implementation_audit.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794308100392397243,
+  "exit_code": 0,
+  "launch_error": null,
+  "start_unix_ns": 1794308097870495555,
+  "stderr": {
+    "bytes": 2179,
+    "file": "successor-fourteen-controls.stderr.log",
+    "sha256": "ef27d6810418b42098b44d3b34e495c895f8c3b13bf841c8076ed41245bb9afd"
+  },
+  "stdout": {
+    "bytes": 0,
+    "file": "successor-fourteen-controls.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

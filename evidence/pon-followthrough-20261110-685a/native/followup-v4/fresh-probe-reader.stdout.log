@@ -1,0 +1,244 @@
+{
+  "all_legal_strategy_cost_bound": null,
+  "all_search_attempts": 1025,
+  "complete_campaign": true,
+  "groups": [
+    {
+      "all_acquisition_wall_ns": 2305069,
+      "all_search_attempts": 11,
+      "class": "dense",
+      "complete_acquisition_for_constructed_ns": 2305069,
+      "complete_group": true,
+      "constructed": 8,
+      "exhausted": 0,
+      "precheck_ns": 1669566,
+      "receiver_to_all_acquisition_ratio": {
+        "production-full-limb": {
+          "denominator": "2305069",
+          "numerator": "13866911"
+        },
+        "scalar-reference": {
+          "denominator": "2305069",
+          "numerator": "27866539"
+        }
+      },
+      "receiver_wall_ns": {
+        "production-full-limb": 13866911,
+        "scalar-reference": 27866539
+      },
+      "samples": 8,
+      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    },
+    {
+      "all_acquisition_wall_ns": 2555774,
+      "all_search_attempts": 145,
+      "class": "dense",
+      "complete_acquisition_for_constructed_ns": 2555774,
+      "complete_group": true,
+      "constructed": 8,
+      "exhausted": 0,
+      "precheck_ns": 1646864,
+      "receiver_to_all_acquisition_ratio": {
+        "production-full-limb": {
+          "denominator": "1277887",
+          "numerator": "6758507"
+        },
+        "scalar-reference": {
+          "denominator": "1277887",
+          "numerator": "13738953"
+        }
+      },
+      "receiver_wall_ns": {
+        "production-full-limb": 13517014,
+        "scalar-reference": 27477906
+      },
+      "samples": 8,
+      "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    },
+    {
+      "all_acquisition_wall_ns": 1971346,
+      "all_search_attempts": 12,
+      "class": "zero",
+      "complete_acquisition_for_constructed_ns": 1971346,
+      "complete_group": true,
+      "constructed": 8,
+      "exhausted": 0,
+      "precheck_ns": 1633199,
+      "receiver_to_all_acquisition_ratio": {
+        "production-full-limb": {
+          "denominator": "985673",
+          "numerator": "6737075"
+        },
+        "scalar-reference": {
+          "denominator": "1971346",
+          "numerator": "27426227"
+        }
+      },
+      "receiver_wall_ns": {
+        "production-full-limb": 13474150,
+        "scalar-reference": 27426227
+      },
+      "samples": 8,
+      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    },
+    {
+      "all_acquisition_wall_ns": 3085699,
+      "all_search_attempts": 405,
+      "class": "zero",
+      "complete_acquisition_for_constructed_ns": 3085699,
+      "complete_group": true,
+      "constructed": 8,
+      "exhausted": 0,
+      "precheck_ns": 1532784,
+      "receiver_to_all_acquisition_ratio": {
+        "production-full-limb": {
+          "denominator": "3085699",
+          "numerator": "12576018"
+        },
+        "scalar-reference": {
+          "denominator": "3085699",
+          "numerator": "26032893"
+        }
+      },
+      "receiver_wall_ns": {
+        "production-full-limb": 12576018,
+        "scalar-reference": 26032893
+      },
+      "samples": 8,
+      "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    },
+    {
+      "all_acquisition_wall_ns": 1768344,
+      "all_search_attempts": 15,
+      "class": "rank-one",
+      "complete_acquisition_for_constructed_ns": 1768344,
+      "complete_group": true,
+      "constructed": 8,
+      "exhausted": 0,
+      "precheck_ns": 1420947,
+      "receiver_to_all_acquisition_ratio": {
+        "production-full-limb": {
+          "denominator": "884172",
+          "numerator": "5861479"
+        },
+        "scalar-reference": {
+          "denominator": "589448",
+          "numerator": "8000579"
+        }
+      },
+      "receiver_wall_ns": {
+        "production-full-limb": 11722958,
+        "scalar-reference": 24001737
+      },
+      "samples": 8,
+      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    },
+    {
+      "all_acquisition_wall_ns": 2313000,
+      "all_search_attempts": 194,
+      "class": "rank-one",
+      "complete_acquisition_for_constructed_ns": 2313000,
+      "complete_group": true,
+      "constructed": 8,
+      "exhausted": 0,
+      "precheck_ns": 1433826,
+      "receiver_to_all_acquisition_ratio": {
+        "production-full-limb": {
+          "denominator": "2313000",
+          "numerator": "11823247"
+        },
+        "scalar-reference": {
+          "denominator": "1156500",
+          "numerator": "12118891"
+        }
+      },
+      "receiver_wall_ns": {
+        "production-full-limb": 11823247,
+        "scalar-reference": 24237782
+      },
+      "samples": 8,
+      "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    },
+    {
+      "all_acquisition_wall_ns": 1888204,
+      "all_search_attempts": 13,
+      "class": "sparse",
+      "complete_acquisition_for_constructed_ns": 1888204,
+      "complete_group": true,
+      "constructed": 8,
+      "exhausted": 0,
+      "precheck_ns": 1463085,
+      "receiver_to_all_acquisition_ratio": {
+        "production-full-limb": {
+          "denominator": "1888204",
+          "numerator": "11809715"
+        },
+        "scalar-reference": {
+          "denominator": "1888204",
+          "numerator": "24008475"
+        }
+      },
+      "receiver_wall_ns": {
+        "production-full-limb": 11809715,
+        "scalar-reference": 24008475
+      },
+      "samples": 8,
+      "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    },
+    {
+      "all_acquisition_wall_ns": 2538853,
+      "all_search_attempts": 230,
+      "class": "sparse",
+      "complete_acquisition_for_constructed_ns": 2538853,
+      "complete_group": true,
+      "constructed": 8,
+      "exhausted": 0,
+      "precheck_ns": 1451323,
+      "receiver_to_all_acquisition_ratio": {
+        "production-full-limb": {
+          "denominator": "2538853",
+          "numerator": "11913697"
+        },
+        "scalar-reference": {
+          "denominator": "2538853",
+          "numerator": "23984656"
+        }
+      },
+      "receiver_wall_ns": {
+        "production-full-limb": 11913697,
+        "scalar-reference": 23984656
+      },
+      "samples": 8,
+      "target": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    }
+  ],
+  "hardness_qualified": false,
+  "independent_relation_replays": 64,
+  "native_source_binary_resource_authenticated": false,
+  "production_activation": false,
+  "public_service_measured": false,
+  "raw_schema": "pon-fresh-rejection-cost-v1",
+  "raw_sha256": "56502bec31afeba6b81c317d0d29ba05d89e9e61352e9027b9d04709cf19992d",
+  "reference_commit": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+  "reference_files": {
+    "config/pon/devnet-v1.json": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+    "config/pon/ledger-v1.json": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+    "config/pon/model-family-v1.json": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+    "config/pon/work-profile-v1.json": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+    "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+    "formal/pon-nakamoto-v1/work_oracle.py": "2b90584fc4f102e9eb40ed5ab138746f4a4b3748544cd287f076a8804c955c18"
+  },
+  "reported_metadata": {
+    "arch": "x86_64",
+    "clock": "std::time::Instant-wall-nanoseconds",
+    "debug_assertions": false,
+    "identity_scope": "external-source-binary-resource-receipt-required",
+    "os": "linux",
+    "pointer_bits": 64,
+    "process_id": 714852
+  },
+  "samples": 64,
+  "schema": "pon-fresh-rejection-summary-v1",
+  "scope": "reported wall timings and independent relation replay; external execution receipts required",
+  "worst_case_rejection_qualified": false
+}

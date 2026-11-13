@@ -1,0 +1,65 @@
+{
+  "additional_selector_positive_case": [
+    "NativeGateTests.test_selected_native_suites_keep_nonzero_filtered_observations"
+  ],
+  "c3_retained": [
+    "NativeGateTests.test_actual_workflow_uses_both_strict_gates_without_changing_native_selectors",
+    "NativeGateTests.test_cli_failure_never_writes_success_report",
+    "NativeGateTests.test_cli_fifo_and_symlink_log_refuse_without_waiting",
+    "NativeGateTests.test_complete_roster_passes",
+    "NativeGateTests.test_every_named_control_requires_one_successful_terminal",
+    "NativeGateTests.test_every_suite_rejects_wrong_count_failure_ignored_and_duplicate_summary",
+    "NativeGateTests.test_frozen_names_equal_current_native_source_and_retained_counts",
+    "NativeGateTests.test_history_named_controls_remain_required_once",
+    "NativeGateTests.test_ignored_child_is_exact_and_parent_still_must_pass",
+    "NativeGateTests.test_kernel_rejects_missing_duplicate_or_replaced_named_control",
+    "NativeGateTests.test_nocapture_retains_name_until_its_serial_success_terminal",
+    "NativeGateTests.test_original_old_counts_cannot_certify_the_current_roster"
+  ],
+  "final_named_test_count": 18,
+  "final_named_tests": [
+    "LegalGateTests.test_complete_current_native_roster_passes",
+    "LegalGateTests.test_every_retained_versioned_material_and_observer_control_executes_once",
+    "LegalGateTests.test_summary_only_stale_filtered_duplicate_or_failed_summaries_are_refused",
+    "NativeGateTests.test_actual_workflow_uses_both_strict_gates_without_changing_native_selectors",
+    "NativeGateTests.test_cli_failure_never_writes_success_report",
+    "NativeGateTests.test_cli_fifo_and_symlink_log_refuse_without_waiting",
+    "NativeGateTests.test_complete_roster_passes",
+    "NativeGateTests.test_every_named_control_requires_one_successful_terminal",
+    "NativeGateTests.test_every_suite_rejects_wrong_count_failure_ignored_and_duplicate_summary",
+    "NativeGateTests.test_factorial_example_does_not_accept_filtered_or_measured_tests",
+    "NativeGateTests.test_factorial_example_rejects_missing_duplicate_replaced_or_failed_named_control",
+    "NativeGateTests.test_frozen_names_equal_current_native_source_and_retained_counts",
+    "NativeGateTests.test_history_named_controls_remain_required_once",
+    "NativeGateTests.test_ignored_child_is_exact_and_parent_still_must_pass",
+    "NativeGateTests.test_kernel_rejects_missing_duplicate_or_replaced_named_control",
+    "NativeGateTests.test_nocapture_retains_name_until_its_serial_success_terminal",
+    "NativeGateTests.test_original_old_counts_cannot_certify_the_current_roster",
+    "NativeGateTests.test_selected_native_suites_keep_nonzero_filtered_observations"
+  ],
+  "shared_names_not_duplicated": [
+    "NativeGateTests.test_complete_roster_passes",
+    "NativeGateTests.test_every_suite_rejects_wrong_count_failure_ignored_and_duplicate_summary",
+    "NativeGateTests.test_history_named_controls_remain_required_once",
+    "NativeGateTests.test_kernel_rejects_missing_duplicate_or_replaced_named_control"
+  ],
+  "tests_executed": false,
+  "upstream_only_added_with_original_bodies": [
+    "LegalGateTests.test_complete_current_native_roster_passes",
+    "LegalGateTests.test_every_retained_versioned_material_and_observer_control_executes_once",
+    "LegalGateTests.test_summary_only_stale_filtered_duplicate_or_failed_summaries_are_refused",
+    "NativeGateTests.test_factorial_example_does_not_accept_filtered_or_measured_tests",
+    "NativeGateTests.test_factorial_example_rejects_missing_duplicate_replaced_or_failed_named_control"
+  ],
+  "upstream_retained": [
+    "LegalGateTests.test_complete_current_native_roster_passes",
+    "LegalGateTests.test_every_retained_versioned_material_and_observer_control_executes_once",
+    "LegalGateTests.test_summary_only_stale_filtered_duplicate_or_failed_summaries_are_refused",
+    "NativeGateTests.test_complete_roster_passes",
+    "NativeGateTests.test_every_suite_rejects_wrong_count_failure_ignored_and_duplicate_summary",
+    "NativeGateTests.test_factorial_example_does_not_accept_filtered_or_measured_tests",
+    "NativeGateTests.test_factorial_example_rejects_missing_duplicate_replaced_or_failed_named_control",
+    "NativeGateTests.test_history_named_controls_remain_required_once",
+    "NativeGateTests.test_kernel_rejects_missing_duplicate_or_replaced_named_control"
+  ]
+}

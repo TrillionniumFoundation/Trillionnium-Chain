@@ -1,0 +1,39 @@
+{
+  "actual_commit": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+  "actual_tree": "00479a98dabc6b1fd91a0ceef82ffbdbffb78067",
+  "all_index_entries_H": true,
+  "baseline_commit": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+  "branch": "test/chain-pon-baseline-control-20261110-685a",
+  "budgets_or_assertions_changed": false,
+  "continuation_scope": "complete tracked source tree, original head verifier; no Git ancestry completeness claim",
+  "expected_tree": "00479a98dabc6b1fd91a0ceef82ffbdbffb78067",
+  "explicit_environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_TARGET_DIR": "/home/qian-qi/chain-pon-followthrough-20261110-685a-target",
+    "CARGO_TERM_COLOR": "never",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "full_library_suite_executed": false,
+  "git_history_shallow": true,
+  "inherited_relevant_environment": {
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_PROFILE_DEV_OPT_LEVEL": null,
+    "CARGO_PROFILE_TEST_OPT_LEVEL": null,
+    "RUSTFLAGS": null,
+    "RUSTUP_TOOLCHAIN": null,
+    "RUST_TEST_THREADS": null
+  },
+  "open_consensus_qualified": false,
+  "prior_commands_sha256": "1974ece1864273d530bdd21aa6b1032dca74b15f8e31fbe7c23b8d43cb12cd07",
+  "prior_creation_observation": "/home/qian-qi/chain-pon-baseline-control-20261110-685a-output",
+  "prior_failure_sha256": "68977e5481de8af130df488d842bd018217de2c05267a66a8993b5486267ba97",
+  "prior_guard_reason": "shallow source refused; no test executed",
+  "production_activation": false,
+  "recorder_sha256": "cdc340416a6287ce1584f10cfc89e6927cfa206c129acdc3c7d6082dbb632e71",
+  "shared_cargo_target": "/home/qian-qi/chain-pon-followthrough-20261110-685a-target",
+  "source_mutated": false,
+  "source_provider_head_at_start": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+  "source_provider_worktree": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "tracked_entries": 27660,
+  "worktree": "/home/qian-qi/chain-pon-baseline-control-20261110-685a"
+}

@@ -1,0 +1,1067 @@
+diff --git a/.github/workflows/pon-w1-qrom-implementation.yml b/.github/workflows/pon-w1-qrom-implementation.yml
+--- a/.github/workflows/pon-w1-qrom-implementation.yml
++++ b/.github/workflows/pon-w1-qrom-implementation.yml
+@@ -24,31 +24,29 @@
+   CI: "true"
+   PYTHONDONTWRITEBYTECODE: "1"
+ jobs:
+-  qrom-implementation:
+-    name: W1 QROM implementation (${{ matrix.source }}, x64)
++  qrom-historical-implementation:
++    name: W1 QROM historical V1 (fixed 0c830e0, x64)
+     runs-on: ubuntu-24.04
+     timeout-minutes: 20
+-    strategy:
+-      fail-fast: false
+-      matrix:
+-        source: [head, prospective-merge]
+     env:
+-      SOURCE_KIND: ${{ matrix.source }}
+-      EXPECTED_SOURCE: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
+-      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+-      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
++      # V1 pins historical bytes. Its positive replay must execute that source;
++      # the current candidate and its V1 refusal are required in the companion job.
++      SOURCE_KIND: head
++      EXPECTED_SOURCE: 0c830e0be8939ce80c8443c9ad68021b87343a00
++      EXPECTED_HEAD: 0c830e0be8939ce80c8443c9ad68021b87343a00
++      EXPECTED_BASE: 1e4bffc371bcdc53aabc621b6b6cb2485ab36f53
+     steps:
+       - name: Reserve source-specific observations
+         id: observations
+         shell: bash
+         run: |
+           set -euo pipefail
+-          w1_qrom_out="$RUNNER_TEMP/pon-w1-qrom-implementation-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
++          w1_qrom_out="$RUNNER_TEMP/pon-w1-qrom-historical-v1-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+           mkdir "$w1_qrom_out"
+           printf 'W1_QROM_OUT=%s\n' "$w1_qrom_out" >> "$GITHUB_ENV"
+-          printf 'Offline construction mapping, saved-fixture consistency and hypothetical component arithmetic only. No new proof verification, QROM instantiation, quantum-work qualification or consensus admission is established.\n' > "$w1_qrom_out/SCOPE.txt"
++          printf 'Fixed historical source 0c830e0be8939ce80c8443c9ad68021b87343a00 and original 81-name V1 roster only. This result does not validate the current candidate. Current V2 mapping and V1-on-current source drift are separate required jobs. No new proof verification, QROM instantiation, quantum-work qualification or consensus admission is established.\n' > "$w1_qrom_out/SCOPE.txt"
+           python3 --version > "$w1_qrom_out/python-version.txt" 2>&1
+-      - name: Checkout exact candidate without persistent credentials
++      - name: Checkout immutable historical V1 source without persistent credentials
+         id: checkout
+         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+         with:
+@@ -516,7 +514,7 @@
+           W1_QROM_STEP_RESULTS: ${{ toJSON(steps) }}
+         run: |
+           set -euo pipefail
+-          w1_qrom_out="$RUNNER_TEMP/pon-w1-qrom-implementation-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
++          w1_qrom_out="$RUNNER_TEMP/pon-w1-qrom-historical-v1-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+           mkdir -p "$w1_qrom_out"
+           python3 - "$w1_qrom_out" <<'PY' 2>&1 | tee "$w1_qrom_out/ci-status.log"
+           from collections import Counter
+@@ -679,7 +677,108 @@
+         if: always()
+         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+         with:
+-          name: w1-qrom-implementation-${{ matrix.source }}-x64-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
+-          path: ${{ runner.temp }}/pon-w1-qrom-implementation-${{ matrix.source }}-x64-${{ github.run_id }}-${{ github.run_attempt }}/
++          name: w1-qrom-historical-v1-x64-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
++          path: ${{ runner.temp }}/pon-w1-qrom-historical-v1-head-x64-${{ github.run_id }}-${{ github.run_attempt }}/
+           if-no-files-found: error
+           retention-days: 30
++
++  qrom-current-implementation:
++    name: W1 QROM current V2 (${{ matrix.source }}, x64)
++    runs-on: ubuntu-24.04
++    timeout-minutes: 20
++    strategy:
++      fail-fast: false
++      matrix:
++        source: [head, prospective-merge]
++    env:
++      SOURCE_KIND: ${{ matrix.source }}
++      EXPECTED_SOURCE: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
++      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
++      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
++    steps:
++      - name: Reserve current-source observations
++        id: observations
++        shell: bash
++        run: |
++          set -euo pipefail
++          w1_qrom_current_out="$RUNNER_TEMP/pon-w1-qrom-current-v2-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
++          mkdir "$w1_qrom_current_out"
++          printf 'W1_QROM_CURRENT_OUT=%s\n' "$w1_qrom_current_out" >> "$GITHUB_ENV"
++          printf 'Current V2 source mapping and original V1 source-pin refusal. Historical V1 positive replay is a separate fixed-source job. All cryptographic, native-execution and production qualifications remain false.\n' > "$w1_qrom_current_out/SCOPE.txt"
++          python3 --version > "$w1_qrom_current_out/python-version.txt" 2>&1
++      - name: Checkout exact current candidate without persistent credentials
++        id: checkout
++        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
++        with:
++          ref: ${{ env.EXPECTED_SOURCE }}
++          fetch-depth: 0
++          persist-credentials: false
++      - name: Verify complete current source before observations
++        id: source_before
++        if: always() && steps.observations.outcome == 'success' && steps.checkout.outcome == 'success'
++        shell: bash
++        run: |
++          set -euo pipefail
++          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
++          if test "$SOURCE_KIND" = prospective-merge; then
++            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
++          fi
++          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$W1_QROM_CURRENT_OUT/source-before.json" 2>&1 | tee "$W1_QROM_CURRENT_OUT/source-before.log"
++      - name: Audit the current project boundary
++        id: preflight
++        if: always() && steps.source_before.outcome == 'success'
++        shell: bash
++        run: |
++          set -euo pipefail
++          bash scripts/project-preflight.sh --audit 2>&1 | tee "$W1_QROM_CURRENT_OUT/preflight.log"
++      - name: Execute all fixed current-source named controls
++        id: named_tests
++        if: always() && steps.preflight.outcome == 'success'
++        shell: bash
++        run: |
++          set -euo pipefail
++          python3 scripts/ci/w1_qrom_current_ci.py named --repo-root "$GITHUB_WORKSPACE" --out "$W1_QROM_CURRENT_OUT" 2>&1 | tee "$W1_QROM_CURRENT_OUT/named-tests.log"
++      - name: Retain original V1 refusal and exact current source differences
++        id: historical_drift
++        if: always() && steps.preflight.outcome == 'success'
++        shell: bash
++        run: |
++          set -euo pipefail
++          python3 scripts/ci/w1_qrom_current_ci.py drift --repo-root "$GITHUB_WORKSPACE" --out "$W1_QROM_CURRENT_OUT" 2>&1 | tee "$W1_QROM_CURRENT_OUT/historical-drift.log"
++      - name: Reproduce the explicit current V2 mapping
++        id: implementation
++        if: always() && steps.preflight.outcome == 'success'
++        shell: bash
++        run: |
++          set -euo pipefail
++          python3 scripts/w1_qrom_current_implementation_audit.py --repo-root "$GITHUB_WORKSPACE" --output "$W1_QROM_CURRENT_OUT/implementation.json" 2>&1 | tee "$W1_QROM_CURRENT_OUT/implementation.log"
++      - name: Verify complete current source after observations
++        id: source_after
++        if: always() && steps.source_before.outcome == 'success'
++        shell: bash
++        run: |
++          set -euo pipefail
++          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")
++          if test "$SOURCE_KIND" = prospective-merge; then
++            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
++          fi
++          python3 scripts/ci/verify_ci_source.py "${args[@]}" --output "$W1_QROM_CURRENT_OUT/source-after.json" 2>&1 | tee "$W1_QROM_CURRENT_OUT/source-after.log"
++      - name: Require all current stages and original historical rejection
++        id: status
++        if: always()
++        shell: bash
++        env:
++          W1_QROM_CURRENT_STEP_RESULTS: ${{ toJSON(steps) }}
++        run: |
++          set -euo pipefail
++          w1_qrom_current_out="$RUNNER_TEMP/pon-w1-qrom-current-v2-$SOURCE_KIND-x64-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
++          mkdir -p "$w1_qrom_current_out"
++          python3 scripts/ci/w1_qrom_current_ci.py verify --repo-root "$GITHUB_WORKSPACE" --out "$w1_qrom_current_out" --kind "$SOURCE_KIND" --expected-source "$EXPECTED_SOURCE" --expected-head "$EXPECTED_HEAD" --expected-base "$EXPECTED_BASE" 2>&1 | tee "$w1_qrom_current_out/current-ci-status.log"
++      - name: Retain complete current-source observations and failures
++        if: always()
++        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
++        with:
++          name: w1-qrom-current-v2-${{ matrix.source }}-x64-${{ env.EXPECTED_SOURCE }}-${{ github.run_attempt }}
++          path: ${{ runner.temp }}/pon-w1-qrom-current-v2-${{ matrix.source }}-x64-${{ github.run_id }}-${{ github.run_attempt }}/
++          if-no-files-found: error
++          retention-days: 30
+diff --git a/config/pon/w1-qrom-current-required-tests-v1.json b/config/pon/w1-qrom-current-required-tests-v1.json
+new file mode 100644
+--- /dev/null
++++ b/config/pon/w1-qrom-current-required-tests-v1.json
+@@ -0,0 +1,120 @@
++{
++  "expected_tests": 75,
++  "qualification": {
++    "complete_w1_soundness_qualified": false,
++    "consensus_admission": false,
++    "post_quantum_soundness_qualified": false,
++    "pq_signature_qualification_inferred": false,
++    "production_qualified": false,
++    "quantum_work_qualified": false,
++    "security_bits_quantum": null
++  },
++  "schema": "TRNM-W1-QROM-CURRENT-REQUIRED-TESTS1",
++  "suites": [
++    {
++      "expected_tests": 28,
++      "module": "test_w1_control_tree_audit",
++      "tests": [
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_aligned_sponge_matches_upstream_interpreter_golden",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_altered_final_join_is_refused_even_in_matching_catalogs",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_bundle_duplicate_source_record_is_refused",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_bundle_relabelled_mutation_cannot_repin_source",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_canonical_field_boundary_is_preserved",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_catalog_recomputation_does_not_certify_semantics_or_qrom",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_catalog_tree_matches_fixed_sdk_root",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_cli_never_overwrites_existing_evidence",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_constants_parser_rejects_expressions_and_noncanonical_values",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_duplicate_control_id_is_refused",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_inclusion_path_reproduces_tree_root",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_length_extension_caveat_is_visible_in_unpadded_hash",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_missing_and_added_program_are_refused",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_montgomery_decoding_is_not_ordinary_integer_encoding",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_named_catalog_disagreement_is_refused",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_noncanonical_leaf_and_sibling_are_refused_before_hashing",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_only_join_is_a_different_control_root",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_out_of_range_and_boolean_path_indices_are_refused",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_partial_control_parser_does_not_ignore_malformed_entry",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_permutation_matches_upstream_known_answer",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_program_reordering_is_refused_and_changes_root",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_sdk_catalog_is_not_the_default_allowlist",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_short_and_long_paths_are_refused",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_source_mutation_and_missing_source_fail_closed",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_tree_rejects_256_leaves_like_sdk_constructor",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_unaligned_sponge_matches_upstream_interpreter_golden",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_unknown_same_size_program_roster_is_refused",
++        "test_w1_control_tree_audit.ControlTreeAuditTests.test_wrong_index_or_path_reproduces_a_different_root"
++      ]
++    },
++    {
++      "expected_tests": 13,
++      "module": "test_w1_qrom_conditional_budget",
++      "tests": [
++        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_256_is_only_an_explicit_hypothetical_width_and_can_fail_budget",
++        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_bool_float_and_malformed_fractions_are_rejected",
++        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_cli_deep_json_below_byte_limit_returns_structured_rejection",
++        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_cli_exact_input_round_trip_and_duplicate_or_nonfinite_rejection",
++        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_domain_and_query_mass_inconsistencies_are_rejected",
++        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_exact_threshold_and_one_rational_step_above_it",
++        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_expression_floor_distinguishes_impossible_and_zero_allowance",
++        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_fractional_mass_and_expression_above_one_are_not_rounded_or_clamped",
++        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_input_cannot_override_qualification_or_request_project_certification",
++        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_merkle_components_are_distinct_and_exact",
++        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_no_inputs_remain_unknown_without_classical_or_width_defaults",
++        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_passing_every_component_never_qualifies_a_project",
++        "test_w1_qrom_conditional_budget.ConditionalBudgetTests.test_unknown_factor_is_not_zero_or_silently_replaced_by_t"
++      ]
++    },
++    {
++      "expected_tests": 14,
++      "module": "test_w1_qrom_current_implementation_audit",
++      "tests": [
++        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_all_lifetime_and_cryptographic_obligations_remain_unknown",
++        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_all_six_local_crates_and_literal_inputs_are_bound",
++        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_cli_report_is_created_once_and_never_replaces_prior_evidence",
++        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_contract_edit_cannot_relabel_unreviewed_source",
++        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_current_mapping_reaches_the_original_complete_saved_fixture",
++        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_fixed_parameters_and_fri_mapping_are_preserved",
++        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_historical_reader_bytes_are_preserved",
++        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_included_work_profile_change_requires_review",
++        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_local_path_manifest_change_requires_review",
++        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_missing_funded_source_is_refused",
++        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_new_local_build_script_requires_review",
++        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_old_contract_and_its_failure_remain_visible",
++        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_project_input_digests_are_the_reviewed_values",
++        "test_w1_qrom_current_implementation_audit.CurrentImplementationTests.test_unlisted_rust_file_is_not_silently_accepted"
++      ]
++    },
++    {
++      "expected_tests": 7,
++      "module": "test_w1_fri_transcript_audit",
++      "tests": [
++        "test_w1_fri_transcript_audit.FriTranscriptAuditTests.test_actual_saved_seal_geometry_and_security_boundary",
++        "test_w1_fri_transcript_audit.FriTranscriptAuditTests.test_canonical_value_change_does_not_become_a_proof_verification",
++        "test_w1_fri_transcript_audit.FriTranscriptAuditTests.test_changed_declared_seal_length_cannot_hide_in_outer_suffix",
++        "test_w1_fri_transcript_audit.FriTranscriptAuditTests.test_missing_or_changed_upstream_source_is_refused",
++        "test_w1_fri_transcript_audit.FriTranscriptAuditTests.test_noncanonical_words_in_cap_coefficients_and_last_opening_are_refused",
++        "test_w1_fri_transcript_audit.FriTranscriptAuditTests.test_raw_po2_scope_does_not_confuse_lift_limit_with_seal_acceptance",
++        "test_w1_fri_transcript_audit.FriTranscriptAuditTests.test_truncated_u_coefficient_section_and_trailing_word_are_refused"
++      ]
++    },
++    {
++      "expected_tests": 13,
++      "module": "test_w1_qrom_current_ci",
++      "tests": [
++        "test_w1_qrom_current_ci.CurrentCiTests.test_actual_current_mapping_and_original_refusal_are_separate",
++        "test_w1_qrom_current_ci.CurrentCiTests.test_drift_rejects_missing_changes_and_unrelated_process_failures",
++        "test_w1_qrom_current_ci.CurrentCiTests.test_duplicate_and_nonfinite_json_are_refused",
++        "test_w1_qrom_current_ci.CurrentCiTests.test_existing_observation_is_never_replaced",
++        "test_w1_qrom_current_ci.CurrentCiTests.test_final_gate_accepts_complete_current_scope_without_qualifying_security",
++        "test_w1_qrom_current_ci.CurrentCiTests.test_final_gate_refuses_missing_completion_and_changed_original_output",
++        "test_w1_qrom_current_ci.CurrentCiTests.test_final_gate_retains_every_failed_or_skipped_stage",
++        "test_w1_qrom_current_ci.CurrentCiTests.test_mapping_rejects_scope_escalation_and_unknown_budget_changes",
++        "test_w1_qrom_current_ci.CurrentCiTests.test_named_completion_rechecks_ids_counts_and_boolean_types",
++        "test_w1_qrom_current_ci.CurrentCiTests.test_named_import_exit_zero_is_not_completion",
++        "test_w1_qrom_current_ci.CurrentCiTests.test_named_runner_records_every_real_start_and_success",
++        "test_w1_qrom_current_ci.CurrentCiTests.test_named_runner_refuses_missing_duplicate_and_skipped_cases",
++        "test_w1_qrom_current_ci.CurrentCiTests.test_source_checks_keep_candidate_and_historical_identities_separate"
++      ]
++    }
++  ]
++}
+diff --git a/scripts/ci/w1_qrom_current_ci.py b/scripts/ci/w1_qrom_current_ci.py
+new file mode 100644
+--- /dev/null
++++ b/scripts/ci/w1_qrom_current_ci.py
+@@ -0,0 +1,460 @@
++#!/usr/bin/env python3
++"""Current-source QROM observations, with an explicit historical-pin refusal.
++
++The historical V1 lane executes its original source and roster separately. This
++runner binds the reviewed current V2 map to the actual candidate; neither lane
++qualifies cryptographic soundness, quantum work, production or consensus use.
++"""
++from __future__ import annotations
++
++import argparse
++from collections import Counter
++import hashlib
++import importlib.util
++import json
++import math
++import os
++from pathlib import Path
++import re
++import subprocess
++import sys
++import traceback
++import unittest
++
++ROOT = Path(__file__).resolve().parents[2]
++ROSTER = 'config/pon/w1-qrom-current-required-tests-v1.json'
++ROSTER_SHA256 = 'e48c23d4d6737d0143798a5c93a194310ebdf7ba1a0cb87bdf3a36af65b8f581'
++MODULES = ('test_w1_control_tree_audit', 'test_w1_qrom_conditional_budget',
++           'test_w1_qrom_current_implementation_audit', 'test_w1_fri_transcript_audit',
++           'test_w1_qrom_current_ci')
++HISTORICAL_SOURCE = '0c830e0be8939ce80c8443c9ad68021b87343a00'
++HISTORICAL_JOB_SHA256 = 'f88c5e041b943ea39be2de6665e9621b0b6a0c056c44dcae2a6215615eb6b130'
++DRIFT_REASON = 'input exceeds bound: formal/pon-nakamoto-v1/w1_v2_verifier/src/main.rs'
++FALSE_FIELDS = (
++    'post_quantum_soundness_qualified', 'complete_w1_soundness_qualified',
++    'quantum_work_qualified', 'pq_signature_qualification_inferred',
++    'production_qualified', 'consensus_admission',
++)
++REQUIRED_STAGES = (
++    'observations', 'checkout', 'source_before', 'preflight', 'named_tests',
++    'historical_drift', 'implementation', 'source_after',
++)
++
++
++class ObservationError(ValueError):
++    pass
++
++
++def require(ok, reason):
++    if not ok:
++        raise ObservationError(reason)
++
++
++def sha(raw):
++    return hashlib.sha256(raw).hexdigest()
++
++
++def strict_json(raw):
++    def unique(pairs):
++        result = {}
++        for key, value in pairs:
++            require(key not in result, 'duplicate JSON key: ' + key)
++            result[key] = value
++        return result
++
++    def invalid(value):
++        raise ObservationError('nonfinite JSON value: ' + value)
++
++    def finite(value):
++        number = float(value)
++        require(math.isfinite(number), 'nonfinite JSON number')
++        return number
++
++    return json.loads(raw, object_pairs_hook=unique, parse_constant=invalid, parse_float=finite)
++
++
++def read_json(path):
++    with path.open('rb') as stream:
++        raw = stream.read(2 * 1024 * 1024 + 1)
++    require(len(raw) <= 2 * 1024 * 1024, 'observation exceeds read bound')
++    value = strict_json(raw)
++    require(type(value) is dict, 'observation must be an object')
++    return value, raw
++
++
++def write_once(path, value):
++    with path.open('x', encoding='utf-8') as stream:
++        json.dump(value, stream, indent=2, sort_keys=True, allow_nan=False)
++        stream.write('\n')
++
++
++def scope():
++    return {**dict.fromkeys(FALSE_FIELDS, False), 'security_bits_quantum': None}
++
++
++def load_current(root):
++    path = root / 'scripts/w1_qrom_current_implementation_audit.py'
++    spec = importlib.util.spec_from_file_location('_qrom_current_ci_mapping', path)
++    require(spec is not None and spec.loader is not None, 'current mapping module unavailable')
++    current = importlib.util.module_from_spec(spec)
++    spec.loader.exec_module(current)
++    audit, contract, raw = current.load_current(root)
++    return current, audit, contract, raw
++
++
++def validate_historical_job(workflow):
++    """Bind the untouched original gates and explicit fixed-source checkout."""
++    start = '  qrom-historical-implementation:\n'
++    end = '  qrom-current-implementation:\n'
++    require(workflow.count(start) == workflow.count(end) == 1
++            and workflow.index(start) < workflow.index(end), 'QROM source job layout differs')
++    historical = workflow[workflow.index(start):workflow.index(end)]
++    require(sha(historical.encode()) == HISTORICAL_JOB_SHA256,
++            'historical job source, original gates or scope changed')
++    return HISTORICAL_JOB_SHA256
++
++
++def load_roster(root):
++    raw = (root / ROSTER).read_bytes()
++    require(sha(raw) == ROSTER_SHA256, 'current roster differs from reviewed pin')
++    roster = strict_json(raw)
++    require(type(roster) is dict and set(roster) == {
++        'schema', 'expected_tests', 'suites', 'qualification'}, 'current roster fields')
++    require(roster['schema'] == 'TRNM-W1-QROM-CURRENT-REQUIRED-TESTS1'
++            and roster['qualification'] == scope(), 'current roster schema or scope')
++    require(type(roster['suites']) is list
++            and all(type(row) is dict for row in roster['suites'])
++            and tuple(row.get('module') for row in roster['suites']) == MODULES,
++            'current roster module order')
++    names = []
++    for row in roster['suites']:
++        require(set(row) == {'module', 'expected_tests', 'tests'}, 'current suite fields')
++        count, ids = row['expected_tests'], row['tests']
++        require(type(count) is int and count > 0 and type(ids) is list
++                and len(ids) == count and all(type(name) is str for name in ids)
++                and len(set(ids)) == count and sorted(ids) == ids
++                and all(re.fullmatch(re.escape(row['module'])
++                    + r'\.[A-Za-z_][A-Za-z0-9_]*\.test_[A-Za-z0-9_]+', name)
++                    for name in ids), 'current suite exact names')
++        names.extend(ids)
++    require(type(roster['expected_tests']) is int
++            and roster['expected_tests'] == len(names) == len(set(names)),
++            'current roster total')
++    return roster, raw
++
++
++def flatten(suite):
++    for item in suite:
++        if isinstance(item, unittest.TestSuite):
++            yield from flatten(item)
++        else:
++            yield item
++
++
++class ObservedResult(unittest.TextTestResult):
++    def __init__(self, *args, **kwargs):
++        super().__init__(*args, **kwargs)
++        self.started_ids = []
++        self.success_ids = []
++
++    def startTest(self, test):
++        self.started_ids.append(test.id())
++        super().startTest(test)
++
++    def addSuccess(self, test):
++        self.success_ids.append(test.id())
++        super().addSuccess(test)
++
++
++def execute_named(root, roster, stream):
++    records = []
++    for required in roster['suites']:
++        module, expected = required['module'], required['tests']
++        row = {'module': module, 'expected_ids': expected, 'passed': False}
++        try:
++            loader = unittest.TestLoader()
++            suite = loader.discover(str(root / 'scripts/ci'), pattern=module + '.py')
++            registered = [case.id() for case in flatten(suite)]
++            row.update(registered_ids=registered, loader_errors=list(loader.errors))
++            require(not loader.errors and Counter(registered) == Counter(expected),
++                    'current complete module registry differs')
++            result = unittest.TextTestRunner(stream=stream, verbosity=2,
++                descriptions=False, resultclass=ObservedResult).run(suite)
++            row.update({
++                'tests_run': result.testsRun, 'started_ids': result.started_ids,
++                'success_ids': result.success_ids,
++                'skipped': [(case.id(), why) for case, why in result.skipped],
++                'failures': [(case.id(), why) for case, why in result.failures],
++                'errors': [(case.id(), why) for case, why in result.errors],
++                'expected_failures': [(case.id(), why) for case, why in result.expectedFailures],
++                'unexpected_successes': [case.id() for case in result.unexpectedSuccesses],
++            })
++            row['passed'] = (result.testsRun == required['expected_tests']
++                and Counter(result.started_ids) == Counter(expected)
++                and Counter(result.success_ids) == Counter(expected)
++                and result.wasSuccessful() and not result.skipped
++                and not result.expectedFailures and not result.unexpectedSuccesses)
++        except (Exception, SystemExit) as error:
++            row['exception'] = str(error)
++            traceback.print_exc(file=stream)
++        records.append(row)
++    return {'schema': 'TRNM-W1-QROM-CURRENT-NAMED-OBSERVATION1',
++        'roster_sha256': ROSTER_SHA256, 'required_tests': roster['expected_tests'],
++        'suites': records, 'all_named_controls_passed':
++            len(records) == len(roster['suites']) and all(x['passed'] is True for x in records),
++        'qualification': scope()}
++
++
++def validate_named(report, roster):
++    require(type(report) is dict and set(report) == {
++        'schema', 'roster_sha256', 'required_tests', 'suites',
++        'all_named_controls_passed', 'qualification'}, 'named completion fields')
++    require(report['schema'] == 'TRNM-W1-QROM-CURRENT-NAMED-OBSERVATION1'
++            and report['roster_sha256'] == ROSTER_SHA256
++            and type(report['required_tests']) is int
++            and report['required_tests'] == roster['expected_tests']
++            and report['all_named_controls_passed'] is True, 'named completion result')
++    validate_qualification(report['qualification'])
++    require(type(report['suites']) is list and len(report['suites']) == len(roster['suites']),
++            'named completion suite count')
++    fields = {'module', 'expected_ids', 'registered_ids', 'loader_errors', 'passed',
++        'tests_run', 'started_ids', 'success_ids', 'skipped', 'failures', 'errors',
++        'expected_failures', 'unexpected_successes'}
++    for expected, actual in zip(roster['suites'], report['suites']):
++        require(type(actual) is dict and set(actual) == fields
++                and actual['module'] == expected['module'] and actual['passed'] is True
++                and type(actual['tests_run']) is int
++                and actual['tests_run'] == expected['expected_tests'], 'named suite completion')
++        for name in ('expected_ids', 'registered_ids', 'started_ids', 'success_ids'):
++            value = actual[name]
++            require(type(value) is list and all(type(item) is str for item in value)
++                    and Counter(value) == Counter(expected['tests']), 'named identities: ' + name)
++        for name in ('loader_errors', 'skipped', 'failures', 'errors',
++                     'expected_failures', 'unexpected_successes'):
++            require(type(actual[name]) is list and not actual[name], 'non-success outcome: ' + name)
++
++
++def validate_qualification(value):
++    require(type(value) is dict and set(value) == set(FALSE_FIELDS) | {'security_bits_quantum'}
++            and all(value[key] is False for key in FALSE_FIELDS)
++            and value['security_bits_quantum'] is None, 'qualification escalation or malformed boolean')
++
++
++def observe_drift(root, out):
++    current, audit, contract, raw = load_current(root)
++    legacy, legacy_raw = audit.load_contract(root)
++    selected = current.pinned(root, contract['project_files'])
++    before = {row['path']: row for row in legacy['project_files']}
++    differences = []
++    for row in contract['project_files']:
++        if row != before[row['path']]:
++            data = selected[row['path']]
++            differences.append({'path': row['path'], 'historical': before[row['path']],
++                'current': row, 'observed_bytes': len(data), 'observed_sha256': sha(data)})
++    result = subprocess.run([sys.executable, str(root / current.LEGACY_READER),
++        '--repo-root', str(root)], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
++        check=False, timeout=60)
++    with (out / 'historical-on-current.stdout.log').open('xb') as stream:
++        stream.write(result.stdout)
++    with (out / 'historical-on-current.stderr.log').open('xb') as stream:
++        stream.write(result.stderr)
++    report = {'schema': 'TRNM-W1-QROM-HISTORICAL-CURRENT-DRIFT1',
++        'historical_contract_sha256': sha(legacy_raw), 'current_contract_sha256': sha(raw),
++        'historical_source_base_commit': legacy['source_base_commit'],
++        'historical_replay_commit': HISTORICAL_SOURCE, 'selected_source_differences': differences,
++        'historical_exit_code': result.returncode, 'historical_stdout_bytes': len(result.stdout),
++        'historical_stdout_sha256': sha(result.stdout), 'historical_stderr_sha256': sha(result.stderr),
++        'historical_result': strict_json(result.stderr),
++        'classification': 'HISTORICAL_SOURCE_PIN_DRIFT', 'historical_v1_on_current_passed': False,
++        'qualification': scope()}
++    try:
++        validate_drift(report, contract, legacy)
++    except (ValueError, KeyError, TypeError) as error:
++        # An unrelated refusal must remain an unclassified failure, even when
++        # its original process output is retained for diagnosis.
++        report['classification'] = 'UNCLASSIFIED_HISTORICAL_RESULT'
++        report['validation_error'] = str(error)
++        write_once(out / 'historical-drift.json', report)
++        raise
++    write_once(out / 'historical-drift.json', report)
++    return report
++
++
++def validate_drift(report, current, legacy):
++    require(report.get('schema') == 'TRNM-W1-QROM-HISTORICAL-CURRENT-DRIFT1'
++            and report.get('classification') == 'HISTORICAL_SOURCE_PIN_DRIFT'
++            and type(report.get('historical_exit_code')) is int
++            and report['historical_exit_code'] == 2
++            and type(report.get('historical_stdout_bytes')) is int
++            and report.get('historical_stdout_bytes') == 0
++            and report.get('historical_v1_on_current_passed') is False,
++            'historical current-source rejection missing')
++    validate_qualification(report.get('qualification'))
++    rejected = report.get('historical_result')
++    require(type(rejected) is dict and set(rejected) == {'result', 'reason', 'qualification'}
++            and rejected['result'] == 'INPUT_REJECTED' and rejected['reason'] == DRIFT_REASON,
++            'unexpected historical current-source result')
++    validate_qualification(rejected['qualification'])
++    require(report.get('historical_source_base_commit') == legacy['source_base_commit']
++            and report.get('historical_replay_commit') == HISTORICAL_SOURCE
++            and report.get('historical_contract_sha256') == current['historical_contract']['sha256'],
++            'historical source attribution differs')
++    old = {row['path']: row for row in legacy['project_files']}
++    expected = [{'path': row['path'], 'historical': old[row['path']], 'current': row,
++        'observed_bytes': row['bytes'], 'observed_sha256': row['sha256']}
++        for row in current['project_files'] if row != old[row['path']]]
++    require(report.get('selected_source_differences') == expected and len(expected) == 2,
++            'historical/current selected-byte differences lost')
++
++
++def validate_source(before, after, kind, source, head, base):
++    require(kind in ('head', 'prospective-merge') and before == after,
++            'candidate source observations differ')
++    require(before.get('schema') == 'trnm-ci-source-v1' and before.get('kind') == kind
++            and before.get('tested_commit') == source and before.get('candidate') == head
++            and before.get('tracked_worktree_verified') is True
++            and before.get('tests_executed_by_identity_check') is False
++            and type(before.get('tested_tree')) is str
++            and re.fullmatch(r'[0-9a-f]{40}', before['tested_tree']) is not None
++            and type(before.get('tracked_entries')) is int and before['tracked_entries'] > 0
++            and type(before.get('tracked_bytes')) is int and before['tracked_bytes'] > 0,
++            'candidate source identity incomplete')
++    if kind == 'head':
++        require(source == head and before.get('base') is None
++                and before.get('prospective_merge') is None, 'candidate head source mismatch')
++    else:
++        require(before.get('base') == base and before.get('prospective_merge') == source,
++                'candidate merge source mismatch')
++
++
++def validate_mapping(report, current, audit, contract, raw, root):
++    require(report.get('schema') == 'TRNM-W1-QROM-CURRENT-IMPLEMENTATION-AUDIT2'
++            and report.get('result') == 'CURRENT_MAPPING_REPRODUCED_SECURITY_HOLD'
++            and report.get('contract_sha256') == sha(raw)
++            and report.get('source_base_commit') == contract['source_base_commit']
++            and report.get('generator_sha256') == sha((root / 'scripts/w1_qrom_current_implementation_audit.py').read_bytes()),
++            'current mapping namespace or input identity differs')
++    validate_qualification(report.get('qualification'))
++    require(report.get('lifetime_budget') == contract['lifetime_budget']
++            and report.get('open_obligations') == [
++                {'id': name, 'state': 'UNRESOLVED'} for name in contract['proof_obligations']],
++            'current mapping unknown obligations or budget changed')
++    budget = report['lifetime_budget']
++    require(budget.get('policy_adopted') is False
++            and all(value is None for key, value in budget.items() if key != 'policy_adopted'),
++            'unknown budget fields and policy boolean must stay exact')
++    require(report.get('project_files') == contract['project_files']
++            and report.get('saved_fixture_files') == contract['saved_v2_files'],
++            'current mapping selected inputs differ')
++    closure = report.get('local_path_closure', {})
++    require(closure.get('files') == contract['local_path_closure']['files']
++            and type(closure.get('source_files_checked')) is int
++            and closure['source_files_checked'] == len(contract['local_path_closure']['files'])
++            and closure.get('source_before_after_equal') is True,
++            'current mapping local closure incomplete')
++    for flag in ('fresh_cryptographic_verification', 'native_binary_executed',
++                 'whole_repository_source_verified', 'third_party_source_closure_verified',
++                 'provider_build_identity_verified', 'git_commit_ancestry_verified'):
++        require(report.get(flag) is False, 'mapping scope widened: ' + flag)
++    require(report.get('historical_v1') == {
++        'reader_sha256': current.LEGACY_READER_SHA256,
++        'contract_sha256': contract['historical_contract']['sha256'],
++        'result': 'INPUT_REJECTED', 'reason': DRIFT_REASON,
++        'named_roster_completed': False, 'workflow_passed': False},
++        'historical current-source rejection relabeled')
++    require(report['historical_v1']['named_roster_completed'] is False
++            and report['historical_v1']['workflow_passed'] is False,
++            'historical scope booleans must stay exact')
++    require(report.get('parameter_digest_independently_recomputed') == audit.PARAMETERS,
++            'mapping parameters differ')
++
++
++def verify(root, out, kind, source, head, base, steps):
++    errors, identities = [], {}
++    missing = [name for name in REQUIRED_STAGES if
++        steps.get(name, {}).get('outcome') != 'success'
++        or steps.get(name, {}).get('conclusion') != 'success']
++    if missing:
++        errors.append('failed or skipped stages: ' + ', '.join(missing))
++    try:
++        current, audit, contract, raw = load_current(root)
++        historical_job = validate_historical_job(
++            (root / '.github/workflows/pon-w1-qrom-implementation.yml').read_text())
++        legacy, _ = audit.load_contract(root)
++        roster, roster_raw = load_roster(root)
++        retained = (out / 'required-tests.json').read_bytes()
++        require(retained == roster_raw, 'retained current roster differs')
++        names, names_raw = read_json(out / 'named-tests.json')
++        validate_named(names, roster)
++        before, _ = read_json(out / 'source-before.json')
++        after, _ = read_json(out / 'source-after.json')
++        validate_source(before, after, kind, source, head, base)
++        implementation, implementation_raw = read_json(out / 'implementation.json')
++        validate_mapping(implementation, current, audit, contract, raw, root)
++        drift, drift_raw = read_json(out / 'historical-drift.json')
++        validate_drift(drift, contract, legacy)
++        require(drift['current_contract_sha256'] == sha(raw), 'drift current contract differs')
++        stdout = (out / 'historical-on-current.stdout.log').read_bytes()
++        stderr = (out / 'historical-on-current.stderr.log').read_bytes()
++        require(not stdout and sha(stdout) == drift['historical_stdout_sha256']
++                and sha(stderr) == drift['historical_stderr_sha256']
++                and strict_json(stderr) == drift['historical_result'],
++                'retained historical process output differs')
++        identities = {'candidate_source': before, 'named_tests_sha256': sha(names_raw),
++            'implementation_sha256': sha(implementation_raw), 'historical_drift_sha256': sha(drift_raw),
++            'required_named_controls': roster['expected_tests'],
++            'historical_job_sha256': historical_job}
++    except (Exception, SystemExit) as error:
++        errors.append(str(error))
++    report = {'schema': 'TRNM-W1-QROM-CURRENT-CI-OBSERVATION1',
++        'expected_source': source, 'expected_candidate': head, 'expected_base': base,
++        'source_kind': kind, 'required_stages': list(REQUIRED_STAGES), 'steps': steps,
++        'failed_or_skipped_stages': missing, 'validation_errors': errors,
++        'all_required_current_observations_passed': not errors,
++        'historical_v1_on_current_passed': False, 'historical_replay_commit': HISTORICAL_SOURCE,
++        'scope': 'Exact candidate current V2 mapping and original V1 source-pin rejection. '
++                 'The separate fixed historical V1 replay is not a current-source or cryptographic qualification.',
++        'identities': identities, 'qualification': scope()}
++    write_once(out / 'current-ci-status.json', report)
++    require(not errors, '; '.join(errors))
++    return report
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument('command', choices=('named', 'drift', 'verify'))
++    parser.add_argument('--repo-root', type=Path, default=ROOT)
++    parser.add_argument('--out', type=Path, required=True)
++    parser.add_argument('--kind', choices=('head', 'prospective-merge'))
++    parser.add_argument('--expected-source')
++    parser.add_argument('--expected-head')
++    parser.add_argument('--expected-base')
++    args = parser.parse_args()
++    root, out = args.repo_root.absolute(), args.out.absolute()
++    try:
++        require(root == root.resolve(strict=True), 'candidate root is an alias')
++        require(out.is_dir() and not out.is_symlink(), 'observation directory unavailable')
++        if args.command == 'named':
++            roster, raw = load_roster(root)
++            with (out / 'required-tests.json').open('xb') as stream:
++                stream.write(raw)
++            report = execute_named(root, roster, sys.stderr)
++            write_once(out / 'named-tests.json', report)
++            validate_named(report, roster)
++        elif args.command == 'drift':
++            observe_drift(root, out)
++        else:
++            steps = strict_json(os.environ['W1_QROM_CURRENT_STEP_RESULTS'])
++            require(type(steps) is dict, 'workflow stage observations must be an object')
++            verify(root, out, args.kind, args.expected_source, args.expected_head,
++                   args.expected_base, steps)
++        print('Source-specific observation completed; cryptographic and production qualification remain false.')
++        return 0
++    except (Exception, SystemExit) as error:
++        print(json.dumps({'schema': 'TRNM-W1-QROM-CURRENT-CI-ERROR1',
++            'result': 'OBSERVATION_FAILED', 'reason': str(error), 'qualification': scope()}), file=sys.stderr)
++        return 1
++
++
++if __name__ == '__main__':
++    raise SystemExit(main())
+diff --git a/scripts/ci/test_w1_qrom_current_ci.py b/scripts/ci/test_w1_qrom_current_ci.py
+new file mode 100644
+--- /dev/null
++++ b/scripts/ci/test_w1_qrom_current_ci.py
+@@ -0,0 +1,263 @@
++#!/usr/bin/env python3
++"""Exercise current CI evidence gates; no native proofs or security qualification.
++
++The real current map is the positive report input. Inert cases carrying exact
++names exercise the named-runner boundary without recursively running this suite.
++"""
++from __future__ import annotations
++
++from copy import deepcopy
++import io
++import json
++from pathlib import Path
++import sys
++import tempfile
++import unittest
++from unittest import mock
++
++sys.path.insert(0, str(Path(__file__).resolve().parent))
++import w1_qrom_current_ci as ci
++
++ROOT = Path(__file__).resolve().parents[2]
++HEAD, BASE, MERGE = 'a' * 40, 'b' * 40, 'c' * 40
++
++
++def inert_case(name, skipped=False):
++    class NamedFixture(unittest.TestCase):
++        def id(self):
++            return name
++
++        def runTest(self):
++            if skipped:
++                self.skipTest('isolated named-runner control')
++
++    return NamedFixture()
++
++
++class CurrentCiTests(unittest.TestCase):
++    @classmethod
++    def setUpClass(cls):
++        cls.current, cls.audit, cls.contract, cls.raw = ci.load_current(ROOT)
++        cls.legacy, _ = cls.audit.load_contract(ROOT)
++        cls.mapping = cls.current.build_report(ROOT)
++        cls.roster, cls.roster_raw = ci.load_roster(ROOT)
++        with tempfile.TemporaryDirectory() as temporary:
++            root = Path(temporary)
++            cls.drift = ci.observe_drift(ROOT, root)
++            cls.stdout = (root / 'historical-on-current.stdout.log').read_bytes()
++            cls.stderr = (root / 'historical-on-current.stderr.log').read_bytes()
++
++    def setUp(self):
++        self.temporary = tempfile.TemporaryDirectory()
++        self.addCleanup(self.temporary.cleanup)
++        self.temp = Path(self.temporary.name)
++        self.counter = 0
++
++    def execute_fixture(self, mode='success'):
++        names = ['fixture_cases.FixedCase.test_one', 'fixture_cases.FixedCase.test_two']
++        roster = {'expected_tests': 2, 'suites': [
++            {'module': 'fixture_cases', 'expected_tests': 2, 'tests': names}]}
++        actual = list(names)
++        if mode == 'missing':
++            actual.pop()
++        elif mode == 'duplicate':
++            actual.append(actual[0])
++        suite = unittest.TestSuite(inert_case(name, mode == 'skip' and i == 0)
++                                  for i, name in enumerate(actual))
++        output = io.StringIO()
++        with mock.patch.object(unittest.TestLoader, 'discover', return_value=suite):
++            report = ci.execute_named(self.temp, roster, output)
++        return report, roster
++
++    def source(self, merge=False):
++        return {'schema': 'trnm-ci-source-v1', 'kind': 'prospective-merge' if merge else 'head',
++            'tested_commit': MERGE if merge else HEAD, 'tested_tree': 'd' * 40,
++            'candidate': HEAD, 'base': BASE if merge else None,
++            'prospective_merge': MERGE if merge else None, 'tracked_worktree_verified': True,
++            'tracked_entries': 1, 'tracked_bytes': 1, 'tests_executed_by_identity_check': False}
++
++    def baseline(self):
++        self.counter += 1
++        out = self.temp / str(self.counter)
++        out.mkdir()
++        (out / 'required-tests.json').write_bytes(self.roster_raw)
++        (out / 'historical-on-current.stdout.log').write_bytes(self.stdout)
++        (out / 'historical-on-current.stderr.log').write_bytes(self.stderr)
++        rows = []
++        for required in self.roster['suites']:
++            names = required['tests']
++            rows.append({'module': required['module'], 'expected_ids': names,
++                'registered_ids': names, 'started_ids': names, 'success_ids': names,
++                'tests_run': len(names), 'passed': True, 'loader_errors': [], 'skipped': [],
++                'failures': [], 'errors': [], 'expected_failures': [], 'unexpected_successes': []})
++        named = {'schema': 'TRNM-W1-QROM-CURRENT-NAMED-OBSERVATION1',
++            'roster_sha256': ci.ROSTER_SHA256, 'required_tests': self.roster['expected_tests'],
++            'suites': rows, 'all_named_controls_passed': True, 'qualification': ci.scope()}
++        for name, report in [('named-tests.json', named), ('source-before.json', self.source()),
++                             ('source-after.json', self.source()), ('implementation.json', self.mapping),
++                             ('historical-drift.json', self.drift)]:
++            ci.write_once(out / name, report)
++        steps = {name: {'outcome': 'success', 'conclusion': 'success'} for name in ci.REQUIRED_STAGES}
++        return out, steps
++
++    def test_actual_current_mapping_and_original_refusal_are_separate(self):
++        ci.validate_historical_job(
++            (ROOT / '.github/workflows/pon-w1-qrom-implementation.yml').read_text())
++        ci.validate_mapping(self.mapping, self.current, self.audit, self.contract, self.raw, ROOT)
++        ci.validate_drift(self.drift, self.contract, self.legacy)
++        self.assertIs(self.mapping['historical_v1']['workflow_passed'], False)
++        self.assertEqual(self.drift['historical_exit_code'], 2)
++        self.assertEqual([row['observed_bytes'] for row in self.drift['selected_source_differences']],
++                         [11172, 32654])
++
++    def test_named_runner_records_every_real_start_and_success(self):
++        report, roster = self.execute_fixture()
++        ci.validate_named(report, roster)
++        self.assertEqual(report['suites'][0]['tests_run'], 2)
++
++    def test_named_runner_refuses_missing_duplicate_and_skipped_cases(self):
++        for mode in ('missing', 'duplicate', 'skip'):
++            with self.subTest(mode=mode):
++                report, roster = self.execute_fixture(mode)
++                self.assertIs(report['all_named_controls_passed'], False)
++                with self.assertRaises(ci.ObservationError):
++                    ci.validate_named(report, roster)
++
++    def test_named_import_exit_zero_is_not_completion(self):
++        roster = {'expected_tests': 1, 'suites': [{'module': 'fixture_cases',
++            'expected_tests': 1, 'tests': ['fixture_cases.FixedCase.test_one']}]}
++        with mock.patch.object(unittest.TestLoader, 'discover', side_effect=SystemExit(0)):
++            result = ci.execute_named(self.temp, roster, io.StringIO())
++        self.assertIs(result['all_named_controls_passed'], False)
++
++    def test_named_completion_rechecks_ids_counts_and_boolean_types(self):
++        for mutation in ('success_ids', 'started_ids', 'count', 'passed', 'scope'):
++            with self.subTest(mutation=mutation):
++                report, roster = self.execute_fixture()
++                if mutation in ('success_ids', 'started_ids'):
++                    report['suites'][0][mutation].pop()
++                elif mutation == 'count':
++                    report['suites'][0]['tests_run'] = True
++                elif mutation == 'passed':
++                    report['all_named_controls_passed'] = 1
++                else:
++                    report['qualification']['production_qualified'] = 0
++                with self.assertRaises(ci.ObservationError):
++                    ci.validate_named(report, roster)
++
++    def test_mapping_rejects_scope_escalation_and_unknown_budget_changes(self):
++        for mutation in ('qualification', 'budget', 'budget_bool', 'native', 'historical',
++                         'historical_bool', 'closure'):
++            with self.subTest(mutation=mutation):
++                report = deepcopy(self.mapping)
++                if mutation == 'qualification':
++                    report['qualification']['post_quantum_soundness_qualified'] = 0
++                elif mutation == 'budget':
++                    report['lifetime_budget']['quantum_queries_lifetime'] = 0
++                elif mutation == 'budget_bool':
++                    report['lifetime_budget']['policy_adopted'] = 0
++                elif mutation == 'native':
++                    report['native_binary_executed'] = True
++                elif mutation == 'historical':
++                    report['historical_v1']['workflow_passed'] = True
++                elif mutation == 'historical_bool':
++                    report['historical_v1']['workflow_passed'] = 0
++                else:
++                    report['local_path_closure']['source_files_checked'] -= 1
++                with self.assertRaises(ci.ObservationError):
++                    ci.validate_mapping(report, self.current, self.audit, self.contract, self.raw, ROOT)
++
++    def test_drift_rejects_missing_changes_and_unrelated_process_failures(self):
++        bad = deepcopy(self.drift['historical_result'])
++        bad['reason'] = 'unrelated helper input drift'
++        fake = type('Result', (), {'stdout': b'', 'stderr': json.dumps(bad).encode(),
++                                  'returncode': 2})()
++        with mock.patch.object(ci.subprocess, 'run', return_value=fake):
++            with self.assertRaises(ci.ObservationError):
++                ci.observe_drift(ROOT, self.temp)
++        failed = json.loads((self.temp / 'historical-drift.json').read_bytes())
++        self.assertEqual(failed['classification'], 'UNCLASSIFIED_HISTORICAL_RESULT')
++        self.assertEqual((self.temp / 'historical-on-current.stderr.log').read_bytes(), fake.stderr)
++        for mutation in ('missing', 'wrong_reason', 'exit_zero', 'old_source', 'scope'):
++            with self.subTest(mutation=mutation):
++                report = deepcopy(self.drift)
++                if mutation == 'missing':
++                    report['selected_source_differences'].pop()
++                elif mutation == 'wrong_reason':
++                    report['historical_result']['reason'] = 'unrelated missing file'
++                elif mutation == 'exit_zero':
++                    report['historical_exit_code'] = 0
++                elif mutation == 'old_source':
++                    report['historical_replay_commit'] = HEAD
++                else:
++                    report['historical_result']['qualification']['security_bits_quantum'] = 128
++                with self.assertRaises(ci.ObservationError):
++                    ci.validate_drift(report, self.contract, self.legacy)
++
++    def test_source_checks_keep_candidate_and_historical_identities_separate(self):
++        workflow = (ROOT / '.github/workflows/pon-w1-qrom-implementation.yml').read_text()
++        for changed in (workflow.replace(ci.HISTORICAL_SOURCE, HEAD),
++                        workflow.replace("actual complete module registry differs", "weakened registry")):
++            with self.assertRaises(ci.ObservationError):
++                ci.validate_historical_job(changed)
++        for merge in (False, True):
++            before = self.source(merge)
++            kind, source = before['kind'], before['tested_commit']
++            ci.validate_source(before, deepcopy(before), kind, source, HEAD, BASE)
++            after = deepcopy(before)
++            after['tested_commit'] = ci.HISTORICAL_SOURCE
++            with self.assertRaises(ci.ObservationError):
++                ci.validate_source(before, after, kind, source, HEAD, BASE)
++            before['candidate'] = ci.HISTORICAL_SOURCE
++            with self.assertRaises(ci.ObservationError):
++                ci.validate_source(before, deepcopy(before), kind, source, HEAD, BASE)
++
++    def test_final_gate_accepts_complete_current_scope_without_qualifying_security(self):
++        out, steps = self.baseline()
++        result = ci.verify(ROOT, out, 'head', HEAD, HEAD, BASE, steps)
++        self.assertIs(result['all_required_current_observations_passed'], True)
++        self.assertIs(result['historical_v1_on_current_passed'], False)
++        self.assertEqual(result['qualification'], ci.scope())
++
++    def test_final_gate_retains_every_failed_or_skipped_stage(self):
++        for stage in ci.REQUIRED_STAGES:
++            for field, value in [('outcome', 'failure'), ('conclusion', 'skipped')]:
++                with self.subTest(stage=stage, field=field):
++                    out, steps = self.baseline()
++                    steps[stage][field] = value
++                    with self.assertRaises(ci.ObservationError):
++                        ci.verify(ROOT, out, 'head', HEAD, HEAD, BASE, steps)
++                    result = json.loads((out / 'current-ci-status.json').read_bytes())
++                    self.assertIs(result['all_required_current_observations_passed'], False)
++                    self.assertIn(stage, result['failed_or_skipped_stages'])
++
++    def test_final_gate_refuses_missing_completion_and_changed_original_output(self):
++        for mutation in ('completion', 'output', 'roster'):
++            with self.subTest(mutation=mutation):
++                out, steps = self.baseline()
++                if mutation == 'completion':
++                    (out / 'named-tests.json').unlink()
++                elif mutation == 'output':
++                    (out / 'historical-on-current.stderr.log').write_bytes(b'{}\n')
++                else:
++                    (out / 'required-tests.json').write_bytes(b'{}\n')
++                with self.assertRaises(ci.ObservationError):
++                    ci.verify(ROOT, out, 'head', HEAD, HEAD, BASE, steps)
++                result = json.loads((out / 'current-ci-status.json').read_bytes())
++                self.assertIs(result['all_required_current_observations_passed'], False)
++
++    def test_duplicate_and_nonfinite_json_are_refused(self):
++        for raw in (b'{"a":1,"a":2}', b'{"a":NaN}', b'{"a":Infinity}', b'{"a":1e999}'):
++            with self.assertRaises(ci.ObservationError):
++                ci.strict_json(raw)
++
++    def test_existing_observation_is_never_replaced(self):
++        path = self.temp / 'retained.json'
++        path.write_bytes(b'original failure\n')
++        with self.assertRaises(FileExistsError):
++            ci.write_once(path, {'passed': True})
++        self.assertEqual(path.read_bytes(), b'original failure\n')
++
++
++if __name__ == '__main__':
++    unittest.main(verbosity=2)
+diff --git a/scripts/ci/ci_job.sh b/scripts/ci/ci_job.sh
+--- a/scripts/ci/ci_job.sh
++++ b/scripts/ci/ci_job.sh
+@@ -30,6 +30,7 @@
+     # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.
+     python3 scripts/ci/test_w1_qrom_current_implementation_audit.py
+     python3 scripts/w1_qrom_current_implementation_audit.py
++    python3 scripts/ci/test_w1_qrom_current_ci.py
+     python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
+     python3 scripts/ci/pq_authority_surface_scan.py --summary-only
+     python3 -m unittest discover -s scripts/ci -p 'test_pq_external_rollback_oracle.py' -v
+diff --git a/scripts/ci/check_ci_contract.py b/scripts/ci/check_ci_contract.py
+--- a/scripts/ci/check_ci_contract.py
++++ b/scripts/ci/check_ci_contract.py
+@@ -706,6 +706,7 @@
+     # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.
+     python3 scripts/ci/test_w1_qrom_current_implementation_audit.py
+     python3 scripts/w1_qrom_current_implementation_audit.py
++    python3 scripts/ci/test_w1_qrom_current_ci.py
+     python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v
+     python3 scripts/ci/pq_authority_surface_scan.py --summary-only
+     python3 -m unittest discover -s scripts/ci -p 'test_pq_external_rollback_oracle.py' -v
+@@ -1463,7 +1464,8 @@
+                 and code_lines(script).count(command) == 1,
+                 'credit model controls must execute exactly once in repository-truth')
+     for command in ('python3 scripts/ci/test_w1_qrom_current_implementation_audit.py',
+-                    'python3 scripts/w1_qrom_current_implementation_audit.py'):
++                    'python3 scripts/w1_qrom_current_implementation_audit.py',
++                    'python3 scripts/ci/test_w1_qrom_current_ci.py'):
+         require(code_lines(lanes['repository-truth']).count(command) == 1
+                 and code_lines(script).count(command) == 1,
+                 'current W1 source mapping controls must execute exactly once in repository-truth')
+diff --git a/scripts/ci/test_ci_contract.py b/scripts/ci/test_ci_contract.py
+--- a/scripts/ci/test_ci_contract.py
++++ b/scripts/ci/test_ci_contract.py
+@@ -2709,6 +2709,7 @@
+         'qrom_current_source': ('repository-truth', '    python3 scripts/ci/test_pq_chain_claim_guard.py\n    # Current selected-source mapping retains the historical V1 refusal and all HOLD flags.\n', (
+             '    python3 scripts/ci/test_w1_qrom_current_implementation_audit.py\n',
+             '    python3 scripts/w1_qrom_current_implementation_audit.py\n',
++            '    python3 scripts/ci/test_w1_qrom_current_ci.py\n',
+         ), "    python3 -m unittest discover -s scripts/ci -p 'test_pq_authority_surface_scan.py' -v\n"),
+         'fixed_probability': ('repository-truth',
+                               "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_work_scale_contract.py' -v\n", (

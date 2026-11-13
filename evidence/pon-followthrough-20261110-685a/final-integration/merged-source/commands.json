@@ -1,0 +1,438 @@
+[
+  {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794310026605048389,
+    "exit_code": 0,
+    "label": "project-preflight",
+    "launch_error": null,
+    "start_unix_ns": 1794310026508568639,
+    "stderr": {
+      "bytes": 0,
+      "file": "project-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 172,
+      "file": "project-preflight.stdout.log",
+      "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+    }
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "a715b2c8e89732ce356ebae67f978ef232156c04",
+      "--output",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-merge-01/source-before.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794310039013728958,
+    "exit_code": 0,
+    "label": "source-before",
+    "launch_error": null,
+    "start_unix_ns": 1794310026663502815,
+    "stderr": {
+      "bytes": 0,
+      "file": "source-before.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 423,
+      "file": "source-before.stdout.log",
+      "sha256": "e326cd35576ad43ff16b461b848b3fe1d2658337fd05550c57a656100b3b3fbc"
+    }
+  },
+  {
+    "argv": [
+      "gh",
+      "api",
+      "user",
+      "--jq",
+      ".login"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794310041413672820,
+    "exit_code": 0,
+    "label": "github-account",
+    "launch_error": null,
+    "start_unix_ns": 1794310039029581682,
+    "stderr": {
+      "bytes": 0,
+      "file": "github-account.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 10,
+      "file": "github-account.stdout.log",
+      "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "fetch",
+      "--no-tags",
+      "--no-write-fetch-head",
+      "--no-recurse-submodules",
+      "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+      "df927b6ffaecff293b9e9428e3ba516f47cd101a"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794310109696352235,
+    "exit_code": 0,
+    "label": "fetch-selected-upstream",
+    "launch_error": null,
+    "start_unix_ns": 1794310041434786834,
+    "stderr": {
+      "bytes": 0,
+      "file": "fetch-selected-upstream.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "fetch-selected-upstream.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "merge",
+      "--no-commit",
+      "--no-ff",
+      "df927b6ffaecff293b9e9428e3ba516f47cd101a"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794310110332781329,
+    "exit_code": 1,
+    "label": "ordinary-merge-no-commit",
+    "launch_error": null,
+    "start_unix_ns": 1794310109890423050,
+    "stderr": {
+      "bytes": 0,
+      "file": "ordinary-merge-no-commit.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 744,
+      "file": "ordinary-merge-no-commit.stdout.log",
+      "sha256": "aa6e4e2f9598fcb52e3cc6fd25f04efb2cec3c01413c6cea50f85e366a17972f"
+    }
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/refresh_distributed_source_inventory.py"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794310110701534128,
+    "exit_code": 0,
+    "label": "regenerate-merged-source-inventory",
+    "launch_error": null,
+    "start_unix_ns": 1794310110579745630,
+    "stderr": {
+      "bytes": 0,
+      "file": "regenerate-merged-source-inventory.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 35,
+      "file": "regenerate-merged-source-inventory.stdout.log",
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "add",
+      "--",
+      "scripts/ci/w1_native_controls.py",
+      "scripts/ci/test_w1_factorial_native_gate.py",
+      ".github/workflows/pon-w1-work-security.yml",
+      ".github/workflows/pon-recent-batch-acceptance.yml",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794310110922043835,
+    "exit_code": 0,
+    "label": "stage-reviewed-resolutions",
+    "launch_error": null,
+    "start_unix_ns": 1794310110706085025,
+    "stderr": {
+      "bytes": 0,
+      "file": "stage-reviewed-resolutions.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "stage-reviewed-resolutions.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-merge-inputs-01/corpus/prepare_union_corpus.py",
+      "prepare",
+      "--root",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+      "--binding-child",
+      "a715b2c8e89732ce356ebae67f978ef232156c04",
+      "--ours",
+      "a715b2c8e89732ce356ebae67f978ef232156c04",
+      "--theirs",
+      "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+      "--candidate-tree",
+      "4366b7f35ef4b82968dee548ba3f994429b705bb",
+      "--output",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-merge-01/corpus-preparation"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794310118956315447,
+    "exit_code": 0,
+    "label": "prepare-live-union-corpus",
+    "launch_error": null,
+    "start_unix_ns": 1794310111397448624,
+    "stderr": {
+      "bytes": 0,
+      "file": "prepare-live-union-corpus.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 340,
+      "file": "prepare-live-union-corpus.stdout.log",
+      "sha256": "8786e80f462ccd7620d9a6d2f182c1752f751f05ab776544755d67284a825a56"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "--check",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-merge-01/corpus-preparation/corpus-update.patch"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794310118967940943,
+    "exit_code": 0,
+    "label": "check-corpus-patch",
+    "launch_error": null,
+    "start_unix_ns": 1794310118961765000,
+    "stderr": {
+      "bytes": 0,
+      "file": "check-corpus-patch.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "check-corpus-patch.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-merge-01/corpus-preparation/corpus-update.patch"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794310118978959076,
+    "exit_code": 0,
+    "label": "apply-corpus-patch",
+    "launch_error": null,
+    "start_unix_ns": 1794310118972894944,
+    "stderr": {
+      "bytes": 0,
+      "file": "apply-corpus-patch.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "apply-corpus-patch.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "add",
+      "--",
+      "config/pon/pq-cross-branch-corpus-v1.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794310119042460994,
+    "exit_code": 0,
+    "label": "stage-corpus",
+    "launch_error": null,
+    "start_unix_ns": 1794310118983977417,
+    "stderr": {
+      "bytes": 0,
+      "file": "stage-corpus.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "stage-corpus.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "diff",
+      "--cached",
+      "--check",
+      "a715b2c8e89732ce356ebae67f978ef232156c04",
+      "--",
+      ".github/workflows/pon-recent-batch-acceptance.yml",
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "docs/protocol/pon-nakamoto-v1/details/NATIVE_EVALUATION_QUORUM_V2.md",
+      "docs/research/PON_W1_LIFECYCLE_COST_V4.md",
+      "scripts/ci/test_w1_factorial_native_gate.py",
+      "scripts/ci/test_w1_lifecycle_cost_v4.py",
+      "scripts/ci/w1_native_controls.py",
+      "scripts/pon_w1_lifecycle_cost_v4.py",
+      "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/public_evaluation/quorum_v2.rs",
+      "trillionnium/crates/trnm-mvcc-fee/tests/evaluation_quorum_v2.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794310119180713382,
+    "exit_code": 0,
+    "label": "source-diff-whitespace",
+    "launch_error": null,
+    "start_unix_ns": 1794310119141583053,
+    "stderr": {
+      "bytes": 0,
+      "file": "source-diff-whitespace.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "source-diff-whitespace.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794310119283005915,
+    "exit_code": 0,
+    "label": "commit-preflight",
+    "launch_error": null,
+    "start_unix_ns": 1794310119185727884,
+    "stderr": {
+      "bytes": 0,
+      "file": "commit-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 172,
+      "file": "commit-preflight.stdout.log",
+      "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "commit",
+      "-m",
+      "merge(pon): retain parallel quorum work and complete source bindings"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794310119398523426,
+    "exit_code": 0,
+    "label": "commit-reviewed-merge",
+    "launch_error": null,
+    "start_unix_ns": 1794310119342955944,
+    "stderr": {
+      "bytes": 0,
+      "file": "commit-reviewed-merge.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 124,
+      "file": "commit-reviewed-merge.stdout.log",
+      "sha256": "79e47d6e2b39ac8c3c01fbb0090d064c81223699046b38a2c4840b2f894190a1"
+    }
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-merge-inputs-01/corpus/prepare_union_corpus.py",
+      "verify",
+      "--root",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+      "--prepared",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-merge-01/corpus-preparation",
+      "--receipt-sha256",
+      "fb8c5282deb8ed65837de2be9e10b4f1eaca68ba5003cb251ba4a6262707aee6",
+      "--merge",
+      "8ab052065ae8307b1ab2c9d42b0dca229a5a3b9d",
+      "--output",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-merge-01/corpus-verification"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794310127026317746,
+    "exit_code": 0,
+    "label": "verify-committed-union-corpus",
+    "launch_error": null,
+    "start_unix_ns": 1794310119522844438,
+    "stderr": {
+      "bytes": 0,
+      "file": "verify-committed-union-corpus.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 267,
+      "file": "verify-committed-union-corpus.stdout.log",
+      "sha256": "e740d599a17ceec183fbef55a2178916ba30d42935fd95565b1f510cb85814cd"
+    }
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "8ab052065ae8307b1ab2c9d42b0dca229a5a3b9d",
+      "--output",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-merge-01/source-merged.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794310132925533292,
+    "exit_code": 0,
+    "label": "merged-source-identity",
+    "launch_error": null,
+    "start_unix_ns": 1794310127031608217,
+    "stderr": {
+      "bytes": 0,
+      "file": "merged-source-identity.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 423,
+      "file": "merged-source-identity.stdout.log",
+      "sha256": "410f65105cfcfe45438e228fe44b11c7eaabb9a1b2d1f93d03bfdb3cca4198c0"
+    }
+  }
+]

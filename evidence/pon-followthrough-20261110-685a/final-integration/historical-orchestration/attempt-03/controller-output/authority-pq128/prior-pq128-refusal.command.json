@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/home/qian-qi/chain-pon-followthrough-20261110-685a/scripts/ci/pq_lifetime_budget.py",
+    "--root",
+    "/home/qian-qi/chain-pon-followthrough-20261110-685a"
+  ],
+  "exit_code": 2
+}

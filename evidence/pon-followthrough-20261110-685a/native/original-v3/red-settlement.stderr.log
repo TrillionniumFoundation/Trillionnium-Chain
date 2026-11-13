@@ -1,0 +1,4 @@
+error: failed to download `libsqlite3-sys v0.39.0`
+
+Caused by:
+  attempting to make an HTTP request, but --offline was specified

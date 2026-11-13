@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/test_w1_lifecycle_cost_v4.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794311067258652815,
+  "exit_code": 0,
+  "interrupted": false,
+  "label": "test_w1_lifecycle_cost_v4",
+  "process_exit_code": 0,
+  "recorder_error": null,
+  "start_unix_ns": 1794311065388731269,
+  "stderr": {
+    "bytes": 2226,
+    "file": "test_w1_lifecycle_cost_v4.stderr.log",
+    "sha256": "054476fea27cb6bfcdc4636fdb04b470aa6a01300c58adf9a95e7d18865e29f5"
+  },
+  "stdout": {
+    "bytes": 0,
+    "file": "test_w1_lifecycle_cost_v4.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "timed_out": false,
+  "timeout_seconds": 1800
+}

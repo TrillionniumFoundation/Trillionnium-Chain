@@ -1,0 +1,41 @@
+diff --git a/scripts/ci/ci_job.sh b/scripts/ci/ci_job.sh
+--- a/scripts/ci/ci_job.sh
++++ b/scripts/ci/ci_job.sh
+@@ -143,6 +143,7 @@
+     python3 -B scripts/ci/test_w1_factorial_native_gate.py
+     python3 -B scripts/ci/test_prepare_artifact_upload.py
+     python3 -B scripts/ci/test_cell_storage_convergence_ci.py
++    python3 -B scripts/ci/test_fresh_rejection_report.py
+     # These in-memory counterexamples use unchanged retained inputs, not a new hardware observation.
+     python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54
+     python3 scripts/ci/test_pon_public_v3_phase_read.py
+diff --git a/scripts/ci/check_ci_contract.py b/scripts/ci/check_ci_contract.py
+--- a/scripts/ci/check_ci_contract.py
++++ b/scripts/ci/check_ci_contract.py
+@@ -211,6 +211,7 @@
+     'python3 -B scripts/ci/test_w1_factorial_native_gate.py',
+     'python3 -B scripts/ci/test_prepare_artifact_upload.py',
+     'python3 -B scripts/ci/test_cell_storage_convergence_ci.py',
++    'python3 -B scripts/ci/test_fresh_rejection_report.py',
+ )
+ W1_LIFECYCLE_NATIVE_CONTROLS = 'cargo test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_lifecycle_cost_v4'
+ PROOF_LATENCY_READER_COMMANDS = (
+@@ -822,6 +823,7 @@
+     python3 -B scripts/ci/test_w1_factorial_native_gate.py
+     python3 -B scripts/ci/test_prepare_artifact_upload.py
+     python3 -B scripts/ci/test_cell_storage_convergence_ci.py
++    python3 -B scripts/ci/test_fresh_rejection_report.py
+     # These in-memory counterexamples use unchanged retained inputs, not a new hardware observation.
+     python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54
+     python3 scripts/ci/test_pon_public_v3_phase_read.py
+diff --git a/scripts/ci/test_ci_contract.py b/scripts/ci/test_ci_contract.py
+--- a/scripts/ci/test_ci_contract.py
++++ b/scripts/ci/test_ci_contract.py
+@@ -2716,6 +2716,7 @@
+                 '    python3 -B scripts/ci/test_w1_factorial_native_gate.py\n',
+                 '    python3 -B scripts/ci/test_prepare_artifact_upload.py\n',
+                 '    python3 -B scripts/ci/test_cell_storage_convergence_ci.py\n',
++                '    python3 -B scripts/ci/test_fresh_rejection_report.py\n',
+             ), '    # These in-memory counterexamples use unchanged retained inputs, not a new hardware observation.\n'
+             '    python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54\n'),
+         'fixed_probability': ('repository-truth',

@@ -278,38 +278,13 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/ci/test_pon_w1_legal_strategy_reader_v1.py 2>&1 | tee "$OUT/legal-reader-controls.log"
+          python3 -B scripts/ci/test_w1_factorial_native_gate.py 2>&1 | tee "$OUT/native-completion-gate-controls.log"
           python3 scripts/ci/test_pon_w1_legal_strategy_reader_v2.py 2>&1 | tee "$OUT/legal-reader-v2-controls.log"
           python3 scripts/ci/test_run_w1_false_trace_reuse_v1.py 2>&1 | tee "$OUT/runner-controls.log"
           cargo +1.95.0 metadata --locked --manifest-path trillionnium/Cargo.toml --format-version 1 > "$OUT/cargo-graph.json"
           cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee "$OUT/format.log"
           cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_legal_strategy_v1 -- --test-threads=1 2>&1 | tee "$OUT/legal-native-controls.log"
-          python3 - "$OUT/legal-native-controls.log" <<'PY'
-          from pathlib import Path
-          import re, sys
-          text = Path(sys.argv[1]).read_text()
-          expected = {
-              'tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments',
-              'tests::versions_keep_exact_namespaces_and_eight_new_sample_streams',
-              'tests::v2_final_sample_keeps_both_legal_producers_and_complete_negative_verification',
-              'tests::public_dispatch_keeps_complete_bytes_and_all_misses',
-              'tests::last_product_mutation_wraps_canonically_and_changes_only_that_word',
-              'tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity',
-              'w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values',
-              'w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks',
-              'w1_cost_producers::observed_search_tests::observer_begin_refusal_precedes_native_generation',
-              'w1_cost_producers::observed_search_tests::native_failure_retains_completed_attempt_and_failed_begin',
-              'w1_cost_producers::observed_search_tests::malformed_generated_proof_has_started_and_failed_record',
-              'w1_cost_producers::observed_search_tests::completion_observer_failure_never_starts_another_attempt',
-              'w1_cost_producers::observed_search_tests::complete_observed_stream_matches_retained_wrapper_byte_for_byte',
-          }
-          rows = re.findall(r'^test result: (\S+)\. ([0-9]+) passed; ([0-9]+) failed; ([0-9]+) ignored; ([0-9]+) measured; ([0-9]+) filtered out;', text, re.M)
-          if rows != [('ok', str(len(expected)), '0', '0', '0', '0')]:
-              raise SystemExit('legal-native-controls: complete unfiltered native summary required once')
-          names = re.findall(r'^test (\S+) \.\.\. (.+)$', text, re.M)
-          if (len(names) != len(expected) or {name for name, _ in names} != expected
-                  or any(outcome != 'ok' for _, outcome in names)):
-              raise SystemExit('legal-native-controls: retained, versioned, material and observer controls must each pass once')
-          PY
+          python3 -B scripts/ci/w1_native_controls.py --group legal --logs "$OUT" --output "$OUT/legal-native-controls-completion.json"
           python3 scripts/ci/test_w1_native_roster.py
           python3 scripts/ci/check_w1_native_roster.py --profile legal-example "$OUT/legal-native-controls.log"
           cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_legal_strategy_v1 -- -D warnings 2>&1 | tee "$OUT/legal-clippy.log"
@@ -431,90 +406,7 @@ jobs:
           cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib history_w1_ -- --test-threads=1 --nocapture 2>&1 | tee "$OUT/history-w1-tests.log"
           cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib ingress::history_import::tests:: -- --test-threads=1 --nocapture 2>&1 | tee "$OUT/history-import-tests.log"
           cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib ingress::public_v3::scalar_cpu::completion_tests:: -- --test-threads=1 --nocapture 2>&1 | tee "$OUT/cpu-completion-tests.log"
-          python3 - "$OUT" <<'PYTEST'
-          from pathlib import Path
-          import re, sys
-          root = Path(sys.argv[1])
-          example_expected = {
-              'tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments',
-              'tests::factorial_search_keeps_every_miss_and_identical_complete_winners',
-              'tests::last_product_mutation_wraps_canonically_and_changes_only_that_word',
-              'tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity',
-              'w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values',
-              'w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks',
-              'w1_cost_producers::observed_search_tests::observer_begin_refusal_precedes_native_generation',
-              'w1_cost_producers::observed_search_tests::native_failure_retains_completed_attempt_and_failed_begin',
-              'w1_cost_producers::observed_search_tests::malformed_generated_proof_has_started_and_failed_record',
-              'w1_cost_producers::observed_search_tests::completion_observer_failure_never_starts_another_attempt',
-              'w1_cost_producers::observed_search_tests::complete_observed_stream_matches_retained_wrapper_byte_for_byte',
-          }
-          # The one ignored History entry is the existing subprocess fixture;
-          # its parent control selects real SIGKILL cuts. It is not a skipped gate.
-          expected = {"factorial-kernel-tests": (14, 0), "factorial-example-tests": (len(example_expected), 0),
-              "header-binding-tests": (1, 0), "history-w1-tests": (5, 0),
-              "history-import-tests": (36, 1), "cpu-completion-tests": (11, 0)}
-          for name, counts in expected.items():
-              text = (root / (name + ".log")).read_text()
-              rows = re.findall(r'^test result: (\S+)\. ([0-9]+) passed; ([0-9]+) failed; ([0-9]+) ignored;', text, re.M)
-              if rows != [('ok', str(counts[0]), '0', str(counts[1]))]:
-                  raise SystemExit(name + ': exact native controls did not execute')
-          example = (root / 'factorial-example-tests.log').read_text()
-          example_summaries = re.findall(r'^test result: (\S+)\. ([0-9]+) passed; ([0-9]+) failed; ([0-9]+) ignored; ([0-9]+) measured; ([0-9]+) filtered out;', example, re.M)
-          example_rows = re.findall(r'^test (\S+) \.\.\. (.+)$', example, re.M)
-          if (example_summaries != [('ok', str(len(example_expected)), '0', '0', '0', '0')]
-                  or len(example_rows) != len(example_expected)
-                  or {name for name, _ in example_rows} != example_expected
-                  or any(outcome != 'ok' for _, outcome in example_rows)):
-              raise SystemExit('factorial-example-tests: retained, material and observer controls must each pass once')
-          kernel = (root / 'factorial-kernel-tests.log').read_text()
-          kernel_expected = {
-              'pon_work::legal_attempt::low_rank::tests::bounded_factorization_reconstructs_exact_full_field_rank_and_pivot_orders',
-              'pon_work::legal_attempt::low_rank::tests::exact_rank_limit_chooses_left_then_right_and_explicit_paid_dense_fallback',
-              'pon_work::legal_attempt::low_rank::tests::both_inputs_are_fully_validated_before_zero_or_high_rank_shortcuts',
-              'pon_work::legal_attempt::low_rank::tests::low_rank_complete_proofs_equal_both_original_kernels_and_verifiers',
-              'pon_work::legal_attempt::low_rank::tests::misses_still_replay_all_tiles_and_cancelled_retries_preserve_the_same_task',
-              'pon_work::legal_attempt::tests::boundary_target_is_inclusive_and_zero_target_refuses_before_work',
-              'pon_work::legal_attempt::tests::changed_challenge_and_task_never_gain_acceptance_from_cached_product',
-              'pon_work::legal_attempt::tests::every_stage_cancellation_returns_no_attempt_and_does_not_poison_retry',
-              'pon_work::legal_attempt::tests::factorial_kernels_match_independent_reference_for_full_and_structured_fields',
-              'pon_work::legal_attempt::tests::losing_attempt_still_replays_every_transcript_tile_without_lazy_serialization',
-              'pon_work::legal_attempt::tests::preparation_never_reduces_noncanonical_fields_or_wrong_shapes',
-              'pon_work::legal_attempt::tests::sparse_preparation_matches_dense_and_independent_full_field_proofs',
-              'pon_work::legal_attempt::tests::sparse_preparation_rejects_hidden_noncanonical_words_and_wrong_lengths',
-              'pon_work::legal_attempt::tests::sparse_setup_keeps_complete_misses_callbacks_and_cancelled_retry',
-          }
-          kernel_rows = re.findall(r'^test (pon_work::legal_attempt::\S+) \.\.\. ok$', kernel, re.M)
-          if len(kernel_rows) != len(kernel_expected) or set(kernel_rows) != kernel_expected:
-              raise SystemExit('factorial-kernel-tests: exact named kernel controls did not execute once')
-          history = (root / 'history-import-tests.log').read_text()
-          for name in (
-              'final_resource_completion_preserves_error_priority_and_original_deadline',
-              'final_resource_expiry_keeps_committed_history_and_settled_cpu',
-              'history_control_keeps_original_timely_single_resource_observation',
-              'history_control_preexpired_does_not_invoke_resource',
-              'history_control_resource_expiry_refuses_late_success',
-              'history_control_resource_expiry_keeps_original_resource_error',
-              'history_owner_resource_expiry_never_invokes_exclusive_or_shared_action',
-          ):
-              selector = 'ingress::history_import::tests::deadline_controls::' + name
-              rows = re.findall(r'^test ' + re.escape(selector) + r' \.\.\. ok$', history, re.M)
-              if len(rows) != 1:
-                  raise SystemExit(selector + ': exact deadline control did not execute once')
-          for name in (
-              'shared_detached_history_continues_from_real_deficit_without_new_credit',
-              'shared_detached_history_refill_keeps_original_resource_cancellation',
-              'shared_detached_history_refill_cannot_renew_original_deadline',
-          ):
-              selector = 'ingress::history_import::tests::detached_budget_controls::' + name
-              rows = re.findall(r'^test ' + re.escape(selector) + r' \.\.\. ok$', history, re.M)
-              if len(rows) != 1:
-                  raise SystemExit(selector + ': exact detached budget control did not execute once')
-          codec_selector = ('ingress::history_import::tests::'
-              'history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors')
-          codec_rows = re.findall(r'^test ' + re.escape(codec_selector) + r' \.\.\. ok$', history, re.M)
-          if len(codec_rows) != 1:
-              raise SystemExit(codec_selector + ': exact codec control did not execute once')
-          PYTEST
+          python3 -B scripts/ci/w1_native_controls.py --group factorial --logs "$OUT" --output "$OUT/factorial-native-controls-completion.json"
           python3 scripts/ci/test_w1_native_roster.py
           python3 scripts/ci/check_w1_native_roster.py --profile factorial-example "$OUT/factorial-example-tests.log"
           python3 scripts/ci/check_w1_native_roster.py --profile history-import "$OUT/history-import-tests.log"

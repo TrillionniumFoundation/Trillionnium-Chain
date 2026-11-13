@@ -1,0 +1,10 @@
+test_actual_source_and_complete_runtime_seam (__main__.CellDiscoveryV3CiControls.test_actual_source_and_complete_runtime_seam) ... ok
+test_compile_only_filtered_or_bypassed_native_execution_rejects (__main__.CellDiscoveryV3CiControls.test_compile_only_filtered_or_bypassed_native_execution_rejects) ... ok
+test_missing_duplicate_stubbed_or_relocated_vectors_reject (__main__.CellDiscoveryV3CiControls.test_missing_duplicate_stubbed_or_relocated_vectors_reject) ... ok
+test_python_failure_and_source_guard_bypasses_reject (__main__.CellDiscoveryV3CiControls.test_python_failure_and_source_guard_bypasses_reject) ... ok
+test_trigger_and_original_matrix_cannot_be_silently_dropped (__main__.CellDiscoveryV3CiControls.test_trigger_and_original_matrix_cannot_be_silently_dropped) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.003s
+
+OK

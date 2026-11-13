@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/test_cell_storage_convergence_ci.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794311038810128908,
+  "exit_code": 0,
+  "interrupted": false,
+  "label": "test_cell_storage_convergence_ci",
+  "process_exit_code": 0,
+  "recorder_error": null,
+  "start_unix_ns": 1794311038544275699,
+  "stderr": {
+    "bytes": 3839,
+    "file": "test_cell_storage_convergence_ci.stderr.log",
+    "sha256": "cd80bb0aa5689c728c05b3118b2b587d494c8406cf4c2871000276044d4766f4"
+  },
+  "stdout": {
+    "bytes": 0,
+    "file": "test_cell_storage_convergence_ci.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "timed_out": false,
+  "timeout_seconds": 1800
+}

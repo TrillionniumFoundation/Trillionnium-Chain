@@ -2823,6 +2823,14 @@ class MergedQualificationLaneTests(unittest.TestCase):
                 '    python3 scripts/ci/test_read_validated_business_goodput.py\n',
                 '    python3 scripts/ci/test_read_failed_native_campaign_zip.py\n',
             ), '    python3 scripts/ci/test_pon_w1_cost_matrix_reader.py\n'),
+        'native_observation_guards': ('repository-truth',
+            '    python3 scripts/ci/test_run_legacy_reorg_root_abba.py\n', (
+                '    python3 -B scripts/ci/test_w1_factorial_native_gate.py\n',
+                '    python3 -B scripts/ci/test_prepare_artifact_upload.py\n',
+                '    python3 -B scripts/ci/test_cell_storage_convergence_ci.py\n',
+                '    python3 -B scripts/ci/test_fresh_rejection_report.py\n',
+            ), '    # These in-memory counterexamples use unchanged retained inputs, not a new hardware observation.\n'
+            '    python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54\n'),
         'fixed_probability': ('repository-truth',
                               "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_work_scale_contract.py' -v\n", (
             "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fixed_probability_contract.py' -v\n",
@@ -2931,6 +2939,9 @@ class MergedQualificationLaneTests(unittest.TestCase):
 
     def test_current_lifetime_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('lifetime_current_source')
+
+    def test_native_observation_guard_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('native_observation_guards')
 
     def test_fixed_probability_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('fixed_probability')

@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "cargo",
+    "metadata",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "--format-version",
+    "1"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794310626287951783,
+  "exit_code": 0,
+  "interrupted": false,
+  "label": "locked-offline-graph",
+  "process_exit_code": 0,
+  "recorder_error": null,
+  "start_unix_ns": 1794310626022283615,
+  "stderr": {
+    "bytes": 0,
+    "file": "locked-offline-graph.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 852263,
+    "file": "locked-offline-graph.stdout.log",
+    "sha256": "80b5555ee496f800fc97c0592d2022d1efabeeb7cd8bf22dcfda0710102fc483"
+  },
+  "timed_out": false,
+  "timeout_seconds": 1800
+}

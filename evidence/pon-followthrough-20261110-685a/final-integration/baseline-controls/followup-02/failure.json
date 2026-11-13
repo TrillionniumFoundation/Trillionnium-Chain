@@ -1,0 +1,36 @@
+{
+  "exit_code": 101,
+  "observation_complete": true,
+  "reason": "original baseline test refusal retained",
+  "recorded_unix_ns": 1794305929814049632,
+  "security_status": "HOLD",
+  "source_bracket_identical": true,
+  "tests": [
+    {
+      "exact_single_test_execution_observed": true,
+      "exit_code": 0,
+      "full_name": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "label": "legacy-large-parent",
+      "reported_counts": [
+        1,
+        0,
+        0,
+        0,
+        1321
+      ]
+    },
+    {
+      "exact_single_test_execution_observed": true,
+      "exit_code": 101,
+      "full_name": "store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation",
+      "label": "inactive-page-parents",
+      "reported_counts": [
+        0,
+        1,
+        0,
+        0,
+        1321
+      ]
+    }
+  ]
+}

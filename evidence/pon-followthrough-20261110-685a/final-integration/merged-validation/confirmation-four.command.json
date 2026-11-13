@@ -1,0 +1,70 @@
+{
+  "argv": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "confirmation_chainwork_tests",
+    "--",
+    "--test-threads=1"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794311975657378008,
+  "exit_code": 0,
+  "interrupted": false,
+  "label": "confirmation-four",
+  "native_observation": {
+    "all_reported_harness_summaries": [
+      {
+        "failed": 0,
+        "filtered": 1322,
+        "ignored": 0,
+        "measured": 0,
+        "outcome": "ok",
+        "passed": 4
+      }
+    ],
+    "command_exit_code": 0,
+    "expected_names": [
+      "store::confirmation_chainwork_tests::a_common_work_offset_cannot_replace_the_zero_work_genesis_anchor",
+      "store::confirmation_chainwork_tests::final_callback_foreign_commit_cannot_return_a_stale_confirmation",
+      "store::confirmation_chainwork_tests::final_callback_same_connection_write_cannot_return_a_stale_confirmation",
+      "store::confirmation_chainwork_tests::full_width_retained_work_corruption_refuses_tip_inclusion_and_middle"
+    ],
+    "observed_selected_names": [
+      "store::confirmation_chainwork_tests::a_common_work_offset_cannot_replace_the_zero_work_genesis_anchor",
+      "store::confirmation_chainwork_tests::final_callback_foreign_commit_cannot_return_a_stale_confirmation",
+      "store::confirmation_chainwork_tests::final_callback_same_connection_write_cannot_return_a_stale_confirmation",
+      "store::confirmation_chainwork_tests::full_width_retained_work_corruption_refuses_tip_inclusion_and_middle"
+    ],
+    "successful_selected_target_observed": true,
+    "terminal_harness": {
+      "failed": 0,
+      "filtered": 1322,
+      "ignored": 0,
+      "measured": 0,
+      "outcome": "ok",
+      "passed": 4
+    }
+  },
+  "process_exit_code": 0,
+  "recorder_error": null,
+  "start_unix_ns": 1794311971181056266,
+  "stderr": {
+    "bytes": 210,
+    "file": "confirmation-four.stderr.log",
+    "sha256": "c555bc24570bf7653191a179230e29a3e70bb6b5dc17c5026770d37b92382ce0"
+  },
+  "stdout": {
+    "bytes": 583,
+    "file": "confirmation-four.stdout.log",
+    "sha256": "c2d76ba273ab68ea829a1b49842764b73bc4f6c0e90d7e95e3c3b6818f0da725"
+  },
+  "timed_out": false,
+  "timeout_seconds": 1800
+}

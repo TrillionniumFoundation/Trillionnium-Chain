@@ -1,0 +1,3834 @@
+{
+  "code_checkpoint_c2": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+  "decoded_merge_archive_identity": {
+    "base64_path": "orchestration/merged-inputs-archive.base64.txt",
+    "bytes": 165643,
+    "git_blob": "8d3fad150325cb77988f7fac35ce6b5be9d1e957",
+    "sha256": "da285a18285c8f4a14204c75e3a8b1795a2dcd3bdc3635af127b1e9bfe9ccbf0"
+  },
+  "draft_only": true,
+  "e1_commit_identity_recorded_after_commit": true,
+  "e1_only_added_prefix": "evidence/pon-followthrough-20261110-685a/final-integration",
+  "existing_m1_files_modified": false,
+  "explicit_exclusions": {
+    "baseline-controls/followup-02": [],
+    "baseline-controls/initial": [],
+    "historical-lock-materialization": [],
+    "historical-orchestration/attempt-01/driver-output": [],
+    "historical-orchestration/attempt-02/controller-output": [],
+    "historical-orchestration/attempt-02/driver-output": [],
+    "historical-orchestration/attempt-03/controller-output": [
+      {
+        "bytes": 0,
+        "path": "controller.lock",
+        "reason": "temporary process lock or Git index; not copied"
+      },
+      {
+        "bytes": 4658478,
+        "path": "patch-preview.index",
+        "reason": "temporary process lock or Git index; not copied"
+      }
+    ],
+    "historical-orchestration/attempt-03/driver-output": [],
+    "merged-source": [],
+    "merged-validation": [],
+    "observer-audit-03": []
+  },
+  "failed_binding_child_c3": "a715b2c8e89732ce356ebae67f978ef232156c04",
+  "historical_driver_archive_retention": "Each original compressed archive remains exactly embedded in its pinned driver source",
+  "hosted_ci_observed_complete": false,
+  "merge_parents": [
+    "a715b2c8e89732ce356ebae67f978ef232156c04",
+    "df927b6ffaecff293b9e9428e3ba516f47cd101a"
+  ],
+  "merged_source_m1": "8ab052065ae8307b1ab2c9d42b0dca229a5a3b9d",
+  "merged_tree": "218f49c3a4b1495f90c0d885433c0ec9ad51fb3c",
+  "native_full_suite_passed": false,
+  "native_tests_executed_by_publisher": false,
+  "observations": {
+    "all_baseline_tests_passed": false,
+    "baseline_controls": {
+      "all_baseline_tests_passed": false,
+      "baseline_commit": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+      "baseline_tree": "00479a98dabc6b1fd91a0ceef82ffbdbffb78067",
+      "causal_attribution_established": false,
+      "complete_global_history_claimed": false,
+      "counted_as_c2_execution": false,
+      "followup_runner_sha256": "cdc340416a6287ce1584f10cfc89e6927cfa206c129acdc3c7d6082dbb632e71",
+      "full_library_suite_executed": false,
+      "full_library_suite_passed": null,
+      "git_history_shallow": true,
+      "inactive_page_error": "PUBLIC_MUTATION_CPU_BUDGET",
+      "initial_guard_reason": "shallow source refused",
+      "initial_observation_tests_executed": false,
+      "initial_runner_sha256": "ec1cf2eec81ef7c640b09a049f261560347c983e9ff019a6d7296ff1e2fd6862",
+      "observation_complete": true,
+      "same_error_as_c2_full_run_claimed": false,
+      "security_status": "HOLD",
+      "selected_tests_observed": 2,
+      "summary_sha256": "7d44c04aa4ceacc40278db27e5f9b82cc960d9e0b8b75a0444a3c858088c79c3",
+      "tests": [
+        {
+          "exact_single_test_execution_observed": true,
+          "exit_code": 0,
+          "full_name": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+          "label": "legacy-large-parent",
+          "reported_counts": [
+            1,
+            0,
+            0,
+            0,
+            1321
+          ]
+        },
+        {
+          "exact_single_test_execution_observed": true,
+          "exit_code": 101,
+          "full_name": "store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation",
+          "label": "inactive-page-parents",
+          "reported_counts": [
+            0,
+            1,
+            0,
+            0,
+            1321
+          ]
+        }
+      ]
+    },
+    "baseline_full_library_suite_passed": null,
+    "baseline_observation_complete": true,
+    "baseline_selected_tests": 2,
+    "c3_all_checks_passed": false,
+    "draft_only": true,
+    "failed_c3": {
+      "all_c3_checks_passed": false,
+      "checks_recorded": 29,
+      "completion_summary_created": false,
+      "driver_integration_exit_code": 2,
+      "failed_checks": {
+        "ci-contract": 1,
+        "repository-and-markdown-links": 2,
+        "test_ci_contract": 1,
+        "test_w1_lifetime_ledger": 1
+      },
+      "native_child_executed": false,
+      "nonzero_exits": 4,
+      "raw_controller_failure_sha256": "292631b840c7f1521432b633837768f462916443a9ac506ae055badc123f7a9a",
+      "raw_driver_failure_sha256": "ea4187fe2c5dc19113f069a060db8eb9cd3487d3d634146befee24e48be8ae73",
+      "raw_summary_sha256": "d7b2875f7f77966e84a123cc9a6a5a0a44e1a5b5f700153c3546084b97b19334",
+      "security_status": "HOLD",
+      "source": "a715b2c8e89732ce356ebae67f978ef232156c04",
+      "source_bracket_identical": true,
+      "tree": "cc44e4c526d9b52d04697169a9b1d3eeb5079451",
+      "zero_exits": 25
+    },
+    "historical_object_preparation": {
+      "complete": true,
+      "historical_blob": "2ff1e1c42dfa7061f4a77620c0bb65b656d158a5",
+      "native_tests_executed": false,
+      "object_store_write_performed": true,
+      "original_failed_read_retained": true,
+      "security_status": "HOLD",
+      "source": "a715b2c8e89732ce356ebae67f978ef232156c04",
+      "source_or_ref_changed": false,
+      "summary_sha256": "b966c60b37778cf6dbb1b9dc1ec1f5f9c0457adece5ba9a19f6ac03468886174"
+    },
+    "m1_full_node_suite_executed": false,
+    "m1_full_node_suite_passed": false,
+    "merged_source": {
+      "corpus_verification_sha256": "d89c64a34772de4c6aa33d7ec5361e472aa05e635ca970cf34e501398b7f3453",
+      "native_tests_executed": false,
+      "parents": [
+        "a715b2c8e89732ce356ebae67f978ef232156c04",
+        "df927b6ffaecff293b9e9428e3ba516f47cd101a"
+      ],
+      "required_checks_executed_by_merge": false,
+      "security_status": "HOLD",
+      "source": "8ab052065ae8307b1ab2c9d42b0dca229a5a3b9d",
+      "source_binding_verified": true,
+      "source_identity_sha256": "410f65105cfcfe45438e228fe44b11c7eaabb9a1b2d1f93d03bfdb3cca4198c0",
+      "summary_sha256": "34d1553565881c298c47c5c3576b4757d8701a43f99e629cab72ebdd1c7b6b26",
+      "tree": "218f49c3a4b1495f90c0d885433c0ec9ad51fb3c"
+    },
+    "merged_validation": {
+      "actual_commands": 38,
+      "all_required_checks_passed": true,
+      "full_node_suite_executed": false,
+      "full_node_suite_passed": false,
+      "hosted_ci_observed_complete": false,
+      "merged_source": "8ab052065ae8307b1ab2c9d42b0dca229a5a3b9d",
+      "merged_tree": "218f49c3a4b1495f90c0d885433c0ec9ad51fb3c",
+      "native_full_suite_passed": false,
+      "native_targeted_results": {
+        "cancel-exact": {
+          "all_reported_harness_summaries": [
+            {
+              "failed": 0,
+              "filtered": 1325,
+              "ignored": 0,
+              "measured": 0,
+              "outcome": "ok",
+              "passed": 1
+            }
+          ],
+          "command_exit_code": 0,
+          "expected_names": [
+            "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work"
+          ],
+          "observed_selected_names": [
+            "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work"
+          ],
+          "successful_selected_target_observed": true,
+          "terminal_harness": {
+            "failed": 0,
+            "filtered": 1325,
+            "ignored": 0,
+            "measured": 0,
+            "outcome": "ok",
+            "passed": 1
+          }
+        },
+        "confirmation-four": {
+          "all_reported_harness_summaries": [
+            {
+              "failed": 0,
+              "filtered": 1322,
+              "ignored": 0,
+              "measured": 0,
+              "outcome": "ok",
+              "passed": 4
+            }
+          ],
+          "command_exit_code": 0,
+          "expected_names": [
+            "store::confirmation_chainwork_tests::a_common_work_offset_cannot_replace_the_zero_work_genesis_anchor",
+            "store::confirmation_chainwork_tests::final_callback_foreign_commit_cannot_return_a_stale_confirmation",
+            "store::confirmation_chainwork_tests::final_callback_same_connection_write_cannot_return_a_stale_confirmation",
+            "store::confirmation_chainwork_tests::full_width_retained_work_corruption_refuses_tip_inclusion_and_middle"
+          ],
+          "observed_selected_names": [
+            "store::confirmation_chainwork_tests::a_common_work_offset_cannot_replace_the_zero_work_genesis_anchor",
+            "store::confirmation_chainwork_tests::final_callback_foreign_commit_cannot_return_a_stale_confirmation",
+            "store::confirmation_chainwork_tests::final_callback_same_connection_write_cannot_return_a_stale_confirmation",
+            "store::confirmation_chainwork_tests::full_width_retained_work_corruption_refuses_tip_inclusion_and_middle"
+          ],
+          "successful_selected_target_observed": true,
+          "terminal_harness": {
+            "failed": 0,
+            "filtered": 1322,
+            "ignored": 0,
+            "measured": 0,
+            "outcome": "ok",
+            "passed": 4
+          }
+        },
+        "evaluation-quorum-v2": {
+          "all_reported_harness_summaries": [
+            {
+              "failed": 0,
+              "filtered": 0,
+              "ignored": 0,
+              "measured": 0,
+              "outcome": "ok",
+              "passed": 9
+            }
+          ],
+          "command_exit_code": 0,
+          "expected_names": [
+            "classic_retained_closure_preserves_legal_appeals_and_late_conflicts",
+            "classic_retained_closure_recounts_aborts_and_accepts_complete_zero_score",
+            "classic_retained_closure_rejects_substituted_summary_at_use_and_restore",
+            "fresh_profile_refuses_attested_models_and_cross_version_replay",
+            "independent_reference_vectors_match_native_domains_counts_and_records",
+            "quorum_retained_closure_cannot_authorize_adoption_before_its_height",
+            "quorum_retained_closure_preserves_nonempty_history_after_more_conflicts",
+            "quorum_retained_closure_rejects_substituted_summary_at_use_and_restore",
+            "retained_reveals_recheck_commitments_at_restore_close_and_adoption"
+          ],
+          "observed_selected_names": [
+            "classic_retained_closure_preserves_legal_appeals_and_late_conflicts",
+            "classic_retained_closure_recounts_aborts_and_accepts_complete_zero_score",
+            "classic_retained_closure_rejects_substituted_summary_at_use_and_restore",
+            "fresh_profile_refuses_attested_models_and_cross_version_replay",
+            "independent_reference_vectors_match_native_domains_counts_and_records",
+            "quorum_retained_closure_cannot_authorize_adoption_before_its_height",
+            "quorum_retained_closure_preserves_nonempty_history_after_more_conflicts",
+            "quorum_retained_closure_rejects_substituted_summary_at_use_and_restore",
+            "retained_reveals_recheck_commitments_at_restore_close_and_adoption"
+          ],
+          "successful_selected_target_observed": true,
+          "terminal_harness": {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 0,
+            "measured": 0,
+            "outcome": "ok",
+            "passed": 9
+          }
+        },
+        "mvcc-library": {
+          "all_reported_harness_summaries": [
+            {
+              "failed": 0,
+              "filtered": 0,
+              "ignored": 9,
+              "measured": 0,
+              "outcome": "ok",
+              "passed": 153
+            }
+          ],
+          "command_exit_code": 0,
+          "successful_selected_target_observed": true,
+          "terminal_harness": {
+            "failed": 0,
+            "filtered": 0,
+            "ignored": 9,
+            "measured": 0,
+            "outcome": "ok",
+            "passed": 153
+          }
+        }
+      },
+      "parent_test_results_inherited": false,
+      "python_named_results": {
+        "test_w1_factorial_native_gate": {
+          "command_exit_code": 0,
+          "expected_names": [
+            "LegalGateTests.test_complete_current_native_roster_passes",
+            "LegalGateTests.test_every_retained_versioned_material_and_observer_control_executes_once",
+            "LegalGateTests.test_summary_only_stale_filtered_duplicate_or_failed_summaries_are_refused",
+            "NativeGateTests.test_actual_workflow_uses_both_strict_gates_without_changing_native_selectors",
+            "NativeGateTests.test_cli_failure_never_writes_success_report",
+            "NativeGateTests.test_cli_fifo_and_symlink_log_refuse_without_waiting",
+            "NativeGateTests.test_complete_roster_passes",
+            "NativeGateTests.test_every_named_control_requires_one_successful_terminal",
+            "NativeGateTests.test_every_suite_rejects_wrong_count_failure_ignored_and_duplicate_summary",
+            "NativeGateTests.test_factorial_example_does_not_accept_filtered_or_measured_tests",
+            "NativeGateTests.test_factorial_example_rejects_missing_duplicate_replaced_or_failed_named_control",
+            "NativeGateTests.test_frozen_names_equal_current_native_source_and_retained_counts",
+            "NativeGateTests.test_history_named_controls_remain_required_once",
+            "NativeGateTests.test_ignored_child_is_exact_and_parent_still_must_pass",
+            "NativeGateTests.test_kernel_rejects_missing_duplicate_or_replaced_named_control",
+            "NativeGateTests.test_nocapture_retains_name_until_its_serial_success_terminal",
+            "NativeGateTests.test_original_old_counts_cannot_certify_the_current_roster",
+            "NativeGateTests.test_selected_native_suites_keep_nonzero_filtered_observations"
+          ],
+          "observed_tests": [
+            {
+              "name": "LegalGateTests.test_complete_current_native_roster_passes",
+              "outcome": "ok"
+            },
+            {
+              "name": "LegalGateTests.test_every_retained_versioned_material_and_observer_control_executes_once",
+              "outcome": "ok"
+            },
+            {
+              "name": "LegalGateTests.test_summary_only_stale_filtered_duplicate_or_failed_summaries_are_refused",
+              "outcome": "ok"
+            },
+            {
+              "name": "NativeGateTests.test_actual_workflow_uses_both_strict_gates_without_changing_native_selectors",
+              "outcome": "ok"
+            },
+            {
+              "name": "NativeGateTests.test_cli_failure_never_writes_success_report",
+              "outcome": "ok"
+            },
+            {
+              "name": "NativeGateTests.test_cli_fifo_and_symlink_log_refuse_without_waiting",
+              "outcome": "ok"
+            },
+            {
+              "name": "NativeGateTests.test_complete_roster_passes",
+              "outcome": "ok"
+            },
+            {
+              "name": "NativeGateTests.test_every_named_control_requires_one_successful_terminal",
+              "outcome": "ok"
+            },
+            {
+              "name": "NativeGateTests.test_every_suite_rejects_wrong_count_failure_ignored_and_duplicate_summary",
+              "outcome": "ok"
+            },
+            {
+              "name": "NativeGateTests.test_factorial_example_does_not_accept_filtered_or_measured_tests",
+              "outcome": "ok"
+            },
+            {
+              "name": "NativeGateTests.test_factorial_example_rejects_missing_duplicate_replaced_or_failed_named_control",
+              "outcome": "ok"
+            },
+            {
+              "name": "NativeGateTests.test_frozen_names_equal_current_native_source_and_retained_counts",
+              "outcome": "ok"
+            },
+            {
+              "name": "NativeGateTests.test_history_named_controls_remain_required_once",
+              "outcome": "ok"
+            },
+            {
+              "name": "NativeGateTests.test_ignored_child_is_exact_and_parent_still_must_pass",
+              "outcome": "ok"
+            },
+            {
+              "name": "NativeGateTests.test_kernel_rejects_missing_duplicate_or_replaced_named_control",
+              "outcome": "ok"
+            },
+            {
+              "name": "NativeGateTests.test_nocapture_retains_name_until_its_serial_success_terminal",
+              "outcome": "ok"
+            },
+            {
+              "name": "NativeGateTests.test_original_old_counts_cannot_certify_the_current_roster",
+              "outcome": "ok"
+            },
+            {
+              "name": "NativeGateTests.test_selected_native_suites_keep_nonzero_filtered_observations",
+              "outcome": "ok"
+            }
+          ],
+          "reported_summary_counts": [
+            18
+          ],
+          "successful_named_suite_observed": true
+        },
+        "test_w1_lifetime_ledger": {
+          "command_exit_code": 0,
+          "expected_names": [
+            "LifetimeLedgerTests.test_bound_domain_cannot_be_extrapolated_to_larger_lifetime_queries",
+            "LifetimeLedgerTests.test_cli_rejects_malformed_input_without_emitting_a_report",
+            "LifetimeLedgerTests.test_complete_relation_event_count_cannot_drop_failed_attempts",
+            "LifetimeLedgerTests.test_conditional_union_is_exact_and_does_not_require_independence",
+            "LifetimeLedgerTests.test_exact_lottery_rounding_and_weight_cost_counterexample",
+            "LifetimeLedgerTests.test_lifetime_reset_and_per_event_target_counterexamples",
+            "LifetimeLedgerTests.test_marginal_or_accepted_only_error_bound_is_refused",
+            "LifetimeLedgerTests.test_mass_and_reduction_overheads_are_independent_inputs",
+            "LifetimeLedgerTests.test_missing_phase_group_or_unknown_field_is_not_a_free_zero",
+            "LifetimeLedgerTests.test_native_permutation_count_cannot_be_the_query_unit",
+            "LifetimeLedgerTests.test_nonexact_numbers_duplicate_json_and_qualification_injection_are_refused",
+            "LifetimeLedgerTests.test_numeric_inputs_need_explicit_unverified_references",
+            "LifetimeLedgerTests.test_offline_adaptive_delegated_and_unclassified_queries_accumulate",
+            "LifetimeLedgerTests.test_processors_failed_roots_and_recursive_nodes_are_all_charged",
+            "LifetimeLedgerTests.test_project_unknowns_do_not_produce_a_target_or_qualification",
+            "LifetimeLedgerTests.test_scope_cannot_reset_by_identity_upgrade_or_reorganization",
+            "LifetimeLedgerTests.test_source_lines_remain_independent_of_existing_qualification_labels",
+            "LifetimeLedgerTests.test_source_mutation_missing_source_and_symlink_are_refused",
+            "LifetimeLedgerTests.test_unknown_factor_survives_known_zero"
+          ],
+          "observed_tests": [
+            {
+              "name": "LifetimeLedgerTests.test_bound_domain_cannot_be_extrapolated_to_larger_lifetime_queries",
+              "outcome": "ok"
+            },
+            {
+              "name": "LifetimeLedgerTests.test_cli_rejects_malformed_input_without_emitting_a_report",
+              "outcome": "ok"
+            },
+            {
+              "name": "LifetimeLedgerTests.test_complete_relation_event_count_cannot_drop_failed_attempts",
+              "outcome": "ok"
+            },
+            {
+              "name": "LifetimeLedgerTests.test_conditional_union_is_exact_and_does_not_require_independence",
+              "outcome": "ok"
+            },
+            {
+              "name": "LifetimeLedgerTests.test_exact_lottery_rounding_and_weight_cost_counterexample",
+              "outcome": "ok"
+            },
+            {
+              "name": "LifetimeLedgerTests.test_lifetime_reset_and_per_event_target_counterexamples",
+              "outcome": "ok"
+            },
+            {
+              "name": "LifetimeLedgerTests.test_marginal_or_accepted_only_error_bound_is_refused",
+              "outcome": "ok"
+            },
+            {
+              "name": "LifetimeLedgerTests.test_mass_and_reduction_overheads_are_independent_inputs",
+              "outcome": "ok"
+            },
+            {
+              "name": "LifetimeLedgerTests.test_missing_phase_group_or_unknown_field_is_not_a_free_zero",
+              "outcome": "ok"
+            },
+            {
+              "name": "LifetimeLedgerTests.test_native_permutation_count_cannot_be_the_query_unit",
+              "outcome": "ok"
+            },
+            {
+              "name": "LifetimeLedgerTests.test_nonexact_numbers_duplicate_json_and_qualification_injection_are_refused",
+              "outcome": "ok"
+            },
+            {
+              "name": "LifetimeLedgerTests.test_numeric_inputs_need_explicit_unverified_references",
+              "outcome": "ok"
+            },
+            {
+              "name": "LifetimeLedgerTests.test_offline_adaptive_delegated_and_unclassified_queries_accumulate",
+              "outcome": "ok"
+            },
+            {
+              "name": "LifetimeLedgerTests.test_processors_failed_roots_and_recursive_nodes_are_all_charged",
+              "outcome": "ok"
+            },
+            {
+              "name": "LifetimeLedgerTests.test_project_unknowns_do_not_produce_a_target_or_qualification",
+              "outcome": "ok"
+            },
+            {
+              "name": "LifetimeLedgerTests.test_scope_cannot_reset_by_identity_upgrade_or_reorganization",
+              "outcome": "ok"
+            },
+            {
+              "name": "LifetimeLedgerTests.test_source_lines_remain_independent_of_existing_qualification_labels",
+              "outcome": "ok"
+            },
+            {
+              "name": "LifetimeLedgerTests.test_source_mutation_missing_source_and_symlink_are_refused",
+              "outcome": "ok"
+            },
+            {
+              "name": "LifetimeLedgerTests.test_unknown_factor_survives_known_zero",
+              "outcome": "ok"
+            }
+          ],
+          "reported_summary_counts": [
+            19
+          ],
+          "successful_named_suite_observed": true
+        }
+      },
+      "security_status": "HOLD",
+      "source_bracket_identical": true,
+      "summary_sha256": "86024665e0c7711e0918da2401e6b33a69aab8b05a8ea614e36a8cef34cfb5b2",
+      "validator_sha256": "825fd284f1a995b3c66753d9338b6ea794afcb5b0c759b701a3831eb63b1ed84"
+    },
+    "native_full_suite_passed": false,
+    "native_observation_complete": true,
+    "open_consensus_qualified": false,
+    "original_driver_01": {
+      "archive_sha256": "1c3ebf117c31271d118095fd31be34aa6add4f335173f044f325f71526656488",
+      "complete": false,
+      "driver_exit_code": 2,
+      "driver_sha256": "08226df52b1ca3d5627b123ca034d8f708f5b32bcc0f2b4d29ecbb3ad58b963f",
+      "failed_native_exit_code": 101,
+      "failed_native_label": "node-library-v3",
+      "historical_controller_sha256": "a1dab7802752d4f534c3d70f40d6bceca1b5eb156c0d1229dfa9306e29c74c62",
+      "original_failure_sha256": "c908712100fc167f69c03f9e9858369d7c04e5e695db08aafa7ff702071d4dca",
+      "published": false
+    },
+    "production_activation": false,
+    "readonly_observer": {
+      "c3_created": false,
+      "complete": true,
+      "controller_sha256": "1075c69186b95bb8e3423693fbb931f375d5afa93dd6fc023a02715945d9e920",
+      "followup_commands": 14,
+      "native_full_suite_passed": false,
+      "native_tests_executed": false,
+      "original_commands": 39,
+      "parser_exit_code": 0,
+      "project_mutations_performed": false,
+      "raw_members": 121,
+      "recorder_sha256": "79d1397d97ad8fce27eb861b1ee70a30b22574a190059766f660259267885e46",
+      "scope": "readonly original receipt parser only",
+      "security_status": "HOLD",
+      "summary_sha256": "d854150b8cf80efec0f06b7c7b5fe92522beee263fde0e151ccd237053887a35"
+    },
+    "refused_controller_02": {
+      "archive_sha256": "4d982f68de64051aba1345716ca926918bf5f92bdfb48cf3c69cc493b4c72cd6",
+      "c3_created": false,
+      "controller_complete": false,
+      "controller_exit_code": 2,
+      "controller_failure_sha256": "ae18656b140134af5951c1eaf64d58dc25630597b6a909103ea5cee05e62a99f",
+      "controller_reason": "original native denominator differs: node-library-v3",
+      "controller_sha256": "725a000ab299079e96192c6e81b3c2d809203d3052947a947f104d3d4d0f70b5",
+      "driver_attempt": "02",
+      "driver_complete": false,
+      "driver_failure_sha256": "5798321a8d484e9e2ea28a7f04b2199a5367435e4475c72c4c69de1eff5cddae",
+      "driver_sha256": "4bb6484c98a41e8d079de97f5f44eae061fd2c0ff8a87366202fe33201fa9a67",
+      "native_child_executed": false,
+      "observed_followup_summary_sha256": "f6693ac2f41c9906f0a01a013e89a00200b844c4a9a78f24decdcb3fc93b0271",
+      "published": false,
+      "security_status": "HOLD"
+    },
+    "retained_c2_native": {
+      "draft_only": true,
+      "followup_command_count": 14,
+      "followup_directory": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04",
+      "followup_exact_error": "PUBLIC_MUTATION_CPU_BUDGET",
+      "followup_recorder_sha256": "13e84ec60d17cd039b0452b34d557305dd7fbb655c87efab6909bb53c24eced5",
+      "followup_summary_sha256": "f6693ac2f41c9906f0a01a013e89a00200b844c4a9a78f24decdcb3fc93b0271",
+      "full_run_and_exact_run_failures_equated": false,
+      "native_full_suite_passed": false,
+      "native_observation_complete": true,
+      "original_command_count": 39,
+      "original_commands_sha256": "bfb1cca4ee885685f4063104f809b4bcc857d3f7ddf7f4a72385f3529ad46a64",
+      "original_directory": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation",
+      "original_full_node_suite": {
+        "exit_code": 101,
+        "failed": 2,
+        "ignored": 39,
+        "passed": 1285
+      },
+      "source_bracket_closed_by_followup": true
+    },
+    "security_status": "HOLD",
+    "unused_v2_publisher": {
+      "bytes": 119912,
+      "publisher_completion_path_invoked": false,
+      "scope": "pinned read-only helper dependency and retained unexecuted publisher",
+      "sha256": "abc4cb69b7d55b9a2bee93b4da19a8992d7389b59a3e5df2898ff1ed10df753e"
+    }
+  },
+  "open_consensus_qualified": false,
+  "original_command_reference_closure": {
+    "baseline-controls/followup-02": [
+      {
+        "command": "cargo-version.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "cargo-version.stdout.log"
+      },
+      {
+        "command": "cargo-version.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "cargo-version.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "preflight.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "preflight.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-before.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-before.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "rustc-version.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "rustc-version.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "cargo-version.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "cargo-version.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "locked-offline-graph.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "locked-offline-graph.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "legacy-large-parent.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "legacy-large-parent.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 101,
+        "prior_hash_recorded": true,
+        "stream": "inactive-page-parents.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 101,
+        "prior_hash_recorded": true,
+        "stream": "inactive-page-parents.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-after.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-after.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-identical.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-identical.stderr.log"
+      },
+      {
+        "command": "inactive-page-parents.command.json",
+        "exit_code": 101,
+        "prior_hash_recorded": true,
+        "stream": "inactive-page-parents.stdout.log"
+      },
+      {
+        "command": "inactive-page-parents.command.json",
+        "exit_code": 101,
+        "prior_hash_recorded": true,
+        "stream": "inactive-page-parents.stderr.log"
+      },
+      {
+        "command": "legacy-large-parent.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "legacy-large-parent.stdout.log"
+      },
+      {
+        "command": "legacy-large-parent.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "legacy-large-parent.stderr.log"
+      },
+      {
+        "command": "locked-offline-graph.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "locked-offline-graph.stdout.log"
+      },
+      {
+        "command": "locked-offline-graph.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "locked-offline-graph.stderr.log"
+      },
+      {
+        "command": "preflight.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "preflight.stdout.log"
+      },
+      {
+        "command": "preflight.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "preflight.stderr.log"
+      },
+      {
+        "command": "rustc-version.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "rustc-version.stdout.log"
+      },
+      {
+        "command": "rustc-version.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "rustc-version.stderr.log"
+      },
+      {
+        "command": "source-after.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-after.stdout.log"
+      },
+      {
+        "command": "source-after.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-after.stderr.log"
+      },
+      {
+        "command": "source-before.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-before.stdout.log"
+      },
+      {
+        "command": "source-before.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-before.stderr.log"
+      },
+      {
+        "command": "source-identical.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-identical.stdout.log"
+      },
+      {
+        "command": "source-identical.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-identical.stderr.log"
+      }
+    ],
+    "baseline-controls/initial": [
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "create-isolated-worktree.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "create-isolated-worktree.stderr.log"
+      },
+      {
+        "command": "create-isolated-worktree.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "create-isolated-worktree.stdout.log"
+      },
+      {
+        "command": "create-isolated-worktree.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "create-isolated-worktree.stderr.log"
+      }
+    ],
+    "historical-lock-materialization": [
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "project-preflight.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "project-preflight.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "before-head.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "before-head.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "before-tree.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "before-tree.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "before-status.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "before-status.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "before-index-flags.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "before-index-flags.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "before-shallow.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "before-shallow.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "historical-commit.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "historical-commit.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "historical-path-identity.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "historical-path-identity.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "materialize-exact-blob.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "materialize-exact-blob.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "original-historical-read.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "original-historical-read.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "after-head.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "after-head.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "after-tree.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "after-tree.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "after-status.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "after-status.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "after-index-flags.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "after-index-flags.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "after-shallow.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "after-shallow.stderr.log"
+      }
+    ],
+    "historical-orchestration/attempt-01/driver-output": [],
+    "historical-orchestration/attempt-02/controller-output": [],
+    "historical-orchestration/attempt-02/driver-output": [
+      {
+        "command": "integrate.command.json",
+        "exit_code": 2,
+        "prior_hash_recorded": true,
+        "stream": "integrate.stdout.log"
+      },
+      {
+        "command": "integrate.command.json",
+        "exit_code": 2,
+        "prior_hash_recorded": true,
+        "stream": "integrate.stderr.log"
+      }
+    ],
+    "historical-orchestration/attempt-03/controller-output": [
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "prepare-preflight.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "prepare-preflight.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "prepare-source-byte-check.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "prepare-source-byte-check.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "preview-index-from-c2.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "preview-index-from-c2.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "preview-patch-1.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "preview-patch-1.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "preview-patch-2.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "preview-patch-2.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "preview-patch-3.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "preview-patch-3.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "preview-patch-4.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "preview-patch-4.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "preview-patch-5.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "preview-patch-5.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "patch-1-check.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "patch-1-check.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "patch-1-apply.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "patch-1-apply.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "patch-2-check.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "patch-2-check.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "patch-2-apply.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "patch-2-apply.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "patch-3-check.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "patch-3-check.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "patch-3-apply.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "patch-3-apply.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "patch-4-check.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "patch-4-check.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "patch-4-apply.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "patch-4-apply.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "patch-5-check.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "patch-5-check.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "patch-5-apply.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "patch-5-apply.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "authority-pq128-bindings.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "authority-pq128-bindings.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "w1-ledger-binding.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "w1-ledger-binding.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "qrom-successor-binding.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "qrom-successor-binding.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "refresh-distributed-source-inventory.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "refresh-distributed-source-inventory.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "stage-explicit-source.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "stage-explicit-source.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "stage-explicit-evidence-including-ignored-logs.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "stage-explicit-evidence-including-ignored-logs.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "corpus-path-inventory.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "corpus-path-inventory.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "corpus-refresh-output.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "corpus-refresh-output.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "stage-corpus.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "stage-corpus.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "prepared-source-diff-check.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "prepared-source-diff-check.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "commit-01-preflight.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "commit-01-preflight.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "commit-01-binding-child.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "commit-01-binding-child.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-source-before.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-source-before.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-preflight.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-preflight.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-test_pq_research_integration.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-test_pq_research_integration.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-test_ci_source_integrity.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-test_ci_source_integrity.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 1,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-test_ci_contract.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 1,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-test_ci_contract.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-test_w1_factorial_native_gate.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-test_w1_factorial_native_gate.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-test_prepare_artifact_upload.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-test_prepare_artifact_upload.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-test_cell_storage_convergence_ci.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-test_cell_storage_convergence_ci.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-test_cell_discovery_v3_ci.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-test_cell_discovery_v3_ci.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-test_fresh_rejection_report.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-test_fresh_rejection_report.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-test_w1_qrom_current_ci.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-test_w1_qrom_current_ci.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-test_pq_authority_effect_register.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-test_pq_authority_effect_register.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-test_pq_lifetime_budget.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-test_pq_lifetime_budget.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 1,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-test_w1_lifetime_ledger.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 1,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-test_w1_lifetime_ledger.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-corpus.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-corpus.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 1,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-ci-contract.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 1,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-ci-contract.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-qrom-current-named.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-qrom-current-named.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-qrom-historical-drift.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-qrom-historical-drift.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-qrom-current-implementation.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-qrom-current-implementation.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-authority-register.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-authority-register.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-pq128-lifetime.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-pq128-lifetime.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-w1-lifetime-report.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-w1-lifetime-report.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-w1-lifetime-report-identical.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-w1-lifetime-report-identical.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-distributed-inventory.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-distributed-inventory.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 2,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-repository-and-markdown-links.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 2,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-repository-and-markdown-links.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-source-diff-whitespace.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-source-diff-whitespace.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-format.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-format.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-source-after.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-source-after.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-source-identical.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "validation-01-source-identical.stderr.log"
+      },
+      {
+        "command": "authority-pq128/prior-authority-refusal.command.json",
+        "exit_code": 2,
+        "prior_hash_recorded": false,
+        "stream": "authority-pq128/prior-authority-refusal.stdout.log"
+      },
+      {
+        "command": "authority-pq128/prior-authority-refusal.command.json",
+        "exit_code": 2,
+        "prior_hash_recorded": false,
+        "stream": "authority-pq128/prior-authority-refusal.stderr.log"
+      },
+      {
+        "command": "authority-pq128/prior-pq128-refusal.command.json",
+        "exit_code": 2,
+        "prior_hash_recorded": false,
+        "stream": "authority-pq128/prior-pq128-refusal.stdout.log"
+      },
+      {
+        "command": "authority-pq128/prior-pq128-refusal.command.json",
+        "exit_code": 2,
+        "prior_hash_recorded": false,
+        "stream": "authority-pq128/prior-pq128-refusal.stderr.log"
+      },
+      {
+        "command": "authority-pq128/project-preflight.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": false,
+        "stream": "authority-pq128/project-preflight.stdout.log"
+      },
+      {
+        "command": "authority-pq128/project-preflight.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": false,
+        "stream": "authority-pq128/project-preflight.stderr.log"
+      },
+      {
+        "command": "qrom-successor/prior-v2-on-c2.command.json",
+        "exit_code": 2,
+        "prior_hash_recorded": true,
+        "stream": "qrom-successor/prior-v2-on-c2.stdout.log"
+      },
+      {
+        "command": "qrom-successor/prior-v2-on-c2.command.json",
+        "exit_code": 2,
+        "prior_hash_recorded": true,
+        "stream": "qrom-successor/prior-v2-on-c2.stderr.log"
+      },
+      {
+        "command": "qrom-successor/project-preflight.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "qrom-successor/project-preflight.stdout.log"
+      },
+      {
+        "command": "qrom-successor/project-preflight.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "qrom-successor/project-preflight.stderr.log"
+      },
+      {
+        "command": "qrom-successor/successor-fourteen-controls.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "qrom-successor/successor-fourteen-controls.stdout.log"
+      },
+      {
+        "command": "qrom-successor/successor-fourteen-controls.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "qrom-successor/successor-fourteen-controls.stderr.log"
+      },
+      {
+        "command": "qrom-successor/successor-mapping.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "qrom-successor/successor-mapping.stdout.log"
+      },
+      {
+        "command": "qrom-successor/successor-mapping.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "qrom-successor/successor-mapping.stderr.log"
+      }
+    ],
+    "historical-orchestration/attempt-03/driver-output": [
+      {
+        "command": "integrate.command.json",
+        "exit_code": 2,
+        "prior_hash_recorded": true,
+        "stream": "integrate.stdout.log"
+      },
+      {
+        "command": "integrate.command.json",
+        "exit_code": 2,
+        "prior_hash_recorded": true,
+        "stream": "integrate.stderr.log"
+      }
+    ],
+    "merged-source": [
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "project-preflight.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "project-preflight.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-before.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-before.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "github-account.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "github-account.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "fetch-selected-upstream.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "fetch-selected-upstream.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 1,
+        "prior_hash_recorded": true,
+        "stream": "ordinary-merge-no-commit.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 1,
+        "prior_hash_recorded": true,
+        "stream": "ordinary-merge-no-commit.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "regenerate-merged-source-inventory.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "regenerate-merged-source-inventory.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "stage-reviewed-resolutions.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "stage-reviewed-resolutions.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "prepare-live-union-corpus.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "prepare-live-union-corpus.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "check-corpus-patch.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "check-corpus-patch.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "apply-corpus-patch.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "apply-corpus-patch.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "stage-corpus.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "stage-corpus.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-diff-whitespace.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-diff-whitespace.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "commit-preflight.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "commit-preflight.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "commit-reviewed-merge.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "commit-reviewed-merge.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "verify-committed-union-corpus.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "verify-committed-union-corpus.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "merged-source-identity.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "merged-source-identity.stderr.log"
+      }
+    ],
+    "merged-validation": [
+      {
+        "command": "authority-register.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "authority-register.stdout.log"
+      },
+      {
+        "command": "authority-register.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "authority-register.stderr.log"
+      },
+      {
+        "command": "cancel-exact.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "cancel-exact.stdout.log"
+      },
+      {
+        "command": "cancel-exact.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "cancel-exact.stderr.log"
+      },
+      {
+        "command": "cargo-version.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "cargo-version.stdout.log"
+      },
+      {
+        "command": "cargo-version.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "cargo-version.stderr.log"
+      },
+      {
+        "command": "ci-contract.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "ci-contract.stdout.log"
+      },
+      {
+        "command": "ci-contract.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "ci-contract.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "preflight.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "preflight.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-before.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-before.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "locked-offline-graph.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "locked-offline-graph.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "rustc-version.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "rustc-version.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "cargo-version.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "cargo-version.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_pq_research_integration.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_pq_research_integration.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_ci_source_integrity.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_ci_source_integrity.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_ci_contract.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_ci_contract.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_w1_factorial_native_gate.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_w1_factorial_native_gate.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_prepare_artifact_upload.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_prepare_artifact_upload.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_cell_storage_convergence_ci.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_cell_storage_convergence_ci.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_cell_discovery_v3_ci.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_cell_discovery_v3_ci.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_fresh_rejection_report.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_fresh_rejection_report.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_w1_qrom_current_ci.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_w1_qrom_current_ci.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_pq_authority_effect_register.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_pq_authority_effect_register.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_pq_lifetime_budget.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_pq_lifetime_budget.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_w1_lifetime_ledger.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_w1_lifetime_ledger.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_w1_lifecycle_cost_v4.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_w1_lifecycle_cost_v4.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "corpus.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "corpus.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "ci-contract.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "ci-contract.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "qrom-current-named.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "qrom-current-named.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "qrom-historical-drift.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "qrom-historical-drift.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "qrom-current-implementation.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "qrom-current-implementation.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "authority-register.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "authority-register.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "pq128-lifetime.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "pq128-lifetime.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "w1-lifetime-report.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "w1-lifetime-report.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "w1-lifetime-report-identical.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "w1-lifetime-report-identical.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "distributed-inventory.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "distributed-inventory.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "repository-and-markdown-links.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "repository-and-markdown-links.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-diff-whitespace.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-diff-whitespace.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "format.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "format.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "mvcc-library.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "mvcc-library.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "evaluation-quorum-v2.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "evaluation-quorum-v2.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "cancel-exact.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "cancel-exact.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "confirmation-four.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "confirmation-four.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "four-owner-strict-clippy.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "four-owner-strict-clippy.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-after.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-after.stderr.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-identical.stdout.log"
+      },
+      {
+        "command": "commands.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-identical.stderr.log"
+      },
+      {
+        "command": "confirmation-four.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "confirmation-four.stdout.log"
+      },
+      {
+        "command": "confirmation-four.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "confirmation-four.stderr.log"
+      },
+      {
+        "command": "corpus.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "corpus.stdout.log"
+      },
+      {
+        "command": "corpus.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "corpus.stderr.log"
+      },
+      {
+        "command": "distributed-inventory.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "distributed-inventory.stdout.log"
+      },
+      {
+        "command": "distributed-inventory.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "distributed-inventory.stderr.log"
+      },
+      {
+        "command": "evaluation-quorum-v2.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "evaluation-quorum-v2.stdout.log"
+      },
+      {
+        "command": "evaluation-quorum-v2.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "evaluation-quorum-v2.stderr.log"
+      },
+      {
+        "command": "format.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "format.stdout.log"
+      },
+      {
+        "command": "format.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "format.stderr.log"
+      },
+      {
+        "command": "four-owner-strict-clippy.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "four-owner-strict-clippy.stdout.log"
+      },
+      {
+        "command": "four-owner-strict-clippy.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "four-owner-strict-clippy.stderr.log"
+      },
+      {
+        "command": "locked-offline-graph.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "locked-offline-graph.stdout.log"
+      },
+      {
+        "command": "locked-offline-graph.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "locked-offline-graph.stderr.log"
+      },
+      {
+        "command": "mvcc-library.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "mvcc-library.stdout.log"
+      },
+      {
+        "command": "mvcc-library.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "mvcc-library.stderr.log"
+      },
+      {
+        "command": "pq128-lifetime.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "pq128-lifetime.stdout.log"
+      },
+      {
+        "command": "pq128-lifetime.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "pq128-lifetime.stderr.log"
+      },
+      {
+        "command": "preflight.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "preflight.stdout.log"
+      },
+      {
+        "command": "preflight.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "preflight.stderr.log"
+      },
+      {
+        "command": "qrom-current-implementation.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "qrom-current-implementation.stdout.log"
+      },
+      {
+        "command": "qrom-current-implementation.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "qrom-current-implementation.stderr.log"
+      },
+      {
+        "command": "qrom-current-named.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "qrom-current-named.stdout.log"
+      },
+      {
+        "command": "qrom-current-named.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "qrom-current-named.stderr.log"
+      },
+      {
+        "command": "qrom-historical-drift.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "qrom-historical-drift.stdout.log"
+      },
+      {
+        "command": "qrom-historical-drift.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "qrom-historical-drift.stderr.log"
+      },
+      {
+        "command": "repository-and-markdown-links.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "repository-and-markdown-links.stdout.log"
+      },
+      {
+        "command": "repository-and-markdown-links.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "repository-and-markdown-links.stderr.log"
+      },
+      {
+        "command": "rustc-version.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "rustc-version.stdout.log"
+      },
+      {
+        "command": "rustc-version.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "rustc-version.stderr.log"
+      },
+      {
+        "command": "source-after.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-after.stdout.log"
+      },
+      {
+        "command": "source-after.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-after.stderr.log"
+      },
+      {
+        "command": "source-before.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-before.stdout.log"
+      },
+      {
+        "command": "source-before.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-before.stderr.log"
+      },
+      {
+        "command": "source-diff-whitespace.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-diff-whitespace.stdout.log"
+      },
+      {
+        "command": "source-diff-whitespace.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-diff-whitespace.stderr.log"
+      },
+      {
+        "command": "source-identical.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-identical.stdout.log"
+      },
+      {
+        "command": "source-identical.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "source-identical.stderr.log"
+      },
+      {
+        "command": "test_cell_discovery_v3_ci.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_cell_discovery_v3_ci.stdout.log"
+      },
+      {
+        "command": "test_cell_discovery_v3_ci.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_cell_discovery_v3_ci.stderr.log"
+      },
+      {
+        "command": "test_cell_storage_convergence_ci.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_cell_storage_convergence_ci.stdout.log"
+      },
+      {
+        "command": "test_cell_storage_convergence_ci.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_cell_storage_convergence_ci.stderr.log"
+      },
+      {
+        "command": "test_ci_contract.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_ci_contract.stdout.log"
+      },
+      {
+        "command": "test_ci_contract.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_ci_contract.stderr.log"
+      },
+      {
+        "command": "test_ci_source_integrity.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_ci_source_integrity.stdout.log"
+      },
+      {
+        "command": "test_ci_source_integrity.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_ci_source_integrity.stderr.log"
+      },
+      {
+        "command": "test_fresh_rejection_report.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_fresh_rejection_report.stdout.log"
+      },
+      {
+        "command": "test_fresh_rejection_report.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_fresh_rejection_report.stderr.log"
+      },
+      {
+        "command": "test_pq_authority_effect_register.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_pq_authority_effect_register.stdout.log"
+      },
+      {
+        "command": "test_pq_authority_effect_register.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_pq_authority_effect_register.stderr.log"
+      },
+      {
+        "command": "test_pq_lifetime_budget.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_pq_lifetime_budget.stdout.log"
+      },
+      {
+        "command": "test_pq_lifetime_budget.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_pq_lifetime_budget.stderr.log"
+      },
+      {
+        "command": "test_pq_research_integration.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_pq_research_integration.stdout.log"
+      },
+      {
+        "command": "test_pq_research_integration.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_pq_research_integration.stderr.log"
+      },
+      {
+        "command": "test_prepare_artifact_upload.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_prepare_artifact_upload.stdout.log"
+      },
+      {
+        "command": "test_prepare_artifact_upload.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_prepare_artifact_upload.stderr.log"
+      },
+      {
+        "command": "test_w1_factorial_native_gate.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_w1_factorial_native_gate.stdout.log"
+      },
+      {
+        "command": "test_w1_factorial_native_gate.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_w1_factorial_native_gate.stderr.log"
+      },
+      {
+        "command": "test_w1_lifecycle_cost_v4.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_w1_lifecycle_cost_v4.stdout.log"
+      },
+      {
+        "command": "test_w1_lifecycle_cost_v4.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_w1_lifecycle_cost_v4.stderr.log"
+      },
+      {
+        "command": "test_w1_lifetime_ledger.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_w1_lifetime_ledger.stdout.log"
+      },
+      {
+        "command": "test_w1_lifetime_ledger.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_w1_lifetime_ledger.stderr.log"
+      },
+      {
+        "command": "test_w1_qrom_current_ci.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_w1_qrom_current_ci.stdout.log"
+      },
+      {
+        "command": "test_w1_qrom_current_ci.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "test_w1_qrom_current_ci.stderr.log"
+      },
+      {
+        "command": "w1-lifetime-report-identical.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "w1-lifetime-report-identical.stdout.log"
+      },
+      {
+        "command": "w1-lifetime-report-identical.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "w1-lifetime-report-identical.stderr.log"
+      },
+      {
+        "command": "w1-lifetime-report.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "w1-lifetime-report.stdout.log"
+      },
+      {
+        "command": "w1-lifetime-report.command.json",
+        "exit_code": 0,
+        "prior_hash_recorded": true,
+        "stream": "w1-lifetime-report.stderr.log"
+      }
+    ],
+    "observer-audit-03": []
+  },
+  "prior_publisher_sha256": "abc4cb69b7d55b9a2bee93b4da19a8992d7389b59a3e5df2898ff1ed10df753e",
+  "production_activation": false,
+  "publisher_sha256": "a611c7b8d3df346af91eb326c7c74f61df8ad8bf06dd44c51aa4be32d3d80234",
+  "retained_native_exclusions": {
+    "followup-v4": [],
+    "original-v3": []
+  },
+  "retained_native_members": [
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/base-locked-graph.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/base-locked-graph.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 184807,
+      "git_blob": "8516f5a8a09718ff17fb942a39b6b2ca8f00609d",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/base-locked-graph.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/base-locked-graph.stdout.log",
+      "sha256": "d00b04e08cc2e43cf46db9041ed34dc900f838ffd29698215bb4aa0c52192b8f"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/base-preflight.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/base-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 172,
+      "git_blob": "05dd3c3bab044819f4955fb1d3e25d43a0bfa784",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/base-preflight.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/base-preflight.stdout.log",
+      "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+    },
+    {
+      "bytes": 14602,
+      "git_blob": "90e78c13b556f0edc61278a75a27df0270f74ae1",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/commands-before-v3.json",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/commands-before-v3.json",
+      "sha256": "bf7547ac7455ce3073902134ddd6f53225e578680337ae2e9c7641a8d9e9e2fe"
+    },
+    {
+      "bytes": 28218,
+      "git_blob": "190b7cabc49c62b09e0b4f225544ae4602d0bad7",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/commands.json",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/commands.json",
+      "sha256": "bfb1cca4ee885685f4063104f809b4bcc857d3f7ddf7f4a72385f3529ad46a64"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/committed-preflight.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/committed-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 172,
+      "git_blob": "05dd3c3bab044819f4955fb1d3e25d43a0bfa784",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/committed-preflight.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/committed-preflight.stdout.log",
+      "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/correct-owned-branch-name.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/correct-owned-branch-name.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/correct-owned-branch-name.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/correct-owned-branch-name.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 780,
+      "git_blob": "90bc09a7101b1639b0bbf7278205085035cbc77d",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/crypto-library-v3.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/crypto-library-v3.stderr.log",
+      "sha256": "ed0966bd0469bfe40089a08d6ab05f8c491a659433b02a3ecf8ffd6cc9f974ea"
+    },
+    {
+      "bytes": 20946,
+      "git_blob": "91e5db365568b86bbedf632d1b28d1b62697174c",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/crypto-library-v3.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/crypto-library-v3.stdout.log",
+      "sha256": "f47cb58dccd9744802753739f24a6ddb92933a47e5c2849f85a91642b2450ba8"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/diff-check.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/diff-check.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/diff-check.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/diff-check.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/format-candidate.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/format-candidate.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/format-candidate.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/format-candidate.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/fresh-probe-apply.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/fresh-probe-apply.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/fresh-probe-apply.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/fresh-probe-apply.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/green-apply.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/green-apply.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/green-apply.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/green-apply.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 333,
+      "git_blob": "d79e165227c3ead815545b6420b03e5f08873304",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/green-confirmation-v3.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/green-confirmation-v3.stderr.log",
+      "sha256": "88dcbfec0abc6f388c201661566593a775c967376223aa7ad6f46299e146f33e"
+    },
+    {
+      "bytes": 583,
+      "git_blob": "449c0a00448eea3b8dd1facb96765f1f3ed089b7",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/green-confirmation-v3.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/green-confirmation-v3.stdout.log",
+      "sha256": "7532a306553a302baacdebff828701a50c3475cd8f402b83b829a56a1496b0e1"
+    },
+    {
+      "bytes": 906,
+      "git_blob": "0b584e1c2bf9218de683025cacd9f3de0d63a096",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/green-confirmation.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/green-confirmation.stderr.log",
+      "sha256": "bbf834f2b1a5969c17135b11d5a49423bbe48808810f18539038f7c83411d053"
+    },
+    {
+      "bytes": 723,
+      "git_blob": "97529aa0c57637526e77f716f7b3b60a7540204a",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/green-confirmation.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/green-confirmation.stdout.log",
+      "sha256": "6dc4a76571c6cbb779f02c05752e6110fcac90d15e923bff27e6aa595b52674c"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/green-preflight.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/green-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 172,
+      "git_blob": "05dd3c3bab044819f4955fb1d3e25d43a0bfa784",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/green-preflight.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/green-preflight.stdout.log",
+      "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+    },
+    {
+      "bytes": 1021,
+      "git_blob": "3b20e50069171a949894a709a44efe81b2c08888",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/green-settlement-v3.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/green-settlement-v3.stderr.log",
+      "sha256": "09922996df22751201628b2348ca28d3e0012b6b731561dabe52906674007bac"
+    },
+    {
+      "bytes": 1053,
+      "git_blob": "c79b29cedd5b0a180ad155434d370224358d77d7",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/green-settlement-v3.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/green-settlement-v3.stdout.log",
+      "sha256": "2dc9aa04bd333db7a6e4ff448a75b75dae0f8f74b851c4ee5726a8d6ed9772cc"
+    },
+    {
+      "bytes": 362,
+      "git_blob": "305e2a088500cb7867a3fb6d15b2600d8c7fe75f",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/green-settlement.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/green-settlement.stderr.log",
+      "sha256": "92d00c52092c507005f88adbf1dcd10a76a47cca3877764664e27e1568c4b122"
+    },
+    {
+      "bytes": 1053,
+      "git_blob": "4d79d2161f63e2b4dcdf589893ba7dca4145547f",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/green-settlement.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/green-settlement.stdout.log",
+      "sha256": "fe5302aca30e71e8b19a9128a011fd8cf3334a5af147ebef9e30fbdd46781cf5"
+    },
+    {
+      "bytes": 90,
+      "git_blob": "22ca02d23c515b1335dbdd7a86f685e9d9d81375",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/locked-dependency-fetch.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/locked-dependency-fetch.stderr.log",
+      "sha256": "ae8bf8ca741845c10fd02c3134cf0aff13565890be7242e72fc7d551ba3e7488"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/locked-dependency-fetch.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/locked-dependency-fetch.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 269,
+      "git_blob": "92a78d2c8fa9731aa1f9c15f87c4e716849b7ea4",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/node-library-v3.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/node-library-v3.stderr.log",
+      "sha256": "e7e8593b3fcacb02f3134a657913ebea93389c3c8a7afb563a03737f5d98cc7c"
+    },
+    {
+      "bytes": 203044,
+      "git_blob": "208bf208f10379c3fd9f79409db0afa88af9a545",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/node-library-v3.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/node-library-v3.stdout.log",
+      "sha256": "022eabf9dba4c26fda5ab75d9d9b53df76f209e19b2af9b3f4ce256ebf4f0b6b"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/red-apply.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/red-apply.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/red-apply.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/red-apply.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 8420,
+      "git_blob": "18daf7876ebf30f8aefd8e467a9c250247b4e795",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/red-confirmation-r2.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/red-confirmation-r2.stderr.log",
+      "sha256": "b417777f55586bd3928362b7fc493da7f0e7a8dcdf4cfce5ff101a93bc69a16c"
+    },
+    {
+      "bytes": 1060,
+      "git_blob": "6db80efd804cbd22c5905effd2c8e80cfc4e2a23",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/red-confirmation-r2.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/red-confirmation-r2.stdout.log",
+      "sha256": "a953369c9485fb592cfdd91fb304d1ada13c3fd1cc69af445976242effcd4600"
+    },
+    {
+      "bytes": 9744,
+      "git_blob": "93ebfbeca6fff65bc513d3cf0d31c28a1d2a9f33",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/red-confirmation-v3.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/red-confirmation-v3.stderr.log",
+      "sha256": "d9b34acda4ec01bccc4ff3eab9e5c9ce8b94bb5bc027ef9d75ce3ff6f9bb6dda"
+    },
+    {
+      "bytes": 1060,
+      "git_blob": "b9e53aaeeb13b4cfee15214e93baebd154e821fc",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/red-confirmation-v3.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/red-confirmation-v3.stdout.log",
+      "sha256": "d3596d318df4bd2a592995d21747fd6f0ae25bf571c308a70f56c7591a961261"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/red-preflight.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/red-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 172,
+      "git_blob": "05dd3c3bab044819f4955fb1d3e25d43a0bfa784",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/red-preflight.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/red-preflight.stdout.log",
+      "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/red-resume-preflight.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/red-resume-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 172,
+      "git_blob": "05dd3c3bab044819f4955fb1d3e25d43a0bfa784",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/red-resume-preflight.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/red-resume-preflight.stdout.log",
+      "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+    },
+    {
+      "bytes": 4428,
+      "git_blob": "a2e2323b68430205d6af127ed2f673539bef020b",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/red-settlement-r2.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/red-settlement-r2.stderr.log",
+      "sha256": "25706e34a712fafd47e67bdfec893c4d2a8bce9bbafedf219c0295d12717a018"
+    },
+    {
+      "bytes": 1750,
+      "git_blob": "effce15a167ebd5941b6d0e1a68d4b1a19138670",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/red-settlement-r2.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/red-settlement-r2.stdout.log",
+      "sha256": "3d47778c15b1b34988b12181f94752bdce7c48b2e0f1ff0597ed24c87fd2368a"
+    },
+    {
+      "bytes": 129,
+      "git_blob": "80c93630fe4520cb0472cd8c8a7ce586026a7656",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/red-settlement.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/red-settlement.stderr.log",
+      "sha256": "5e1b82c8441478db9189bf14ec5fd7dc5a41794804e59733da237b4ea2f032a8"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/red-settlement.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/red-settlement.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 11732,
+      "git_blob": "01b031041135148b5f0b8c5cf9b05d8fa2d3b93a",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/red-source.patch",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/red-source.patch",
+      "sha256": "d4649a861f4a3b3fbb7432e66b728c4e349fcb41c34e94f75cfc3a018af76e7b"
+    },
+    {
+      "bytes": 664,
+      "git_blob": "56ec28af597125bd6376f1045bc9f4c9981b66be",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/red-v3-source.json",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/red-v3-source.json",
+      "sha256": "6a3a37f2ce75394335adf1b2e5bebd0c8406d797f793d92ee3f74ffa14407a5b"
+    },
+    {
+      "bytes": 399,
+      "git_blob": "9e3d82de58820aa9f766091a9461810da823fa3d",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/settlement-all-features-v3.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/settlement-all-features-v3.stderr.log",
+      "sha256": "4294618ffd34b0ff5d3c08c94aadc0a03e7fec78175c7d01063b20e6271174ba"
+    },
+    {
+      "bytes": 8579,
+      "git_blob": "08e9533b2ebb143803279268d11ac750213af4cd",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/settlement-all-features-v3.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/settlement-all-features-v3.stdout.log",
+      "sha256": "61e9a7ed8e97385c9f79347725d400cf820a096952d780cf677932f5f7f241f7"
+    },
+    {
+      "bytes": 423,
+      "git_blob": "eec05b1b26f64f1d3c6a62ec0542e9a75002e7d1",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/source-before-v3.json",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/source-before-v3.json",
+      "sha256": "81581c539d39f3531c8a42919ffa29ad895a041ebe7afdb850f0b9ef41a4782a"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/source-commit.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/source-commit.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 572,
+      "git_blob": "8c6fa9d70670f24691f6bc69859b9383c1577c9d",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/source-commit.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/source-commit.stdout.log",
+      "sha256": "253fa76c2d52307e1f605cbe45467fc2b009caddfba3b2cd0899b1197a5ee40c"
+    },
+    {
+      "bytes": 410,
+      "git_blob": "711df6887b73f970ddf5cf21b4387d36ded76f65",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/source-v3.json",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/source-v3.json",
+      "sha256": "41bafb9ac391e74b6ed0ff8a119aef956c10e2c591237eb6f33182dfe88d0400"
+    },
+    {
+      "bytes": 911,
+      "git_blob": "9b0d8afb047ae6a04584d3fb9eb0f0f2a163bce4",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/source.json",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/source.json",
+      "sha256": "b4b03bda6faedc9117baa29ea6083e3d5681752cbc362bc09f3afe5e6afea5b0"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/stage-source.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/stage-source.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/stage-source.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/stage-source.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-apply-exact-test-diagnostic.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-apply-exact-test-diagnostic.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-apply-exact-test-diagnostic.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-apply-exact-test-diagnostic.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-apply-verified-reference-reader.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-apply-verified-reference-reader.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-apply-verified-reference-reader.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-apply-verified-reference-reader.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-cargo.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-cargo.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 36,
+      "git_blob": "7bd2e87f6aad3217bce2f274a01d37a3b4b4e74a",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-cargo.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-cargo.stdout.log",
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-committed-preflight.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-committed-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 172,
+      "git_blob": "05dd3c3bab044819f4955fb1d3e25d43a0bfa784",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-committed-preflight.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-committed-preflight.stdout.log",
+      "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-diff-check.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-diff-check.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-diff-check.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-diff-check.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-format-candidate.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-format-candidate.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-format-candidate.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-format-candidate.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-locked-graph.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-locked-graph.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 852263,
+      "git_blob": "87b67692f5c5ed6eedcf01fa303a5ca0d31d65e5",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-locked-graph.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-locked-graph.stdout.log",
+      "sha256": "80b5555ee496f800fc97c0592d2022d1efabeeb7cd8bf22dcfda0710102fc483"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-precommit-preflight.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-precommit-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 172,
+      "git_blob": "05dd3c3bab044819f4955fb1d3e25d43a0bfa784",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-precommit-preflight.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-precommit-preflight.stdout.log",
+      "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-preflight.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 172,
+      "git_blob": "05dd3c3bab044819f4955fb1d3e25d43a0bfa784",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-preflight.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-preflight.stdout.log",
+      "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-rustc.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-rustc.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 196,
+      "git_blob": "b246e451c7cb89baf52e49a5c7995e70184fa73d",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-rustc.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-rustc.stdout.log",
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-source-before.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-source-before.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "git_blob": "eec05b1b26f64f1d3c6a62ec0542e9a75002e7d1",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-source-before.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-source-before.stdout.log",
+      "sha256": "81581c539d39f3531c8a42919ffa29ad895a041ebe7afdb850f0b9ef41a4782a"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-source-commit.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-source-commit.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 186,
+      "git_blob": "f7736e0a5edee0cc75a5890dffd2b79f4ffdcf5f",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-source-commit.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-source-commit.stdout.log",
+      "sha256": "14461d6a82f86f279df35febf07b8145625665335a44bceef28be5f7fff1debc"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-stage-source.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-stage-source.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation/v3-stage-source.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-stage-source.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3350,
+      "git_blob": "fa1bf4596c2319e6d6b1fa0edbdb6504cbc7fb24",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/changed-owner-clippy.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/changed-owner-clippy.stderr.log",
+      "sha256": "1564b1804e74c08b38156477fe1c52db02c56d12893ee40bba0d5b392f68b7f8"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/changed-owner-clippy.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/changed-owner-clippy.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 11216,
+      "git_blob": "90d564dcdb3d8ef1bdf5cb67270e60db7c059491",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/commands.json",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/commands.json",
+      "sha256": "b58ca2b75a10f84a2c4bd2c801b6e5b36bdf3c8c9cf2c8b9d87a96d276418824"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/format-check.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/format-check.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/format-check.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/format-check.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 202,
+      "git_blob": "53ec1cba6d0723eab09080fadabb5f497768e1d5",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/fresh-probe-build.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-build.stderr.log",
+      "sha256": "fcad440f451910bc32dcbfe3fbc8c21d3b74b26d2a5ac84a9fa87a2b7a14659c"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/fresh-probe-build.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-build.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/fresh-probe-native.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-native.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 320105,
+      "git_blob": "54753cae397f8faa272d31613992a31651f14541",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/fresh-probe-native.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-native.stdout.log",
+      "sha256": "56502bec31afeba6b81c317d0d29ba05d89e9e61352e9027b9d04709cf19992d"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/fresh-probe-reader.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-reader.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 7869,
+      "git_blob": "4a94fc7341b7c32b22757318041b4fb0db61cc14",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/fresh-probe-reader.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-reader.stdout.log",
+      "sha256": "9d530074780a9eec1bbbe025d1f3d2555c0829b4a450a09becfab576c82ca168"
+    },
+    {
+      "bytes": 2120,
+      "git_blob": "5b925d96a9c940b6247d92461d0de226943a6b4f",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/fresh-probe-tests.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-tests.stderr.log",
+      "sha256": "d7fd115dccabb9266e4d3f1d4f710f59ee6fb3f71d06101e02ab41435cfa8954"
+    },
+    {
+      "bytes": 344,
+      "git_blob": "0fd3d5d4be55cc35ab40d7e139f1f0e7e3b59f4a",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/fresh-probe-tests.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-tests.stdout.log",
+      "sha256": "88b541c0de62376c49d5069c19ef96dbf2a9bdc4980ee1f8b56ebfe5377f4d4a"
+    },
+    {
+      "bytes": 891,
+      "git_blob": "a51c5263d37d950f2f0841c0ceb667ce2c3b74e3",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/fresh-profile-after.json",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-profile-after.json",
+      "sha256": "e6082700d247c090e4cca5ed41d2d7b6470499f1785dda4617b25ef4e5439fa3"
+    },
+    {
+      "bytes": 891,
+      "git_blob": "b1728c09d41eb18a9e2f750ac7141b1e6981b554",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/fresh-profile-before.json",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-profile-before.json",
+      "sha256": "6a5aa051ef2c0e7b768fc560d87772d23e110a1047cb3faaafd9a1281fefb5d7"
+    },
+    {
+      "bytes": 4122,
+      "git_blob": "a7c0011c91bb2ca3e362c592f3a490c87801f6f3",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/fresh-reader-tests.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-reader-tests.stderr.log",
+      "sha256": "a311d45571c8c85a327df34808858a4a7abd9630a4873746e1ddbde843a2e6bc"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/fresh-reader-tests.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-reader-tests.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 742,
+      "git_blob": "efe3f2acb9a13f245497b937669cb5ddbcbb4e8f",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/isolated-inactive-page.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/isolated-inactive-page.stderr.log",
+      "sha256": "cb63895f49260128a74007c6dd3ab9887e155c463d05348ec320cb6906734f38"
+    },
+    {
+      "bytes": 5792,
+      "git_blob": "2c3185c5a90902e1e7dd8a69c555379392c2f557",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/isolated-inactive-page.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/isolated-inactive-page.stdout.log",
+      "sha256": "61249402e66e732559e21b1bf2c68dab475057511bbee20ee655761cfdd6fd5b"
+    },
+    {
+      "bytes": 753,
+      "git_blob": "b1df6e9bf319cc232f5a2839b3e245cd5486666c",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/isolated-large-parent.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/isolated-large-parent.stderr.log",
+      "sha256": "1dd29e7b3f1c694a54f2a682fbd907ba04a23b459538cab7f8a8361ca5e6a932"
+    },
+    {
+      "bytes": 34398,
+      "git_blob": "50ff930fa88e5546d7bd2e4aea93ce2299275aab",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/isolated-large-parent.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/isolated-large-parent.stdout.log",
+      "sha256": "631f05bd5f6d72c7e7f32c310cd88bea63e627f463793c474cf3c5b78bdc098e"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/preflight.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 172,
+      "git_blob": "05dd3c3bab044819f4955fb1d3e25d43a0bfa784",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/preflight.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/preflight.stdout.log",
+      "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/prior-source-identical.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/prior-source-identical.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/prior-source-identical.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/prior-source-identical.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "git_blob": "eec05b1b26f64f1d3c6a62ec0542e9a75002e7d1",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/source-after.json",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/source-after.json",
+      "sha256": "81581c539d39f3531c8a42919ffa29ad895a041ebe7afdb850f0b9ef41a4782a"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/source-after.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/source-after.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "git_blob": "eec05b1b26f64f1d3c6a62ec0542e9a75002e7d1",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/source-after.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/source-after.stdout.log",
+      "sha256": "81581c539d39f3531c8a42919ffa29ad895a041ebe7afdb850f0b9ef41a4782a"
+    },
+    {
+      "bytes": 423,
+      "git_blob": "eec05b1b26f64f1d3c6a62ec0542e9a75002e7d1",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/source-before.json",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/source-before.json",
+      "sha256": "81581c539d39f3531c8a42919ffa29ad895a041ebe7afdb850f0b9ef41a4782a"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/source-before.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/source-before.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "git_blob": "eec05b1b26f64f1d3c6a62ec0542e9a75002e7d1",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/source-before.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/source-before.stdout.log",
+      "sha256": "81581c539d39f3531c8a42919ffa29ad895a041ebe7afdb850f0b9ef41a4782a"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/source-identical.stderr.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/source-identical.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/source-identical.stdout.log",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/source-identical.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 905,
+      "git_blob": "95b5ec9b2e29fe1fefe4f295cf319e2f0cb7b7fa",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/source.json",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/source.json",
+      "sha256": "94bb7d02a2b357838b7994539e74afcdd25623332113670bda750d88babf537f"
+    },
+    {
+      "bytes": 251,
+      "git_blob": "38840be54b0531946ade1512c9f1317d5b95317f",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/status.json",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/status.json",
+      "sha256": "f2ed5437e93bb04423b0d1a94b6256b27f3e9b605575a82915580027256480ca"
+    },
+    {
+      "bytes": 2328,
+      "git_blob": "85bfcaeda7857c46dc49b76b069c3601b09babc6",
+      "original_source": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04/summary.json",
+      "path": "evidence/pon-followthrough-20261110-685a/native/followup-v4/summary.json",
+      "sha256": "f6693ac2f41c9906f0a01a013e89a00200b844c4a9a78f24decdcb3fc93b0271"
+    }
+  ],
+  "retained_native_original_directories": {
+    "followup-v4": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04",
+    "original-v3": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation"
+  },
+  "schema": "pon-followthrough-merged-evidence-sources-v3",
+  "security_status": "HOLD",
+  "selected_history": {
+    "complete_global_history_claimed": false,
+    "git_history_shallow": true,
+    "selected_ancestry_head": "8ab052065ae8307b1ab2c9d42b0dca229a5a3b9d",
+    "selected_lineage": [
+      {
+        "commit": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+        "required_parent": null,
+        "tree": "00479a98dabc6b1fd91a0ceef82ffbdbffb78067"
+      },
+      {
+        "commit": "11c9562252d3cf56b423c7756569be0c669d9606",
+        "required_parent": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+        "tree": "94e1b4f1718dec1b88bccd7e1996ba83ca29ff8a"
+      },
+      {
+        "commit": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+        "required_parent": "11c9562252d3cf56b423c7756569be0c669d9606",
+        "tree": "7c003a3d183ad33ff4f3349cbcce61564f73a2ba"
+      }
+    ],
+    "selected_lineage_complete": true,
+    "selected_source_ancestor_of_head": true
+  },
+  "validator_sha256": "825fd284f1a995b3c66753d9338b6ea794afcb5b0c759b701a3831eb63b1ed84"
+}

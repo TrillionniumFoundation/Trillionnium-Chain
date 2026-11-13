@@ -1,0 +1,234 @@
+[
+  {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-baseline-control-20261110-685a",
+    "end_unix_ns": 1794305204588024998,
+    "exit_code": 0,
+    "label": "preflight",
+    "start_unix_ns": 1794305204485299248,
+    "stderr": {
+      "bytes": 0,
+      "file": "preflight.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 176,
+      "file": "preflight.stdout.log",
+      "sha256": "69b1e20b92bc0b507af0b6d0fc4aa8170de89c5e2f8641603386d44d11c6c5de"
+    }
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+      "--output",
+      "/home/qian-qi/chain-pon-baseline-control-20261110-685a-output-02/source-before.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-baseline-control-20261110-685a",
+    "end_unix_ns": 1794305211140405678,
+    "exit_code": 0,
+    "label": "source-before",
+    "start_unix_ns": 1794305204624834445,
+    "stderr": {
+      "bytes": 0,
+      "file": "source-before.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 423,
+      "file": "source-before.stdout.log",
+      "sha256": "dc91431c238b2305c8b23f3406cb9be44ecc81ecdee98b0d9214677845ffcb24"
+    }
+  },
+  {
+    "argv": [
+      "rustc",
+      "-Vv"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-baseline-control-20261110-685a",
+    "end_unix_ns": 1794305211236822791,
+    "exit_code": 0,
+    "label": "rustc-version",
+    "start_unix_ns": 1794305211161389956,
+    "stderr": {
+      "bytes": 0,
+      "file": "rustc-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 196,
+      "file": "rustc-version.stdout.log",
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    }
+  },
+  {
+    "argv": [
+      "cargo",
+      "-V"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-baseline-control-20261110-685a",
+    "end_unix_ns": 1794305211315470224,
+    "exit_code": 0,
+    "label": "cargo-version",
+    "start_unix_ns": 1794305211255741045,
+    "stderr": {
+      "bytes": 0,
+      "file": "cargo-version.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 36,
+      "file": "cargo-version.stdout.log",
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    }
+  },
+  {
+    "argv": [
+      "cargo",
+      "metadata",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-baseline-control-20261110-685a",
+    "end_unix_ns": 1794305211751800505,
+    "exit_code": 0,
+    "label": "locked-offline-graph",
+    "start_unix_ns": 1794305211335392920,
+    "stderr": {
+      "bytes": 0,
+      "file": "locked-offline-graph.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 853930,
+      "file": "locked-offline-graph.stdout.log",
+      "sha256": "d889b4d0dc9662c2d800cba1949690e66eaa244165f5f16162459b5bc6bf6ac9"
+    }
+  },
+  {
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "--",
+      "--exact",
+      "--nocapture"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-baseline-control-20261110-685a",
+    "end_unix_ns": 1794305907374018490,
+    "exit_code": 0,
+    "label": "legacy-large-parent",
+    "start_unix_ns": 1794305211777844051,
+    "stderr": {
+      "bytes": 1832,
+      "file": "legacy-large-parent.stderr.log",
+      "sha256": "74be0228634b0ca42e129389ecaa2589a9b61081abf634d42359b99b0a9dbde7"
+    },
+    "stdout": {
+      "bytes": 70434,
+      "file": "legacy-large-parent.stdout.log",
+      "sha256": "60fc27cfb8bdebd073809aaf6d2d34c372547ca2dee8ed01a8b759d7a6ac07d0"
+    }
+  },
+  {
+    "argv": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation",
+      "--",
+      "--exact",
+      "--nocapture"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-baseline-control-20261110-685a",
+    "end_unix_ns": 1794305913318410366,
+    "exit_code": 101,
+    "label": "inactive-page-parents",
+    "start_unix_ns": 1794305907398420929,
+    "stderr": {
+      "bytes": 742,
+      "file": "inactive-page-parents.stderr.log",
+      "sha256": "27509b235d5ba72d1c3324f8ea7b45f79f0dba9eaaeef0ef57bf27ecf2fdfeb9"
+    },
+    "stdout": {
+      "bytes": 5794,
+      "file": "inactive-page-parents.stdout.log",
+      "sha256": "c6e084f0260371b4296aa2fe7e2439e880df1c8bfcdbc52d8ce44abb08ea3da5"
+    }
+  },
+  {
+    "argv": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+      "--output",
+      "/home/qian-qi/chain-pon-baseline-control-20261110-685a-output-02/source-after.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-baseline-control-20261110-685a",
+    "end_unix_ns": 1794305929618337046,
+    "exit_code": 0,
+    "label": "source-after",
+    "start_unix_ns": 1794305913338854156,
+    "stderr": {
+      "bytes": 0,
+      "file": "source-after.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 423,
+      "file": "source-after.stdout.log",
+      "sha256": "dc91431c238b2305c8b23f3406cb9be44ecc81ecdee98b0d9214677845ffcb24"
+    }
+  },
+  {
+    "argv": [
+      "cmp",
+      "/home/qian-qi/chain-pon-baseline-control-20261110-685a-output-02/source-before.json",
+      "/home/qian-qi/chain-pon-baseline-control-20261110-685a-output-02/source-after.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-baseline-control-20261110-685a",
+    "end_unix_ns": 1794305929648773559,
+    "exit_code": 0,
+    "label": "source-identical",
+    "start_unix_ns": 1794305929637927867,
+    "stderr": {
+      "bytes": 0,
+      "file": "source-identical.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "source-identical.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+]

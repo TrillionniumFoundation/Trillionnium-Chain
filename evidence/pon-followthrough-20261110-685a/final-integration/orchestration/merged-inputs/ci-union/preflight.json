@@ -1,0 +1,10 @@
+{
+  "command": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "cwd": "/workspace/scratch/685a0c6d6aa4/ci-fixes/baseline",
+  "exit_code": 128,
+  "output": "fatal: not a git repository (or any parent up to mount point /)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n",
+  "scope": "partial retained baseline has no Git checkout; not a passed preflight"
+}

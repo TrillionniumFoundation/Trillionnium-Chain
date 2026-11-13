@@ -1,0 +1,38 @@
+{
+  "applied": [
+    "config/pon/pq-authority-effects-v1.json",
+    "scripts/ci/pq_authority_effect_register.py",
+    "scripts/ci/test_pq_authority_effect_register.py",
+    "config/pon/pq128-source-lock-v1.json",
+    "config/pon/pq128-lifetime-budget-v1.json",
+    "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+    "docs/security/PQ128_LIFETIME_BUDGET_V1.md"
+  ],
+  "complete_global_history_claimed": false,
+  "git_history_shallow": true,
+  "native_tests_executed": false,
+  "production_activation": false,
+  "schema": "trnm-authority-pq128-source-binding-result-v2",
+  "selected_ancestry_head": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+  "selected_lineage": [
+    {
+      "commit": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+      "required_parent": null,
+      "tree": "00479a98dabc6b1fd91a0ceef82ffbdbffb78067"
+    },
+    {
+      "commit": "11c9562252d3cf56b423c7756569be0c669d9606",
+      "required_parent": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+      "tree": "94e1b4f1718dec1b88bccd7e1996ba83ca29ff8a"
+    },
+    {
+      "commit": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+      "required_parent": "11c9562252d3cf56b423c7756569be0c669d9606",
+      "tree": "7c003a3d183ad33ff4f3349cbcce61564f73a2ba"
+    }
+  ],
+  "selected_lineage_complete": true,
+  "selected_source_ancestor_of_head": true,
+  "status": "APPLIED_VALIDATION_DEFERRED",
+  "validation": []
+}

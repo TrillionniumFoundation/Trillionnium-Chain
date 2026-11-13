@@ -1,0 +1,42 @@
+{
+  "argv": [
+    "cargo",
+    "clippy",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-mvcc-fee",
+    "-p",
+    "trnm-pon-node",
+    "-p",
+    "trnm-service-settlement",
+    "-p",
+    "trnm-crypto-primitives",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794312079624241244,
+  "exit_code": 0,
+  "interrupted": false,
+  "label": "four-owner-strict-clippy",
+  "process_exit_code": 0,
+  "recorder_error": null,
+  "start_unix_ns": 1794311975921543606,
+  "stderr": {
+    "bytes": 1216,
+    "file": "four-owner-strict-clippy.stderr.log",
+    "sha256": "5d2aaa495c131b5590c1874512dd7bf6aa6f74c84decfd837ad0d1ad354cd15d"
+  },
+  "stdout": {
+    "bytes": 0,
+    "file": "four-owner-strict-clippy.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "timed_out": false,
+  "timeout_seconds": 1800
+}

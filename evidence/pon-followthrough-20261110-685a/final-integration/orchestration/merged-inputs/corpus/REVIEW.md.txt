@@ -1,0 +1,180 @@
+# Corpus union for the actual selected-parent + df927 merge
+
+This is a local source-preparation helper. It has not run on the live checkout,
+created a merge, executed native tests, or established acceptance of a merged
+revision. The original C2 node full-suite failure and the subsequently observed
+C3 integration failures remain distinct observations of those exact commits.
+No source binding, test output, budget, assertion, ignored test, old evidence,
+or frozen v1/v2/v3 integration input is rewritten by this helper.
+
+## Exact sources and the two deltas
+
+The helper reads actual Git objects in a complete, materialized worktree:
+
+| Role | Exact identity or requirement |
+| --- | --- |
+| Common base | `da1374a200022bc14dc2bd325cc9ba29dbcd24ab`, tree `00479a98dabc6b1fd91a0ceef82ffbdbffb78067` |
+| C1 | `11c9562252d3cf56b423c7756569be0c669d9606`, direct child of the base |
+| C2 | `8d8c0e64e7a301fc111a6720721a14816639e5aa`, tree `7c003a3d183ad33ff4f3349cbcce61564f73a2ba`, direct child of C1 |
+| Binding child C3 | Explicit actual commit argument; its raw parent must be C2; only the 32 previously reviewed integration source paths and the three original evidence prefixes may differ from C2 |
+| First merge parent | Explicit actual commit argument; either C3 itself, including its recorded failures, or C3's direct child adding only regular files under the final-integration evidence prefix |
+| Upstream middle | `fcc3c86631c4fb5a1be59ba6da49d9d98d560761`, tree `dcbeaec3ae9cf300c10223f12ae9890e05285b22`, direct child of the base |
+| Second merge parent | `df927b6ffaecff293b9e9428e3ba516f47cd101a`, tree `a883a05b590fb8b0113b3715f4294eee7a00275b`, direct child of the upstream middle |
+
+The two selected branches must have exactly the selected common merge base.
+Every selected commit is independently hashed from its raw Git object; its tree
+and selected newer parent edges are checked. A global shallow repository is
+reported as such. Availability of the selected commits, trees, and source blob
+closure is mandatory; complete global history is never inferred.
+
+The baseline corpus retains 987 required paths and 1,079 pin keys. The upstream
+corpus has the same exact required-path list, pin-key set, and all other fields;
+its only difference is the fixed ten reviewed pin replacements. The original
+upstream JSON is pinned by Git blob `9781fc7225c50b3a8710ce10a1adba332c2617df` and
+SHA-256 `ec51f57a21432c05a296ac64df6483dd96de6a1682d284cf5055eded3b7d4c2d`.
+
+The first-parent corpus must retain the original 987-path prefix and all 1,079
+keys, with exactly the established 24 additions in their original order. Every
+pin in each parent must match that parent's actual Git tree. All historical
+fields are compared with JSON types preserved: replacing `false` by `0`,
+changing a `null`, adding a new field, or upgrading a qualification is refused.
+The final denominator stays **1,011 required paths and 1,103 pins**. The merged
+corpus changes only existing pin values, using the actual staged merge tree.
+
+## Allowed merge resolution
+
+All staged paths must be exactly the union of the two parent path sets. There
+are no path deletions or unreviewed new source/evidence files. Every ordinary
+path must equal the unchanged parent or the uniquely changed parent's exact
+blob, type, size, and mode. An overlapping change outside the explicit resolution
+set is refused. Every evidence or qualification file already present in either
+parent must retain that parent's exact entry. The upstream's 196 additions are
+preserved from its real Git tree; API metadata is not treated as mode evidence.
+
+The narrow exceptions are:
+
+- The W1 workflow keeps the frozen C3 helper-based bytes. The independently
+  reviewed CI union preserves the original C3 and upstream named controls in
+  the helper and factorial test module, including the two unfiltered lanes.
+  Exact target blobs, lengths, and SHA-256 values are embedded in the helper.
+- The recent-batch workflow has the independently reviewed one-line inline
+  store-pin correction. Its target is Git blob
+  `89171c7274109594c3b5d82df8664d66eda710f8`, 36,087 bytes, SHA-256
+  `598f24ce01ecfffc3e2e8225c3bc6456dd2ec94702597b6da56e0d34472dc3e4`.
+  No general workflow edit is authorized by this exception.
+- The sole development plan retains the common-base bytes followed by both
+  original EOF appendices, each exactly once, in either order. No old claim or
+  result is rewritten, and the helper adds no new claim of its own.
+- The distributed source inventory is the explicitly regenerated file for the
+  merged sources. This helper reads and pins the staged bytes; it does **not**
+  claim the original inventory generator's `--check` has executed. That command
+  remains a required actual merged-source gate.
+- The corpus starts as the exact first-parent JSON and is replaced only by this
+  helper's generated patch. No header, history, source composition, required
+  path, key, prior evidence, or qualification is merged by heuristic rules.
+
+The authority, PQ128, W1 lifetime and QROM source-checkpoint bindings remain at
+their original C2 identities. They do not acquire M1 native-test credit. The
+required-path checker must retain the C3 Git blob
+`21094a39eb15525663925ac2d258deae40502990`, preserving the 24 additions against
+simultaneous manifest-and-pin deletion.
+
+## Invocation and retained artifacts
+
+All paths below are caller-supplied absolute paths. This helper never starts a
+merge, repairs the index, modifies checkout files, stages files, commits, fetches,
+pushes, or runs the project tests. The caller performs the ordinary merge and
+resolves the explicitly reviewed sources first. All content conflicts must be
+resolved and staged; the corpus must temporarily be the exact first-parent
+version. There must be no unstaged tracked change, untracked nonignored file,
+sparse checkout, hidden index flag, or unresolved stage. `HEAD` must equal the
+selected first parent and `MERGE_HEAD` must contain exactly df927.
+
+```bash
+python3 -B /absolute/path/prepare_union_corpus.py prepare \
+  --root "$PON_MERGE_ROOT" \
+  --binding-child "$PON_C3" \
+  --ours "$PON_FIRST_PARENT" \
+  --theirs df927b6ffaecff293b9e9428e3ba516f47cd101a \
+  --candidate-tree "$PON_ACTUAL_STAGED_TREE" \
+  --output "$PON_NEW_PREPARATION_OUTPUT"
+```
+
+`PON_ACTUAL_STAGED_TREE` is the real result of `git write-tree` after the source
+resolutions and the inventory regeneration. For the currently planned direct
+merge from the failed C3, `PON_FIRST_PARENT` and `PON_C3` are the same actual SHA.
+No successful C3/C4 summary is required or manufactured.
+
+The fresh external output contains exactly seven files:
+
+1. `base-corpus.json`: exact original base bytes.
+2. `ours-parent-corpus.json`: exact first-parent bytes.
+3. `theirs-df927-corpus.json`: exact second-parent bytes.
+4. `merged-corpus.json`: candidate with preserved fields and live staged pins.
+5. `corpus-update.patch`: exact reviewed replacement of the first-parent JSON.
+6. `review.json`: both pin deltas, actual resolutions and changed entries, source
+   objects, selected ancestry, descriptor-read hashes, and explicit scope limits.
+7. `receipt.json`: original and generated file lengths, SHA-256 hashes, Git blobs,
+   helper identity, original staged-tree identity, parent identities and order.
+
+Outputs are create-only. Existing receipts are never overwritten. Actual files
+are opened with nonblocking descriptors and without following ancestor or leaf
+symlinks, checked as regular files, hashed through Git, and rechecked for size,
+mode, identity, and replacement. The stage and merge parents are rechecked after
+all reads. The retained pin closure includes all 1,103 paths, including unchanged
+historical pins, rather than only the changed values.
+
+The caller can review and apply only `corpus-update.patch`, stage only the corpus
+path, and complete a normal two-parent commit. There must be no additional tree
+change between preparation and that commit. The separate verification command
+then checks the actual merge:
+
+```bash
+python3 -B /absolute/path/prepare_union_corpus.py verify \
+  --root "$PON_MERGE_ROOT" \
+  --prepared "$PON_NEW_PREPARATION_OUTPUT" \
+  --receipt-sha256 "$PON_PREPARATION_RECEIPT_SHA256" \
+  --merge "$PON_ACTUAL_MERGE_COMMIT" \
+  --output "$PON_NEW_VERIFICATION_OUTPUT"
+```
+
+Verification requires a clean actual merge HEAD with raw parents exactly
+`[first parent, df927]`. Its tree must match the prepared staged tree at every
+path except the exact generated corpus replacement. All 1,103 pins are checked
+against the real merge tree and current file bytes. The output is a separate
+`source-binding-verification.json` that asserts source binding only.
+
+## Actual merged-source gates remain separate
+
+The successor recorder must retain actual command argv, stdout/stderr, exit,
+source commit/tree and the original source-verifier before/after bracket. The
+existing entry points remain:
+
+```bash
+python3 -B scripts/ci/check_pq_research_integration.py
+python3 -B scripts/ci/test_pq_research_integration.py
+python3 -B scripts/ci/test_ci_source_integrity.py
+python3 -B scripts/refresh_distributed_source_inventory.py --check
+python3 -B scripts/ci/check_ci_contract.py
+python3 -B scripts/ci/test_ci_contract.py
+python3 -B scripts/ci/check_repository.py
+cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+```
+
+`check_repository.py` includes repository Markdown link checks. The separate
+successor plan owns the affected lifecycle/quorum/CI/native commands, the
+original locked/offline graph check, and source verifier. No previous base or
+C2/C3 test output proves a merged-source result. The failed full node suite,
+retained 39 ignored tests, original C3 failures, and all `HOLD` / `false` / `null`
+qualification boundaries remain intact.
+
+## Local validation scope
+
+The companion test module uses the two real, byte-pinned corpus JSON snapshots
+for finite collection/type/delta controls, plus a tiny isolated Git repository
+for descriptor hashing and hidden-index refusal. It also tests a real FIFO and
+ancestor symlink without blocking. It does not synthesize the selected real Git
+history, execute the actual preparation/verification workflow on C3, run a
+project checker, or execute native tests. The initial control log retains a
+reordered-list fixture mistake; the corrected component run is separately
+recorded. These local controls give no test credit to a future merged commit.

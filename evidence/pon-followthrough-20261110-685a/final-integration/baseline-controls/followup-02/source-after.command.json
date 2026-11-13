@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+    "--output",
+    "/home/qian-qi/chain-pon-baseline-control-20261110-685a-output-02/source-after.json"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-baseline-control-20261110-685a",
+  "end_unix_ns": 1794305929618337046,
+  "exit_code": 0,
+  "label": "source-after",
+  "start_unix_ns": 1794305913338854156,
+  "stderr": {
+    "bytes": 0,
+    "file": "source-after.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 423,
+    "file": "source-after.stdout.log",
+    "sha256": "dc91431c238b2305c8b23f3406cb9be44ecc81ecdee98b0d9214677845ffcb24"
+  }
+}

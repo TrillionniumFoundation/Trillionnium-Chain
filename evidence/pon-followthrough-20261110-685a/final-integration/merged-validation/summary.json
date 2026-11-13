@@ -1,0 +1,379 @@
+{
+  "all_required_checks_passed": true,
+  "commands": 38,
+  "draft_only": true,
+  "failed_commands": [],
+  "failure_reason": null,
+  "first_parent_test_results_reused": false,
+  "full_node_suite_executed": false,
+  "full_node_suite_passed": false,
+  "history_fetched_or_rewritten": false,
+  "hosted_ci_observed_complete": false,
+  "merge_source_only_summary_sha256": "34d1553565881c298c47c5c3576b4757d8701a43f99e629cab72ebdd1c7b6b26",
+  "native_full_suite_passed": false,
+  "native_targeted_results": {
+    "cancel-exact": {
+      "all_reported_harness_summaries": [
+        {
+          "failed": 0,
+          "filtered": 1325,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 1
+        }
+      ],
+      "command_exit_code": 0,
+      "expected_names": [
+        "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work"
+      ],
+      "observed_selected_names": [
+        "ingress::public_v3::tests::write_half_closed_or_disconnected_signed_submits_waiting_or_queued_do_not_start_work"
+      ],
+      "successful_selected_target_observed": true,
+      "terminal_harness": {
+        "failed": 0,
+        "filtered": 1325,
+        "ignored": 0,
+        "measured": 0,
+        "outcome": "ok",
+        "passed": 1
+      }
+    },
+    "confirmation-four": {
+      "all_reported_harness_summaries": [
+        {
+          "failed": 0,
+          "filtered": 1322,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 4
+        }
+      ],
+      "command_exit_code": 0,
+      "expected_names": [
+        "store::confirmation_chainwork_tests::a_common_work_offset_cannot_replace_the_zero_work_genesis_anchor",
+        "store::confirmation_chainwork_tests::final_callback_foreign_commit_cannot_return_a_stale_confirmation",
+        "store::confirmation_chainwork_tests::final_callback_same_connection_write_cannot_return_a_stale_confirmation",
+        "store::confirmation_chainwork_tests::full_width_retained_work_corruption_refuses_tip_inclusion_and_middle"
+      ],
+      "observed_selected_names": [
+        "store::confirmation_chainwork_tests::a_common_work_offset_cannot_replace_the_zero_work_genesis_anchor",
+        "store::confirmation_chainwork_tests::final_callback_foreign_commit_cannot_return_a_stale_confirmation",
+        "store::confirmation_chainwork_tests::final_callback_same_connection_write_cannot_return_a_stale_confirmation",
+        "store::confirmation_chainwork_tests::full_width_retained_work_corruption_refuses_tip_inclusion_and_middle"
+      ],
+      "successful_selected_target_observed": true,
+      "terminal_harness": {
+        "failed": 0,
+        "filtered": 1322,
+        "ignored": 0,
+        "measured": 0,
+        "outcome": "ok",
+        "passed": 4
+      }
+    },
+    "evaluation-quorum-v2": {
+      "all_reported_harness_summaries": [
+        {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 0,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 9
+        }
+      ],
+      "command_exit_code": 0,
+      "expected_names": [
+        "classic_retained_closure_preserves_legal_appeals_and_late_conflicts",
+        "classic_retained_closure_recounts_aborts_and_accepts_complete_zero_score",
+        "classic_retained_closure_rejects_substituted_summary_at_use_and_restore",
+        "fresh_profile_refuses_attested_models_and_cross_version_replay",
+        "independent_reference_vectors_match_native_domains_counts_and_records",
+        "quorum_retained_closure_cannot_authorize_adoption_before_its_height",
+        "quorum_retained_closure_preserves_nonempty_history_after_more_conflicts",
+        "quorum_retained_closure_rejects_substituted_summary_at_use_and_restore",
+        "retained_reveals_recheck_commitments_at_restore_close_and_adoption"
+      ],
+      "observed_selected_names": [
+        "classic_retained_closure_preserves_legal_appeals_and_late_conflicts",
+        "classic_retained_closure_recounts_aborts_and_accepts_complete_zero_score",
+        "classic_retained_closure_rejects_substituted_summary_at_use_and_restore",
+        "fresh_profile_refuses_attested_models_and_cross_version_replay",
+        "independent_reference_vectors_match_native_domains_counts_and_records",
+        "quorum_retained_closure_cannot_authorize_adoption_before_its_height",
+        "quorum_retained_closure_preserves_nonempty_history_after_more_conflicts",
+        "quorum_retained_closure_rejects_substituted_summary_at_use_and_restore",
+        "retained_reveals_recheck_commitments_at_restore_close_and_adoption"
+      ],
+      "successful_selected_target_observed": true,
+      "terminal_harness": {
+        "failed": 0,
+        "filtered": 0,
+        "ignored": 0,
+        "measured": 0,
+        "outcome": "ok",
+        "passed": 9
+      }
+    },
+    "mvcc-library": {
+      "all_reported_harness_summaries": [
+        {
+          "failed": 0,
+          "filtered": 0,
+          "ignored": 9,
+          "measured": 0,
+          "outcome": "ok",
+          "passed": 153
+        }
+      ],
+      "command_exit_code": 0,
+      "successful_selected_target_observed": true,
+      "terminal_harness": {
+        "failed": 0,
+        "filtered": 0,
+        "ignored": 9,
+        "measured": 0,
+        "outcome": "ok",
+        "passed": 153
+      }
+    }
+  },
+  "observation_complete": true,
+  "open_consensus_qualified": false,
+  "original_c3_failed_observation_rewritten": false,
+  "original_evidence_blobs_and_modes_preserved": true,
+  "parents": [
+    "a715b2c8e89732ce356ebae67f978ef232156c04",
+    "df927b6ffaecff293b9e9428e3ba516f47cd101a"
+  ],
+  "planned_commands": 38,
+  "prior_c2_full_node_failure_retained": {
+    "exit_code": 101,
+    "failed": 2,
+    "ignored": 39,
+    "passed": 1285,
+    "source": "8d8c0e64e7a301fc111a6720721a14816639e5aa"
+  },
+  "production_activation": false,
+  "published": false,
+  "python_named_results": {
+    "test_w1_factorial_native_gate": {
+      "command_exit_code": 0,
+      "expected_names": [
+        "LegalGateTests.test_complete_current_native_roster_passes",
+        "LegalGateTests.test_every_retained_versioned_material_and_observer_control_executes_once",
+        "LegalGateTests.test_summary_only_stale_filtered_duplicate_or_failed_summaries_are_refused",
+        "NativeGateTests.test_actual_workflow_uses_both_strict_gates_without_changing_native_selectors",
+        "NativeGateTests.test_cli_failure_never_writes_success_report",
+        "NativeGateTests.test_cli_fifo_and_symlink_log_refuse_without_waiting",
+        "NativeGateTests.test_complete_roster_passes",
+        "NativeGateTests.test_every_named_control_requires_one_successful_terminal",
+        "NativeGateTests.test_every_suite_rejects_wrong_count_failure_ignored_and_duplicate_summary",
+        "NativeGateTests.test_factorial_example_does_not_accept_filtered_or_measured_tests",
+        "NativeGateTests.test_factorial_example_rejects_missing_duplicate_replaced_or_failed_named_control",
+        "NativeGateTests.test_frozen_names_equal_current_native_source_and_retained_counts",
+        "NativeGateTests.test_history_named_controls_remain_required_once",
+        "NativeGateTests.test_ignored_child_is_exact_and_parent_still_must_pass",
+        "NativeGateTests.test_kernel_rejects_missing_duplicate_or_replaced_named_control",
+        "NativeGateTests.test_nocapture_retains_name_until_its_serial_success_terminal",
+        "NativeGateTests.test_original_old_counts_cannot_certify_the_current_roster",
+        "NativeGateTests.test_selected_native_suites_keep_nonzero_filtered_observations"
+      ],
+      "observed_tests": [
+        {
+          "name": "LegalGateTests.test_complete_current_native_roster_passes",
+          "outcome": "ok"
+        },
+        {
+          "name": "LegalGateTests.test_every_retained_versioned_material_and_observer_control_executes_once",
+          "outcome": "ok"
+        },
+        {
+          "name": "LegalGateTests.test_summary_only_stale_filtered_duplicate_or_failed_summaries_are_refused",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_actual_workflow_uses_both_strict_gates_without_changing_native_selectors",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_cli_failure_never_writes_success_report",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_cli_fifo_and_symlink_log_refuse_without_waiting",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_complete_roster_passes",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_every_named_control_requires_one_successful_terminal",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_every_suite_rejects_wrong_count_failure_ignored_and_duplicate_summary",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_factorial_example_does_not_accept_filtered_or_measured_tests",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_factorial_example_rejects_missing_duplicate_replaced_or_failed_named_control",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_frozen_names_equal_current_native_source_and_retained_counts",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_history_named_controls_remain_required_once",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_ignored_child_is_exact_and_parent_still_must_pass",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_kernel_rejects_missing_duplicate_or_replaced_named_control",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_nocapture_retains_name_until_its_serial_success_terminal",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_original_old_counts_cannot_certify_the_current_roster",
+          "outcome": "ok"
+        },
+        {
+          "name": "NativeGateTests.test_selected_native_suites_keep_nonzero_filtered_observations",
+          "outcome": "ok"
+        }
+      ],
+      "reported_summary_counts": [
+        18
+      ],
+      "successful_named_suite_observed": true
+    },
+    "test_w1_lifetime_ledger": {
+      "command_exit_code": 0,
+      "expected_names": [
+        "LifetimeLedgerTests.test_bound_domain_cannot_be_extrapolated_to_larger_lifetime_queries",
+        "LifetimeLedgerTests.test_cli_rejects_malformed_input_without_emitting_a_report",
+        "LifetimeLedgerTests.test_complete_relation_event_count_cannot_drop_failed_attempts",
+        "LifetimeLedgerTests.test_conditional_union_is_exact_and_does_not_require_independence",
+        "LifetimeLedgerTests.test_exact_lottery_rounding_and_weight_cost_counterexample",
+        "LifetimeLedgerTests.test_lifetime_reset_and_per_event_target_counterexamples",
+        "LifetimeLedgerTests.test_marginal_or_accepted_only_error_bound_is_refused",
+        "LifetimeLedgerTests.test_mass_and_reduction_overheads_are_independent_inputs",
+        "LifetimeLedgerTests.test_missing_phase_group_or_unknown_field_is_not_a_free_zero",
+        "LifetimeLedgerTests.test_native_permutation_count_cannot_be_the_query_unit",
+        "LifetimeLedgerTests.test_nonexact_numbers_duplicate_json_and_qualification_injection_are_refused",
+        "LifetimeLedgerTests.test_numeric_inputs_need_explicit_unverified_references",
+        "LifetimeLedgerTests.test_offline_adaptive_delegated_and_unclassified_queries_accumulate",
+        "LifetimeLedgerTests.test_processors_failed_roots_and_recursive_nodes_are_all_charged",
+        "LifetimeLedgerTests.test_project_unknowns_do_not_produce_a_target_or_qualification",
+        "LifetimeLedgerTests.test_scope_cannot_reset_by_identity_upgrade_or_reorganization",
+        "LifetimeLedgerTests.test_source_lines_remain_independent_of_existing_qualification_labels",
+        "LifetimeLedgerTests.test_source_mutation_missing_source_and_symlink_are_refused",
+        "LifetimeLedgerTests.test_unknown_factor_survives_known_zero"
+      ],
+      "observed_tests": [
+        {
+          "name": "LifetimeLedgerTests.test_bound_domain_cannot_be_extrapolated_to_larger_lifetime_queries",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_cli_rejects_malformed_input_without_emitting_a_report",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_complete_relation_event_count_cannot_drop_failed_attempts",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_conditional_union_is_exact_and_does_not_require_independence",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_exact_lottery_rounding_and_weight_cost_counterexample",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_lifetime_reset_and_per_event_target_counterexamples",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_marginal_or_accepted_only_error_bound_is_refused",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_mass_and_reduction_overheads_are_independent_inputs",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_missing_phase_group_or_unknown_field_is_not_a_free_zero",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_native_permutation_count_cannot_be_the_query_unit",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_nonexact_numbers_duplicate_json_and_qualification_injection_are_refused",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_numeric_inputs_need_explicit_unverified_references",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_offline_adaptive_delegated_and_unclassified_queries_accumulate",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_processors_failed_roots_and_recursive_nodes_are_all_charged",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_project_unknowns_do_not_produce_a_target_or_qualification",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_scope_cannot_reset_by_identity_upgrade_or_reorganization",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_source_lines_remain_independent_of_existing_qualification_labels",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_source_mutation_missing_source_and_symlink_are_refused",
+          "outcome": "ok"
+        },
+        {
+          "name": "LifetimeLedgerTests.test_unknown_factor_survives_known_zero",
+          "outcome": "ok"
+        }
+      ],
+      "reported_summary_counts": [
+        19
+      ],
+      "successful_named_suite_observed": true
+    }
+  },
+  "recorder_sha256": "825fd284f1a995b3c66753d9338b6ea794afcb5b0c759b701a3831eb63b1ed84",
+  "schema": "pon-upstream-union-observations-v1",
+  "second_parent_test_results_reused": false,
+  "security_status": "HOLD",
+  "source": "8ab052065ae8307b1ab2c9d42b0dca229a5a3b9d",
+  "source_bracket_identical": true,
+  "source_mutations_performed": false,
+  "tree": "218f49c3a4b1495f90c0d885433c0ec9ad51fb3c"
+}

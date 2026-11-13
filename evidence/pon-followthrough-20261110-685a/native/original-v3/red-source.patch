@@ -1,0 +1,310 @@
+diff --git a/trillionnium/crates/trnm-pon-node/src/store.rs b/trillionnium/crates/trnm-pon-node/src/store.rs
+index a8bd7b9c8d..b59fe271a5 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store.rs
+@@ -8,6 +8,8 @@ pub mod authenticated_migration;
+ pub(crate) mod authenticated_state;
+ #[cfg(test)]
+ mod canonical_row_reuse_tests;
++#[cfg(test)]
++mod confirmation_chainwork_tests;
+ pub mod capacity_observation;
+ pub mod demand_evidence;
+ pub mod evaluation_observation;
+diff --git a/trillionnium/crates/trnm-service-settlement/src/native_budget/tests.rs b/trillionnium/crates/trnm-service-settlement/src/native_budget/tests.rs
+index 2b5ed7f62b..31f14f8ea5 100644
+--- a/trillionnium/crates/trnm-service-settlement/src/native_budget/tests.rs
++++ b/trillionnium/crates/trnm-service-settlement/src/native_budget/tests.rs
+@@ -1895,3 +1895,167 @@ fn completed_effect_readback_rejects_stale_or_changed_owner_after_restart() {
+         assert_eq!(store.report().unwrap(), report);
+     }
+ }
++
++
++/// Run the ordinary observation, then commit through an independent connection.
++/// These are local SQLite races with synthetic native owners, not real payments.
++struct OwnerWithReadbackAppend<'a, F> {
++    owner: &'a mut SyntheticOwner,
++    payment: bool,
++    append: F,
++}
++impl<F: FnMut() -> NativeBudgetResultV1<()>> NativeFundingOwnerV1
++    for OwnerWithReadbackAppend<'_, F>
++{
++    fn observe_funding(
++        &mut self,
++        source: NativeFundingSourceV1,
++    ) -> NativeBudgetResultV1<NativeFundingObservationV1> {
++        let observed = self.owner.observe_funding(source)?;
++        if !self.payment {
++            (self.append)()?;
++        }
++        Ok(observed)
++    }
++
++    fn observe_payment(
++        &mut self,
++        query: &NativePaymentQueryV1,
++    ) -> NativeBudgetResultV1<NativePaymentObservationV1> {
++        let observed = self.owner.observe_payment(query)?;
++        if self.payment {
++            (self.append)()?;
++        }
++        Ok(observed)
++    }
++}
++
++fn native_readback_during_append(payment: bool, advance_generation: bool) {
++    let lane = NativeBudgetLaneV1::Serving;
++    let (directory, mut store, mut owner, policy, claim) = setup(lane);
++    store.reserve(&mut owner, claim.clone()).unwrap();
++    store
++        .begin_effect_in_window(&mut owner, claim.claim, [80; 32], [81; 32], 5, 20)
++        .unwrap();
++    store.complete_effect(claim.claim, [80; 32], [82; 32]).unwrap();
++    store
++        .record_resources(
++            claim.claim,
++            NativeResourceOutcomeV1::Positive,
++            Some(resources(lane, 2)),
++        )
++        .unwrap();
++    owner.payment = Some(NativePaymentObservationV1 {
++        anchor: owner.anchor,
++        source: policy.source,
++        subject: claim.subject,
++        beneficiary: claim.beneficiary,
++        operation: [90; 32],
++        gross_escrow_debit: 20,
++        beneficiary_credit: 18,
++    });
++    store.record_native_payment(&mut owner, claim.claim, [90; 32]).unwrap();
++    let (before, before_sequence, before_root) =
++        load_snapshot(&store.connection, &configuration()).unwrap();
++    let historical = before.claim(claim.claim).unwrap().clone();
++
++    let mut other = claim.clone();
++    other.claim = [61; 32];
++    other.subject = [71; 32];
++    let mut writer_owner = owner.clone();
++    if advance_generation {
++        writer_owner.advance(6);
++    }
++    let mut writer =
++        NativeBudgetStoreV1::open(&directory.path().join("budget.sqlite"), configuration())
++            .unwrap();
++    let result = {
++        let mut callback = OwnerWithReadbackAppend {
++            owner: &mut owner,
++            payment,
++            append: || {
++                writer.reserve(&mut writer_owner, other.clone())?;
++                writer.record_resources(other.claim, NativeResourceOutcomeV1::Unknown, None)?;
++                Ok(())
++            },
++        };
++        if payment {
++            store.reobserve_native_payment(&mut callback, claim.claim).map(|_| ())
++        } else {
++            store
++                .reobserve_completed_effect(
++                    &mut callback,
++                    claim.claim,
++                    [80; 32],
++                    [81; 32],
++                    Some((5, 20)),
++                    [82; 32],
++                )
++                .map(|_| ())
++        }
++    };
++    assert!(matches!(
++        result,
++        Err(NativeBudgetErrorV1::Invalid("BUDGET_NATIVE_READBACK_JOURNAL_CHANGED"))
++    ));
++    let (after, after_sequence, after_root) =
++        load_snapshot(&store.connection, &configuration()).unwrap();
++    assert_eq!(after_sequence, before_sequence + 2);
++    assert_ne!(after_root, before_root);
++    assert_eq!(after.claim(claim.claim).unwrap(), &historical);
++    let unknown = after.claim(other.claim).unwrap();
++    assert_eq!(unknown.outcome, Some(NativeResourceOutcomeV1::Unknown));
++    assert_eq!(unknown.consumed.as_ref(), Some(&other.resource_reservation));
++
++    owner.anchor = writer_owner.anchor;
++    owner.payment.as_mut().unwrap().anchor = owner.anchor;
++    if payment {
++        store.reobserve_native_payment(&mut owner, claim.claim).unwrap();
++    } else {
++        store
++            .reobserve_completed_effect(
++                &mut owner,
++                claim.claim,
++                [80; 32],
++                [81; 32],
++                Some((5, 20)),
++                [82; 32],
++            )
++            .unwrap();
++    }
++    let (final_state, final_sequence, final_root) =
++        load_snapshot(&store.connection, &configuration()).unwrap();
++    assert_eq!((final_sequence, final_root), (after_sequence, after_root));
++    assert!(final_state == after);
++    drop(writer);
++    drop(store);
++    let mut reopened =
++        NativeBudgetStoreV1::open(&directory.path().join("budget.sqlite"), configuration())
++            .unwrap();
++    let (recovered, _, _) = load_snapshot(&reopened.connection, &configuration()).unwrap();
++    assert!(recovered == after);
++    assert_eq!(
++        reopened.reserve(&mut writer_owner, other).unwrap(),
++        NativeBudgetReplayV1::Done
++    );
++}
++
++#[test]
++fn native_payment_readback_rejects_same_generation_append_from_second_connection() {
++    native_readback_during_append(true, false);
++}
++
++#[test]
++fn native_payment_readback_rejects_new_generation_append_and_preserves_unknown() {
++    native_readback_during_append(true, true);
++}
++
++#[test]
++fn completed_effect_readback_rejects_same_generation_append_from_second_connection() {
++    native_readback_during_append(false, false);
++}
++
++#[test]
++fn completed_effect_readback_rejects_new_generation_append_and_preserves_unknown() {
++    native_readback_during_append(false, true);
++}
+diff --git a/trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs b/trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs
+index d7019e8a8b..5ef821c315 100644
+--- a/trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs
++++ b/trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs
+@@ -541,3 +541,120 @@ fn restored_fixed_size_blobs_refuse_before_owner_callbacks_and_cold_reopen() {
+         }
+     }
+ }
++
++
++/// The callback uses a second real SQLite connection. The owner declarations
++/// remain synthetic; these controls test local readback freshness only.
++struct PaymentWithAppend<'a, F> {
++    owner: &'a mut MockOwner,
++    append: F,
++}
++impl<F: FnMut() -> Result<()>> NativeFundingOwnerV1 for PaymentWithAppend<'_, F> {
++    fn observe_funding(
++        &mut self,
++        source: NativeFundingSourceV1,
++    ) -> Result<NativeFundingObservationV1> {
++        self.owner.observe_funding(source)
++    }
++
++    fn observe_payment(&mut self, query: &NativePaymentQueryV1) -> Result<NativePaymentObservationV1> {
++        let observed = self.owner.observe_payment(query)?;
++        (self.append)()?;
++        Ok(observed)
++    }
++}
++
++fn payment_readback_during_append(advance_generation: bool) {
++    let directory = tempfile::tempdir().unwrap();
++    let path = directory.path().join("generation.sqlite");
++    let original = statement();
++    let mut owner = MockOwner::new(&original);
++    let (mut store, id) = started(&path, &original, &mut owner);
++    store.verify(&mut owner, id, &evidence()).unwrap();
++    owner.receipt(&original);
++    store
++        .prepare_settlement(&mut owner, id, b"original wire".to_vec())
++        .unwrap();
++    owner.paid = true;
++    store.record_payment(&mut owner, id).unwrap();
++    let historical = store.readback(id).unwrap();
++    let (_, before_sequence, before_root) =
++        load(&store.connection, &cfg(), store.journal_identity(), None).unwrap();
++
++    let mut next = original.clone();
++    next.task = [44; 32];
++    next.provider_operation = [45; 32];
++    next.request_digest = [46; 32];
++    let next_id = next.id().unwrap();
++    let mut next_owner = MockOwner::new(&next);
++    next_owner.anchor = owner.anchor;
++    if advance_generation {
++        next_owner.anchor.generation += 1;
++        next_owner.anchor.height += 1;
++        next_owner.anchor.block[0] += 1;
++    }
++    let mut writer = NativeGenerationStoreV2::open(&path, cfg()).unwrap();
++    let result = store.reobserve_payment(
++        &mut PaymentWithAppend {
++            owner: &mut owner,
++            append: || {
++                writer.prepare(&mut next_owner, next.clone())?;
++                writer.begin(&mut next_owner, next_id)?;
++                writer.fail(
++                    next_id,
++                    FailureV2 {
++                        kind: FailureKindV2::Unknown,
++                        evidence_digest: [47; 32],
++                        consumed: None,
++                    },
++                )?;
++                Ok(())
++            },
++        },
++        id,
++    );
++    assert!(matches!(
++        result,
++        Err(NativeBudgetErrorV1::Invalid("GENERATION_PAYMENT_JOURNAL_CHANGED"))
++    ));
++    let (_, after_sequence, after_root) =
++        load(&store.connection, &cfg(), store.journal_identity(), None).unwrap();
++    assert_eq!(after_sequence, before_sequence + 3);
++    assert_ne!(after_root, before_root);
++    assert_eq!(store.readback(id).unwrap(), historical);
++    let unknown = store.readback(next_id).unwrap();
++    assert_eq!(unknown.resource_charge, next.resource_cap);
++    assert_eq!(unknown.failure.as_ref().unwrap().kind, FailureKindV2::Unknown);
++
++    owner.anchor = next_owner.anchor;
++    let observed = store.reobserve_payment(&mut owner, id).unwrap();
++    assert_eq!(observed.anchor, next_owner.anchor);
++    let (_, final_sequence, final_root) =
++        load(&store.connection, &cfg(), store.journal_identity(), None).unwrap();
++    assert_eq!((final_sequence, final_root), (after_sequence, after_root));
++    drop(writer);
++    drop(store);
++    let mut reopened = NativeGenerationStoreV2::open(&path, cfg()).unwrap();
++    assert_eq!(reopened.readback(id).unwrap(), historical);
++    assert_eq!(reopened.readback(next_id).unwrap(), unknown);
++    assert!(matches!(
++        reopened.begin(&mut next_owner, next_id).unwrap(),
++        DispatchDecisionV2::Done
++    ));
++    assert!(matches!(
++        reopened
++            .prepare_settlement(&mut owner, id, b"original wire".to_vec())
++            .unwrap(),
++        DispatchDecisionV2::Done
++    ));
++}
++
++#[test]
++fn payment_readback_rejects_same_generation_append_from_second_connection() {
++    payment_readback_during_append(false);
++}
++
++#[test]
++fn payment_readback_rejects_new_generation_append_and_retains_unknown_after_reopen() {
++    payment_readback_during_append(true);
++}
