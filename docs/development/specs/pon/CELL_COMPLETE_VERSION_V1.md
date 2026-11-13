@@ -121,6 +121,31 @@ argument, and cannot fall back to remote download. They retain the original
 deadline, compare current loader pins, and latch observed cancellation/expiry.
 The admission deadline does not preempt arbitrary consumer computation.
 
+`admit_local_version` binds the complete owner-pinned TCV1 to that existing task
+working set. It checks both exact resident closures against the model and
+environment declarations, including their paths, roles, dependency edges,
+generations and loader profiles. Both components must already occupy the actual
+immutable RAM pool; a complete disk readback, a model-only pool or a completion
+marker cannot satisfy the entry point. The one task byte/reference/closure
+reservation includes the environment. Identical live chunk allocations are
+charged once, while every distinct closure mapping retains its reference cost.
+
+The returned `CellResidentVersionV1` exposes the paired components only through
+`with_local`, which checks the original task ID, complete commitment and both
+current loader contexts before calling the consumer. A changed complete version
+with the same model closure, swapped model/environment contexts, tighter
+component budgets, cancellation or expiry returns no partial callback. The
+original working set latches observed cancellation and expiry. No hot operation
+accepts a new deadline, cache path or peer, and the handle cannot outlive the
+borrowed immutable pool. Previously borrowed views and copied public bytes are
+not revocable; the ordinary execution owner must retain its authority guard.
+
+Native regression tests remove the actual disk cache after preparing the two
+components, then read their exact resident chunks and full-file hashes in two
+distinct local tasks. These tests use explicitly synthetic payloads. They prove
+this byte-admission join, not OS execution of the declared environment, expert
+execution, a trained model's next-task adoption or independent service.
+
 Actual storage-device identity, NVMe transfer performance, GPU/VRAM allocation,
 device readback and the ordinary Hepta expert path remain separate measured
 gates. No fixture boolean stands in for those effects.

@@ -1,0 +1,102 @@
+{
+  "files": {
+    "config/pon/pq-cross-branch-corpus-v1.json": "dda93878611bf205beb5dd35f065f7854da0a0ca04efc5b75a1fd24057c93a27",
+    "tests/fuzz/Cargo.lock": "5d50d62bb68c6119f2c6abfe91c321e6ea48d11d11fde86cd2fe56f53a4ddef1",
+    "tests/fuzz/Cargo.toml": "4c9521a3eacb98598cfc0b7c8f2b52cced5fa9b3eba3d0c41d9cb0594fe15321",
+    "trillionnium/Cargo.lock": "39ab5baeecb55c5445e6bbbbb359cb4ddcddd75a237e19ec243dc2f0f92849be",
+    "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+  },
+  "kernel": "6.18.57",
+  "machine": "x86_64",
+  "native_differential_provider_receipt": {
+    "backend_exported": true,
+    "build_directory": "/workspace/scratch/487d55b3efb1/provider-setup/trnm-pq-provider-3.5.9.VAYL1b9M",
+    "cli_executable": "/workspace/scratch/487d55b3efb1/provider-setup/trnm-pq-provider-3.5.9.VAYL1b9M/install/bin/openssl",
+    "cli_sha256": "1588b955e5622cf9f7c203dad6e3a19d7f224285705fb97afe5069598d1da7ed",
+    "cli_version_output": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+    "elapsed_wall_seconds": 190,
+    "exit_code": 0,
+    "github_actions_reported": false,
+    "independent_cryptographic_implementation_claim": false,
+    "install_prefix": "/workspace/scratch/487d55b3efb1/provider-setup/trnm-pq-provider-3.5.9.VAYL1b9M/install",
+    "last_stage": "complete",
+    "ml_dsa_65_sign_verify_and_wrong_message_rejection": true,
+    "native_backend_inputs": [
+      {
+        "bytes": 8839432,
+        "path": "/workspace/scratch/487d55b3efb1/provider-setup/trnm-pq-provider-3.5.9.VAYL1b9M/install/bin/openssl",
+        "sha256": "1588b955e5622cf9f7c203dad6e3a19d7f224285705fb97afe5069598d1da7ed"
+      },
+      {
+        "bytes": 3449,
+        "path": "/workspace/scratch/487d55b3efb1/provider-setup/trnm-pq-provider-3.5.9.VAYL1b9M/install/include/openssl/opensslv.h",
+        "sha256": "9647fc99758cf83e3bcf11ae310894fd4911ad62bff22d8213a614df89cfedda"
+      },
+      {
+        "bytes": 4729,
+        "path": "/workspace/scratch/487d55b3efb1/provider-setup/trnm-pq-provider-3.5.9.VAYL1b9M/install/include/openssl/configuration.h",
+        "sha256": "406c26f93511299b264062f9f3faf0760e7a0506e91a61717c491f3c92e1a996"
+      },
+      {
+        "bytes": 12103480,
+        "path": "/workspace/scratch/487d55b3efb1/provider-setup/trnm-pq-provider-3.5.9.VAYL1b9M/install/lib/libcrypto.a",
+        "sha256": "3c6b6b8566d9c96f0a0c216764435435ed736c4924346c4cc88c947d951da736"
+      },
+      {
+        "bytes": 2073650,
+        "path": "/workspace/scratch/487d55b3efb1/provider-setup/trnm-pq-provider-3.5.9.VAYL1b9M/install/lib/libssl.a",
+        "sha256": "ce766975e2748030cdcab09302cae4a2e774130dff9376e42e1bef4f9918a490"
+      }
+    ],
+    "native_rust_pq_tests_run_by_preparation": false,
+    "openssl_conf": "/dev/null",
+    "openssl_modules": "/workspace/scratch/487d55b3efb1/provider-setup/trnm-pq-provider-3.5.9.VAYL1b9M/install/lib/ossl-modules",
+    "preparation_script_sha256": "ccdcf7e8bb9871607c73adc78624a607b616c227b7fe581b96c48761a3805bfa",
+    "production_activation": false,
+    "result": "PREPARED_AND_SMOKE_VERIFIED",
+    "runner_environment_reported": null,
+    "schema": "trnm-ci-pq-provider-v3",
+    "source_archive_sha256_expected": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+    "source_digest_verified": true,
+    "source_transport": "download",
+    "source_url": "https://github.com/openssl/openssl/releases/download/openssl-3.5.9/openssl-3.5.9.tar.gz",
+    "static_build": true,
+    "upstream_full_tests_run": false,
+    "version": "3.5.9",
+    "whole_chain_quantum_security_qualified": false
+  },
+  "pinned_source_blobs": 602,
+  "provider_files_rechecked": [
+    {
+      "path": "/workspace/scratch/487d55b3efb1/provider-setup/trnm-pq-provider-3.5.9.VAYL1b9M/install/bin/openssl",
+      "unchanged": true
+    },
+    {
+      "path": "/workspace/scratch/487d55b3efb1/provider-setup/trnm-pq-provider-3.5.9.VAYL1b9M/install/include/openssl/opensslv.h",
+      "unchanged": true
+    },
+    {
+      "path": "/workspace/scratch/487d55b3efb1/provider-setup/trnm-pq-provider-3.5.9.VAYL1b9M/install/include/openssl/configuration.h",
+      "unchanged": true
+    },
+    {
+      "path": "/workspace/scratch/487d55b3efb1/provider-setup/trnm-pq-provider-3.5.9.VAYL1b9M/install/lib/libcrypto.a",
+      "unchanged": true
+    },
+    {
+      "path": "/workspace/scratch/487d55b3efb1/provider-setup/trnm-pq-provider-3.5.9.VAYL1b9M/install/lib/libssl.a",
+      "unchanged": true
+    }
+  ],
+  "qualification": "shared-host component observation only; resources were not an independent fixed-resource acceptance profile",
+  "recorded_at": "2026-11-08T17:55:03.541213+00:00",
+  "source": "266d9be8e7f6a2ecb556a129b1be69e6ec9553a2",
+  "system": "Linux",
+  "toolchain": {
+    "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+    "cargo-clippy": "clippy 0.1.95 (59807616e1 2026-04-14)",
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2",
+    "rustfmt": "rustfmt 1.9.0-stable (59807616e1 2026-04-14)"
+  },
+  "tree": "52a76f7280792b68ef539adc610bfff2e339d849"
+}

@@ -1,0 +1,135 @@
+{
+  "client_operations_including_expected_refusal": 4,
+  "elapsed_micros_including_preparation_and_shutdown": 369557,
+  "error": null,
+  "fixed_fixture_keys_are_public_test_material": true,
+  "independent_operators_demonstrated": false,
+  "observations": [
+    {
+      "discovery": {
+        "authenticated_bootstrap_responses": 1,
+        "bootstrap_validation_attempts": 1,
+        "capacity_rejections": 0,
+        "connection_attempts": 1,
+        "received_response_bytes": 3440,
+        "record_validation_attempts": 1,
+        "rejected_bootstraps": 0,
+        "rejected_records": 0
+      },
+      "original_deadline_remaining_micros": 9952016,
+      "result": "accepted",
+      "scope": "client_operation",
+      "stage": "announce",
+      "total_connection_attempts": 1,
+      "total_received_response_bytes": 3440
+    },
+    {
+      "cached_chunks": 0,
+      "discovery": {
+        "authenticated_bootstrap_responses": 1,
+        "bootstrap_validation_attempts": 1,
+        "capacity_rejections": 0,
+        "connection_attempts": 1,
+        "received_response_bytes": 7009,
+        "record_validation_attempts": 1,
+        "rejected_bootstraps": 0,
+        "rejected_records": 0
+      },
+      "downloaded_bytes": 40960,
+      "downloaded_chunks": 3,
+      "manifest_initial_cache_hit": false,
+      "original_deadline_remaining_micros": 9891019,
+      "rejected_payload_responses": 0,
+      "result": "accepted",
+      "scope": "client_operation",
+      "selected_providers": [
+        "127.0.0.1:46653"
+      ],
+      "stage": "cold_fetch",
+      "supplying_peers": [
+        "127.0.0.1:46653"
+      ],
+      "total_connection_attempts": 5,
+      "total_received_response_bytes": 48363
+    },
+    {
+      "discovery": {
+        "authenticated_bootstrap_responses": 1,
+        "bootstrap_validation_attempts": 1,
+        "capacity_rejections": 0,
+        "connection_attempts": 1,
+        "received_response_bytes": 3440,
+        "record_validation_attempts": 1,
+        "rejected_bootstraps": 0,
+        "rejected_records": 0
+      },
+      "original_deadline_remaining_micros": 9813501,
+      "result": "accepted",
+      "scope": "client_operation",
+      "stage": "withdraw",
+      "total_connection_attempts": 1,
+      "total_received_response_bytes": 3440
+    },
+    {
+      "cause": "cell: discovery has no admissible provider",
+      "discovery": {
+        "authenticated_bootstrap_responses": 1,
+        "bootstrap_validation_attempts": 1,
+        "capacity_rejections": 0,
+        "connection_attempts": 1,
+        "received_response_bytes": 7009,
+        "record_validation_attempts": 1,
+        "rejected_bootstraps": 0,
+        "rejected_records": 0
+      },
+      "expected": true,
+      "original_deadline_remaining_micros": 9759829,
+      "result": "refused",
+      "scope": "client_operation",
+      "stage": "fetch_after_withdrawal",
+      "total_connection_attempts": 1,
+      "total_received_response_bytes": 7009
+    },
+    {
+      "connections": 4,
+      "scope": "payload_server"
+    },
+    {
+      "charged_native_primitive_slots": 12,
+      "connections": 4,
+      "native_primitive_slot_limit": 64,
+      "record_validation_attempts": 4,
+      "rejected_requests": 0,
+      "response_signing_attempts": 4,
+      "scope": "bootstrap_server"
+    }
+  ],
+  "original_operation_window_milliseconds": 10000,
+  "output_directory": "/workspace/scratch/487d55b3efb1/validation/frozen-02/native-example",
+  "output_directory_display_is_lossy": false,
+  "per_operation_connection_limit": 16,
+  "per_operation_response_byte_limit": 262144,
+  "profile": "cell-provider-discovery-pq-v3",
+  "public_wan_or_hepta_loader_exercised": false,
+  "response_byte_scope": "application responses actually read; excludes requests and transport overhead",
+  "result": {
+    "actual_output_bytes_checked": 40960,
+    "bootstrap_endpoint": "127.0.0.1:45209",
+    "bootstrap_key_id": "fe3d3e375b5bb4f4633a8920e4ed17d522113006ad8725d41684557f1a105cc2",
+    "client_active_identities": 0,
+    "client_tombstone_identities": 1,
+    "manifest": "2803bc904aab870832d6f3005c6303ec356833861b57ef6f8caeee8dc591c510",
+    "original_advertisement_epoch": 5980535,
+    "original_advertisement_expires_unix_seconds": 1794160800,
+    "payload_endpoint": "127.0.0.1:46653",
+    "payload_sha256": "a22dd47e68186cd88cb78e0ab9423425d2d7eb34e7e886fea1bc6a61f6aae890",
+    "withdrawal_authenticated_in_original_epoch": true,
+    "withdrawal_control_completed_unix_seconds": 1794160617,
+    "withdrawn_fetch_created_output": false
+  },
+  "scope": "temporary_same_host_loopback_development",
+  "source_sha256": "179681b9605b3413bffdda6b84a8300dca15b6c396a81c736e4a496b8fa0c56d",
+  "status": "passed",
+  "total_connection_attempts_including_failures": 8,
+  "total_received_response_bytes_including_failures": 62252
+}

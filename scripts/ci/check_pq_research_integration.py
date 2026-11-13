@@ -34,6 +34,7 @@ PQ_SOURCE_DIRS = (
     "trillionnium/crates/trnm-crypto-primitives/examples",
     "trillionnium/crates/trnm-data-availability/src",
     "trillionnium/crates/trnm-data-availability/tests",
+    "trillionnium/crates/trnm-data-availability/examples",
     "trillionnium/crates/trnm-mvcc-fee/src",
     "trillionnium/crates/trnm-mvcc-fee/tests",
     "trillionnium/crates/trnm-pon-node/src",
@@ -669,6 +670,20 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "scripts/ci/test_w1_qrom_implementation_audit.py",
     "config/pon/w1-qrom-implementation-v1.json",
 ))
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    "docs/development/specs/pon/CELL_PROVIDER_DISCOVERY_PQ_V3.md",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/auth.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/directory.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/directory_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/transport.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/transport_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/multisource_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/server_tests.rs",
+    "trillionnium/crates/trnm-data-availability/examples/cell_discovery_pq_v3.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/residency/version.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/residency/version_tests.rs",
+))
 NATIVE_REQUIRED_PATHS |= CONVERGENCE_REQUIRED_PATHS
 RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-checkpoint-store/Cargo.toml",
@@ -1171,10 +1186,10 @@ CONSOLIDATION_CONTROL_REQUIRED_PATHS = frozenset((
 NATIVE_REQUIRED_PATHS |= CONSOLIDATION_CONTROL_REQUIRED_PATHS
 
 def is_pq_source(parts: tuple[str, ...]) -> bool:
-    """Recognize pq.rs, cell_pq and operator_pq_auth as well as older prefixes."""
+    """Recognize versioned pq3 modules, pq.rs, cell_pq and older prefixes."""
     return any(
         part.startswith(("pq_", "pqg_", "pql"))
-        or re.search(r"(?:^|_)pq(?:_|$)", Path(part).stem)
+        or re.search(r"(?:^|_)pq(?:[0-9]+)?(?:_|$)", Path(part).stem)
         for part in parts
     )
 
