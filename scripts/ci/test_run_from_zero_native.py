@@ -648,6 +648,18 @@ class ExecutionBoundaryTests(unittest.TestCase):
         self.assertEqual(result['terminal']['native_invocations'][0]['exit_code'], 101)
         self.assertFalse(result['terminal']['acceptance_passed'])
 
+    def test_final_named_ignored_exit_zero_is_still_failure(self):
+        # Protect the fifth signed-business test from being credited when ignored.
+        result, _ = self.exercise(ignored=driver.TESTS[-1])
+        self.assertFalse(result['passed'])
+        self.assertEqual([r['passed'] for r in result['runs']], [True, True, True, True, False])
+
+    def test_final_named_nonzero_exit_cannot_claim_success(self):
+        result, _ = self.exercise(fail=driver.TESTS[-1])
+        self.assertFalse(result['passed'])
+        self.assertEqual(len(result['runs']), len(driver.TESTS))
+        self.assertFalse(result['runs'][-1]['passed'])
+
     def test_timeout_cannot_be_overridden_by_success_text(self):
         result, _ = self.exercise(timeout=driver.TESTS[2])
         self.assertFalse(result['passed'])

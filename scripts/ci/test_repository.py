@@ -2,12 +2,31 @@
 """Negative boundary tests. A pass is not consensus or independent acceptance."""
 from __future__ import annotations
 import copy,json,pathlib,shutil,tempfile,unittest
-from check_repository import ROOT,Invalid,check,graph_acyclic,no_promotion,unique
+from check_repository import ROOT,Invalid,check,graph_acyclic,no_promotion,unique,check_mainline_consensus_research_claim,load,contained
 
 class EvidenceBoundaryTests(unittest.TestCase):
     def test_current_claims_are_unactivated(self):
         no_promotion(json.loads((ROOT/'config/consensus-mainline.json').read_text()))
         no_promotion(json.loads((ROOT/'config/pon-nakamoto-v1.json').read_text()))
+    def test_mainline_consensus_is_a_frozen_nonproduction_declaration(self):
+        truth=json.loads((ROOT/'config/consensus-mainline.json').read_text())
+        check_mainline_consensus_research_claim(truth)
+        cases=[
+            ('activation_alias',lambda d:d.update(whole_chain_post_quantum=True)),
+            ('scope_drift',lambda d:d.update(native_application_scope='production-active')),
+            ('stage_drift',lambda d:d.update(stage='production-mainline')),
+            ('missing_scope',lambda d:d.pop('native_application_scope')),
+            ('missing_flag',lambda d:d.pop('work_profile_qualified')),
+            ('coerced_false',lambda d:d.update(production_candidate=0)),
+            ('string_null',lambda d:d.update(active_consensus_implementation='null')),
+            ('new_unknown_field',lambda d:d.update(new_policy_revision='unreviewed')),
+        ]
+        for name,mutate in cases:
+            with self.subTest(case=name):
+                changed=dict(truth)
+                mutate(changed)
+                with self.assertRaises(Invalid):
+                    check_mainline_consensus_research_claim(changed)
     def test_no_runtime_claim(self):
         with self.assertRaises(Invalid):no_promotion({'runtime_implemented':True})
     def test_no_release_from_nested_report(self):
@@ -18,6 +37,55 @@ class EvidenceBoundaryTests(unittest.TestCase):
         with self.assertRaises(Invalid):no_promotion({'production_consensus_activation':0})
     def test_duplicate_json_claims(self):
         with self.assertRaises(Invalid):json.loads('{"runtime_implemented":false,"runtime_implemented":true}',object_pairs_hook=unique)
+    def test_nonfinite_json_is_not_valid_policy_data(self):
+        with tempfile.TemporaryDirectory(prefix='trnm-pq-json-') as temporary:
+            path=pathlib.Path(temporary)/'policy.json'
+            for value in ('NaN','Infinity','-Infinity'):
+                with self.subTest(value=value):
+                    path.write_text('{"quantum_security_bits":'+value+'}')
+                    with self.assertRaises(Invalid):load(path)
+    def test_extreme_json_exponents_are_not_policy_numbers(self):
+        with tempfile.TemporaryDirectory(prefix='trnm-pq-exponent-') as temporary:
+            path=pathlib.Path(temporary)/'policy.json'
+            # parse_constant does NOT see these syntactically valid JSON
+            # exponent tokens. They overflow to infinities or underflow to
+            # zero in binary64, changing the asserted policy value.
+            for token in ('1e309','-1e309','1e-99999','-1e-99999'):
+                with self.subTest(token=token):
+                    path.write_text('{"quantum_assumption":{"value":'+token+'}}')
+                    with self.assertRaises(Invalid):load(path)
+            # Preserve accepted ordinary finite decimals, signed zero and
+            # the smallest positive representable subnormal.
+            for token in ('1.25','1e-8','0e-99999','-0.0','5e-324'):
+                with self.subTest(token=token):
+                    path.write_text('{"risk":'+token+'}')
+                    self.assertIsInstance(load(path)['risk'],float)
+    def test_extreme_json_exponents_refused_by_repository_intake(self):
+        # The repository checks ALL JSON documents with the same strict
+        # loader; non-critical extra keys must not bypass numeric checks.
+        with tempfile.TemporaryDirectory(prefix='trnm-pq-intake-') as temporary:
+            path=pathlib.Path(temporary)/'source.json'
+            for token in ('1e309','1e-99999'):
+                with self.subTest(token=token):
+                    path.write_text('{"limits":[{"research":'+token+'}]}')
+                    with self.assertRaises(Invalid):load(path)
+    def test_policy_path_alias_is_not_trusted_even_inside_root(self):
+        with tempfile.TemporaryDirectory(prefix='trnm-pq-source-') as temporary:
+            root=pathlib.Path(temporary)
+            policy=root/'policy'
+            policy.mkdir()
+            canonical=policy/'canonical.json'
+            canonical.write_text('{"production_consensus_activation":false}')
+            alias=policy/'alias.json'
+            alias.symlink_to(canonical.name)
+            with self.assertRaises(Invalid):load(alias)
+            with self.assertRaises(Invalid):contained(root,'policy/alias.json')
+            (root/'directory-alias').symlink_to('policy',target_is_directory=True)
+            with self.assertRaises(Invalid):contained(root,'directory-alias/canonical.json')
+            self.assertEqual(contained(root,'policy/canonical.json'),canonical)
+    def test_mainline_consensus_policy_is_regular_file(self):
+        policy=contained(ROOT,'config/consensus-mainline.json')
+        self.assertIs(load(policy)['production_consensus_activation'],False)
     def test_explicit_missing_native_core(self):
         inventory=json.loads((ROOT/'config/portability-inventory-v1.json').read_text())
         self.assertFalse(inventory['runtime_implemented'])
@@ -75,6 +143,12 @@ class RepositoryMutants(unittest.TestCase):
         finally:p.rmdir()
     def test_missing_runtime_claim_is_not_false_evidence(self):
         self.reject_json('config/consensus-mainline.json',lambda d:d.pop('runtime_implemented'))
+    def test_unreviewed_consensus_alias_cannot_ride_a_false_flag(self):
+        self.reject_json('config/consensus-mainline.json',
+                         lambda d:d.update(whole_chain_post_quantum=True))
+    def test_research_scope_cannot_silently_be_renamed_production(self):
+        self.reject_json('config/consensus-mainline.json',
+                         lambda d:d.update(native_application_scope='production-active'))
     def test_missing_implementation_axis(self):
         self.reject_json('config/pon-nakamoto-v1.json',lambda d:d['implementation'].pop('independent_security_accepted'))
     def test_unknown_implementation_axis(self):
