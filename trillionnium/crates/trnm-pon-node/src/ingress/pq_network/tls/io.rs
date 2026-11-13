@@ -162,16 +162,6 @@ impl<'a> Channel<'a> {
     ) -> Result<Self> {
         Self::handshake(stream, deadline, context, None, false, None)
     }
-    #[cfg(test)]
-    pub(super) fn accept(
-        stream: TcpStream,
-        deadline: Instant,
-        context: &context::TlsContext,
-        node: &'a Mutex<Node>,
-        policy: &'a PqNetworkPolicy,
-    ) -> Result<Self> {
-        Self::handshake(stream, deadline, context, Some((node, policy)), true, None)
-    }
     pub(super) fn accept_observed(
         stream: TcpStream,
         deadline: Instant,
