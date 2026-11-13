@@ -14294,3 +14294,18 @@ assertions; local JSON and original-error controls cover the added field.
 Client CPU stays separate from wall time and receiver W1 accounting. Historical
 cost/depletion experiments and their outputs are not transplanted or relabelled;
 this diagnostic is not an adversarial-cost or production-readiness claim.
+
+### 2026-11-13 retain the fixed History page target boundary
+
+Retain the small Decode boundary from
+`92df9eff019883476f9604e64cb8fedf4328bc1e`: once the original caller's fixed
+target has been reached, no additional packet is decoded from that page.
+The check follows the existing resource and CPU checkpoints and precedes
+packet decoding. Original page context, frame limits, epoch ownership,
+per-packet native validation, settlement and deadlines remain in force.
+
+The existing ordinary exact-target final-packet and two-packet handoff
+controls provide the positive validation scope. Historical fault scenarios
+are not copied or executed for this repair. This narrow target-boundary change
+does not close the separately recorded Page JSON parsing-account gap or
+qualify the other source changes on that historical branch.

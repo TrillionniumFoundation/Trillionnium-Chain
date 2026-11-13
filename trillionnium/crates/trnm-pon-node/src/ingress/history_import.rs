@@ -576,6 +576,8 @@ pub(super) fn receive_observed(
                             for (index, raw) in page.packets.iter().enumerate() {
                                 control.check()?;
                                 operation.checkpoint()?;
+                                // The caller's fixed target ends this page.
+                                ensure(next != tip, "PAGE_COMPLETE")?;
                                 let packet = hex_packet_for_context(raw, &codec)?;
                                 ensure(packet.header.parent == next, "PAGE_PARENT")?;
                                 next = packet.id()?;
