@@ -1,0 +1,6 @@
+{
+  "io_pressure": "some avg10=18.69 avg60=7.62 avg300=6.71 total=52696772710\nfull avg10=17.69 avg60=7.25 avg300=6.39 total=49583670669\n",
+  "loadavg": "10.81 14.09 16.36 9/4483 3695383\n",
+  "scope": "shared desktop, not original Host qualification",
+  "utc": "2026-11-08T07:13:53.656982+00:00"
+}

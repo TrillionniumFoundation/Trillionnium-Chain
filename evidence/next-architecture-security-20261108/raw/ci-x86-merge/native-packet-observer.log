@@ -1,0 +1,38 @@
+   Compiling generic-array v0.14.7
+   Compiling typenum v1.20.1
+   Compiling serde_json v1.0.149
+   Compiling rusqlite v0.39.0
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.4
+   Compiling cpufeatures v0.2.17
+   Compiling rustix v1.1.4
+   Compiling sha2 v0.10.9
+   Compiling linux-raw-sys v0.12.1
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-task-kernel v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-verification-profiles v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-verification-profiles)
+   Compiling tempfile v3.27.0
+   Compiling trnm-mvcc-fee v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-data-availability v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-service-settlement v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-transport v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-transport)
+   Compiling trnm-mempool v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-mempool)
+   Compiling trnm-pon-node v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 2m 25s
+     Running tests/native_packet_observer.rs (/home/runner/work/_temp/target-next-architecture/release/deps/native_packet_observer-ba4e5e768c1688bb)
+
+running 9 tests
+test packet_status_cli_absence_is_local_only_and_does_not_execute ... ok
+test packet_status_cli_decodes_all_completed_reorg_fields_like_the_original_writer ... ok
+test packet_status_cli_does_not_activate_an_admitted_packet ... ok
+test packet_status_cli_never_creates_a_store_or_recreates_a_missing_owner_lock ... ok
+test packet_status_cli_preserves_context_exact_bytes_and_snapshot_budget ... ok
+test packet_status_cli_preserves_recovery_candidate_checks_for_an_unrelated_query ... ok
+test packet_status_cli_refuses_recovery_and_owner_markers_without_sqlite_cleanup ... ok
+test packet_status_cli_refuses_the_live_owner_without_touching_its_files ... ok
+test packet_status_cli_refuses_unfinished_native_reorg_without_recovering ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.03s
+

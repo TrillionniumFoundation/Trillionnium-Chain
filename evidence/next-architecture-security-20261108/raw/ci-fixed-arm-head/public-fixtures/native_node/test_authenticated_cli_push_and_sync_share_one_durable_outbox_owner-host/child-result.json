@@ -1,0 +1,13 @@
+{
+  "command_argv": [
+    "python3",
+    "scripts/ci/run_public_fixture_native.py",
+    "--out",
+    "/home/runner/work/_temp/next-architecture-head-42456517352-1/public-fixtures/native_node/test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner"
+  ],
+  "consensus_or_model_authority": false,
+  "host_errors": [],
+  "host_readiness_only": true,
+  "native_child_exit": 0,
+  "schema": "trnm-ci-original-public-host-child-v1"
+}
