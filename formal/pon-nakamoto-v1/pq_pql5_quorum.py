@@ -200,7 +200,8 @@ class LocalWitness:
             raise Reject("foreign witness DDL")
         # Per-connection TEMP triggers/tables do not appear in sqlite_master.
         # Both signed observation and append must reject namespace shadowing.
-        if self.db.execute("SELECT name FROM sqlite_temp_master WHERE name NOT LIKE 'sqlite_%' LIMIT 1").fetchone():
+        # Match the literal reserved prefix, including its underscore.
+        if self.db.execute("SELECT name FROM sqlite_temp_master WHERE name NOT GLOB 'sqlite_*' LIMIT 1").fetchone():
             raise Reject("temporary witness SQLite schema forbidden")
         try:
             leaf = os.lstat(self.path)

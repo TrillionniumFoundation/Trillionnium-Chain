@@ -299,8 +299,9 @@ class OfflineOneUseJournal:
             provider_key_id BLOB NOT NULL
         ) WITHOUT ROWID"""
     SCHEMA = [("table", "pq_custody_observation", DDL)]
-    SCHEMA_QUERY = "SELECT type,name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type,name"
-    TEMP_QUERY = "SELECT name FROM sqlite_temp_master WHERE name NOT LIKE 'sqlite_%' LIMIT 1"
+    # SQLite reserves the literal sqlite_ prefix; LIKE would treat _ as a wildcard.
+    SCHEMA_QUERY = "SELECT type,name,sql FROM sqlite_master WHERE name NOT GLOB 'sqlite_*' ORDER BY type,name"
+    TEMP_QUERY = "SELECT name FROM sqlite_temp_master WHERE name NOT GLOB 'sqlite_*' LIMIT 1"
 
     @staticmethod
     def _leaf_inode(path: Path, *, allow_missing: bool = False):
