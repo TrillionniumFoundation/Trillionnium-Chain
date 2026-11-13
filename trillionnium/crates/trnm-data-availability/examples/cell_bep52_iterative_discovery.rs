@@ -283,7 +283,6 @@ fn dht(
                                 | io::ErrorKind::Interrupted
                         ) =>
                     {
-                        ()
                     }
                     Err(error) => return Err(error.into()),
                 }
