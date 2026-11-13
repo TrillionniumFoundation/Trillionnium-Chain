@@ -29,6 +29,10 @@ class DurableReceiverAdmission(StatelessReceiverAdmission):
     The caller must separately authenticate the signed peer and protect an
     absolute, owner-private directory. Each serving process reopens the SAME
     physical DB; missing or independently copied DBs are not safe restarts.
+    Capacity, lifetime and the inherited minimum-cost policy are trusted local
+    settings, not persisted shared policy in this research schema. Every owner
+    must receive the same operator configuration; reopening does not restore a
+    raised local minimum. This class is not a policy-migration mechanism.
     """
 
     def __init__(self, receiver: bytes, secret: bytes, epoch: bytes,
@@ -164,6 +168,10 @@ class DurableReceiverAdmission(StatelessReceiverAdmission):
             if not hmac.compare_digest(
                     hmac.new(self.secret, payload, hashlib.sha256).digest(), mac):
                 return 'GRANT_MAC'
+            # Preserve the inherited owner's local policy before allocating a
+            # durable spend. An authenticated older grant cannot lower it.
+            if grant.bits < self.minimum_bits:
+                return 'PRICE_POLICY'
             if not grant.issued_ms <= now_ms < grant.expires_ms:
                 return 'EXPIRED_OR_FUTURE'
             # SQLite stores signed 64-bit integer timestamps. Reject a valid
