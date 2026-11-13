@@ -41,7 +41,7 @@ MAX_SOURCE_BYTES = 2 * 1024 * 1024
 # Current QROM mapping reviewed at 975ab093 (140 selected local inputs).
 # BASE_COMMIT remains the retained historical/literature baseline. Route
 # parameters, literature identities and security qualification are unchanged.
-FROZEN_SOURCE_SET_SHA256 = "1f773dbcf4710470c8a7f7b9c3e616cdca099bfa9561425dd940ef9478da9aae"
+FROZEN_SOURCE_SET_SHA256 = "494d2d9fc72cfdae473c7b9c7f53cbeed19eea42a14b991ff83b369e4390d927"
 SOURCE_SCOPE = "selected_route_inputs_not_full_repository_or_dependency_closure"
 ROUTE_IDS = ("risc0_poseidon2_fixed_v2", "plonky3_poseidon2_w1_r1",
              "plonky3_tagged_sha3_512_w1_r1")

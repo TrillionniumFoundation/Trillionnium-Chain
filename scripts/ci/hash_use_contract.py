@@ -31,7 +31,7 @@ REVIEWED_SEMANTICS_SHA256 = "29189f8e96a255472577479d46204b2b403a1f8e27806da6aa6
 # identities and the proof descriptor's 140-input W1 map were separately reviewed.
 # New exported APIs outside these declared uses are not a complete callgraph
 # review or current-use approval. The selected upstream profile remains withdrawn.
-REVIEWED_SOURCE_MAP_SHA256 = "75490c688e5bf5eab404cc57a716fc9fc51a3fd66d7e37285b10d3801471aadd"
+REVIEWED_SOURCE_MAP_SHA256 = "4c52b9ee94afcc67992da56ce88f0705bd4b5c6dd99f29fc56b4b894ed484cbf"
 
 USES = {
     "model-legacy-root": "model",

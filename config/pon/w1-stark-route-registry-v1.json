@@ -509,9 +509,9 @@
   "source_base_commit": "e2a02f9271b49f146e70806c8a66e161b5973971",
   "source_inputs": [
     {
-      "bytes": 45826,
+      "bytes": 46786,
       "path": "config/pon/w1-qrom-implementation-current-v2.json",
-      "sha256": "11cff1c62a3bd00ea97c0766f87cc5b50a09f1edc812d1fe5ad2e98631f7558b"
+      "sha256": "27cabbd49a12d1f0381fe5c89351888b26d8cc83b95e44dcd1dddb9b97ae7934"
     },
     {
       "bytes": 9445,

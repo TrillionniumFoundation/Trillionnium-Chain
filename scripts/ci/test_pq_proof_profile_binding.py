@@ -78,12 +78,12 @@ class ProofProfileBindingTests(unittest.TestCase):
             self.assertIs(result[key], False)
 
     def test_composed_current_mapping_has_one_fixed_identity_and_no_approval(self):
-        # Fixed review values from the 975ab093 source review, independent of
+        # Fixed review values from the 80ee3a6a actor source review, independent of
         # constants or pin values supplied by the implementation under test.
         expected = {
             'path': 'config/pon/w1-qrom-implementation-current-v2.json',
-            'bytes': 45826,
-            'sha256': '11cff1c62a3bd00ea97c0766f87cc5b50a09f1edc812d1fe5ad2e98631f7558b',
+            'bytes': 46786,
+            'sha256': '27cabbd49a12d1f0381fe5c89351888b26d8cc83b95e44dcd1dddb9b97ae7934',
         }
         security = json.loads((ROOT / binding.upstream.DEFAULT_MANIFEST).read_bytes())
         self.assertEqual(self.contract['mapping_contract'], expected)
@@ -160,7 +160,7 @@ class ProofProfileBindingTests(unittest.TestCase):
 
     def test_declared_audit_helpers_are_observed_without_changing_profile_identity(self):
         result = binding.inspect(ROOT, expected_profile_descriptor_sha256=
-                                 '89e80683454b5b5e0152c0454602f0cf631e88ab1da62aaac18a350391fdaf69')
+                                 '9b30541f9d05e335d1f598db3834df40588cc0e0a57b3035c9ce2be2dcc62e97')
         for row in self.mapping['audit_helpers']:
             self.assertEqual(result['source_files_sha256'][row['path']], row['sha256'])
         self.assertEqual(result['selected_input_observation_count'], len(self.paths))
@@ -375,7 +375,8 @@ class ProofProfileBindingTests(unittest.TestCase):
 
     def test_wrong_candidate_profile_descriptor_is_refused(self):
         for digest in ('0' * 64,
-                       'da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c'):
+                       'da0c97f1c549e10ecfc066f6b0a9721147dc3d430eab6f53d502cbc7b91dd48c',
+                       '89e80683454b5b5e0152c0454602f0cf631e88ab1da62aaac18a350391fdaf69'):
             with self.subTest(digest=digest), self.assertRaisesRegex(
                     binding.ProfileError, 'candidate proof profile descriptor mismatch'):
                 binding.inspect(ROOT, expected_profile_descriptor_sha256=digest)

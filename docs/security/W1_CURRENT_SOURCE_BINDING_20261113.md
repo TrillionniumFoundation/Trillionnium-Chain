@@ -151,3 +151,20 @@ upstream snapshot remain identical. The old descriptor
 89e80683454b5b5e0152c0454602f0cf631e88ab1da62aaac18a350391fdaf69.
 The candidate workflow and fixed test assertion bind that reviewed value.
 Exact descriptor mismatch refusal and the upstream-revoked HOLD remain.
+
+## Actor error-contract binding on the reviewed combination
+
+Combination 80ee3a6ad326662074b329d4c9b7c04a5580b504 includes actor correction 1166b1661b389104b2209fc71dd9a81f263f17a1.
+Only crypto/lib.rs changes within the 140-input closure: 10,395 to 12,112 bytes,
+with new SHA-256 83fe52804bfbc593e2768c3a88764b532539deb8c9e866ee7305286491e16115.
+The six crate roots, eight literal includes, 16 selected proof inputs and all other 139 inputs are unchanged.
+
+Canonical encoding and point checks still precede weak-key refusal. A typed marker keeps
+the same display text and lets the operator preserve ACTOR_WEAK_KEY. Identity, later
+weak-key and fixture-denylist checks remain. The mvcc caller is outside this W1 closure.
+
+The source-map change flows through STARK, profile/upstream, candidate and hash-use
+source pins. Selected proof identity, 19 hash-use semantics, all business/MAX budgets
+and false/null/HOLD fields remain fixed. The previous exact candidate descriptor is
+added to the existing ordinary refusal control. These metadata controls do not execute
+native code or confer current-proof-use eligibility.
