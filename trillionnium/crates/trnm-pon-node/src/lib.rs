@@ -4,6 +4,8 @@ mod ancestry_index;
 /// Explicit bounded native Cell replay; never installs a consensus work rule.
 pub mod cell_native_v1;
 pub mod consensus;
+/// Non-activated fixed-point difficulty research: never selected by Node.
+pub mod daa_research_v1;
 mod error;
 /// Fresh independent research capsule; never W1 admission or consensus credit.
 pub mod grouped_fresh_admission_v0;
