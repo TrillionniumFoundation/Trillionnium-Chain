@@ -1,0 +1,22 @@
+{
+  "name": "original-learning-owner",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-B",
+    "formal/release-finality-v2/check_existing_learning_owner.py"
+  ],
+  "timeout_seconds": 120,
+  "started_unix": 1794137017.965725,
+  "ended_unix": 1794137018.45482,
+  "exit_code": 0,
+  "status": "completed",
+  "expected_source": "ca8ca808ee636cc282dfee9558e419ab1225820f",
+  "stdout": {
+    "bytes": 105,
+    "sha256": "5a6abd032bd2e9e4fd4254ed96bd3f838e47a9b1717807f43f6efbd9a0004ba9"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

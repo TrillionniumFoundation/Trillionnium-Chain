@@ -2364,6 +2364,20 @@ effects; this read-only join does not replace them or create FinalUse. Keep the
 complete-cycle gate at **HOLD_NO_GO** pending same-source original evidence.
 
 
+**Four-domain Cell control-material continuation, 2026-11-08 America/New_York:**
+Extend the existing seven-role material reader through
+[the V2 administration/failure/funding/custody join](specs/pon/CELL_CONTROL_DOMAINS_V2.md).
+Execute the unchanged V1 owner-binding and signed V3 parent/NoUpdate checks;
+read exact bounded canonical document bytes; keep missing axes/documents unresolved;
+join declared administration, funding control and custody transitively across
+the same original controller IDs; and re-evaluate reviewers after that join.
+Common failure dependencies remain a separate conflict, not an authority claim.
+No marginal-domain counts create a joint independent-node count. This closes a
+material-schema omission only: authenticated complete real-world inventories,
+original learning actor association, independent operators, current revocation,
+WAN/fault qualification and all native use/activation gates remain unaccepted.
+
+
 **Cell original native use readbacks, 2026-11-08:** Preserve the original
 Hepta actor as the owner of retained-parent and adopted-candidate next-use.
 The [readback review](specs/pon/CELL_ADOPTION_READBACK_V1.md) consumes exact

@@ -1,0 +1,28 @@
+{
+  "name": "source-after",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-B",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "ca8ca808ee636cc282dfee9558e419ab1225820f",
+    "--output",
+    "/workspace/scratch/10366560c781/control-validation/source-after.json"
+  ],
+  "timeout_seconds": 300,
+  "started_unix": 1794137242.6714098,
+  "ended_unix": 1794137245.444705,
+  "exit_code": 0,
+  "status": "completed",
+  "expected_source": "ca8ca808ee636cc282dfee9558e419ab1225820f",
+  "stdout": {
+    "bytes": 423,
+    "sha256": "216466a9b2f437bb0d3dd0691dcfe76f17a2b4ba25f04e3707353ca3af398b49"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "strict-clippy",
+  "argv": [
+    "cargo",
+    "clippy",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--all-features",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "timeout_seconds": 900,
+  "started_unix": 1794137131.5463152,
+  "ended_unix": 1794137242.669948,
+  "exit_code": 0,
+  "status": "completed",
+  "expected_source": "ca8ca808ee636cc282dfee9558e419ab1225820f",
+  "stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "bytes": 6848,
+    "sha256": "04601f2bc513d5fbd78756ae7b81b52490da4317c585a60a8186053a27b399f0"
+  }
+}

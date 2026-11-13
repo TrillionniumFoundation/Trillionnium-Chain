@@ -1,0 +1,26 @@
+{
+  "name": "cargo-graph",
+  "argv": [
+    "cargo",
+    "metadata",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--format-version",
+    "1"
+  ],
+  "timeout_seconds": 300,
+  "started_unix": 1794137104.2528985,
+  "ended_unix": 1794137117.4093769,
+  "exit_code": 0,
+  "status": "completed",
+  "expected_source": "ca8ca808ee636cc282dfee9558e419ab1225820f",
+  "stdout": {
+    "bytes": 844264,
+    "sha256": "b090a8ebbf65572f2af6e910888411d1fa887d72a6df4b5e7800651e26755dcf"
+  },
+  "stderr": {
+    "bytes": 4820,
+    "sha256": "255decd51cabf96a5e3de6f427e2d951c8fe40173ce53c1b2b7910016a8dbacf"
+  }
+}

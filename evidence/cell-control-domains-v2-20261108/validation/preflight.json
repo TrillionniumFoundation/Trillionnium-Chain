@@ -1,0 +1,21 @@
+{
+  "name": "preflight",
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "timeout_seconds": 60,
+  "started_unix": 1794137003.5344677,
+  "ended_unix": 1794137003.705295,
+  "exit_code": 0,
+  "status": "completed",
+  "expected_source": "ca8ca808ee636cc282dfee9558e419ab1225820f",
+  "stdout": {
+    "bytes": 169,
+    "sha256": "c1e0aa1a9f7af1156456cce127044f4248a9809e162efb97b6f9c3766495514d"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}
