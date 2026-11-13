@@ -1,0 +1,9 @@
+test_original_grant_obeys_raised_local_owner_policy (test_w2c_durable_spent.DurablePaidSpendTests.test_original_grant_obeys_raised_local_owner_policy) ... ok
+test_restart_same_store_rejects_paid_ticket (test_w2c_durable_spent.DurablePaidSpendTests.test_restart_same_store_rejects_paid_ticket) ... ok
+test_shared_capacity_and_expiry_survive_restart (test_w2c_durable_spent.DurablePaidSpendTests.test_shared_capacity_and_expiry_survive_restart) ... ok
+test_two_distinct_instances_one_original_db_have_only_one_ready (test_w2c_durable_spent.DurablePaidSpendTests.test_two_distinct_instances_one_original_db_have_only_one_ready) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.070s
+
+OK

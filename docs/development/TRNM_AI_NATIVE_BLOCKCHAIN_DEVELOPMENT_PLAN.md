@@ -14545,3 +14545,26 @@ Status: **HOLD; draft only; native full suite failed**. Native checkpoint `8d8c0
 C1 `11c9562252d3cf56b423c7756569be0c669d9606` keeps its initial node green failure (3 passed / 1 failed) and initial offline dependency failure. The corrected node counterfactual changes only the old node owner plus its test declaration over C1 dependencies: red 0 passed / 4 failed, C2 green 4 passed / 0 failed. Settlement red remains 2 passed / 6 failed and C2 green 8 passed / 0 failed; C2 settlement completed 77 library plus 2 documentation tests and crypto completed 196 library tests. Exact commands, environments and all original streams are in the [native evidence](../../evidence/pon-followthrough-20261110-685a/README.md). The separately collected exact-BASE two-test control observed large-parent 1/0 (both backends) and inactive-page 0/1 with `PUBLIC_MUTATION_CPU_BUDGET`. Its different build/environment and refill observations do not establish a single cause for the C2 failures or replace the failed full suite.
 
 The child integrates the exact CI roster/artifact/QROM-current registrations, preserves the historical QROM lane, rebinds selected source surveys to C2, retains every previous corpus dependency and adds the new implementation inputs. Its actual source/corpus/ledger/CI/repository/Markdown/format checks are separate controller receipts on the eventual child commit; this entry does not assert those checks or hosted CI passed. All false/null qualification fields, existing historical evidence and open work-cost/service/consensus/model-benefit obligations remain unchanged. No activation is authorized by this observation.
+
+### 2026-11-13 W2 research branch consolidation
+
+Review 20 assigned W2/formal tips plus four formal-only transfers as 24
+original heads and 95 distinct source variants. Retain source-qualified
+alternatives where SQLite formats, signed profiles, policy ownership or
+restart contracts differ. Preserve 33 original documentation variants and
+failed/HOLD observations through their exact heads before branch retirement.
+
+The selected continuation composes one stateful owner policy with original
+nonrefunding epoch issuance, preserves conservative shared-preparation cost
+and finite/unknown arithmetic, and retains read-only economic models. The
+shared-database research class honors its inherited local floor; capacity,
+lifetime and floor still are not durable shared policy. No schema migration
+is implied.
+
+Retain the independent bounded Go W1 oracle with ordinary controls. Exact
+source receipts record 35 selected Python methods, two Go functions and ten
+full-byte Go/Python cases across three checkpoints. Historical falsification
+and cost workflows were not rerun. These results do not qualify full historic
+suites, native Node, WAN, physical GPU/ASIC cost, independent custody,
+cryptographic soundness or production activation. See
+[evidence and per-tip decisions](../../evidence/branch-consolidation-20261113/w2/README.md).

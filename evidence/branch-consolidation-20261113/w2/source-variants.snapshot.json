@@ -1,0 +1,2305 @@
+{
+  "selected_checkpoint": "11a2cba1953f4aaee97e8ed169fcfd9a1517da23",
+  "cohort": [
+    {
+      "name": "dot/w2c-durable-negative-tests-repair-20261027-0758",
+      "sha": "fa704e45c1fea9e99dd35a77142d9b27a09fe7e0",
+      "commit_date": "2026-10-27T04:06:03-04:00",
+      "subject": "test(w2c): restore false-W1 durable negative tests and cross-process paid-spend coverage",
+      "unique_commits": 7,
+      "merge_base": "2787ad3959359bc5377d982a7ab46a2d76d44e0e",
+      "core_paths": [
+        "formal/pon-nakamoto-v1/test_w2c_durable_spent.py",
+        "formal/pon-nakamoto-v1/w2c_durable_spent.py"
+      ],
+      "residual_counts": {
+        "evidence_or_documentation": 1,
+        "implementation_or_tooling": 2
+      }
+    },
+    {
+      "name": "dot/w2c-durable-paid-claims-20261027",
+      "sha": "9934e70dba5aabf5f02b85bc92ec87544fdf51e8",
+      "commit_date": "2026-10-27T01:18:57-04:00",
+      "subject": "docs(pon): retain paid-durability latency regression and prohibit V3 activation without matched native cost",
+      "unique_commits": 10,
+      "merge_base": "2787ad3959359bc5377d982a7ab46a2d76d44e0e",
+      "core_paths": [
+        "formal/pon-nakamoto-v1/test_w2c_durable_paid_claims.py",
+        "formal/pon-nakamoto-v1/w2c_durable_cost.py",
+        "formal/pon-nakamoto-v1/w2c_durable_paid_claims.py"
+      ],
+      "residual_counts": {
+        "evidence_or_documentation": 1,
+        "implementation_or_tooling": 3
+      }
+    },
+    {
+      "name": "dot/w1-p1-integrated-preview-20261027",
+      "sha": "10429dab61b195e8b9bd7e1950081acb4bfd83e0",
+      "commit_date": "2026-10-27T00:42:06-04:00",
+      "subject": "docs(pon): pin twelve-path integration and 26 isolated W2-C replay tests without production claims",
+      "unique_commits": 11,
+      "merge_base": "db0dad68f0909460e8b1cf0c248d8bab4b59c129",
+      "core_paths": [
+        "formal/pon-nakamoto-v1/test_w2c_durable_spend.py",
+        "formal/pon-nakamoto-v1/test_w2c_stateless_receiver.py",
+        "formal/pon-nakamoto-v1/w2c_durable_spend.py",
+        "formal/pon-nakamoto-v1/w2c_stateless_receiver.py",
+        "trillionnium/crates/trnm-pon-node/src/error.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "trillionnium/crates/trnm-pon-node/src/main.rs",
+        "trillionnium/crates/trnm-pon-node/src/peer_polling.rs"
+      ],
+      "residual_counts": {
+        "evidence_or_documentation": 3,
+        "implementation_or_tooling": 8
+      }
+    },
+    {
+      "name": "dot/p0-p6-chain-security-integration-20261026",
+      "sha": "26dd988a1eb3b464cf9a53b8a0c32df390523776",
+      "commit_date": "2026-10-26T21:57:34-04:00",
+      "subject": "docs(security): record per-packet cgroup rechecks and nonpreemptive security limit",
+      "unique_commits": 10,
+      "merge_base": "7ed523093e89bd50ce85775ca023028fdc3a58c7",
+      "core_paths": [
+        "formal/pon-nakamoto-v1/test_w2c_durable_spend.py",
+        "formal/pon-nakamoto-v1/w2c_durable_spend.py",
+        "scripts/ci/ci_job.sh",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "trillionnium/crates/trnm-pon-node/src/main.rs"
+      ],
+      "residual_counts": {
+        "evidence_or_documentation": 2,
+        "implementation_or_tooling": 4,
+        "checks_or_configuration": 1
+      }
+    },
+    {
+      "name": "dot/w2c-durable-epoch-fence-20261026",
+      "sha": "ca2e9d14d58e0882c3be58a3711428e055ff2eb6",
+      "commit_date": "2026-10-26T21:07:00-04:00",
+      "subject": "docs(research): preserve initial SIGKILL child readiness failure and bounded retry evidence",
+      "unique_commits": 6,
+      "merge_base": "2787ad3959359bc5377d982a7ab46a2d76d44e0e",
+      "core_paths": [
+        "formal/pon-nakamoto-v1/test_w2c_durable_crash.py",
+        "formal/pon-nakamoto-v1/test_w2c_durable_epoch.py",
+        "formal/pon-nakamoto-v1/w2c_durable_epoch.py"
+      ],
+      "residual_counts": {
+        "evidence_or_documentation": 1,
+        "implementation_or_tooling": 3
+      }
+    },
+    {
+      "name": "dot/p3-w2c-durable-epoch-owner-20261026",
+      "sha": "db379fe21097ac4501f17f0362fec421d687d412",
+      "commit_date": "2026-10-26T15:31:40-04:00",
+      "subject": "docs(pon): pin warning-free real-process fork control and exact 14-case local result",
+      "unique_commits": 8,
+      "merge_base": "2787ad3959359bc5377d982a7ab46a2d76d44e0e",
+      "core_paths": [
+        "formal/pon-nakamoto-v1/test_w2c_durable_epoch_owner.py",
+        "formal/pon-nakamoto-v1/w2c_durable_cost.py",
+        "formal/pon-nakamoto-v1/w2c_durable_epoch_owner.py"
+      ],
+      "residual_counts": {
+        "evidence_or_documentation": 1,
+        "implementation_or_tooling": 3
+      }
+    },
+    {
+      "name": "dot/pon-p2-economics-integrated-20261026",
+      "sha": "d575524c95b198d49c1459f58184a65b4f999722",
+      "commit_date": "2026-10-26T12:05:25-04:00",
+      "subject": "fix(research): reject overflowing shared-W1 fanout cost even under unknown acceleration",
+      "unique_commits": 15,
+      "merge_base": "7ed523093e89bd50ce85775ca023028fdc3a58c7",
+      "core_paths": [
+        "formal/pon-nakamoto-v1/test_w2c_cost_verdict.py",
+        "formal/pon-nakamoto-v1/test_w2c_sqlite_spend_owner.py",
+        "formal/pon-nakamoto-v1/test_w2c_stateless_durable_spends.py",
+        "formal/pon-nakamoto-v1/w2c_cost_verdict.py",
+        "formal/pon-nakamoto-v1/w2c_sqlite_spend_owner.py",
+        "formal/pon-nakamoto-v1/w2c_stateless_receiver.py",
+        "scripts/ci/ci_job.sh",
+        "scripts/ci/test_pon_admission_price_model.py",
+        "scripts/ci/test_pon_p2_joint_triage.py",
+        "scripts/pon_admission_price_model.py",
+        "scripts/pon_p2_joint_triage.py",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "trillionnium/crates/trnm-pon-node/src/main.rs"
+      ],
+      "residual_counts": {
+        "evidence_or_documentation": 5,
+        "implementation_or_tooling": 10,
+        "checks_or_configuration": 3
+      }
+    },
+    {
+      "name": "dot/p5-single-host-epoch-exclusivity-20261026",
+      "sha": "c953a86c9338bc46509ed527e53bd836d66ffce2",
+      "commit_date": "2026-10-26T10:17:01-04:00",
+      "subject": "docs(security): preserve pre-fix global atfork secret-retention negative and exact eight-test evidence",
+      "unique_commits": 8,
+      "merge_base": "2787ad3959359bc5377d982a7ab46a2d76d44e0e",
+      "core_paths": [
+        "formal/pon-nakamoto-v1/test_w2c_local_epoch_lease.py",
+        "formal/pon-nakamoto-v1/w2c_local_epoch_lease.py"
+      ],
+      "residual_counts": {
+        "evidence_or_documentation": 1,
+        "implementation_or_tooling": 2
+      }
+    },
+    {
+      "name": "dot/w2c-durable-paid-spend-20261026",
+      "sha": "cab37b3f9ea4cc2565e2902c38c5a36f095ab171",
+      "commit_date": "2026-10-26T09:38:16-04:00",
+      "subject": "docs(research): retain observed SQLite admission cost and still-open honest latency gate",
+      "unique_commits": 16,
+      "merge_base": "2787ad3959359bc5377d982a7ab46a2d76d44e0e",
+      "core_paths": [
+        "formal/pon-nakamoto-v1/test_w2c_durable_integration.py",
+        "formal/pon-nakamoto-v1/test_w2c_durable_spent.py",
+        "formal/pon-nakamoto-v1/w2c_durable_spent.py",
+        "formal/pon-nakamoto-v1/w2c_stateless_receiver.py",
+        "scripts/ci/ci_job.sh"
+      ],
+      "residual_counts": {
+        "evidence_or_documentation": 1,
+        "implementation_or_tooling": 4,
+        "checks_or_configuration": 1
+      }
+    },
+    {
+      "name": "dot/w2c-durable-spend-20261026",
+      "sha": "093ec49ae58da21d79c1fc1df0e3569f4d9e357b",
+      "commit_date": "2026-10-26T09:04:32-04:00",
+      "subject": "docs(pon): record durable spend semantics, local 9-case evidence and copied-state replay failure",
+      "unique_commits": 7,
+      "merge_base": "2787ad3959359bc5377d982a7ab46a2d76d44e0e",
+      "core_paths": [
+        "formal/pon-nakamoto-v1/test_w2c_durable_spend.py",
+        "formal/pon-nakamoto-v1/test_w2c_stateless_receiver.py",
+        "formal/pon-nakamoto-v1/w2c_durable_spend.py",
+        "formal/pon-nakamoto-v1/w2c_stateless_receiver.py"
+      ],
+      "residual_counts": {
+        "evidence_or_documentation": 2,
+        "implementation_or_tooling": 4
+      }
+    },
+    {
+      "name": "dot/w2c-durable-consume-20261026",
+      "sha": "e19245dd880a989b5310cda126ff2f27a6da67d4",
+      "commit_date": "2026-10-26T07:50:42-04:00",
+      "subject": "docs(research): retain measured matched W1/W2-C SQLite cost and falsification of price closure",
+      "unique_commits": 9,
+      "merge_base": "2787ad3959359bc5377d982a7ab46a2d76d44e0e",
+      "core_paths": [
+        "formal/pon-nakamoto-v1/test_w2c_durable_receiver.py",
+        "formal/pon-nakamoto-v1/w2c_durable_costs.py",
+        "formal/pon-nakamoto-v1/w2c_durable_receiver.py"
+      ],
+      "residual_counts": {
+        "evidence_or_documentation": 1,
+        "implementation_or_tooling": 3
+      }
+    },
+    {
+      "name": "dot/p2-admission-cost-verdict-20261026",
+      "sha": "7573e3ae83fd6090a1005a29fe716b0402b090ff",
+      "commit_date": "2026-10-26T07:25:20-04:00",
+      "subject": "docs(pon): formalize unknown-fail conservative CPU/GPU PoN admission economics",
+      "unique_commits": 3,
+      "merge_base": "2787ad3959359bc5377d982a7ab46a2d76d44e0e",
+      "core_paths": [
+        "formal/pon-nakamoto-v1/test_w2c_cost_verdict.py",
+        "formal/pon-nakamoto-v1/w2c_cost_verdict.py"
+      ],
+      "residual_counts": {
+        "evidence_or_documentation": 1,
+        "implementation_or_tooling": 2
+      }
+    },
+    {
+      "name": "dot/w2c-durable-spend-owner-20261026",
+      "sha": "4bf21e2a1e92e07955129c98d2c4f9102d3a1742",
+      "commit_date": "2026-10-26T07:07:11-04:00",
+      "subject": "docs(pon): preserve atomic durable spend evidence and whole-db clone failure",
+      "unique_commits": 3,
+      "merge_base": "2787ad3959359bc5377d982a7ab46a2d76d44e0e",
+      "core_paths": [
+        "formal/pon-nakamoto-v1/test_w2c_durable_receiver.py",
+        "formal/pon-nakamoto-v1/w2c_durable_receiver.py"
+      ],
+      "residual_counts": {
+        "evidence_or_documentation": 1,
+        "implementation_or_tooling": 2
+      }
+    },
+    {
+      "name": "dot/w2e-global-polynomial-research-20261026",
+      "sha": "4f367f106f97c92e95cca6a85c59fbc9d01d4a92",
+      "commit_date": "2026-10-26T06:51:32-04:00",
+      "subject": "docs(security): five-round batched W2-E source, adaptive grinding and measured late-rejection blocker",
+      "unique_commits": 15,
+      "merge_base": "db0dad68f0909460e8b1cf0c248d8bab4b59c129",
+      "core_paths": [
+        "formal/pon-nakamoto-v1/test_w2d_full_tile_freivalds.py",
+        "formal/pon-nakamoto-v1/test_w2d_late_tile_attack.py",
+        "formal/pon-nakamoto-v1/test_w2e_batched_polynomial.py",
+        "formal/pon-nakamoto-v1/test_w2e_matched_costs.py",
+        "formal/pon-nakamoto-v1/w2d_full_tile_freivalds.py",
+        "formal/pon-nakamoto-v1/w2d_late_tile_attack.py",
+        "formal/pon-nakamoto-v1/w2e_batched_polynomial.py",
+        "formal/pon-nakamoto-v1/w2e_matched_costs.py"
+      ],
+      "residual_counts": {
+        "evidence_or_documentation": 2,
+        "implementation_or_tooling": 8
+      }
+    },
+    {
+      "name": "dot/w2c-durable-paid-replay-20261026",
+      "sha": "b517d6f9e1e763742853c0d65f512d53203ec768",
+      "commit_date": "2026-10-26T03:58:32-04:00",
+      "subject": "docs(pon): add actual unclean subprocess termination to W2-C paid replay qualification scope",
+      "unique_commits": 6,
+      "merge_base": "2787ad3959359bc5377d982a7ab46a2d76d44e0e",
+      "core_paths": [
+        "formal/pon-nakamoto-v1/test_w2c_durable_receiver.py",
+        "formal/pon-nakamoto-v1/w2c_durable_receiver.py"
+      ],
+      "residual_counts": {
+        "evidence_or_documentation": 1,
+        "implementation_or_tooling": 2
+      }
+    },
+    {
+      "name": "dot/p1-consolidated-host-origin-20261026",
+      "sha": "a4f7fd5bdace75612928be0917f550f7dea864fc",
+      "commit_date": "2026-10-26T02:04:16-04:00",
+      "subject": "docs(security): consolidate P1 remote peer guards on complete W1 admission research branch",
+      "unique_commits": 12,
+      "merge_base": "563a8c982106dc38880f4a8cbaf37f4f89fa9cb4",
+      "core_paths": [
+        "formal/pon-nakamoto-v1/test_w2_admission_cost_envelope.py",
+        "formal/pon-nakamoto-v1/w2_admission_cost_envelope.py",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+        "trillionnium/crates/trnm-pon-node/src/main.rs",
+        "trillionnium/crates/trnm-pon-node/src/peer_polling.rs"
+      ],
+      "residual_counts": {
+        "evidence_or_documentation": 5,
+        "implementation_or_tooling": 5
+      }
+    },
+    {
+      "name": "dot/w2d-freivalds-cost-research-20261026",
+      "sha": "51423e17989d837405c9455a012bc654a21a5e0c",
+      "commit_date": "2026-10-26T01:30:21-04:00",
+      "subject": "docs(pon): retain four ticket-winning forged W2-D cases and unqualified amplification",
+      "unique_commits": 6,
+      "merge_base": "db0dad68f0909460e8b1cf0c248d8bab4b59c129",
+      "core_paths": [
+        "formal/pon-nakamoto-v1/test_w2d_product_projection.py",
+        "formal/pon-nakamoto-v1/w2d_product_projection.py",
+        "scripts/ci/ci_job.sh"
+      ],
+      "residual_counts": {
+        "evidence_or_documentation": 1,
+        "implementation_or_tooling": 2,
+        "checks_or_configuration": 1
+      }
+    },
+    {
+      "name": "dot/w2c-issuer-epoch-quota-20261025",
+      "sha": "7aa1a1dad78e530329ba03d81f7e7da01296f27d",
+      "commit_date": "2026-10-25T23:51:14-04:00",
+      "subject": "docs(security): distinguish finite epoch grant issuance from Sybil fairness and CPU pricing",
+      "unique_commits": 3,
+      "merge_base": "f06ccc809ebd7f553a55d5a54af1ba80e6523126",
+      "core_paths": [
+        "formal/pon-nakamoto-v1/test_w2c_receiver_admission.py",
+        "formal/pon-nakamoto-v1/w2c_receiver_admission.py"
+      ],
+      "residual_counts": {
+        "evidence_or_documentation": 1,
+        "implementation_or_tooling": 2
+      }
+    },
+    {
+      "name": "dot/w2d-fs-prefix-full-tape-20261025",
+      "sha": "9386ba1462138b0e235b22050afc9225d90c3cb0",
+      "commit_date": "2026-10-25T21:41:21-04:00",
+      "subject": "docs(pon): record fail-closed exact prototype cost reader and second retained local sample",
+      "unique_commits": 9,
+      "merge_base": "e55107450eb1a1f051a6c98101f3f88b7afa8f91",
+      "core_paths": [
+        "formal/pon-nakamoto-v1/test_w2c_stateless_paired_cost.py",
+        "formal/pon-nakamoto-v1/test_w2c_stateless_receiver_admission.py",
+        "formal/pon-nakamoto-v1/test_w2d_transcript_freivalds.py",
+        "formal/pon-nakamoto-v1/w2c_stateless_paired_cost.py",
+        "formal/pon-nakamoto-v1/w2c_stateless_receiver_admission.py",
+        "formal/pon-nakamoto-v1/w2d_cost.py",
+        "formal/pon-nakamoto-v1/w2d_transcript_freivalds.py",
+        "trillionnium/crates/trnm-pon-node/src/peer_polling.rs"
+      ],
+      "residual_counts": {
+        "evidence_or_documentation": 3,
+        "implementation_or_tooling": 8
+      }
+    },
+    {
+      "name": "dot/pon-next-p1-p3-w2c-20261025",
+      "sha": "658b61cacc539f0c4faf1216f7ff10a77a0bd4d7",
+      "commit_date": "2026-10-25T11:29:30-04:00",
+      "subject": "test(pon): require Python full W1 verifier as well as Go across all ten cases",
+      "unique_commits": 32,
+      "merge_base": "97e42de18da8e66f85cb9ed5adda39288a29f791",
+      "core_paths": [
+        "formal/pon-nakamoto-v1/go_oracle/cmd/pon_w1_io/main.go",
+        "formal/pon-nakamoto-v1/go_oracle/go.mod",
+        "formal/pon-nakamoto-v1/go_oracle/w1.go",
+        "formal/pon-nakamoto-v1/go_oracle/w1_test.go",
+        "formal/pon-nakamoto-v1/test_go_w1_cross_language.py",
+        "formal/pon-nakamoto-v1/test_w2_candidate_comparison.py",
+        "formal/pon-nakamoto-v1/test_w2_research_vectors.py",
+        "formal/pon-nakamoto-v1/test_w2b_relation_witness.py",
+        "formal/pon-nakamoto-v1/test_w2c_separated_security_pow.py",
+        "formal/pon-nakamoto-v1/w2_candidate_comparison.py",
+        "formal/pon-nakamoto-v1/w2_research_vectors_v0.json",
+        "formal/pon-nakamoto-v1/w2b_relation_witness.py",
+        "formal/pon-nakamoto-v1/w2c_separated_security_pow.py",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/w2_research_vectors.rs",
+        "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress.rs"
+      ],
+      "residual_counts": {
+        "evidence_or_documentation": 5,
+        "implementation_or_tooling": 17
+      }
+    }
+  ],
+  "variants": [
+    {
+      "id": 0,
+      "path": "formal/pon-nakamoto-v1/test_w2c_durable_spent.py",
+      "branch_blob": "15e612c03d73a22bfade110535034c11b44d2c7a",
+      "current_blob": "15e612c03d73a22bfade110535034c11b44d2c7a",
+      "tips": [
+        "fa704e45c1fea9e99dd35a77142d9b27a09fe7e0"
+      ],
+      "state": "exact",
+      "historical_lines": 298,
+      "current_lines": 298,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 1,
+      "path": "formal/pon-nakamoto-v1/w2c_durable_spent.py",
+      "branch_blob": "310b576585c7b0a16a674cbcd62f4d9cde9497b0",
+      "current_blob": "310b576585c7b0a16a674cbcd62f4d9cde9497b0",
+      "tips": [
+        "fa704e45c1fea9e99dd35a77142d9b27a09fe7e0"
+      ],
+      "state": "exact",
+      "historical_lines": 210,
+      "current_lines": 210,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 2,
+      "path": "formal/pon-nakamoto-v1/test_w2c_durable_paid_claims.py",
+      "branch_blob": "cf91d3b9405409cf287b3811d69ab41828e507d2",
+      "current_blob": null,
+      "tips": [
+        "9934e70dba5aabf5f02b85bc92ec87544fdf51e8"
+      ],
+      "state": "absent",
+      "historical_lines": 173,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "DurableReceiverTests",
+        "DurableReceiverTests.grant",
+        "DurableReceiverTests.setUp",
+        "DurableReceiverTests.test_abrupt_exit_after_commit_before_w1_retains_paid_record",
+        "DurableReceiverTests.test_bad_unowned_paths_and_missing_schema_fail_closed",
+        "DurableReceiverTests.test_cloned_process_epoch_share_one_durable_paid_claim",
+        "DurableReceiverTests.test_copied_epoch_without_shared_store_still_replays",
+        "DurableReceiverTests.test_crash_after_commit_before_w1_does_not_refund",
+        "DurableReceiverTests.test_database_disappearance_fails_closed_after_paid_ticket",
+        "DurableReceiverTests.test_different_capacity_or_epoch_cannot_mint_larger_claim_budget",
+        "DurableReceiverTests.test_full_global_paid_capacity_is_not_free_w1",
+        "DurableReceiverTests.test_live_database_policy_change_fails_before_w1",
+        "DurableReceiverTests.test_modified_schema_cannot_be_restarted_as_free_epoch",
+        "DurableReceiverTests.test_paid_w2c_ticket_does_not_make_false_w1_into_chainwork",
+        "DurableReceiverTests.test_persistent_monotonic_high_watermark",
+        "DurableReceiverTests.test_remote_claim_rejects_mutated_caller_without_consuming",
+        "use_fresh_process"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 3,
+      "path": "formal/pon-nakamoto-v1/w2c_durable_cost.py",
+      "branch_blob": "8bee0361e92b25bfd08db00c17e23d3ed2c71d4f",
+      "current_blob": "d231675b41a8c0cb36be8aa5ef4e3282eeaa8849",
+      "tips": [
+        "9934e70dba5aabf5f02b85bc92ec87544fdf51e8"
+      ],
+      "state": "different",
+      "historical_lines": 123,
+      "current_lines": 133,
+      "old_names_absent_current": [
+        "measured"
+      ],
+      "current_names_absent_old": [
+        "false_w1",
+        "timed"
+      ]
+    },
+    {
+      "id": 4,
+      "path": "formal/pon-nakamoto-v1/w2c_durable_paid_claims.py",
+      "branch_blob": "7b8a51e7912749d4ad284b711e9339f85be8e7fb",
+      "current_blob": null,
+      "tips": [
+        "9934e70dba5aabf5f02b85bc92ec87544fdf51e8"
+      ],
+      "state": "absent",
+      "historical_lines": 167,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "DurableStatelessReceiver",
+        "DurableStatelessReceiver.__init__",
+        "DurableStatelessReceiver.consume",
+        "_checked_path",
+        "_connect",
+        "_existing_file",
+        "provision"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 5,
+      "path": "formal/pon-nakamoto-v1/test_w2c_durable_spend.py",
+      "branch_blob": "d72a8568e1c6630bf1cfe5c0bca0bb2024e489c1",
+      "current_blob": "aa4af217a6bf66a8e8505b64f44eef9c08a23cc6",
+      "tips": [
+        "10429dab61b195e8b9bd7e1950081acb4bfd83e0"
+      ],
+      "state": "different",
+      "historical_lines": 188,
+      "current_lines": 91,
+      "old_names_absent_current": [
+        "DurablePaidSpendTests",
+        "DurablePaidSpendTests.grant",
+        "DurablePaidSpendTests.issuer",
+        "DurablePaidSpendTests.owner",
+        "DurablePaidSpendTests.setUp",
+        "DurablePaidSpendTests.test_capacity_expiration_and_atomic_no_refund",
+        "DurablePaidSpendTests.test_db_error_cannot_grant_ticket",
+        "DurablePaidSpendTests.test_distinct_processes_one_sqlite_winner",
+        "DurablePaidSpendTests.test_durable_paid_false_trace_still_fails_independent_w1",
+        "DurablePaidSpendTests.test_durable_time_watermark_refuses_clock_rollback_across_clones",
+        "DurablePaidSpendTests.test_issuer_still_does_not_grant_verified_work",
+        "DurablePaidSpendTests.test_restart_reopens_durable_spend_before_old_grant",
+        "DurablePaidSpendTests.test_two_clones_one_real_shared_ledger_replay_refused",
+        "DurablePaidSpendTests.test_two_independently_copied_stores_do_not_supply_global_replay_safety",
+        "DurablePaidSpendTests.test_wrong_receiver_epoch_bits_and_capacity_cannot_share_file",
+        "independent_consumer"
+      ],
+      "current_names_absent_old": [
+        "DurableTests",
+        "DurableTests.gate",
+        "DurableTests.setUp",
+        "DurableTests.tearDown",
+        "DurableTests.test_capacity_and_ttl_cannot_widen_on_reopen",
+        "DurableTests.test_copied_database_is_not_a_global_replay_proof",
+        "DurableTests.test_crash_reopen_and_replay",
+        "DurableTests.test_monotonic_and_expiration",
+        "DurableTests.test_parallel_same_host_two_connections",
+        "DurableTests.test_preexisting_symlink_and_hardlink_database_refused",
+        "DurableTests.test_price_survives_reopen_and_cannot_rollback",
+        "DurableTests.test_scope_clone_rejected_on_same_db",
+        "DurableTests.test_wrong_mac_wrong_host_and_capacity",
+        "make"
+      ]
+    },
+    {
+      "id": 6,
+      "path": "formal/pon-nakamoto-v1/test_w2c_stateless_receiver.py",
+      "branch_blob": "0c4c04a0b4cc17f5d51c18e9fb6d9885aab6f882",
+      "current_blob": "1e000a6d68ece8f1312e095f9d343be97ee66a9a",
+      "tips": [
+        "10429dab61b195e8b9bd7e1950081acb4bfd83e0"
+      ],
+      "state": "different",
+      "historical_lines": 177,
+      "current_lines": 204,
+      "old_names_absent_current": [
+        "StatelessAdmissionControls",
+        "StatelessAdmissionControls.grant",
+        "StatelessAdmissionControls.setUp",
+        "StatelessAdmissionControls.test_authentic_old_policy_ticket_cannot_buy_new_policy_replay",
+        "StatelessAdmissionControls.test_caller_identity_and_proposal_are_both_bound",
+        "StatelessAdmissionControls.test_copying_same_secret_and_epoch_cannot_be_called_safe_restart",
+        "StatelessAdmissionControls.test_distinct_receivers_cannot_replay_same_paid_nonce",
+        "StatelessAdmissionControls.test_expiration_and_clock_regression_fail_closed",
+        "StatelessAdmissionControls.test_new_epoch_makes_old_grant_unusable",
+        "StatelessAdmissionControls.test_paid_capacity_and_no_free_w1_when_full",
+        "StatelessAdmissionControls.test_paid_research_ticket_still_rejects_false_w1_transcript",
+        "StatelessAdmissionControls.test_same_paid_ticket_thirty_two_concurrent_consumers_exactly_one",
+        "StatelessAdmissionControls.test_server_owned_difficulty_disallows_unpriced_offers",
+        "StatelessAdmissionControls.test_tamper_bad_nonce_and_strict_types",
+        "StatelessAdmissionControls.test_unpaid_issued_grants_do_not_fill_any_spent_slots"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 7,
+      "path": "formal/pon-nakamoto-v1/w2c_durable_spend.py",
+      "branch_blob": "905d4589e5d807cf0093c290014c89c11f6c8281",
+      "current_blob": "c8f20aaae584993868bd98b57c53348c26359d2b",
+      "tips": [
+        "10429dab61b195e8b9bd7e1950081acb4bfd83e0"
+      ],
+      "state": "different",
+      "historical_lines": 123,
+      "current_lines": 170,
+      "old_names_absent_current": [
+        "SQLiteSpentOwner",
+        "SQLiteSpentOwner.__init__",
+        "SQLiteSpentOwner.close",
+        "SQLiteSpentOwner.pending_paid",
+        "SQLiteSpentOwner.spend"
+      ],
+      "current_names_absent_old": [
+        "DurableSpendGate",
+        "DurableSpendGate._Tx",
+        "DurableSpendGate._Tx.__enter__",
+        "DurableSpendGate._Tx.__exit__",
+        "DurableSpendGate._Tx.__init__",
+        "DurableSpendGate.__init__",
+        "DurableSpendGate._clock",
+        "DurableSpendGate._transaction",
+        "DurableSpendGate.close",
+        "DurableSpendGate.consume",
+        "DurableSpendGate.pending_paid",
+        "DurableSpendGate.raise_minimum_bits"
+      ]
+    },
+    {
+      "id": 8,
+      "path": "formal/pon-nakamoto-v1/w2c_stateless_receiver.py",
+      "branch_blob": "b498bfaea05e506f98e90b52047ed4a2ae48452c",
+      "current_blob": "bbd703e4fca74757783bc20f2b4ca3870a968da1",
+      "tips": [
+        "10429dab61b195e8b9bd7e1950081acb4bfd83e0"
+      ],
+      "state": "different",
+      "historical_lines": 142,
+      "current_lines": 130,
+      "old_names_absent_current": [],
+      "current_names_absent_old": [
+        "StatelessReceiverAdmission.raise_minimum_bits"
+      ]
+    },
+    {
+      "id": 9,
+      "path": "formal/pon-nakamoto-v1/test_w2c_durable_spend.py",
+      "branch_blob": "2a864cc6076dc43c0cc727248e29071bb82152f9",
+      "current_blob": "aa4af217a6bf66a8e8505b64f44eef9c08a23cc6",
+      "tips": [
+        "26dd988a1eb3b464cf9a53b8a0c32df390523776"
+      ],
+      "state": "different",
+      "historical_lines": 250,
+      "current_lines": 91,
+      "old_names_absent_current": [
+        "DurableReceiverCostControls",
+        "DurableReceiverCostControls.paid",
+        "DurableReceiverCostControls.setUp",
+        "DurableReceiverCostControls.test_actual_child_hard_exit_does_not_erase_committed_spend",
+        "DurableReceiverCostControls.test_copied_private_database_is_not_a_shared_spend_authority",
+        "DurableReceiverCostControls.test_exact_duplicate_with_another_winning_nonce_is_still_replay",
+        "DurableReceiverCostControls.test_expiry_frees_capacity_but_only_after_grant_expired",
+        "DurableReceiverCostControls.test_invalid_grant_and_tamper_never_spends_cpu_ticket",
+        "DurableReceiverCostControls.test_multiple_distinct_connections_have_one_linearized_spend",
+        "DurableReceiverCostControls.test_paid_false_w1_transcript_still_rejected_after_durable_spend",
+        "DurableReceiverCostControls.test_persisted_clock_regression_rejected_after_restart",
+        "DurableReceiverCostControls.test_private_directory_and_file_symlinks_fail_closed",
+        "DurableReceiverCostControls.test_restart_with_cloned_epoch_keeps_spent_ticket",
+        "DurableReceiverCostControls.test_restart_with_different_secret_epoch_or_boot_fails_closed",
+        "DurableReceiverCostControls.test_two_actual_processes_share_sqlite_one_spend",
+        "DurableReceiverCostControls.test_unavailable_sqlite_spend_owner_fails_closed",
+        "new_receiver",
+        "process_consume",
+        "process_hard_exit_after_paid"
+      ],
+      "current_names_absent_old": [
+        "DurableTests",
+        "DurableTests.gate",
+        "DurableTests.setUp",
+        "DurableTests.tearDown",
+        "DurableTests.test_capacity_and_ttl_cannot_widen_on_reopen",
+        "DurableTests.test_copied_database_is_not_a_global_replay_proof",
+        "DurableTests.test_crash_reopen_and_replay",
+        "DurableTests.test_monotonic_and_expiration",
+        "DurableTests.test_parallel_same_host_two_connections",
+        "DurableTests.test_preexisting_symlink_and_hardlink_database_refused",
+        "DurableTests.test_price_survives_reopen_and_cannot_rollback",
+        "DurableTests.test_scope_clone_rejected_on_same_db",
+        "DurableTests.test_wrong_mac_wrong_host_and_capacity",
+        "make"
+      ]
+    },
+    {
+      "id": 10,
+      "path": "formal/pon-nakamoto-v1/w2c_durable_spend.py",
+      "branch_blob": "2f1ba185584324ae0d5d80a65c4f9ddf767b9fb7",
+      "current_blob": "c8f20aaae584993868bd98b57c53348c26359d2b",
+      "tips": [
+        "26dd988a1eb3b464cf9a53b8a0c32df390523776"
+      ],
+      "state": "different",
+      "historical_lines": 202,
+      "current_lines": 170,
+      "old_names_absent_current": [
+        "DurableStatelessReceiver",
+        "DurableStatelessReceiver.__init__",
+        "DurableStatelessReceiver._valid_paid_ticket",
+        "DurableStatelessReceiver.close",
+        "DurableStatelessReceiver.consume",
+        "DurableStatelessReceiver.pending_paid",
+        "_private_database_path"
+      ],
+      "current_names_absent_old": [
+        "DurableSpendGate",
+        "DurableSpendGate._Tx",
+        "DurableSpendGate._Tx.__enter__",
+        "DurableSpendGate._Tx.__exit__",
+        "DurableSpendGate._Tx.__init__",
+        "DurableSpendGate.__init__",
+        "DurableSpendGate._clock",
+        "DurableSpendGate._transaction",
+        "DurableSpendGate.close",
+        "DurableSpendGate.consume",
+        "DurableSpendGate.pending_paid",
+        "DurableSpendGate.raise_minimum_bits"
+      ]
+    },
+    {
+      "id": 11,
+      "path": "formal/pon-nakamoto-v1/test_w2c_durable_crash.py",
+      "branch_blob": "e43ac3c831ad0d68058f6027a1d7f1f9d363d9f3",
+      "current_blob": null,
+      "tips": [
+        "ca2e9d14d58e0882c3be58a3711428e055ff2eb6"
+      ],
+      "state": "absent",
+      "historical_lines": 66,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "RealCrashEpochControls",
+        "RealCrashEpochControls.test_sigkill_releases_old_lock_but_cannot_reuse_its_epoch"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 12,
+      "path": "formal/pon-nakamoto-v1/test_w2c_durable_epoch.py",
+      "branch_blob": "8ee1afea19f891b145bfc395d35d82dc5c8011a0",
+      "current_blob": null,
+      "tips": [
+        "ca2e9d14d58e0882c3be58a3711428e055ff2eb6"
+      ],
+      "state": "absent",
+      "historical_lines": 174,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "DurableEpochControls",
+        "DurableEpochControls.open",
+        "DurableEpochControls.setUp",
+        "DurableEpochControls.tearDown",
+        "DurableEpochControls.test_a_clean_restart_never_reuses_an_issued_epoch",
+        "DurableEpochControls.test_actual_stateless_receiver_old_paid_ticket_denied_after_durable_restart",
+        "DurableEpochControls.test_bad_random_and_fsync_failure_never_returns_usable_epoch",
+        "DurableEpochControls.test_counter_corruption_rejected",
+        "DurableEpochControls.test_live_owner_refuses_permission_widening",
+        "DurableEpochControls.test_manual_filesystem_snapshot_rollback_remains_a_documented_nonclosure",
+        "DurableEpochControls.test_old_epoch_cannot_survive_new_startup",
+        "DurableEpochControls.test_old_log_replacement_and_hardlink_detected",
+        "DurableEpochControls.test_parent_directory_replacement_fences_previous_process",
+        "DurableEpochControls.test_partial_torn_log_refuses_restart_instead_of_reset",
+        "DurableEpochControls.test_same_startup_fails_if_owner_is_forked",
+        "DurableEpochControls.test_symlink_weak_directory_and_world_writable_file_fail"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 13,
+      "path": "formal/pon-nakamoto-v1/w2c_durable_epoch.py",
+      "branch_blob": "513323ab752e7909a5c8526a7fc7e777cae71f13",
+      "current_blob": null,
+      "tips": [
+        "ca2e9d14d58e0882c3be58a3711428e055ff2eb6"
+      ],
+      "state": "absent",
+      "historical_lines": 192,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "DurableEpochOwner",
+        "DurableEpochOwner.__del__",
+        "DurableEpochOwner.__enter__",
+        "DurableEpochOwner.__exit__",
+        "DurableEpochOwner.__init__",
+        "DurableEpochOwner.assert_live",
+        "DurableEpochOwner.close",
+        "DurableEpochOwner.epoch",
+        "EpochOwnerError",
+        "ScopedResearchReceiver",
+        "ScopedResearchReceiver.__init__",
+        "ScopedResearchReceiver.consume",
+        "ScopedResearchReceiver.offer",
+        "_hash",
+        "_read_exact_records",
+        "_record"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 14,
+      "path": "formal/pon-nakamoto-v1/test_w2c_durable_epoch_owner.py",
+      "branch_blob": "da8864af75311452426b51e0636987d59481beaf",
+      "current_blob": "da8864af75311452426b51e0636987d59481beaf",
+      "tips": [
+        "db379fe21097ac4501f17f0362fec421d687d412"
+      ],
+      "state": "exact",
+      "historical_lines": 253,
+      "current_lines": 253,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 15,
+      "path": "formal/pon-nakamoto-v1/w2c_durable_cost.py",
+      "branch_blob": "d231675b41a8c0cb36be8aa5ef4e3282eeaa8849",
+      "current_blob": "d231675b41a8c0cb36be8aa5ef4e3282eeaa8849",
+      "tips": [
+        "db379fe21097ac4501f17f0362fec421d687d412"
+      ],
+      "state": "exact",
+      "historical_lines": 133,
+      "current_lines": 133,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 16,
+      "path": "formal/pon-nakamoto-v1/w2c_durable_epoch_owner.py",
+      "branch_blob": "995d47aa32f55e54583b89a39f739ee57bef3eab",
+      "current_blob": "995d47aa32f55e54583b89a39f739ee57bef3eab",
+      "tips": [
+        "db379fe21097ac4501f17f0362fec421d687d412"
+      ],
+      "state": "exact",
+      "historical_lines": 163,
+      "current_lines": 163,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 17,
+      "path": "formal/pon-nakamoto-v1/test_w2c_cost_verdict.py",
+      "branch_blob": "3b4210c253889dc186d0b421e4ce6e5477589d2a",
+      "current_blob": "31ab3dcb15cde09cef1c7436e154f224417fb8b2",
+      "tips": [
+        "d575524c95b198d49c1459f58184a65b4f999722"
+      ],
+      "state": "different",
+      "historical_lines": 101,
+      "current_lines": 65,
+      "old_names_absent_current": [
+        "ConservativeCostTests.test_global_ticket_can_gossip_one_send_to_many_receivers",
+        "ConservativeCostTests.test_shared_false_proof_is_not_reconstructed_for_every_receiver"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 18,
+      "path": "formal/pon-nakamoto-v1/test_w2c_sqlite_spend_owner.py",
+      "branch_blob": "116f6f7ea0b2e70a72bc16a1c527809d9ee33140",
+      "current_blob": null,
+      "tips": [
+        "d575524c95b198d49c1459f58184a65b4f999722"
+      ],
+      "state": "absent",
+      "historical_lines": 114,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "DurablePaidSpendTests",
+        "DurablePaidSpendTests.setUp",
+        "DurablePaidSpendTests.test_capacity_expiration_and_monotonic_watermark_survive_restart",
+        "DurablePaidSpendTests.test_copied_database_separate_owner_still_not_safe",
+        "DurablePaidSpendTests.test_fresh_context_cannot_claim_existing_owner_database",
+        "DurablePaidSpendTests.test_multiple_real_processes_share_one_atomic_paid_slot",
+        "DurablePaidSpendTests.test_one_real_paid_grant_and_replay_after_reopen",
+        "DurablePaidSpendTests.test_real_child_exit_after_commit_does_not_refund",
+        "DurablePaidSpendTests.test_shared_db_cannot_change_original_capacity",
+        "DurablePaidSpendTests.test_thirty_two_threads_get_one_ready",
+        "DurablePaidSpendTests.test_untrusted_files_or_bad_ranges_refused",
+        "crash_after_spend",
+        "worker"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 19,
+      "path": "formal/pon-nakamoto-v1/test_w2c_stateless_durable_spends.py",
+      "branch_blob": "18cb86905ae00b6a3c22315b188fdd822d969c3d",
+      "current_blob": null,
+      "tips": [
+        "d575524c95b198d49c1459f58184a65b4f999722"
+      ],
+      "state": "absent",
+      "historical_lines": 98,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "DurableResearchIntegration",
+        "DurableResearchIntegration.grant",
+        "DurableResearchIntegration.setUp",
+        "DurableResearchIntegration.test_mismatched_epoch_capacity_and_owner_fail_closed",
+        "DurableResearchIntegration.test_paid_local_acceptance_still_rejects_false_w1_math",
+        "DurableResearchIntegration.test_paid_nonce_exactly_once_across_cloned_instances_and_reopen",
+        "DurableResearchIntegration.test_six_real_processes_with_same_grant_one_paid_claim",
+        "claimed_in_child"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 20,
+      "path": "formal/pon-nakamoto-v1/w2c_cost_verdict.py",
+      "branch_blob": "81cb70309dca6e24f6abb320862ef8ee4f965a2f",
+      "current_blob": "6950b06ce838c7a10d8bd1a0d9046aec5218089d",
+      "tips": [
+        "d575524c95b198d49c1459f58184a65b4f999722"
+      ],
+      "state": "different",
+      "historical_lines": 115,
+      "current_lines": 100,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 21,
+      "path": "formal/pon-nakamoto-v1/w2c_sqlite_spend_owner.py",
+      "branch_blob": "9815df8b083cf2e435731d38e6e964e444671bf2",
+      "current_blob": null,
+      "tips": [
+        "d575524c95b198d49c1459f58184a65b4f999722"
+      ],
+      "state": "absent",
+      "historical_lines": 133,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "SqlitePaidSpendOwner",
+        "SqlitePaidSpendOwner.__init__",
+        "SqlitePaidSpendOwner._check_file",
+        "SqlitePaidSpendOwner._connect",
+        "SqlitePaidSpendOwner.claim",
+        "SqlitePaidSpendOwner.pending_paid",
+        "_hash32",
+        "_time"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 22,
+      "path": "formal/pon-nakamoto-v1/w2c_stateless_receiver.py",
+      "branch_blob": "6ee26f1e3bdfc21e7da575d6de1cac95c5286cfb",
+      "current_blob": "bbd703e4fca74757783bc20f2b4ca3870a968da1",
+      "tips": [
+        "d575524c95b198d49c1459f58184a65b4f999722"
+      ],
+      "state": "different",
+      "historical_lines": 125,
+      "current_lines": 130,
+      "old_names_absent_current": [],
+      "current_names_absent_old": [
+        "StatelessReceiverAdmission.raise_minimum_bits"
+      ]
+    },
+    {
+      "id": 23,
+      "path": "scripts/ci/test_pon_admission_price_model.py",
+      "branch_blob": "5cc1597572c4d297a50486d0577d642288afe06c",
+      "current_blob": null,
+      "tips": [
+        "d575524c95b198d49c1459f58184a65b4f999722"
+      ],
+      "state": "absent",
+      "historical_lines": 46,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "PriceGate",
+        "PriceGate.test_fast_gpu_wins_cheapest_attacker_arm",
+        "PriceGate.test_missing_and_bad_measures_fail_closed",
+        "PriceGate.test_no_solution_when_needed_20_bit_hashcash_exceeds_cookie",
+        "PriceGate.test_slower_receiver_can_have_a_model_solution_but_no_activation",
+        "sample"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 24,
+      "path": "scripts/ci/test_pon_p2_joint_triage.py",
+      "branch_blob": "7148721db1cb77885c6d5df0f2bf94deb7cd62f8",
+      "current_blob": null,
+      "tips": [
+        "d575524c95b198d49c1459f58184a65b4f999722"
+      ],
+      "state": "absent",
+      "historical_lines": 106,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "JointGate",
+        "JointGate.test_allegedly_verified_hardware_still_cannot_be_attested_here",
+        "JointGate.test_missing_gpu_and_sender_cost_must_not_become_safe",
+        "JointGate.test_mutated_source_and_context_reject",
+        "JointGate.test_observed_forgery_is_a_blocker_even_if_cookie_bits_are_modeled",
+        "JointGate.test_replayed_security_ticket_does_not_price_fanout",
+        "JointGate.test_unknown_surplus_field_and_authority_schema_refused",
+        "input_record"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 25,
+      "path": "scripts/pon_admission_price_model.py",
+      "branch_blob": "9085866799cb4a1d5d8caf23979dd1a5dd9abb5b",
+      "current_blob": null,
+      "tips": [
+        "d575524c95b198d49c1459f58184a65b4f999722"
+      ],
+      "state": "absent",
+      "historical_lines": 122,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "evaluate",
+        "main",
+        "positive"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 26,
+      "path": "scripts/pon_p2_joint_triage.py",
+      "branch_blob": "cf3d204f23b4b8fa96e8af0012f6274b333d5821",
+      "current_blob": null,
+      "tips": [
+        "d575524c95b198d49c1459f58184a65b4f999722"
+      ],
+      "state": "absent",
+      "historical_lines": 113,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "analyze",
+        "main"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 27,
+      "path": "formal/pon-nakamoto-v1/test_w2c_local_epoch_lease.py",
+      "branch_blob": "446e211fda58f0de2e32f7a4c5f75ee2d32f351f",
+      "current_blob": "446e211fda58f0de2e32f7a4c5f75ee2d32f351f",
+      "tips": [
+        "c953a86c9338bc46509ed527e53bd836d66ffce2"
+      ],
+      "state": "exact",
+      "historical_lines": 166,
+      "current_lines": 166,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 28,
+      "path": "formal/pon-nakamoto-v1/w2c_local_epoch_lease.py",
+      "branch_blob": "352cf5b9400d347d0e4360d5c381cf8eec6ebf86",
+      "current_blob": "352cf5b9400d347d0e4360d5c381cf8eec6ebf86",
+      "tips": [
+        "c953a86c9338bc46509ed527e53bd836d66ffce2"
+      ],
+      "state": "exact",
+      "historical_lines": 180,
+      "current_lines": 180,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 29,
+      "path": "formal/pon-nakamoto-v1/test_w2c_durable_integration.py",
+      "branch_blob": "140d7ac97022082aaf8465c17505f0d3af16ff1a",
+      "current_blob": null,
+      "tips": [
+        "cab37b3f9ea4cc2565e2902c38c5a36f095ab171"
+      ],
+      "state": "absent",
+      "historical_lines": 102,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "DurableStatelessIntegrationTests",
+        "DurableStatelessIntegrationTests.issuer",
+        "DurableStatelessIntegrationTests.setUp",
+        "DurableStatelessIntegrationTests.tearDown",
+        "DurableStatelessIntegrationTests.test_durable_owner_error_does_not_turn_into_w1_validity",
+        "DurableStatelessIntegrationTests.test_policy_16_cannot_be_downgraded_by_caller_or_grant",
+        "DurableStatelessIntegrationTests.test_separate_copied_or_unshared_database_remains_unsafe",
+        "DurableStatelessIntegrationTests.test_stored_owner_context_mismatch_is_not_silent_new_budget",
+        "DurableStatelessIntegrationTests.test_two_cloned_same_epoch_issuers_share_exact_spent_ledger"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 30,
+      "path": "formal/pon-nakamoto-v1/test_w2c_durable_spent.py",
+      "branch_blob": "40252ee6847422b026c8354380be2f22e576777b",
+      "current_blob": "15e612c03d73a22bfade110535034c11b44d2c7a",
+      "tips": [
+        "cab37b3f9ea4cc2565e2902c38c5a36f095ab171"
+      ],
+      "state": "different",
+      "historical_lines": 112,
+      "current_lines": 298,
+      "old_names_absent_current": [
+        "TestDurableOwner",
+        "TestDurableOwner.setUp",
+        "TestDurableOwner.tearDown",
+        "TestDurableOwner.test_capacity_busy_then_expired_recovery",
+        "TestDurableOwner.test_corrupt_db_refuses_new_issuer_without_w1",
+        "TestDurableOwner.test_expired_and_invalid_timing_never_mints_ready",
+        "TestDurableOwner.test_link_or_unsafe_owner_directory_rejected",
+        "TestDurableOwner.test_process_crash_after_paid_commit_cannot_unspend",
+        "TestDurableOwner.test_real_cross_process_same_paid_grant_exactly_once",
+        "TestDurableOwner.test_restart_clone_same_epoch_is_no_longer_free",
+        "TestDurableOwner.test_same_file_different_receiver_epoch_or_capacity_refused",
+        "TestDurableOwner.test_true_clock_regression_after_process_reopen_is_refused",
+        "abrupt_exit_after_paid_commit",
+        "spend_child"
+      ],
+      "current_names_absent_old": [
+        "DurablePaidSpendTests",
+        "DurablePaidSpendTests.child",
+        "DurablePaidSpendTests.owner",
+        "DurablePaidSpendTests.setUp",
+        "DurablePaidSpendTests.test_a_paid_ticket_still_rejects_false_w1_without_refund",
+        "DurablePaidSpendTests.test_bad_target_and_mac_do_not_spend",
+        "DurablePaidSpendTests.test_copying_database_before_spend_is_not_global_replay_protection",
+        "DurablePaidSpendTests.test_directory_symlink_and_world_readable_policy_refuse",
+        "DurablePaidSpendTests.test_existing_mismatched_epoch_or_key_fails_closed",
+        "DurablePaidSpendTests.test_local_file_replace_refuses_new_paid_replay",
+        "DurablePaidSpendTests.test_paid_spend_survives_abrupt_process_exit_after_commit",
+        "DurablePaidSpendTests.test_reopen_refuses_rollback_clock_and_missing_durable_file",
+        "DurablePaidSpendTests.test_restart_same_store_rejects_paid_ticket",
+        "DurablePaidSpendTests.test_shared_capacity_and_expiry_survive_restart",
+        "DurablePaidSpendTests.test_sqlite_lock_timeout_refuses_without_entering_w1",
+        "DurablePaidSpendTests.test_two_distinct_instances_one_original_db_have_only_one_ready",
+        "DurablePaidSpendTests.test_two_real_os_processes_share_one_paid_spend",
+        "DurablePaidSpendTests.test_unpaid_offers_consume_no_disk_spend_capacity",
+        "DurablePaidSpendTests.ticket"
+      ]
+    },
+    {
+      "id": 31,
+      "path": "formal/pon-nakamoto-v1/w2c_durable_spent.py",
+      "branch_blob": "ea04a117717956911b7d0667b016670d57dd86c7",
+      "current_blob": "310b576585c7b0a16a674cbcd62f4d9cde9497b0",
+      "tips": [
+        "cab37b3f9ea4cc2565e2902c38c5a36f095ab171"
+      ],
+      "state": "different",
+      "historical_lines": 187,
+      "current_lines": 210,
+      "old_names_absent_current": [
+        "DurablePaidSpendOwner",
+        "DurablePaidSpendOwner.__init__",
+        "DurablePaidSpendOwner._check_file",
+        "DurablePaidSpendOwner._connect",
+        "DurablePaidSpendOwner._expected",
+        "DurablePaidSpendOwner._initialize",
+        "DurablePaidSpendOwner._owner_dir",
+        "DurablePaidSpendOwner.pending_paid",
+        "DurablePaidSpendOwner.spend",
+        "OwnerUnavailable",
+        "_hash32",
+        "_u64"
+      ],
+      "current_names_absent_old": [
+        "DurableReceiverAdmission",
+        "DurableReceiverAdmission.__init__",
+        "DurableReceiverAdmission._check_file",
+        "DurableReceiverAdmission.close",
+        "DurableReceiverAdmission.consume",
+        "DurableReceiverAdmission.pending_paid"
+      ]
+    },
+    {
+      "id": 32,
+      "path": "formal/pon-nakamoto-v1/w2c_stateless_receiver.py",
+      "branch_blob": "1db98af8b9a77c47e08d2b588cb0cc4c15dc1330",
+      "current_blob": "bbd703e4fca74757783bc20f2b4ca3870a968da1",
+      "tips": [
+        "cab37b3f9ea4cc2565e2902c38c5a36f095ab171"
+      ],
+      "state": "different",
+      "historical_lines": 132,
+      "current_lines": 130,
+      "old_names_absent_current": [],
+      "current_names_absent_old": [
+        "StatelessReceiverAdmission.raise_minimum_bits"
+      ]
+    },
+    {
+      "id": 33,
+      "path": "formal/pon-nakamoto-v1/test_w2c_durable_spend.py",
+      "branch_blob": "aa4af217a6bf66a8e8505b64f44eef9c08a23cc6",
+      "current_blob": "aa4af217a6bf66a8e8505b64f44eef9c08a23cc6",
+      "tips": [
+        "093ec49ae58da21d79c1fc1df0e3569f4d9e357b"
+      ],
+      "state": "exact",
+      "historical_lines": 91,
+      "current_lines": 91,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 34,
+      "path": "formal/pon-nakamoto-v1/test_w2c_stateless_receiver.py",
+      "branch_blob": "1e000a6d68ece8f1312e095f9d343be97ee66a9a",
+      "current_blob": "1e000a6d68ece8f1312e095f9d343be97ee66a9a",
+      "tips": [
+        "093ec49ae58da21d79c1fc1df0e3569f4d9e357b"
+      ],
+      "state": "exact",
+      "historical_lines": 204,
+      "current_lines": 204,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 35,
+      "path": "formal/pon-nakamoto-v1/w2c_durable_spend.py",
+      "branch_blob": "c8f20aaae584993868bd98b57c53348c26359d2b",
+      "current_blob": "c8f20aaae584993868bd98b57c53348c26359d2b",
+      "tips": [
+        "093ec49ae58da21d79c1fc1df0e3569f4d9e357b"
+      ],
+      "state": "exact",
+      "historical_lines": 170,
+      "current_lines": 170,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 36,
+      "path": "formal/pon-nakamoto-v1/w2c_stateless_receiver.py",
+      "branch_blob": "bbd703e4fca74757783bc20f2b4ca3870a968da1",
+      "current_blob": "bbd703e4fca74757783bc20f2b4ca3870a968da1",
+      "tips": [
+        "093ec49ae58da21d79c1fc1df0e3569f4d9e357b"
+      ],
+      "state": "exact",
+      "historical_lines": 130,
+      "current_lines": 130,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 37,
+      "path": "formal/pon-nakamoto-v1/test_w2c_durable_receiver.py",
+      "branch_blob": "2990b7f973c8f26857a03da4c254a10ca1b06347",
+      "current_blob": "b4b1e06097b94068498fa2f6f091d57ce5766bd3",
+      "tips": [
+        "e19245dd880a989b5310cda126ff2f27a6da67d4"
+      ],
+      "state": "different",
+      "historical_lines": 222,
+      "current_lines": 217,
+      "old_names_absent_current": [
+        "DurableReceiverResearchTests",
+        "DurableReceiverResearchTests.mint",
+        "DurableReceiverResearchTests.open_owner",
+        "DurableReceiverResearchTests.setUp",
+        "DurableReceiverResearchTests.test_actual_sqlite_page_exhaustion_rejects_without_ready_or_refund",
+        "DurableReceiverResearchTests.test_atomic_parallel_replay_and_no_pseudo_authority",
+        "DurableReceiverResearchTests.test_bad_mac_changed_caller_and_nonce_do_not_spend",
+        "DurableReceiverResearchTests.test_capacity_refusal_is_not_invalid_work_and_expiry_releases_rows",
+        "DurableReceiverResearchTests.test_clock_regression_fences_new_paid_operations",
+        "DurableReceiverResearchTests.test_database_symlinks_and_hardlinks_refused",
+        "DurableReceiverResearchTests.test_fail_write_aborts_and_disables_owner_without_false_ready",
+        "DurableReceiverResearchTests.test_fresh_epoch_on_restart_fences_old_ticket_and_retains_spent_row",
+        "DurableReceiverResearchTests.test_paid_ticket_still_rejects_actual_false_w1_transcript",
+        "DurableReceiverResearchTests.test_real_crash_after_durable_commit_and_reopen",
+        "DurableReceiverResearchTests.test_real_second_process_cannot_create_a_new_spend_owner",
+        "DurableReceiverResearchTests.test_unauthenticated_offer_has_no_pending_slot_state"
+      ],
+      "current_names_absent_old": [
+        "DurablePaidSpendTests",
+        "DurablePaidSpendTests.open",
+        "DurablePaidSpendTests.paid",
+        "DurablePaidSpendTests.setUp",
+        "DurablePaidSpendTests.tearDown",
+        "DurablePaidSpendTests.test_32_way_paid_race_has_one_durable_ready",
+        "DurablePaidSpendTests.test_capacity_refusal_then_expiry_reclaims_only_original_rows",
+        "DurablePaidSpendTests.test_modified_caller_proposal_mac_and_clock_do_not_grant",
+        "DurablePaidSpendTests.test_paid_false_w1_transcript_still_no_verified_work",
+        "DurablePaidSpendTests.test_paid_insert_fault_never_returns_ready",
+        "DurablePaidSpendTests.test_private_directory_and_file_permissions_are_mandatory",
+        "DurablePaidSpendTests.test_real_child_unclean_exit_releases_flock_and_fences_old_epoch",
+        "DurablePaidSpendTests.test_restart_with_same_key_and_reused_rng_rotates_epoch",
+        "DurablePaidSpendTests.test_same_store_second_live_owner_fails_before_issuing",
+        "DurablePaidSpendTests.test_wrong_recovery_key_cannot_resume_old_epoch",
+        "entropy"
+      ]
+    },
+    {
+      "id": 38,
+      "path": "formal/pon-nakamoto-v1/w2c_durable_costs.py",
+      "branch_blob": "4a77f02b57d0edf45a4861c76610a9e32268eb0b",
+      "current_blob": null,
+      "tips": [
+        "e19245dd880a989b5310cda126ff2f27a6da67d4"
+      ],
+      "state": "absent",
+      "historical_lines": 145,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "cpu",
+        "generate",
+        "main",
+        "receiver_cost",
+        "refuse_w1"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 39,
+      "path": "formal/pon-nakamoto-v1/w2c_durable_receiver.py",
+      "branch_blob": "afa20256affa295d1ee085056e5dca2b189b437f",
+      "current_blob": "b089b061cc1dd1770d0c9c82bf947081f54d5f97",
+      "tips": [
+        "e19245dd880a989b5310cda126ff2f27a6da67d4"
+      ],
+      "state": "different",
+      "historical_lines": 247,
+      "current_lines": 231,
+      "old_names_absent_current": [
+        "DurableReceiver",
+        "DurableReceiver.__enter__",
+        "DurableReceiver.__exit__",
+        "DurableReceiver.__init__",
+        "DurableReceiver._now",
+        "DurableReceiver._owned_file",
+        "DurableReceiver.close",
+        "DurableReceiver.consume",
+        "DurableReceiver.offer",
+        "DurableReceiver.paid_rows",
+        "Grant",
+        "Grant.ticket",
+        "Grant.unsigned",
+        "challenge_ticket",
+        "hash32",
+        "integer",
+        "qualified",
+        "solve"
+      ],
+      "current_names_absent_old": [
+        "DurableReceiverAdmission",
+        "DurableReceiverAdmission.__enter__",
+        "DurableReceiverAdmission.__exit__",
+        "DurableReceiverAdmission.__init__",
+        "DurableReceiverAdmission._available",
+        "DurableReceiverAdmission._clock",
+        "DurableReceiverAdmission.close",
+        "DurableReceiverAdmission.consume",
+        "DurableReceiverAdmission.offer",
+        "DurableReceiverAdmission.paid_count",
+        "_file"
+      ]
+    },
+    {
+      "id": 40,
+      "path": "formal/pon-nakamoto-v1/test_w2c_cost_verdict.py",
+      "branch_blob": "31ab3dcb15cde09cef1c7436e154f224417fb8b2",
+      "current_blob": "31ab3dcb15cde09cef1c7436e154f224417fb8b2",
+      "tips": [
+        "7573e3ae83fd6090a1005a29fe716b0402b090ff"
+      ],
+      "state": "exact",
+      "historical_lines": 65,
+      "current_lines": 65,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 41,
+      "path": "formal/pon-nakamoto-v1/w2c_cost_verdict.py",
+      "branch_blob": "6950b06ce838c7a10d8bd1a0d9046aec5218089d",
+      "current_blob": "6950b06ce838c7a10d8bd1a0d9046aec5218089d",
+      "tips": [
+        "7573e3ae83fd6090a1005a29fe716b0402b090ff"
+      ],
+      "state": "exact",
+      "historical_lines": 100,
+      "current_lines": 100,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 42,
+      "path": "formal/pon-nakamoto-v1/test_w2c_durable_receiver.py",
+      "branch_blob": "50b3a31c86f993ab2beb6403c7e1b926e77f26bc",
+      "current_blob": "b4b1e06097b94068498fa2f6f091d57ce5766bd3",
+      "tips": [
+        "4bf21e2a1e92e07955129c98d2c4f9102d3a1742"
+      ],
+      "state": "different",
+      "historical_lines": 162,
+      "current_lines": 217,
+      "old_names_absent_current": [
+        "DurableResearchTests",
+        "DurableResearchTests.grant",
+        "DurableResearchTests.setUp",
+        "DurableResearchTests.test_cloned_durable_database_and_secret_still_double_spends",
+        "DurableResearchTests.test_cross_instance_shared_sqlite_cannot_double_spend",
+        "DurableResearchTests.test_eight_real_processes_share_one_atomic_paid_spend",
+        "DurableResearchTests.test_hard_exit_after_paid_commit_cannot_refund_spend",
+        "DurableResearchTests.test_paid_capacity_expiry_and_replay_without_refund",
+        "DurableResearchTests.test_restart_rotates_epoch_and_fences_old_workers",
+        "DurableResearchTests.test_unpaid_grant_flood_does_not_store_spent_rows",
+        "DurableResearchTests.test_wrong_caller_mac_target_and_clock_rejected_without_spend",
+        "DurableResearchTests.test_wrong_identity_cannot_join_or_rotate_existing_owner",
+        "_crashed_paid_child",
+        "_shared_paid_child"
+      ],
+      "current_names_absent_old": [
+        "DurablePaidSpendTests",
+        "DurablePaidSpendTests.open",
+        "DurablePaidSpendTests.paid",
+        "DurablePaidSpendTests.setUp",
+        "DurablePaidSpendTests.tearDown",
+        "DurablePaidSpendTests.test_32_way_paid_race_has_one_durable_ready",
+        "DurablePaidSpendTests.test_capacity_refusal_then_expiry_reclaims_only_original_rows",
+        "DurablePaidSpendTests.test_modified_caller_proposal_mac_and_clock_do_not_grant",
+        "DurablePaidSpendTests.test_paid_false_w1_transcript_still_no_verified_work",
+        "DurablePaidSpendTests.test_paid_insert_fault_never_returns_ready",
+        "DurablePaidSpendTests.test_private_directory_and_file_permissions_are_mandatory",
+        "DurablePaidSpendTests.test_real_child_unclean_exit_releases_flock_and_fences_old_epoch",
+        "DurablePaidSpendTests.test_restart_with_same_key_and_reused_rng_rotates_epoch",
+        "DurablePaidSpendTests.test_same_store_second_live_owner_fails_before_issuing",
+        "DurablePaidSpendTests.test_wrong_recovery_key_cannot_resume_old_epoch",
+        "entropy"
+      ]
+    },
+    {
+      "id": 43,
+      "path": "formal/pon-nakamoto-v1/w2c_durable_receiver.py",
+      "branch_blob": "9052b554b0d77f88e25409cc1bccd4c8178adc1c",
+      "current_blob": "b089b061cc1dd1770d0c9c82bf947081f54d5f97",
+      "tips": [
+        "4bf21e2a1e92e07955129c98d2c4f9102d3a1742"
+      ],
+      "state": "different",
+      "historical_lines": 194,
+      "current_lines": 231,
+      "old_names_absent_current": [
+        "DurableReceiverAdmission._current_owner"
+      ],
+      "current_names_absent_old": [
+        "DurableReceiverAdmission.__enter__",
+        "DurableReceiverAdmission.__exit__",
+        "DurableReceiverAdmission._available",
+        "DurableReceiverAdmission._clock",
+        "_file"
+      ]
+    },
+    {
+      "id": 44,
+      "path": "formal/pon-nakamoto-v1/test_w2d_full_tile_freivalds.py",
+      "branch_blob": "d0dbc15bddf994053a46159822b2dd7e58b34c59",
+      "current_blob": "d0dbc15bddf994053a46159822b2dd7e58b34c59",
+      "tips": [
+        "4f367f106f97c92e95cca6a85c59fbc9d01d4a92"
+      ],
+      "state": "exact",
+      "historical_lines": 104,
+      "current_lines": 104,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 45,
+      "path": "formal/pon-nakamoto-v1/test_w2d_late_tile_attack.py",
+      "branch_blob": "9b9e903d85bcc5829eaa585a97a61938b5089658",
+      "current_blob": "9b9e903d85bcc5829eaa585a97a61938b5089658",
+      "tips": [
+        "4f367f106f97c92e95cca6a85c59fbc9d01d4a92"
+      ],
+      "state": "exact",
+      "historical_lines": 44,
+      "current_lines": 44,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 46,
+      "path": "formal/pon-nakamoto-v1/test_w2e_batched_polynomial.py",
+      "branch_blob": "0d32326a614eb9e608c251e949c014ea6e9cb035",
+      "current_blob": "0d32326a614eb9e608c251e949c014ea6e9cb035",
+      "tips": [
+        "4f367f106f97c92e95cca6a85c59fbc9d01d4a92"
+      ],
+      "state": "exact",
+      "historical_lines": 86,
+      "current_lines": 86,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 47,
+      "path": "formal/pon-nakamoto-v1/test_w2e_matched_costs.py",
+      "branch_blob": "0214855a81c3ce9ee7b6a8200c16a3920daf0dba",
+      "current_blob": "0214855a81c3ce9ee7b6a8200c16a3920daf0dba",
+      "tips": [
+        "4f367f106f97c92e95cca6a85c59fbc9d01d4a92"
+      ],
+      "state": "exact",
+      "historical_lines": 29,
+      "current_lines": 29,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 48,
+      "path": "formal/pon-nakamoto-v1/w2d_full_tile_freivalds.py",
+      "branch_blob": "ceab434a5f851d9f450a238932eeeeb88ea78444",
+      "current_blob": "ceab434a5f851d9f450a238932eeeeb88ea78444",
+      "tips": [
+        "4f367f106f97c92e95cca6a85c59fbc9d01d4a92"
+      ],
+      "state": "exact",
+      "historical_lines": 156,
+      "current_lines": 156,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 49,
+      "path": "formal/pon-nakamoto-v1/w2d_late_tile_attack.py",
+      "branch_blob": "edebce714b1eecc9fdd96e9866aa859815f35234",
+      "current_blob": "edebce714b1eecc9fdd96e9866aa859815f35234",
+      "tips": [
+        "4f367f106f97c92e95cca6a85c59fbc9d01d4a92"
+      ],
+      "state": "exact",
+      "historical_lines": 113,
+      "current_lines": 113,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 50,
+      "path": "formal/pon-nakamoto-v1/w2e_batched_polynomial.py",
+      "branch_blob": "d8a6c7b887efc04deed90f26d43967b317773ca8",
+      "current_blob": "d8a6c7b887efc04deed90f26d43967b317773ca8",
+      "tips": [
+        "4f367f106f97c92e95cca6a85c59fbc9d01d4a92"
+      ],
+      "state": "exact",
+      "historical_lines": 123,
+      "current_lines": 123,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 51,
+      "path": "formal/pon-nakamoto-v1/w2e_matched_costs.py",
+      "branch_blob": "6f7bff669b409d5464201850a6673184d8fff463",
+      "current_blob": "6f7bff669b409d5464201850a6673184d8fff463",
+      "tips": [
+        "4f367f106f97c92e95cca6a85c59fbc9d01d4a92"
+      ],
+      "state": "exact",
+      "historical_lines": 52,
+      "current_lines": 52,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 52,
+      "path": "formal/pon-nakamoto-v1/test_w2c_durable_receiver.py",
+      "branch_blob": "b4b1e06097b94068498fa2f6f091d57ce5766bd3",
+      "current_blob": "b4b1e06097b94068498fa2f6f091d57ce5766bd3",
+      "tips": [
+        "b517d6f9e1e763742853c0d65f512d53203ec768"
+      ],
+      "state": "exact",
+      "historical_lines": 217,
+      "current_lines": 217,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 53,
+      "path": "formal/pon-nakamoto-v1/w2c_durable_receiver.py",
+      "branch_blob": "b089b061cc1dd1770d0c9c82bf947081f54d5f97",
+      "current_blob": "b089b061cc1dd1770d0c9c82bf947081f54d5f97",
+      "tips": [
+        "b517d6f9e1e763742853c0d65f512d53203ec768"
+      ],
+      "state": "exact",
+      "historical_lines": 231,
+      "current_lines": 231,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 54,
+      "path": "formal/pon-nakamoto-v1/test_w2_admission_cost_envelope.py",
+      "branch_blob": "814dd7d119015c60cec025efd7bbef144a4583a6",
+      "current_blob": null,
+      "tips": [
+        "a4f7fd5bdace75612928be0917f550f7dea864fc",
+        "b50018a58aef05a6f890e104bbb8d1f19642e05e"
+      ],
+      "state": "absent",
+      "historical_lines": 72,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "CostEnvelopeTests",
+        "CostEnvelopeTests.test_absent_gpu_cost_must_keep_all_admission_bits_unknown",
+        "CostEnvelopeTests.test_duplicate_or_nonfinite_pricing_inputs_are_never_silently_normalized",
+        "CostEnvelopeTests.test_fast_attacker_hardware_exposes_expected_cost_gap",
+        "CostEnvelopeTests.test_monotone_geometric_quantile_and_strict_bounds",
+        "CostEnvelopeTests.test_sample_expected_pricing_cannot_be_relabelled_cryptographic_security",
+        "evidence"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 55,
+      "path": "formal/pon-nakamoto-v1/w2_admission_cost_envelope.py",
+      "branch_blob": "b669e09908db0506f9c02f399a1ae44c40cbf6bb",
+      "current_blob": null,
+      "tips": [
+        "a4f7fd5bdace75612928be0917f550f7dea864fc",
+        "b50018a58aef05a6f890e104bbb8d1f19642e05e"
+      ],
+      "state": "absent",
+      "historical_lines": 134,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "evaluate",
+        "main",
+        "positive_real",
+        "quantile_trials",
+        "strict_json"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 56,
+      "path": "formal/pon-nakamoto-v1/test_w2d_product_projection.py",
+      "branch_blob": "4e6e82598b8d4c6f5e6d09339233546b178440d8",
+      "current_blob": "4e6e82598b8d4c6f5e6d09339233546b178440d8",
+      "tips": [
+        "51423e17989d837405c9455a012bc654a21a5e0c"
+      ],
+      "state": "exact",
+      "historical_lines": 53,
+      "current_lines": 53,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 57,
+      "path": "formal/pon-nakamoto-v1/w2d_product_projection.py",
+      "branch_blob": "2b0911aa35d49e5249d7af850ee63e4ca1e64b8a",
+      "current_blob": "2b0911aa35d49e5249d7af850ee63e4ca1e64b8a",
+      "tips": [
+        "51423e17989d837405c9455a012bc654a21a5e0c"
+      ],
+      "state": "exact",
+      "historical_lines": 128,
+      "current_lines": 128,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 58,
+      "path": "formal/pon-nakamoto-v1/test_w2c_receiver_admission.py",
+      "branch_blob": "cb529ed0c9524b8ada5b444d698f3c8be615b1ed",
+      "current_blob": "4e3e5097e43e6ceaad89414934b895f37a72e5d4",
+      "tips": [
+        "7aa1a1dad78e530329ba03d81f7e7da01296f27d"
+      ],
+      "state": "different",
+      "historical_lines": 141,
+      "current_lines": 115,
+      "old_names_absent_current": [
+        "ReceiverScopedCostTests.test_epoch_issuance_not_refunded_by_expiry_spend_or_identity_rotation",
+        "ReceiverScopedCostTests.test_epoch_limit_has_strict_bounded_constructor"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 59,
+      "path": "formal/pon-nakamoto-v1/w2c_receiver_admission.py",
+      "branch_blob": "96a558e9f183b9dd445fe00f315e49aadc9c77cf",
+      "current_blob": "045700db730d330df05670351fa40a94fe4dd510",
+      "tips": [
+        "7aa1a1dad78e530329ba03d81f7e7da01296f27d"
+      ],
+      "state": "different",
+      "historical_lines": 174,
+      "current_lines": 169,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 60,
+      "path": "formal/pon-nakamoto-v1/test_w2c_stateless_paired_cost.py",
+      "branch_blob": "8d3b8fa980de6fd0bf71e3d3c2c94d5d6ba940e3",
+      "current_blob": null,
+      "tips": [
+        "9386ba1462138b0e235b22050afc9225d90c3cb0",
+        "fffc600e20386d797039763f5b1b081449342d1a"
+      ],
+      "state": "absent",
+      "historical_lines": 45,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "PairedCpuCostResearchTests",
+        "PairedCpuCostResearchTests.setUpClass",
+        "PairedCpuCostResearchTests.test_bounds_do_not_coerce_invalid_limits",
+        "PairedCpuCostResearchTests.test_exhausted_cost_ticket_must_not_look_paid",
+        "PairedCpuCostResearchTests.test_same_task_target_and_complete_valid_misses_are_retained"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 61,
+      "path": "formal/pon-nakamoto-v1/test_w2c_stateless_receiver_admission.py",
+      "branch_blob": "32ec9e2a81aeacad198ed8c129b5d1248d41ab5d",
+      "current_blob": null,
+      "tips": [
+        "9386ba1462138b0e235b22050afc9225d90c3cb0",
+        "fffc600e20386d797039763f5b1b081449342d1a"
+      ],
+      "state": "absent",
+      "historical_lines": 103,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "StatelessW2CResearchTests",
+        "StatelessW2CResearchTests.paid",
+        "StatelessW2CResearchTests.setUp",
+        "StatelessW2CResearchTests.test_cheap_unsigned_grant_issuance_cannot_exhaust_pending_slots",
+        "StatelessW2CResearchTests.test_concurrent_replay_has_exactly_one_ready",
+        "StatelessW2CResearchTests.test_context_and_numeric_bounds",
+        "StatelessW2CResearchTests.test_copy_to_another_receiver_is_not_payment",
+        "StatelessW2CResearchTests.test_expiry_and_monotonic_clock",
+        "StatelessW2CResearchTests.test_mac_tamper_and_false_cost_are_not_validated",
+        "StatelessW2CResearchTests.test_old_epoch_rejected_even_with_identical_secret",
+        "StatelessW2CResearchTests.test_paid_capacity_full_fails_closed_and_preserves_spent_replay",
+        "StatelessW2CResearchTests.test_signed_low_cost_grant_cannot_downgrade_server_bits"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 62,
+      "path": "formal/pon-nakamoto-v1/test_w2d_transcript_freivalds.py",
+      "branch_blob": "fa91851f5cdcade74484e5667b54c1de6e951e96",
+      "current_blob": null,
+      "tips": [
+        "9386ba1462138b0e235b22050afc9225d90c3cb0"
+      ],
+      "state": "absent",
+      "historical_lines": 102,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "W2DResearchTests",
+        "W2DResearchTests.call",
+        "W2DResearchTests.setUpClass",
+        "W2DResearchTests.test_claimed_product_mismatch_is_rejected_independently",
+        "W2DResearchTests.test_complete_valid_w1_proof_matches_existing_independent_scalar_oracle",
+        "W2DResearchTests.test_dense_nonzero_a_b_c_proof_still_matches_full_w1",
+        "W2DResearchTests.test_encoding_and_source_task_guards",
+        "W2DResearchTests.test_fiat_shamir_vectors_are_domain_and_round_separated",
+        "W2DResearchTests.test_forged_all_zero_tape_even_with_matching_sha_ticket_is_rejected",
+        "W2DResearchTests.test_single_tampered_tile_with_recomputed_trace_is_rejected",
+        "W2DResearchTests.test_wrong_trace_digest_rejected_before_arithmetic_projection"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 63,
+      "path": "formal/pon-nakamoto-v1/w2c_stateless_paired_cost.py",
+      "branch_blob": "3bcb3f2b6b0a4b967fdd902c5c6e6ecfefe9a70d",
+      "current_blob": null,
+      "tips": [
+        "9386ba1462138b0e235b22050afc9225d90c3cb0",
+        "fffc600e20386d797039763f5b1b081449342d1a"
+      ],
+      "state": "absent",
+      "historical_lines": 162,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "case",
+        "main",
+        "measured",
+        "run"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 64,
+      "path": "formal/pon-nakamoto-v1/w2c_stateless_receiver_admission.py",
+      "branch_blob": "5f64266f57b5cd56bfa51088c6a4e725b1b7f0d3",
+      "current_blob": null,
+      "tips": [
+        "9386ba1462138b0e235b22050afc9225d90c3cb0",
+        "fffc600e20386d797039763f5b1b081449342d1a"
+      ],
+      "state": "absent",
+      "historical_lines": 163,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "Grant",
+        "Grant.unsigned",
+        "StatelessReceiver",
+        "StatelessReceiver.__init__",
+        "StatelessReceiver._clock",
+        "StatelessReceiver.consume",
+        "StatelessReceiver.offer",
+        "fixed32",
+        "qualifies",
+        "solve",
+        "ticket",
+        "u64"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 65,
+      "path": "formal/pon-nakamoto-v1/w2d_cost.py",
+      "branch_blob": "b0d52cd9945dee0b7d07fdc62b157400094d9108",
+      "current_blob": null,
+      "tips": [
+        "9386ba1462138b0e235b22050afc9225d90c3cb0"
+      ],
+      "state": "absent",
+      "historical_lines": 111,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "cpu",
+        "main",
+        "run"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 66,
+      "path": "formal/pon-nakamoto-v1/w2d_transcript_freivalds.py",
+      "branch_blob": "cc4feae72ed0f32f3aea3337ab82bb0b215e7f95",
+      "current_blob": null,
+      "tips": [
+        "9386ba1462138b0e235b22050afc9225d90c3cb0"
+      ],
+      "state": "absent",
+      "historical_lines": 147,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "Candidate",
+        "checked_tape",
+        "expansions",
+        "field_vector",
+        "prefix_check",
+        "prepared",
+        "produce",
+        "product_check",
+        "reconstruct_prefixes",
+        "right_projection",
+        "verify"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 67,
+      "path": "formal/pon-nakamoto-v1/go_oracle/cmd/pon_w1_io/main.go",
+      "branch_blob": "a7023026ef533ddaa3f027af704673dd97926605",
+      "current_blob": null,
+      "tips": [
+        "658b61cacc539f0c4faf1216f7ff10a77a0bd4d7"
+      ],
+      "state": "absent",
+      "historical_lines": 52,
+      "current_lines": 0,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 68,
+      "path": "formal/pon-nakamoto-v1/go_oracle/go.mod",
+      "branch_blob": "57c6ea19aa51a2cfb17c0977824dc6b404740510",
+      "current_blob": null,
+      "tips": [
+        "658b61cacc539f0c4faf1216f7ff10a77a0bd4d7"
+      ],
+      "state": "absent",
+      "historical_lines": 3,
+      "current_lines": 0,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 69,
+      "path": "formal/pon-nakamoto-v1/go_oracle/w1.go",
+      "branch_blob": "09d627d86701bb11f8157772423812fad9a1f5e9",
+      "current_blob": null,
+      "tips": [
+        "658b61cacc539f0c4faf1216f7ff10a77a0bd4d7"
+      ],
+      "state": "absent",
+      "historical_lines": 189,
+      "current_lines": 0,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 70,
+      "path": "formal/pon-nakamoto-v1/go_oracle/w1_test.go",
+      "branch_blob": "dfcb93a5dede8358c1ab9aac2eb95df92f701042",
+      "current_blob": null,
+      "tips": [
+        "658b61cacc539f0c4faf1216f7ff10a77a0bd4d7"
+      ],
+      "state": "absent",
+      "historical_lines": 128,
+      "current_lines": 0,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 71,
+      "path": "formal/pon-nakamoto-v1/test_go_w1_cross_language.py",
+      "branch_blob": "93d0bcd9c9ae9b6674ec19280fef0f740b9be3be",
+      "current_blob": null,
+      "tips": [
+        "658b61cacc539f0c4faf1216f7ff10a77a0bd4d7"
+      ],
+      "state": "absent",
+      "historical_lines": 111,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "GoW1CrossLanguageTests",
+        "GoW1CrossLanguageTests.call",
+        "GoW1CrossLanguageTests.setUpClass",
+        "GoW1CrossLanguageTests.tearDownClass",
+        "GoW1CrossLanguageTests.test_ten_full_proof_parities_and_late_false_transcripts",
+        "GoW1CrossLanguageTests.test_wrong_field_and_packet_length_reject_without_a_valid_proof"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 72,
+      "path": "formal/pon-nakamoto-v1/test_w2_candidate_comparison.py",
+      "branch_blob": "ad1107e50ce3b82f9241866a759f3df3e67b8362",
+      "current_blob": null,
+      "tips": [
+        "658b61cacc539f0c4faf1216f7ff10a77a0bd4d7"
+      ],
+      "state": "absent",
+      "historical_lines": 51,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "W2CandidateComparisonTests",
+        "W2CandidateComparisonTests.setUpClass",
+        "W2CandidateComparisonTests.test_exact_shared_context_and_all_unsolved_safety_gates",
+        "W2CandidateComparisonTests.test_over_cap_and_invalid_profiles_refused",
+        "W2CandidateComparisonTests.test_real_sample_costs_and_exhaustion_keep_denominators"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 73,
+      "path": "formal/pon-nakamoto-v1/test_w2_research_vectors.py",
+      "branch_blob": "e36e9834768762a47f02be49b6c9215d63aa2db2",
+      "current_blob": null,
+      "tips": [
+        "658b61cacc539f0c4faf1216f7ff10a77a0bd4d7"
+      ],
+      "state": "absent",
+      "historical_lines": 71,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "W2IndependentImplementationInputs",
+        "W2IndependentImplementationInputs.setUpClass",
+        "W2IndependentImplementationInputs.test_w2a_and_w2b_full_transcript_public_vectors",
+        "W2IndependentImplementationInputs.test_w2c_fake_proof_security_hash_vectors",
+        "digest"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 74,
+      "path": "formal/pon-nakamoto-v1/test_w2b_relation_witness.py",
+      "branch_blob": "2ca50a67ca5fd845383cfe44dccc0ea4b84a7486",
+      "current_blob": "697b07bdd7d128762a7c7416787b6017b6bdc106",
+      "tips": [
+        "658b61cacc539f0c4faf1216f7ff10a77a0bd4d7"
+      ],
+      "state": "different",
+      "historical_lines": 71,
+      "current_lines": 61,
+      "old_names_absent_current": [
+        "W2BRelationWitnessTests.test_invalid_claimed_product_is_never_accepted",
+        "W2BRelationWitnessTests.test_wrong_task_and_incomplete_trace_refuse"
+      ],
+      "current_names_absent_old": [
+        "W2BRelationWitnessTests.test_changed_product_and_task_reject",
+        "W2BRelationWitnessTests.test_incomplete_witness_and_changed_challenge"
+      ]
+    },
+    {
+      "id": 75,
+      "path": "formal/pon-nakamoto-v1/test_w2c_separated_security_pow.py",
+      "branch_blob": "5d09d4c74fe8f05365d9ebd70ea8d9aa4a8a38d4",
+      "current_blob": "ea86cf248a40eb0ed86baf2c4be8ff813087ea4b",
+      "tips": [
+        "658b61cacc539f0c4faf1216f7ff10a77a0bd4d7"
+      ],
+      "state": "different",
+      "historical_lines": 70,
+      "current_lines": 77,
+      "old_names_absent_current": [
+        "W2CResearchTests.test_all_exact_bytes_are_committed_before_hash_search",
+        "W2CResearchTests.test_bad_security_ticket_cannot_trigger_w1_replay",
+        "W2CResearchTests.test_bounded_exhaustion_and_invalid_profile_refuse",
+        "W2CResearchTests.test_false_w1_passes_security_but_fails_full_original_replay",
+        "W2CResearchTests.test_valid_w1_requires_independent_security_work_but_grants_no_chainwork"
+      ],
+      "current_names_absent_old": [
+        "W2CResearchTests.test_exact_header_and_proof_commitment_and_capped_search",
+        "W2CResearchTests.test_failed_security_ticket_stops_before_work",
+        "W2CResearchTests.test_false_w1_passes_security_but_fails_original_replay",
+        "W2CResearchTests.test_one_global_security_ticket_cannot_price_two_independent_receivers",
+        "W2CResearchTests.test_valid_w1_still_grants_zero_chainwork_authority"
+      ]
+    },
+    {
+      "id": 76,
+      "path": "formal/pon-nakamoto-v1/w2_candidate_comparison.py",
+      "branch_blob": "53000f4faffe258da779bf31e6fcbb2fac875151",
+      "current_blob": null,
+      "tips": [
+        "658b61cacc539f0c4faf1216f7ff10a77a0bd4d7"
+      ],
+      "state": "absent",
+      "historical_lines": 132,
+      "current_lines": 0,
+      "old_names_absent_current": [
+        "main",
+        "report",
+        "timed"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 77,
+      "path": "formal/pon-nakamoto-v1/w2_research_vectors_v0.json",
+      "branch_blob": "8ac4cf61e67ecbf47a72d08466a173170f1e8241",
+      "current_blob": null,
+      "tips": [
+        "658b61cacc539f0c4faf1216f7ff10a77a0bd4d7"
+      ],
+      "state": "absent",
+      "historical_lines": 26,
+      "current_lines": 0,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 78,
+      "path": "formal/pon-nakamoto-v1/w2b_relation_witness.py",
+      "branch_blob": "d0e22bc6a9c1a676665f5fe82812ddf50454f4a6",
+      "current_blob": "7ea28d653cf49b39073ea63bdabd451f2942fdf6",
+      "tips": [
+        "658b61cacc539f0c4faf1216f7ff10a77a0bd4d7"
+      ],
+      "state": "different",
+      "historical_lines": 80,
+      "current_lines": 67,
+      "old_names_absent_current": [],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 79,
+      "path": "formal/pon-nakamoto-v1/w2c_separated_security_pow.py",
+      "branch_blob": "4058997257ed7feb7e1c104db040baebbbd68e92",
+      "current_blob": "0d8032887733202180d7153d47359dbed11bb3a7",
+      "tips": [
+        "658b61cacc539f0c4faf1216f7ff10a77a0bd4d7"
+      ],
+      "state": "different",
+      "historical_lines": 163,
+      "current_lines": 118,
+      "old_names_absent_current": [
+        "main"
+      ],
+      "current_names_absent_old": []
+    },
+    {
+      "id": 80,
+      "path": "formal/pon-nakamoto-v1/test_w2c_durable_spend.py",
+      "branch_blob": "4c35a650569fe6706c0f6ae0f3f0c7019a2f760b",
+      "current_blob": "aa4af217a6bf66a8e8505b64f44eef9c08a23cc6",
+      "tips": [
+        "b50018a58aef05a6f890e104bbb8d1f19642e05e"
+      ],
+      "state": "different",
+      "historical_lines": 147,
+      "current_lines": 91
+    },
+    {
+      "id": 81,
+      "path": "formal/pon-nakamoto-v1/test_w2c_receiver_admission.py",
+      "branch_blob": "4e3e5097e43e6ceaad89414934b895f37a72e5d4",
+      "current_blob": "4e3e5097e43e6ceaad89414934b895f37a72e5d4",
+      "tips": [
+        "b50018a58aef05a6f890e104bbb8d1f19642e05e"
+      ],
+      "state": "exact",
+      "historical_lines": 115,
+      "current_lines": 115
+    },
+    {
+      "id": 82,
+      "path": "formal/pon-nakamoto-v1/test_w2c_stateless_receiver.py",
+      "branch_blob": "55c0e8a3dee0d25999f9ea259545e1d6b8c332d3",
+      "current_blob": "1e000a6d68ece8f1312e095f9d343be97ee66a9a",
+      "tips": [
+        "b50018a58aef05a6f890e104bbb8d1f19642e05e"
+      ],
+      "state": "different",
+      "historical_lines": 150,
+      "current_lines": 204
+    },
+    {
+      "id": 83,
+      "path": "formal/pon-nakamoto-v1/w2c_durable_spend.py",
+      "branch_blob": "b828c8c06e471bccd8d9b44afe391e476d2b342f",
+      "current_blob": "c8f20aaae584993868bd98b57c53348c26359d2b",
+      "tips": [
+        "b50018a58aef05a6f890e104bbb8d1f19642e05e"
+      ],
+      "state": "different",
+      "historical_lines": 155,
+      "current_lines": 170
+    },
+    {
+      "id": 84,
+      "path": "formal/pon-nakamoto-v1/w2c_receiver_admission.py",
+      "branch_blob": "045700db730d330df05670351fa40a94fe4dd510",
+      "current_blob": "045700db730d330df05670351fa40a94fe4dd510",
+      "tips": [
+        "b50018a58aef05a6f890e104bbb8d1f19642e05e"
+      ],
+      "state": "exact",
+      "historical_lines": 169,
+      "current_lines": 169
+    },
+    {
+      "id": 85,
+      "path": "formal/pon-nakamoto-v1/w2c_receiver_admission_cost.py",
+      "branch_blob": "1b63caa0889b9e1dafc7d8834db8566d861afe18",
+      "current_blob": "1b63caa0889b9e1dafc7d8834db8566d861afe18",
+      "tips": [
+        "b50018a58aef05a6f890e104bbb8d1f19642e05e"
+      ],
+      "state": "exact",
+      "historical_lines": 88,
+      "current_lines": 88
+    },
+    {
+      "id": 86,
+      "path": "formal/pon-nakamoto-v1/w2c_stateless_receiver.py",
+      "branch_blob": "8a800f526bbcfddb3308a1966fc4c406ee29c5d0",
+      "current_blob": "bbd703e4fca74757783bc20f2b4ca3870a968da1",
+      "tips": [
+        "b50018a58aef05a6f890e104bbb8d1f19642e05e"
+      ],
+      "state": "different",
+      "historical_lines": 111,
+      "current_lines": 130
+    },
+    {
+      "id": 87,
+      "path": "formal/pon-nakamoto-v1/test_w2c_receiver_admission.py",
+      "branch_blob": "3b591fe5f51c3b153fbfb67d65f3ebf9fc0848af",
+      "current_blob": "4e3e5097e43e6ceaad89414934b895f37a72e5d4",
+      "tips": [
+        "a0d2b172bbdd9e57f6c72fd02df1764aeaf54a66"
+      ],
+      "state": "different",
+      "historical_lines": 142,
+      "current_lines": 115
+    },
+    {
+      "id": 88,
+      "path": "formal/pon-nakamoto-v1/test_w2c_stateless_receiver.py",
+      "branch_blob": "bb675fd69b3c1e4b246d6055e9c69be5b39d4923",
+      "current_blob": "1e000a6d68ece8f1312e095f9d343be97ee66a9a",
+      "tips": [
+        "a0d2b172bbdd9e57f6c72fd02df1764aeaf54a66"
+      ],
+      "state": "different",
+      "historical_lines": 128,
+      "current_lines": 204
+    },
+    {
+      "id": 89,
+      "path": "formal/pon-nakamoto-v1/w2c_receiver_admission.py",
+      "branch_blob": "06d528d712120422056ee0c55c0fa0c6ee4e8192",
+      "current_blob": "045700db730d330df05670351fa40a94fe4dd510",
+      "tips": [
+        "a0d2b172bbdd9e57f6c72fd02df1764aeaf54a66"
+      ],
+      "state": "different",
+      "historical_lines": 177,
+      "current_lines": 169
+    },
+    {
+      "id": 90,
+      "path": "formal/pon-nakamoto-v1/w2c_receiver_admission_cost.py",
+      "branch_blob": "568a525a0454ed861f7feda8668839a5105edcda",
+      "current_blob": "1b63caa0889b9e1dafc7d8834db8566d861afe18",
+      "tips": [
+        "a0d2b172bbdd9e57f6c72fd02df1764aeaf54a66"
+      ],
+      "state": "different",
+      "historical_lines": 89,
+      "current_lines": 88
+    },
+    {
+      "id": 91,
+      "path": "formal/pon-nakamoto-v1/w2c_stateless_receiver.py",
+      "branch_blob": "dc63a0eec2f89181d33a1d4de6b9e356c033f6cb",
+      "current_blob": "bbd703e4fca74757783bc20f2b4ca3870a968da1",
+      "tips": [
+        "a0d2b172bbdd9e57f6c72fd02df1764aeaf54a66"
+      ],
+      "state": "different",
+      "historical_lines": 99,
+      "current_lines": 130
+    },
+    {
+      "id": 92,
+      "path": "formal/pon-nakamoto-v1/test_w2c_stateless_admission.py",
+      "branch_blob": "d7d4797d450bbae7c65f72376c9ea3ff87f176e9",
+      "current_blob": "d7d4797d450bbae7c65f72376c9ea3ff87f176e9",
+      "tips": [
+        "e489fa33fe80cae84dcc9bb0de2dad8b50efc69a"
+      ],
+      "state": "exact",
+      "historical_lines": 133,
+      "current_lines": 133
+    },
+    {
+      "id": 93,
+      "path": "formal/pon-nakamoto-v1/w2c_stateless_admission.py",
+      "branch_blob": "c7b5104f44074c91e59b51d3d434c6d617ef452a",
+      "current_blob": "c7b5104f44074c91e59b51d3d434c6d617ef452a",
+      "tips": [
+        "e489fa33fe80cae84dcc9bb0de2dad8b50efc69a"
+      ],
+      "state": "exact",
+      "historical_lines": 191,
+      "current_lines": 191
+    },
+    {
+      "id": 94,
+      "path": "formal/pon-nakamoto-v1/w2c_stateless_cost.py",
+      "branch_blob": "ebd9814d87edb4bb2f017ff2160e4b322f48fc20",
+      "current_blob": "ebd9814d87edb4bb2f017ff2160e4b322f48fc20",
+      "tips": [
+        "e489fa33fe80cae84dcc9bb0de2dad8b50efc69a"
+      ],
+      "state": "exact",
+      "historical_lines": 124,
+      "current_lines": 124
+    }
+  ],
+  "scope": "read-only syntax/blob triage, not semantic qualification",
+  "additional_transferred_cohort": [
+    {
+      "sha": "b50018a58aef05a6f890e104bbb8d1f19642e05e",
+      "merge_base": "7ed523093e89bd50ce85775ca023028fdc3a58c7",
+      "core_paths": [
+        "formal/pon-nakamoto-v1/test_w2_admission_cost_envelope.py",
+        "formal/pon-nakamoto-v1/test_w2c_durable_spend.py",
+        "formal/pon-nakamoto-v1/test_w2c_receiver_admission.py",
+        "formal/pon-nakamoto-v1/test_w2c_stateless_receiver.py",
+        "formal/pon-nakamoto-v1/w2_admission_cost_envelope.py",
+        "formal/pon-nakamoto-v1/w2c_durable_spend.py",
+        "formal/pon-nakamoto-v1/w2c_receiver_admission.py",
+        "formal/pon-nakamoto-v1/w2c_receiver_admission_cost.py",
+        "formal/pon-nakamoto-v1/w2c_stateless_receiver.py"
+      ],
+      "scope": "formal boundary transferred from source_audit"
+    },
+    {
+      "sha": "a0d2b172bbdd9e57f6c72fd02df1764aeaf54a66",
+      "merge_base": "f06ccc809ebd7f553a55d5a54af1ba80e6523126",
+      "core_paths": [
+        "formal/pon-nakamoto-v1/test_w2c_receiver_admission.py",
+        "formal/pon-nakamoto-v1/test_w2c_stateless_receiver.py",
+        "formal/pon-nakamoto-v1/w2c_receiver_admission.py",
+        "formal/pon-nakamoto-v1/w2c_receiver_admission_cost.py",
+        "formal/pon-nakamoto-v1/w2c_stateless_receiver.py"
+      ],
+      "scope": "formal boundary transferred from source_audit"
+    },
+    {
+      "sha": "e489fa33fe80cae84dcc9bb0de2dad8b50efc69a",
+      "merge_base": "f06ccc809ebd7f553a55d5a54af1ba80e6523126",
+      "core_paths": [
+        "formal/pon-nakamoto-v1/test_w2c_stateless_admission.py",
+        "formal/pon-nakamoto-v1/w2c_stateless_admission.py",
+        "formal/pon-nakamoto-v1/w2c_stateless_cost.py"
+      ],
+      "scope": "formal boundary transferred from source_audit"
+    },
+    {
+      "sha": "fffc600e20386d797039763f5b1b081449342d1a",
+      "merge_base": "f06ccc809ebd7f553a55d5a54af1ba80e6523126",
+      "core_paths": [
+        "formal/pon-nakamoto-v1/test_w2c_stateless_paired_cost.py",
+        "formal/pon-nakamoto-v1/test_w2c_stateless_receiver_admission.py",
+        "formal/pon-nakamoto-v1/w2c_stateless_paired_cost.py",
+        "formal/pon-nakamoto-v1/w2c_stateless_receiver_admission.py"
+      ],
+      "scope": "formal boundary transferred from source_audit"
+    }
+  ]
+}

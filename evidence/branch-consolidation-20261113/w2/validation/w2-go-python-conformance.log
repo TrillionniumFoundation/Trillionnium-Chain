@@ -1,0 +1,15 @@
+go version go1.27.4 linux/amd64
+=== RUN   TestThirdLanguageW1ProofReferenceVector
+--- PASS: TestThirdLanguageW1ProofReferenceVector (0.02s)
+=== RUN   TestGoW1EarlyAndLateRejectionOrder
+--- PASS: TestGoW1EarlyAndLateRejectionOrder (0.03s)
+PASS
+ok  	trillionnium/pon-w1-research-oracle	0.062s
+?   	trillionnium/pon-w1-research-oracle/cmd/pon_w1_io	[no test files]
+test_ten_full_proof_parities_and_late_false_transcripts (test_go_w1_cross_language.GoW1CrossLanguageTests.test_ten_full_proof_parities_and_late_false_transcripts) ... ok
+test_wrong_field_and_packet_length_reject_without_a_valid_proof (test_go_w1_cross_language.GoW1CrossLanguageTests.test_wrong_field_and_packet_length_reject_without_a_valid_proof) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 5.093s
+
+OK

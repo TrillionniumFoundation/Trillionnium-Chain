@@ -1,0 +1,369 @@
+[
+  {
+    "id": 0,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_C_DURABLE_SPEND_RESEARCH.md",
+    "blob": "27464f21f6899e43e8f429a3f4671b6def7fd675",
+    "sha256": "5d4e9001b65c28a7af263c9adf0e991d6d67141fdc935af2d4c2a0aa38766ee6",
+    "current_blob": "19047320f258fe6ebc70bd1910cc6d202f22c7ce",
+    "tips": [
+      "fa704e45c1fea9e99dd35a77142d9b27a09fe7e0"
+    ],
+    "bytes": 5821
+  },
+  {
+    "id": 1,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_C_DURABLE_SPEND_RESEARCH.md",
+    "blob": "559220538c78eabab93671f103519841717130cc",
+    "sha256": "96d60bd4ec45198a69cd8d2d19de22e1517f1b6f6f1ae05ae68d55961a2ee851",
+    "current_blob": "19047320f258fe6ebc70bd1910cc6d202f22c7ce",
+    "tips": [
+      "9934e70dba5aabf5f02b85bc92ec87544fdf51e8"
+    ],
+    "bytes": 8848
+  },
+  {
+    "id": 2,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_C_RECEIVER_COST_RESEARCH.md",
+    "blob": "5de5b185a80083bfbc18a1593d665b6ae103fd38",
+    "sha256": "620e0365e8969ad2fa769327c82b383a23ace6e576c1976acabe7151f7df9ba9",
+    "current_blob": "f772c831233ac08a2e1f155923895e00f927df07",
+    "tips": [
+      "10429dab61b195e8b9bd7e1950081acb4bfd83e0",
+      "26dd988a1eb3b464cf9a53b8a0c32df390523776",
+      "d575524c95b198d49c1459f58184a65b4f999722"
+    ],
+    "bytes": 9257
+  },
+  {
+    "id": 3,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_C_DURABLE_SPEND_RESEARCH.md",
+    "blob": "a89cf6fa365fa6c24fbb9d43a767161586704c70",
+    "sha256": "c30e48930c407fc400316fa0e03ebc9fbc16ea7629023eae96532a43f4207e37",
+    "current_blob": "19047320f258fe6ebc70bd1910cc6d202f22c7ce",
+    "tips": [
+      "26dd988a1eb3b464cf9a53b8a0c32df390523776"
+    ],
+    "bytes": 5332
+  },
+  {
+    "id": 4,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_C_DURABLE_EPOCH_RESEARCH.md",
+    "blob": "e41b545fd43b8f4e78579b71eb29e6cafdf2bd76",
+    "sha256": "53d23d54e031881a82b18b30aeb7b5eb1f46614593ad7a36d2f5a37324dda7d6",
+    "current_blob": "4986cd311d5503e47bdd3ac5cf22102717388d96",
+    "tips": [
+      "ca2e9d14d58e0882c3be58a3711428e055ff2eb6"
+    ],
+    "bytes": 6038
+  },
+  {
+    "id": 5,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_C_DURABLE_EPOCH_RESEARCH.md",
+    "blob": "4986cd311d5503e47bdd3ac5cf22102717388d96",
+    "sha256": "69c6f86c141904c1dd2b563526d782668fc67d735a03fbfe95109dab12e44f64",
+    "current_blob": "4986cd311d5503e47bdd3ac5cf22102717388d96",
+    "tips": [
+      "db379fe21097ac4501f17f0362fec421d687d412"
+    ],
+    "bytes": 9334
+  },
+  {
+    "id": 6,
+    "path": "docs/protocol/pon-nakamoto-v1/details/P2_ECONOMICS_CONVERGENCE.md",
+    "blob": "2810f8ac4732f410c7b0bffc3955f08c62b6caea",
+    "sha256": "561606717781fba2e105980fadf4064d90549a6f776f574cb930e9600b4911ad",
+    "current_blob": null,
+    "tips": [
+      "d575524c95b198d49c1459f58184a65b4f999722"
+    ],
+    "bytes": 2684
+  },
+  {
+    "id": 7,
+    "path": "docs/protocol/pon-nakamoto-v1/details/V3_COOKIE_COST_FEASIBILITY.md",
+    "blob": "4d40d624f2cdcc080517f76de82dd2e3e403be32",
+    "sha256": "cabd9a478a83ac6fbaa948e6e8d60004d9806f6187e662b9ccf96f8617f4f87c",
+    "current_blob": null,
+    "tips": [
+      "d575524c95b198d49c1459f58184a65b4f999722"
+    ],
+    "bytes": 4587
+  },
+  {
+    "id": 8,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_C_COST_VERDICT_V1.md",
+    "blob": "8a73e547345a760987c7893c58cc8dfdf14fccf7",
+    "sha256": "68ce1a0e691c2321775732fb57f5b2fffbb052c1f24df88933fac220afc002db",
+    "current_blob": "0d8d65304367e50e3457b2f09d49e001ca6cae52",
+    "tips": [
+      "d575524c95b198d49c1459f58184a65b4f999722"
+    ],
+    "bytes": 4054
+  },
+  {
+    "id": 9,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_C_DURABLE_SPEND_RESEARCH.md",
+    "blob": "bf0c5094d0fa419f9ba588ff4b82d3c314aaf2c8",
+    "sha256": "1836c9ff8ccdd3a18de72425cae204d567b91856914309e7a41fb77cff1aaab8",
+    "current_blob": "19047320f258fe6ebc70bd1910cc6d202f22c7ce",
+    "tips": [
+      "d575524c95b198d49c1459f58184a65b4f999722"
+    ],
+    "bytes": 5571
+  },
+  {
+    "id": 10,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_C_LOCAL_EPOCH_LEASE_RESEARCH.md",
+    "blob": "26f4ad53de6e54060a41a89efeef38e294efad26",
+    "sha256": "e14167fd9e4ff840aed41be0ff681a520b477ff8c48893cc04fac640d9075261",
+    "current_blob": "26f4ad53de6e54060a41a89efeef38e294efad26",
+    "tips": [
+      "c953a86c9338bc46509ed527e53bd836d66ffce2"
+    ],
+    "bytes": 5989
+  },
+  {
+    "id": 11,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_C_DURABLE_SPEND_RESEARCH.md",
+    "blob": "bbf82476db28d5be0e45c5719c47e8d73806459d",
+    "sha256": "d50fee03a5af4941e65759e09777def3382d0a0e051731860074f30f151838ad",
+    "current_blob": "19047320f258fe6ebc70bd1910cc6d202f22c7ce",
+    "tips": [
+      "cab37b3f9ea4cc2565e2902c38c5a36f095ab171"
+    ],
+    "bytes": 8676
+  },
+  {
+    "id": 12,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_C_DURABLE_SPEND_RESEARCH.md",
+    "blob": "19047320f258fe6ebc70bd1910cc6d202f22c7ce",
+    "sha256": "7388a88434449e95f17e34455a8594596ba029eafbe96ff27cd2b938140474fa",
+    "current_blob": "19047320f258fe6ebc70bd1910cc6d202f22c7ce",
+    "tips": [
+      "093ec49ae58da21d79c1fc1df0e3569f4d9e357b"
+    ],
+    "bytes": 5197
+  },
+  {
+    "id": 13,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_C_RECEIVER_COST_RESEARCH.md",
+    "blob": "f772c831233ac08a2e1f155923895e00f927df07",
+    "sha256": "4e171ac04802da964a7d6300c4bb1e5ca6815e90b08384ddfbea6ce52585caea",
+    "current_blob": "f772c831233ac08a2e1f155923895e00f927df07",
+    "tips": [
+      "093ec49ae58da21d79c1fc1df0e3569f4d9e357b"
+    ],
+    "bytes": 11487
+  },
+  {
+    "id": 14,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_C_DURABLE_SPEND_RESEARCH.md",
+    "blob": "2b7ab2fb90f81e20b882a30982ce72607674f94c",
+    "sha256": "16e4b72766b3c51629f4355e31eed2b0636f7a36a3c33dd7e78b5489c9913979",
+    "current_blob": "19047320f258fe6ebc70bd1910cc6d202f22c7ce",
+    "tips": [
+      "e19245dd880a989b5310cda126ff2f27a6da67d4"
+    ],
+    "bytes": 9086
+  },
+  {
+    "id": 15,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_C_COST_VERDICT_V1.md",
+    "blob": "0d8d65304367e50e3457b2f09d49e001ca6cae52",
+    "sha256": "0c235b09d3370c30ef8cb8252e468f0527434c9b4d02630ee89a536a9e8bcc14",
+    "current_blob": "0d8d65304367e50e3457b2f09d49e001ca6cae52",
+    "tips": [
+      "7573e3ae83fd6090a1005a29fe716b0402b090ff"
+    ],
+    "bytes": 2912
+  },
+  {
+    "id": 16,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_C_DURABLE_SPEND_RESEARCH.md",
+    "blob": "e9f2fa4ff9b519f25258b4fe5b0fc1bcb1b5b7f1",
+    "sha256": "cf83ae967bcf476d20843ced3557d363d269862e6a4c96c3b6881fb6de95dfba",
+    "current_blob": "19047320f258fe6ebc70bd1910cc6d202f22c7ce",
+    "tips": [
+      "4bf21e2a1e92e07955129c98d2c4f9102d3a1742"
+    ],
+    "bytes": 6066
+  },
+  {
+    "id": 17,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_D_FULL_TILE_FREIVALDS_RESEARCH.md",
+    "blob": "31ed6a5ec74c51710e0913f64c349069983972d6",
+    "sha256": "f76412668a148e5b431e014b76155e3270624b9abd90300e242294d658854fd9",
+    "current_blob": "31ed6a5ec74c51710e0913f64c349069983972d6",
+    "tips": [
+      "4f367f106f97c92e95cca6a85c59fbc9d01d4a92"
+    ],
+    "bytes": 11152
+  },
+  {
+    "id": 18,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_E_BATCHED_POLYNOMIAL_RESEARCH.md",
+    "blob": "e12bd6f42cf5ab0bf46285252858af1bd1411af3",
+    "sha256": "33f7af0d88534bbfb95ff2fb464543f168b57752669a2a616a5cafe5f27748cf",
+    "current_blob": "e12bd6f42cf5ab0bf46285252858af1bd1411af3",
+    "tips": [
+      "4f367f106f97c92e95cca6a85c59fbc9d01d4a92"
+    ],
+    "bytes": 7247
+  },
+  {
+    "id": 19,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_C_DURABLE_PAID_REPLAY.md",
+    "blob": "6ee366d36d1887b14db57a6d3998a51222188cb2",
+    "sha256": "b7e3affbe4693a4d5c15112afd6248139b73d409debbe61dd654c923f8c89ee4",
+    "current_blob": "6ee366d36d1887b14db57a6d3998a51222188cb2",
+    "tips": [
+      "b517d6f9e1e763742853c0d65f512d53203ec768"
+    ],
+    "bytes": 5714
+  },
+  {
+    "id": 20,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_ADMISSION_COST_ENVELOPE_V1.md",
+    "blob": "d0f348f8d09e5804ccea3335f97108e65cd6bfc7",
+    "sha256": "f45a476e6b768d27db34d9b4791624e350d1268d8e0cdda65d00e0150b192c5e",
+    "current_blob": null,
+    "tips": [
+      "a4f7fd5bdace75612928be0917f550f7dea864fc",
+      "b50018a58aef05a6f890e104bbb8d1f19642e05e"
+    ],
+    "bytes": 4243
+  },
+  {
+    "id": 21,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_C_RECEIVER_COST_RESEARCH.md",
+    "blob": "c2169d04bbd515c4a8554dc047c2e0664103e065",
+    "sha256": "53f5b2ae3603926d92d87499b4671446db8d5015b513bd9dd06656227cbd44da",
+    "current_blob": "f772c831233ac08a2e1f155923895e00f927df07",
+    "tips": [
+      "a4f7fd5bdace75612928be0917f550f7dea864fc"
+    ],
+    "bytes": 5698
+  },
+  {
+    "id": 22,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_D_FREIVALDS_RESEARCH.md",
+    "blob": "111859d695d2b3ad385e64ed6bd0844aa15f956c",
+    "sha256": "df1f14366e509d799f32dbb7c1b275093b63994f7e61b6d0b862d3620120bbae",
+    "current_blob": "111859d695d2b3ad385e64ed6bd0844aa15f956c",
+    "tips": [
+      "51423e17989d837405c9455a012bc654a21a5e0c"
+    ],
+    "bytes": 7340
+  },
+  {
+    "id": 23,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_C_RECEIVER_COST_RESEARCH.md",
+    "blob": "d2e30999bf164385d84fe4abab4f87daf6ce3ede",
+    "sha256": "20269b23d16eba1a7e63e1c05c1683aa51edcc9c1db6026d62a8b318b65296b0",
+    "current_blob": "f772c831233ac08a2e1f155923895e00f927df07",
+    "tips": [
+      "7aa1a1dad78e530329ba03d81f7e7da01296f27d"
+    ],
+    "bytes": 6972
+  },
+  {
+    "id": 24,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_C_RECEIVER_COST_RESEARCH.md",
+    "blob": "31d833faca8f6cf7727823332aa4ccbec9f5e937",
+    "sha256": "d95a026df409fa9d85c836d0c26d1076057c8b20bc122c1e5c8752f2f5ff1061",
+    "current_blob": "f772c831233ac08a2e1f155923895e00f927df07",
+    "tips": [
+      "9386ba1462138b0e235b22050afc9225d90c3cb0",
+      "fffc600e20386d797039763f5b1b081449342d1a"
+    ],
+    "bytes": 11617
+  },
+  {
+    "id": 25,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_D_FULL_TAPE_RESEARCH.md",
+    "blob": "635b824ce9c1951de74c6965d3c7fe7a4cade76a",
+    "sha256": "67c82d60589719fbf02b9aac50bdda68d01f71ae6b03987fd007f6853a411ab1",
+    "current_blob": null,
+    "tips": [
+      "9386ba1462138b0e235b22050afc9225d90c3cb0"
+    ],
+    "bytes": 5589
+  },
+  {
+    "id": 26,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_B_RELATION_SPEC.md",
+    "blob": "1ab17318e60389785b2acb30ee0a50556f58855f",
+    "sha256": "a1bc3572e767350d199f3ff4fb40cd7f88b3dd1da36a0366e21183d94bb55ac0",
+    "current_blob": null,
+    "tips": [
+      "658b61cacc539f0c4faf1216f7ff10a77a0bd4d7"
+    ],
+    "bytes": 4682
+  },
+  {
+    "id": 27,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_C_RESEARCH.md",
+    "blob": "a9108a57858784587574a495831dd914127fb312",
+    "sha256": "bb362fc502df8968ba41b79120edd2a627b5caa0560d0a99daea6235d346b7ab",
+    "current_blob": null,
+    "tips": [
+      "658b61cacc539f0c4faf1216f7ff10a77a0bd4d7"
+    ],
+    "bytes": 4113
+  },
+  {
+    "id": 28,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_GO_ORACLE.md",
+    "blob": "d67fd246b13d2c650bc2ba1c596bc8b50587dfa3",
+    "sha256": "3e574cea295374fc01db5337ba668d96805856d9d9aa8dd641a38aa06bd60f02",
+    "current_blob": null,
+    "tips": [
+      "658b61cacc539f0c4faf1216f7ff10a77a0bd4d7"
+    ],
+    "bytes": 4958
+  },
+  {
+    "id": 29,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_P5_MATCHED_RESEARCH.md",
+    "blob": "bb05504faabf10d059dedab1d239505acd2f79f7",
+    "sha256": "086516dfc2c14d3f9688468e4319adcfac10185c7d328e959795a609e580317c",
+    "current_blob": null,
+    "tips": [
+      "658b61cacc539f0c4faf1216f7ff10a77a0bd4d7"
+    ],
+    "bytes": 3820
+  },
+  {
+    "id": 30,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_C_RECEIVER_COST_RESEARCH.md",
+    "blob": "94343020fc5e06f8b0d9eb4061e29763bffadf40",
+    "sha256": "b05b9bb1435ddaaa3415f242177aa257bd37778d7a9539cdb267eed15bff7ca1",
+    "current_blob": "f772c831233ac08a2e1f155923895e00f927df07",
+    "tips": [
+      "b50018a58aef05a6f890e104bbb8d1f19642e05e"
+    ],
+    "bytes": 11909
+  },
+  {
+    "id": 31,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_C_RECEIVER_COST_RESEARCH.md",
+    "blob": "d0fea1a9c9278d84bc26256ec55c91d81d3d9ba1",
+    "sha256": "e8271f78aa852fd86af8b81208ca7d57ef275f711bf241205f60256348c57f22",
+    "current_blob": "f772c831233ac08a2e1f155923895e00f927df07",
+    "tips": [
+      "a0d2b172bbdd9e57f6c72fd02df1764aeaf54a66"
+    ],
+    "bytes": 10040
+  },
+  {
+    "id": 32,
+    "path": "docs/protocol/pon-nakamoto-v1/details/W2_C_STATELESS_OFFER_RESEARCH.md",
+    "blob": "d465780f017506e34b822c8909bdc9137e667682",
+    "sha256": "216cb02ad03970209ed481d01aa2f15ed7470b0d6a06abb74afcc5c365e4a360",
+    "current_blob": "d465780f017506e34b822c8909bdc9137e667682",
+    "tips": [
+      "e489fa33fe80cae84dcc9bb0de2dad8b50efc69a"
+    ],
+    "bytes": 7937
+  }
+]
