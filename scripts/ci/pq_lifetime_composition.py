@@ -37,7 +37,7 @@ INPUTS = {
     },
     "root": {
         "path": root_register.DEFAULT_MANIFEST,
-        "sha256": "4144d308e76fd73f14c197765e354273059bfc8f7480541eaa3f715c31b132cf",
+        "sha256": "d973cb827537c5b852370da6e4e916afc0f52ccdadb2f2c051ed2b9e041f40c8",
         "declared_revision": root_register.REVIEW_BASE,
         "revision_semantics": "review-base-context-not-all-source-revision",
     },

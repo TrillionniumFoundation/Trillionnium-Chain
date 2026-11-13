@@ -18,7 +18,9 @@ The new [machine register](../../config/pon/pq128-lifetime-composition-v2.json),
 
 The current legacy V1 budget declares **21 source paths** at
 `0f9b30549328e5be20f4d3e6e27bd132b42d90de`. The current root inventory
-declares **45 paths**, all retaining the reviewed bytes from
+declares **45 paths**, reviewed at the SQLite cleanup source commit
+`975af9eb4a7f15b405de602552fa05021a176c11`. The journal source changes;
+the other 44 source hashes retain the reviewed bytes from
 `57b069ae1e7ed32ff95e4f2a18a74d5eadcda550`. This mapping's review context is
 the actual client-construction source checkpoint
 `0f9b30549328e5be20f4d3e6e27bd132b42d90de`. Child manifest bytes are independently
@@ -51,7 +53,7 @@ revision `12e510b211110d93d9ead07e02c07a1eecc28ae9` and root review context
 `eedc1db827d97aab0be4c43e58713a2e2f2a3d0331e045a509f0941557834028`.
 Current child manifest SHA-256 digests are
 `0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd` and
-`4144d308e76fd73f14c197765e354273059bfc8f7480541eaa3f715c31b132cf`, respectively.
+`d973cb827537c5b852370da6e4e916afc0f52ccdadb2f2c051ed2b9e041f40c8`, respectively.
 Added controls explicitly
 reject the old input pins and the omitted witness population.
 
@@ -75,6 +77,14 @@ both are explicit refusal cases for the current bridge. The private timing
 change includes PQ pin preparation in diagnostics and preserves the original
 caller deadline. It changes no event roster, allocation, primitive scope,
 quorum, operational maximum or qualification field.
+
+The subsequent SQLite cleanup continuation moves the existing journal setup
+PRAGMAs inside its existing close guard. It updates only that source digest
+in the 45-path root inventory and the exact root input binding here. The prior
+root review context `57b069ae1e7ed32ff95e4f2a18a74d5eadcda550` and manifest digest
+`4144d308e76fd73f14c197765e354273059bfc8f7480541eaa3f715c31b132cf`
+remain historical identities. The legacy input, 21/45/1/65 counts, roles,
+conditional arithmetic, limits, unknowns and false qualification fields remain.
 
 An exact manifest change requires a new review. One source map cannot silently
 overwrite the other. Missing inputs, locks, sources, changed bytes, conflicting

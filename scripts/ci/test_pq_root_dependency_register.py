@@ -34,6 +34,8 @@ PREVIOUS_SOURCE_SNAPSHOT_SHA256 = (
     "844d27717babb9b3a286cd28915a06b0cd1152ffcf151ffdf6c30a01708bd9fe"
 )
 PREVIOUS_SOURCE_PINS = {
+    "formal/pon-nakamoto-v1/pq_root_recovery_journal_v2.py":
+        "b163c732775bcd79a132462782609fd81008ac30df3b03c5201996411bfc3519",
     "trillionnium/Cargo.lock":
         "53c4eab0fb3d2951894348de2b765e0a573e49acb5dbfe1fe805719ec868a136",
     "trillionnium/crates/trnm-crypto-primitives/Cargo.toml":

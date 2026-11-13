@@ -298,9 +298,26 @@ keep their original source identities. The inspector still returns
 `source_revision_bound = false`; it supplies no native execution, custody,
 cryptographic lifetime bound or production qualification.
 
+### 2026-11-13 SQLite setup cleanup source continuation
+
+The current 45-path source review uses implementation commit
+`975af9eb4a7f15b405de602552fa05021a176c11`, tree
+`0b48dffaadc6b6281f95d2aa0392aaf95b02874b`. Its canonical source-map digest is
+`8cfc6a3d9a0347cb8bd7e6c41f5286523d85bba48b3b392922ad8aae8c8d2435`.
+Only `formal/pon-nakamoto-v1/pq_root_recovery_journal_v2.py` changes within
+this inventory: the same three setup PRAGMAs now run inside the existing
+try/finally connection-close guard. Transaction ordering, authority checks,
+limits, deadlines and the other 44 source hashes remain unchanged.
+
+The exact historical 225ab source-map test retains its original journal digest
+and original `844d27717babb9b3a286cd28915a06b0cd1152ffcf151ffdf6c30a01708bd9fe`
+map digest. The typed weak-key mapping below remains a historical input.
+This source binding supplies no native execution or new qualification;
+all roles, query obligations, unknown bounds and false qualification fields remain.
+
 ### 2026-11-13 typed weak-key source continuation
 
-The current source review binds the same **45 declared files** at
+The typed weak-key source review bound the same **45 declared files** at
 `57b069ae1e7ed32ff95e4f2a18a74d5eadcda550`, tree
 `887f402546a4d1449919915a82f122acf3d0d49d`. The canonical source-map digest is
 `e877eae7f4c1f7df4874c49f0bf6e2fc5b27f15912d9a0532e6704bb8e112a95`.

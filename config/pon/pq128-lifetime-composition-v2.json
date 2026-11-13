@@ -140,10 +140,10 @@
       "sha256": "0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd"
     },
     "root": {
-      "declared_revision": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+      "declared_revision": "975af9eb4a7f15b405de602552fa05021a176c11",
       "path": "config/pon/pq-root-dependency-register-v3.json",
       "revision_semantics": "review-base-context-not-all-source-revision",
-      "sha256": "4144d308e76fd73f14c197765e354273059bfc8f7480541eaa3f715c31b132cf"
+      "sha256": "d973cb827537c5b852370da6e4e916afc0f52ccdadb2f2c051ed2b9e041f40c8"
     }
   },
   "primitive_scope_bridge": {
