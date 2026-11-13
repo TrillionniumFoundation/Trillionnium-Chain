@@ -32,6 +32,22 @@ const MAX_CONFIG_BYTES: u64 = 16384;
 const MAX_PACKET_BYTES: usize = 1_048_576;
 const MAX_ERROR_BYTES: usize = 2048;
 pub const PEER_POLLING_SCHEMA: &str = "pon-native-pinned-peer-poll-config-v1";
+/// A remote pinned peer can still be malicious. A loopback V3 *listener*
+/// otherwise carries no compulsory cgroup, so a remote outbound poller must
+/// independently join the one original fixed administrator resource parent.
+/// No resource budget or admission authority is created here.
+fn original_remote_host_owner(
+    cfg: &PeerPollingConfig,
+) -> Result<Option<crate::host_kernel_parent::HostKernelBudget>> {
+    let Some(peer) = cfg.peers.iter().find(|p| !p.address.ip().is_loopback()) else {
+        return Ok(None);
+    };
+    let kernel = crate::host_kernel_parent::require_for_listener(peer.address)?
+        .ok_or("PUBLIC_HOST_KERNEL_REQUIRED")?;
+    kernel.verify()?;
+    Ok(Some(kernel))
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct PinnedPeer {
@@ -341,7 +357,16 @@ fn admit_page(
     end: Instant,
     stop: &AtomicBool,
     activate: Option<Hash>,
+    host_kernel: Option<&crate::host_kernel_parent::HostKernelBudget>,
 ) -> Result<(bool, Option<Hash>)> {
+    let resource = || {
+        progress(end, stop)?;
+        if let Some(kernel) = host_kernel {
+            kernel.verify()?;
+        }
+        Ok(())
+    };
+    resource()?;
     {
         let owner = lock(node, end, stop)?;
         ensure(
@@ -352,13 +377,17 @@ fn admit_page(
         // owner must already have bound this original CPU domain.
         owner.public_service_cpu_domain()?;
     }
-    ingress::history_import::admit_shared_packet(
-        node,
-        packet,
-        end,
-        &|| progress(end, stop),
-        activate,
-    )
+    let result =
+        ingress::history_import::admit_shared_packet(node, packet, end, &resource, activate);
+    // A successful durable admission is never undone by a later Host refusal,
+    // but it cannot be reported as completed synchronization after owner loss.
+    match result {
+        Ok(value) => {
+            resource()?;
+            Ok(value)
+        }
+        Err(error) => Err(error),
+    }
 }
 
 struct PollContext<'a> {
@@ -367,6 +396,7 @@ struct PollContext<'a> {
     settings: &'a Settings,
     end: Instant,
     stop: &'a AtomicBool,
+    host_kernel: Option<&'a crate::host_kernel_parent::HostKernelBudget>,
 }
 struct EventDetail {
     stage: &'static str,
@@ -469,6 +499,7 @@ impl Engine {
             settings,
             end,
             stop,
+            host_kernel,
         } = *context;
         progress(end, stop)?;
         if self.calls >= cfg.max_calls {
@@ -617,7 +648,14 @@ impl Engine {
         let mut verified = false;
         let mut active = None;
         if let Some(packet) = packet {
-            match admit_page(node, packet, end, stop, complete.then_some(target)) {
+            match admit_page(
+                node,
+                packet,
+                end,
+                stop,
+                complete.then_some(target),
+                host_kernel,
+            ) {
                 Ok((inserted, activated)) => {
                     verified = inserted;
                     active = activated;
@@ -721,6 +759,7 @@ impl Engine {
             settings: _,
             end,
             stop,
+            host_kernel: _,
         } = *context;
         let count = self.states.len();
         let mut attempted_pages = 0;
@@ -787,6 +826,7 @@ where
             owner.settings().clone()
         };
         cfg.validate(&settings)?;
+        let host_kernel = original_remote_host_owner(&cfg)?;
         // The sibling V3 listener and this poller start concurrently.
         // Await its original Node CPU binding before any remote history Work;
         // absent/unknown identity fails closed after the original startup cap.
@@ -810,9 +850,12 @@ where
         let mut cycles = 0;
         let mut next = started;
         let mut rpc = |index: usize, request: &Request| {
+            if let Some(kernel) = &host_kernel {
+                kernel.verify()?;
+            }
             // Every dial and all client phases share this poller's original
             // absolute end, including retries after a transport failure.
-            public_v3::call_public_protected_v3_with_deadline(
+            let reply = public_v3::call_public_protected_v3_with_deadline(
                 cfg.peers[index].address,
                 request,
                 &settings,
@@ -821,7 +864,11 @@ where
                 policy,
                 Some(end),
             )
-            .0
+            .0;
+            if let Some(kernel) = &host_kernel {
+                kernel.verify()?;
+            }
+            reply
         };
         let poll_context = PollContext {
             node: &node,
@@ -829,6 +876,7 @@ where
             settings: &settings,
             end,
             stop: &stop,
+            host_kernel: host_kernel.as_ref(),
         };
         while Instant::now() < end && !stop.load(Ordering::Acquire) && engine.calls < cfg.max_calls
         {
@@ -842,6 +890,9 @@ where
             match engine.cycle(&poll_context, &mut rpc, &mut observe) {
                 Err(error) if error.is(ErrorCode::PeerPollCancelled) => break,
                 other => other?,
+            }
+            if let Some(kernel) = &host_kernel {
+                kernel.verify()?;
             }
             next = Instant::now() + Duration::from_millis(cfg.poll_interval_ms);
         }
@@ -952,6 +1003,7 @@ mod tests {
             settings: s,
             end: Instant::now() + Duration::from_secs(120),
             stop,
+            host_kernel: None,
         }
     }
     #[test]
@@ -977,6 +1029,7 @@ mod tests {
             packet,
             Instant::now() + Duration::from_secs(10),
             &stop,
+            None,
             None,
         )
         .unwrap_err();
@@ -1041,6 +1094,7 @@ mod tests {
             Instant::now() + Duration::from_secs(10),
             &stop,
             None,
+            None,
         )
         .unwrap_err();
         assert_eq!(refused.to_string(), "WORK:Product");
@@ -1056,6 +1110,25 @@ mod tests {
             guarded.lock().unwrap().read_active().unwrap().0,
             settings.genesis()
         );
+    }
+
+    #[test]
+    fn nonloopback_pinned_peer_needs_original_physical_host_owner() {
+        let settings = Settings::development(Some(1)).unwrap();
+        let mut cfg = config(&settings);
+        assert!(original_remote_host_owner(&cfg).unwrap().is_none());
+        cfg.peers[0].address = "192.0.2.21:12345".parse().unwrap();
+        cfg.validate(&settings).unwrap();
+        // A machine either has the administrator-owned fixed cgroup (and
+        // its actual thread is checked), or must deny this peer BEFORE W1.
+        match original_remote_host_owner(&cfg) {
+            Ok(Some(kernel)) => kernel.verify().unwrap(),
+            Err(error) => assert!(
+                !error.to_string().is_empty(),
+                "unbudgeted remote pinned peers must not be silently admitted"
+            ),
+            Ok(None) => panic!("nonloopback peer received unbudgeted host owner"),
+        }
     }
 
     #[test]
