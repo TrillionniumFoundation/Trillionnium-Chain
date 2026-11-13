@@ -8,6 +8,7 @@ pub mod blocked_one_zero;
 pub mod blocked_zero;
 pub mod blocked_zero_paired;
 pub mod facts;
+pub mod full_relation;
 mod integer_paired;
 pub mod legal_attempt;
 pub mod maintenance_limb;
