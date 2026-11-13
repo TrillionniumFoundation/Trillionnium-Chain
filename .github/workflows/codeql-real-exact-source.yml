@@ -24,7 +24,7 @@ jobs:
     permissions:
       contents: read
       actions: read
-      security-events: write
+      security-events: read
     strategy:
       fail-fast: false
       matrix:
@@ -75,6 +75,7 @@ jobs:
           ref: ${{ github.event_name == 'pull_request' && matrix.source == 'head' && format('refs/pull/{0}/head', github.event.pull_request.number) || github.ref }}
           sha: ${{ github.event_name == 'pull_request' && matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
           upload: never
+          upload-database: false
       - name: Verify generated SARIF is present and parseable
         id: sarif_verify
         if: always() && steps.codeql.outcome != 'skipped'

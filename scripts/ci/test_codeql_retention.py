@@ -84,6 +84,43 @@ class CodeqlRetentionTests(unittest.TestCase):
         self.assertEqual(field(analyze, "sha"), "${{ github.event_name == 'pull_request' && "
                          "matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}")
 
+    def require_local_only_permissions(self, workflow):
+        sections = re.findall(r"^    permissions:\n((?:      [^\n]*\n)+)",
+                              workflow, re.MULTILINE)
+        self.assertEqual(len(sections), 1)
+        pairs = re.findall(r"^      ([a-z-]+): ([^\n]+)$",
+                           sections[0], re.MULTILINE)
+        self.assertEqual(len(pairs), 3)
+        self.assertEqual(dict(pairs), {
+            "contents": "read", "actions": "read", "security-events": "read",
+        })
+        analyze = step(workflow, "Generate local exact-source SARIF for exact source SHA")
+        self.assertEqual(re.findall(r"^          upload: (.+)$", analyze, re.MULTILINE),
+                         ["never"])
+        # The pinned action defaults database upload on independently of SARIF upload.
+        self.assertEqual(re.findall(r"^          upload-database: (.+)$",
+                                    analyze, re.MULTILINE), ["false"])
+
+    def test_local_analysis_keeps_read_only_status_access_and_disables_database_upload(self):
+        self.require_local_only_permissions(self.workflow)
+
+    def test_write_permissions_or_implicit_database_upload_are_refused(self):
+        changes = [
+            ("      security-events: read\n", "      security-events: write\n"),
+            ("      security-events: read\n", ""),
+            ("      actions: read\n", "      actions: write\n"),
+            ("          upload: never\n", "          upload: always\n"),
+            ("          upload-database: false\n", "          upload-database: true\n"),
+            ("          upload-database: false\n", ""),
+            ("          upload-database: false\n",
+             "          upload-database: false\n          upload-database: true\n"),
+        ]
+        for old, new in changes:
+            with self.subTest(replacement=new):
+                self.assertIn(old, self.workflow)
+                with self.assertRaises(AssertionError):
+                    self.require_local_only_permissions(self.workflow.replace(old, new, 1))
+
     def test_local_sarif_covers_exporter_pr_scope_with_immutable_same_repository_sources(self):
         self.require_pr_source_contract(self.workflow, EXPORT_WORKFLOW.read_text(encoding="utf-8"))
 

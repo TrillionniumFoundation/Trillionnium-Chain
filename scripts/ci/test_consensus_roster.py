@@ -17,6 +17,48 @@ def transcript():
 
 
 class ConsensusRosterTests(unittest.TestCase):
+    def require_isolated_consensus_controls(self, workflow):
+        loops = [match for match in re.finditer(
+            r"^          for test in (?P<names>[^\n]+); do\n"
+            r"(?P<body>.*?)^          done$", workflow, re.MULTILINE | re.DOTALL)
+            if 'selector="consensus::tests::$test"' in match["body"]]
+        self.assertEqual(len(loops), 1)
+        loop = loops[0]
+        self.assertEqual(loop["names"].split(), [
+            'aligned_division_preserves_all_512_shift_and_limb_boundaries',
+            'aligned_division_matches_original_for_wide_arbitrary_operands',
+            'aligned_required_work_and_retarget_match_original_arithmetic',
+            'native_arithmetic_matches_versioned_python_domain_vectors',
+        ])
+        command = ('cargo +1.95.0 test --release --locked --manifest-path trillionnium/Cargo.toml '
+                   '-p trnm-pon-node --lib "$selector" -- --exact --show-output --test-threads=1')
+        self.assertIn(command, loop["body"])
+        self.assertIn('python3 scripts/ci/check_required_native_test.py '
+                      '"$OUT/$test.log" --test "$selector"', loop["body"])
+        return loop
+
+    def test_workflow_retains_all_four_isolated_consensus_controls(self):
+        self.require_isolated_consensus_controls(WORKFLOW.read_text(encoding='utf-8'))
+
+    def test_missing_duplicate_or_unchecked_isolated_control_is_refused(self):
+        workflow = WORKFLOW.read_text(encoding='utf-8')
+        loop = self.require_isolated_consensus_controls(workflow)
+        original = loop.group(0)
+        changes = [(name + ' ', '') for name in loop["names"].split()[:-1]]
+        last = 'native_arithmetic_matches_versioned_python_domain_vectors'
+        changes += [
+            (' ' + last + '; do', '; do'),
+            (' ' + last + '; do', ' ' + last + ' ' + last + '; do'),
+            (' -- --exact --show-output', ' -- --show-output'),
+            ('python3 scripts/ci/check_required_native_test.py', 'python3 scripts/ci/other.py'),
+        ]
+        for old, new in changes:
+            with self.subTest(replacement=new):
+                self.assertIn(old, original)
+                changed = workflow[:loop.start()] + original.replace(old, new, 1) + workflow[loop.end():]
+                with self.assertRaises(AssertionError):
+                    self.require_isolated_consensus_controls(changed)
+
     def test_complete_frozen_roster(self):
         self.assertEqual(validate(transcript())['passed'], list(PASSED))
 
