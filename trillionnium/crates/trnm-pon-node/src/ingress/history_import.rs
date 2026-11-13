@@ -457,17 +457,17 @@ fn admit_packet(
         };
         // Test-only cut is after the actual native COMMIT, before CPU settle.
         cut("admitted");
-        let active = if let Some(tip) = activate {
-            // Final activation keeps the original admission operation and
-            // deadline. It does not start a new reservation after paid W1.
-            Some(super::observe_submit_phase(
-                observation,
-                SubmitPhase::SubmitResult,
-                || activate_packet(owner, tip, clock, control, operation),
-            )?)
-        } else {
-            None
-        };
+        let active = super::observe_submit_phase(observation, SubmitPhase::SubmitResult, || {
+            // Admission has released its Node guard and committed the complete
+            // native relation. Only that same operation's original completion
+            // marker may wait for its paid headroom before activation/settle.
+            // A failure here leaves the committed packet intact. Settlement
+            // releases this marker before the next packet reserves for itself.
+            progress.history_prepare_writer(&|| control.check())?;
+            activate
+                .map(|tip| activate_packet(owner, tip, clock, control, operation))
+                .transpose()
+        })?;
         Ok((id, true, active))
     })
 }
@@ -480,21 +480,21 @@ fn activate_packet(
     operation: &public_v3::ServiceMutationCpuOperation,
 ) -> Result<Hash> {
     let owns_node_mutex = matches!(owner, Owner::Shared(_));
-    let checkpoint = || operation.history_checkpoint(owns_node_mutex, &|| control.check());
-    checkpoint()?;
+    let held_checkpoint = || operation.history_checkpoint(owns_node_mutex, &|| control.check());
+    operation.history_checkpoint(false, &|| control.check())?;
     let active = owner.with(control, |node| {
         node.activate_observed_with_termination(
             tip,
             clock,
             &mut || {
                 cut("activation_progress");
-                checkpoint()
+                held_checkpoint()
             },
             Some(&operation.checkpoint_handle()),
         )
     })?;
     cut("activated");
-    checkpoint()?;
+    operation.history_checkpoint(false, &|| control.check())?;
     Ok(active)
 }
 

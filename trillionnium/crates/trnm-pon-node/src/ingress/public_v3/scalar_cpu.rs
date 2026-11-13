@@ -710,7 +710,8 @@ impl LiveRequestCpu {
     }
 
     /// The same settled-worker History continuation may prepare to reacquire
-    /// its Node writer. This earns free credit through the ORIGINAL refill;
+    /// its Node writer or finish after native admission. This earns free credit
+    /// through the ORIGINAL refill;
     /// it does not reserve another start quantum or predict commit cost.
     /// Another live owner may consume that headroom before the held checks,
     /// which must still refuse rather than wait under the writer.
@@ -718,7 +719,7 @@ impl LiveRequestCpu {
         loop {
             resource()?;
             // Charge this exact owner's new interval once. The sampler keeps
-            // unknown/refused and verified-unique-W1 scheduling semantics.
+            // unknown/refused and verified native-completion scheduling rules.
             self.observe_sample(false, true)?;
             let (request, ready) = {
                 let mut state = match self.state.lock() {
@@ -1257,9 +1258,10 @@ impl ServiceMutationCpuCheckpoint {
             .observe_with_control(false, true, !owns_node_mutex, resource)
     }
 
-    /// Call only after detached execution has joined its workers and before
-    /// reacquiring the Node writer. Only this same operation's unique verified
-    /// W1 may wait for original free credit, with its original request controls.
+    /// Call only with workers joined and no Node writer held. Only this same
+    /// operation's unique full native completion may wait for original free
+    /// credit, with its original request controls. Before native completion,
+    /// the original paid checkpoint still applies without extra waiting rights.
     /// This is no reservation or guarantee that a later held commit can finish.
     pub(crate) fn history_prepare_writer(&self, resource: &dyn Fn() -> Result<()>) -> Result<()> {
         self.live.prepare_history_writer(resource)

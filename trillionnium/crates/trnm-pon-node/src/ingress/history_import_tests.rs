@@ -75,6 +75,122 @@ fn fixture() -> (tempfile::TempDir, Settings, Node, Packet, u64) {
     (directory, settings, node, packet, clock)
 }
 
+fn history_successor(
+    directory: &std::path::Path,
+    settings: &Settings,
+    parent: &Packet,
+    clock: u64,
+) -> Packet {
+    let mut source = Node::open(&directory.join("history-source"), settings.clone(), 2).unwrap();
+    source.admit(parent, clock).unwrap();
+    source
+        .make(
+            parent.id().unwrap(),
+            vec![],
+            crate::development_public(0).unwrap(),
+            parent.header.timestamp + 10,
+            4096,
+        )
+        .unwrap()
+}
+
+#[test]
+fn shared_history_native_completion_handoff_settles_before_next_packet() {
+    let (directory, settings, node, first, clock) = fixture();
+    let second = history_successor(directory.path(), &settings, &first, clock);
+    let ids = [first.id().unwrap(), second.id().unwrap()];
+    let owner = Arc::new(Mutex::new(node));
+    let original = owner.lock().unwrap().remote_history_cpu_domain().unwrap();
+    assert_eq!(original.observe().unwrap().stored_credit_ns, 0);
+    let admitted = Arc::new(AtomicUsize::new(0));
+    let pending = Arc::new(std::sync::atomic::AtomicBool::new(false));
+    let handoffs = AtomicUsize::new(0);
+    let observed_owner = owner.clone();
+    let observed_cpu = original.clone();
+    let observed_admitted = admitted.clone();
+    let observed_pending = pending.clone();
+    OBSERVER.with(|hook| {
+        *hook.borrow_mut() = Some(Box::new(move |stage| {
+            if matches!(stage, "w1" | "m06") {
+                let completion = observed_cpu.observe_completion_work().unwrap();
+                // Each packet starts without its predecessor's scheduling
+                // marker. W1/M06 alone never promotes the new operation.
+                assert_eq!(completion.live_completions, 0);
+                assert_eq!(
+                    completion.retained_identities,
+                    observed_admitted.load(Ordering::SeqCst)
+                );
+            }
+            if stage == "admitted" {
+                let index = observed_admitted.fetch_add(1, Ordering::SeqCst);
+                let completion = observed_cpu.observe_completion_work().unwrap();
+                assert_eq!(completion.live_completions, 1);
+                assert_eq!(completion.retained_identities, index + 1);
+                assert_eq!(observed_cpu.observe().unwrap().in_flight, 1);
+                // Both the original transaction and its Node writer have ended.
+                let node = observed_owner.try_lock().unwrap();
+                assert_eq!(node.packet(ids[index]).unwrap().id().unwrap(), ids[index]);
+                assert!(!observed_pending.swap(true, Ordering::SeqCst));
+            }
+        }));
+    });
+    let mut import = page(&settings, &first);
+    import.packets.push(hex::encode(second.encode().unwrap()));
+    import.tip = hex::encode(ids[1]);
+    import.next = hex::encode(ids[1]);
+    let deadline = Instant::now() + Duration::from_secs(5);
+    let result = receive(
+        Owner::Shared(&owner),
+        import,
+        ids[1],
+        settings.genesis(),
+        clock,
+        Control {
+            deadline,
+            resource: &|| {
+                if pending.swap(false, Ordering::SeqCst) {
+                    owner.try_lock().unwrap().active().unwrap();
+                    // This must be the same qualified operation's detached
+                    // handoff, before finish releases it and the next reserve.
+                    assert_eq!(original.observe().unwrap().in_flight, 1);
+                    assert_eq!(
+                        original.observe_completion_work().unwrap().live_completions,
+                        1
+                    );
+                    handoffs.fetch_add(1, Ordering::SeqCst);
+                }
+                Ok(())
+            },
+        },
+    );
+    OBSERVER.with(|hook| *hook.borrow_mut() = None);
+    assert_eq!(result.unwrap(), ids[1]);
+    assert_eq!(admitted.load(Ordering::SeqCst), 2);
+    assert_eq!(handoffs.load(Ordering::SeqCst), 2);
+    assert!(!pending.load(Ordering::SeqCst));
+    let completion = original.observe_completion_work().unwrap();
+    assert_eq!(completion.retained_identities, 2);
+    assert_eq!(completion.live_completions, 0);
+    let flow = original.observe_actual_flow().unwrap().unwrap();
+    assert_eq!(flow.initial_credit_ns, 0);
+    assert_eq!(flow.booked_reservation_ns, 0);
+    assert_eq!(flow.live_owners, 0);
+    assert_eq!(flow.paid_cpu_debit_ns, flow.settled_full_cpu_ns);
+    assert!(flow.balance_identity_verified);
+    let node = owner.lock().unwrap();
+    assert!(node
+        .public_service_cpu_domain()
+        .unwrap()
+        .shares_domain_with(&original));
+    assert_eq!(node.read_active().unwrap().0, ids[1]);
+    for packet in [&first, &second] {
+        assert_eq!(
+            node.packet(packet.id().unwrap()).unwrap().encode().unwrap(),
+            packet.encode().unwrap()
+        );
+    }
+}
+
 #[test]
 fn history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors() {
     let (_directory, mut settings, _node, packet, _clock) = fixture();

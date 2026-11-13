@@ -1,6 +1,9 @@
 //! Scope regression for the original cold History CPU account. The existing
-//! test-only M06 hook performs extra real W1 arithmetic to reach actual debt;
+//! test-only hook performs extra real W1 arithmetic to reach actual debt;
 //! it is not useful application work or a throughput/campaign measurement.
+//! The original M06 cut remains a pre-completion refusal control. Positive
+//! continuation starts only after the actual native commit has qualified its
+//! original operation, with its writer released and its deadline unchanged.
 use super::*;
 use public_v3::request_observation::ThreadCpuStamp;
 use rusqlite::OptionalExtension;
@@ -53,8 +56,27 @@ enum DuringRefill {
     Expire,
 }
 
-fn detached_history_original_account(mode: DuringRefill) {
+#[derive(Clone, Copy, Debug)]
+enum QualificationCut {
+    BeforeNativeCompletion,
+    NativeCommitted,
+}
+
+fn detached_history_original_account(mode: DuringRefill, qualification: QualificationCut) {
     let (directory, settings, node, packet, clock) = fixture();
+    let native_complete = matches!(qualification, QualificationCut::NativeCommitted);
+    let successor =
+        native_complete.then(|| history_successor(directory.path(), &settings, &packet, clock));
+    let id = packet.id().unwrap();
+    let tip = successor.as_ref().map_or(id, |packet| packet.id().unwrap());
+    let mut import = page(&settings, &packet);
+    if let Some(successor) = &successor {
+        import
+            .packets
+            .push(hex::encode(successor.encode().unwrap()));
+        import.tip = hex::encode(tip);
+        import.next = hex::encode(tip);
+    }
     let owner = Arc::new(Mutex::new(node));
     let original = owner.lock().unwrap().remote_history_cpu_domain().unwrap();
     assert_eq!(original.observe().unwrap().stored_credit_ns, 0);
@@ -70,10 +92,18 @@ fn detached_history_original_account(mode: DuringRefill) {
     let observed_injected = injected.clone();
     OBSERVER.with(|hook| {
         *hook.borrow_mut() = Some(Box::new(move |stage| {
-            if stage == "m06" && !observed_injected.swap(true, Ordering::SeqCst) {
+            let selected = if native_complete { "admitted" } else { "m06" };
+            if stage == selected && !observed_injected.swap(true, Ordering::SeqCst) {
                 // Establish the actual detached scope before adding the local
                 // test workload. The production owner and account stay intact.
                 observed_owner.try_lock().unwrap().active().unwrap();
+                assert_eq!(
+                    observed_domain
+                        .observe_completion_work()
+                        .unwrap()
+                        .live_completions,
+                    usize::from(native_complete)
+                );
                 *observed_replay.lock().unwrap() = Some(consume_original_credit(
                     &observed_domain,
                     &observed_packet,
@@ -92,10 +122,16 @@ fn detached_history_original_account(mode: DuringRefill) {
         }));
     });
     let refill_checks = AtomicUsize::new(0);
+    let first_refill_credit = Mutex::new(None);
     let resource = || {
         let balance = original.observe()?;
         if balance.stored_credit_ns < -i128::from(balance.start_reserve_ns) {
             refill_checks.fetch_add(1, Ordering::SeqCst);
+            let mut first = first_refill_credit.lock().unwrap();
+            if first.is_none() {
+                *first = Some(original.observe_actual_flow()?.unwrap().credited_refill_ns);
+            }
+            drop(first);
             // Waiting is legal here only because the actual Node writer is
             // released. Held preparation/commit/activation keep their refusal.
             owner.try_lock().unwrap().active().unwrap();
@@ -111,12 +147,11 @@ fn detached_history_original_account(mode: DuringRefill) {
         }
         Ok(())
     };
-    let id = packet.id().unwrap();
     let observation = HistoryImportObserver::new();
     let result = receive_observed(
         Owner::Shared(&owner),
-        page(&settings, &packet),
-        id,
+        import,
+        tip,
         settings.genesis(),
         clock,
         Control {
@@ -147,11 +182,13 @@ fn detached_history_original_account(mode: DuringRefill) {
     println!(
         "{}",
         serde_json::json!({
-            "schema": "history-detached-original-refill-control-v2",
+            "schema": "history-detached-native-completion-control-v3",
             "mode": format!("{mode:?}"),
+            "qualification": format!("{qualification:?}"),
             "outcome": result.as_ref().map(hex::encode).map_err(ToString::to_string),
             "replay": *replay.lock().unwrap(),
             "refill_resource_checks": refill_checks.load(Ordering::SeqCst),
+            "first_refill_credited_ns": *first_refill_credit.lock().unwrap(),
             "before_epoch_close": before_epoch_close.as_ref().map(|(cpu, flow)| {
                 serde_json::json!({"cpu":cpu,"flow":flow})
             }),
@@ -218,25 +255,60 @@ fn detached_history_original_account(mode: DuringRefill) {
         assert_eq!(flow.as_ref(), Some(&before_flow));
         assert!(epoch_marker.is_none());
     }
-    assert!(
-        refill_checks.load(Ordering::SeqCst) > 0,
-        "detached execution refused actual debt before its original refill control: {result:?}"
-    );
+    if native_complete {
+        assert!(
+            refill_checks.load(Ordering::SeqCst) > 0,
+            "complete native continuation missed its original refill control: {result:?}"
+        );
+    } else {
+        assert_eq!(refill_checks.load(Ordering::SeqCst), 0);
+        assert!(first_refill_credit.lock().unwrap().is_none());
+    }
     assert_eq!(original.observe().unwrap().in_flight, 0);
     let node = owner.lock().unwrap();
     assert!(node
         .public_service_cpu_domain()
         .unwrap()
         .shares_domain_with(&original));
-    match mode {
-        DuringRefill::Continue => {
-            assert_eq!(result.unwrap(), id);
-            assert_eq!(node.read_active().unwrap().0, id);
+    let first_packet = &snapshot.packets[0];
+    match (qualification, mode) {
+        (QualificationCut::BeforeNativeCompletion, _) => {
+            assert!(result.is_err());
+            assert!(first_packet.phases.iter().any(|phase| {
+                phase.phase == SubmitPhase::Execution
+                    && phase.error_code == Some("PUBLIC_MUTATION_CPU_BUDGET")
+            }));
+            assert!(first_packet
+                .phases
+                .iter()
+                .filter(|phase| phase.phase == SubmitPhase::Commit)
+                .all(|phase| !phase.started));
+            assert_eq!(node.read_active().unwrap().0, settings.genesis());
+            assert!(node.packet(id).is_err());
+            assert_eq!(
+                original
+                    .observe_completion_work()
+                    .unwrap()
+                    .retained_identities,
+                0
+            );
+        }
+        (QualificationCut::NativeCommitted, DuringRefill::Continue) => {
+            assert_eq!(result.unwrap(), tip);
+            assert_eq!(node.read_active().unwrap().0, tip);
             assert_eq!(
                 node.packet(id).unwrap().encode().unwrap(),
                 packet.encode().unwrap()
             );
+            assert_eq!(
+                node.packet(tip).unwrap().encode().unwrap(),
+                successor.as_ref().unwrap().encode().unwrap()
+            );
+            let completion = original.observe_completion_work().unwrap();
+            assert_eq!(completion.retained_identities, 2);
+            assert_eq!(completion.live_completions, 0);
             let flow = flow.unwrap();
+            assert!(flow.credited_refill_ns > first_refill_credit.lock().unwrap().unwrap());
             assert_eq!(flow.initial_credit_ns, 0);
             assert_eq!(flow.booked_reservation_ns, 0);
             assert_eq!(flow.unsettled_known_live_cpu_ns, 0);
@@ -252,27 +324,40 @@ fn detached_history_original_account(mode: DuringRefill) {
                         .actual_thread_cpu_ns
             );
         }
-        DuringRefill::Cancel | DuringRefill::Expire => {
+        (QualificationCut::NativeCommitted, DuringRefill::Cancel | DuringRefill::Expire) => {
             let expected = match mode {
                 DuringRefill::Cancel => "PUBLIC_REQUEST_CANCELLED",
                 DuringRefill::Expire => "PUBLIC_REQUEST_DEADLINE",
                 DuringRefill::Continue => unreachable!(),
             };
             assert!(result.is_err());
-            let packet_record = &snapshot.packets[0];
             assert!(
-                packet_record.phases.iter().any(|phase| {
-                    phase.phase == SubmitPhase::Execution && phase.error_code == Some(expected)
+                first_packet.phases.iter().any(|phase| {
+                    phase.phase == SubmitPhase::SubmitResult && phase.error_code == Some(expected)
                 }),
                 "original detached cancellation was not preserved: {snapshot:?}"
             );
-            assert!(packet_record
+            assert!(first_packet
                 .phases
                 .iter()
-                .filter(|phase| phase.phase == SubmitPhase::Commit)
-                .all(|phase| !phase.started));
+                .any(|phase| phase.phase == SubmitPhase::Commit && phase.accepted == Some(true)));
             assert_eq!(node.read_active().unwrap().0, settings.genesis());
-            assert!(node.packet(id).is_err());
+            assert_eq!(
+                node.packet(id).unwrap().encode().unwrap(),
+                packet.encode().unwrap()
+            );
+            assert!(node.packet(tip).is_err());
+            assert!(snapshot.packets[1]
+                .phases
+                .iter()
+                .all(|phase| !phase.started));
+            assert_eq!(
+                original
+                    .observe_completion_work()
+                    .unwrap()
+                    .retained_identities,
+                1
+            );
         }
     }
     drop(node);
@@ -280,8 +365,14 @@ fn detached_history_original_account(mode: DuringRefill) {
     let mut reopened = Node::open(directory.path(), settings.clone(), 2).unwrap();
     assert_eq!(
         reopened.read_active().unwrap().0,
-        if matches!(mode, DuringRefill::Continue) {
-            id
+        if native_complete {
+            // Ordinary cold recovery may activate already committed work; a
+            // cancelled continuation never erases the first packet's commit.
+            if matches!(mode, DuringRefill::Continue) {
+                tip
+            } else {
+                id
+            }
         } else {
             settings.genesis()
         }
@@ -297,15 +388,23 @@ fn detached_history_original_account(mode: DuringRefill) {
 
 #[test]
 fn shared_detached_history_continues_from_real_deficit_without_new_credit() {
-    detached_history_original_account(DuringRefill::Continue);
+    detached_history_original_account(DuringRefill::Continue, QualificationCut::NativeCommitted);
 }
 
 #[test]
 fn shared_detached_history_refill_keeps_original_resource_cancellation() {
-    detached_history_original_account(DuringRefill::Cancel);
+    detached_history_original_account(DuringRefill::Cancel, QualificationCut::NativeCommitted);
 }
 
 #[test]
 fn shared_detached_history_refill_cannot_renew_original_deadline() {
-    detached_history_original_account(DuringRefill::Expire);
+    detached_history_original_account(DuringRefill::Expire, QualificationCut::NativeCommitted);
+}
+
+#[test]
+fn shared_detached_history_before_native_completion_keeps_sticky_budget_refusal() {
+    detached_history_original_account(
+        DuringRefill::Continue,
+        QualificationCut::BeforeNativeCompletion,
+    );
 }

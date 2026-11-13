@@ -14227,3 +14227,31 @@ and the #811 printed-source audit, retain their research boundaries.
 See [the composition review](../security/RETAINED_RESEARCH_COMPONENTS_20261113.md).
 Every prior gate remains; current source binding requires the real final
 source commit, and historical evidence remains unchanged.
+
+### 2026-11-13 retain the qualified History continuation after native commit
+
+The r19 completion marker still originates only in the original native owner,
+after complete W1, parent/task/M06/State/output and transactional readback.
+History now applies the existing original-account handoff after that admission
+has committed and released its Node writer, before activation or settlement.
+Only the same operation's verified unique native completion may wait; earlier,
+replayed, refused and unknown work keeps its existing paid refusal. Actual
+activation checkpoints distinguish the detached outer calls from calls while
+holding the writer. No wait is added inside the original SQL transaction.
+
+Keep the same account, principal, deadline, resource callback, worker charges,
+identity capacity and settlement. The first packet releases its completion
+marker before the second packet independently reserves, verifies and earns its
+own marker. Cancellation after the handoff boundary preserves the first
+packet's durable fact and leaves later packets unstarted; ordinary cold recovery
+may subsequently activate that already committed packet.
+
+Preserve the original AfterMandatory deficit scenario as a negative control:
+W1/M06 without full native completion cannot receive extra refill rights.
+The retained positive deficit controls use the real committed boundary, demand
+actual refill, and require two-packet progress or original cancellation/deadline
+failure. A separate ordinary two-packet control observes the real lock-free
+handoff and proves that scheduling markers do not carry into the next packet.
+These changes do not relabel the failed observations on `9fcf1233b`, execute a
+depletion campaign, or close pre-token service starvation. Current profile
+bytes and budgets remain r19; production qualification remains HOLD_NO_GO.
