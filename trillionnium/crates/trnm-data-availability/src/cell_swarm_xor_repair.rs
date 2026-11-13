@@ -84,9 +84,7 @@ fn check_descriptor(
         return Err(CellSwarmXorErrorV0::InvalidPlan);
     }
     let expected = manifest.descriptor().chunk_hashes.len().div_ceil(width);
-    if descriptor.parity_hashes.len() != expected
-        || descriptor.parity_hashes.iter().any(|hash| *hash == [0; 32])
-    {
+    if descriptor.parity_hashes.len() != expected || descriptor.parity_hashes.contains(&[0; 32]) {
         return Err(CellSwarmXorErrorV0::InvalidPlan);
     }
     Ok(())
@@ -210,11 +208,11 @@ impl CellSwarmXorPlanV0 {
                 assembler.offer(index, data)?;
             }
         }
-        for group in 0..parity.len() {
+        for (group, &parity_shard) in parity.iter().enumerate() {
             let start = group * group_width;
             let end = (start + group_width).min(count);
             let expected_parity_len = (start..end).map(&expected_len).max().unwrap_or(0);
-            if let Some(bytes) = parity[group] {
+            if let Some(bytes) = parity_shard {
                 if bytes.len() != expected_parity_len
                     || parity_digest(independently_pinned_manifest_id, group, bytes)
                         != self.descriptor.parity_hashes[group]
@@ -229,7 +227,7 @@ impl CellSwarmXorPlanV0 {
                 return Err(CellSwarmXorErrorV0::TooManyMissing);
             }
             if let Some(&missing_index) = missing.first() {
-                let parity_bytes = parity[group].ok_or(CellSwarmXorErrorV0::MissingParity)?;
+                let parity_bytes = parity_shard.ok_or(CellSwarmXorErrorV0::MissingParity)?;
                 let mut recovered = parity_bytes.to_vec();
                 for original in chunks.iter().take(end).skip(start).flatten() {
                     for (dst, byte) in recovered.iter_mut().zip(original.iter()) {

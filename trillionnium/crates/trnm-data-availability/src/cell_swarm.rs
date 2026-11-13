@@ -95,7 +95,7 @@ fn checked_count(descriptor: &CellSwarmDescriptorV0) -> Result<usize, CellSwarmE
     if count == 0
         || count > MAX_CELL_SWARM_CHUNKS_V0 as u64
         || descriptor.chunk_hashes.len() != count as usize
-        || descriptor.chunk_hashes.iter().any(|hash| *hash == [0; 32])
+        || descriptor.chunk_hashes.contains(&[0; 32])
     {
         return Err(CellSwarmErrorV0::InvalidDescriptor);
     }
