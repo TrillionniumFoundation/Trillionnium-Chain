@@ -2206,7 +2206,7 @@
     "trillionnium/crates/trnm-pon-node/src/authenticated_state_archive_tests.rs": "c83de1c8af9753abc2106679c00278d9380a4b1a",
     "trillionnium/crates/trnm-pon-node/src/error.rs": "25ff72dd18896c37d09eaf5e5359d2311445789d",
     "trillionnium/crates/trnm-pon-node/src/growth_cli.rs": "540e1fce02b2b88eb862a6ae2f0e14d947c94221",
-    "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs": "7089e961965af9209f2d588061c8526c5acba161",
+    "trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs": "c4ba3967594eb6533b49954330017f142a6c1b9a",
     "trillionnium/crates/trnm-pon-node/src/ingress.rs": "a9aef9689af378bd115a54c25a076941ef2cbb96",
     "trillionnium/crates/trnm-pon-node/src/ingress/account_scope_tests.rs": "8858c681dab4e555b8103ed1f003e83e59b1e0c3",
     "trillionnium/crates/trnm-pon-node/src/ingress/authenticated_recovery_tests.rs": "d7e8257f383a3d3e96d016b0f66274beeb943d8d",

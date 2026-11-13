@@ -60,6 +60,7 @@ mod kernel_parent {
     use super::KernelResourceSample;
     use std::{
         borrow::Cow,
+        ffi::CStr,
         fs,
         io::{self, Read},
         net::SocketAddr,
@@ -154,6 +155,7 @@ mod kernel_parent {
         }
     }
 
+    #[cfg(test)]
     fn read_limit<'a>(path: &Path, bytes: &'a mut [u8; MAX_LIMIT_BYTES + 1]) -> Result<&'a str> {
         // Reopen the actual path on EVERY observation. No descriptor, file
         // contents or prior resource decision survives this read. The bounded
@@ -163,6 +165,7 @@ mod kernel_parent {
         read_limit_text(&mut file, bytes)
     }
 
+    #[cfg(test)]
     fn limit_paths(parent: &Path) -> [PathBuf; 5] {
         [
             "cpu.max",
@@ -174,6 +177,7 @@ mod kernel_parent {
         .map(|name| parent.join(name))
     }
 
+    #[cfg(test)]
     fn read_limits(paths: &[PathBuf; 5]) -> Result<Limits> {
         let [cpu, burst, memory, swap, pids] = &mut [[0; MAX_LIMIT_BYTES + 1]; 5];
         // Preserve the original read order and parse only AFTER all five
@@ -184,6 +188,51 @@ mod kernel_parent {
             read_limit(&paths[2], memory)?,
             read_limit(&paths[3], swap)?,
             read_limit(&paths[4], pids)?,
+        )
+    }
+
+    fn open_current_parent(path: &Path) -> Result<fs::File> {
+        // Resolve the actual directory on EVERY check. O_PATH preserves the
+        // original search-only access requirement; this does not need directory
+        // read permission or open any resource file for writing.
+        rustix::fs::open(
+            path,
+            rustix::fs::OFlags::PATH
+                | rustix::fs::OFlags::DIRECTORY
+                | rustix::fs::OFlags::NOFOLLOW
+                | rustix::fs::OFlags::CLOEXEC,
+            rustix::fs::Mode::empty(),
+        )
+        .map(fs::File::from)
+        .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_REPLACED"))
+    }
+
+    fn read_limit_at<'a>(
+        parent: &fs::File,
+        name: &CStr,
+        bytes: &'a mut [u8; MAX_LIMIT_BYTES + 1],
+    ) -> Result<&'a str> {
+        let fd = rustix::fs::openat(
+            parent,
+            name,
+            rustix::fs::OFlags::RDONLY | rustix::fs::OFlags::CLOEXEC,
+            rustix::fs::Mode::empty(),
+        )
+        .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_UNAVAILABLE"))?;
+        read_limit_text(&mut fs::File::from(fd), bytes)
+    }
+
+    fn read_limits_at(parent: &fs::File) -> Result<Limits> {
+        let [cpu, burst, memory, swap, pids] = &mut [[0; MAX_LIMIT_BYTES + 1]; 5];
+        // Reopen and completely read all five files in the original order.
+        // The directory was freshly opened and checked in this same call;
+        // neither it, the files, their contents nor a verdict is retained.
+        validate_limits(
+            read_limit_at(parent, c"cpu.max", cpu)?,
+            read_limit_at(parent, c"cpu.max.burst", burst)?,
+            read_limit_at(parent, c"memory.max", memory)?,
+            read_limit_at(parent, c"memory.swap.max", swap)?,
+            read_limit_at(parent, c"pids.max", pids)?,
         )
     }
 
@@ -324,9 +373,6 @@ mod kernel_parent {
 
     pub struct KernelBudget {
         parent: PathBuf,
-        // Immutable names only. Every check still opens all five actual paths
-        // afresh; no descriptor, contents or resource verdict is retained.
-        limit_paths: [PathBuf; 5],
         parent_relative: String,
         identity: (u64, u64),
         boot_id: String,
@@ -342,7 +388,9 @@ mod kernel_parent {
             if now_boot.trim() != self.boot_id {
                 return Err("PUBLIC_HOST_KERNEL_REPLACED".into());
             }
-            let meta = fs::symlink_metadata(&self.parent)
+            let parent = open_current_parent(&self.parent)?;
+            let meta = parent
+                .metadata()
                 .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_REPLACED"))?;
             if !meta.file_type().is_dir()
                 || meta.uid() != 0
@@ -354,7 +402,19 @@ mod kernel_parent {
             if !in_parent_cgroup(&self.parent_relative)? {
                 return Err("PUBLIC_HOST_KERNEL_CONTEXT".into());
             }
-            let observed = read_limits(&self.limit_paths)?;
+            let observed = read_limits_at(&parent)?;
+            // A directory descriptor pins its inode, not its pathname. Check
+            // the actual path again so a replacement during these reads cannot
+            // make a detached directory count as the current fixed parent.
+            let current = fs::symlink_metadata(&self.parent)
+                .map_err(|_| crate::Error::from("PUBLIC_HOST_KERNEL_REPLACED"))?;
+            if !current.file_type().is_dir()
+                || current.uid() != 0
+                || current.mode() & 0o022 != 0
+                || (current.dev(), current.ino()) != self.identity
+            {
+                return Err("PUBLIC_HOST_KERNEL_REPLACED".into());
+            }
             if observed != self.limits {
                 return Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into());
             }
@@ -394,7 +454,6 @@ mod kernel_parent {
             let budget = Self {
                 identity: (meta.dev(), meta.ino()),
                 boot_id: boot.trim().to_owned(),
-                limit_paths: limit_paths(&parent),
                 parent_relative,
                 parent,
                 limits: Limits {
@@ -849,6 +908,130 @@ mod kernel_parent {
                 read_limits(&paths).unwrap_err().to_string(),
                 "PUBLIC_HOST_KERNEL_LIMITS"
             );
+        }
+
+        #[test]
+        fn directory_limit_reader_keeps_all_values_bounds_and_late_io_refusal() {
+            // Ordinary temporary bytes only, never Host admission or authority.
+            let dir = tempfile::tempdir().unwrap();
+            let values = [
+                ("cpu.max", "25000 100000\n"),
+                ("cpu.max.burst", "0\n"),
+                ("memory.max", "268435456\n"),
+                ("memory.swap.max", "0\n"),
+                ("pids.max", "32\n"),
+            ];
+            for (name, value) in values {
+                fs::write(dir.path().join(name), value).unwrap();
+            }
+            let paths = limit_paths(dir.path());
+            let compare = || {
+                let actual = read_limits_at(&open_current_parent(dir.path()).unwrap())
+                    .map_err(|error| error.to_string());
+                let reference = read_limits(&paths).map_err(|error| error.to_string());
+                assert_eq!(actual, reference);
+                actual
+            };
+            let initial = compare().unwrap();
+            assert_eq!(
+                initial,
+                validate_limits("25000 100000", "0", "268435456", "0", "32").unwrap()
+            );
+            for (name, value) in values {
+                let file = dir.path().join(name);
+                let mut padded = value.as_bytes().to_vec();
+                padded.resize(MAX_LIMIT_BYTES, b' ');
+                fs::write(&file, &padded).unwrap();
+                assert_eq!(compare().unwrap(), initial);
+                padded.push(b' ');
+                fs::write(&file, &padded).unwrap();
+                assert_eq!(compare().unwrap_err(), "PUBLIC_HOST_KERNEL_UNAVAILABLE");
+                fs::write(&file, [0xff]).unwrap();
+                assert_eq!(compare().unwrap_err(), "PUBLIC_HOST_KERNEL_UNAVAILABLE");
+                fs::write(&file, value).unwrap();
+            }
+            fs::write(dir.path().join("cpu.max"), "10000 100000").unwrap();
+            assert_ne!(compare().unwrap(), initial);
+            fs::write(dir.path().join("cpu.max"), "malformed").unwrap();
+            fs::remove_file(dir.path().join("pids.max")).unwrap();
+            assert_eq!(compare().unwrap_err(), "PUBLIC_HOST_KERNEL_UNAVAILABLE");
+            fs::write(dir.path().join("pids.max"), "32").unwrap();
+            assert_eq!(compare().unwrap_err(), "PUBLIC_HOST_KERNEL_LIMITS");
+        }
+
+        #[test]
+        fn directory_lookup_reopens_current_inode_and_refuses_links_or_files() {
+            use std::os::unix::fs::symlink;
+            let dir = tempfile::tempdir().unwrap();
+            let path = dir.path().join("parent");
+            let retired = dir.path().join("retired");
+            fs::create_dir(&path).unwrap();
+            fs::write(path.join("cpu.max"), "25000 100000").unwrap();
+            let first = open_current_parent(&path).unwrap();
+            let first_meta = first.metadata().unwrap();
+            assert!(rustix::io::fcntl_getfd(&first)
+                .unwrap()
+                .contains(rustix::io::FdFlags::CLOEXEC));
+            let mut bytes = [0; MAX_LIMIT_BYTES + 1];
+            assert_eq!(
+                read_limit_at(&first, c"cpu.max", &mut bytes).unwrap(),
+                "25000 100000"
+            );
+            drop(first);
+            fs::rename(&path, &retired).unwrap();
+            fs::create_dir(&path).unwrap();
+            fs::write(path.join("cpu.max"), "10000 100000").unwrap();
+            let second = open_current_parent(&path).unwrap();
+            let second_meta = second.metadata().unwrap();
+            assert_ne!(
+                (first_meta.dev(), first_meta.ino()),
+                (second_meta.dev(), second_meta.ino())
+            );
+            assert_eq!(
+                read_limit_at(&second, c"cpu.max", &mut bytes).unwrap(),
+                "10000 100000"
+            );
+            fs::remove_file(path.join("cpu.max")).unwrap();
+            assert_eq!(
+                read_limit_at(&second, c"cpu.max", &mut bytes)
+                    .unwrap_err()
+                    .to_string(),
+                "PUBLIC_HOST_KERNEL_UNAVAILABLE"
+            );
+            drop(second);
+            fs::remove_dir(&path).unwrap();
+            symlink(&retired, &path).unwrap();
+            assert_eq!(
+                open_current_parent(&path).unwrap_err().to_string(),
+                "PUBLIC_HOST_KERNEL_REPLACED"
+            );
+            fs::remove_file(&path).unwrap();
+            fs::write(&path, "not a directory").unwrap();
+            assert_eq!(
+                open_current_parent(&path).unwrap_err().to_string(),
+                "PUBLIC_HOST_KERNEL_REPLACED"
+            );
+            fs::remove_file(&path).unwrap();
+            assert_eq!(
+                open_current_parent(&path).unwrap_err().to_string(),
+                "PUBLIC_HOST_KERNEL_REPLACED"
+            );
+        }
+
+        #[test]
+        fn directory_lookup_keeps_search_only_access_without_reading_directory() {
+            let dir = tempfile::tempdir().unwrap();
+            let path = dir.path().join("search-only");
+            fs::create_dir(&path).unwrap();
+            fs::write(path.join("cpu.max"), "25000 100000").unwrap();
+            fs::set_permissions(&path, fs::Permissions::from_mode(0o111)).unwrap();
+            let actual = (|| -> Result<String> {
+                let parent = open_current_parent(&path)?;
+                let mut bytes = [0; MAX_LIMIT_BYTES + 1];
+                Ok(read_limit_at(&parent, c"cpu.max", &mut bytes)?.to_owned())
+            })();
+            fs::set_permissions(&path, fs::Permissions::from_mode(0o755)).unwrap();
+            assert_eq!(actual.unwrap(), "25000 100000");
         }
 
         const CPU_SAMPLE: &str = "usage_usec 600\nuser_usec 400\nsystem_usec 200\nnr_periods 16\nnr_throttled 4\nthrottled_usec 150\nnr_bursts 0\n";
