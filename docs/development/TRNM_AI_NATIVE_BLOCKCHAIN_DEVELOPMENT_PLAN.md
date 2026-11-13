@@ -14267,3 +14267,14 @@ classification. Unknown caller locators and resource callbacks keep their
 original nonfatal/control provenance. Header-link corruption, rollback and
 exact row restoration remain required by the original regression; it also
 checks that a remote copy of the diagnostic cannot stop a healthy owner.
+
+### 2026-11-13 retain native capacity-scan callback controls
+
+The branch review retains the two bounded native observation controls from
+`34c59304f0db4667320cb14c333dbd7f0371e418`. The current liability scanner already
+preserves callback origins and checks its final active generation. The added
+controls require its actual per-256-row callbacks, preserve the caller's error
+kind at every liability-scan boundary, and reject a generation change during
+that scan. Existing first/last callback, retained-state integrity and exact
+typed-source controls remain. Only the current progress-interval constant name
+is adapted; no production algorithm, budget, namespace or gate is changed.
