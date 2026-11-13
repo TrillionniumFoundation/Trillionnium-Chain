@@ -1,0 +1,8 @@
+{
+  "schema": "trnm-validation-raw-log-v1",
+  "encoding": "base64",
+  "original_filename": "04.stdout",
+  "bytes": 307,
+  "sha256": "86e3cd499b2d62943597c08dba5c8573fb93910b1bdafedcd0b2bac5993b535a",
+  "data": "eyJhY3RpdmF0aW9uIjogZmFsc2UsICJoZWFkIjogIjdlMDQ0YjY1NDU0ZjRjOWVhNTA1NTkxNzI3MzMyYWNmZmIzM2U3ZTUiLCAibG9jYWxfbGlua3MiOiA1NDczLCAibm9ybWFsX2RlcGVuZGVuY3lfZWRnZXMiOiAyNywgInJlc3VsdCI6ICJQQVNTIiwgInJ1bnRpbWVfaW1wbGVtZW50ZWQiOiBmYWxzZSwgInJ1c3RfZmlsZXMiOiAxMzczLCAic291cmNlX3N0YXRlIjogImRpcnR5LWNhbmRpZGF0ZSIsICJ0cmVlIjogIjBjZDIzZWZlZTU4ZTljMDhhODBhOWYzOGQxMzVkNTA0Yzk2NDY5ZWEiLCAid29ya3NwYWNlX3BhY2thZ2VzIjogMjZ9Cg=="
+}

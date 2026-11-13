@@ -1,0 +1,17 @@
+{
+  "schema": "trnm-throughput-preparation-failures-v1",
+  "scope": "source preparation; no native performance attempts",
+  "observations": [
+    {
+      "job": "1a1bc43c985-138b0-13d",
+      "command": "git diff --check",
+      "failure": "one added blank line at end of sole plan",
+      "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-throughput-architecture-20261108-d947\", \"remote_policy_mutated\": false}\n{\"updated_current_pins\": [\"docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md\", \"scripts/ci/check_ci_contract.py\", \"scripts/ci/ci_job.sh\", \"trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs\", \"trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs\"], \"required_paths\": 778, \"pinned_blobs\": 870, \"historical_metadata_unchanged\": true}\ndistributed source inventory: PASS\n{\"canonical_default_provider_contract_checked\": true, \"canonical_pnq2_contract_checked\": true, \"continuous_npq6_combination_accepted\": false, \"cryptographic_acceptance\": false, \"exact_source_blobs\": 870, \"legacy_qtx1_optional_adapter_contract_checked\": true, \"native_transfer_account_contract_checked\": true, \"native_transport_contract_checked\": true, \"node_activated\": false, \"production_confidentiality_accepted\": false, \"schema\": \"trnm-pq-cross-branch-check-v1\", \"status\": \"HOLD_NO_GO\", \"upstream_heads\": 6, \"whole_native_authorization_migrated\": false}\ndocs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md:10196: new blank line at EOF.\n",
+      "stderr": ""
+    },
+    {
+      "stage": "local orchestration parse",
+      "failure": "JavaScript template literal was rejected before any remote job or edit; corrected command then launched under the original intended key"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "schema": "trnm-validation-raw-log-v1",
+  "encoding": "base64",
+  "original_filename": "00.stdout",
+  "bytes": 178,
+  "sha256": "b73bc1ef7d4da67c5f69cf726a56a2bd6af60dcf885fad7ce9ffa1ece68bef30",
+  "data": "eyJyZXN1bHQiOiAiUEFTUyIsICJtb2RlIjogIi0tZGV2IiwgInByb2plY3QiOiAidHJpbGxpb25uaXVtLWNoYWluIiwgInBhY2thZ2VzIjogMjYsICJicmFuY2giOiAiZml4L2NoYWluLXRocm91Z2hwdXQtYXJjaGl0ZWN0dXJlLTIwMjYxMTA4LWQ5NDciLCAicmVtb3RlX3BvbGljeV9tdXRhdGVkIjogZmFsc2V9Cg=="
+}

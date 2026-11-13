@@ -170,6 +170,7 @@ WORK_NATIVE_MODEL_COMMANDS = (
     'python3 formal/pon-nakamoto-v1/fixed_probability_contract.py',
     'python3 formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py --check',
     'python3 formal/pon-nakamoto-v1/stateful_tail.py',
+    "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_stateful_tail_snapshot.py' -v",
     'python3 formal/pon-nakamoto-v1/residual_grover.py',
     "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_fork_witness.py' -v",
     "python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_execution_certificate.py' -v",
@@ -797,6 +798,7 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
     python3 formal/pon-nakamoto-v1/fixed_probability_contract.py
     python3 formal/pon-nakamoto-v1/fixed_probability_reuse_probe.py --check
     python3 formal/pon-nakamoto-v1/stateful_tail.py
+    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_stateful_tail_snapshot.py' -v
     python3 formal/pon-nakamoto-v1/residual_grover.py
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_fork_witness.py' -v
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_native_execution_certificate.py' -v

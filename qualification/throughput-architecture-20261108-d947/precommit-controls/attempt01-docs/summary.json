@@ -1,0 +1,40 @@
+{
+  "scope": "dirty candidate documentation and repository controls; no native performance",
+  "base": "7e044b65454f4c9ea505591727332acffb33e7e5",
+  "results": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "wall_ns": 164981318
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "exit_code": 0,
+      "wall_ns": 39714353913
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "wall_ns": 165505154
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 2,
+      "wall_ns": 64995898
+    }
+  ]
+}

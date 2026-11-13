@@ -1,3 +1,12 @@
+**Snapshot and per-call configuration ownership, 2026-11-13 UTC — HOLD:**
+
+Retain `042e3d4a22a444c028074ddd21561a6153205370`: the formal tail query owns an
+immutable copy of caller mappings, and PQ account checks reuse one borrowed
+configuration validation only within the same immutable call. They do not cache
+account authority, signatures or state across entry points. Preserve the newer
+lifetime reader and the original pinned historical workflow/report pair; bind
+current composition observations separately after the source is complete.
+
 **Native postprocessing research retained separately, 2026-11-13 UTC — HOLD:**
 
 Integrate original `ed452e9a67419900b7d30b2c5561ebbfbdd3c1ff` with its bounded
