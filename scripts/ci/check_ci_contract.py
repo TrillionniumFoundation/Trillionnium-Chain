@@ -519,6 +519,7 @@ PROTOCOL_CONTRACT_BLOCK = PQ_MIGRATION_CONFORMANCE_PREFIX + ROOT_RECOVERY_NATIVE
     TRNM_DISTRIBUTED_TEST_BINARY="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/distributed_pipeline" TRNM_DISTRIBUTED_TEST_OUTPUT="${RUNNER_TEMP:-/tmp}/trnm-distributed-conformance-$$" cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test distributed_roles -- --ignored --test-threads=1
     python3 scripts/run_public_v3_service_campaign.py --out "${TRNM_CI_RECEIPT_DIR:-${RUNNER_TEMP:-/tmp}/trnm-ci-$$}/public-v3-service"
     python3 scripts/test_llm_runtime_pilot.py
+    python3 scripts/test_llm_runtime_trial_ledger.py
     python3 scripts/test_llm_parent_material.py
     python3 scripts/test_llm_runtime_parent_step.py
     python3 scripts/test_llm_runtime_rss_owner.py
@@ -573,6 +574,10 @@ PROTOCOL_CONTRACT_BLOCK = PQ_MIGRATION_CONFORMANCE_PREFIX + ROOT_RECOVERY_NATIVE
     python3 formal/pon-nakamoto-v1/test_model_contract.py
     python3 formal/pon-nakamoto-v1/test_useful_cell_numeric_v1.py -v
     python3 formal/pon-nakamoto-v1/test_useful_cell_relation_v1.py -v
+    python3 formal/pon-nakamoto-v1/test_useful_cell_attempt_journal_v1.py -v
+    python3 formal/pon-nakamoto-v1/test_grouped_delivery_cost_v1.py -v
+    python3 scripts/ci/test_fixed_host_service_readback_v1.py
+    python3 scripts/ci/test_llm_cell_installed_host.py RecoveryHandoffTests -v
     python3 formal/pon-nakamoto-v1/test_useful_cell_execution_v2.py -v
     python3 formal/pon-nakamoto-v1/test_useful_cell_relation_v2.py -v
     python3 formal/pon-nakamoto-v1/test_useful_cell_relation_v2_adversarial.py -v
@@ -1529,10 +1534,10 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
         require(sum(line.count(name) for line in code_lines(lanes['repository-truth'])) == 1
                 and sum(line.count(name) for line in code_lines(script)) == 1,
                 'W1 post-win controls must execute exactly once globally and in repository-truth')
-    runtime_pilot = '    python3 scripts/test_llm_runtime_pilot.py\n'
+    runtime_pilot = '    python3 scripts/test_llm_runtime_pilot.py\n    python3 scripts/test_llm_runtime_trial_ledger.py\n'
     require(runtime_pilot + parent_material + parent_step + LLM_RUNTIME_TESTS in lanes['protocol-contract']
             and all(code_lines(script).count(command) == 1
-                    for command in code_lines(LLM_RUNTIME_TESTS)),
+                    for command in code_lines(runtime_pilot + LLM_RUNTIME_TESTS)),
             'runtime owner, exit, inheritance and neural worker controls must retain their straight-line command sequence exactly once after pilot, parent material and parent step in protocol-contract')
     reward_budgets = '    python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py\n'
     require(reward_budgets in lanes['protocol-contract'] and script.count(reward_budgets) == 1,
@@ -2228,6 +2233,7 @@ def validate(root: Path = ROOT) -> dict:
     # Discovery can exit successfully with zero tests when a pattern disappears.
     # These mandatory files are executed explicitly and must also exist at review.
     for name in ('test_useful_cell_numeric_v1.py', 'test_useful_cell_relation_v1.py',
+                 'test_useful_cell_attempt_journal_v1.py', 'test_grouped_delivery_cost_v1.py',
                  'test_useful_cell_execution_v2.py', 'test_useful_cell_relation_v2.py',
                  'test_useful_cell_relation_v2_adversarial.py', 'test_useful_cell_source_guard_v2.py',
                  'test_useful_cell_multimodal_execution_v3.py',

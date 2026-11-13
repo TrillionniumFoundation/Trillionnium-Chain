@@ -479,6 +479,9 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             'scripts/ci/test_w1_lifecycle_cost_v4.py',
             'scripts/ci/test_pon_public_v3_policy_read.py',
             'scripts/ci/test_llm_cell_handoff_deadline.py',
+            'scripts/ci/test_fixed_host_service_readback_v1.py',
+            'scripts/ci/test_llm_cell_installed_host.py RecoveryHandoffTests -v',
+            'scripts/test_llm_runtime_trial_ledger.py',
             'scripts/test_llm_runtime_rss_owner.py',
             'scripts/test_llm_runtime_exit_observation.py',
             'scripts/test_llm_runtime_exit_subset_observation.py',
@@ -819,6 +822,7 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
 
     def test_useful_cell_relation_controls_cannot_be_removed_skipped_duplicated_or_moved(self):
         for name in ('test_useful_cell_numeric_v1.py', 'test_useful_cell_relation_v1.py',
+                     'test_useful_cell_attempt_journal_v1.py', 'test_grouped_delivery_cost_v1.py',
                      'test_useful_cell_execution_v2.py', 'test_useful_cell_relation_v2.py',
                      'test_useful_cell_relation_v2_adversarial.py', 'test_useful_cell_source_guard_v2.py',
                      'test_useful_cell_multimodal_execution_v3.py',
@@ -1524,6 +1528,7 @@ class CiContractTests(unittest.TestCase):
     def test_missing_useful_cell_sources_fail_contract_and_actual_ci_command(self):
         script = (self.root / 'scripts/ci/ci_job.sh').read_text()
         for name in ('test_useful_cell_numeric_v1.py', 'test_useful_cell_relation_v1.py',
+                     'test_useful_cell_attempt_journal_v1.py', 'test_grouped_delivery_cost_v1.py',
                      'test_useful_cell_execution_v2.py', 'test_useful_cell_relation_v2.py',
                      'test_useful_cell_relation_v2_adversarial.py', 'test_useful_cell_source_guard_v2.py',
                      'test_useful_cell_multimodal_execution_v3.py',
