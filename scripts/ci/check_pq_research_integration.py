@@ -669,6 +669,15 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "scripts/ci/test_w1_qrom_implementation_audit.py",
     "config/pon/w1-qrom-implementation-v1.json",
 ))
+# Preserve the finite local owner's original required source set from #830.
+# Source coverage is separate from physical resource or service qualification.
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    "config/pon/local-resource-owner-v1.json",
+    "trillionnium/crates/trnm-pon-node/src/packet_observer_cli.rs",
+    "trillionnium/crates/trnm-pon-node/src/packet_observer_cli/owned.rs",
+    "trillionnium/crates/trnm-pon-node/src/resource_owner_v1.rs",
+    "trillionnium/crates/trnm-pon-node/src/resource_owner_v1_tests.rs",
+))
 # The development service adapter must retain its actual inherited executor,
 # frozen controls, native owner and refusal/recovery tests as one source set.
 # These pins do not establish independent demand, installation or FinalUse.
