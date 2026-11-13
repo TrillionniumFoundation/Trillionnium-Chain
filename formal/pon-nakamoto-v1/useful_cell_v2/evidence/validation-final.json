@@ -1,0 +1,51 @@
+{
+  "schema": "pon-useful-cell-v2-final-local-validation-v1",
+  "result": "PASS",
+  "scope": "final full release tests and targeted file-boundary fix; no proof generation",
+  "commands": [
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--release",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/useful_cell_v2/Cargo.toml"
+      ],
+      "returncode": 0,
+      "log": "tests-final.log",
+      "elapsed_seconds": 2.327826916000049
+    },
+    {
+      "argv": [
+        "cargo",
+        "clippy",
+        "--offline",
+        "--locked",
+        "--release",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/useful_cell_v2/Cargo.toml",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "returncode": 0,
+      "log": "clippy-final.log",
+      "elapsed_seconds": 0.1655231080003432
+    },
+    {
+      "argv": [
+        "cargo",
+        "fmt",
+        "--check",
+        "--manifest-path",
+        "formal/pon-nakamoto-v1/useful_cell_v2/Cargo.toml"
+      ],
+      "returncode": 0,
+      "log": "fmt-final.log",
+      "elapsed_seconds": 0.11493835799774388
+    }
+  ]
+}

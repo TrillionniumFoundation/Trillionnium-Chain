@@ -1,24 +1,48 @@
 //! Independent verification-only v2 gate. Expected A/B hashes belong to the
 //! caller's checked manifest; neither receipt bytes nor CLI select a guest image.
 mod image;
+mod input;
 use anyhow::{ensure, Context, Result};
+use input::bounded;
 use risc0_zkvm::Receipt;
 use serde_json::json;
 use sha2::{Digest, Sha256};
-use std::{fs::File, hint::black_box, io::Read, path::Path, time::Instant};
+use std::{fmt, hint::black_box, process::ExitCode, time::Instant};
 use trnm_w1_hardened_verifier::{profile, wire};
 use trnm_w1_zk_relation::v2::{self, HEADER_BYTES};
 const PROFILE_ID: &str = "trnm-w1-risc0-3.0.6-poseidon2-join-v2";
+
+// Only these typed statement failures may populate the research supervisor's
+// exact-byte rejection cache. I/O, local profile initialization, panic, OOM and
+// resource termination must never acquire consensus-invalid semantics.
+#[derive(Clone, Copy, Debug)]
+enum StatementRejected {
+    Wire,
+    Public,
+    Crypto,
+}
+impl StatementRejected {
+    fn exit_code(self) -> u8 {
+        match self {
+            Self::Wire => 20,
+            Self::Public => 21,
+            Self::Crypto => 22,
+        }
+    }
+}
+impl fmt::Display for StatementRejected {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(match self {
+            Self::Wire => "W1_V2_WIRE_REJECT",
+            Self::Public => "W1_V2_PUBLIC_REJECT",
+            Self::Crypto => "W1_V2_CRYPTO_REJECT",
+        })
+    }
+}
+impl std::error::Error for StatementRejected {}
+
 fn sha(bytes: &[u8]) -> String {
     hex::encode(Sha256::digest(bytes))
-}
-fn bounded(path: &str, limit: usize) -> Result<Vec<u8>> {
-    let mut bytes = Vec::new();
-    File::open(Path::new(path))?
-        .take(limit as u64 + 1)
-        .read_to_end(&mut bytes)?;
-    ensure!(bytes.len() <= limit, "input size bound");
-    Ok(bytes)
 }
 fn artifacts(bytes: &[u8]) -> Result<v2::ArtifactCommitments> {
     ensure!(
@@ -39,8 +63,8 @@ fn verify(
     receipt: &Receipt,
 ) -> Result<[u8; 32]> {
     let identity =
-        public(header, expected, &receipt.journal.bytes).context("W1_V2_PUBLIC_REJECT")?;
-    profile::verify_image(receipt, image::IMAGE_ID).context("W1_V2_CRYPTO_REJECT")?;
+        public(header, expected, &receipt.journal.bytes).context(StatementRejected::Public)?;
+    profile::verify_image(receipt, image::IMAGE_ID).context(StatementRejected::Crypto)?;
     Ok(identity)
 }
 fn native(args: &[String]) -> Result<()> {
@@ -130,6 +154,9 @@ fn run() -> Result<()> {
             "unexpected proof environment: {key}"
         );
     }
+    // A local SDK/profile mismatch is an operational refusal, even when a
+    // remote receipt would otherwise reach the cryptographic stage.
+    profile::context().context("W1_V2_PROFILE_UNAVAILABLE")?;
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.first().map(String::as_str) == Some("--native") {
         return native(&args[1..]);
@@ -153,7 +180,7 @@ fn run() -> Result<()> {
     let mut journal_hash = None;
     for _ in 0..if many { 100 } else { 1 } {
         let started = Instant::now();
-        let receipt = wire::decode(black_box(&bytes)).context("W1_V2_WIRE_REJECT")?;
+        let receipt = wire::decode(black_box(&bytes)).context(StatementRejected::Wire)?;
         let work_id = verify(black_box(&header), black_box(&expected), &receipt)?;
         timings.push(started.elapsed().as_nanos());
         if let Some(previous) = identity {
@@ -175,13 +202,43 @@ fn run() -> Result<()> {
     );
     Ok(())
 }
-fn main() -> Result<()> {
-    run()
+fn main() -> ExitCode {
+    match run() {
+        Ok(()) => ExitCode::SUCCESS,
+        Err(error) => {
+            eprintln!("Error: {error:?}");
+            ExitCode::from(
+                error
+                    .downcast_ref::<StatementRejected>()
+                    .map_or(1, |rejected| rejected.exit_code()),
+            )
+        }
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::path::Path;
+    #[test]
+    fn only_typed_statement_failures_select_rejection_exit_codes() {
+        for (layer, code) in [
+            (StatementRejected::Wire, 20),
+            (StatementRejected::Public, 21),
+            (StatementRejected::Crypto, 22),
+        ] {
+            let error = anyhow::anyhow!("underlying refusal").context(layer);
+            assert_eq!(
+                error
+                    .downcast_ref::<StatementRejected>()
+                    .unwrap()
+                    .exit_code(),
+                code
+            );
+        }
+        let error = anyhow::anyhow!("W1_V2_CRYPTO_REJECT in ordinary operational text");
+        assert!(error.downcast_ref::<StatementRejected>().is_none());
+    }
     #[test]
     fn saved_full_v2_receipt_verifies_with_independent_artifacts() {
         let root =

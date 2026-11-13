@@ -1,3 +1,16 @@
+**Native postprocessing research retained separately, 2026-11-13 UTC — HOLD:**
+
+Integrate original `ed452e9a67419900b7d30b2c5561ebbfbdd3c1ff` with its bounded
+process usage/deadline ownership and typed verifier refusal categories. Preserve
+both independently named V2 research relations: the existing stateful Python
+`pon-useful-cell-stateful-int257-v2` and the native
+`pon-useful-cell-int257-postprocess-research-v2` documented in
+[its separate specification](specs/pon/USEFUL_CELL_NATIVE_POSTPROCESS_V2.md).
+They have different contracts and are not interchangeable. Both remain
+unregistered research; neither activates consensus or qualifies ordinary Hepta.
+Original observations remain tied to their original source. Final composition
+source binding and validation are pending.
+
 **Source consolidation and retained native controls, 2026-11-13 UTC — HOLD:**
 
 Continue the existing #847 candidate `b683714cdd5ba241c16c335a81aebc12c1581902`
