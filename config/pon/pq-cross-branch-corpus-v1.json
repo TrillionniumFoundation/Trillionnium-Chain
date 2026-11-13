@@ -2065,7 +2065,7 @@
     "trillionnium/crates/trnm-data-availability/src/cell/network/serving.rs": "ee37a45ca055dcbacdc3dffda3c8e95b7aa3d0c9",
     "trillionnium/crates/trnm-data-availability/src/cell/network/serving/tests.rs": "208d6d6030dd0a2314ebae43cb98d2c56da49fb2",
     "trillionnium/crates/trnm-data-availability/src/cell/placement.rs": "395275c88b8abd96f4a2b8d5b8054a86e8261939",
-    "trillionnium/crates/trnm-data-availability/src/cell/placement/tests.rs": "8851d6968f8b0bd6f4ff2792645958e98bb55b70",
+    "trillionnium/crates/trnm-data-availability/src/cell/placement/tests.rs": "27720cddc02a0955b97bc0ebf1a75ec690a73396",
     "trillionnium/crates/trnm-data-availability/src/cell/pq.rs": "9739dbb7882da42af42bae5d103d73637feb3ad9",
     "trillionnium/crates/trnm-data-availability/src/cell/pq/content.rs": "afff6ca3205053d1777434c777ceaf84b3e4aeda",
     "trillionnium/crates/trnm-data-availability/src/cell/pq/content/tests.rs": "0d5fcd62c85630fef4f9f35f392a6e1a07b15668",
