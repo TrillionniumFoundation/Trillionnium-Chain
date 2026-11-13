@@ -34,7 +34,7 @@ from check_ci_contract import (ROOT, validate, check_inline_source_pins, check_m
                                NATIVE_RELEASE_BLOCK, NATIVE_GROWTH_RELEASE_BLOCK, NATIVE_GROWTH_V2_RELEASE_BLOCK,
                                GSC2_SYNTHETIC_ORACLE,
                                NODE_EXAMPLE_BUILD, ACCOUNT_ARCHIVE_ORACLE, ACCOUNT_EXECUTION_ORACLE)
-from check_ci_contract import (check_pq_release_authority_controls, PQ_RELEASE_WORKFLOW,
+from check_ci_contract import (check_pq_release_authority_controls, check_cell_current_api_workflow, PQ_RELEASE_WORKFLOW,
                                PQ_RELEASE_MANIFEST, PQ_RELEASE_GROUPS, PQ_ROOT_HARNESS_FILES)
 from check_ci_contract import (check_pq_system_required_controls, PQ_SYSTEM_REQUIRED_MANIFEST,
                                PQ_SYSTEM_SUPPLEMENTAL_MANIFEST, PQ_SYSTEM_REQUIRED_STEP,
@@ -3094,23 +3094,82 @@ class CellCurrentApiReadbackTests(unittest.TestCase):
             raise AssertionError("original compile-fail observation changed")
         cls.observed = raw.decode("utf-8")
         cls.observation = json.loads((cls.root / cls.OBSERVATION).read_bytes())
-        prefix = "python3 -c '"
-        suffix = "' \"$out/cell-current-api.log\""
-        commands = [line.strip() for line in (cls.root / cls.WORKFLOW).read_text().splitlines()
-                    if line.strip().startswith(prefix) and line.strip().endswith(suffix)]
-        if len(commands) != 1:
-            raise AssertionError("exactly one actual workflow readback command is required")
-        cls.program = commands[0][len(prefix):-len(suffix)]
+        cls.program = cls.root / "scripts/ci/check_cell_current_api_readback.py"
+        cls.source = (cls.root / "trillionnium/crates/trnm-data-availability/src/cell/pq.rs").read_text()
+        start = cls.source.index("/// ```compile_fail,E0308")
+        end = cls.source.index("pub struct VerifiedCellPqReleaseV2<'a> {", start)
+        # Synthetic source placement for the unchanged historical log, not a
+        # claim that the current checkout was executed in that historical job.
+        cls.historical_source = "\n" * 363 + cls.source[start:end] + "pub struct VerifiedCellPqReleaseV2<'a> {"
+        cls.workflow = (cls.root / cls.WORKFLOW).read_text()
+        check_cell_current_api_workflow(cls.workflow)
+        cls.workflow_command = ('python3 scripts/ci/check_cell_current_api_readback.py '
+                                '"$out/cell-current-api.log" '
+                                'trillionnium/crates/trnm-data-availability/src/cell/pq.rs')
 
-    def observe(self, text):
+    def observe(self, text, source=None):
         with tempfile.TemporaryDirectory(prefix="trnm-cell-api-readback-") as directory:
             path = Path(directory) / "observation.log"
             path.write_text(text)
+            source_path = Path(directory) / "pq.rs"
+            source_path.write_text(self.historical_source if source is None else source)
             result = subprocess.run(
-                [sys.executable, "-I", "-S", "-B", "-c", self.program, str(path)],
+                [sys.executable, "-I", "-S", "-B", str(self.program), str(path), str(source_path)],
                 capture_output=True, text=True, check=False, timeout=5)
         self.assertEqual(result.stderr, "")
         return result.returncode, json.loads(result.stdout)
+
+    def test_workflow_reader_cannot_be_commented_skipped_swallowed_or_moved(self):
+        recorder = ('          python3 scripts/ci/record_pq_native_command.py '
+                    '"${source_args[@]}" --label {label} --output "$out" -- \\\n')
+        commands = (
+            ('cell-current-api-reader-controls',
+             'python3 -m unittest discover -s scripts/ci -p test_ci_contract.py -k CellCurrentApiReadbackTests -v'),
+            ('cell-current-api',
+             'cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --doc cell::pq -- --show-output --test-threads=1'),
+            ('cell-current-api-readback', self.workflow_command),
+        )
+        blocks = []
+        for label, command in commands:
+            block = recorder.replace('{label}', label) + '            ' + command + '\n'
+            self.assertEqual(self.workflow.count(block), 1)
+            blocks.append(block)
+            variants = (
+                '', block * 2,
+                ''.join('          # ' + line.lstrip() + '\n' for line in block.splitlines()),
+                block.rstrip() + ' || true\n',
+                block.rstrip() + ' &\n',
+                '          if false; then\n' + block + '          fi\n',
+                '          if\n' + block + '          then :; fi\n',
+                '          {\n' + block + '          } || true\n',
+                '          set +e\n' + block,
+            )
+            for replacement in variants:
+                with self.subTest(label=label, replacement=replacement), self.assertRaises(ValueError):
+                    check_cell_current_api_workflow(self.workflow.replace(block, replacement, 1))
+        sequence = ''.join(blocks)
+        self.assertIn(sequence, self.workflow)
+        marker = '      - name: Run independent primitives on the exact candidate\n'
+        for changed in (
+            self.workflow.replace(sequence, ''.join(reversed(blocks)), 1),
+            self.workflow.replace('  primitive-interoperability:\n', '  other-job:\n', 1),
+            self.workflow.replace(marker, marker + '        if: false\n', 1),
+            self.workflow.replace('      - scripts/ci/check_cell_current_api_readback.py\n', '', 1),
+        ):
+            with self.subTest(change=changed), self.assertRaises(ValueError):
+                check_cell_current_api_workflow(changed)
+
+    def test_source_bound_line_shift_and_stale_log(self):
+        line = self.source[:self.source.index("/// ```compile_fail,E0308")].count("\n") + 1
+        shifted = self.observed.replace("(line 364)", f"(line {line})")
+        self.assertEqual(self.observe(shifted, self.source)[0], 0)
+        self.assertEqual(self.observe(shifted, "\n" + self.source)[0], 1)
+        self.assertEqual(self.observe(shifted, self.source.replace("proof.release_at(300)", "proof.release_at(301)"))[0], 1)
+
+    def test_appended_failed_or_ignored_cases_and_failed_summary_refuse(self):
+        for extra in ("test other ... FAILED\n", "test other ... ignored\n",
+                      "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s\n"):
+            self.assert_refused(self.observed + extra)
 
     def assert_refused(self, text):
         status, report = self.observe(text)

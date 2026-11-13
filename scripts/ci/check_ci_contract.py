@@ -608,6 +608,44 @@ PQ_RELEASE_JOB_HEADER = r'''    name: ML-DSA independent C implementation (${{ m
       EXPECTED_TESTED: ${{ matrix.source == 'head' && github.event.pull_request.head.sha || github.sha }}
     steps:
 '''
+# Preserve the actual source-recorded execution and refusal sequence, not a
+# matching command hidden in comments or conditional shell flow.
+PQ_CELL_CURRENT_API_STEP = r'''      - name: Run independent primitives on the exact candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/mldsa-interoperability"
+          mkdir "$out"
+          export CARGO_TARGET_DIR="$RUNNER_TEMP/mldsa-rust-target"
+          source_args=(--kind "$SOURCE_KIND" --candidate "$EXPECTED_HEAD" --tested "$EXPECTED_TESTED")
+          if test "$SOURCE_KIND" = prospective-merge; then
+            source_args+=(--base "$EXPECTED_BASE")
+          fi
+          bash scripts/project-preflight.sh --audit
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label independent-source-guard --output "$out" -- \
+            python3 trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/test_mldsa_native_source.py \
+            --source "$GITHUB_WORKSPACE/upstream-mldsa"
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label oracle-build --output "$out" -- \
+            cargo +1.95.0 build --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --example pq_message_oracle
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label tap21-metadata --output "$out" -- \
+            cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --test tuf_tap21
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label cell-current-authority --output "$out" -- \
+            cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability cell::pq
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label cell-current-api-reader-controls --output "$out" -- \
+            python3 -m unittest discover -s scripts/ci -p test_ci_contract.py -k CellCurrentApiReadbackTests -v
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label cell-current-api --output "$out" -- \
+            cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --doc cell::pq -- --show-output --test-threads=1
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label cell-current-api-readback --output "$out" -- \
+            python3 scripts/ci/check_cell_current_api_readback.py "$out/cell-current-api.log" trillionnium/crates/trnm-data-availability/src/cell/pq.rs
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label recovery-release-components --output "$out" -- \
+            cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-checkpoint-store -p trnm-release-bundle --all-targets --no-fail-fast -- --test-threads=1
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label independent-c --output "$out" -- \
+            python3 trillionnium/crates/trnm-crypto-primitives/tests/independent_backend/mldsa_native_differential.py \
+            --source "$GITHUB_WORKSPACE/upstream-mldsa" \
+            --chain-oracle "$CARGO_TARGET_DIR/debug/examples/pq_message_oracle" \
+            --wycheproof trillionnium/crates/trnm-crypto-primitives/tests/fixtures/wycheproof/mldsa_65_verify_test.json \
+            --build-dir "$out/c-build" --report "$out/differential.json"
+'''
 PQ_RELEASE_AUTHORITY_STEP = r'''      - name: Require all release authority and CCH1 controls from the complete Unix registry
         shell: bash
         run: |
@@ -2050,6 +2088,29 @@ PQ_CHECKPOINT_OWNERSHIP_STEP = r'''      - name: Require admitted migration hand
           test "$failed" = 0
 '''
 
+def check_cell_current_api_workflow(text: str) -> None:
+    """Require the source-bound reader in its complete executable native step."""
+    header, separator, body = text.partition('\njobs:\n')
+    require(bool(separator), 'cell current API workflow requires explicit jobs')
+    paths = re.findall(r'^      - ([A-Za-z0-9_./*-]+)$', header, re.M)
+    require(paths.count('scripts/ci/check_cell_current_api_readback.py') == 1,
+            'cell current API reader changes must trigger its native workflow')
+    pairs = re.findall(r'(?ms)^  ([a-z][a-z0-9-]*):\n(.*?)(?=^  [a-z][a-z0-9-]*:\n|\Z)', body)
+    jobs = dict(pairs)
+    require(len(jobs) == len(pairs), 'cell current API workflow jobs must be unique')
+    job = jobs.get('primitive-interoperability', '')
+    steps = re.findall(r'(?ms)^      - name: .*?(?=^      - |\Z)', job)
+    marker = '      - name: Run independent primitives on the exact candidate\n'
+    observed = [step for step in steps if step.startswith(marker)]
+    require(len(observed) == 1 and code_lines(observed[0]) == code_lines(PQ_CELL_CURRENT_API_STEP),
+            'cell current API controls, native doctest and reader require the complete executable step without skipped or swallowed failures')
+    for label in ('cell-current-api-reader-controls', 'cell-current-api', 'cell-current-api-readback'):
+        command = next(line for line in code_lines(PQ_CELL_CURRENT_API_STEP)
+                       if '--label ' + label + ' --output ' in line)
+        require(code_lines(text).count(command) == 1,
+                'cell current API command must execute once in its original source recorder: ' + label)
+
+
 def check_pq_release_authority_controls(root: Path) -> dict:
     """Pin the complete release roster and its actual hosted execution wiring.
 
@@ -2104,6 +2165,7 @@ def check_pq_release_authority_controls(root: Path) -> dict:
             'PQ root harness must retain the exact 18 codec/policy test doubles')
 
     text = (root / PQ_RELEASE_WORKFLOW).read_text()
+    check_cell_current_api_workflow(text)
     header, separator, body = text.partition('\njobs:\n')
     require(bool(separator), 'PQ workflow requires an explicit jobs mapping')
     paths = re.findall(r'^      - ([A-Za-z0-9_./*-]+)$', header, re.M)
