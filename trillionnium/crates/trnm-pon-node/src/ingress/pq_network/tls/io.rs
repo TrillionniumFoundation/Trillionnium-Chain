@@ -18,6 +18,7 @@ pub(super) struct DeadlineStream<'a> {
     written_bytes: usize,
     limit: usize,
     owner: Option<(&'a Mutex<Node>, &'a PqNetworkPolicy)>,
+    observation: Option<&'a diagnostics::Observation>,
 }
 impl<'a> DeadlineStream<'a> {
     pub(super) fn new(
@@ -29,6 +30,8 @@ impl<'a> DeadlineStream<'a> {
         // Darwin may inherit O_NONBLOCK from the listener. Read/write timeouts
         // need a blocking descriptor; each BIO call still uses the SAME end.
         stream.set_nonblocking(false)?;
+        // Disable Nagle without changing TLS bytes, deadlines or read accounting.
+        stream.set_nodelay(true)?;
         Ok(Self {
             stream,
             deadline,
@@ -36,6 +39,7 @@ impl<'a> DeadlineStream<'a> {
             written_bytes: 0,
             limit: HANDSHAKE_BYTES,
             owner,
+            observation: None,
         })
     }
     fn remaining(&self) -> io::Result<Duration> {
@@ -46,6 +50,7 @@ impl<'a> DeadlineStream<'a> {
     }
     fn charge(&self, bytes: usize) -> io::Result<()> {
         if let Some((node, policy)) = self.owner {
+            let started = self.observation.map(|_| Instant::now());
             let result = lock_live_owner(node, self.deadline, None).and_then(|mut owner| {
                 owner.charge_pq_ingress_with_check(
                     policy,
@@ -56,6 +61,9 @@ impl<'a> DeadlineStream<'a> {
                     &mut || check_live_request(self.deadline, None),
                 )
             });
+            if let (Some(observation), Some(started)) = (self.observation, started) {
+                observation.charge(started.elapsed(), result.as_ref().err());
+            }
             result.map_err(|error| io::Error::other(error.to_string()))?;
         }
         self.remaining().map(|_| ())
@@ -103,8 +111,46 @@ impl Write for DeadlineStream<'_> {
     }
 }
 
+// OpenSSL can request a record header and body in separate BIO reads. Fill a
+// fixed ciphertext buffer through the original durable/deadline owner first,
+// then satisfy small TLS reads from those already charged bytes. This neither
+// caches witness answers nor waits to fill the buffer before making progress.
+const CIPHERTEXT_READ_BUFFER: usize = 16_384;
+
+pub(super) struct BufferedIo<'a> {
+    reader: io::BufReader<DeadlineStream<'a>>,
+}
+impl<'a> BufferedIo<'a> {
+    pub(super) fn new(stream: DeadlineStream<'a>) -> Self {
+        Self {
+            reader: io::BufReader::with_capacity(CIPHERTEXT_READ_BUFFER, stream),
+        }
+    }
+}
+impl Read for BufferedIo<'_> {
+    fn read(&mut self, output: &mut [u8]) -> io::Result<usize> {
+        if output.is_empty() {
+            return Ok(0);
+        }
+        // BufReader can return without a syscall. Such a cache hit must still
+        // honor the original absolute deadline, including after a slow caller.
+        self.reader.get_ref().remaining()?;
+        let read = self.reader.read(output)?;
+        self.reader.get_ref().remaining()?;
+        Ok(read)
+    }
+}
+impl Write for BufferedIo<'_> {
+    fn write(&mut self, input: &[u8]) -> io::Result<usize> {
+        self.reader.get_mut().write(input)
+    }
+    fn flush(&mut self) -> io::Result<()> {
+        self.reader.get_mut().flush()
+    }
+}
+
 pub(super) struct Channel<'a> {
-    stream: SslStream<DeadlineStream<'a>>,
+    stream: SslStream<BufferedIo<'a>>,
     admission: TransportAdmission,
     deadline: Instant,
 }
@@ -114,8 +160,9 @@ impl<'a> Channel<'a> {
         deadline: Instant,
         context: &context::TlsContext,
     ) -> Result<Self> {
-        Self::handshake(stream, deadline, context, None, false)
+        Self::handshake(stream, deadline, context, None, false, None)
     }
+    #[cfg(test)]
     pub(super) fn accept(
         stream: TcpStream,
         deadline: Instant,
@@ -123,10 +170,27 @@ impl<'a> Channel<'a> {
         node: &'a Mutex<Node>,
         policy: &'a PqNetworkPolicy,
     ) -> Result<Self> {
+        Self::handshake(stream, deadline, context, Some((node, policy)), true, None)
+    }
+    pub(super) fn accept_observed(
+        stream: TcpStream,
+        deadline: Instant,
+        context: &context::TlsContext,
+        node: &'a Mutex<Node>,
+        policy: &'a PqNetworkPolicy,
+        observation: &'a diagnostics::Observation,
+    ) -> Result<Self> {
         // connection() has already spent this owner's durable TLS handshake
         // attempt. Certificate-path construction may perform multiple signature
         // operations: it is NOT charged as one/two native TPQ verifications.
-        Self::handshake(stream, deadline, context, Some((node, policy)), true)
+        Self::handshake(
+            stream,
+            deadline,
+            context,
+            Some((node, policy)),
+            true,
+            Some(observation),
+        )
     }
     fn handshake(
         stream: TcpStream,
@@ -134,8 +198,11 @@ impl<'a> Channel<'a> {
         context: &context::TlsContext,
         owner: Option<(&'a Mutex<Node>, &'a PqNetworkPolicy)>,
         server: bool,
+        observation: Option<&'a diagnostics::Observation>,
     ) -> Result<Self> {
-        let io = DeadlineStream::new(stream, deadline, owner)?;
+        let mut io = DeadlineStream::new(stream, deadline, owner)?;
+        io.observation = observation;
+        let io = BufferedIo::new(io);
         let mut stream = SslStream::new(context.session()?, io).map_err(crypto)?;
         check_live_request(deadline, None)?;
         if server {
@@ -149,7 +216,7 @@ impl<'a> Channel<'a> {
         check_live_request(deadline, None)?;
         let admission = context.admit(stream.ssl())?;
         check_live_request(deadline, None)?;
-        stream.get_mut().limit = CONNECTION_BYTES;
+        stream.get_mut().reader.get_mut().limit = CONNECTION_BYTES;
         Ok(Self {
             stream,
             admission,
@@ -179,8 +246,18 @@ impl<'a> Channel<'a> {
             "PQ_NETWORK_WIRE_LIMIT",
         )?;
         check_live_request(self.deadline, None)?;
-        self.stream.write_all(&(bytes.len() as u32).to_be_bytes())?;
-        self.stream.write_all(bytes)?;
+        // Coalesce the unchanged length prefix and first payload bytes into
+        // one bounded SSL write. Receive charging and live checks are unchanged.
+        let mut first = [0_u8; 16_384];
+        let prefix = (bytes.len() as u32).to_be_bytes();
+        let copied = bytes.len().min(first.len() - prefix.len());
+        first[..prefix.len()].copy_from_slice(&prefix);
+        first[prefix.len()..prefix.len() + copied].copy_from_slice(&bytes[..copied]);
+        self.stream.write_all(&first[..prefix.len() + copied])?;
+        self.stream.write_all(&bytes[copied..])?;
         check_live_request(self.deadline, None)
     }
 }
+
+#[cfg(test)]
+mod buffer_tests;

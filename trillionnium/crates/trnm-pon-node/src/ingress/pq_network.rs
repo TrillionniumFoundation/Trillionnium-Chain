@@ -45,6 +45,11 @@ mod tls_profile;
 pub use tls_profile::{PqTlsPins, TLS_HANDSHAKE_LIMIT, TLS_PROFILE, TLS_TRANSPORT_MODE};
 #[cfg(feature = "pq-native-openssl")]
 pub mod tls;
+#[cfg(all(test, feature = "pq-native-openssl"))]
+use tls::{PqTlsClient, PqTlsIdentity, PqTlsServer};
+#[cfg(all(test, feature = "pq-native-openssl"))]
+#[path = "pq_network/tls/fixtures.rs"]
+mod tls_fixtures;
 
 mod shared;
 pub use shared::serve_pq_authenticated_shared;

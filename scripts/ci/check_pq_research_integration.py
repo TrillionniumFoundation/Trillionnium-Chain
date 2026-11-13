@@ -119,6 +119,8 @@ NATIVE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/context.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/io.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/diagnostics.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/io/buffer_tests.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/fixtures.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/tests.rs",
     "trillionnium/crates/trnm-pon-node/src/pq_tls_cli.rs",
