@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/pq_lifetime_budget.py"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794311076959202857,
+  "exit_code": 0,
+  "interrupted": false,
+  "label": "pq128-lifetime",
+  "process_exit_code": 0,
+  "recorder_error": null,
+  "start_unix_ns": 1794311076843821061,
+  "stderr": {
+    "bytes": 0,
+    "file": "pq128-lifetime.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 12824,
+    "file": "pq128-lifetime.stdout.log",
+    "sha256": "19927acdc66216b824653f4776f530164156b85d18eb4ed6039ac6ad6975b7ad"
+  },
+  "timed_out": false,
+  "timeout_seconds": 1800
+}

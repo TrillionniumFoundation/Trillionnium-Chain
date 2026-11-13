@@ -1,0 +1,16 @@
+   Compiling getrandom v0.4.2
+   Compiling rand_core v0.10.1
+   Compiling const-oid v0.10.2
+   Compiling crypto-common v0.2.2
+   Compiling digest v0.11.3
+   Compiling shake v0.1.0
+   Compiling signature v3.0.0
+   Compiling tempfile v3.27.0
+   Compiling der v0.8.3
+   Compiling spki v0.8.1
+   Compiling pkcs8 v0.11.0
+   Compiling ml-dsa v0.1.1
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-mvcc-fee)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 26s
+     Running unittests src/lib.rs (/home/qian-qi/chain-pon-followthrough-20261110-685a-target/debug/deps/trnm_mvcc_fee-1d2d7c5fd541f6a0)

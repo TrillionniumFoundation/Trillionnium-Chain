@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/bin/learning_service_round-fc406bad",
+    "revoke",
+    "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/native-service"
+  ],
+  "automatic_retry_allowed": false,
+  "exit_code": 0,
+  "finished_unix_ns": 1794162382193135229,
+  "label": "03-revoke-while-orphaned",
+  "same_original_round": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/native-service",
+  "started_unix_ns": 1794162381823016141,
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 3251,
+  "stdout_sha256": "65d01b65c439e57cf5c50125908f3ad9db64a99987a139426c872c914a2f66c4",
+  "wall_ns": 369182564
+}

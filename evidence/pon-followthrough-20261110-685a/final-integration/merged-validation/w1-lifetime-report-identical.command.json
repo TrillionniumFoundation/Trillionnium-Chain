@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "cmp",
+    "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-validation-01/w1-lifetime-report.stdout.log",
+    "/home/qian-qi/chain-pon-followthrough-20261110-685a/evidence/pon-w1-lifetime-current-20261110-685a/project-report.json"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794311077631985457,
+  "exit_code": 0,
+  "interrupted": false,
+  "label": "w1-lifetime-report-identical",
+  "process_exit_code": 0,
+  "recorder_error": null,
+  "start_unix_ns": 1794311077627387420,
+  "stderr": {
+    "bytes": 0,
+    "file": "w1-lifetime-report-identical.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 0,
+    "file": "w1-lifetime-report-identical.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "timed_out": false,
+  "timeout_seconds": 1800
+}

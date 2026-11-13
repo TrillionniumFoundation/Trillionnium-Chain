@@ -1,0 +1,11 @@
+tree d0fd1180a193e2caafd9ef6818f28bf571a9240b
+parent 4dbeae12fa756fd662cc074390fcb628abe970ad
+author Codex <codex@openai.com> 1794246741 -0500
+committer Codex <codex@openai.com> 1794246741 -0500
+
+docs: retain fixed Chain/Hepta validation and open closure gates
+
+Publish the exact M6 engineering observations and source/environment identities
+while retaining M4/M5 failures, original service campaign failures, PoN/PQ
+research obligations, and the ordinary-daemon and real deployment gaps.
+No runtime source or qualification authority changes; HOLD_NO_GO remains.

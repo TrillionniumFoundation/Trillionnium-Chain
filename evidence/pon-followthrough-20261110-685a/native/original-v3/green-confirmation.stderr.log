@@ -1,0 +1,11 @@
+   Compiling trnm-service-settlement v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6m 33s
+     Running unittests src/lib.rs (/home/qian-qi/chain-pon-followthrough-20261110-685a-target/debug/deps/trnm_pon_node-4b16683c307f94b0)
+
+thread 'store::confirmation_chainwork_tests::full_width_retained_work_corruption_refuses_tip_inclusion_and_middle' (455742) panicked at crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs:86:5:
+assertion `left == right` failed
+  left: "NATIVE_STATE_PARENT"
+ right: "STORAGE_PACKET"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+error: test failed, to rerun pass `-p trnm-pon-node --lib`

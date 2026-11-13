@@ -1,0 +1,20 @@
+{
+  "all_cargo_inputs_and_other_owner_git_entries_equal": true,
+  "candidate_tree": "cc44e4c526d9b52d04697169a9b1d3eeb5079451",
+  "cargo_input_changed_paths": [],
+  "code_checkpoint_c2": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+  "code_tree_c2": "7c003a3d183ad33ff4f3349cbcce61564f73a2ba",
+  "final_native_policy": "Root runs the original three-crate --all-targets strict Clippy plus locked offline graph and actual C3 source bracket; no 4/8/3 or full library suite repeat is credited.",
+  "native_executed_by_this_review": false,
+  "other_three_owner_changed_paths": [],
+  "production_activation": false,
+  "rust_changed_paths": [
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+  ],
+  "schema": "pon-followthrough-native-source-delta-v1",
+  "three_owner_scopes": [
+    "trillionnium/crates/trnm-pon-node/",
+    "trillionnium/crates/trnm-service-settlement/",
+    "trillionnium/crates/trnm-crypto-primitives/"
+  ]
+}

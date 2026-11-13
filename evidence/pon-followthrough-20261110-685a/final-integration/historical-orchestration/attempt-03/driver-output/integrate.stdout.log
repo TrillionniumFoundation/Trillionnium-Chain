@@ -1,0 +1,121 @@
+START prepare-preflight
+END prepare-preflight 0
+START prepare-source-byte-check
+END prepare-source-byte-check 0
+START preview-index-from-c2
+END preview-index-from-c2 0
+START preview-patch-1
+END preview-patch-1 0
+START preview-patch-2
+END preview-patch-2 0
+START preview-patch-3
+END preview-patch-3 0
+START preview-patch-4
+END preview-patch-4 0
+START preview-patch-5
+END preview-patch-5 0
+START patch-1-check
+END patch-1-check 0
+START patch-1-apply
+END patch-1-apply 0
+START patch-2-check
+END patch-2-check 0
+START patch-2-apply
+END patch-2-apply 0
+START patch-3-check
+END patch-3-check 0
+START patch-3-apply
+END patch-3-apply 0
+START patch-4-check
+END patch-4-check 0
+START patch-4-apply
+END patch-4-apply 0
+START patch-5-check
+END patch-5-check 0
+START patch-5-apply
+END patch-5-apply 0
+START authority-pq128-bindings
+END authority-pq128-bindings 0
+START w1-ledger-binding
+END w1-ledger-binding 0
+START qrom-successor-binding
+END qrom-successor-binding 0
+START refresh-distributed-source-inventory
+END refresh-distributed-source-inventory 0
+START stage-explicit-source
+END stage-explicit-source 0
+START stage-explicit-evidence-including-ignored-logs
+END stage-explicit-evidence-including-ignored-logs 0
+START corpus-path-inventory
+END corpus-path-inventory 0
+START corpus-refresh-output
+END corpus-refresh-output 0
+START stage-corpus
+END stage-corpus 0
+START prepared-source-diff-check
+END prepared-source-diff-check 0
+PREPARED cc44e4c526d9b52d04697169a9b1d3eeb5079451 SECURITY_HOLD
+START commit-01-preflight
+END commit-01-preflight 0
+START commit-01-binding-child
+END commit-01-binding-child 0
+COMMITTED a715b2c8e89732ce356ebae67f978ef232156c04 SECURITY_HOLD
+START validation-01-source-before
+END validation-01-source-before 0
+START validation-01-preflight
+END validation-01-preflight 0
+START validation-01-test_pq_research_integration
+END validation-01-test_pq_research_integration 0
+START validation-01-test_ci_source_integrity
+END validation-01-test_ci_source_integrity 0
+START validation-01-test_ci_contract
+END validation-01-test_ci_contract 1
+START validation-01-test_w1_factorial_native_gate
+END validation-01-test_w1_factorial_native_gate 0
+START validation-01-test_prepare_artifact_upload
+END validation-01-test_prepare_artifact_upload 0
+START validation-01-test_cell_storage_convergence_ci
+END validation-01-test_cell_storage_convergence_ci 0
+START validation-01-test_cell_discovery_v3_ci
+END validation-01-test_cell_discovery_v3_ci 0
+START validation-01-test_fresh_rejection_report
+END validation-01-test_fresh_rejection_report 0
+START validation-01-test_w1_qrom_current_ci
+END validation-01-test_w1_qrom_current_ci 0
+START validation-01-test_pq_authority_effect_register
+END validation-01-test_pq_authority_effect_register 0
+START validation-01-test_pq_lifetime_budget
+END validation-01-test_pq_lifetime_budget 0
+START validation-01-test_w1_lifetime_ledger
+END validation-01-test_w1_lifetime_ledger 1
+START validation-01-corpus
+END validation-01-corpus 0
+START validation-01-ci-contract
+END validation-01-ci-contract 1
+START validation-01-qrom-current-named
+END validation-01-qrom-current-named 0
+START validation-01-qrom-historical-drift
+END validation-01-qrom-historical-drift 0
+START validation-01-qrom-current-implementation
+END validation-01-qrom-current-implementation 0
+START validation-01-authority-register
+END validation-01-authority-register 0
+START validation-01-pq128-lifetime
+END validation-01-pq128-lifetime 0
+START validation-01-w1-lifetime-report
+END validation-01-w1-lifetime-report 0
+START validation-01-w1-lifetime-report-identical
+END validation-01-w1-lifetime-report-identical 0
+START validation-01-distributed-inventory
+END validation-01-distributed-inventory 0
+START validation-01-repository-and-markdown-links
+END validation-01-repository-and-markdown-links 2
+START validation-01-source-diff-whitespace
+END validation-01-source-diff-whitespace 0
+START validation-01-format
+END validation-01-format 0
+START validation-01-source-after
+END validation-01-source-after 0
+START validation-01-source-identical
+END validation-01-source-identical 0
+VALIDATION {"binding_child_c3": "a715b2c8e89732ce356ebae67f978ef232156c04", "binding_child_tree": "cc44e4c526d9b52d04697169a9b1d3eeb5079451", "code_checkpoint_c2": "8d8c0e64e7a301fc111a6720721a14816639e5aa", "commands": [{"exit_code": 0, "label": "validation-01-source-before"}, {"exit_code": 0, "label": "validation-01-preflight"}, {"exit_code": 0, "label": "validation-01-test_pq_research_integration"}, {"exit_code": 0, "label": "validation-01-test_ci_source_integrity"}, {"exit_code": 1, "label": "validation-01-test_ci_contract"}, {"exit_code": 0, "label": "validation-01-test_w1_factorial_native_gate"}, {"exit_code": 0, "label": "validation-01-test_prepare_artifact_upload"}, {"exit_code": 0, "label": "validation-01-test_cell_storage_convergence_ci"}, {"exit_code": 0, "label": "validation-01-test_cell_discovery_v3_ci"}, {"exit_code": 0, "label": "validation-01-test_fresh_rejection_report"}, {"exit_code": 0, "label": "validation-01-test_w1_qrom_current_ci"}, {"exit_code": 0, "label": "validation-01-test_pq_authority_effect_register"}, {"exit_code": 0, "label": "validation-01-test_pq_lifetime_budget"}, {"exit_code": 1, "label": "validation-01-test_w1_lifetime_ledger"}, {"exit_code": 0, "label": "validation-01-corpus"}, {"exit_code": 1, "label": "validation-01-ci-contract"}, {"exit_code": 0, "label": "validation-01-qrom-current-named"}, {"exit_code": 0, "label": "validation-01-qrom-historical-drift"}, {"exit_code": 0, "label": "validation-01-qrom-current-implementation"}, {"exit_code": 0, "label": "validation-01-authority-register"}, {"exit_code": 0, "label": "validation-01-pq128-lifetime"}, {"exit_code": 0, "label": "validation-01-w1-lifetime-report"}, {"exit_code": 0, "label": "validation-01-w1-lifetime-report-identical"}, {"exit_code": 0, "label": "validation-01-distributed-inventory"}, {"exit_code": 2, "label": "validation-01-repository-and-markdown-links"}, {"exit_code": 0, "label": "validation-01-source-diff-whitespace"}, {"exit_code": 0, "label": "validation-01-format"}, {"exit_code": 0, "label": "validation-01-source-after"}, {"exit_code": 0, "label": "validation-01-source-identical"}], "complete": false, "draft_only": true, "hosted_ci_observed_complete": false, "native_execution_source": "8d8c0e64e7a301fc111a6720721a14816639e5aa", "native_full_suite_passed": false, "native_full_suites_repeated": false, "native_observation_complete": true, "open_consensus_qualified": false, "production_activation": false, "remaining_native_child_checks": "Root runs the original three-crate --all-targets strict Clippy plus locked offline graph and actual C3 source bracket; no 4/8/3 or full library suite repeat is credited.", "schema": "pon-followthrough-binding-child-checks-v2", "security_status": "HOLD", "source_bracket_identical": true}

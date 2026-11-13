@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "scripts/test_llm_parent_material.py",
+    "-v"
+  ],
+  "cwd": "/data/chain-learning-exit-70ae-20261109",
+  "exit_code": 0,
+  "expected_exit": 0,
+  "duration_ns": 1408707137,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "e5ad9fd56a2dee62039c9a57150591652270a6c095b327e80bed2e029c24fba8"
+}

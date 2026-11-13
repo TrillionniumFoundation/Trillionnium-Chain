@@ -1,0 +1,10 @@
+{
+  "code_checkpoint": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+  "controller_sha256": "1075c69186b95bb8e3423693fbb931f375d5afa93dd6fc023a02715945d9e920",
+  "last_exit": 0,
+  "native_full_suite_passed": false,
+  "phase": "finished",
+  "recorded_unix_ns": 1794307745505384372,
+  "security_status": "HOLD",
+  "stage": "validate-native-actual-originals"
+}

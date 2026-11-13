@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "rustc",
+    "-Vv"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794310626641093431,
+  "exit_code": 0,
+  "interrupted": false,
+  "label": "rustc-version",
+  "process_exit_code": 0,
+  "recorder_error": null,
+  "start_unix_ns": 1794310626575893694,
+  "stderr": {
+    "bytes": 0,
+    "file": "rustc-version.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 196,
+    "file": "rustc-version.stdout.log",
+    "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+  },
+  "timed_out": false,
+  "timeout_seconds": 1800
+}

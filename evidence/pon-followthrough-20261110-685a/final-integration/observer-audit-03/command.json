@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "-c",
+    "import importlib.util,json,sys\nfrom pathlib import Path\nspec=importlib.util.spec_from_file_location('pon_observer_v3_readonly',Path(sys.argv[1]))\nmodule=importlib.util.module_from_spec(spec)\nspec.loader.exec_module(module)\nfiles,observations=module.validate_native(Path(sys.argv[2]),Path(sys.argv[3]),Path(sys.argv[4]))\nprint(json.dumps({'observations':observations,'members':{name:item['record'] for name,item in files.items()}},indent=2,sort_keys=True))\n",
+    "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integrate_candidate_v3_observer.py",
+    "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation",
+    "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04",
+    "/home/qian-qi/chain-pon-followthrough-20261110-685a"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794307745409262841,
+  "exit_code": 0,
+  "label": "validate-native-actual-originals",
+  "start_unix_ns": 1794307745245191205,
+  "stderr": {
+    "bytes": 0,
+    "file": "validate-native.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 38365,
+    "file": "validate-native.stdout.log",
+    "sha256": "2835d032bdbdb420599092d03be394fa29d1c00894891d15bae065bc9d4cfef1"
+  }
+}

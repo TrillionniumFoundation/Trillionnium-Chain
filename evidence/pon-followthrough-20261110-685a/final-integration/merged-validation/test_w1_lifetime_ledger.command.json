@@ -1,0 +1,134 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/test_w1_lifetime_ledger.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794311065116186324,
+  "exit_code": 0,
+  "interrupted": false,
+  "label": "test_w1_lifetime_ledger",
+  "process_exit_code": 0,
+  "python_named_observation": {
+    "command_exit_code": 0,
+    "expected_names": [
+      "LifetimeLedgerTests.test_bound_domain_cannot_be_extrapolated_to_larger_lifetime_queries",
+      "LifetimeLedgerTests.test_cli_rejects_malformed_input_without_emitting_a_report",
+      "LifetimeLedgerTests.test_complete_relation_event_count_cannot_drop_failed_attempts",
+      "LifetimeLedgerTests.test_conditional_union_is_exact_and_does_not_require_independence",
+      "LifetimeLedgerTests.test_exact_lottery_rounding_and_weight_cost_counterexample",
+      "LifetimeLedgerTests.test_lifetime_reset_and_per_event_target_counterexamples",
+      "LifetimeLedgerTests.test_marginal_or_accepted_only_error_bound_is_refused",
+      "LifetimeLedgerTests.test_mass_and_reduction_overheads_are_independent_inputs",
+      "LifetimeLedgerTests.test_missing_phase_group_or_unknown_field_is_not_a_free_zero",
+      "LifetimeLedgerTests.test_native_permutation_count_cannot_be_the_query_unit",
+      "LifetimeLedgerTests.test_nonexact_numbers_duplicate_json_and_qualification_injection_are_refused",
+      "LifetimeLedgerTests.test_numeric_inputs_need_explicit_unverified_references",
+      "LifetimeLedgerTests.test_offline_adaptive_delegated_and_unclassified_queries_accumulate",
+      "LifetimeLedgerTests.test_processors_failed_roots_and_recursive_nodes_are_all_charged",
+      "LifetimeLedgerTests.test_project_unknowns_do_not_produce_a_target_or_qualification",
+      "LifetimeLedgerTests.test_scope_cannot_reset_by_identity_upgrade_or_reorganization",
+      "LifetimeLedgerTests.test_source_lines_remain_independent_of_existing_qualification_labels",
+      "LifetimeLedgerTests.test_source_mutation_missing_source_and_symlink_are_refused",
+      "LifetimeLedgerTests.test_unknown_factor_survives_known_zero"
+    ],
+    "observed_tests": [
+      {
+        "name": "LifetimeLedgerTests.test_bound_domain_cannot_be_extrapolated_to_larger_lifetime_queries",
+        "outcome": "ok"
+      },
+      {
+        "name": "LifetimeLedgerTests.test_cli_rejects_malformed_input_without_emitting_a_report",
+        "outcome": "ok"
+      },
+      {
+        "name": "LifetimeLedgerTests.test_complete_relation_event_count_cannot_drop_failed_attempts",
+        "outcome": "ok"
+      },
+      {
+        "name": "LifetimeLedgerTests.test_conditional_union_is_exact_and_does_not_require_independence",
+        "outcome": "ok"
+      },
+      {
+        "name": "LifetimeLedgerTests.test_exact_lottery_rounding_and_weight_cost_counterexample",
+        "outcome": "ok"
+      },
+      {
+        "name": "LifetimeLedgerTests.test_lifetime_reset_and_per_event_target_counterexamples",
+        "outcome": "ok"
+      },
+      {
+        "name": "LifetimeLedgerTests.test_marginal_or_accepted_only_error_bound_is_refused",
+        "outcome": "ok"
+      },
+      {
+        "name": "LifetimeLedgerTests.test_mass_and_reduction_overheads_are_independent_inputs",
+        "outcome": "ok"
+      },
+      {
+        "name": "LifetimeLedgerTests.test_missing_phase_group_or_unknown_field_is_not_a_free_zero",
+        "outcome": "ok"
+      },
+      {
+        "name": "LifetimeLedgerTests.test_native_permutation_count_cannot_be_the_query_unit",
+        "outcome": "ok"
+      },
+      {
+        "name": "LifetimeLedgerTests.test_nonexact_numbers_duplicate_json_and_qualification_injection_are_refused",
+        "outcome": "ok"
+      },
+      {
+        "name": "LifetimeLedgerTests.test_numeric_inputs_need_explicit_unverified_references",
+        "outcome": "ok"
+      },
+      {
+        "name": "LifetimeLedgerTests.test_offline_adaptive_delegated_and_unclassified_queries_accumulate",
+        "outcome": "ok"
+      },
+      {
+        "name": "LifetimeLedgerTests.test_processors_failed_roots_and_recursive_nodes_are_all_charged",
+        "outcome": "ok"
+      },
+      {
+        "name": "LifetimeLedgerTests.test_project_unknowns_do_not_produce_a_target_or_qualification",
+        "outcome": "ok"
+      },
+      {
+        "name": "LifetimeLedgerTests.test_scope_cannot_reset_by_identity_upgrade_or_reorganization",
+        "outcome": "ok"
+      },
+      {
+        "name": "LifetimeLedgerTests.test_source_lines_remain_independent_of_existing_qualification_labels",
+        "outcome": "ok"
+      },
+      {
+        "name": "LifetimeLedgerTests.test_source_mutation_missing_source_and_symlink_are_refused",
+        "outcome": "ok"
+      },
+      {
+        "name": "LifetimeLedgerTests.test_unknown_factor_survives_known_zero",
+        "outcome": "ok"
+      }
+    ],
+    "reported_summary_counts": [
+      19
+    ],
+    "successful_named_suite_observed": true
+  },
+  "recorder_error": null,
+  "start_unix_ns": 1794311064750625157,
+  "stderr": {
+    "bytes": 3141,
+    "file": "test_w1_lifetime_ledger.stderr.log",
+    "sha256": "e8182fb057f90f09c6cea906254d85f1dacb8038c171512bb1118a2028c2b053"
+  },
+  "stdout": {
+    "bytes": 0,
+    "file": "test_w1_lifetime_ledger.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "timed_out": false,
+  "timeout_seconds": 1800
+}

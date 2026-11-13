@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "8ab052065ae8307b1ab2c9d42b0dca229a5a3b9d",
+    "--output",
+    "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/upstream-validation-01/source-after.json"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794312092452482233,
+  "exit_code": 0,
+  "interrupted": false,
+  "label": "source-after",
+  "process_exit_code": 0,
+  "recorder_error": null,
+  "start_unix_ns": 1794312079652145231,
+  "stderr": {
+    "bytes": 0,
+    "file": "source-after.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 423,
+    "file": "source-after.stdout.log",
+    "sha256": "410f65105cfcfe45438e228fe44b11c7eaabb9a1b2d1f93d03bfdb3cca4198c0"
+  },
+  "timed_out": false,
+  "timeout_seconds": 1800
+}

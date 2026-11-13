@@ -1,0 +1,429 @@
+{
+  "all_recorded_log_digests_recomputed": true,
+  "created_utc": "2026-11-09T03:12:15.743947+00:00",
+  "errors": [],
+  "host": "ai395",
+  "native": {
+    "all_11_exit_zero": true,
+    "compiler_artifacts": [
+      {
+        "executable": "/home/qq/work/chain-rejection-resource-owner-956149-target/debug/deps/trnm_pon_node-571a85d65bb41857",
+        "features": [
+          "default"
+        ],
+        "filenames": [
+          "/home/qq/work/chain-rejection-resource-owner-956149-target/debug/deps/trnm_pon_node-571a85d65bb41857"
+        ],
+        "fresh": true,
+        "line": 138,
+        "log": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-native/artifact-profiles.log",
+        "package_id": "path+file:///home/qq/work/chain-rejection-resource-owner-956149-20261108/trillionnium/crates/trnm-pon-node#0.1.0",
+        "profile": {
+          "debug_assertions": true,
+          "debuginfo": 2,
+          "opt_level": "3",
+          "overflow_checks": true,
+          "test": true
+        },
+        "target": {
+          "crate_types": [
+            "lib"
+          ],
+          "doc": true,
+          "doctest": true,
+          "edition": "2021",
+          "kind": [
+            "lib"
+          ],
+          "name": "trnm_pon_node",
+          "src_path": "/home/qq/work/chain-rejection-resource-owner-956149-20261108/trillionnium/crates/trnm-pon-node/src/lib.rs",
+          "test": true
+        }
+      }
+    ],
+    "core_log": {
+      "bytes": 6876,
+      "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-resource-owner-tests.log",
+      "sha256": "4df356f5a147c002144c8d1edd8ca14f3ffdee50c54a42daf6e99a023f8c0d85"
+    },
+    "executables": [
+      {
+        "bytes": 233042448,
+        "compiler_profile": null,
+        "observations": [
+          {
+            "line": 3,
+            "log": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-native/native-observers.log"
+          }
+        ],
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-target/debug/deps/accepted_task_observation-eaaa7fc4743f1f0e",
+        "role": "executed-test-harness",
+        "sha256": "23e4ce9b5edc4417790814caa02c02b18ab8f499d44ff505d9b86c33667342ee"
+      },
+      {
+        "bytes": 233765992,
+        "compiler_profile": null,
+        "observations": [
+          {
+            "line": 21,
+            "log": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-native/native-observers.log"
+          }
+        ],
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-target/debug/deps/native_packet_observer-93c679b7065ffd33",
+        "role": "executed-test-harness",
+        "sha256": "02ff1b2d8bf1c8f911722e2f4c8f9ede1bcb733d797e8fdeb891f28289abf006"
+      },
+      {
+        "bytes": 514970328,
+        "compiler_profile": {
+          "debug_assertions": true,
+          "debuginfo": 2,
+          "opt_level": "3",
+          "overflow_checks": true,
+          "test": true
+        },
+        "observations": [
+          {
+            "line": 94,
+            "log": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-resource-owner-tests.log"
+          },
+          {
+            "line": 2,
+            "log": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-native/scalar-cpu.log"
+          },
+          {
+            "line": 2,
+            "log": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-native/root-rejection.log"
+          },
+          {
+            "line": 2,
+            "log": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-native/r14-profile.log"
+          }
+        ],
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-target/debug/deps/trnm_pon_node-571a85d65bb41857",
+        "role": "executed-test-harness",
+        "sha256": "8a07acce8e809b56398c08f5f2b81609c95767f0660c38fa4fe350ce7616ec4c"
+      },
+      {
+        "bytes": 226380728,
+        "compiler_profile": null,
+        "observations": [
+          {
+            "line": 3,
+            "log": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-native/observer-process-envelope.log"
+          }
+        ],
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-target/debug/deps/trnm_pon_node-7db8fe84b8d08080",
+        "role": "executed-test-harness",
+        "sha256": "9689ba2192858b48ae12f0c665bd47a8c25449e994126a310c94b3051221f782"
+      },
+      {
+        "bytes": 248265976,
+        "compiler_profile": null,
+        "observations": [],
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-target/debug/trnm-pon-node",
+        "role": "present-observer-cli-artifact",
+        "sha256": "a85427895bb3af5bfaaacd0798dabb620bebea4beced4d32bc3787561116ca01"
+      }
+    ],
+    "gates": [
+      {
+        "exit_code": 0,
+        "log_sha256": "bfe1fd556432020e77d09ef52f28f794fc423c0af7b4223fc13ec3055cd86c51",
+        "name": "preflight"
+      },
+      {
+        "exit_code": 0,
+        "log_sha256": "f242962256627d60335a46cbd838c73692ab9886d9bc70c28a6ba976c295d6d2",
+        "name": "source-before"
+      },
+      {
+        "exit_code": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "name": "cargo-fmt"
+      },
+      {
+        "exit_code": 0,
+        "log_sha256": "1757acb8179549282275013c7250e7ae14e637b171e9b66754a89c131efe3295",
+        "name": "scalar-cpu"
+      },
+      {
+        "exit_code": 0,
+        "log_sha256": "6b511a921aa0101028202b9539b2582b49849246ce15320f82a4b206dfeff649",
+        "name": "root-rejection"
+      },
+      {
+        "exit_code": 0,
+        "log_sha256": "2f3e89181c2cc2e0ae79fc5d4a229ae9b31fb806b20a725692cff047bbb9fb43",
+        "name": "r14-profile"
+      },
+      {
+        "exit_code": 0,
+        "log_sha256": "9fd444c2f6a41b74a3bf52e10836b17b145e8cc0f26f94c6c9854c9604784fd2",
+        "name": "native-observers"
+      },
+      {
+        "exit_code": 0,
+        "log_sha256": "a87219e3d2ce04b888e000d645c46b1306fe0a23a287589bda13e6cf162c712b",
+        "name": "observer-process-envelope"
+      },
+      {
+        "exit_code": 0,
+        "log_sha256": "4663b12c0286ec1b9377ef2f041b51efc9bb91a8ca23d8d327888b6b2b9750f7",
+        "name": "artifact-profiles"
+      },
+      {
+        "exit_code": 0,
+        "log_sha256": "180ec8c00f171d0919d21b6aaa4aba56d62d885ea8c9b31e34f1f421d68434a2",
+        "name": "strict-workspace-clippy"
+      },
+      {
+        "exit_code": 0,
+        "log_sha256": "f242962256627d60335a46cbd838c73692ab9886d9bc70c28a6ba976c295d6d2",
+        "name": "source-after"
+      }
+    ],
+    "summary": {
+      "bytes": 13653,
+      "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-native/summary.json",
+      "sha256": "3d7e9273806cbd191cb70f080815ac12756f5a1cbe690dfd2fda3e2d0ab3388b"
+    },
+    "test_suites": [
+      {
+        "executable": "/home/qq/work/chain-rejection-resource-owner-956149-target/debug/deps/trnm_pon_node-571a85d65bb41857",
+        "execution_time": "0.02s",
+        "failed": 0,
+        "filtered_out": 1272,
+        "gate": "resource-owner-core",
+        "ignored": 0,
+        "line": 121,
+        "log": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-resource-owner-tests.log",
+        "log_sha256": "4df356f5a147c002144c8d1edd8ca14f3ffdee50c54a42daf6e99a023f8c0d85",
+        "measured": 0,
+        "passed": 23,
+        "status": "ok"
+      },
+      {
+        "executable": "/home/qq/work/chain-rejection-resource-owner-956149-target/debug/deps/trnm_pon_node-571a85d65bb41857",
+        "execution_time": "2.49s",
+        "failed": 0,
+        "filtered_out": 1235,
+        "gate": "scalar-cpu",
+        "ignored": 0,
+        "line": 81,
+        "log": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-native/scalar-cpu.log",
+        "log_sha256": "1757acb8179549282275013c7250e7ae14e637b171e9b66754a89c131efe3295",
+        "measured": 0,
+        "passed": 60,
+        "status": "ok"
+      },
+      {
+        "executable": "/home/qq/work/chain-rejection-resource-owner-956149-target/debug/deps/trnm_pon_node-571a85d65bb41857",
+        "execution_time": "0.10s",
+        "failed": 0,
+        "filtered_out": 1288,
+        "gate": "root-rejection",
+        "ignored": 0,
+        "line": 13,
+        "log": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-native/root-rejection.log",
+        "log_sha256": "6b511a921aa0101028202b9539b2582b49849246ce15320f82a4b206dfeff649",
+        "measured": 0,
+        "passed": 7,
+        "status": "ok"
+      },
+      {
+        "executable": "/home/qq/work/chain-rejection-resource-owner-956149-target/debug/deps/trnm_pon_node-571a85d65bb41857",
+        "execution_time": "0.00s",
+        "failed": 0,
+        "filtered_out": 1294,
+        "gate": "r14-profile",
+        "ignored": 0,
+        "line": 7,
+        "log": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-native/r14-profile.log",
+        "log_sha256": "2f3e89181c2cc2e0ae79fc5d4a229ae9b31fb806b20a725692cff047bbb9fb43",
+        "measured": 0,
+        "passed": 1,
+        "status": "ok"
+      },
+      {
+        "executable": "/home/qq/work/chain-rejection-resource-owner-956149-target/debug/deps/accepted_task_observation-eaaa7fc4743f1f0e",
+        "execution_time": "0.22s",
+        "failed": 0,
+        "filtered_out": 0,
+        "gate": "native-observers",
+        "ignored": 0,
+        "line": 19,
+        "log": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-native/native-observers.log",
+        "log_sha256": "9fd444c2f6a41b74a3bf52e10836b17b145e8cc0f26f94c6c9854c9604784fd2",
+        "measured": 0,
+        "passed": 4,
+        "status": "ok"
+      },
+      {
+        "executable": "/home/qq/work/chain-rejection-resource-owner-956149-target/debug/deps/native_packet_observer-93c679b7065ffd33",
+        "execution_time": "0.98s",
+        "failed": 0,
+        "filtered_out": 0,
+        "gate": "native-observers",
+        "ignored": 0,
+        "line": 40,
+        "log": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-native/native-observers.log",
+        "log_sha256": "9fd444c2f6a41b74a3bf52e10836b17b145e8cc0f26f94c6c9854c9604784fd2",
+        "measured": 0,
+        "passed": 15,
+        "status": "ok"
+      },
+      {
+        "executable": "/home/qq/work/chain-rejection-resource-owner-956149-target/debug/deps/trnm_pon_node-7db8fe84b8d08080",
+        "execution_time": "0.36s",
+        "failed": 0,
+        "filtered_out": 14,
+        "gate": "observer-process-envelope",
+        "ignored": 0,
+        "line": 11,
+        "log": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-native/observer-process-envelope.log",
+        "log_sha256": "a87219e3d2ce04b888e000d645c46b1306fe0a23a287589bda13e6cf162c712b",
+        "measured": 0,
+        "passed": 4,
+        "status": "ok"
+      }
+    ],
+    "tests_passed": 114
+  },
+  "passed": true,
+  "repository": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+  "schema": "pon-resource-owner-c1-independent-readback-v1",
+  "scope": {
+    "builds_started": false,
+    "method": "Read retained receipts/logs, recompute full input and executable SHA256, and inspect current git identity. Compiler profile proof applies to the lib test artifact present in retained Cargo JSON; no compiler profile is inferred for other binaries.",
+    "repository_edits": false,
+    "tests_restarted": false
+  },
+  "source": {
+    "current_after": {
+      "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+      "status": "",
+      "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4"
+    },
+    "current_before": {
+      "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+      "status": "",
+      "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4"
+    },
+    "expected": {
+      "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+      "status": "",
+      "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4"
+    },
+    "full_verification_receipts": [
+      {
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-source-before.json",
+        "sha256": "f242962256627d60335a46cbd838c73692ab9886d9bc70c28a6ba976c295d6d2",
+        "tracked_bytes": 2380365122,
+        "tracked_entries": 23333,
+        "tracked_worktree_verified": true
+      },
+      {
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/source-before.json",
+        "sha256": "f242962256627d60335a46cbd838c73692ab9886d9bc70c28a6ba976c295d6d2",
+        "tracked_bytes": 2380365122,
+        "tracked_entries": 23333,
+        "tracked_worktree_verified": true
+      },
+      {
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/source-after.json",
+        "sha256": "f242962256627d60335a46cbd838c73692ab9886d9bc70c28a6ba976c295d6d2",
+        "tracked_bytes": 2380365122,
+        "tracked_entries": 23333,
+        "tracked_worktree_verified": true
+      },
+      {
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-native/source-before.log",
+        "sha256": "f242962256627d60335a46cbd838c73692ab9886d9bc70c28a6ba976c295d6d2",
+        "tracked_bytes": 2380365122,
+        "tracked_entries": 23333,
+        "tracked_worktree_verified": true
+      },
+      {
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-native/source-after.log",
+        "sha256": "f242962256627d60335a46cbd838c73692ab9886d9bc70c28a6ba976c295d6d2",
+        "tracked_bytes": 2380365122,
+        "tracked_entries": 23333,
+        "tracked_worktree_verified": true
+      }
+    ]
+  },
+  "static": {
+    "all_11_exit_zero": true,
+    "gates": [
+      {
+        "exit_code": 0,
+        "name": "preflight"
+      },
+      {
+        "exit_code": 0,
+        "name": "source-before"
+      },
+      {
+        "exit_code": 0,
+        "name": "source-inventory"
+      },
+      {
+        "exit_code": 0,
+        "name": "repository-markdown"
+      },
+      {
+        "exit_code": 0,
+        "name": "ci-contract"
+      },
+      {
+        "exit_code": 0,
+        "name": "pq-integration"
+      },
+      {
+        "exit_code": 0,
+        "name": "negative-source-integrity"
+      },
+      {
+        "exit_code": 0,
+        "name": "negative-repository"
+      },
+      {
+        "exit_code": 0,
+        "name": "negative-pq-integration"
+      },
+      {
+        "exit_code": 0,
+        "name": "negative-ci-contract"
+      },
+      {
+        "exit_code": 0,
+        "name": "source-after"
+      }
+    ],
+    "negative_test_suites": [
+      {
+        "name": "negative-source-integrity",
+        "passed": 43
+      },
+      {
+        "name": "negative-repository",
+        "passed": 50
+      },
+      {
+        "name": "negative-pq-integration",
+        "passed": 57
+      },
+      {
+        "name": "negative-ci-contract",
+        "passed": 151
+      }
+    ],
+    "negative_tests_passed": 301,
+    "summary": {
+      "bytes": 14842,
+      "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/summary.json",
+      "sha256": "058a605cd6dd8f35fd7a3107e1564a92b425d5b965fc9435e8ef43f252246ba2"
+    }
+  }
+}

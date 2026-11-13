@@ -1,0 +1,137 @@
+{
+  "c3_created": false,
+  "code_checkpoint": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+  "complete": true,
+  "controller_bytes": 81870,
+  "controller_sha256": "1075c69186b95bb8e3423693fbb931f375d5afa93dd6fc023a02715945d9e920",
+  "followup_commands": 14,
+  "followup_directory": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/native-followup-04",
+  "native_full_suite_passed": false,
+  "native_tests_executed": false,
+  "original_commands": 39,
+  "original_directory": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/validation",
+  "original_node_harness": {
+    "announcement_to_summary_pairing_claimed": false,
+    "main_announced_tests": 1326,
+    "main_elapsed_seconds_text": "2178.88",
+    "main_failed_names": [
+      "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation"
+    ],
+    "main_ignored_tests_executed_claimed": false,
+    "main_result": "FAILED",
+    "main_status_counts": {
+      "FAILED": 2,
+      "ignored": 39,
+      "ok": 1285
+    },
+    "main_status_rows_sha256": "0721b3d3c3b894edc1523af3770cc55a419ccd2a086abd8487cf799c13d9e842",
+    "main_summary_line": 1399,
+    "main_unique_names": 1326,
+    "nested_completed_summaries": [
+      {
+        "elapsed_seconds_text": "0.00",
+        "failed": 0,
+        "filtered_out": 1325,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 1,
+        "result": "ok",
+        "status_line": 569,
+        "summary_line": 571,
+        "test": "operator_task_policy::file_tests::held_file_substitution_child"
+      },
+      {
+        "elapsed_seconds_text": "0.00",
+        "failed": 0,
+        "filtered_out": 1325,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 1,
+        "result": "ok",
+        "status_line": 759,
+        "summary_line": 761,
+        "test": "store::authenticated_migration::tests::growth_rehearsal_file_reads_refuse_fifo_replacement_before_open"
+      },
+      {
+        "elapsed_seconds_text": "0.00",
+        "failed": 0,
+        "filtered_out": 1325,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 1,
+        "result": "ok",
+        "status_line": 765,
+        "summary_line": 767,
+        "test": "store::authenticated_migration::tests::growth_rehearsal_file_reads_refuse_fifo_replacement_before_open"
+      }
+    ],
+    "nested_running_announcements": [
+      {
+        "line": 565,
+        "tests": 1
+      },
+      {
+        "line": 747,
+        "tests": 1
+      },
+      {
+        "line": 757,
+        "tests": 1
+      },
+      {
+        "line": 764,
+        "tests": 1
+      },
+      {
+        "line": 773,
+        "tests": 1
+      },
+      {
+        "line": 783,
+        "tests": 1
+      },
+      {
+        "line": 810,
+        "tests": 1
+      },
+      {
+        "line": 846,
+        "tests": 1
+      },
+      {
+        "line": 869,
+        "tests": 1
+      },
+      {
+        "line": 928,
+        "tests": 1
+      },
+      {
+        "line": 1255,
+        "tests": 1
+      },
+      {
+        "line": 1273,
+        "tests": 1
+      },
+      {
+        "line": 1295,
+        "tests": 1
+      }
+    ],
+    "nested_successes_added_to_main": false,
+    "raw_sha256": "022eabf9dba4c26fda5ab75d9d9b53df76f209e19b2af9b3f4ce256ebf4f0b6b",
+    "raw_status_rows": 1329,
+    "schema": "pon-original-node-interleaved-harness-v1"
+  },
+  "parser_exit_code": 0,
+  "production_activation": false,
+  "project_mutations_performed": false,
+  "raw_members": 121,
+  "recorder_sha256": "79d1397d97ad8fce27eb861b1ee70a30b22574a190059766f660259267885e46",
+  "schema": "pon-native-observer-actual-receipts-audit-v1",
+  "scope": "read-only actual receipt parser; no Controller construction, project mutation, native test, or C3 commit",
+  "security_status": "HOLD",
+  "tree": "7c003a3d183ad33ff4f3349cbcce61564f73a2ba"
+}

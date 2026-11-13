@@ -1,0 +1,19 @@
+    Checking rand_core v0.10.1
+    Checking const-oid v0.10.2
+    Checking getrandom v0.4.2
+    Checking crypto-common v0.2.2
+    Checking digest v0.11.3
+    Checking shake v0.1.0
+    Checking signature v3.0.0
+    Checking tempfile v3.27.0
+    Checking trnm-service-settlement v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-service-settlement)
+    Checking der v0.8.3
+    Checking spki v0.8.1
+    Checking pkcs8 v0.11.0
+    Checking ml-dsa v0.1.1
+    Checking trnm-crypto-primitives v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-crypto-primitives)
+    Checking trnm-mvcc-fee v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-mvcc-fee)
+    Checking trnm-data-availability v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-data-availability)
+    Checking trnm-release-bundle v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-release-bundle)
+    Checking trnm-pon-node v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-pon-node)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1m 43s

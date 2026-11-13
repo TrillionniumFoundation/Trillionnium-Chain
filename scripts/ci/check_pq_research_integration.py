@@ -669,6 +669,64 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "scripts/ci/test_w1_qrom_implementation_audit.py",
     "config/pon/w1-qrom-implementation-v1.json",
 ))
+# Preserve the finite local owner's original required source set from #830.
+# Source coverage is separate from physical resource or service qualification.
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    "config/pon/local-resource-owner-v1.json",
+    "trillionnium/crates/trnm-pon-node/src/packet_observer_cli.rs",
+    "trillionnium/crates/trnm-pon-node/src/packet_observer_cli/owned.rs",
+    "trillionnium/crates/trnm-pon-node/src/resource_owner_v1.rs",
+    "trillionnium/crates/trnm-pon-node/src/resource_owner_v1_tests.rs",
+))
+# The development service adapter must retain its actual inherited executor,
+# frozen controls, native owner and refusal/recovery tests as one source set.
+# These pins do not establish independent demand, installation or FinalUse.
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    'docs/development/specs/pon/REAL_LEARNING_SERVICE_ITERATION_V1.md',
+    'scripts/llm_inherited_runtime.py',
+    'scripts/llm_parent_material.py',
+    'scripts/llm_inherited_operation.py',
+    'scripts/llm_frozen_evaluation.py',
+    'scripts/run_learning_service_development.py',
+    'scripts/test_llm_inherited_operation.py',
+    'scripts/test_llm_frozen_evaluation.py',
+    'scripts/test_run_learning_service_development.py',
+    'trillionnium/crates/trnm-pon-node/examples/learning_service_round.rs',
+    'trillionnium/crates/trnm-pon-node/examples/learning_service_recovery_probe.rs',
+    'trillionnium/crates/trnm-pon-node/examples/support/learning_service_recovery_probe_unix.rs',
+    'trillionnium/crates/trnm-pon-node/examples/support/learning_service_recovery_binding.rs',
+    'trillionnium/crates/trnm-pon-node/examples/support/learning_service_round_unix.rs',
+    'trillionnium/crates/trnm-pon-node/examples/support/learning_service_receipt.rs',
+))
+# Current follow-through controls and their exact source observations remain
+# mandatory even if both a manifest requirement and its pin are removed.
+# These bindings do not grant native service, cost, PQ or production acceptance.
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    "config/pon/w1-qrom-current-required-tests-v1.json",
+    "docs/research/PON_FRESH_REJECTION_COST_V1.md",
+    "evidence/pon-w1-lifetime-current-20261110-685a/README.md",
+    "evidence/pon-w1-lifetime-current-20261110-685a/project-input.json",
+    "evidence/pon-w1-lifetime-current-20261110-685a/project-report.json",
+    "scripts/ci/prepare_artifact_upload.py",
+    "scripts/ci/test_fresh_rejection_report.py",
+    "scripts/ci/test_prepare_artifact_upload.py",
+    "scripts/ci/test_w1_qrom_current_ci.py",
+    "scripts/ci/w1_native_controls.py",
+    "scripts/ci/w1_qrom_current_ci.py",
+    "scripts/pon_fresh_rejection_report.py",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_fresh_rejection_cost.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs",
+    "evidence/pon-w1-qrom-current-20261110-685a/README.md",
+    "evidence/pon-w1-qrom-current-20261110-685a/source-binding.json",
+    "evidence/pon-w1-qrom-current-20261110-685a/current-report.json",
+    "evidence/pon-w1-qrom-current-20261110-685a/prior-v2-on-c2.command.json",
+    "evidence/pon-w1-qrom-current-20261110-685a/prior-v2-on-c2.stdout.log",
+    "evidence/pon-w1-qrom-current-20261110-685a/prior-v2-on-c2.stderr.log",
+    "evidence/pon-w1-qrom-current-20261110-685a/historical/current-v2.json",
+    "evidence/pon-w1-qrom-current-20261110-685a/historical/current-auditor.py",
+    "evidence/pon-w1-qrom-current-20261110-685a/historical/current-tests.py",
+    "evidence/pon-w1-qrom-current-20261110-685a/historical/current-mapping.md.txt",
+))
 NATIVE_REQUIRED_PATHS |= CONVERGENCE_REQUIRED_PATHS
 RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-checkpoint-store/Cargo.toml",

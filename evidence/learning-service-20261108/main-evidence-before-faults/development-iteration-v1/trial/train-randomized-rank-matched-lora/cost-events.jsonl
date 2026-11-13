@@ -1,0 +1,10 @@
+{"bytes_read": 271265792, "bytes_written": 0, "cpu_ns": 202292601, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 305905664, "outcome": "success", "stage": "material-verification", "wall_ns": 482702720}
+{"bytes_read": 0, "bytes_written": 0, "cpu_ns": 126500, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 305905664, "outcome": "success", "stage": "declared-family-check", "wall_ns": 127276}
+{"bytes_read": 156946432, "bytes_written": 0, "cpu_ns": 1446362678, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 309952512, "outcome": "success", "stage": "runtime-import", "wall_ns": 1945316640}
+{"bytes_read": 6696960, "bytes_written": 0, "cpu_ns": 986927877, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 1423085568, "outcome": "success", "stage": "model-load", "wall_ns": 743003871}
+{"bytes_read": 0, "bytes_written": 0, "cpu_ns": 299504939, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 1423085568, "outcome": "success", "stage": "derived-material-check", "wall_ns": 299525894}
+{"bytes_read": 3588096, "bytes_written": 0, "cpu_ns": 174738908, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 1423085568, "outcome": "success", "stage": "adapter-insertion", "wall_ns": 187628412}
+{"bytes_read": 0, "bytes_written": 0, "cpu_ns": 29110, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 1423085568, "outcome": "success", "stage": "training", "wall_ns": 29499}
+{"bytes_read": 0, "bytes_written": 0, "cpu_ns": 35626504, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 1423085568, "outcome": "success", "stage": "adapter-material-check", "wall_ns": 35629148}
+{"bytes_read": 0, "bytes_written": 933888, "cpu_ns": 1744712, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 1423085568, "outcome": "success", "stage": "artifact-save", "wall_ns": 1746360}
+{"bytes_read": 0, "bytes_written": 0, "cpu_ns": 446970, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 1423085568, "outcome": "success", "stage": "artifact-domain-hash", "wall_ns": 447454}

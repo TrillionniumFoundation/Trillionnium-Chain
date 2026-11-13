@@ -1,0 +1,160 @@
+{
+  "scope": "explicit current query audit only",
+  "files": 29,
+  "high_confidence_credential_pattern_hits": 0,
+  "sensitive_json_key_names": {},
+  "excluded": [
+    "original private native identities and key material",
+    "databases",
+    "model artifacts",
+    "runtime transfer metadata",
+    "unrelated task files"
+  ],
+  "files_by_path": {
+    "before-query.json": {
+      "source_path": "/home/qq/chain-learning-exit-readback-70ae-20261109/before-query.json",
+      "bytes": 3340,
+      "sha256": "8cb5fc8b618bce0a2eff2b5591c8e8a5d09e80d99d24257ddda28373f4184215"
+    },
+    "query.command.json": {
+      "source_path": "/home/qq/chain-learning-exit-readback-70ae-20261109/query.command.json",
+      "bytes": 1029,
+      "sha256": "5bcc7915a1421f3d9e041f7fc6f99eb443924c9223104064f0fe190f0744300b"
+    },
+    "query.stderr": {
+      "source_path": "/home/qq/chain-learning-exit-readback-70ae-20261109/query.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "query.stdout": {
+      "source_path": "/home/qq/chain-learning-exit-readback-70ae-20261109/query.stdout",
+      "bytes": 79560,
+      "sha256": "53f43dcab709d5c7e2d49ac98d63ff488177f964ee91cf4f3a939637d01e0d71"
+    },
+    "readback-audit.json": {
+      "source_path": "/home/qq/chain-learning-exit-readback-70ae-20261109/readback-audit.json",
+      "bytes": 5149,
+      "sha256": "b665a67e93b7edf46e957158ecacaffa06fa90a6c24209d71e1df086204a9834"
+    },
+    "readback-summary.json": {
+      "source_path": "/home/qq/chain-learning-exit-readback-70ae-20261109/readback-summary.json",
+      "bytes": 4463,
+      "sha256": "e5f9a79a90c3da8d49fdd1271fdcfa1162e3df9dccac193a5507ae5bbe53bf3c"
+    },
+    "reader-verification.json": {
+      "source_path": "/home/qq/chain-learning-exit-readback-70ae-20261109/reader-verification.json",
+      "bytes": 217,
+      "sha256": "8485a7bebc88b09cd41e2b5ed47de2110ddfd8c5dfe247755433c2fe21d70cc1"
+    },
+    "reader-capsule.json": {
+      "source_path": "/home/qq/chain-learning-exit-readback-70ae-20261109/source/reader-capsule.json",
+      "bytes": 3812,
+      "sha256": "66f0be104b6bf43a48981a0210efc2a27fb00fec289db0a5e167d1857e313352"
+    },
+    "query-stages/01-candidate-query/exit.json": {
+      "source_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/queries/1794194676816310266-f6e91b93/01-candidate-query/exit.json",
+      "bytes": 337,
+      "sha256": "15f81096fd8db619b357588aa368480df80377608a659ab7f242e022fb4fa2b4"
+    },
+    "query-stages/01-candidate-query/invocation.json": {
+      "source_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/queries/1794194676816310266-f6e91b93/01-candidate-query/invocation.json",
+      "bytes": 770,
+      "sha256": "a0daa01e77ab10254339ad66340e3510c23578c4c026307194384a8a3696adbf"
+    },
+    "query-stages/01-candidate-query/started.json": {
+      "source_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/queries/1794194676816310266-f6e91b93/01-candidate-query/started.json",
+      "bytes": 79,
+      "sha256": "5d4acdaf19f1e9b821e5861c87e4330de39a73348b21adefe36da4c22c685fc5"
+    },
+    "query-stages/01-candidate-query/stdout.log": {
+      "source_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/queries/1794194676816310266-f6e91b93/01-candidate-query/stdout.log",
+      "bytes": 2042,
+      "sha256": "38c20d3d0b46b7203f62c0ff7baf47c06730c27a0a63c502edcff4af43286b23"
+    },
+    "query-stages/01-candidate-query/stderr.log": {
+      "source_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/queries/1794194676816310266-f6e91b93/01-candidate-query/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "query-stages/02-evaluation-query/exit.json": {
+      "source_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/queries/1794194676816310266-f6e91b93/02-evaluation-query/exit.json",
+      "bytes": 339,
+      "sha256": "d165d8339508706bc7aad21d76a0ee9698c07a200bcbec8e5b4fcc7ad62b019a"
+    },
+    "query-stages/02-evaluation-query/invocation.json": {
+      "source_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/queries/1794194676816310266-f6e91b93/02-evaluation-query/invocation.json",
+      "bytes": 1114,
+      "sha256": "81dc87cbf9e7cc3ae8eb83e6aae72ee3845895ec99c4c14d25bba9db2ff0db5d"
+    },
+    "query-stages/02-evaluation-query/started.json": {
+      "source_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/queries/1794194676816310266-f6e91b93/02-evaluation-query/started.json",
+      "bytes": 79,
+      "sha256": "b45a05cc46f27a6462cff89bec44ecbecdd20fe148b7a08256b85fa2ea860419"
+    },
+    "query-stages/02-evaluation-query/stdout.log": {
+      "source_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/queries/1794194676816310266-f6e91b93/02-evaluation-query/stdout.log",
+      "bytes": 23483,
+      "sha256": "a6fffb273d0a47496343f3b800cafb755990349c66cf0d94e19efa7b77db9137"
+    },
+    "query-stages/02-evaluation-query/stderr.log": {
+      "source_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/queries/1794194676816310266-f6e91b93/02-evaluation-query/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "query-stages/03-native-query/exit.json": {
+      "source_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/queries/1794194676816310266-f6e91b93/03-native-query/exit.json",
+      "bytes": 335,
+      "sha256": "49eb2407378bb1e8b1aa41db1e25ff81de428d70f3d9dd1fd9ba68cae35dbb96"
+    },
+    "query-stages/03-native-query/invocation.json": {
+      "source_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/queries/1794194676816310266-f6e91b93/03-native-query/invocation.json",
+      "bytes": 385,
+      "sha256": "222802f0306d64505acf09fe4ffb04489d34a267ddd4c1b80d03f8963f2d1be7"
+    },
+    "query-stages/03-native-query/started.json": {
+      "source_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/queries/1794194676816310266-f6e91b93/03-native-query/started.json",
+      "bytes": 79,
+      "sha256": "1f4939834df47d45851fb224978e46b7b092d52494e6876d65219b39ca0ce00f"
+    },
+    "query-stages/03-native-query/stdout.log": {
+      "source_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/queries/1794194676816310266-f6e91b93/03-native-query/stdout.log",
+      "bytes": 11881,
+      "sha256": "a55709dea3860ae9a3c50a530b0ef17fa7993589315fd79fc354f297e3d96368"
+    },
+    "query-stages/03-native-query/stderr.log": {
+      "source_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/queries/1794194676816310266-f6e91b93/03-native-query/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "query-stages/04-next-input-query/exit.json": {
+      "source_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/queries/1794194676816310266-f6e91b93/04-next-input-query/exit.json",
+      "bytes": 337,
+      "sha256": "84694f203c824838e12016f104437eee44d92417d8863c2d5fa569426f4fed5b"
+    },
+    "query-stages/04-next-input-query/invocation.json": {
+      "source_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/queries/1794194676816310266-f6e91b93/04-next-input-query/invocation.json",
+      "bytes": 764,
+      "sha256": "2aa1e15910bd489d55a2275e81fd80df925b5f67565b90bb03411ae1790b54f2"
+    },
+    "query-stages/04-next-input-query/started.json": {
+      "source_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/queries/1794194676816310266-f6e91b93/04-next-input-query/started.json",
+      "bytes": 79,
+      "sha256": "f179335e81cb59389a495d72af94e122996b8d4c68f425745b988e34d751289b"
+    },
+    "query-stages/04-next-input-query/stdout.log": {
+      "source_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/queries/1794194676816310266-f6e91b93/04-next-input-query/stdout.log",
+      "bytes": 1642,
+      "sha256": "e110b6dd4e54bd253c04c92fba455dcc7cbda38203587b33b3e0d331a0a25fb7"
+    },
+    "query-stages/04-next-input-query/stderr.log": {
+      "source_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/queries/1794194676816310266-f6e91b93/04-next-input-query/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "query-stages/result.json": {
+      "source_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1/queries/1794194676816310266-f6e91b93/result.json",
+      "bytes": 79560,
+      "sha256": "53f43dcab709d5c7e2d49ac98d63ff488177f964ee91cf4f3a939637d01e0d71"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "commit": "11c9562252d3cf56b423c7756569be0c669d9606",
+  "tree": "94e1b4f1718dec1b88bccd7e1996ba83ca29ff8a",
+  "baseline": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+  "changed_paths": [
+    "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs",
+    "trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
+    "trillionnium/crates/trnm-service-settlement/src/native_budget/tests.rs",
+    "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs",
+    "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_fresh_rejection_cost.rs",
+    "scripts/pon_fresh_rejection_report.py",
+    "scripts/ci/test_fresh_rejection_report.py",
+    "docs/research/PON_FRESH_REJECTION_COST_V1.md"
+  ],
+  "clean": true
+}

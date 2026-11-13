@@ -1,0 +1,92 @@
+{
+  "all_followup_checks_passed": false,
+  "all_prior_observations_retained": true,
+  "binary": {
+    "exit_code": 0,
+    "path": "/home/qian-qi/chain-pon-followthrough-20261110-685a-target/release/examples/pon_fresh_rejection_cost",
+    "sha256": "95bd7f1605e8bf27ab708ece44b9fd44b38497953ce31733c91564548fa7ecff"
+  },
+  "commands": [
+    {
+      "exit_code": 0,
+      "label": "preflight"
+    },
+    {
+      "exit_code": 0,
+      "label": "source-before"
+    },
+    {
+      "exit_code": 0,
+      "label": "prior-source-identical"
+    },
+    {
+      "exit_code": 101,
+      "label": "isolated-large-parent"
+    },
+    {
+      "exit_code": 101,
+      "label": "isolated-inactive-page"
+    },
+    {
+      "exit_code": 0,
+      "label": "fresh-probe-tests"
+    },
+    {
+      "exit_code": 0,
+      "label": "changed-owner-clippy"
+    },
+    {
+      "exit_code": 0,
+      "label": "format-check"
+    },
+    {
+      "exit_code": 0,
+      "label": "fresh-probe-build"
+    },
+    {
+      "exit_code": 0,
+      "label": "fresh-probe-native"
+    },
+    {
+      "exit_code": 0,
+      "label": "fresh-probe-reader"
+    },
+    {
+      "exit_code": 0,
+      "label": "fresh-reader-tests"
+    },
+    {
+      "exit_code": 0,
+      "label": "source-after"
+    },
+    {
+      "exit_code": 0,
+      "label": "source-identical"
+    }
+  ],
+  "explicit_environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_TARGET_DIR": "/home/qian-qi/chain-pon-followthrough-20261110-685a-target",
+    "CARGO_TERM_COLOR": "never",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "full_suite_repeated": false,
+  "observation_complete": true,
+  "open_consensus_qualified": false,
+  "original_full_node_suite_passed": false,
+  "prior_commands_sha256": "bfb1cca4ee885685f4063104f809b4bcc857d3f7ddf7f4a72385f3529ad46a64",
+  "prior_full_suite": {
+    "exit_code": 101,
+    "failed": 2,
+    "ignored": 39,
+    "passed": 1285
+  },
+  "prior_full_suite_sha256": "022eabf9dba4c26fda5ab75d9d9b53df76f209e19b2af9b3f4ce256ebf4f0b6b",
+  "production_activation": false,
+  "recorder_sha256": "13e84ec60d17cd039b0452b34d557305dd7fbb655c87efab6909bb53c24eced5",
+  "schema": "pon-native-failure-followup-v1",
+  "security_status": "HOLD",
+  "source": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+  "source_mutations_performed": false,
+  "tree": "7c003a3d183ad33ff4f3349cbcce61564f73a2ba"
+}

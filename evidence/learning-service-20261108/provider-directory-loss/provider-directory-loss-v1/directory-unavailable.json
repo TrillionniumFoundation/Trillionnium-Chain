@@ -1,0 +1,91 @@
+{
+  "original_path_absent": true,
+  "retained_directory_pins": {
+    "content_identity": "37a3e1622b1b5201099c9166e261ec437fa51566f9a2628682fbee03bece6668",
+    "device": 66306,
+    "files": [
+      {
+        "bytes": 9848,
+        "device": 66306,
+        "inode": 56885604,
+        "mode": 384,
+        "path": "execution-plan.json",
+        "sha256": "8ce1bdcf4d810110bbf384a9227b99cf1c268f223ca816daa1b9907577e0c179"
+      },
+      {
+        "bytes": 2812,
+        "device": 66306,
+        "inode": 56885614,
+        "mode": 384,
+        "path": "supervisor.json",
+        "sha256": "0e7d71d319f1960cd84a22e7c1813a9cbf41e75deed3431b0b96ac521443932f"
+      },
+      {
+        "bytes": 4233,
+        "device": 66306,
+        "inode": 56885612,
+        "mode": 384,
+        "path": "worker/actual-receipt.json",
+        "sha256": "5a4d01e6e10372ca75e0c32f2e6d4b52087e6b336a9c1a3e2869609776795c44"
+      },
+      {
+        "bytes": 933544,
+        "device": 66306,
+        "inode": 56885610,
+        "mode": 384,
+        "path": "worker/artifact.safetensors",
+        "sha256": "ba499505516b41abec81142b2954f703c640b29ba37068344debb04eab49d57c"
+      },
+      {
+        "bytes": 1821,
+        "device": 66306,
+        "inode": 56885607,
+        "mode": 384,
+        "path": "worker/cost-events.jsonl",
+        "sha256": "7824390d48432c18f6e6e6ce542ec6f2d239c7b002b399755645d0e90f1efb4d"
+      },
+      {
+        "bytes": 466,
+        "device": 66306,
+        "inode": 56885611,
+        "mode": 384,
+        "path": "worker/parent-material.json",
+        "sha256": "117bcb821667e9a7830a1baff4cbf092f00d290cd817ca4c11874d8dbedfce2e"
+      },
+      {
+        "bytes": 0,
+        "device": 66306,
+        "inode": 56885606,
+        "mode": 384,
+        "path": "worker/process.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 2812,
+        "device": 66306,
+        "inode": 56885613,
+        "mode": 384,
+        "path": "worker/supervisor.json",
+        "sha256": "0e7d71d319f1960cd84a22e7c1813a9cbf41e75deed3431b0b96ac521443932f"
+      },
+      {
+        "bytes": 56809,
+        "device": 66306,
+        "inode": 56885608,
+        "mode": 384,
+        "path": "worker/target-contract.json",
+        "sha256": "0087d5fbe0eef122075b3a4cf0899b86e505fb7566f395a3c51f2aba2c3352fc"
+      },
+      {
+        "bytes": 20962,
+        "device": 66306,
+        "inode": 56885609,
+        "mode": 384,
+        "path": "worker/wrapped-adapter.json",
+        "sha256": "4d9689693681039a308f997a5293a3dec4f2895509d04c9e1e9891f590d72cd5"
+      }
+    ],
+    "inode": 56885603
+  },
+  "scope": "local-directory-unavailable-not-independent-provider-or-host-loss"
+}

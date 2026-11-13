@@ -1,0 +1,21 @@
+{
+  "bytes": 40365,
+  "complete": true,
+  "current_head_tree_index_status_and_shallow_state_identical": true,
+  "git_ref_mutation_commands_executed": [],
+  "historical_15_second_read_passed": true,
+  "historical_blob": "2ff1e1c42dfa7061f4a77620c0bb65b656d158a5",
+  "historical_commit": "7ddfe2bfa480d1ebd91c07d03d56a963fff038c5",
+  "historical_path": "7ddfe2bfa480d1ebd91c07d03d56a963fff038c5:trillionnium/Cargo.lock",
+  "native_tests_executed": false,
+  "object_store_write_performed": true,
+  "open_consensus_qualified": false,
+  "original_failed_read_retained": true,
+  "production_activation": false,
+  "project_source_changed": false,
+  "recorder_sha256": "a6256557384ebaefaffd61dd7e3089b948115e2df9287bc50b1c3967c67cd135",
+  "schema": "pon-historical-lock-materialization-v1",
+  "security_status": "HOLD",
+  "sha256": "f9e57d73899c5d9fabd4f5b4fedf45256b8db4efb448d15680d070bbcfcb30bd",
+  "source_commit": "a715b2c8e89732ce356ebae67f978ef232156c04"
+}

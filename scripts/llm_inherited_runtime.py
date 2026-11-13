@@ -225,7 +225,8 @@ def child(args):
         runtime.save(directory/'actual-receipt.json', report)
 
 
-def run(args):
+def prepare_plan(args):
+    """Validate and freeze the original execution before any worker is started."""
     runtime.require(Path(args.output).is_absolute(), 'INHERITED_OUTPUT_PATH')
     manifest, _ = runtime.verify_materials(args.materials)
     inputs = checked_json(args.input, args.input_sha256)
@@ -245,23 +246,35 @@ def run(args):
         parent=previous, runtime=pilot, inputs=inputs, inputs_sha256=args.input_sha256,
         source_pins=source_pins(), authority=NO_AUTHORITY)
     validate_plan(plan)
-    directory = Path(args.output)
+    return plan
+
+
+def execute_plan(plan, materials, output):
+    """Use the original owned child/supervisor with an already frozen plan."""
+    validate_plan(plan)
+    pilot = plan['runtime']
+    directory = Path(output)
     directory.mkdir(mode=0o700, parents=False, exist_ok=False)
     plan_path = directory/'execution-plan.json'
     runtime.save(plan_path, plan)
     process = directory/'worker'
     result = runtime.supervise([sys.executable, str(Path(__file__).resolve()), '_child',
-        '--materials', args.materials, '--output', str(process), '--plan', str(plan_path),
+        '--materials', str(materials), '--output', str(process), '--plan', str(plan_path),
         '--plan-sha256', runtime.file_sha(plan_path)], process,
-        pilot['training_budget' if args.command == 'train' else 'inference_budget'])
+        pilot['training_budget' if plan['phase'] == 'train' else 'inference_budget'])
     runtime.save(directory/'supervisor.json', result)
     runtime.require(result['outcome'] == 'success', 'INHERITED_CHILD_FAILED')
     receipt = runtime.read_json(process/'actual-receipt.json')
     runtime.require(receipt['outcome'] == 'success' and
-                    receipt['operation_id'] == args.operation_id, 'INHERITED_CHILD_RECEIPT')
-    print(json.dumps(dict(outcome='success', operation_id=args.operation_id,
+                    receipt['operation_id'] == plan['operation_id'], 'INHERITED_CHILD_RECEIPT')
+    return dict(outcome='success', operation_id=plan['operation_id'],
         generation=plan['generation'], artifact=receipt['artifact'], receipt=str(process/'actual-receipt.json'),
-        authority=NO_AUTHORITY), sort_keys=True))
+        authority=NO_AUTHORITY)
+
+
+def run(args):
+    plan = prepare_plan(args)
+    print(json.dumps(execute_plan(plan, args.materials, args.output), sort_keys=True))
 
 
 def main():

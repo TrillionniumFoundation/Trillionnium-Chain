@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/bin/python",
+    "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/source/scripts/run_learning_service_development.py",
+    "query",
+    "--output",
+    "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1",
+    "--native-bin",
+    "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/bin/learning_service_round-fc406bad",
+    "--native-bin-sha256",
+    "fc406badb161bd9847b9aa3b7f5863018baae62b172467e2ae3a44317a76808a"
+  ],
+  "label": "integrated-cold-query-v1",
+  "returncode": 2,
+  "schema": "chain-integrated-process-exit-v1",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 79592,
+  "stdout_sha256": "8ab71e7204b8a2baeb3fbf2ef58f280e6310a3fce6a01a602c8293c503905e06",
+  "wall_ns": 1859534884
+}

@@ -1,0 +1,43 @@
+{
+  "actual_merge_executed": false,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/pon-continuation-685a/upstream-union-corpus/test_prepare_union_corpus.py"
+  ],
+  "component_tests": 10,
+  "cwd": "/tmp/pon-continuation-685a/upstream-union-corpus",
+  "ended_unix_ns": 1794309278048486457,
+  "exit_code": 0,
+  "final_helper_locked_to_ci_union_v2": true,
+  "helper_source": {
+    "prepare_union_corpus.py": {
+      "bytes": 45329,
+      "sha256": "e25bc61e01248ebedcfc0bfddcdbab520fca4696391916de0a7b0c19fc54289e"
+    },
+    "test_prepare_union_corpus.py": {
+      "bytes": 8732,
+      "sha256": "f34397a67865666ad0e561d0e13c5cbde731d3524d9a6e91918ef3a6a743fce1"
+    }
+  },
+  "initial_component_fixture_failure_retained": true,
+  "native_executed": false,
+  "production_activation": false,
+  "project_tests_executed": false,
+  "remote_executed": false,
+  "schema": "pon-upstream-corpus-local-component-validation-v1",
+  "scope": "finite local component controls with real corpus snapshots and tiny isolated Git/FIFO objects; no selected real C3/merge workflow execution",
+  "security_status": "HOLD",
+  "source_unchanged": true,
+  "started_unix_ns": 1794309277634294404,
+  "stderr": {
+    "bytes": 109,
+    "file": "component-controls-03.stderr.log",
+    "sha256": "7f6c0246f23ba715f2f83677dd71afc541b4132ec9cf853d6a82ef11e91dfbfe"
+  },
+  "stdout": {
+    "bytes": 0,
+    "file": "component-controls-03.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

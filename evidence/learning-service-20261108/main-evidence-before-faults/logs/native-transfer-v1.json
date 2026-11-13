@@ -1,0 +1,189 @@
+{
+  "all_part_hashes_verified": true,
+  "assembled_and_uncompressed_sha256_verified": true,
+  "elf_sha256": "fc406badb161bd9847b9aa3b7f5863018baae62b172467e2ae3a44317a76808a",
+  "elf_size": 20546720,
+  "gzip_sha256": "6e1297a7ba7b458d5ae44df09e3e63118d892121d0f6d91fbe3e353702bbd30f",
+  "gzip_size": 5723406,
+  "native_execution_started": false,
+  "original_owner_installation": false,
+  "parts": [
+    {
+      "n": 0,
+      "offset": 0,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/native-fc406bad-gz.part00",
+      "sha256": "db778e23745864440c4cf96f60f31c2df02c82d1429a00290352af9343935042",
+      "size": 262144
+    },
+    {
+      "n": 1,
+      "offset": 262144,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/native-fc406bad-gz.part01",
+      "sha256": "50f34ca1930a151d4b4f5ce321c9ece0e0c7138cec0f68feb9cb1f3c0f1edbcb",
+      "size": 262144,
+      "version": "66306:56885471:262144:1794159848093905718:1794159848130634758"
+    },
+    {
+      "n": 2,
+      "offset": 524288,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/native-fc406bad-gz.part02",
+      "sha256": "e73898d1412d766a75231ad3239918ce5cb90fbffbf09d24999e05b6b1935f54",
+      "size": 262144,
+      "version": "66306:56885477:262144:1794159873793153523:1794159873795733688"
+    },
+    {
+      "n": 3,
+      "offset": 786432,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/native-fc406bad-gz.part03",
+      "sha256": "4537e0ec741f1a7040390bbb03f1c317277b3c2253b40c235cd7f2260ae9903f",
+      "size": 262144,
+      "version": "66306:56885473:262144:1794159862348648723:1794159862352135456"
+    },
+    {
+      "n": 4,
+      "offset": 1048576,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/native-fc406bad-gz.part04",
+      "sha256": "32cceefa2ae2208da94fc123bd5a7a299226abc61e0940a70a8343f7096607e1",
+      "size": 262144,
+      "version": "66306:56885475:262144:1794159869487584905:1794159869545882895"
+    },
+    {
+      "n": 5,
+      "offset": 1310720,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/native-fc406bad-gz.part05",
+      "sha256": "3d9b0c625d80d9eb341a2e1ae8e256988142898dfdedc130cb806869bf2e0d01",
+      "size": 262144,
+      "version": "66306:56885481:262144:1794159880232283165:1794159880268506436"
+    },
+    {
+      "n": 6,
+      "offset": 1572864,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/native-fc406bad-gz.part06",
+      "sha256": "497fb26312a93f4ce15908d6b78d8e03b43027f7b66af0843d71979f31a74f45",
+      "size": 262144,
+      "version": "66306:56885483:262144:1794159885695164322:1794159885697315837"
+    },
+    {
+      "n": 7,
+      "offset": 1835008,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/native-fc406bad-gz.part07",
+      "sha256": "743687f53511918e58f30a99be571c0b627036b049dc4b4bc1132334ca587b4e",
+      "size": 262144,
+      "version": "66306:56885479:262144:1794159876777850383:1794159876780628892"
+    },
+    {
+      "n": 8,
+      "offset": 2097152,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/native-fc406bad-gz.part08",
+      "sha256": "2acf4dfe2b648b96bc7ad00891e889d886dc4cb9a6a4fe4863874dc248408101",
+      "size": 262144,
+      "version": "66306:56885485:262144:1794159891202427919:1794159891213122183"
+    },
+    {
+      "n": 9,
+      "offset": 2359296,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/native-fc406bad-gz.part09",
+      "sha256": "8f3dd8bc5e6b57f0ff79e13e4199bdbf5286d3f7bedb56464040beb8bd7b4421",
+      "size": 262144,
+      "version": "66306:56885487:262144:1794159900521846092:1794159900522795335"
+    },
+    {
+      "n": 10,
+      "offset": 2621440,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/native-fc406bad-gz.part10",
+      "sha256": "04141e5f86979de7a4bb051ddeb037df98b79c6fe8ef077d0c1027a36c22ca15",
+      "size": 262144,
+      "version": "66306:56885491:262144:1794159912347665009:1794159912380379032"
+    },
+    {
+      "n": 11,
+      "offset": 2883584,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/native-fc406bad-gz.part11",
+      "sha256": "0dee6575486f2e0f470679a710dfc0e949c31609a16b8d8d5531d85642c896ef",
+      "size": 262144,
+      "version": "66306:56885489:262144:1794159907487027617:1794159907489550741"
+    },
+    {
+      "n": 12,
+      "offset": 3145728,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/native-fc406bad-gz.part12",
+      "sha256": "f373ed19da3245b5ecb17d9e72d1ecbe15bcfd9afd3328e877348b7b60315232",
+      "size": 262144,
+      "version": "66306:56885493:262144:1794159917221906472:1794159917225208938"
+    },
+    {
+      "n": 13,
+      "offset": 3407872,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/native-fc406bad-gz.part13",
+      "sha256": "c800b57599f68793445e80ed5fb0203675facc3b4fc3bcf0555aeabfa14c6787",
+      "size": 262144,
+      "version": "66306:56885501:262144:1794159931305268547:1794159931307714524"
+    },
+    {
+      "n": 14,
+      "offset": 3670016,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/native-fc406bad-gz.part14",
+      "sha256": "8c727aa8acb16b2f47efb0bded485ba25d4f3cdcc7d08c5dedc3a8f32694ba58",
+      "size": 262144,
+      "version": "66306:56885499:262144:1794159927565150453:1794159927567845825"
+    },
+    {
+      "n": 15,
+      "offset": 3932160,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/native-fc406bad-gz.part15",
+      "sha256": "9aa6234c6a121725ec6e49021be475440005ea89defaa34acbb7e4fe8b424d46",
+      "size": 262144,
+      "version": "66306:56885495:262144:1794159921884954788:1794159921943043301"
+    },
+    {
+      "n": 16,
+      "offset": 4194304,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/native-fc406bad-gz.part16",
+      "sha256": "c36ba2af2cef1261e6bebf72ef8343f10109c97a305b37f8472272142925b522",
+      "size": 262144,
+      "version": "66306:56885497:262144:1794159924632371342:1794159924634948793"
+    },
+    {
+      "n": 17,
+      "offset": 4456448,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/native-fc406bad-gz.part17",
+      "sha256": "6dfb9cecb913658ba569a9be0b369015b14edc6f3e91e779d080c20879b7f57a",
+      "size": 262144,
+      "version": "66306:56885507:262144:1794159942867573793:1794159942879308266"
+    },
+    {
+      "n": 18,
+      "offset": 4718592,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/native-fc406bad-gz.part18",
+      "sha256": "ebd3f4bbe20449d6f13e729ddfc0654b2f6b007c3b8e961acbf0cac1b046a6a0",
+      "size": 262144,
+      "version": "66306:56885509:262144:1794159946314925151:1794159946318187532"
+    },
+    {
+      "n": 19,
+      "offset": 4980736,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/native-fc406bad-gz.part19",
+      "sha256": "acdeb3efc57b7d5c3889b3a9f74895b65cba0bd7d3701e38c76e9873c854ba4b",
+      "size": 262144,
+      "version": "66306:56885503:262144:1794159934815535019:1794159934851590106"
+    },
+    {
+      "n": 20,
+      "offset": 5242880,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/native-fc406bad-gz.part20",
+      "sha256": "ada866976cc580de168b6be25e4c738e7d2e1482175574d82d064c5887c74ab0",
+      "size": 262144,
+      "version": "66306:56885505:262144:1794159938217863257:1794159938220471830"
+    },
+    {
+      "n": 21,
+      "offset": 5505024,
+      "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/incoming/native-fc406bad-gz.part21",
+      "sha256": "3876419c9db133dff62032e7cbb43ad2d3d601f084b264a0f41312b75c58e36a",
+      "size": 218382,
+      "version": "66306:56885511:218382:1794159949466884443:1794159949503075718"
+    }
+  ],
+  "remote_binary": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/bin/learning_service_round-fc406bad",
+  "schema": "chain-native-candidate-transfer-v1"
+}

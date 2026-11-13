@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794310619604941069,
+  "exit_code": 0,
+  "interrupted": false,
+  "label": "preflight",
+  "process_exit_code": 0,
+  "recorder_error": null,
+  "start_unix_ns": 1794310619489591047,
+  "stderr": {
+    "bytes": 0,
+    "file": "preflight.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 172,
+    "file": "preflight.stdout.log",
+    "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+  },
+  "timed_out": false,
+  "timeout_seconds": 1800
+}

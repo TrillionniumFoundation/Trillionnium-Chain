@@ -1,0 +1,62 @@
+{
+  "binding_child_c3": "a715b2c8e89732ce356ebae67f978ef232156c04",
+  "candidate_index_tree_before_corpus_refresh": "4366b7f35ef4b82968dee548ba3f994429b705bb",
+  "corpus_path": "config/pon/pq-cross-branch-corpus-v1.json",
+  "expected_merge_parent_order": [
+    "a715b2c8e89732ce356ebae67f978ef232156c04",
+    "df927b6ffaecff293b9e9428e3ba516f47cd101a"
+  ],
+  "files": {
+    "base-corpus.json": {
+      "bytes": 197098,
+      "git_blob": "e8f863a9988aed86797f923864631dac60b5a0b0",
+      "sha256": "8b04622f2dd117ec137dc5995ba4ee00730ae41d6c0ba75b43d0aa2d34abd552"
+    },
+    "corpus-update.patch": {
+      "bytes": 7604,
+      "git_blob": "46d2e25e2fc50d35651cc19329fedbf29e0bb059",
+      "sha256": "4616e40d1a4fb0ba30ffa12751f56085bcce09da09dd23017f49d026b89a2675"
+    },
+    "merged-corpus.json": {
+      "bytes": 201260,
+      "git_blob": "e1032804a900734682a9bf1752f9b2f5d6c608d4",
+      "sha256": "99c591f2e4fbcb20983b911e8cf6eeedcd0dedbc0b78a4f7df4382bb83ba3315"
+    },
+    "ours-parent-corpus.json": {
+      "bytes": 201260,
+      "git_blob": "6af9ccd840ed3347dff8c44c8d4c145a0b7ecbd6",
+      "sha256": "a378946fe7e0799ed29dc6d7ca17563aecc1d5a0bc09b2efcca863628e1265b0"
+    },
+    "review.json": {
+      "bytes": 443928,
+      "git_blob": "723049aa9b8111a914a6dac86fb78be5bb984077",
+      "sha256": "ce8cea68cdf39b659053839e1ba46df89b7c2913d806cea7c3b783d6f98e68b4"
+    },
+    "theirs-df927-corpus.json": {
+      "bytes": 197098,
+      "git_blob": "9781fc7225c50b3a8710ce10a1adba332c2617df",
+      "sha256": "ec51f57a21432c05a296ac64df6483dd96de6a1682d284cf5055eded3b7d4c2d"
+    }
+  },
+  "helper_sha256": "e25bc61e01248ebedcfc0bfddcdbab520fca4696391916de0a7b0c19fc54289e",
+  "historical_non_pin_fields_preserved": true,
+  "merge_acceptance_claimed": false,
+  "merge_commit_created": false,
+  "native_executed": false,
+  "native_full_suite_passed": false,
+  "ours_commit": "a715b2c8e89732ce356ebae67f978ef232156c04",
+  "ours_is_binding_child": true,
+  "pinned_blobs": 1103,
+  "production_activation": false,
+  "project_tests_executed": false,
+  "required_paths": 1011,
+  "retained_original_pin_paths": 1079,
+  "retained_original_required_paths": 987,
+  "retained_ours_additions": 24,
+  "schema": "pon-upstream-corpus-preparation-v1",
+  "scope": "source binding preparation only",
+  "security_status": "HOLD",
+  "selected_base": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+  "theirs_df927": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+  "theirs_replaced_pins": 10
+}

@@ -1,0 +1,9 @@
+{
+  "exit_code": 0,
+  "original_full_node_suite_passed": false,
+  "phase": "finished",
+  "recorded_unix_ns": 1794305063258104721,
+  "security_status": "HOLD",
+  "source": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+  "stage": "complete-observation"
+}

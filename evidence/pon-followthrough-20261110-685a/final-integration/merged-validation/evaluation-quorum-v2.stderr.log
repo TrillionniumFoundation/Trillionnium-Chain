@@ -1,0 +1,3 @@
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/chain-pon-followthrough-20261110-685a/trillionnium/crates/trnm-mvcc-fee)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 40.99s
+     Running tests/evaluation_quorum_v2.rs (/home/qian-qi/chain-pon-followthrough-20261110-685a-target/debug/deps/evaluation_quorum_v2-ca7e39d2c7c7fb7b)

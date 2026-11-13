@@ -1,0 +1,39 @@
+diff --git a/scripts/ci/check_pq_research_integration.py b/scripts/ci/check_pq_research_integration.py
+--- a/scripts/ci/check_pq_research_integration.py
++++ b/scripts/ci/check_pq_research_integration.py
+@@ -637,6 +637,35 @@
+     "evidence/pon-w1-qrom-semantics-current-20261109/report.json",
+     "evidence/pon-w1-qrom-semantics-current-20261109/README.md",
+ ))
++# Current follow-through controls and their exact source observations remain
++# mandatory even if both a manifest requirement and its pin are removed.
++# These bindings do not grant native service, cost, PQ or production acceptance.
++CONVERGENCE_REQUIRED_PATHS |= frozenset((
++    "config/pon/w1-qrom-current-required-tests-v1.json",
++    "docs/research/PON_FRESH_REJECTION_COST_V1.md",
++    "evidence/pon-w1-lifetime-current-20261110-685a/README.md",
++    "evidence/pon-w1-lifetime-current-20261110-685a/project-input.json",
++    "evidence/pon-w1-lifetime-current-20261110-685a/project-report.json",
++    "scripts/ci/prepare_artifact_upload.py",
++    "scripts/ci/test_fresh_rejection_report.py",
++    "scripts/ci/test_prepare_artifact_upload.py",
++    "scripts/ci/test_w1_qrom_current_ci.py",
++    "scripts/ci/w1_native_controls.py",
++    "scripts/ci/w1_qrom_current_ci.py",
++    "scripts/pon_fresh_rejection_report.py",
++    "trillionnium/crates/trnm-crypto-primitives/examples/pon_fresh_rejection_cost.rs",
++    "trillionnium/crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs",
++    "evidence/pon-w1-qrom-current-20261110-685a/README.md",
++    "evidence/pon-w1-qrom-current-20261110-685a/source-binding.json",
++    "evidence/pon-w1-qrom-current-20261110-685a/current-report.json",
++    "evidence/pon-w1-qrom-current-20261110-685a/prior-v2-on-c2.command.json",
++    "evidence/pon-w1-qrom-current-20261110-685a/prior-v2-on-c2.stdout.log",
++    "evidence/pon-w1-qrom-current-20261110-685a/prior-v2-on-c2.stderr.log",
++    "evidence/pon-w1-qrom-current-20261110-685a/historical/current-v2.json",
++    "evidence/pon-w1-qrom-current-20261110-685a/historical/current-auditor.py",
++    "evidence/pon-w1-qrom-current-20261110-685a/historical/current-tests.py",
++    "evidence/pon-w1-qrom-current-20261110-685a/historical/current-mapping.md.txt",
++))
+ NATIVE_REQUIRED_PATHS |= CONVERGENCE_REQUIRED_PATHS
+ RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((
+     "trillionnium/crates/trnm-checkpoint-store/Cargo.toml",

@@ -1,0 +1,80 @@
+{
+  "argv": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-mvcc-fee",
+    "--test",
+    "evaluation_quorum_v2",
+    "--",
+    "--test-threads=1"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794311360097666067,
+  "exit_code": 0,
+  "interrupted": false,
+  "label": "evaluation-quorum-v2",
+  "native_observation": {
+    "all_reported_harness_summaries": [
+      {
+        "failed": 0,
+        "filtered": 0,
+        "ignored": 0,
+        "measured": 0,
+        "outcome": "ok",
+        "passed": 9
+      }
+    ],
+    "command_exit_code": 0,
+    "expected_names": [
+      "classic_retained_closure_preserves_legal_appeals_and_late_conflicts",
+      "classic_retained_closure_recounts_aborts_and_accepts_complete_zero_score",
+      "classic_retained_closure_rejects_substituted_summary_at_use_and_restore",
+      "fresh_profile_refuses_attested_models_and_cross_version_replay",
+      "independent_reference_vectors_match_native_domains_counts_and_records",
+      "quorum_retained_closure_cannot_authorize_adoption_before_its_height",
+      "quorum_retained_closure_preserves_nonempty_history_after_more_conflicts",
+      "quorum_retained_closure_rejects_substituted_summary_at_use_and_restore",
+      "retained_reveals_recheck_commitments_at_restore_close_and_adoption"
+    ],
+    "observed_selected_names": [
+      "classic_retained_closure_preserves_legal_appeals_and_late_conflicts",
+      "classic_retained_closure_recounts_aborts_and_accepts_complete_zero_score",
+      "classic_retained_closure_rejects_substituted_summary_at_use_and_restore",
+      "fresh_profile_refuses_attested_models_and_cross_version_replay",
+      "independent_reference_vectors_match_native_domains_counts_and_records",
+      "quorum_retained_closure_cannot_authorize_adoption_before_its_height",
+      "quorum_retained_closure_preserves_nonempty_history_after_more_conflicts",
+      "quorum_retained_closure_rejects_substituted_summary_at_use_and_restore",
+      "retained_reveals_recheck_commitments_at_restore_close_and_adoption"
+    ],
+    "successful_selected_target_observed": true,
+    "terminal_harness": {
+      "failed": 0,
+      "filtered": 0,
+      "ignored": 0,
+      "measured": 0,
+      "outcome": "ok",
+      "passed": 9
+    }
+  },
+  "process_exit_code": 0,
+  "recorder_error": null,
+  "start_unix_ns": 1794311318466191729,
+  "stderr": {
+    "bytes": 349,
+    "file": "evaluation-quorum-v2.stderr.log",
+    "sha256": "03dafd9f70bd63e9154087e3bb6674487115f89c5925a805197e9732a6258c0b"
+  },
+  "stdout": {
+    "bytes": 845,
+    "file": "evaluation-quorum-v2.stdout.log",
+    "sha256": "1482928379d8a4c8ce794535dc18df1cad0833f6a0ddbb5fa4eedce6808cccb5"
+  },
+  "timed_out": false,
+  "timeout_seconds": 1800
+}

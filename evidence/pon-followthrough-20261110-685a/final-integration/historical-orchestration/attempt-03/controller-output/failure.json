@@ -1,0 +1,9 @@
+{
+  "no_automatic_rollback": true,
+  "no_push_or_activation": true,
+  "reason": "one or more actual C3 checks failed; no push or qualification performed",
+  "recorded_unix_ns": 1794308588537954828,
+  "requested_phase": "all",
+  "security_status": "HOLD",
+  "status": "REFUSE_OR_ACTUAL_FAILURE"
+}

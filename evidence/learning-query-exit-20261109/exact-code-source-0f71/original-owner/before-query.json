@@ -1,0 +1,100 @@
+{
+  "original_owner": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1",
+  "reader_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+  "provider_rows": [
+    [
+      "dev-learning-service-8b4f-v1",
+      "5076ac05ac74835a8ab9a567a3e8833759a0eac53a39587064e711bb2ed5146c",
+      1
+    ],
+    [
+      "dev-next-task-8b4f-v1",
+      "bd098c30a60fe741cce37811bd983806f91942c939e51bd665a00a144276efdd",
+      1
+    ]
+  ],
+  "files": {
+    "manifest.json": {
+      "bytes": 3218,
+      "sha256": "ed8fcb5fd0175f9222b83068247d98858cd10be65be0156b7899dc448e853a61"
+    },
+    "binding.json": {
+      "bytes": 389,
+      "sha256": "829acfcca7ad7be92431a83dd30f6b1b97fe68d27d261962af3b4bc1ce2f15bd"
+    },
+    "evaluation-profile.json": {
+      "bytes": 9134,
+      "sha256": "748cfd188acd70b450789eb9421d41b60ca187beafbaf48b66d4614615a56faa"
+    },
+    "result.json": {
+      "bytes": 100850,
+      "sha256": "161a3bd2b194b2c8f6df598697cf2828c42df5e1657911bd42ca11e857175616"
+    },
+    "next-intent.json": {
+      "bytes": 501,
+      "sha256": "893d0de95ba9b9590cd9fbf97009c6b52ca7f43b82cf4ebcfadedb21ef100cff"
+    },
+    "next-input/execution-plan.json": {
+      "bytes": 12325,
+      "sha256": "6b3a2aa63dcb6411367eb68cdfdb02988b923834daf2618e9bbf348522d241aa"
+    },
+    "next-input/worker/prediction.json": {
+      "bytes": 1583,
+      "sha256": "b9fc2c87c885c8006672974255d3050fba64c4f97537ccb7463ad01ebc63d4b7"
+    },
+    "provider.sqlite3": {
+      "bytes": 94208,
+      "sha256": "e6f63841993cef5966cbd618b96b781fc1aca2fd5bab871b50d5d52bcbbd1c50"
+    },
+    "trial/stages.sqlite3": {
+      "bytes": 286720,
+      "sha256": "4c9eb9c51c53919fc1f91826e3aa2b847427e187a6715dacb0ce0882111b9fa5"
+    },
+    "native-service/identity.json": {
+      "bytes": 2204,
+      "sha256": "05d2acaf505b3e7da1cdf2e9daff8881608dcfe621fcb3dc506cba344db72ce9"
+    },
+    "native-service/operations.sqlite": {
+      "bytes": 12288,
+      "sha256": "3a3c720a4705736369b682a0451fc9036f9a925c21c4f8281ef3f20034c85ac7"
+    },
+    "native-service/native/native.sqlite": {
+      "bytes": 765952,
+      "sha256": "81f5538c76c5cf28a90db216cea8167382a33269e6638f66a3b5664191e6f849"
+    },
+    "native-service/revoked.json": {
+      "bytes": 283,
+      "sha256": "c2045ce4512e5a8c82fff6d5d357594f41372908ebce43c244c451ffe87d9949"
+    }
+  },
+  "participants": [
+    "retained-parent",
+    "candidate",
+    "current-backbone",
+    "fresh-budget-matched-lora",
+    "budget-matched-full-tune",
+    "randomized-rank-matched-lora"
+  ],
+  "original_authority": {
+    "hepta_final_use": false,
+    "independent_accepted": false,
+    "installation_authorized": false,
+    "prospective_accepted": false,
+    "public_reward_eligible": false,
+    "selection_authorized": false
+  },
+  "original_result_status": "NO_UPDATE_NEXT_INPUT_OUTPUT_MISMATCH",
+  "original_scope": {
+    "anti_sybil_consensus_credit": 0,
+    "atomic_cross_owner_revocation_enforced": false,
+    "controlled_local_development": true,
+    "external_custody_verified": false,
+    "improvement_bonus": 0,
+    "independent_customer_verified": false,
+    "independent_evaluation_accepted": false,
+    "original_owner_installation_verified": false,
+    "production_activation": false,
+    "real_asset_funding_verified": false
+  },
+  "whole_repository_execution_claim": false
+}

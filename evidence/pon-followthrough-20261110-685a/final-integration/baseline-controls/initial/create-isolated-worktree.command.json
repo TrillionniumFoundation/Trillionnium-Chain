@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "git",
+    "--no-replace-objects",
+    "-c",
+    "core.sparseCheckout=false",
+    "-c",
+    "core.sparseCheckoutCone=false",
+    "-c",
+    "submodule.recurse=false",
+    "worktree",
+    "add",
+    "-b",
+    "test/chain-pon-baseline-control-20261110-685a",
+    "/home/qian-qi/chain-pon-baseline-control-20261110-685a",
+    "da1374a200022bc14dc2bd325cc9ba29dbcd24ab"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794304991624485288,
+  "exit_code": 0,
+  "label": "create-isolated-worktree",
+  "start_unix_ns": 1794304978006107386,
+  "stderr": {
+    "bytes": 3999,
+    "file": "create-isolated-worktree.stderr.log",
+    "sha256": "20b685e7ae7c294655d3edd531c30ced611a8f1f108d505b24261b4134683064"
+  },
+  "stdout": {
+    "bytes": 104,
+    "file": "create-isolated-worktree.stdout.log",
+    "sha256": "8a6fb63fd63b04cfdc91d12dac8df74c25810aecccb8305884036f9913240697"
+  }
+}

@@ -1,0 +1,159 @@
+diff --git a/config/pon/pq-authority-effects-v1.json b/config/pon/pq-authority-effects-v1.json
+--- a/config/pon/pq-authority-effects-v1.json
++++ b/config/pon/pq-authority-effects-v1.json
+@@ -1,6 +1,6 @@
+ {
+   "schema": "trnm-pq-authority-effects-v1",
+-  "source_revision": "893738947a50dc42819b56e632192de4f9f24fa0",
++  "source_revision": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+   "purpose": "curated-source-consistency-only",
+   "coverage_complete": false,
+   "whole_chain_pq_qualified": false,
+@@ -209,7 +209,7 @@
+     "trillionnium/crates/trnm-pon-node/src/ingress.rs": "7a0ea0cc4a000a693d94faa43b6acf8541cf1f8965f9fe837d01e7d757a0bee7",
+     "trillionnium/crates/trnm-pon-node/src/public_submit.rs": "11fb84b1c7c7ab4e0f31723c5f708d0d5042dc080712fe899a632b6edc573a5a",
+     "trillionnium/crates/trnm-pon-node/src/release_finality.rs": "5a70f3985c511a5bec6b107e9184ea5f5a6f533aa4be647b9ced23be0b7232df",
+-    "trillionnium/crates/trnm-pon-node/src/store.rs": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554",
++    "trillionnium/crates/trnm-pon-node/src/store.rs": "e43ba6ea4775b5256a95781fcc3dbb1dd9c359900fc91263f3e8cd2844cf43bd",
+     "trillionnium/crates/trnm-pon-node/tests/pq_account_native.rs": "2b70c0c0aa2ff27ebd951590faf34125cb878b0e6d1a5e4c35fbcc59f855c10d",
+     "trillionnium/crates/trnm-pon-node/tests/public_submit_recovery.rs": "c38fd34412d955f04add458c91873a7fd7421171c3d64b5829ee5a3a4d51cdd6",
+     "trillionnium/crates/trnm-pon-node/tests/release_finality_v2.rs": "d34da033529f65c73ae687d8436f338963883f3139350429ac2b65d2b923fe1f",
+diff --git a/scripts/ci/pq_authority_effect_register.py b/scripts/ci/pq_authority_effect_register.py
+--- a/scripts/ci/pq_authority_effect_register.py
++++ b/scripts/ci/pq_authority_effect_register.py
+@@ -22,12 +22,12 @@
+ DEFAULT_MANIFEST = 'config/pon/pq-authority-effects-v1.json'
+ # The seven route definitions and 44 source paths retain their reviewed scope.
+ # Both prior review lineages are documented in PQ_AUTHORITY_EFFECT_REGISTER_V1.md.
+-SOURCE_REVISION = '893738947a50dc42819b56e632192de4f9f24fa0'
++SOURCE_REVISION = '8d8c0e64e7a301fc111a6720721a14816639e5aa'
+ PURPOSE = 'curated-source-consistency-only'
+ MAX_BYTES = 1024 * 1024
+ # SHA-256 of canonical {"source_revision": SOURCE_REVISION, "files": ...}.
+ # Generated from git show at the exact revision, not from current-tree hashes.
+-REVIEWED_SOURCE_LOCK_SHA256 = 'a3c5483479d5217c13946e173e4103316069eb42b43c335c6f7b44e783b73f1c'
++REVIEWED_SOURCE_LOCK_SHA256 = 'a9d7e7b47585626c7eeb1cfc33007623ca1fedf83e30200dee6e78c1be128774'
+ 
+ CRATES = 'trillionnium/crates/'
+ TRANSFER = CRATES + 'trnm-types/src/transfer.rs'
+diff --git a/scripts/ci/test_pq_authority_effect_register.py b/scripts/ci/test_pq_authority_effect_register.py
+--- a/scripts/ci/test_pq_authority_effect_register.py
++++ b/scripts/ci/test_pq_authority_effect_register.py
+@@ -70,7 +70,7 @@
+         self.assertEqual({row['id']: row['effect_scope'] for row in result['routes']},
+                          EXPECTED_SCOPES)
+         self.assertEqual(result['source_revision'],
+-                         '893738947a50dc42819b56e632192de4f9f24fa0')
++                         '8d8c0e64e7a301fc111a6720721a14816639e5aa')
+         self.assertEqual(result['source_files_sha256'], self.original['source_files_sha256'])
+         for name in ('coverage_complete', 'whole_chain_pq_qualified', 'production_activation',
+                      'provenance_authenticated', 'call_graph_proved',
+@@ -153,6 +153,7 @@
+                              ('source_revision', '0f0592ace4b08a1d39e1ffad31beee76ddc4fd66'),
+                              ('source_revision', '1f7ff4106f14e5b514d95a9faf2c5eea1233aea5'),
+                              ('source_revision', '44e96b1a841a50613d0b93484c5e576caec9f81f'),
++                             ('source_revision', '893738947a50dc42819b56e632192de4f9f24fa0'),
+                              ('schema', 'future-schema'),
+                              ('purpose', 'production-qualification')):
+             with self.subTest(field=field):
+diff --git a/config/pon/pq128-source-lock-v1.json b/config/pon/pq128-source-lock-v1.json
+--- a/config/pon/pq128-source-lock-v1.json
++++ b/config/pon/pq128-source-lock-v1.json
+@@ -10,12 +10,12 @@
+     "trillionnium/crates/trnm-pon-node/src/consensus.rs": "a5600aeb8287cce30ae3075b675082df4e6e5569a80f23e9a2e381f8202a8f62",
+     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs": "8146d8bc6a759246098d3c67040839364248b95ba54309f21d72805b31019617",
+     "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs": "090c13700baf9ed945a4aa86519f1d4df85105ef1064addd73de2acb025d9a45",
+-    "trillionnium/crates/trnm-pon-node/src/store.rs": "108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554",
++    "trillionnium/crates/trnm-pon-node/src/store.rs": "e43ba6ea4775b5256a95781fcc3dbb1dd9c359900fc91263f3e8cd2844cf43bd",
+     "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs": "14f10ec0fa8a4c6cd017b79f72f6fd2a2dafec6002ddfbffe34fd455bfdf3ab5",
+     "trillionnium/crates/trnm-release-bundle/src/pq_release.rs": "eb17390e1d16fe7fa82c773c0ed81004374687469f6081a2ad5ce9bd7d87ac9b",
+     "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs": "06b4c988f921b03c6f20134bdc5130fbd7db18bec6f291bfd289de52c81087e6",
+-    "trillionnium/crates/trnm-service-settlement/src/native_budget.rs": "1fd964a4bfb3dec372c04a32853d9b08a3b80773d3182099d80705ab916ace38"
++    "trillionnium/crates/trnm-service-settlement/src/native_budget.rs": "75be11d65dfc681fa3997d3653ceacb0616ddb37d1520551e6d5169cfe73922e"
+   },
+   "schema": "trnm-pq128-source-lock-v1",
+-  "source_revision": "66b7064be597039ce871b5b12ad5568850a2dd46"
++  "source_revision": "8d8c0e64e7a301fc111a6720721a14816639e5aa"
+ }
+diff --git a/config/pon/pq128-lifetime-budget-v1.json b/config/pon/pq128-lifetime-budget-v1.json
+--- a/config/pon/pq128-lifetime-budget-v1.json
++++ b/config/pon/pq128-lifetime-budget-v1.json
+@@ -7,7 +7,7 @@
+     "profile": "pon-nakamoto-v1-pq-research-native-pnw1",
+     "model": "quantum-adaptive-lifetime",
+     "horizon": "UNSPECIFIED: no finite deployment lifetime or stopping rule is qualified; include prior preprocessing and surviving authority after retirement.",
+-    "source_revision": "66b7064be597039ce871b5b12ad5568850a2dd46"
++    "source_revision": "8d8c0e64e7a301fc111a6720721a14816639e5aa"
+   },
+   "assumptions": [
+     {
+diff --git a/docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md b/docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md
+--- a/docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md
++++ b/docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md
+@@ -281,3 +281,31 @@
+ fresh authorization, recovery, external effects and whole-chain security remain
+ separate obligations; `native_tests_executed`, `call_graph_proved` and
+ `runtime_reachability_proved` all remain false in the checker result.
++
++## Reviewed source binding to code checkpoint `8d8c0e64e7a301fc111a6720721a14816639e5aa`
++
++This is a selected-source consistency review. All named regular Git blobs were read with
++`git show 8d8c0e64e7a301fc111a6720721a14816639e5aa:<path>` and matched against the working files.
++The code checkpoint is `8d8c0e64e7a301fc111a6720721a14816639e5aa`, tree `7c003a3d183ad33ff4f3349cbcce61564f73a2ba`.
++The later binding, reader, test and documentation edits are not claimed to exist in that
++checkpoint. The final executed candidate and binary require their own observations.
++
++All 44 curated paths retain their roster. Forty-three source hashes are unchanged; only
++`trillionnium/crates/trnm-pon-node/src/store.rs` changes:
++
++```text
++prior:    108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554
++reviewed: e43ba6ea4775b5256a95781fcc3dbb1dd9c359900fc91263f3e8cd2844cf43bd
++```
++
++The prior active revision `893738947a50dc42819b56e632192de4f9f24fa0` and its canonical table digest
++`a3c5483479d5217c13946e173e4103316069eb42b43c335c6f7b44e783b73f1c` remain historical records. The new canonical table digest is
++`a9d7e7b47585626c7eeb1cfc33007623ca1fedf83e30200dee6e78c1be128774`. The independent positive revision is updated, and the prior
++revision is added to the existing stale-context refusal control. No test is removed.
++
++The seven routes, exact effect scopes and all false qualification fields are unchanged.
++The old reader's actual source-lock refusal is retained separately before rebinding;
++the new Python checks and their outcomes belong to this mapping and cannot relabel an
++earlier failure or native run. Neither these pins nor the checks establish complete
++dependency coverage, call-graph reachability, provenance authentication, native behavior,
++external-effect acceptance or production activation.
+diff --git a/docs/security/PQ128_LIFETIME_BUDGET_V1.md b/docs/security/PQ128_LIFETIME_BUDGET_V1.md
+--- a/docs/security/PQ128_LIFETIME_BUDGET_V1.md
++++ b/docs/security/PQ128_LIFETIME_BUDGET_V1.md
+@@ -358,3 +358,31 @@
+ implementation/environment obligations; then compare the complete derived sum
+ with its declared target. Any future attestation needs a separately reviewed
+ schema. This V1 research checker deliberately has no promotion switch.
++
++## Reviewed source binding to code checkpoint `8d8c0e64e7a301fc111a6720721a14816639e5aa`
++
++This is a selected-source consistency review. All named regular Git blobs were read with
++`git show 8d8c0e64e7a301fc111a6720721a14816639e5aa:<path>` and matched against the working files.
++The code checkpoint is `8d8c0e64e7a301fc111a6720721a14816639e5aa`, tree `7c003a3d183ad33ff4f3349cbcce61564f73a2ba`.
++The later binding, reader, test and documentation edits are not claimed to exist in that
++checkpoint. The final executed candidate and binary require their own observations.
++
++All 15 declared event paths retain their roster. Thirteen source hashes are unchanged.
++The two changed source pins are:
++
++| Source | Prior SHA-256 | Reviewed SHA-256 |
++| --- | --- | --- |
++| `trillionnium/crates/trnm-pon-node/src/store.rs` | `108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554` | `e43ba6ea4775b5256a95781fcc3dbb1dd9c359900fc91263f3e8cd2844cf43bd` |
++| `trillionnium/crates/trnm-service-settlement/src/native_budget.rs` | `1fd964a4bfb3dec372c04a32853d9b08a3b80773d3182099d80705ab916ace38` | `75be11d65dfc681fa3997d3653ceacb0616ddb37d1520551e6d5169cfe73922e` |
++
++The prior mapping remains `66b7064be597039ce871b5b12ad5568850a2dd46`, with lock-byte SHA-256
++`29ba9abdbb39d96bece885a0cd821fd9ad428413974cd530d26434f5a7daf84a`. The new lock-byte SHA-256 is
++`cc1ed0c7516c308127467b1be6b0f82e28fe6dfd44ca1e6fbd6782548028a781`. The research manifest changes only
++`experiment.source_revision`; no source is added to an event or removed from one.
++
++All eight unknown event terms, four unknown shared-primitive query budgets, allocations,
++assumptions, null actual lifetime failure bound and false qualification/activation
++fields are preserved. The prior guard's source-lock refusal remains a failed observation.
++This reviewed mapping and its separate Python controls do not replace native execution,
++complete reduction/coverage work, cryptographic provenance or an instantiated PQ128 bound.
++Earlier reports and evidence remain unchanged and retain their original source attribution.

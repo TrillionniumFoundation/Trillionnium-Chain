@@ -1,0 +1,380 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+      "end_utc": "2026-11-09T02:54:25.685827+00:00",
+      "exit_code": 0,
+      "expected_head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+      "expected_tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+      "identity_after": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "status": "",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4"
+      },
+      "index": 1,
+      "name": "preflight",
+      "start_utc": "2026-11-09T02:54:25.655365+00:00",
+      "state": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/01-preflight.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 181,
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/01-preflight.stdout.log",
+        "sha256": "bfe1fd556432020e77d09ef52f28f794fc423c0af7b4223fc13ec3055cd86c51"
+      },
+      "wall_ns": 30403906
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "--output",
+        "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/source-before.json"
+      ],
+      "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+      "end_utc": "2026-11-09T02:54:30.971728+00:00",
+      "exit_code": 0,
+      "expected_head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+      "expected_tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+      "identity_after": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "status": "",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4"
+      },
+      "index": 2,
+      "name": "source-before",
+      "start_utc": "2026-11-09T02:54:25.712813+00:00",
+      "state": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/02-source-before.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 423,
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/02-source-before.stdout.log",
+        "sha256": "f242962256627d60335a46cbd838c73692ab9886d9bc70c28a6ba976c295d6d2"
+      },
+      "wall_ns": 5258854839
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+      "end_utc": "2026-11-09T02:54:31.046391+00:00",
+      "exit_code": 0,
+      "expected_head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+      "expected_tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+      "identity_after": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "status": "",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4"
+      },
+      "index": 3,
+      "name": "source-inventory",
+      "start_utc": "2026-11-09T02:54:31.000074+00:00",
+      "state": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/03-source-inventory.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 35,
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/03-source-inventory.stdout.log",
+        "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+      },
+      "wall_ns": 46199374
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+      "end_utc": "2026-11-09T02:54:37.253404+00:00",
+      "exit_code": 0,
+      "expected_head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+      "expected_tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+      "identity_after": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "status": "",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4"
+      },
+      "index": 4,
+      "name": "repository-markdown",
+      "start_utc": "2026-11-09T02:54:31.073147+00:00",
+      "state": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/04-repository-markdown.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 307,
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/04-repository-markdown.stdout.log",
+        "sha256": "bbb0eb354d818187e49d5a4f40dd7316b037f99b626a5d1de1d73ccf9620e667"
+      },
+      "wall_ns": 6180167391
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+      "end_utc": "2026-11-09T02:54:37.333249+00:00",
+      "exit_code": 0,
+      "expected_head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+      "expected_tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+      "identity_after": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "status": "",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4"
+      },
+      "index": 5,
+      "name": "ci-contract",
+      "start_utc": "2026-11-09T02:54:37.281183+00:00",
+      "state": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/05-ci-contract.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 431,
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/05-ci-contract.stdout.log",
+        "sha256": "334cc2b26ed99ad5f867ee9b65f3047e23afcfae056d4ba9c852b0a201e2dbeb"
+      },
+      "wall_ns": 51956495
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+      "end_utc": "2026-11-09T02:54:37.493861+00:00",
+      "exit_code": 0,
+      "expected_head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+      "expected_tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+      "identity_after": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "status": "",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4"
+      },
+      "index": 6,
+      "name": "pq-integration",
+      "start_utc": "2026-11-09T02:54:37.363513+00:00",
+      "state": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/06-pq-integration.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 557,
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/06-pq-integration.stdout.log",
+        "sha256": "9e89f551b42cf5845c2abc75c1bcbd5be908cd920b76e7dbf58d2107cc307874"
+      },
+      "wall_ns": 130277373
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+      "end_utc": "2026-11-09T02:54:39.408384+00:00",
+      "exit_code": 0,
+      "expected_head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+      "expected_tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+      "identity_after": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "status": "",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4"
+      },
+      "index": 7,
+      "name": "negative-source-integrity",
+      "start_utc": "2026-11-09T02:54:37.523214+00:00",
+      "state": "completed",
+      "stderr": {
+        "bytes": 6414,
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/07-negative-source-integrity.stderr.log",
+        "sha256": "e698eb908ac3e472156aafa5ebc143327dfe56c727d4d126766eda462f09d4e9"
+      },
+      "stdout": {
+        "bytes": 484,
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/07-negative-source-integrity.stdout.log",
+        "sha256": "1e7fc6176ecc290b5998584dcf1f2880f46e54ac0c96ddb44a6397b53b11af5a"
+      },
+      "wall_ns": 1885041230
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_repository.py"
+      ],
+      "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+      "end_utc": "2026-11-09T02:55:52.409490+00:00",
+      "exit_code": 0,
+      "expected_head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+      "expected_tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+      "identity_after": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "status": "",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4"
+      },
+      "index": 8,
+      "name": "negative-repository",
+      "start_utc": "2026-11-09T02:54:39.435269+00:00",
+      "state": "completed",
+      "stderr": {
+        "bytes": 5344,
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/08-negative-repository.stderr.log",
+        "sha256": "68ed2e9d1c1b5060a367b68c4ff89bb2668adb3504583186204d0e0b53d57945"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/08-negative-repository.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "wall_ns": 72974167918
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+      "end_utc": "2026-11-09T02:56:22.698659+00:00",
+      "exit_code": 0,
+      "expected_head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+      "expected_tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+      "identity_after": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "status": "",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4"
+      },
+      "index": 9,
+      "name": "negative-pq-integration",
+      "start_utc": "2026-11-09T02:55:52.438845+00:00",
+      "state": "completed",
+      "stderr": {
+        "bytes": 157,
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/09-negative-pq-integration.stderr.log",
+        "sha256": "ff0c23d2a6910162a15d1be0d0fdb0e97ff2f3055ee4af844e878e86a3fbd59d"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/09-negative-pq-integration.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "wall_ns": 30259684867
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+      "end_utc": "2026-11-09T02:56:40.861458+00:00",
+      "exit_code": 0,
+      "expected_head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+      "expected_tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+      "identity_after": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "status": "",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4"
+      },
+      "index": 10,
+      "name": "negative-ci-contract",
+      "start_utc": "2026-11-09T02:56:22.728120+00:00",
+      "state": "completed",
+      "stderr": {
+        "bytes": 25717,
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/10-negative-ci-contract.stderr.log",
+        "sha256": "9ae3dfd314b642d1ed861d9848725efdf443b6de7366b179d29ef6c985f68281"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/10-negative-ci-contract.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "wall_ns": 18133243980
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "--output",
+        "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/source-after.json"
+      ],
+      "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+      "end_utc": "2026-11-09T02:56:42.306321+00:00",
+      "exit_code": 0,
+      "expected_head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+      "expected_tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+      "identity_after": {
+        "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+        "status": "",
+        "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4"
+      },
+      "index": 11,
+      "name": "source-after",
+      "start_utc": "2026-11-09T02:56:40.888762+00:00",
+      "state": "completed",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/11-source-after.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 423,
+        "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/11-source-after.stdout.log",
+        "sha256": "f242962256627d60335a46cbd838c73692ab9886d9bc70c28a6ba976c295d6d2"
+      },
+      "wall_ns": 1417479182
+    }
+  ],
+  "completed_utc": "2026-11-09T02:56:42.356423+00:00",
+  "count": 11,
+  "failed": [],
+  "native_or_cargo_builds": false,
+  "passed": 11,
+  "runner": {
+    "bytes": 4930,
+    "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/runner.py",
+    "sha256": "330682fc563cf73536381e25a7011aeadc3fe05c4697f6d9516cf48110c7e3eb"
+  },
+  "schema": "pon-resource-owner-c1-static-receipt-v1",
+  "source_after": {
+    "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+    "status": "",
+    "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4"
+  },
+  "source_before": {
+    "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+    "status": "",
+    "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4"
+  },
+  "tracked_identity_unchanged": true
+}

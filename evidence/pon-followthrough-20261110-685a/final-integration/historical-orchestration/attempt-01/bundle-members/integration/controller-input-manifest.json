@@ -1,0 +1,95 @@
+{
+  "actual_c2_observed_by_parent": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+  "actual_c2_tree_observed_by_parent": "7c003a3d183ad33ff4f3349cbcce61564f73a2ba",
+  "complete_project_git_or_native_execution_claimed": false,
+  "component_controls_observed": 15,
+  "controller_bytes": 61687,
+  "controller_sha256": "a1dab7802752d4f534c3d70f40d6bceca1b5eb156c0d1229dfa9306e29c74c62",
+  "corpus_guard_mutations_observed": 48,
+  "corpus_updater_component_methods_observed": 7,
+  "files": [
+    {
+      "bytes": 65044,
+      "path": "ci-fixes/ci-native-evidence-fixes.patch",
+      "runtime_input": true,
+      "sha256": "3af253fa2c6828f3aa61e44554402a60e26172530f9cf16d07af40a3985f013b"
+    },
+    {
+      "bytes": 61235,
+      "path": "qrom-port/qrom-current-ci.patch",
+      "runtime_input": true,
+      "sha256": "db3fcd65c427d297f308568ebb6889344b00b86e3e343a840fe4384152ceb7c0"
+    },
+    {
+      "bytes": 4118,
+      "path": "qrom-port/additional-ci-registrations.patch",
+      "runtime_input": true,
+      "sha256": "73cd46b5b29ff24f1d1d6fbc0acf9a31576a2840a5a8841475097a1a00f50da8"
+    },
+    {
+      "bytes": 2673,
+      "path": "qrom-port/fresh-rejection-ci-registration.patch",
+      "runtime_input": true,
+      "sha256": "2afcdfa4cb5321f8c5eeeaff2992214f65ce0e18b5d51a484d20d8721f475c94"
+    },
+    {
+      "bytes": 2381,
+      "path": "binding-update-v2/required-paths.patch",
+      "runtime_input": true,
+      "sha256": "aafae62ab0f5f7920af757b0c2645b70348b0dda3486207f22182d7771aaa8a1"
+    },
+    {
+      "bytes": 18043,
+      "path": "binding-update-v2/update_corpus.py",
+      "runtime_input": true,
+      "sha256": "1e80cad195fb03a18f57387575b4b89e4ef7eb4be697c0887263ee682fb9a6d9"
+    },
+    {
+      "bytes": 26643,
+      "path": "binding-tool/prepare_authority_pq128_binding.py",
+      "runtime_input": true,
+      "sha256": "13bfaee99dd91cdc73d6a05a89663a1e75ad0ac70a55f6b97f1e6051ae6aedb1"
+    },
+    {
+      "bytes": 12657,
+      "path": "integration/update_w1_ledger_binding.py",
+      "runtime_input": true,
+      "sha256": "86589db5540576e00c4d4e7bad14082114a4dce9a6ed559969ed7996ffc8ab42"
+    },
+    {
+      "bytes": 36987,
+      "path": "qrom-successor/prepare_qrom_successor_binding.py",
+      "runtime_input": true,
+      "sha256": "f635eca914d72845b6b6753e34365d245bea586aebc74c76b994afc942b1449d"
+    },
+    {
+      "bytes": 61687,
+      "path": "integration/integrate_candidate.py",
+      "runtime_input": false,
+      "sha256": "a1dab7802752d4f534c3d70f40d6bceca1b5eb156c0d1229dfa9306e29c74c62"
+    },
+    {
+      "bytes": 12214,
+      "path": "integration/test_integrate_candidate.py",
+      "runtime_input": false,
+      "sha256": "e75e1b0b156c0a7942378776f8638f437902dd5bd017bd59c987f303f22c3a75"
+    },
+    {
+      "bytes": 9479,
+      "path": "integration/INTEGRATE_CANDIDATE_README.md",
+      "runtime_input": false,
+      "sha256": "fdd34c46671e112963d5b91f80e0f3e1fd8f0eaae0921042fdd3d85ca94d27a4"
+    },
+    {
+      "bytes": 3780,
+      "path": "integration/PUBLICATION_RECEIPTS.md",
+      "runtime_input": false,
+      "sha256": "c04d211a5e51c84fa06c9228dd24ab9e987e7b5262427b4640e1dcd73c4b4522"
+    }
+  ],
+  "frozen": true,
+  "native_summary_still_required": true,
+  "production_activation": false,
+  "schema": "pon-integration-controller-input-bundle-v1",
+  "security_status": "HOLD"
+}

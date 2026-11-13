@@ -1,0 +1,36 @@
+{
+  "complete_global_history_claimed": false,
+  "global_history_shallow": true,
+  "history_fetched_or_rewritten": false,
+  "schema": "pon-selected-native-history-v2",
+  "selected_blob_objects_available": 20614,
+  "selected_c2_is_ancestor_of_current_head": true,
+  "selected_chain_scope": "BASE to C1 to C2 only; older BASE ancestors are not traversed",
+  "selected_commits": [
+    {
+      "commit": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+      "raw_parents": [
+        "ac8501a85a770ba34f34e1bed507ca747e5c3f8d"
+      ],
+      "tracked_entries": 27660,
+      "tree": "00479a98dabc6b1fd91a0ceef82ffbdbffb78067"
+    },
+    {
+      "commit": "11c9562252d3cf56b423c7756569be0c669d9606",
+      "raw_parents": [
+        "da1374a200022bc14dc2bd325cc9ba29dbcd24ab"
+      ],
+      "tracked_entries": 27665,
+      "tree": "94e1b4f1718dec1b88bccd7e1996ba83ca29ff8a"
+    },
+    {
+      "commit": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+      "raw_parents": [
+        "11c9562252d3cf56b423c7756569be0c669d9606"
+      ],
+      "tracked_entries": 27665,
+      "tree": "7c003a3d183ad33ff4f3349cbcce61564f73a2ba"
+    }
+  ],
+  "selected_parent_chain_complete": true
+}

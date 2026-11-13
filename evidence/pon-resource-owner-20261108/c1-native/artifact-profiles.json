@@ -1,0 +1,36 @@
+{
+  "name": "artifact-profiles",
+  "argv": [
+    "/home/qq/.cargo/bin/cargo",
+    "test",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "-p",
+    "trnm-pon-node",
+    "--lib",
+    "--no-run",
+    "--message-format=json"
+  ],
+  "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+  "started_utc": "2026-11-09T03:03:23.030809+00:00",
+  "finished_utc": "2026-11-09T03:03:23.088870+00:00",
+  "wall_seconds": 0.05807400494813919,
+  "exit_code": 0,
+  "child_user_cpu_seconds": 0.041349999999994225,
+  "child_system_cpu_seconds": 0.017145000000001076,
+  "children_maxrss_highwater_kib": 1938368,
+  "source_before": {
+    "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+    "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+    "status": ""
+  },
+  "source_after": {
+    "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+    "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+    "status": ""
+  },
+  "log_bytes": 106605,
+  "log_sha256": "4663b12c0286ec1b9377ef2f041b51efc9bb91a8ca23d8d327888b6b2b9750f7"
+}

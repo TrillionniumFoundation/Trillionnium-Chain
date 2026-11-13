@@ -172,6 +172,10 @@ PY
     python3 scripts/ci/test_run_w1_rank_batch_v5.py
     python3 scripts/ci/test_pon_w1_zero_paired_lazy_v1.py
     python3 scripts/ci/test_run_legacy_reorg_root_abba.py
+    python3 -B scripts/ci/test_w1_factorial_native_gate.py
+    python3 -B scripts/ci/test_prepare_artifact_upload.py
+    python3 -B scripts/ci/test_cell_storage_convergence_ci.py
+    python3 -B scripts/ci/test_fresh_rejection_report.py
     # These in-memory counterexamples use unchanged retained inputs, not a new hardware observation.
     python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54
     python3 scripts/ci/test_pon_public_v3_phase_read.py
@@ -284,12 +288,16 @@ PY
     python3 scripts/test_llm_runtime_exit_observation.py
     python3 scripts/test_llm_runtime_stop.py
     python3 scripts/test_llm_inherited_runtime.py
+    python3 scripts/test_llm_inherited_operation.py
+    python3 scripts/test_llm_frozen_evaluation.py
+    python3 scripts/test_run_learning_service_development.py
     python3 scripts/test_llm_neural_read_worker.py
     python3 scripts/test_llm_python_runtime_contract.py
     python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py
     python3 formal/pon-nakamoto-v1/test_demand_evidence.py -v
     python3 formal/pon-nakamoto-v1/test_upgrade_policy.py -v
     cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test no_gain_fees --test funded_service_contract --test native_demand_evidence --test native_task_operation_v2 --test native_active_anchor --all-features -- --test-threads=1
+    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example learning_service_round --example learning_service_recovery_probe --all-features -- --test-threads=1
     python3 formal/pon-nakamoto-v1/test_model_attribution.py
     python3 formal/pon-nakamoto-v1/test_model_evolution_oracle.py -v
     python3 formal/pon-nakamoto-v1/test_model_task_windows_oracle.py -v

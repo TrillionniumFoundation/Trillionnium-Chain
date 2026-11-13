@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "python3",
+    "scripts/test_llm_frozen_evaluation.py",
+    "-v"
+  ],
+  "cwd": "/data/chain-learning-exit-70ae-20261109",
+  "tested_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+  "tested_tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+  "exit_code": 0,
+  "valid": true,
+  "tool_timeout_seconds": 180,
+  "timed_out": false,
+  "duration_ns": 1519915421,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "5eb4234afcbe41a579f9f8dc47ff87ac933b7e834eda92cec6110b249ef2656a",
+  "expected_tests": 26,
+  "observed_test_counts": [
+    26
+  ],
+  "skipped": false
+}

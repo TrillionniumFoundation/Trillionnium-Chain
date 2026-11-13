@@ -1,0 +1,136 @@
+{
+  "binding_child_c3": "a715b2c8e89732ce356ebae67f978ef232156c04",
+  "binding_child_tree": "cc44e4c526d9b52d04697169a9b1d3eeb5079451",
+  "code_checkpoint_c2": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+  "commands": [
+    {
+      "exit_code": 0,
+      "label": "validation-01-source-before"
+    },
+    {
+      "exit_code": 0,
+      "label": "validation-01-preflight"
+    },
+    {
+      "exit_code": 0,
+      "label": "validation-01-test_pq_research_integration"
+    },
+    {
+      "exit_code": 0,
+      "label": "validation-01-test_ci_source_integrity"
+    },
+    {
+      "exit_code": 1,
+      "label": "validation-01-test_ci_contract"
+    },
+    {
+      "exit_code": 0,
+      "label": "validation-01-test_w1_factorial_native_gate"
+    },
+    {
+      "exit_code": 0,
+      "label": "validation-01-test_prepare_artifact_upload"
+    },
+    {
+      "exit_code": 0,
+      "label": "validation-01-test_cell_storage_convergence_ci"
+    },
+    {
+      "exit_code": 0,
+      "label": "validation-01-test_cell_discovery_v3_ci"
+    },
+    {
+      "exit_code": 0,
+      "label": "validation-01-test_fresh_rejection_report"
+    },
+    {
+      "exit_code": 0,
+      "label": "validation-01-test_w1_qrom_current_ci"
+    },
+    {
+      "exit_code": 0,
+      "label": "validation-01-test_pq_authority_effect_register"
+    },
+    {
+      "exit_code": 0,
+      "label": "validation-01-test_pq_lifetime_budget"
+    },
+    {
+      "exit_code": 1,
+      "label": "validation-01-test_w1_lifetime_ledger"
+    },
+    {
+      "exit_code": 0,
+      "label": "validation-01-corpus"
+    },
+    {
+      "exit_code": 1,
+      "label": "validation-01-ci-contract"
+    },
+    {
+      "exit_code": 0,
+      "label": "validation-01-qrom-current-named"
+    },
+    {
+      "exit_code": 0,
+      "label": "validation-01-qrom-historical-drift"
+    },
+    {
+      "exit_code": 0,
+      "label": "validation-01-qrom-current-implementation"
+    },
+    {
+      "exit_code": 0,
+      "label": "validation-01-authority-register"
+    },
+    {
+      "exit_code": 0,
+      "label": "validation-01-pq128-lifetime"
+    },
+    {
+      "exit_code": 0,
+      "label": "validation-01-w1-lifetime-report"
+    },
+    {
+      "exit_code": 0,
+      "label": "validation-01-w1-lifetime-report-identical"
+    },
+    {
+      "exit_code": 0,
+      "label": "validation-01-distributed-inventory"
+    },
+    {
+      "exit_code": 2,
+      "label": "validation-01-repository-and-markdown-links"
+    },
+    {
+      "exit_code": 0,
+      "label": "validation-01-source-diff-whitespace"
+    },
+    {
+      "exit_code": 0,
+      "label": "validation-01-format"
+    },
+    {
+      "exit_code": 0,
+      "label": "validation-01-source-after"
+    },
+    {
+      "exit_code": 0,
+      "label": "validation-01-source-identical"
+    }
+  ],
+  "complete": false,
+  "draft_only": true,
+  "hosted_ci_observed_complete": false,
+  "native_execution_source": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+  "native_full_suite_passed": false,
+  "native_full_suites_repeated": false,
+  "native_observation_complete": true,
+  "open_consensus_qualified": false,
+  "production_activation": false,
+  "remaining_native_child_checks": "Root runs the original three-crate --all-targets strict Clippy plus locked offline graph and actual C3 source bracket; no 4/8/3 or full library suite repeat is credited.",
+  "schema": "pon-followthrough-binding-child-checks-v2",
+  "security_status": "HOLD",
+  "source_bracket_identical": true
+}

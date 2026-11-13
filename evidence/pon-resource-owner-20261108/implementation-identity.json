@@ -1,0 +1,14 @@
+{
+  "schema": "pon-owner-evidence-child-implementation-identity-v1",
+  "implementation_source_commit": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+  "runtime_proof_test_dependency_bytes_unchanged": true,
+  "admission_profile_bytes_unchanged": true,
+  "signed_r14_profile_unchanged": true,
+  "documentation_pin_change_only": {
+    "path": "config/pon/pq-cross-branch-corpus-v1.json",
+    "key": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "before": "197f9fe0c7fbdc396d79daea1e13af6031546b4c",
+    "after": "2975c3c9eefbaff5b26c30a9da36d24d1492d962"
+  },
+  "purpose": "Final source identity and checks are reported independently in the publication pull request."
+}

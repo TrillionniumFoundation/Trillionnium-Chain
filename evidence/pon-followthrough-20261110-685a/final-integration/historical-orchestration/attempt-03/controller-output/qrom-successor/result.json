@@ -1,0 +1,47 @@
+{
+  "applied": [
+    "evidence/pon-w1-qrom-current-20261110-685a/historical/current-v2.json",
+    "evidence/pon-w1-qrom-current-20261110-685a/historical/current-auditor.py",
+    "evidence/pon-w1-qrom-current-20261110-685a/historical/current-tests.py",
+    "evidence/pon-w1-qrom-current-20261110-685a/historical/current-mapping.md.txt",
+    "evidence/pon-w1-qrom-current-20261110-685a/prior-v2-on-c2.command.json",
+    "evidence/pon-w1-qrom-current-20261110-685a/prior-v2-on-c2.stdout.log",
+    "evidence/pon-w1-qrom-current-20261110-685a/prior-v2-on-c2.stderr.log",
+    "config/pon/w1-qrom-implementation-current-v2.json",
+    "scripts/w1_qrom_current_implementation_audit.py",
+    "scripts/ci/test_w1_qrom_current_implementation_audit.py",
+    "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md",
+    "evidence/pon-w1-qrom-current-20261110-685a/current-report.json",
+    "evidence/pon-w1-qrom-current-20261110-685a/source-binding.json",
+    "evidence/pon-w1-qrom-current-20261110-685a/README.md"
+  ],
+  "code_checkpoint": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+  "code_checkpoint_tree": "7c003a3d183ad33ff4f3349cbcce61564f73a2ba",
+  "complete_global_history_claimed": false,
+  "git_history_shallow": true,
+  "hosted_ci_observed": false,
+  "native_binary_executed": false,
+  "production_qualified": false,
+  "schema": "trnm-qrom-v2-successor-binding-result-v2",
+  "selected_ancestry_head": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+  "selected_lineage": [
+    {
+      "commit": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+      "required_parent": null,
+      "tree": "00479a98dabc6b1fd91a0ceef82ffbdbffb78067"
+    },
+    {
+      "commit": "11c9562252d3cf56b423c7756569be0c669d9606",
+      "required_parent": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+      "tree": "94e1b4f1718dec1b88bccd7e1996ba83ca29ff8a"
+    },
+    {
+      "commit": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+      "required_parent": "11c9562252d3cf56b423c7756569be0c669d9606",
+      "tree": "7c003a3d183ad33ff4f3349cbcce61564f73a2ba"
+    }
+  ],
+  "selected_lineage_complete": true,
+  "selected_source_ancestor_of_head": true,
+  "status": "APPLIED_MAPPING_AND_FOURTEEN_CONTROLS_SECURITY_HOLD"
+}

@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/home/qian-qi/.cargo/bin/cargo",
+    "+1.95.0",
+    "metadata",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--all-features",
+    "--format-version",
+    "1"
+  ],
+  "cwd": "/data/chain-learning-exit-70ae-20261109",
+  "exit_code": 0,
+  "tool_timeout_seconds": 180,
+  "timed_out": false,
+  "duration_ns": 267198366,
+  "stdout_sha256": "a92f6fb2e344a43e9b1cefe3d1288d6d871380d14825c0884511160496141ff3",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

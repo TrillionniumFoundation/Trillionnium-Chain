@@ -1,0 +1,282 @@
+{
+  "baseline_two_test_control_included_here": false,
+  "binary_sha256": "95bd7f1605e8bf27ab708ece44b9fd44b38497953ce31733c91564548fa7ecff",
+  "binding_child_tests_recorded_here": false,
+  "code_checkpoint": {
+    "baseline": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+    "changed_from_c1": [
+      "trillionnium/crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs",
+      "scripts/pon_fresh_rejection_report.py"
+    ],
+    "clean": true,
+    "commit": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+    "prior_code_commit": "11c9562252d3cf56b423c7756569be0c669d9606",
+    "tree": "7c003a3d183ad33ff4f3349cbcce61564f73a2ba"
+  },
+  "counterfactual": {
+    "complete_baseline_checkout_claimed": false,
+    "dependency_checkpoint": "11c9562252d3cf56b423c7756569be0c669d9606",
+    "node_production_base": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+    "production_activation": false,
+    "reader_sha256": "6d4e31fdbbeab51e376c5bafc92deb79440662bed71e202d766cf872cf57ac72",
+    "red_store_sha256": "8c7b60e976d49b605b582252c49af984933126a6059b6c61423c9c3ddf7a65d6",
+    "schema": "pon-node-corrected-test-counterfactual-v1",
+    "scope": "same four corrected tests; old Node production with the test-module declaration; other dependencies at C1",
+    "test_sha256": "d371c338aecd2f8b64fb0869f0f60cd78e08e144b4d0159b38e903dc74bb09a6"
+  },
+  "draft_only": true,
+  "followup_command_count": 14,
+  "followup_exact_results": {
+    "isolated-inactive-page": {
+      "exit_code": 101,
+      "failed": 1,
+      "ignored": 0,
+      "passed": 0
+    },
+    "isolated-large-parent": {
+      "exit_code": 101,
+      "failed": 1,
+      "ignored": 0,
+      "passed": 0
+    }
+  },
+  "followup_failure_labels": [
+    "isolated-large-parent",
+    "isolated-inactive-page"
+  ],
+  "full_node_suite": {
+    "exit_code": 101,
+    "failed": 2,
+    "ignored": 39,
+    "passed": 1285
+  },
+  "native_full_suite_passed": false,
+  "native_observation_complete": true,
+  "open_consensus_qualified": false,
+  "original_command_count": 39,
+  "original_failure_labels": [
+    "green-confirmation",
+    "node-library-v3",
+    "red-confirmation-r2",
+    "red-confirmation-v3",
+    "red-settlement",
+    "red-settlement-r2"
+  ],
+  "original_node_harness": {
+    "announcement_to_summary_pairing_claimed": false,
+    "main_announced_tests": 1326,
+    "main_elapsed_seconds_text": "2178.88",
+    "main_failed_names": [
+      "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation"
+    ],
+    "main_ignored_tests_executed_claimed": false,
+    "main_result": "FAILED",
+    "main_status_counts": {
+      "FAILED": 2,
+      "ignored": 39,
+      "ok": 1285
+    },
+    "main_status_rows_sha256": "0721b3d3c3b894edc1523af3770cc55a419ccd2a086abd8487cf799c13d9e842",
+    "main_summary_line": 1399,
+    "main_unique_names": 1326,
+    "nested_completed_summaries": [
+      {
+        "elapsed_seconds_text": "0.00",
+        "failed": 0,
+        "filtered_out": 1325,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 1,
+        "result": "ok",
+        "status_line": 569,
+        "summary_line": 571,
+        "test": "operator_task_policy::file_tests::held_file_substitution_child"
+      },
+      {
+        "elapsed_seconds_text": "0.00",
+        "failed": 0,
+        "filtered_out": 1325,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 1,
+        "result": "ok",
+        "status_line": 759,
+        "summary_line": 761,
+        "test": "store::authenticated_migration::tests::growth_rehearsal_file_reads_refuse_fifo_replacement_before_open"
+      },
+      {
+        "elapsed_seconds_text": "0.00",
+        "failed": 0,
+        "filtered_out": 1325,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 1,
+        "result": "ok",
+        "status_line": 765,
+        "summary_line": 767,
+        "test": "store::authenticated_migration::tests::growth_rehearsal_file_reads_refuse_fifo_replacement_before_open"
+      }
+    ],
+    "nested_running_announcements": [
+      {
+        "line": 565,
+        "tests": 1
+      },
+      {
+        "line": 747,
+        "tests": 1
+      },
+      {
+        "line": 757,
+        "tests": 1
+      },
+      {
+        "line": 764,
+        "tests": 1
+      },
+      {
+        "line": 773,
+        "tests": 1
+      },
+      {
+        "line": 783,
+        "tests": 1
+      },
+      {
+        "line": 810,
+        "tests": 1
+      },
+      {
+        "line": 846,
+        "tests": 1
+      },
+      {
+        "line": 869,
+        "tests": 1
+      },
+      {
+        "line": 928,
+        "tests": 1
+      },
+      {
+        "line": 1255,
+        "tests": 1
+      },
+      {
+        "line": 1273,
+        "tests": 1
+      },
+      {
+        "line": 1295,
+        "tests": 1
+      }
+    ],
+    "nested_successes_added_to_main": false,
+    "raw_sha256": "022eabf9dba4c26fda5ab75d9d9b53df76f209e19b2af9b3f4ce256ebf4f0b6b",
+    "raw_status_rows": 1329,
+    "schema": "pon-original-node-interleaved-harness-v1"
+  },
+  "original_results": {
+    "crypto-library-v3": [
+      [
+        196,
+        0,
+        0
+      ]
+    ],
+    "green-confirmation": [
+      [
+        3,
+        1,
+        0
+      ]
+    ],
+    "green-confirmation-v3": [
+      [
+        4,
+        0,
+        0
+      ]
+    ],
+    "green-settlement": [
+      [
+        8,
+        0,
+        0
+      ]
+    ],
+    "green-settlement-v3": [
+      [
+        8,
+        0,
+        0
+      ]
+    ],
+    "node-library-v3": [
+      [
+        1285,
+        2,
+        39
+      ]
+    ],
+    "red-confirmation-r2": [
+      [
+        0,
+        4,
+        0
+      ]
+    ],
+    "red-confirmation-v3": [
+      [
+        0,
+        4,
+        0
+      ]
+    ],
+    "red-settlement-r2": [
+      [
+        2,
+        6,
+        0
+      ]
+    ],
+    "settlement-all-features-v3": [
+      [
+        77,
+        0,
+        0
+      ],
+      [
+        2,
+        0,
+        0
+      ]
+    ]
+  },
+  "original_source_after_v3_created": false,
+  "original_v3_completed": false,
+  "prior_code_checkpoint": {
+    "baseline": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+    "changed_paths": [
+      "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs",
+      "trillionnium/crates/trnm-service-settlement/src/native_budget.rs",
+      "trillionnium/crates/trnm-service-settlement/src/native_budget/tests.rs",
+      "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs",
+      "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs",
+      "trillionnium/crates/trnm-crypto-primitives/examples/pon_fresh_rejection_cost.rs",
+      "scripts/pon_fresh_rejection_report.py",
+      "scripts/ci/test_fresh_rejection_report.py",
+      "docs/research/PON_FRESH_REJECTION_COST_V1.md"
+    ],
+    "clean": true,
+    "commit": "11c9562252d3cf56b423c7756569be0c669d9606",
+    "tree": "94e1b4f1718dec1b88bccd7e1996ba83ca29ff8a"
+  },
+  "production_activation": false,
+  "raw_member_count": 121,
+  "schema": "pon-followthrough-native-observations-v2",
+  "security_status": "HOLD",
+  "source_bracket_closed_by_followup": true
+}

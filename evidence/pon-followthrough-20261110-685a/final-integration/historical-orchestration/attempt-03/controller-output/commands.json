@@ -1,0 +1,2163 @@
+[
+  {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308068394455365,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "prepare-preflight",
+    "launch_error": null,
+    "start_unix_ns": 1794308068273120961,
+    "stderr": {
+      "bytes": 0,
+      "file": "prepare-preflight.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 172,
+      "file": "prepare-preflight.stdout.log",
+      "git_blob": "05dd3c3bab044819f4955fb1d3e25d43a0bfa784",
+      "git_mode": "100644",
+      "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+      "--output",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-03/prepare-source.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308085378147180,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "prepare-source-byte-check",
+    "launch_error": null,
+    "start_unix_ns": 1794308068410154435,
+    "stderr": {
+      "bytes": 0,
+      "file": "prepare-source-byte-check.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 423,
+      "file": "prepare-source-byte-check.stdout.log",
+      "git_blob": "eec05b1b26f64f1d3c6a62ec0542e9a75002e7d1",
+      "git_mode": "100644",
+      "sha256": "81581c539d39f3531c8a42919ffa29ad895a041ebe7afdb850f0b9ef41a4782a"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "read-tree",
+      "8d8c0e64e7a301fc111a6720721a14816639e5aa"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308085798403836,
+    "exit_code": 0,
+    "explicit_environment": {
+      "GIT_INDEX_FILE": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-03/patch-preview.index"
+    },
+    "label": "preview-index-from-c2",
+    "launch_error": null,
+    "start_unix_ns": 1794308085665348063,
+    "stderr": {
+      "bytes": 0,
+      "file": "preview-index-from-c2.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "preview-index-from-c2.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "--cached",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-bundle-03/ci-fixes/ci-native-evidence-fixes.patch"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308086048240520,
+    "exit_code": 0,
+    "explicit_environment": {
+      "GIT_INDEX_FILE": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-03/patch-preview.index"
+    },
+    "label": "preview-patch-1",
+    "launch_error": null,
+    "start_unix_ns": 1794308085915082684,
+    "stderr": {
+      "bytes": 0,
+      "file": "preview-patch-1.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "preview-patch-1.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "--cached",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-bundle-03/qrom-port/qrom-current-ci.patch"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308086462243585,
+    "exit_code": 0,
+    "explicit_environment": {
+      "GIT_INDEX_FILE": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-03/patch-preview.index"
+    },
+    "label": "preview-patch-2",
+    "launch_error": null,
+    "start_unix_ns": 1794308086378509528,
+    "stderr": {
+      "bytes": 0,
+      "file": "preview-patch-2.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "preview-patch-2.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "--cached",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-bundle-03/qrom-port/additional-ci-registrations.patch"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308086810209884,
+    "exit_code": 0,
+    "explicit_environment": {
+      "GIT_INDEX_FILE": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-03/patch-preview.index"
+    },
+    "label": "preview-patch-3",
+    "launch_error": null,
+    "start_unix_ns": 1794308086726243056,
+    "stderr": {
+      "bytes": 0,
+      "file": "preview-patch-3.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "preview-patch-3.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "--cached",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-bundle-03/qrom-port/fresh-rejection-ci-registration.patch"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308087157802731,
+    "exit_code": 0,
+    "explicit_environment": {
+      "GIT_INDEX_FILE": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-03/patch-preview.index"
+    },
+    "label": "preview-patch-4",
+    "launch_error": null,
+    "start_unix_ns": 1794308087074230102,
+    "stderr": {
+      "bytes": 0,
+      "file": "preview-patch-4.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "preview-patch-4.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "--cached",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-bundle-03/binding-update-v2/required-paths.patch"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308087488049294,
+    "exit_code": 0,
+    "explicit_environment": {
+      "GIT_INDEX_FILE": "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-03/patch-preview.index"
+    },
+    "label": "preview-patch-5",
+    "launch_error": null,
+    "start_unix_ns": 1794308087404313236,
+    "stderr": {
+      "bytes": 0,
+      "file": "preview-patch-5.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "preview-patch-5.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "--check",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-bundle-03/ci-fixes/ci-native-evidence-fixes.patch"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308087913140040,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "patch-1-check",
+    "launch_error": null,
+    "start_unix_ns": 1794308087897459138,
+    "stderr": {
+      "bytes": 0,
+      "file": "patch-1-check.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "patch-1-check.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-bundle-03/ci-fixes/ci-native-evidence-fixes.patch"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308088127840152,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "patch-1-apply",
+    "launch_error": null,
+    "start_unix_ns": 1794308088092204826,
+    "stderr": {
+      "bytes": 0,
+      "file": "patch-1-apply.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "patch-1-apply.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "--check",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-bundle-03/qrom-port/qrom-current-ci.patch"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308088303892140,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "patch-2-check",
+    "launch_error": null,
+    "start_unix_ns": 1794308088288665137,
+    "stderr": {
+      "bytes": 0,
+      "file": "patch-2-check.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "patch-2-check.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-bundle-03/qrom-port/qrom-current-ci.patch"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308088515295900,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "patch-2-apply",
+    "launch_error": null,
+    "start_unix_ns": 1794308088486965492,
+    "stderr": {
+      "bytes": 0,
+      "file": "patch-2-apply.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "patch-2-apply.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "--check",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-bundle-03/qrom-port/additional-ci-registrations.patch"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308088705194917,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "patch-3-check",
+    "launch_error": null,
+    "start_unix_ns": 1794308088690983753,
+    "stderr": {
+      "bytes": 0,
+      "file": "patch-3-check.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "patch-3-check.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-bundle-03/qrom-port/additional-ci-registrations.patch"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308088910400158,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "patch-3-apply",
+    "launch_error": null,
+    "start_unix_ns": 1794308088894444077,
+    "stderr": {
+      "bytes": 0,
+      "file": "patch-3-apply.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "patch-3-apply.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "--check",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-bundle-03/qrom-port/fresh-rejection-ci-registration.patch"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308089097933521,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "patch-4-check",
+    "launch_error": null,
+    "start_unix_ns": 1794308089083156954,
+    "stderr": {
+      "bytes": 0,
+      "file": "patch-4-check.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "patch-4-check.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-bundle-03/qrom-port/fresh-rejection-ci-registration.patch"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308089307584380,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "patch-4-apply",
+    "launch_error": null,
+    "start_unix_ns": 1794308089278885572,
+    "stderr": {
+      "bytes": 0,
+      "file": "patch-4-apply.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "patch-4-apply.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "--check",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-bundle-03/binding-update-v2/required-paths.patch"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308089495385763,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "patch-5-check",
+    "launch_error": null,
+    "start_unix_ns": 1794308089484800125,
+    "stderr": {
+      "bytes": 0,
+      "file": "patch-5-check.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "patch-5-check.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "apply",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-bundle-03/binding-update-v2/required-paths.patch"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308089681531209,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "patch-5-apply",
+    "launch_error": null,
+    "start_unix_ns": 1794308089655908826,
+    "stderr": {
+      "bytes": 0,
+      "file": "patch-5-apply.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "patch-5-apply.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-bundle-03/binding-tool/prepare_authority_pq128_binding_v2.py",
+      "--root",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+      "--checkpoint",
+      "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+      "--output",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-03/authority-pq128",
+      "--apply",
+      "--defer-validation"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308091459904984,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "authority-pq128-bindings",
+    "launch_error": null,
+    "start_unix_ns": 1794308090022116204,
+    "stderr": {
+      "bytes": 0,
+      "file": "authority-pq128-bindings.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 615,
+      "file": "authority-pq128-bindings.stdout.log",
+      "git_blob": "e3cd5ca473b50f5601e203117301defff08a370d",
+      "git_mode": "100644",
+      "sha256": "d737c46f3fa2b8f3cdf0c26f7538545388495a7419ce1304c60c317e890cd21f"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-bundle-03/integration/update_w1_ledger_binding_v2.py",
+      "--root",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+      "--source",
+      "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+      "--receipt",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-03/w1-ledger-receipt.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308092579048058,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "w1-ledger-binding",
+    "launch_error": null,
+    "start_unix_ns": 1794308091794444359,
+    "stderr": {
+      "bytes": 0,
+      "file": "w1-ledger-binding.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 469,
+      "file": "w1-ledger-binding.stdout.log",
+      "git_blob": "368cf0e0274a50263269bbcf4e22e54633ecdfe1",
+      "git_mode": "100644",
+      "sha256": "94b1763bac42982da5821be88b6687b858217b50350f9c123fb0427187b866d7"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-bundle-03/qrom-successor/prepare_qrom_successor_binding_v2.py",
+      "--root",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+      "--checkpoint",
+      "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+      "--output",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-03/qrom-successor",
+      "--apply"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308102294134097,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "qrom-successor-binding",
+    "launch_error": null,
+    "start_unix_ns": 1794308092934571235,
+    "stderr": {
+      "bytes": 0,
+      "file": "qrom-successor-binding.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 243,
+      "file": "qrom-successor-binding.stdout.log",
+      "git_blob": "7cdf4cfb4a7993c1a5ab360e47a2a7f3eda85b90",
+      "git_mode": "100644",
+      "sha256": "81e9ca49ccdfeb36676fd94b90ab837498c7af0a386147338f190baf2428be2b"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/refresh_distributed_source_inventory.py"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308104039503092,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "refresh-distributed-source-inventory",
+    "launch_error": null,
+    "start_unix_ns": 1794308103857438738,
+    "stderr": {
+      "bytes": 0,
+      "file": "refresh-distributed-source-inventory.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 35,
+      "file": "refresh-distributed-source-inventory.stdout.log",
+      "git_blob": "377f4ef57d19f3b41daa3be227d631fbbb09ce0f",
+      "git_mode": "100644",
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "add",
+      "--",
+      ".github/workflows/pon-next-architecture-security.yml",
+      ".github/workflows/pon-w1-qrom-closure.yml",
+      ".github/workflows/pon-w1-qrom-implementation.yml",
+      ".github/workflows/pon-w1-work-security.yml",
+      "config/pon/pq-authority-effects-v1.json",
+      "config/pon/pq128-lifetime-budget-v1.json",
+      "config/pon/pq128-source-lock-v1.json",
+      "config/pon/w1-qrom-current-required-tests-v1.json",
+      "config/pon/w1-qrom-implementation-current-v2.json",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "docs/security/PQ128_LIFETIME_BUDGET_V1.md",
+      "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md",
+      "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md",
+      "scripts/ci/check_ci_contract.py",
+      "scripts/ci/check_pq_research_integration.py",
+      "scripts/ci/ci_job.sh",
+      "scripts/ci/pq_authority_effect_register.py",
+      "scripts/ci/prepare_artifact_upload.py",
+      "scripts/ci/test_cell_storage_convergence_ci.py",
+      "scripts/ci/test_ci_contract.py",
+      "scripts/ci/test_pq_authority_effect_register.py",
+      "scripts/ci/test_prepare_artifact_upload.py",
+      "scripts/ci/test_w1_factorial_native_gate.py",
+      "scripts/ci/test_w1_lifetime_ledger.py",
+      "scripts/ci/test_w1_qrom_current_ci.py",
+      "scripts/ci/test_w1_qrom_current_implementation_audit.py",
+      "scripts/ci/w1_native_controls.py",
+      "scripts/ci/w1_qrom_current_ci.py",
+      "scripts/w1_lifetime_ledger.py",
+      "scripts/w1_qrom_current_implementation_audit.py",
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308104695122088,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "stage-explicit-source",
+    "launch_error": null,
+    "start_unix_ns": 1794308104511899316,
+    "stderr": {
+      "bytes": 0,
+      "file": "stage-explicit-source.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "stage-explicit-source.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "add",
+      "-f",
+      "--",
+      "evidence/pon-followthrough-20261110-685a/README.md",
+      "evidence/pon-followthrough-20261110-685a/native-members.json",
+      "evidence/pon-followthrough-20261110-685a/native-observations.json",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/changed-owner-clippy.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/changed-owner-clippy.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/commands.json",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/format-check.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/format-check.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-build.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-build.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-native.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-native.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-reader.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-reader.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-tests.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-tests.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-profile-after.json",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-profile-before.json",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-reader-tests.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-reader-tests.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/isolated-inactive-page.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/isolated-inactive-page.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/isolated-large-parent.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/isolated-large-parent.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/preflight.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/preflight.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/prior-source-identical.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/prior-source-identical.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/source-after.json",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/source-after.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/source-after.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/source-before.json",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/source-before.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/source-before.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/source-identical.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/source-identical.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/source.json",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/status.json",
+      "evidence/pon-followthrough-20261110-685a/native/followup-v4/summary.json",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/base-locked-graph.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/base-locked-graph.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/base-preflight.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/base-preflight.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/commands-before-v3.json",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/commands.json",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/committed-preflight.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/committed-preflight.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/correct-owned-branch-name.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/correct-owned-branch-name.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/crypto-library-v3.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/crypto-library-v3.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/diff-check.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/diff-check.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/format-candidate.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/format-candidate.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/fresh-probe-apply.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/fresh-probe-apply.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/green-apply.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/green-apply.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/green-confirmation-v3.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/green-confirmation-v3.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/green-confirmation.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/green-confirmation.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/green-preflight.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/green-preflight.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/green-settlement-v3.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/green-settlement-v3.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/green-settlement.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/green-settlement.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/locked-dependency-fetch.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/locked-dependency-fetch.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/node-library-v3.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/node-library-v3.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/red-apply.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/red-apply.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/red-confirmation-r2.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/red-confirmation-r2.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/red-confirmation-v3.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/red-confirmation-v3.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/red-preflight.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/red-preflight.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/red-resume-preflight.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/red-resume-preflight.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/red-settlement-r2.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/red-settlement-r2.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/red-settlement.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/red-settlement.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/red-source.patch",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/red-v3-source.json",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/settlement-all-features-v3.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/settlement-all-features-v3.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/source-before-v3.json",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/source-commit.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/source-commit.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/source-v3.json",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/source.json",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/stage-source.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/stage-source.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-apply-exact-test-diagnostic.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-apply-exact-test-diagnostic.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-apply-verified-reference-reader.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-apply-verified-reference-reader.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-cargo.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-cargo.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-committed-preflight.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-committed-preflight.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-diff-check.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-diff-check.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-format-candidate.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-format-candidate.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-locked-graph.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-locked-graph.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-precommit-preflight.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-precommit-preflight.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-preflight.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-preflight.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-rustc.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-rustc.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-source-before.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-source-before.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-source-commit.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-source-commit.stdout.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-stage-source.stderr.log",
+      "evidence/pon-followthrough-20261110-685a/native/original-v3/v3-stage-source.stdout.log",
+      "evidence/pon-w1-lifetime-current-20261110-685a/README.md",
+      "evidence/pon-w1-lifetime-current-20261110-685a/project-input.json",
+      "evidence/pon-w1-lifetime-current-20261110-685a/project-report.json",
+      "evidence/pon-w1-qrom-current-20261110-685a/README.md",
+      "evidence/pon-w1-qrom-current-20261110-685a/current-report.json",
+      "evidence/pon-w1-qrom-current-20261110-685a/historical/current-auditor.py",
+      "evidence/pon-w1-qrom-current-20261110-685a/historical/current-mapping.md.txt",
+      "evidence/pon-w1-qrom-current-20261110-685a/historical/current-tests.py",
+      "evidence/pon-w1-qrom-current-20261110-685a/historical/current-v2.json",
+      "evidence/pon-w1-qrom-current-20261110-685a/prior-v2-on-c2.command.json",
+      "evidence/pon-w1-qrom-current-20261110-685a/prior-v2-on-c2.stderr.log",
+      "evidence/pon-w1-qrom-current-20261110-685a/prior-v2-on-c2.stdout.log",
+      "evidence/pon-w1-qrom-current-20261110-685a/source-binding.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308105448418361,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "stage-explicit-evidence-including-ignored-logs",
+    "launch_error": null,
+    "start_unix_ns": 1794308105215050030,
+    "stderr": {
+      "bytes": 0,
+      "file": "stage-explicit-evidence-including-ignored-logs.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "stage-explicit-evidence-including-ignored-logs.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-bundle-03/binding-update-v2/update_corpus.py",
+      "inventory",
+      "--repo-root",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+      "--checkpoint",
+      "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+      "--checkpoint-tree",
+      "7c003a3d183ad33ff4f3349cbcce61564f73a2ba",
+      "--candidate-tree",
+      "8d2bab0a0d5ddd557cb18e0db42b08e024f090d5",
+      "--plan",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-03/corpus-path-plan.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308108739259184,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "corpus-path-inventory",
+    "launch_error": null,
+    "start_unix_ns": 1794308106813310409,
+    "stderr": {
+      "bytes": 0,
+      "file": "corpus-path-inventory.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 168,
+      "file": "corpus-path-inventory.stdout.log",
+      "git_blob": "f5b07aa37bdef82d40dbc9b3697058e4430a7b8f",
+      "git_mode": "100644",
+      "sha256": "9cec51acc811c9f9bb15108f37ec1ad8ceed94fe8384991a340c3c9fa47e6098"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-bundle-03/binding-update-v2/update_corpus.py",
+      "update",
+      "--repo-root",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+      "--checkpoint",
+      "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+      "--checkpoint-tree",
+      "7c003a3d183ad33ff4f3349cbcce61564f73a2ba",
+      "--candidate-tree",
+      "8d2bab0a0d5ddd557cb18e0db42b08e024f090d5",
+      "--plan",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-03/corpus-path-plan.json",
+      "--output",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-03/refreshed-corpus.json",
+      "--receipt",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-03/corpus-receipt.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308114634799711,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "corpus-refresh-output",
+    "launch_error": null,
+    "start_unix_ns": 1794308108998488379,
+    "stderr": {
+      "bytes": 0,
+      "file": "corpus-refresh-output.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 296,
+      "file": "corpus-refresh-output.stdout.log",
+      "git_blob": "d8892ad038eaccfa1a6777db0e2f886283655b79",
+      "git_mode": "100644",
+      "sha256": "8585fe802efec6a78ad50ec28be7fa15f68f67f1c6efbc98a87c23efddd3dd45"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "add",
+      "--",
+      "config/pon/pq-cross-branch-corpus-v1.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308115206767774,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "stage-corpus",
+    "launch_error": null,
+    "start_unix_ns": 1794308115136186226,
+    "stderr": {
+      "bytes": 0,
+      "file": "stage-corpus.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "stage-corpus.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "diff",
+      "--cached",
+      "--check",
+      "--",
+      ".",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/changed-owner-clippy.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/changed-owner-clippy.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/format-check.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/format-check.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-build.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-build.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-native.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-native.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-reader.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-reader.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-tests.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-tests.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-reader-tests.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-reader-tests.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/isolated-inactive-page.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/isolated-inactive-page.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/isolated-large-parent.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/isolated-large-parent.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/preflight.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/preflight.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/prior-source-identical.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/prior-source-identical.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/source-after.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/source-after.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/source-before.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/source-before.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/source-identical.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/source-identical.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/base-locked-graph.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/base-locked-graph.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/base-preflight.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/base-preflight.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/committed-preflight.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/committed-preflight.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/correct-owned-branch-name.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/correct-owned-branch-name.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/crypto-library-v3.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/crypto-library-v3.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/diff-check.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/diff-check.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/format-candidate.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/format-candidate.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/fresh-probe-apply.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/fresh-probe-apply.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/green-apply.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/green-apply.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/green-confirmation-v3.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/green-confirmation-v3.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/green-confirmation.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/green-confirmation.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/green-preflight.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/green-preflight.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/green-settlement-v3.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/green-settlement-v3.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/green-settlement.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/green-settlement.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/locked-dependency-fetch.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/locked-dependency-fetch.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/node-library-v3.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/node-library-v3.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-apply.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-apply.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-confirmation-r2.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-confirmation-r2.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-confirmation-v3.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-confirmation-v3.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-preflight.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-preflight.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-resume-preflight.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-resume-preflight.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-settlement-r2.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-settlement-r2.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-settlement.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-settlement.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-source.patch",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/settlement-all-features-v3.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/settlement-all-features-v3.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/source-commit.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/source-commit.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/stage-source.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/stage-source.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-apply-exact-test-diagnostic.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-apply-exact-test-diagnostic.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-apply-verified-reference-reader.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-apply-verified-reference-reader.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-cargo.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-cargo.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-committed-preflight.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-committed-preflight.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-diff-check.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-diff-check.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-format-candidate.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-format-candidate.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-locked-graph.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-locked-graph.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-precommit-preflight.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-precommit-preflight.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-preflight.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-preflight.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-rustc.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-rustc.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-source-before.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-source-before.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-source-commit.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-source-commit.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-stage-source.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-stage-source.stdout.log"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308116507606209,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "prepared-source-diff-check",
+    "launch_error": null,
+    "start_unix_ns": 1794308116424229137,
+    "stderr": {
+      "bytes": 0,
+      "file": "prepared-source-diff-check.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "prepared-source-diff-check.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308118222256899,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "commit-01-preflight",
+    "launch_error": null,
+    "start_unix_ns": 1794308118088007409,
+    "stderr": {
+      "bytes": 0,
+      "file": "commit-01-preflight.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 172,
+      "file": "commit-01-preflight.stdout.log",
+      "git_blob": "05dd3c3bab044819f4955fb1d3e25d43a0bfa784",
+      "git_mode": "100644",
+      "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "commit",
+      "-m",
+      "fix(pon): bind reviewed source and retain native failure observations"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308118633059216,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "commit-01-binding-child",
+    "launch_error": null,
+    "start_unix_ns": 1794308118500008857,
+    "stderr": {
+      "bytes": 0,
+      "file": "commit-01-binding-child.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 14919,
+      "file": "commit-01-binding-child.stdout.log",
+      "git_blob": "0106fa1800109891035497532da4cafd85cdae49",
+      "git_mode": "100644",
+      "sha256": "f5bf88dbefdc3b6c9c1f83170463d62c2a1757fac4513b9043cef3f3d8f7168d"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "a715b2c8e89732ce356ebae67f978ef232156c04",
+      "--output",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-03/validation-01-source-before.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308126822622602,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-source-before",
+    "launch_error": null,
+    "start_unix_ns": 1794308120385235140,
+    "stderr": {
+      "bytes": 0,
+      "file": "validation-01-source-before.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 423,
+      "file": "validation-01-source-before.stdout.log",
+      "git_blob": "ac2d0f074de6b022391e1327cadc8c6d4a5cc09d",
+      "git_mode": "100644",
+      "sha256": "e326cd35576ad43ff16b461b848b3fe1d2658337fd05550c57a656100b3b3fbc"
+    }
+  },
+  {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308127206460540,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-preflight",
+    "launch_error": null,
+    "start_unix_ns": 1794308127084987210,
+    "stderr": {
+      "bytes": 0,
+      "file": "validation-01-preflight.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 172,
+      "file": "validation-01-preflight.stdout.log",
+      "git_blob": "05dd3c3bab044819f4955fb1d3e25d43a0bfa784",
+      "git_mode": "100644",
+      "sha256": "b8cce1e79bc2b07bd009efb6b2828fa50cda4eca4df6648d1c0a0c0d08c6aab4"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/test_pq_research_integration.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308425593620956,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-test_pq_research_integration",
+    "launch_error": null,
+    "start_unix_ns": 1794308127470924065,
+    "stderr": {
+      "bytes": 8425,
+      "file": "validation-01-test_pq_research_integration.stderr.log",
+      "git_blob": "2663ece26407a4c43a743c1a017a7b16d513a48c",
+      "git_mode": "100644",
+      "sha256": "f20f6d2ae08cd8683cfbacf379d0130ff1a82b08e7a44085b774092fd2a67eb2"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "validation-01-test_pq_research_integration.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/test_ci_source_integrity.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308430634062301,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-test_ci_source_integrity",
+    "launch_error": null,
+    "start_unix_ns": 1794308425840274132,
+    "stderr": {
+      "bytes": 6414,
+      "file": "validation-01-test_ci_source_integrity.stderr.log",
+      "git_blob": "0224c0a061b2907b96932396c8fe792849ab7769",
+      "git_mode": "100644",
+      "sha256": "eb30844849b0216e4f6930aeb46a82ca96c1282fbf9b6dac620b78f5bbd4a619"
+    },
+    "stdout": {
+      "bytes": 484,
+      "file": "validation-01-test_ci_source_integrity.stdout.log",
+      "git_blob": "3a50336c75fbb8609cb7caf964833a6275700784",
+      "git_mode": "100644",
+      "sha256": "4cf4599ed8618f802d3cd04ebe9d1c035c7f1c9051b3464397a6131d896c3ccb"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/test_ci_contract.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308488026114557,
+    "exit_code": 1,
+    "explicit_environment": {},
+    "label": "validation-01-test_ci_contract",
+    "launch_error": null,
+    "start_unix_ns": 1794308430888369225,
+    "stderr": {
+      "bytes": 51047,
+      "file": "validation-01-test_ci_contract.stderr.log",
+      "git_blob": "710ced88f45c4040b43a56eb80b9336b3a00c095",
+      "git_mode": "100644",
+      "sha256": "7bea0daedcfbecae8446356dba85d51fe19555cc4d0b51ecb1aa3018d7ebfa39"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "validation-01-test_ci_contract.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/test_w1_factorial_native_gate.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308488812333902,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-test_w1_factorial_native_gate",
+    "launch_error": null,
+    "start_unix_ns": 1794308488278336732,
+    "stderr": {
+      "bytes": 1891,
+      "file": "validation-01-test_w1_factorial_native_gate.stderr.log",
+      "git_blob": "b0558a1e36b375f7fb98eb2aae7dd1ca763a9eb8",
+      "git_mode": "100644",
+      "sha256": "b89c387777d730c1c900db34b0807f98c584605452a993a00872819486d5f4ac"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "validation-01-test_w1_factorial_native_gate.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/test_prepare_artifact_upload.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308489489083012,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-test_prepare_artifact_upload",
+    "launch_error": null,
+    "start_unix_ns": 1794308489055927575,
+    "stderr": {
+      "bytes": 1406,
+      "file": "validation-01-test_prepare_artifact_upload.stderr.log",
+      "git_blob": "e92f9de4c5374fd983a1c916db7673566c633a82",
+      "git_mode": "100644",
+      "sha256": "5517cf007ff32fd86e3a7d8a6aa215ff2a50b80a2e549256b9a8c78bb4cfddb3"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "validation-01-test_prepare_artifact_upload.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/test_cell_storage_convergence_ci.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308490034238815,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-test_cell_storage_convergence_ci",
+    "launch_error": null,
+    "start_unix_ns": 1794308489752008552,
+    "stderr": {
+      "bytes": 3839,
+      "file": "validation-01-test_cell_storage_convergence_ci.stderr.log",
+      "git_blob": "1b7d86242cf9e0ffc88c0c214c1e047656fd2a55",
+      "git_mode": "100644",
+      "sha256": "88adab4e4c94a09dc085b22ebacd68ac1e22fc0314830d7e5d997c07262e4ecb"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "validation-01-test_cell_storage_convergence_ci.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/test_cell_discovery_v3_ci.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308490438718168,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-test_cell_discovery_v3_ci",
+    "launch_error": null,
+    "start_unix_ns": 1794308490305462835,
+    "stderr": {
+      "bytes": 880,
+      "file": "validation-01-test_cell_discovery_v3_ci.stderr.log",
+      "git_blob": "67ef843cf59bd868c355d86159b8b8fe29afc57c",
+      "git_mode": "100644",
+      "sha256": "66af42b617f5a00b64df9f8b80955197bab293f3c5eb4e809eb6bd6c76023cea"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "validation-01-test_cell_discovery_v3_ci.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/test_fresh_rejection_report.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308511789735715,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-test_fresh_rejection_report",
+    "launch_error": null,
+    "start_unix_ns": 1794308490703391606,
+    "stderr": {
+      "bytes": 4122,
+      "file": "validation-01-test_fresh_rejection_report.stderr.log",
+      "git_blob": "db6bfa13ecaa9dc2486636e778f1889c3dc5dc65",
+      "git_mode": "100644",
+      "sha256": "fec90d61f230e93b97377c0ba9b7f2ccd41f3107849394599f7d8aeffb5fce3a"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "validation-01-test_fresh_rejection_report.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/test_w1_qrom_current_ci.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308513280758379,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-test_w1_qrom_current_ci",
+    "launch_error": null,
+    "start_unix_ns": 1794308512044733569,
+    "stderr": {
+      "bytes": 2078,
+      "file": "validation-01-test_w1_qrom_current_ci.stderr.log",
+      "git_blob": "5e964d2019efeba3cebc8b919207d1262b6b8fe8",
+      "git_mode": "100644",
+      "sha256": "8feecb135545a564918c345b9e8017c72c4656e8af58412688822317efed3aa6"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "validation-01-test_w1_qrom_current_ci.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/test_pq_authority_effect_register.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308514564843813,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-test_pq_authority_effect_register",
+    "launch_error": null,
+    "start_unix_ns": 1794308513529464467,
+    "stderr": {
+      "bytes": 3019,
+      "file": "validation-01-test_pq_authority_effect_register.stderr.log",
+      "git_blob": "9027f2cd2c02ecf2ba5025f1329d2826eb15d61b",
+      "git_mode": "100644",
+      "sha256": "20cb6e8a8341b7307d79a8abcb103778f351221ba6bb0fe6bbaa4f7f47418044"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "validation-01-test_pq_authority_effect_register.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/test_pq_lifetime_budget.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308515236672141,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-test_pq_lifetime_budget",
+    "launch_error": null,
+    "start_unix_ns": 1794308514803777456,
+    "stderr": {
+      "bytes": 9494,
+      "file": "validation-01-test_pq_lifetime_budget.stderr.log",
+      "git_blob": "c244e9bf9aca5804d54dc9897cffb9b03d1eb8c2",
+      "git_mode": "100644",
+      "sha256": "37208eeec2976a4513da0e4b7ff1e98153f86dae847a902751a7897d16fdb735"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "validation-01-test_pq_lifetime_budget.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/test_w1_lifetime_ledger.py",
+      "-v"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308530976175979,
+    "exit_code": 1,
+    "explicit_environment": {},
+    "label": "validation-01-test_w1_lifetime_ledger",
+    "launch_error": null,
+    "start_unix_ns": 1794308515510394686,
+    "stderr": {
+      "bytes": 5093,
+      "file": "validation-01-test_w1_lifetime_ledger.stderr.log",
+      "git_blob": "a2dcde2d0fc586377d9b7dc3131f4b3279d06fe0",
+      "git_mode": "100644",
+      "sha256": "ee2dee908104af8298cb07ef0d94947e789e67f52e713c862c974c97a480afbe"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "validation-01-test_w1_lifetime_ledger.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308532181098064,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-corpus",
+    "launch_error": null,
+    "start_unix_ns": 1794308531245280178,
+    "stderr": {
+      "bytes": 0,
+      "file": "validation-01-corpus.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 558,
+      "file": "validation-01-corpus.stdout.log",
+      "git_blob": "018190f28576ebd0cf9a4100ba6131261f873b90",
+      "git_mode": "100644",
+      "sha256": "0485d6cfa5b0d38536751f0a1db46ec851cc349d38fb706639aeeea375e41e32"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/check_ci_contract.py"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308532668501299,
+    "exit_code": 1,
+    "explicit_environment": {},
+    "label": "validation-01-ci-contract",
+    "launch_error": null,
+    "start_unix_ns": 1794308532447023401,
+    "stderr": {
+      "bytes": 1097,
+      "file": "validation-01-ci-contract.stderr.log",
+      "git_blob": "5757f8d4f2a393c6568081c85053836fbddf721e",
+      "git_mode": "100644",
+      "sha256": "e6f10f53f1458185fd3d56ef42f369e5e8eae29ce43b652eab76d37b8a475246"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "validation-01-ci-contract.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/w1_qrom_current_ci.py",
+      "named",
+      "--repo-root",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+      "--out",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-03/validation-01-qrom-current"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308538501456012,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-qrom-current-named",
+    "launch_error": null,
+    "start_unix_ns": 1794308532904082052,
+    "stderr": {
+      "bytes": 13414,
+      "file": "validation-01-qrom-current-named.stderr.log",
+      "git_blob": "741df80613e14b8ac6f48057191ce86aeacef58c",
+      "git_mode": "100644",
+      "sha256": "fe9dd04cd66ff55eb73eced532163193c6472d7c1179bab095879e8a21d1e239"
+    },
+    "stdout": {
+      "bytes": 96,
+      "file": "validation-01-qrom-current-named.stdout.log",
+      "git_blob": "2b6ec06101ae419bba70dbfbdf1b511117aa56c4",
+      "git_mode": "100644",
+      "sha256": "ed3674ccd377d7922269eb138265ab6becd9b22c89b7ccbd1f47593487b71cea"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/w1_qrom_current_ci.py",
+      "drift",
+      "--repo-root",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+      "--out",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-03/validation-01-qrom-current"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308538980905091,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-qrom-historical-drift",
+    "launch_error": null,
+    "start_unix_ns": 1794308538760163317,
+    "stderr": {
+      "bytes": 0,
+      "file": "validation-01-qrom-historical-drift.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 96,
+      "file": "validation-01-qrom-historical-drift.stdout.log",
+      "git_blob": "2b6ec06101ae419bba70dbfbdf1b511117aa56c4",
+      "git_mode": "100644",
+      "sha256": "ed3674ccd377d7922269eb138265ab6becd9b22c89b7ccbd1f47593487b71cea"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/w1_qrom_current_implementation_audit.py",
+      "--repo-root",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+      "--output",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-03/validation-01-qrom-current/implementation.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308539926092676,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-qrom-current-implementation",
+    "launch_error": null,
+    "start_unix_ns": 1794308539241074463,
+    "stderr": {
+      "bytes": 0,
+      "file": "validation-01-qrom-current-implementation.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "validation-01-qrom-current-implementation.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/pq_authority_effect_register.py"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308540314330058,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-authority-register",
+    "launch_error": null,
+    "start_unix_ns": 1794308540181398456,
+    "stderr": {
+      "bytes": 0,
+      "file": "validation-01-authority-register.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 13223,
+      "file": "validation-01-authority-register.stdout.log",
+      "git_blob": "153143971ff8d7f02f787f12c0cf8c93f37e161c",
+      "git_mode": "100644",
+      "sha256": "b2193f3318f3ada8896d14081e44916c64e91bca0c5d96fb67d22b866acb5ad4"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/pq_lifetime_budget.py"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308540700991386,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-pq128-lifetime",
+    "launch_error": null,
+    "start_unix_ns": 1794308540568532516,
+    "stderr": {
+      "bytes": 0,
+      "file": "validation-01-pq128-lifetime.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 12824,
+      "file": "validation-01-pq128-lifetime.stdout.log",
+      "git_blob": "a8d83690f50a724b810f0f1ebd8eecb8191babcd",
+      "git_mode": "100644",
+      "sha256": "19927acdc66216b824653f4776f530164156b85d18eb4ed6039ac6ad6975b7ad"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/w1_lifetime_ledger.py",
+      "--input",
+      "evidence/pon-w1-lifetime-current-20261110-685a/project-input.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308541103329410,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-w1-lifetime-report",
+    "launch_error": null,
+    "start_unix_ns": 1794308540971620919,
+    "stderr": {
+      "bytes": 0,
+      "file": "validation-01-w1-lifetime-report.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 31311,
+      "file": "validation-01-w1-lifetime-report.stdout.log",
+      "git_blob": "7d629571401ef98b973a29324b69c5bd4355c7e9",
+      "git_mode": "100644",
+      "sha256": "10038c7b28384995e9bca883b010a1699b89d7d757067fbeeca409f30a197537"
+    }
+  },
+  {
+    "argv": [
+      "cmp",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-03/validation-01-w1-lifetime-report.stdout.log",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a/evidence/pon-w1-lifetime-current-20261110-685a/project-report.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308541390467154,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-w1-lifetime-report-identical",
+    "launch_error": null,
+    "start_unix_ns": 1794308541367976684,
+    "stderr": {
+      "bytes": 0,
+      "file": "validation-01-w1-lifetime-report-identical.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "validation-01-w1-lifetime-report-identical.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308541765485857,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-distributed-inventory",
+    "launch_error": null,
+    "start_unix_ns": 1794308541631682357,
+    "stderr": {
+      "bytes": 0,
+      "file": "validation-01-distributed-inventory.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 35,
+      "file": "validation-01-distributed-inventory.stdout.log",
+      "git_blob": "377f4ef57d19f3b41daa3be227d631fbbb09ce0f",
+      "git_mode": "100644",
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/check_repository.py"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308559510399390,
+    "exit_code": 2,
+    "explicit_environment": {},
+    "label": "validation-01-repository-and-markdown-links",
+    "launch_error": null,
+    "start_unix_ns": 1794308542032466377,
+    "stderr": {
+      "bytes": 268,
+      "file": "validation-01-repository-and-markdown-links.stderr.log",
+      "git_blob": "6e9153e560803944e152736a46d9110c8acd5e38",
+      "git_mode": "100644",
+      "sha256": "a2414e4cf0201195996f95596808c17f95d8cc08a607b5d0ce5ab4e2af674869"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "validation-01-repository-and-markdown-links.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "diff",
+      "--check",
+      "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+      "a715b2c8e89732ce356ebae67f978ef232156c04",
+      "--",
+      ".",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/changed-owner-clippy.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/changed-owner-clippy.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/format-check.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/format-check.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-build.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-build.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-native.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-native.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-reader.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-reader.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-tests.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-probe-tests.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-reader-tests.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/fresh-reader-tests.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/isolated-inactive-page.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/isolated-inactive-page.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/isolated-large-parent.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/isolated-large-parent.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/preflight.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/preflight.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/prior-source-identical.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/prior-source-identical.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/source-after.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/source-after.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/source-before.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/source-before.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/source-identical.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/followup-v4/source-identical.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/base-locked-graph.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/base-locked-graph.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/base-preflight.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/base-preflight.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/committed-preflight.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/committed-preflight.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/correct-owned-branch-name.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/correct-owned-branch-name.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/crypto-library-v3.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/crypto-library-v3.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/diff-check.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/diff-check.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/format-candidate.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/format-candidate.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/fresh-probe-apply.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/fresh-probe-apply.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/green-apply.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/green-apply.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/green-confirmation-v3.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/green-confirmation-v3.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/green-confirmation.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/green-confirmation.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/green-preflight.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/green-preflight.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/green-settlement-v3.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/green-settlement-v3.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/green-settlement.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/green-settlement.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/locked-dependency-fetch.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/locked-dependency-fetch.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/node-library-v3.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/node-library-v3.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-apply.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-apply.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-confirmation-r2.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-confirmation-r2.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-confirmation-v3.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-confirmation-v3.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-preflight.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-preflight.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-resume-preflight.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-resume-preflight.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-settlement-r2.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-settlement-r2.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-settlement.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-settlement.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/red-source.patch",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/settlement-all-features-v3.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/settlement-all-features-v3.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/source-commit.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/source-commit.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/stage-source.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/stage-source.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-apply-exact-test-diagnostic.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-apply-exact-test-diagnostic.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-apply-verified-reference-reader.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-apply-verified-reference-reader.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-cargo.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-cargo.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-committed-preflight.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-committed-preflight.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-diff-check.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-diff-check.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-format-candidate.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-format-candidate.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-locked-graph.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-locked-graph.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-precommit-preflight.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-precommit-preflight.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-preflight.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-preflight.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-rustc.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-rustc.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-source-before.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-source-before.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-source-commit.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-source-commit.stdout.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-stage-source.stderr.log",
+      ":(exclude,literal)evidence/pon-followthrough-20261110-685a/native/original-v3/v3-stage-source.stdout.log"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308559856601704,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-source-diff-whitespace",
+    "launch_error": null,
+    "start_unix_ns": 1794308559773221734,
+    "stderr": {
+      "bytes": 0,
+      "file": "validation-01-source-diff-whitespace.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "validation-01-source-diff-whitespace.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308580875452270,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-format",
+    "launch_error": null,
+    "start_unix_ns": 1794308560085396645,
+    "stderr": {
+      "bytes": 0,
+      "file": "validation-01-format.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "validation-01-format.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "a715b2c8e89732ce356ebae67f978ef232156c04",
+      "--output",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-03/validation-01-source-after.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308587301023032,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-source-after",
+    "launch_error": null,
+    "start_unix_ns": 1794308580911229876,
+    "stderr": {
+      "bytes": 0,
+      "file": "validation-01-source-after.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 423,
+      "file": "validation-01-source-after.stdout.log",
+      "git_blob": "ac2d0f074de6b022391e1327cadc8c6d4a5cc09d",
+      "git_mode": "100644",
+      "sha256": "e326cd35576ad43ff16b461b848b3fe1d2658337fd05550c57a656100b3b3fbc"
+    }
+  },
+  {
+    "argv": [
+      "cmp",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-03/validation-01-source-before.json",
+      "/home/qian-qi/chain-pon-followthrough-20261110-685a-inputs/integration-03/validation-01-source-after.json"
+    ],
+    "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "end_unix_ns": 1794308587344261724,
+    "exit_code": 0,
+    "explicit_environment": {},
+    "label": "validation-01-source-identical",
+    "launch_error": null,
+    "start_unix_ns": 1794308587335982140,
+    "stderr": {
+      "bytes": 0,
+      "file": "validation-01-source-identical.stderr.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "file": "validation-01-source-identical.stdout.log",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+]

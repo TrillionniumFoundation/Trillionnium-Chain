@@ -1,0 +1,17 @@
+
+running 4 tests
+test store::confirmation_chainwork_tests::final_callback_foreign_commit_cannot_return_a_stale_confirmation ... FAILED
+test store::confirmation_chainwork_tests::final_callback_same_connection_write_cannot_return_a_stale_confirmation ... FAILED
+test store::confirmation_chainwork_tests::full_width_retained_work_corruption_refuses_tip_inclusion_and_middle ... FAILED
+test store::confirmation_chainwork_tests::a_common_work_offset_cannot_replace_the_zero_work_genesis_anchor ... FAILED
+
+failures:
+
+failures:
+    store::confirmation_chainwork_tests::a_common_work_offset_cannot_replace_the_zero_work_genesis_anchor
+    store::confirmation_chainwork_tests::final_callback_foreign_commit_cannot_return_a_stale_confirmation
+    store::confirmation_chainwork_tests::final_callback_same_connection_write_cannot_return_a_stale_confirmation
+    store::confirmation_chainwork_tests::full_width_retained_work_corruption_refuses_tip_inclusion_and_middle
+
+test result: FAILED. 0 passed; 4 failed; 0 ignored; 0 measured; 1322 filtered out; finished in 0.33s
+

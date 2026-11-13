@@ -1,0 +1,22 @@
+{
+  "operation_id": "dev-bootstrap-8b4f-v1",
+  "parent_material": {
+    "path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/bootstrap-v1/worker/parent-material.json",
+    "sha256": "3dc662136885ef85c77b16e6abf951169d94b29d274a3fc59021d98997eb5868",
+    "value": {
+      "adapter": "468470f45894e7dbd6d937b3f3c21fdf657c9f468594bd242ce38b2a2677ff0a",
+      "contract": "9252301c8c8dee242e6721e4dc012d7762cd2ced049e6585533bf0324b3f6af9",
+      "directory": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/bootstrap-v1/worker",
+      "file_sha256": "17a8b660f5e9d370713849b00f3f620afbd992b364ba318032a6a1b3179d5289",
+      "generation": 1,
+      "operation_id": "dev-bootstrap-8b4f-v1",
+      "schema": "hepta-smollm-parent-material-v1"
+    }
+  },
+  "returncode": 0,
+  "schema": "chain-development-bootstrap-exit-v1",
+  "scope": "explicit-development-bootstrap-not-original-owner-installation",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "1f3ab3dd54e65e3a187ca1cc9322eb434638a224774e7370e91dd045372226e3",
+  "wall_ns": 5874363311
+}

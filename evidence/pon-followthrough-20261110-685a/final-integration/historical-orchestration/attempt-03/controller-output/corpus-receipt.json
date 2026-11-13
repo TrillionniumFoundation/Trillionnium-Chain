@@ -1,0 +1,193 @@
+{
+  "candidate_index_tree_before_corpus_refresh": "8d2bab0a0d5ddd557cb18e0db42b08e024f090d5",
+  "candidate_plan_sha256": "5293b876b8b4d0904640af70ca73abe04a9c7f194d11a8b82994e6261615b5d2",
+  "changed_existing_pins": [
+    {
+      "after": "a2ff2e7128d546c3b7dc842082e697aa05bdc65d",
+      "before": "27adab1aa9913d811d9bb1fb549589a0a95b6965",
+      "path": ".github/workflows/pon-next-architecture-security.yml"
+    },
+    {
+      "after": "71f063a8446b2e8f81073d625ae6aa699fcc5413",
+      "before": "f5b8534fd863587419854e5a8827f8c3a86c3d52",
+      "path": ".github/workflows/pon-w1-qrom-closure.yml"
+    },
+    {
+      "after": "08d044a5f4c69ac6022446e7fd03965f0d35da90",
+      "before": "c9ab642e0f23194b32a7b283107d215deb534c7a",
+      "path": ".github/workflows/pon-w1-work-security.yml"
+    },
+    {
+      "after": "d41db937da938ca3e4bb8b55313fc81cc96a6c6f",
+      "before": "adbce9a7866f1b9edfbbb3b556873c509d12228d",
+      "path": "config/pon/pq-authority-effects-v1.json"
+    },
+    {
+      "after": "184b82c3a1ff3543355ba746e8bb9b8bba10a5cc",
+      "before": "c36fc3e9d904c6e9b634425a1784f96280305951",
+      "path": "config/pon/pq128-lifetime-budget-v1.json"
+    },
+    {
+      "after": "f685741b6137d0681f437d6dffe2b123cbf7bfa5",
+      "before": "7644527dccaf4f8559ac2ca94334b658ca1d7438",
+      "path": "config/pon/pq128-source-lock-v1.json"
+    },
+    {
+      "after": "2668dfc8bc64b4e5f4bf0ec8a4e05f63f5bc258a",
+      "before": "17c1aee3547b8b21be7914b7fe2f6e1a04d9a998",
+      "path": "config/pon/w1-qrom-implementation-current-v2.json"
+    },
+    {
+      "after": "77c11f0c90452c8b49586ae37cf0a1924ebd90d1",
+      "before": "9e95a0870c3ab8af6871a62d8ad8bc4edc189ab8",
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    },
+    {
+      "after": "d36d1ecd3588ae16f8d3792d79a5c6bc66abbfad",
+      "before": "0459757b4b8d94c64ec7a825f598012e524d9213",
+      "path": "docs/security/PQ128_LIFETIME_BUDGET_V1.md"
+    },
+    {
+      "after": "56d4c24c361b6bb0afffba5b9179ea3b7fdd707a",
+      "before": "32d760fc0e5fd89588a0281b731db3bb803420f6",
+      "path": "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md"
+    },
+    {
+      "after": "de72d3ddaeb9933d5120dd9ce42df9cd2523df55",
+      "before": "1622af8f74183cf3a8d2ce0358dc808158ba774b",
+      "path": "docs/security/W1_QROM_CURRENT_SOURCE_MAPPING_V2.md"
+    },
+    {
+      "after": "0713254b4cf6ad53c344484919357e3974081add",
+      "before": "8d7b8b6029deaaeb9f7db64aa015c6f27dbaebb3",
+      "path": "scripts/ci/check_ci_contract.py"
+    },
+    {
+      "after": "21094a39eb15525663925ac2d258deae40502990",
+      "before": "250454d67b984e5b7784a27e7a326a2d91f4205a",
+      "path": "scripts/ci/check_pq_research_integration.py"
+    },
+    {
+      "after": "65b8dd06f474e61cacb3d7818c8c881510304a41",
+      "before": "648295580fa3d8f6c6b0cc219fd550dffdcc85b2",
+      "path": "scripts/ci/ci_job.sh"
+    },
+    {
+      "after": "d2f71b8317b1b5dd76f97e0b743f8d2dd77d9729",
+      "before": "5ed3512c9289df5043ef1c95013567fe54d22c5e",
+      "path": "scripts/ci/pq_authority_effect_register.py"
+    },
+    {
+      "after": "70ab1e250ce287a7a6503d6df44c8ac9ed9f5595",
+      "before": "da4ffd67bfeffe39f529c32af1ab086f700ba6f5",
+      "path": "scripts/ci/test_cell_storage_convergence_ci.py"
+    },
+    {
+      "after": "6a7448503a21e701d705041b7b423dce6541e665",
+      "before": "89eb4c339c1ed8023345570fa019e9ffb95f81c9",
+      "path": "scripts/ci/test_ci_contract.py"
+    },
+    {
+      "after": "329a6a0e633243a026b7d10b5b5e23f9195dbab2",
+      "before": "c3d12d5d5433d79c1d0d592aae5584ecf2c1731b",
+      "path": "scripts/ci/test_pq_authority_effect_register.py"
+    },
+    {
+      "after": "8e95f890e9e40415aa5ada408ee9dedae964abdd",
+      "before": "6c944696db9dc8db8668981958c7117d910aad36",
+      "path": "scripts/ci/test_w1_factorial_native_gate.py"
+    },
+    {
+      "after": "faeda2b9c7bad680e87183a7ad3496b8873b9c87",
+      "before": "9f37cdc5bc2f7b2faaa2c13afa9c7b3d6a44a883",
+      "path": "scripts/ci/test_w1_lifetime_ledger.py"
+    },
+    {
+      "after": "b84c395252e39930690b804d114ac7ad8e82d7a6",
+      "before": "f3297626cbf62990c2b061f12fb615467ee071ff",
+      "path": "scripts/ci/test_w1_qrom_current_implementation_audit.py"
+    },
+    {
+      "after": "5863727e6d5a4ae977fd1a958972b0732b4c7f93",
+      "before": "2e8973a3a5af930938a08432e1384da6ebe6f177",
+      "path": "scripts/w1_lifetime_ledger.py"
+    },
+    {
+      "after": "5c9d1c07634813973e9a6d02c468d8437c3a732c",
+      "before": "6676a90ee5924086832f85bf967ef8713061d672",
+      "path": "scripts/w1_qrom_current_implementation_audit.py"
+    },
+    {
+      "after": "bc8f7d5580839ac69fbeaed1475e252858cc87f8",
+      "before": "1073fbf92c159b82f0822f13281018a46198e1a8",
+      "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+    },
+    {
+      "after": "62f0a44f37d6258c32eee5f8977a99a51d89c284",
+      "before": "a8bd7b9c8d9b02617060bea955b3bb21d905129f",
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs"
+    },
+    {
+      "after": "43f2f2f84edca75a5b7e0777de702b6d46dc7bcc",
+      "before": "abcccb052bb816fe3d6bc842531ba7dd56bb99b2",
+      "path": "trillionnium/crates/trnm-service-settlement/src/native_budget.rs"
+    },
+    {
+      "after": "8a867e174418c03d72e74ce6e306f85f45cd589c",
+      "before": "2b5ed7f62b206494303432824bdbd22b5bff7c89",
+      "path": "trillionnium/crates/trnm-service-settlement/src/native_budget/tests.rs"
+    },
+    {
+      "after": "d17639fd91334a6a4b227db6492e4d91b40ea7d8",
+      "before": "caeb464e53adf2a14eaa3c8c32eddebd867ce619",
+      "path": "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2.rs"
+    },
+    {
+      "after": "5ee09a702d2e0012709a41b497a0536151115eff",
+      "before": "d7019e8a8b29f784ed66a21edd7ac43cdd646dd7",
+      "path": "trillionnium/crates/trnm-service-settlement/src/native_generation_budget_v2/tests.rs"
+    }
+  ],
+  "checkpoint_commit": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+  "checkpoint_tree": "7c003a3d183ad33ff4f3349cbcce61564f73a2ba",
+  "historical_evidence_unchanged": true,
+  "historical_fields_unchanged": true,
+  "native_executed": false,
+  "new_required_paths": [
+    "config/pon/w1-qrom-current-required-tests-v1.json",
+    "docs/research/PON_FRESH_REJECTION_COST_V1.md",
+    "evidence/pon-w1-lifetime-current-20261110-685a/README.md",
+    "evidence/pon-w1-lifetime-current-20261110-685a/project-input.json",
+    "evidence/pon-w1-lifetime-current-20261110-685a/project-report.json",
+    "scripts/ci/prepare_artifact_upload.py",
+    "scripts/ci/test_fresh_rejection_report.py",
+    "scripts/ci/test_prepare_artifact_upload.py",
+    "scripts/ci/test_w1_qrom_current_ci.py",
+    "scripts/ci/w1_native_controls.py",
+    "scripts/ci/w1_qrom_current_ci.py",
+    "scripts/pon_fresh_rejection_report.py",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pon_fresh_rejection_cost.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs",
+    "evidence/pon-w1-qrom-current-20261110-685a/README.md",
+    "evidence/pon-w1-qrom-current-20261110-685a/source-binding.json",
+    "evidence/pon-w1-qrom-current-20261110-685a/current-report.json",
+    "evidence/pon-w1-qrom-current-20261110-685a/prior-v2-on-c2.command.json",
+    "evidence/pon-w1-qrom-current-20261110-685a/prior-v2-on-c2.stdout.log",
+    "evidence/pon-w1-qrom-current-20261110-685a/prior-v2-on-c2.stderr.log",
+    "evidence/pon-w1-qrom-current-20261110-685a/historical/current-v2.json",
+    "evidence/pon-w1-qrom-current-20261110-685a/historical/current-auditor.py",
+    "evidence/pon-w1-qrom-current-20261110-685a/historical/current-tests.py",
+    "evidence/pon-w1-qrom-current-20261110-685a/historical/current-mapping.md.txt"
+  ],
+  "old_corpus_sha256": "8b04622f2dd117ec137dc5995ba4ee00730ae41d6c0ba75b43d0aa2d34abd552",
+  "pinned_blobs": 1103,
+  "production_qualified": false,
+  "required_paths": 1011,
+  "retained_original_pin_paths": 1079,
+  "retained_original_required_paths": 987,
+  "schema": "trnm-corpus-refresh-observation-v1",
+  "scope": "source binding preparation only; no final commit or acceptance is claimed",
+  "status": "HOLD_NO_GO",
+  "tests_executed": false,
+  "updated_corpus_sha256": "a378946fe7e0799ed29dc6d7ca17563aecc1d5a0bc09b2efcca863628e1265b0"
+}

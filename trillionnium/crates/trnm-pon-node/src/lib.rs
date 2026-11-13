@@ -48,6 +48,8 @@ pub mod research_work_schedule;
 pub mod root_recovery_v3;
 #[cfg(test)]
 mod sp27_cost_attribution_tests;
+/// Explicit finite cross-process resource reservations for a fixed local Node.
+pub mod resource_owner_v1;
 mod store;
 pub use error::{Error, ErrorCode, ErrorKind};
 use serde_json::{json, Value};
@@ -83,8 +85,8 @@ pub use store::native_owner_observation::{
     MAX_CENSUS_PACKET_BYTES,
 };
 pub use store::packet_observation::{
-    observe_existing_packet, PacketObservationBackend,
-    DEFAULT_PACKET_OBSERVATION_SNAPSHOT_BYTE_LIMIT,
+    observe_existing_packet, observe_existing_packet_owned, PacketObservationBackend,
+    PacketObservationResourceContractV1, DEFAULT_PACKET_OBSERVATION_SNAPSHOT_BYTE_LIMIT,
 };
 pub use store::pinned_account_query::PinnedNativeAccountQuery;
 pub use store::storage_service::{

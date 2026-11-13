@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-baseline-control-20261110-685a",
+  "end_unix_ns": 1794305204588024998,
+  "exit_code": 0,
+  "label": "preflight",
+  "start_unix_ns": 1794305204485299248,
+  "stderr": {
+    "bytes": 0,
+    "file": "preflight.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 176,
+    "file": "preflight.stdout.log",
+    "sha256": "69b1e20b92bc0b507af0b6d0fc4aa8170de89c5e2f8641603386d44d11c6c5de"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "git",
+    "diff",
+    "--check",
+    "a715b2c8e89732ce356ebae67f978ef232156c04",
+    "8ab052065ae8307b1ab2c9d42b0dca229a5a3b9d",
+    "--",
+    ".",
+    ":(exclude)evidence/**"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794311105489889582,
+  "exit_code": 0,
+  "interrupted": false,
+  "label": "source-diff-whitespace",
+  "process_exit_code": 0,
+  "recorder_error": null,
+  "start_unix_ns": 1794311105425194133,
+  "stderr": {
+    "bytes": 0,
+    "file": "source-diff-whitespace.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 0,
+    "file": "source-diff-whitespace.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "timed_out": false,
+  "timeout_seconds": 1800
+}

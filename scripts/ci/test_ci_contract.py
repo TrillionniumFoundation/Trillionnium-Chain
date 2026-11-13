@@ -456,6 +456,9 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             'scripts/test_llm_runtime_exit_observation.py',
             'scripts/test_llm_runtime_stop.py',
             'scripts/test_llm_inherited_runtime.py',
+            'scripts/test_llm_inherited_operation.py',
+            'scripts/test_llm_frozen_evaluation.py',
+            'scripts/test_run_learning_service_development.py',
             'scripts/test_llm_neural_read_worker.py',
             'scripts/test_llm_python_runtime_contract.py',
         )
@@ -473,6 +476,33 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             for label, changed in changes.items():
                 with self.subTest(path=path, change=label), self.assertRaises(ValueError):
                     check_independent_conformance(changed, self.lanes)
+
+    def test_learning_service_owner_controls_cannot_be_removed_or_swallowed(self):
+        # Keep the new owner's real native execution mandatory alongside the
+        # retained Task contracts, independently of the checker's constant.
+        command = ('    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml '
+                   '-p trnm-pon-node --example learning_service_round --example learning_service_recovery_probe --all-features '
+                   '-- --test-threads=1\n')
+        self.assertEqual(self.script.count(command), 1)
+        changes = {
+            'missing': self.script.replace(command, ''),
+            'duplicate': self.script.replace(command, command * 2),
+            'true stub': self.script.replace(command, '    true # ' + command.lstrip()),
+            'comment': self.script.replace(command, '    # ' + command.lstrip()),
+            'swallowed failure': self.script.replace(command, command.rstrip() + ' || true\n'),
+            'wrong lane': self.script.replace(command, '').replace(
+                '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+            'other-lane duplicate': self.script.replace(
+                '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command,
+            ),
+            'offline removed': self.script.replace(command, command.replace(' --offline', '')),
+            'lock removed': self.script.replace(command, command.replace(' --locked', '')),
+            'tests skipped': self.script.replace(command, command.replace('-- --test-threads=1', '-- --ignored')),
+        }
+        for label, changed in changes.items():
+            with self.subTest(change=label), self.assertRaisesRegex(
+                    ValueError, 'native learning service reconciliation'):
+                check_independent_conformance(changed, self.lanes)
 
     def test_proof_latency_controls_cannot_be_missing_duplicated_stubbed_or_moved(self):
         # Keep this inventory independent of the checker's command tuple.
@@ -2793,6 +2823,14 @@ class MergedQualificationLaneTests(unittest.TestCase):
                 '    python3 scripts/ci/test_read_validated_business_goodput.py\n',
                 '    python3 scripts/ci/test_read_failed_native_campaign_zip.py\n',
             ), '    python3 scripts/ci/test_pon_w1_cost_matrix_reader.py\n'),
+        'native_observation_guards': ('repository-truth',
+            '    python3 scripts/ci/test_run_legacy_reorg_root_abba.py\n', (
+                '    python3 -B scripts/ci/test_w1_factorial_native_gate.py\n',
+                '    python3 -B scripts/ci/test_prepare_artifact_upload.py\n',
+                '    python3 -B scripts/ci/test_cell_storage_convergence_ci.py\n',
+                '    python3 -B scripts/ci/test_fresh_rejection_report.py\n',
+            ), '    # These in-memory counterexamples use unchanged retained inputs, not a new hardware observation.\n'
+            '    python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54\n'),
         'fixed_probability': ('repository-truth',
                               "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_work_scale_contract.py' -v\n", (
             "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_fixed_probability_contract.py' -v\n",
@@ -2901,6 +2939,9 @@ class MergedQualificationLaneTests(unittest.TestCase):
 
     def test_current_lifetime_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('lifetime_current_source')
+
+    def test_native_observation_guard_commands_cannot_change_position_multiplicity_or_failure_policy(self):
+        self.reject_command_mutations('native_observation_guards')
 
     def test_fixed_probability_commands_cannot_change_position_multiplicity_or_failure_policy(self):
         self.reject_command_mutations('fixed_probability')

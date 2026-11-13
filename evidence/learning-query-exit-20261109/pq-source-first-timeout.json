@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/test_pq_research_integration.py",
+    "-v"
+  ],
+  "tool_timeout_seconds": 90,
+  "outer_job": "1a1be378983-3902-10",
+  "outcome": "TimeoutExpired; not a test pass",
+  "partial_child_output_retained": false,
+  "evidence_gap": "initial capture helper did not persist TimeoutExpired partial child stdout/stderr; outer supervisor traceback is retained",
+  "gate_or_product_deadline_changed": false
+}

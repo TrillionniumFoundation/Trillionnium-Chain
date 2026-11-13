@@ -1,0 +1,129 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/test_w1_factorial_native_gate.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794311037545775421,
+  "exit_code": 0,
+  "interrupted": false,
+  "label": "test_w1_factorial_native_gate",
+  "process_exit_code": 0,
+  "python_named_observation": {
+    "command_exit_code": 0,
+    "expected_names": [
+      "LegalGateTests.test_complete_current_native_roster_passes",
+      "LegalGateTests.test_every_retained_versioned_material_and_observer_control_executes_once",
+      "LegalGateTests.test_summary_only_stale_filtered_duplicate_or_failed_summaries_are_refused",
+      "NativeGateTests.test_actual_workflow_uses_both_strict_gates_without_changing_native_selectors",
+      "NativeGateTests.test_cli_failure_never_writes_success_report",
+      "NativeGateTests.test_cli_fifo_and_symlink_log_refuse_without_waiting",
+      "NativeGateTests.test_complete_roster_passes",
+      "NativeGateTests.test_every_named_control_requires_one_successful_terminal",
+      "NativeGateTests.test_every_suite_rejects_wrong_count_failure_ignored_and_duplicate_summary",
+      "NativeGateTests.test_factorial_example_does_not_accept_filtered_or_measured_tests",
+      "NativeGateTests.test_factorial_example_rejects_missing_duplicate_replaced_or_failed_named_control",
+      "NativeGateTests.test_frozen_names_equal_current_native_source_and_retained_counts",
+      "NativeGateTests.test_history_named_controls_remain_required_once",
+      "NativeGateTests.test_ignored_child_is_exact_and_parent_still_must_pass",
+      "NativeGateTests.test_kernel_rejects_missing_duplicate_or_replaced_named_control",
+      "NativeGateTests.test_nocapture_retains_name_until_its_serial_success_terminal",
+      "NativeGateTests.test_original_old_counts_cannot_certify_the_current_roster",
+      "NativeGateTests.test_selected_native_suites_keep_nonzero_filtered_observations"
+    ],
+    "observed_tests": [
+      {
+        "name": "LegalGateTests.test_complete_current_native_roster_passes",
+        "outcome": "ok"
+      },
+      {
+        "name": "LegalGateTests.test_every_retained_versioned_material_and_observer_control_executes_once",
+        "outcome": "ok"
+      },
+      {
+        "name": "LegalGateTests.test_summary_only_stale_filtered_duplicate_or_failed_summaries_are_refused",
+        "outcome": "ok"
+      },
+      {
+        "name": "NativeGateTests.test_actual_workflow_uses_both_strict_gates_without_changing_native_selectors",
+        "outcome": "ok"
+      },
+      {
+        "name": "NativeGateTests.test_cli_failure_never_writes_success_report",
+        "outcome": "ok"
+      },
+      {
+        "name": "NativeGateTests.test_cli_fifo_and_symlink_log_refuse_without_waiting",
+        "outcome": "ok"
+      },
+      {
+        "name": "NativeGateTests.test_complete_roster_passes",
+        "outcome": "ok"
+      },
+      {
+        "name": "NativeGateTests.test_every_named_control_requires_one_successful_terminal",
+        "outcome": "ok"
+      },
+      {
+        "name": "NativeGateTests.test_every_suite_rejects_wrong_count_failure_ignored_and_duplicate_summary",
+        "outcome": "ok"
+      },
+      {
+        "name": "NativeGateTests.test_factorial_example_does_not_accept_filtered_or_measured_tests",
+        "outcome": "ok"
+      },
+      {
+        "name": "NativeGateTests.test_factorial_example_rejects_missing_duplicate_replaced_or_failed_named_control",
+        "outcome": "ok"
+      },
+      {
+        "name": "NativeGateTests.test_frozen_names_equal_current_native_source_and_retained_counts",
+        "outcome": "ok"
+      },
+      {
+        "name": "NativeGateTests.test_history_named_controls_remain_required_once",
+        "outcome": "ok"
+      },
+      {
+        "name": "NativeGateTests.test_ignored_child_is_exact_and_parent_still_must_pass",
+        "outcome": "ok"
+      },
+      {
+        "name": "NativeGateTests.test_kernel_rejects_missing_duplicate_or_replaced_named_control",
+        "outcome": "ok"
+      },
+      {
+        "name": "NativeGateTests.test_nocapture_retains_name_until_its_serial_success_terminal",
+        "outcome": "ok"
+      },
+      {
+        "name": "NativeGateTests.test_original_old_counts_cannot_certify_the_current_roster",
+        "outcome": "ok"
+      },
+      {
+        "name": "NativeGateTests.test_selected_native_suites_keep_nonzero_filtered_observations",
+        "outcome": "ok"
+      }
+    ],
+    "reported_summary_counts": [
+      18
+    ],
+    "successful_named_suite_observed": true
+  },
+  "recorder_error": null,
+  "start_unix_ns": 1794311028658243595,
+  "stderr": {
+    "bytes": 2898,
+    "file": "test_w1_factorial_native_gate.stderr.log",
+    "sha256": "fda56a007479e9d31854d2baeb4e0976ecc0bd129dbe65d387c76eb8b929a354"
+  },
+  "stdout": {
+    "bytes": 0,
+    "file": "test_w1_factorial_native_gate.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "timed_out": false,
+  "timeout_seconds": 1800
+}

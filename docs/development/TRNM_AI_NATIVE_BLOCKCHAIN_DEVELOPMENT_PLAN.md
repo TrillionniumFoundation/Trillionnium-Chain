@@ -1,3 +1,28 @@
+**Source consolidation and retained native controls, 2026-11-13 UTC — HOLD:**
+
+Continue the existing #847 candidate `b683714cdd5ba241c16c335a81aebc12c1581902`
+with the original #830 resource-owner head
+`bb3f13ed78edd367381275a3ae4752f1f4da4c22`, #829 learning/readback head
+`0cdc6ca1878854dd794aad25adfb072bc5fa4422`, and #948 followthrough head
+`a4aebf12ffb73c0f5ae8912048153bdd0cae9c4b`. Keep finite local reservations,
+confirmed process exits, original-operation recovery, confirmation chainwork
+and storage-epoch checks, and fresh settlement-journal readback fences together.
+Preserve current independent security/lifetime controls, raw artifact archives,
+original evidence bytes, and newer source-contract definitions when their older
+metadata conflicts. Rebind exact source pins only after the complete integration
+source is fixed; intermediate pins must continue to refuse changed bytes.
+
+The strict named W1 completion reader and the retained frozen roster now include
+all current History source declarations: 38 successful controls and the one
+ignored child fixture required by its parent. The five additions already existed
+in `b683714c`: four detached-budget controls and the native-completion handoff
+control. The older 28, 33, and 36 success counts cannot certify this current
+roster. No original test name is removed, and a name or aggregate count alone
+cannot substitute for its unique successful terminal observation. This is a
+source/reader repair, not a claim that the complete native suites executed here.
+Local synthetic reader/control tests retain their own execution scope. Full
+current-source qualification, independent resource/service bounds, model gain,
+whole-chain PQ acceptance, and production activation remain HOLD.
 
 **PoN and learning-outcome composition, 2026-11-11 America/New_York — HOLD:**
 
@@ -1968,6 +1993,49 @@ passed one explicit same-source infrastructure recheck. Independent operators,
 public discovery, long custody, equal-resource gain, complete external payment,
 irreversible-effect reconciliation and whole-lifecycle PQ security remain open.
 The broader disposition remains HOLD / NO-GO.
+
+**Original-owner rejection-cost continuation, 2026-11-08 America/New_York — HOLD:**
+Continue the real #812 integration source `7e044b65454f4c9ea505591727332acffb33e7e5`,
+selectively carrying #802's bounded observer envelope while retaining later
+owner fixes. The [new explicit local admission profile](specs/pon/RESOURCE_OWNER_ADMISSION_V1.md)
+reserves execution and cleanup principal durably, binds the original operation,
+packet bytes, active-parent commitment and deadline, and preserves outstanding
+cost across process loss and replay. Adopted packet readers require the original
+account; no restart, identity or new listener creates credit. The native adapter
+settles conservatively only after actual child termination and cleanup. Existing
+public-v3 r14 semantics stay unchanged. The [execution record](../../evidence/pon-resource-owner-20261108/README.md)
+separates source preparation, component evidence and remaining qualification.
+
+Frozen C1 `8fed7514193e06058f4eaf18f362a8fb968ce96f`, tree
+`1ebc5d4c252eacb727da67945892a9ae0b8d76c4`, passed seven selected native suites:
+core 23, scalar CPU 60, root rejection 7, r14 compatibility 1, packet observation
+15, accepted-task controls 4 and process-envelope controls 4. These are 114
+reported selected passes with zero failures/ignores, not a complete workspace
+native run. Four static suites passed 43 + 50 + 57 + 151 = 301 controls; all
+11 static gates passed. The separate native runner also passed strict
+all-workspace/all-target/all-feature Clippy with `-D warnings` and formatting.
+Rust 1.95.0 and the executed Node library test artifact's original optimisation
+level 3 were retained. The complete ai395 source receipt covered
+23,333 tracked entries / 2,380,365,122 bytes and matched before/after; the locked
+offline Cargo graph resolved 181 packages and 26 workspace members.
+
+Retain the original partial-snapshot missing-fixture failures and local test
+codegen SIGKILL with its unconfirmed cause. No preparatory local test pass is
+invented. The mac publisher's Python 3.9/tomllib preflight failure and successful
+retry with its existing Python 3.14.3 remain separate observations. An
+evidence and plan publication child, with its matching documentation source
+pin, must retain C1 runtime/test/profile/dependency bytes and pass its own
+source/link gates. Keep C1 native results
+attached to C1; record the publication child's exact identity, actual checks
+and GitHub readback independently in the resulting pull request.
+
+All-ingress ownership, physical overshoot, independent rollback freshness,
+authenticated committed-service entitlement, a positive honest-service bound,
+full proof-backend net benefit and production activation remain open.
+Direct owned-worker invocation retains claim/CPU checks but does not itself
+supply the supervisor wall/reaping/cleanup contract. The original host resource
+profile, inverse-cost qualification and complete cryptographic/PQ128 obligations
+remain unchanged and unclosed. Overall status remains **HOLD_NO_GO**.
 
 **PQ quorum preflight and root-family continuation, 2026-11-08 UTC:**
 Continue the existing #723 PQ candidate from `12e510b211110d93d9ead07e02c07a1eecc28ae9`.
@@ -12054,6 +12122,37 @@ remaining obligations are recorded in the
 No historical failed run or original evidence is relabeled as a success.
 
 
+### 2026-11-08 real learning service execution and reconciliation
+
+Continue the same-iteration objective with executable adapters on the unified
+`7e044b65454f4c9ea505591727332acffb33e7e5` source. The
+[development execution contract](specs/pon/REAL_LEARNING_SERVICE_ITERATION_V1.md)
+binds a complete pretraining evaluation freeze to a durable once-only inherited
+SmolLM operation. Execute the existing four controls and the actual retained
+parent/candidate loaders under frozen incremental budgets. Incomplete or failed
+evaluation cannot become NoUpdate. Keep local numerical results separate from
+original-owner Selection and independent evaluation acceptance.
+
+Connect the same operation's actual files and measured CPU to the existing
+native TSC1/M12 development Task owner. Preserve full Unknown reservations,
+durable original side-effect IDs, current-branch payment readback and monotonic
+local revocation/history through reorganization and cold reopen. A compliant
+completed training service can earn the base fee without model improvement;
+improvement bonus and consensus credit remain distinct and zero in this entry.
+
+Retain exact failures when a historical parent has a different runtime contract.
+An explicit new development bootstrap does not establish that the original
+owner installed it. Real task authorization, independent evaluation/provider
+custody, protected original-owner installation/load, final next-task receipt,
+real funds and the complete nine-step production iteration remain open until
+observed together. Preserve source/file identities and all attempted outcomes;
+do not transfer historical pass counts or weaken the original performance gates.
+
+Retain the [dated execution record](../../evidence/learning-service-20261108/README.md)
+with source snapshots, original unsuccessful observations and raw model/native
+receipts. Its development findings do not close the remaining original-owner
+and independent-custody acceptance boundaries.
+
 ### 2026-11-08 unified Chain / Hepta qualification continuation
 
 Continue the user's P0 integration, consensus, authority and real Hepta loop,
@@ -14388,3 +14487,39 @@ controls provide the positive validation scope. Historical fault scenarios
 are not copied or executed for this repair. This narrow target-boundary change
 does not close the separately recorded Page JSON parsing-account gap or
 qualify the other source changes on that historical branch.
+
+### 2026-11-09 learning service query process completion
+
+Continue the real learning service driver from PR #820 source
+`c247d623704b1cce2307fa31b21cab045063e0f6`. A provider or native query can print
+successful JSON before its process later fails, including during cleanup. Require
+an observed integer zero exit before using `SUCCESS` or paid native observations
+as completed development effects. Apply the same boundary in the initial run and
+in read-only reconciliation; a completed comparison cannot hide an unconfirmed
+candidate query. Missing, boolean and textual exit codes are not confirmed exits.
+
+Preserve every phase's original exit, stdout and stderr. Keep provider UNKNOWN
+and FAILED observations, their retained reservations and original status codes;
+query never authorizes redispatch or changes the original intent. A subsequent
+successful original-owner query can confirm an earlier uncertain effect without
+replaying it. Independent numerical Candidate/NoUpdate findings remain distinct
+from service completion, original-owner selection, installation and payment.
+
+Keep the original budgets, deadlines, model and native-owner implementations,
+signed namespaces and stored schemas unchanged. Preserve actual subprocess
+boundary failures and run the complete driver, inherited runtime, parent material,
+operation and frozen-evaluation Python suites on the full continuation source.
+Repeat source-integrity negative controls and Markdown checks on the committed
+source. These controls do not rerun model quality, native Rust, WAN, independent
+custody, FinalUse or whole-chain qualification; their existing HOLD gates remain.
+The [preserved boundary observations](../../evidence/learning-query-exit-20261109/README.md)
+retain the original failures, candidate test logs and source identities.
+This continuation is separate from PR #821, which does not contain this driver.
+
+## 2026-11-10: PoN native checkpoint and binding follow-through
+
+Status: **HOLD; draft only; native full suite failed**. Native checkpoint `8d8c0e64e7a301fc111a6720721a14816639e5aa` (tree `7c003a3d183ad33ff4f3349cbcce61564f73a2ba`) retains the node full-suite result **1285 passed / 2 failed / 39 retained ignored**, exit **101**. The later two exact original tests each failed **0/1**, exit **101**. The unchanged-source followup closes the original source bracket and completes the remaining strict Clippy, format, three release-probe tests, release build/probe, independent reader and 26 reader tests; it does not turn either native failure into a pass. V3 has no fabricated completion summary or source-after file.
+
+C1 `11c9562252d3cf56b423c7756569be0c669d9606` keeps its initial node green failure (3 passed / 1 failed) and initial offline dependency failure. The corrected node counterfactual changes only the old node owner plus its test declaration over C1 dependencies: red 0 passed / 4 failed, C2 green 4 passed / 0 failed. Settlement red remains 2 passed / 6 failed and C2 green 8 passed / 0 failed; C2 settlement completed 77 library plus 2 documentation tests and crypto completed 196 library tests. Exact commands, environments and all original streams are in the [native evidence](../../evidence/pon-followthrough-20261110-685a/README.md). The separately collected exact-BASE two-test control observed large-parent 1/0 (both backends) and inactive-page 0/1 with `PUBLIC_MUTATION_CPU_BUDGET`. Its different build/environment and refill observations do not establish a single cause for the C2 failures or replace the failed full suite.
+
+The child integrates the exact CI roster/artifact/QROM-current registrations, preserves the historical QROM lane, rebinds selected source surveys to C2, retains every previous corpus dependency and adds the new implementation inputs. Its actual source/corpus/ledger/CI/repository/Markdown/format checks are separate controller receipts on the eventual child commit; this entry does not assert those checks or hosted CI passed. All false/null qualification fields, existing historical evidence and open work-cost/service/consensus/model-benefit obligations remain unchanged. No activation is authorized by this observation.

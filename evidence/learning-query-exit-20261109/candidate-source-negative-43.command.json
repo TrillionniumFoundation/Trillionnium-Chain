@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/test_ci_source_integrity.py"
+  ],
+  "cwd": "/data/chain-learning-exit-70ae-20261109",
+  "exit_code": 0,
+  "duration_ns": 5075537518,
+  "stdout_sha256": "fe2e92956aebb9baddb46e8dd7bb100ddb33b36ae63c31fdf520e1ccd4fe7a08",
+  "stderr_sha256": "c6bee7044ab3429f292d77059d4b0a692c469b1ab43924e19aa8f63fd4681b08"
+}

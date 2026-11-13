@@ -1,0 +1,30 @@
+{
+  "source_commit": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+  "argv": [
+    "/home/qq/.cargo/bin/cargo",
+    "metadata",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "--all-features",
+    "--format-version",
+    "1"
+  ],
+  "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+  "exit_code": 0,
+  "packages": 181,
+  "workspace_members": 26,
+  "lockfile_sha256": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c",
+  "metadata_sha256": "733169a5b8861ae41155fa30b5fd5ed8cd4459605eea03f158bb8e3dccdf9ee2",
+  "versions": {
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+    "python": "Python 3.14.4",
+    "system_openssl": "3.5.5",
+    "kernel": "Linux 7.0.0-38-generic x86_64 GNU/Linux"
+  },
+  "node_lib_test_opt_level": "3",
+  "node_lib_test_profile_evidence": "../independent-audit.json",
+  "other_artifact_profiles_not_inferred": true
+}

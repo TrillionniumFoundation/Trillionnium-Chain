@@ -1,0 +1,22 @@
+{
+  "observation_complete": false,
+  "reason": "shallow source refused",
+  "recorded_unix_ns": 1794304992200137943,
+  "security_status": "HOLD",
+  "source": {
+    "baseline_commit": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+    "branch": "test/chain-pon-baseline-control-20261110-685a",
+    "budgets_or_assertions_changed": false,
+    "expected_tree": "00479a98dabc6b1fd91a0ceef82ffbdbffb78067",
+    "full_library_suite_executed": false,
+    "open_consensus_qualified": false,
+    "production_activation": false,
+    "recorder_sha256": "ec1cf2eec81ef7c640b09a049f261560347c983e9ff019a6d7296ff1e2fd6862",
+    "shared_cargo_target": "/home/qian-qi/chain-pon-followthrough-20261110-685a-target",
+    "source_mutated": false,
+    "source_provider_head_at_start": "8d8c0e64e7a301fc111a6720721a14816639e5aa",
+    "source_provider_worktree": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+    "worktree": "/home/qian-qi/chain-pon-baseline-control-20261110-685a"
+  },
+  "stage": "create-isolated-worktree"
+}

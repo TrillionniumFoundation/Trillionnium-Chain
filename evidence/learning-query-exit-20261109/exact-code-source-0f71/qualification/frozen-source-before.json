@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/verify_ci_source.py",
+    "--kind",
+    "head",
+    "--expected-head",
+    "0f71bd817164feef370f75ee2ab881227693573d",
+    "--output",
+    "/data/chain-learning-exit-70ae-20261109-evidence/frozen-source-before-report.json"
+  ],
+  "exit_code": 0,
+  "duration_ns": 14951834740
+}

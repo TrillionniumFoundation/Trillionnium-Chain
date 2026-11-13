@@ -1,0 +1,8 @@
+{
+  "details": "RuntimeError('integrate actual exit 2')",
+  "exit_code": 2,
+  "phase": "failed",
+  "recorded_unix_ns": 1794308588580830526,
+  "security_status": "HOLD",
+  "stage": "driver"
+}

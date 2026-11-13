@@ -1,0 +1,7 @@
+[fix/chain-pon-followthrough-20261110-685a 11c9562252] fix(pon): fence retained chainwork and payment readbacks; measure fresh rejection
+ 10 files changed, 1681 insertions(+), 7 deletions(-)
+ create mode 100644 docs/research/PON_FRESH_REJECTION_COST_V1.md
+ create mode 100644 scripts/ci/test_fresh_rejection_report.py
+ create mode 100644 scripts/pon_fresh_rejection_report.py
+ create mode 100644 trillionnium/crates/trnm-crypto-primitives/examples/pon_fresh_rejection_cost.rs
+ create mode 100644 trillionnium/crates/trnm-pon-node/src/store/confirmation_chainwork_tests.rs

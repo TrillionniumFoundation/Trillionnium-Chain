@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/ci/test_pq_research_integration.py",
+    "-v"
+  ],
+  "cwd": "/home/qian-qi/chain-pon-followthrough-20261110-685a",
+  "end_unix_ns": 1794310948728366562,
+  "exit_code": 0,
+  "interrupted": false,
+  "label": "test_pq_research_integration",
+  "process_exit_code": 0,
+  "recorder_error": null,
+  "start_unix_ns": 1794310627232453005,
+  "stderr": {
+    "bytes": 8425,
+    "file": "test_pq_research_integration.stderr.log",
+    "sha256": "acab8914ca0bfa9577f2f836e62fda53a45ebb51788f1f8e525c2d12374dceb0"
+  },
+  "stdout": {
+    "bytes": 0,
+    "file": "test_pq_research_integration.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "timed_out": false,
+  "timeout_seconds": 3600
+}

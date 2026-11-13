@@ -1,0 +1,18 @@
+{
+  "openssl": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-runtime/trnm-pq-provider-3.5.9.DYf2qEaX/install/bin/openssl",
+  "openssl_sha256": "8ff7dd91270fd4a8fc377031f0fd2f2cee1cd17a32ce30e4fd773a25730a120f",
+  "environment": {
+    "OPENSSL_DIR": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-runtime/trnm-pq-provider-3.5.9.DYf2qEaX/install",
+    "OPENSSL_STATIC": "1",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_MODULES": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-runtime/trnm-pq-provider-3.5.9.DYf2qEaX/install/lib/ossl-modules",
+    "TRNM_PQ_OPENSSL": "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-runtime/trnm-pq-provider-3.5.9.DYf2qEaX/install/bin/openssl",
+    "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTDOC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc"
+  },
+  "target_dir": "/data/chain-learning-exit-70ae-20261109-target",
+  "jobs": 2,
+  "inherited_rustc_wrapper": null,
+  "inherited_workspace_wrapper": null,
+  "inherited_ld_library_path": null
+}

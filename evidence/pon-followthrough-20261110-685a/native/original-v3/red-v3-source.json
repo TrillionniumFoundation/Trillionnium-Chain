@@ -1,0 +1,11 @@
+{
+  "complete_baseline_checkout_claimed": false,
+  "dependency_checkpoint": "11c9562252d3cf56b423c7756569be0c669d9606",
+  "node_production_base": "da1374a200022bc14dc2bd325cc9ba29dbcd24ab",
+  "production_activation": false,
+  "reader_sha256": "6d4e31fdbbeab51e376c5bafc92deb79440662bed71e202d766cf872cf57ac72",
+  "red_store_sha256": "8c7b60e976d49b605b582252c49af984933126a6059b6c61423c9c3ddf7a65d6",
+  "schema": "pon-node-corrected-test-counterfactual-v1",
+  "scope": "same four corrected tests; old Node production with the test-module declaration; other dependencies at C1",
+  "test_sha256": "d371c338aecd2f8b64fb0869f0f60cd78e08e144b4d0159b38e903dc74bb09a6"
+}

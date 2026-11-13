@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/home/qian-qi/chain-pon-followthrough-20261110-685a/scripts/ci/check_ci_contract.py", line 2078, in <module>
+    print(json.dumps(validate(), sort_keys=True))
+                     ^^^^^^^^^^
+  File "/home/qian-qi/chain-pon-followthrough-20261110-685a/scripts/ci/check_ci_contract.py", line 1795, in validate
+    inline_source_pins = check_inline_source_pins(root)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qian-qi/chain-pon-followthrough-20261110-685a/scripts/ci/check_ci_contract.py", line 1696, in check_inline_source_pins
+    require(actual == expected, f'inline source pin differs: {context}: {path}: '
+  File "/home/qian-qi/chain-pon-followthrough-20261110-685a/scripts/ci/check_ci_contract.py", line 1523, in require
+    raise ValueError('CI contract: ' + message)
+ValueError: CI contract: inline source pin differs: .github/workflows/pon-recent-batch-acceptance.yml:80: trillionnium/crates/trnm-pon-node/src/store.rs: expected a8bd7b9c8d9b02617060bea955b3bb21d905129f, observed 62f0a44f37d6258c32eee5f8977a99a51d89c284

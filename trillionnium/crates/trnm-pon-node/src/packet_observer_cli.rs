@@ -3,6 +3,8 @@
 //! This envelope is separate from public mutation credit and is not a durable
 //! or cross-process owner quota. The parent owns temporary files and reaps the
 //! reader even when full-history validation cannot reach a checkpoint.
+mod owned;
+pub(crate) use owned::initialize;
 use serde_json::Value;
 use std::{
     collections::BTreeMap,
@@ -51,6 +53,10 @@ pub(crate) fn supervise(args: &BTreeMap<String, String>) -> Result<Option<Value>
         DEFAULT_WALL_SECONDS,
         MAX_WALL_SECONDS,
     )?;
+    let source = std::path::Path::new(args.get("--store").ok_or("--store")?);
+    if owned::selected(args, source)? {
+        return owned::supervise(args, source, cpu, wall).map(Some);
+    }
     if let Some(worker) = args.get(WORKER_OPTION) {
         if worker != "v1" {
             return Err("PACKET_OBSERVATION_WORKER".into());
@@ -58,7 +64,6 @@ pub(crate) fn supervise(args: &BTreeMap<String, String>) -> Result<Option<Value>
         install_cpu_ceiling(cpu)?;
         return Ok(None);
     }
-    let source = std::path::Path::new(args.get("--store").ok_or("--store")?);
     if !source.join("native.sqlite").is_file() {
         return Err("PACKET_STATUS_EXISTING_STORE_REQUIRED".into());
     }
@@ -155,10 +160,16 @@ fn capture(mut pipe: impl Read, exceeded: &AtomicBool) -> Result<Vec<u8>> {
     }
     Ok(bytes)
 }
-fn execute(mut command: Command, wall: Duration) -> Result<Value> {
+fn execute(command: Command, wall: Duration) -> Result<Value> {
     let deadline = Instant::now()
         .checked_add(wall)
         .ok_or("PACKET_OBSERVATION_BUDGET")?;
+    execute_until(command, deadline)
+}
+fn execute_until(mut command: Command, deadline: Instant) -> Result<Value> {
+    if Instant::now() >= deadline {
+        return Err("PACKET_OBSERVATION_WALL_BUDGET".into());
+    }
     let child = command
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
