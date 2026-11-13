@@ -439,18 +439,26 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 - "$PQ_OUT/required-tests.tsv" <<'PY'
+          bash "$PQ_OUT/run-command.sh" native-registry cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features -- --list
+          python3 - "$PQ_OUT/required-tests.tsv" "$PQ_OUT/native-registry.log" <<'PY'
           import json, re, sys
           from pathlib import Path
           value = json.loads(Path('config/pon/pq-system-required-tests-v1.json').read_text())
           assert value['schema'] == 'trnm-pq-system-required-tests-v1'
-          assert value['whole_chain_quantum_security_qualified'] is False
+          assert all(value.get(key) is False for key in (
+              'whole_chain_quantum_security_qualified', 'original_business_budgets_changed'))
           tests = value['tests']
+          assert type(value['expected_meaningful_controls']) is int
           assert len(tests) == value['expected_meaningful_controls'] and len(set(tests)) == len(tests)
           assert len(tests) == 52
           assert all(re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*', x) for x in tests)
           assert not set(tests) & set(value['child_process_harnesses_not_counted'])
-          Path(sys.argv[1]).write_text(''.join(f'native-{i:02d}\t{name}\n' for i, name in enumerate(tests)))
+          registered = re.findall(r'^([A-Za-z0-9_:]+): test$', Path(sys.argv[2]).read_text(), re.M)
+          assert len(registered) == len(set(registered)) and all(registered.count(name) == 1 for name in tests)
+          with Path(sys.argv[1]).open('x') as output:
+              output.write(''.join(f'native-{i:02d}\t{name}\n' for i, name in enumerate(tests)))
+          print(json.dumps({'scope': 'registry-presence-only', 'required_controls': 52,
+              'whole_chain_quantum_security_qualified': False}, sort_keys=True))
           PY
           failed=0
           while IFS=$'\t' read -r label selector; do

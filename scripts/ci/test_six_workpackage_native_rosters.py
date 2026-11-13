@@ -39,7 +39,7 @@ def workspace_script() -> str:
 
 
 def pq_script() -> str:
-    return heredoc(PQ, 'python3 - "$PQ_OUT/required-tests.tsv" <<\'PY\'\n', '          PY\n')
+    return heredoc(PQ, 'python3 - "$PQ_OUT/required-tests.tsv" "$PQ_OUT/native-registry.log" <<\'PY\'\n', '          PY\n')
 
 
 class NativeRosterTests(unittest.TestCase):
@@ -68,15 +68,21 @@ class NativeRosterTests(unittest.TestCase):
             selected = controls / 'selected-tests.tsv'
             return result, selected.read_text() if selected.exists() else None
 
-    def run_pq(self, *, script=None, value=None):
+    def run_pq(self, *, script=None, value=None, registry_names=None, existing_output=None):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / 'config/pon').mkdir(parents=True)
             (root / 'config/pon/pq-system-required-tests-v1.json').write_text(
                 json.dumps(self.required if value is None else value))
             output = root / 'required.tsv'
-            result = subprocess.run([sys.executable, '-c', script or pq_script(), str(output)],
-                                    cwd=root, text=True, capture_output=True, timeout=10)
+            registry = root / 'native-registry.log'
+            names = self.required['tests'] if registry_names is None else registry_names
+            registry.write_text(''.join(f'{name}: test\n' for name in names))
+            if existing_output is not None:
+                output.write_text(existing_output)
+            result = subprocess.run(
+                [sys.executable, '-c', script or pq_script(), str(output), str(registry)],
+                cwd=root, text=True, capture_output=True, timeout=10)
             return result, output.read_text() if output.exists() else None
 
     def test_original_workspace_failure_remains_reproducible(self):
@@ -148,6 +154,36 @@ class NativeRosterTests(unittest.TestCase):
         self.assertIn('"expected_count": count', text)
         self.assertIn('"empty or duplicate libtest registry: " + crate', text)
         self.assertNotIn('continue-on-error: true', text)
+
+
+    def test_pq_registry_missing_duplicate_and_empty_required_entries_refused(self):
+        required = self.required['tests']
+        for registry in (required[:-1], required + [required[0]], []):
+            with self.subTest(registry_count=len(registry)):
+                result, output = self.run_pq(registry_names=registry)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIsNone(output)
+
+    def test_pq_required_count_and_original_false_claims_are_exact(self):
+        changes = [dict(self.required, expected_meaningful_controls=count)
+                   for count in (52.0, True, None)]
+        for key in ('whole_chain_quantum_security_qualified',
+                    'original_business_budgets_changed'):
+            for bad in (True, 0, None):
+                changes.append(dict(self.required, **{key: bad}))
+            missing = dict(self.required)
+            del missing[key]
+            changes.append(missing)
+        for value in changes:
+            with self.subTest(value=value):
+                result, output = self.run_pq(value=value)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIsNone(output)
+
+    def test_pq_roster_output_cannot_replace_an_existing_receipt(self):
+        result, output = self.run_pq(existing_output='retained-original-receipt\n')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(output, 'retained-original-receipt\n')
 
 
 if __name__ == '__main__':

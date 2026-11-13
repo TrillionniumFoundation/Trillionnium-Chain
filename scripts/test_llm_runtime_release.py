@@ -490,5 +490,15 @@ class RuntimeMaterialTests(unittest.TestCase):
         self.assertEqual(output.read_bytes(), before)
 
 
+
+    def test_marker_internal_type_error_is_evaluated_once_with_pinned_environment(self):
+        spec = self.repack_metadata('Requires-Dist: absent-runtime; sys_platform == "linux"\n')
+        with mock.patch.object(Marker, "evaluate",
+                               side_effect=TypeError("marker-internal-failure")) as evaluate, \
+                self.assertRaisesRegex(TypeError, "marker-internal-failure"):
+            self.declare(spec)
+        evaluate.assert_called_once_with(environment=dict(spec["marker_environment"], extra=""))
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
