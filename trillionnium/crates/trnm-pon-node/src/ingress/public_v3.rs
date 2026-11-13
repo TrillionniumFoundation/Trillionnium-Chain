@@ -4175,7 +4175,7 @@ mod tests {
         assert!(metrics.solution_search_thread_cpu_ns.is_none());
         let error = metrics
             .measure_solution_search::<()>(|_| {
-                Err(Error::from(std::io::Error::new(
+                Err(crate::Error::from(std::io::Error::new(
                     std::io::ErrorKind::Interrupted,
                     "client search cancelled",
                 )))
