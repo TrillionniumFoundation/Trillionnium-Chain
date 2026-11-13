@@ -943,6 +943,8 @@ NATIVE_REQUIRED_PATHS |= frozenset((
     "config/pon/pq-root-dependency-register-v3.json",
     "docs/security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md",
     "docs/security/PQ_ROOT_RECOVERY_NATIVE_V3.md",
+    "docs/security/PQ_ROOT_SIGNATURE_COST_V1.md",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pq_root_v3_cost_observation.rs",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs",
     "trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs",

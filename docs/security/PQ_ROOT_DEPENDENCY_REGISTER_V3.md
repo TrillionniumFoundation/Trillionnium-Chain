@@ -298,6 +298,13 @@ keep their original source identities. The inspector still returns
 `source_revision_bound = false`; it supplies no native execution, custody,
 cryptographic lifetime bound or production qualification.
 
+The [signature cost continuation](PQ_ROOT_SIGNATURE_COST_V1.md) reviews the
+immutable ML-DSA-87 expansion cache and adds the native cost-observation example
+to this declared source map. The cache changes no signed domains, authority
+roles, operational charges, unknown lifetime populations or domain bounds.
+The reviewed snapshot is deliberately updated after those code and test changes;
+the runtime inspector still cannot regenerate its own approved snapshot.
+
 The checker reuses the existing
 [descriptor-bound source reader](../../scripts/ci/pq_source_reader.py).
 It refuses missing, symlinked, nonregular, oversized and changing source

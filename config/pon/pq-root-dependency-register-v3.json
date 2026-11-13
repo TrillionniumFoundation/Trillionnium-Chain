@@ -1348,6 +1348,7 @@
     "trillionnium/Cargo.lock": "53c4eab0fb3d2951894348de2b765e0a573e49acb5dbfe1fe805719ec868a136",
     "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
     "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "caff7ff137c94e26a378a2a95ae029a21b1ee30a79d08a05b8c9e3b1f1810ab8",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pq_root_v3_cost_observation.rs": "2af82ca049a155882b8577c32f45d7867ad24adf04dd0d42b8d960d58ecbb1fb",
     "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "74f11c99984a0c199f6b1a882206dc887440a3c69668dd3833054eb0e98fd32c",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs": "2f775934937dc0997579ca43132c3a2aee262103ec66ca4a4be08d3b8f4f93f4",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs": "9b03c4f4a22175fe183e045bc1a2e25282232a4bb156281970f542e7277ebf1b",
