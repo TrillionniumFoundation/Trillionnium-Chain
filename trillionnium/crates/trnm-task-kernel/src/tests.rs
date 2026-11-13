@@ -2625,6 +2625,7 @@ fn open_existing_requires_precreated_regular_nonsymlink_store() {
 
     drop(TaskKernelStoreV1::open(config.clone()).expect("create store"));
     drop(TaskKernelStoreV1::open_existing(config.clone()).expect("strict reopen"));
+    drop(TaskKernelStoreV1::open(config.clone()).expect("normal regular reopen"));
 
     let directory_path = fixture.directory.path().join("not-a-store-file");
     fs::create_dir(&directory_path).expect("directory object");
@@ -2641,14 +2642,32 @@ fn open_existing_requires_precreated_regular_nonsymlink_store() {
     {
         let symlink_path = fixture.directory.path().join("store-link.sqlite");
         std::os::unix::fs::symlink(&config.path, &symlink_path).expect("store symlink");
-        let mut symlink_config = config;
+        let mut symlink_config = config.clone();
         symlink_config.path = symlink_path;
         assert_eq!(
-            TaskKernelStoreV1::open_existing(symlink_config)
+            TaskKernelStoreV1::open_existing(symlink_config.clone())
                 .expect_err("symlink store path")
                 .code(),
             AgentMarketErrorCodeV1::StoreFailure
         );
+        assert_eq!(
+            TaskKernelStoreV1::open(symlink_config)
+                .expect_err("normal open rejects symlink store path")
+                .code(),
+            AgentMarketErrorCodeV1::StoreFailure
+        );
+        let missing = fixture.directory.path().join("missing-store.sqlite");
+        let dangling = fixture.directory.path().join("dangling-store.sqlite");
+        std::os::unix::fs::symlink(&missing, &dangling).expect("dangling store symlink");
+        let mut dangling_config = config;
+        dangling_config.path = dangling;
+        assert_eq!(
+            TaskKernelStoreV1::open(dangling_config)
+                .expect_err("normal open rejects dangling store path")
+                .code(),
+            AgentMarketErrorCodeV1::StoreFailure
+        );
+        assert!(!missing.exists(), "refusal must not create the link target");
     }
 }
 

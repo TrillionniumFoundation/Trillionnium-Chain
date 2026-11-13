@@ -1505,8 +1505,14 @@ fn open_existing_requires_precreated_regular_nonsymlink_store() {
         let symlink_path = fixture.directory.path().join("store-link.sqlite");
         std::os::unix::fs::symlink(config.path(), &symlink_path).expect("store symlink");
         assert_eq!(
-            DataAvailabilityStoreV1::open_existing(config_at(symlink_path))
+            DataAvailabilityStoreV1::open_existing(config_at(symlink_path.clone()))
                 .expect_err("symlink store path")
+                .code(),
+            DaErrorCodeV1::StoreFailure
+        );
+        assert_eq!(
+            DataAvailabilityStoreV1::open(config_at(symlink_path))
+                .expect_err("normal open rejects symlink store path")
                 .code(),
             DaErrorCodeV1::StoreFailure
         );

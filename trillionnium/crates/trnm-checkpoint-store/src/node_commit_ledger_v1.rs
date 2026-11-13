@@ -987,8 +987,14 @@ fn u64_at_v1(raw: &[u8], offset: usize) -> ResultV1<u64> {
 
 pub(crate) fn read_checkpoint_file_v1(path: &Path) -> ResultV1<ExternalCheckpointV2> {
     let mut file = File::open(path).map_err(|source| io_v1("open checkpoint input", source))?;
-    let mut bytes = Vec::new();
-    file.read_to_end(&mut bytes)
+    read_checkpoint_input_v1(&mut file)
+}
+
+fn read_checkpoint_input_v1(reader: &mut impl Read) -> ResultV1<ExternalCheckpointV2> {
+    let mut bytes = Vec::with_capacity(EXTERNAL_CHECKPOINT_RECORD_BYTES_V2 + 1);
+    reader
+        .take((EXTERNAL_CHECKPOINT_RECORD_BYTES_V2 + 1) as u64)
+        .read_to_end(&mut bytes)
         .map_err(|source| io_v1("read checkpoint input", source))?;
     if bytes.len() != EXTERNAL_CHECKPOINT_RECORD_BYTES_V2 {
         return Err(NodeCommitLedgerErrorV1::InvalidState(
@@ -1522,5 +1528,51 @@ mod tests {
                 b"untrusted inventory"
             );
         }
+    }
+
+    #[test]
+    fn checkpoint_input_is_bounded_to_one_record_plus_one_byte() {
+        let checkpoint = checkpoint_v1(0, [0; 32], 21);
+        let raw = checkpoint.encode_canonical();
+        let mut exact = raw.as_slice();
+        assert_eq!(
+            read_checkpoint_input_v1(&mut exact).expect("one exact canonical input"),
+            checkpoint
+        );
+        assert!(exact.is_empty());
+
+        let mut short = &raw[..raw.len() - 1];
+        assert!(matches!(
+            read_checkpoint_input_v1(&mut short),
+            Err(NodeCommitLedgerErrorV1::InvalidState(
+                "checkpoint input length differs"
+            ))
+        ));
+
+        struct CountingReader<'a> {
+            bytes: &'a [u8],
+            consumed: usize,
+        }
+        impl Read for CountingReader<'_> {
+            fn read(&mut self, output: &mut [u8]) -> std::io::Result<usize> {
+                let count = output.len().min(self.bytes.len() - self.consumed).min(7);
+                output[..count].copy_from_slice(&self.bytes[self.consumed..self.consumed + count]);
+                self.consumed += count;
+                Ok(count)
+            }
+        }
+        let mut extra = raw.to_vec();
+        extra.extend_from_slice(&[0; 17]);
+        let mut reader = CountingReader {
+            bytes: &extra,
+            consumed: 0,
+        };
+        assert!(matches!(
+            read_checkpoint_input_v1(&mut reader),
+            Err(NodeCommitLedgerErrorV1::InvalidState(
+                "checkpoint input length differs"
+            ))
+        ));
+        assert_eq!(reader.consumed, EXTERNAL_CHECKPOINT_RECORD_BYTES_V2 + 1);
     }
 }

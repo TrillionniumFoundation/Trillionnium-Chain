@@ -556,6 +556,7 @@ fn open_existing_requires_precreated_regular_nonsymlink_store() {
 
     drop(MvccFeeStoreV1::open(&store_path, g.clone()).expect("create store"));
     drop(MvccFeeStoreV1::open_existing(&store_path, g.clone()).expect("strict reopen"));
+    drop(MvccFeeStoreV1::open(&store_path, g.clone()).expect("normal regular reopen"));
 
     let directory_path = temporary.path().join("not-a-store-file");
     fs::create_dir(&directory_path).expect("directory object");
@@ -571,11 +572,27 @@ fn open_existing_requires_precreated_regular_nonsymlink_store() {
         let symlink_path = temporary.path().join("store-link.sqlite");
         std::os::unix::fs::symlink(&store_path, &symlink_path).expect("store symlink");
         assert_eq!(
-            MvccFeeStoreV1::open_existing(symlink_path, g)
+            MvccFeeStoreV1::open_existing(&symlink_path, g.clone())
                 .expect_err("symlink store path")
                 .code(),
             MvccFeeErrorCodeV1::StoreFailure
         );
+        assert_eq!(
+            MvccFeeStoreV1::open(&symlink_path, g.clone())
+                .expect_err("normal open rejects symlink store path")
+                .code(),
+            MvccFeeErrorCodeV1::StoreFailure
+        );
+        let missing = temporary.path().join("missing-store.sqlite");
+        let dangling = temporary.path().join("dangling-store.sqlite");
+        std::os::unix::fs::symlink(&missing, &dangling).expect("dangling store symlink");
+        assert_eq!(
+            MvccFeeStoreV1::open(&dangling, g)
+                .expect_err("normal open rejects dangling store path")
+                .code(),
+            MvccFeeErrorCodeV1::StoreFailure
+        );
+        assert!(!missing.exists(), "refusal must not create the link target");
     }
 }
 

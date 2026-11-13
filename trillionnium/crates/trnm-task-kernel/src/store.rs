@@ -225,7 +225,18 @@ impl TaskKernelStoreV1 {
     pub fn open(config: AgentMarketStoreConfigV1) -> AgentMarketResultV1<Self> {
         validate_trust_bundle(&config.trust_bundle)?;
         reject_sidecars(&config.path)?;
-        if config.path.exists() {
+        let store_exists = match fs::symlink_metadata(&config.path) {
+            Ok(_) => true,
+            Err(cause) if cause.kind() == std::io::ErrorKind::NotFound => false,
+            Err(cause) => {
+                return Err(error(
+                    AgentMarketErrorCodeV1::StoreFailure,
+                    cause.to_string(),
+                ))
+            }
+        };
+        if store_exists {
+            require_existing_regular_store(&config.path)?;
             let read_only = open_ro_raw(&config.path)?;
             verify_schema(&read_only)?;
             verify_metadata(&read_only, &config)?;

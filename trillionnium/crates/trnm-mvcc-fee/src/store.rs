@@ -145,7 +145,13 @@ impl MvccFeeStoreV1 {
         validate_worker_count_v1(worker_count)?;
         let path = path.into();
         reject_sidecars(&path)?;
-        if path.exists() {
+        let store_exists = match fs::symlink_metadata(&path) {
+            Ok(_) => true,
+            Err(cause) if cause.kind() == std::io::ErrorKind::NotFound => false,
+            Err(cause) => return Err(error(MvccFeeErrorCodeV1::StoreFailure, cause.to_string())),
+        };
+        if store_exists {
+            require_existing_regular_store(&path)?;
             let connection = open_ro(&path)?;
             verify_schema(&connection)?;
             audit(&connection, &genesis)?;
