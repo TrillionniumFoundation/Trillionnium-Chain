@@ -3380,6 +3380,10 @@ fn call_public_authenticated(
     let result = (|| -> Result<PublicReply> {
         if !pq {
             super::require_classical_network_settings(settings)?;
+        } else {
+            // PQ transport authentication does not validate the caller's current
+            // account scope. Reject damaged configuration before network IO.
+            settings.app.check_account_profile()?;
         }
         if let Some(deadline) = outer_deadline {
             ensure(Instant::now() < deadline, "PUBLIC_CLIENT_DEADLINE")?;

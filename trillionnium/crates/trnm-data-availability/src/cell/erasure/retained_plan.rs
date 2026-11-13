@@ -214,17 +214,15 @@ impl CellRetainedShardPlanV1 {
                     Some(deadline),
                 )?
                 .ok_or(CellErrorV1::Unavailable)?;
-            let shards = chunk.binding().encode_chunk(&source)?;
-            for (contract, shard) in chunk.slots.iter().zip(shards) {
-                check(deadline)?;
-                CellRs46ShardProviderV1::cache_shard(
-                    contract,
-                    contract.operation(),
-                    &shard.encode(),
-                    cache,
-                    deadline,
-                )?;
-            }
+            let wires = chunk
+                .binding()
+                .encode_chunk(&source)?
+                .map(|shard| shard.encode());
+            let staged = std::array::from_fn(|slot| {
+                let contract = &chunk.slots[slot];
+                (contract, contract.operation(), wires[slot].as_slice())
+            });
+            CellRs46ShardProviderV1::cache_shard_batch(&staged, cache, deadline)?;
         }
         self.verify_current_catalog(catalog, current_height, deadline)
     }
@@ -322,7 +320,7 @@ impl CellRetainedShardPlanV1 {
                 let placement_id = placement.id()?;
                 let wires = binding.encode_chunk(&bytes)?.map(|shard| shard.encode());
                 let mut slots = Vec::with_capacity(6);
-                for (slot, wire) in wires.into_iter().enumerate() {
+                for (slot, wire) in wires.iter().enumerate() {
                     check(deadline)?;
                     let provider = &request.providers[slot];
                     let contract = CellRs46ShardContractV1::from_verified_shard(
@@ -346,23 +344,22 @@ impl CellRetainedShardPlanV1 {
                         &binding,
                         &codeword,
                         &placement,
-                        &wire,
-                    )?;
-                    CellRs46ShardProviderV1::cache_shard(
-                        &contract,
-                        contract.operation(),
-                        &wire,
-                        cache,
-                        deadline,
+                        wire,
                     )?;
                     slots.push(contract);
                 }
+                let slots: [CellRs46ShardContractV1; 6] = slots
+                    .try_into()
+                    .map_err(|_| CellErrorV1::Invalid("retained shard plan slots"))?;
+                let staged = std::array::from_fn(|slot| {
+                    let contract = &slots[slot];
+                    (contract, contract.operation(), wires[slot].as_slice())
+                });
+                CellRs46ShardProviderV1::cache_shard_batch(&staged, cache, deadline)?;
                 chunks.push(CellRetainedShardChunkV1 {
                     manifest: manifest.id(),
                     index: index as u32,
-                    slots: slots
-                        .try_into()
-                        .map_err(|_| CellErrorV1::Invalid("retained shard plan slots"))?,
+                    slots,
                 });
             }
         }

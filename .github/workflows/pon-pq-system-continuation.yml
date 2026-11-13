@@ -481,8 +481,8 @@ jobs:
           assert retained['schema'] == 'trnm-pq-system-required-tests-v1'
           assert retained['expected_meaningful_controls'] == len(retained['tests']) == 52
           tests = value['tests']
-          assert type(value['expected_meaningful_controls']) is int and value['expected_meaningful_controls'] == 7
-          assert isinstance(tests, list) and len(tests) == len(set(tests)) == 7
+          assert type(value['expected_meaningful_controls']) is int and value['expected_meaningful_controls'] == 11
+          assert isinstance(tests, list) and len(tests) == len(set(tests)) == 11
           assert all(isinstance(x, str) and re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*', x) for x in tests)
           assert not set(tests) & (set(retained['tests']) | set(retained['child_process_harnesses_not_counted']))
           Path(sys.argv[1]).write_text(''.join(f'native-supplemental-{i:02d}\t{name}\n' for i, name in enumerate(tests)))
@@ -515,9 +515,26 @@ jobs:
           for selector in \
             rejected_nonprivate_socket_parent_does_not_unlink_existing_listener \
             different_admitted_journal_cannot_replace_a_live_checkpoint_endpoint \
-            copied_lease_record_cannot_replace_a_live_checkpoint_endpoint; do
+            copied_lease_record_cannot_replace_a_live_checkpoint_endpoint \
+            connect_only_probe_preserves_live_owner_and_journal \
+            complete_checkpoint_request_rejects_a_copied_lease_replacement; do
             label="checkpoint-$selector"
             if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-checkpoint-store --test socket_ownership "$selector" -- --exact --show-output --test-threads=1; then
+              failed=1
+            elif ! python3 scripts/ci/check_required_native_test.py "$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then
+              failed=1
+            fi
+          done
+          for selector in \
+            socket_owner_v1::tests::saturated_copied_lease_refuses_without_unlink_and_allows_dead_recovery \
+            socket_owner_v1::tests::endpoint_lease_prevents_live_socket_replacement_and_permits_owner_restart \
+            socket_owner_v1::probe_policy_tests::connected_listener_is_not_stale \
+            socket_owner_v1::probe_policy_tests::explicit_refusal_is_only_recovery_case \
+            socket_owner_v1::probe_policy_tests::every_other_error_stays_refused \
+            socket_owner_v1::probe_policy_tests::linux_eagain_and_einprogress_are_not_dead_listener \
+            socket_owner_v1::unsupported_probe_tests::other_unix_policy_never_probes_or_authorizes_replacement; do
+            label="checkpoint-probe-${selector##*::}"
+            if ! bash "$PQ_OUT/run-command.sh" "$label" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-checkpoint-store --lib "$selector" -- --exact --show-output --test-threads=1; then
               failed=1
             elif ! python3 scripts/ci/check_required_native_test.py "$PQ_OUT/$label.log" --test "$selector" > "$PQ_OUT/$label-execution.json"; then
               failed=1

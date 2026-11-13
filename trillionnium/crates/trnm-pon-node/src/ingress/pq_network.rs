@@ -107,6 +107,9 @@ impl PqNetworkPolicy {
             (1..=i64::MAX as u64).contains(&generation),
             "PQ_NETWORK_GENERATION",
         )?;
+        // Cached Settings identities do not validate the mutable application
+        // configuration. Check its selected owner before issuing a new policy.
+        settings.app.check_account_profile()?;
         let crypto_profile = CryptoProfile::LegacyMlDsa65V1
             .bind(ProfileBinding {
                 network: settings.network(),

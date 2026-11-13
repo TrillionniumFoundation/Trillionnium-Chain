@@ -862,7 +862,6 @@ fn tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication() 
     let pin = request(manifest.id());
     // Prepare all databases/listeners before starting the short signed TTL.
     // Failure to reach the proxy while live is a failed fixture, never a pass.
-    setup.finish();
     let now = wall_now().unwrap().as_secs();
     let old = record(pin, proxy.address, 1, now, 300);
     let original_deadline = deadline();
@@ -874,9 +873,39 @@ fn tcp_newer_same_endpoint_short_ttl_expires_mid_manifest_without_publication() 
     );
     assert_eq!(old_receipt.connection_attempts, 1);
     assert_eq!(old_receipt.received_response_bytes, 41);
-    // The long-lived seq1 announcement is fixture preparation. Mint seq2 only
-    // when its own announcement is next, retaining the same two-second TTL.
-    let latest = record(pin, proxy.address, 2, wall_now().unwrap().as_secs(), 2);
+    // The long-lived seq1 announcement is fixture preparation. Select exactly
+    // one next wall-second before minting seq2: flooring a mid-second issue time
+    // would otherwise consume part of its unchanged two-second signed TTL.
+    let selected_second = wall_now().unwrap().as_secs().checked_add(1).unwrap();
+    let issued = loop {
+        let remaining = setup.deadline.saturating_duration_since(Instant::now());
+        assert!(!remaining.is_zero(), "short TTL setup alignment deadline");
+        let wall = wall_now().unwrap();
+        assert!(
+            wall.as_secs() <= selected_second,
+            "selected short TTL setup window was missed"
+        );
+        if wall.as_secs() == selected_second {
+            // A late wake keeps only this second's actual remaining time;
+            // the original transfer-phase guards still decide admissibility.
+            break wall.as_secs();
+        }
+        // Only setup waits. Its original deadline bounds every sleep; no
+        // announcement or fetch is retried and no target second is reselected.
+        thread::sleep(
+            Duration::from_secs(selected_second)
+                .saturating_sub(wall)
+                .min(remaining)
+                .min(Duration::from_millis(1)),
+        );
+    };
+    let latest = record(pin, proxy.address, 2, issued, 2);
+    setup.finish();
+    assert_eq!(
+        wall_now().unwrap().as_secs(),
+        issued,
+        "selected short TTL setup window must remain live through signing"
+    );
     let expires = Duration::from_secs(latest.statement().expires_unix_seconds);
     proxy.arm(latest.statement().expires_unix_seconds);
     let original_deadline = deadline();

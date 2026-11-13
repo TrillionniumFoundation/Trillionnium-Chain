@@ -1,14 +1,4 @@
 {
-  "schema": "trnm-pq128-lifetime-budget-v1",
-  "purpose": "research-model",
-  "target_bits": 128,
-  "experiment": {
-    "id": "trnm-pq128-proposed-lifetime-experiment-v1",
-    "profile": "pon-nakamoto-v1-pq-research-native-pnw1",
-    "model": "quantum-adaptive-lifetime",
-    "horizon": "UNSPECIFIED: no finite deployment lifetime or stopping rule is qualified; include prior preprocessing and surviving authority after retirement.",
-    "source_revision": "7f83ea843d6d1578a475a7a0c4dc026da564a795"
-  },
   "assumptions": [
     {
       "id": "experiment_complete",
@@ -56,208 +46,241 @@
       "status": "unmet"
     }
   ],
-  "primitives": [
-    {
-      "id": "sha256",
-      "construction": "SHA-256; native W1 and other role mapping still requires joint qualification",
-      "public_parameter_id": "FIPS180-4/SHA-256",
-      "fixed_across_epochs": true,
-      "reset_at_epoch": false,
-      "query_budget": {
-        "basis": "unknown",
-        "maximum": null,
-        "coverage": [
-          "online",
-          "offline",
-          "preprocessing",
-          "failed",
-          "unpublished",
-          "recursive",
-          "shared-primitive"
-        ],
-        "assumption_id": null
-      }
-    },
-    {
-      "id": "sha512",
-      "construction": "SHA-512; PQ profile commitments and state roles require exact owner mapping",
-      "public_parameter_id": "FIPS180-4/SHA-512",
-      "fixed_across_epochs": true,
-      "reset_at_epoch": false,
-      "query_budget": {
-        "basis": "unknown",
-        "maximum": null,
-        "coverage": [
-          "online",
-          "offline",
-          "preprocessing",
-          "failed",
-          "unpublished",
-          "recursive",
-          "shared-primitive"
-        ],
-        "assumption_id": null
-      }
-    },
-    {
-      "id": "shake128",
-      "construction": "SHAKE128; native PQ algorithm internal uses require exact parameter mapping",
-      "public_parameter_id": "FIPS202/SHAKE128",
-      "fixed_across_epochs": true,
-      "reset_at_epoch": false,
-      "query_budget": {
-        "basis": "unknown",
-        "maximum": null,
-        "coverage": [
-          "online",
-          "offline",
-          "preprocessing",
-          "failed",
-          "unpublished",
-          "recursive",
-          "shared-primitive"
-        ],
-        "assumption_id": null
-      }
-    },
-    {
-      "id": "shake256",
-      "construction": "SHAKE256; native PQ algorithm internal uses require exact parameter mapping",
-      "public_parameter_id": "FIPS202/SHAKE256",
-      "fixed_across_epochs": true,
-      "reset_at_epoch": false,
-      "query_budget": {
-        "basis": "unknown",
-        "maximum": null,
-        "coverage": [
-          "online",
-          "offline",
-          "preprocessing",
-          "failed",
-          "unpublished",
-          "recursive",
-          "shared-primitive"
-        ],
-        "assumption_id": null
-      }
-    }
-  ],
   "events": [
     {
-      "id": "signature",
+      "allocation": {
+        "denominator": "2722258935367507707706996859454145691648",
+        "numerator": "1"
+      },
       "definition": "An uncompromised authorized key is credited with an accepted authorization it did not permissibly sign.",
+      "id": "signature",
       "source_paths": [
         "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
         "trillionnium/crates/trnm-crypto-primitives/src/pq_profile_auth.rs"
-      ],
-      "allocation": {
-        "numerator": "1",
-        "denominator": "2722258935367507707706996859454145691648"
-      }
+      ]
     },
     {
-      "id": "commitment",
+      "allocation": {
+        "denominator": "2722258935367507707706996859454145691648",
+        "numerator": "1"
+      },
       "definition": "An authenticated commitment is accepted for a different semantic object or state under the required binding property.",
+      "id": "commitment",
       "source_paths": [
         "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs",
         "trillionnium/crates/trnm-data-availability/src/cell/model_root.rs",
-        "trillionnium/crates/trnm-data-availability/src/cell/pq.rs"
-      ],
-      "allocation": {
-        "numerator": "1",
-        "denominator": "2722258935367507707706996859454145691648"
-      }
+        "trillionnium/crates/trnm-data-availability/src/cell/pq.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/version.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/version_content.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/retained.rs",
+        "trillionnium/crates/trnm-data-availability/src/cell/version_content_closure_v3.rs"
+      ]
     },
     {
-      "id": "proof",
+      "allocation": {
+        "denominator": "2722258935367507707706996859454145691648",
+        "numerator": "1"
+      },
       "definition": "The actual verifier accepts a false complete W1 statement.",
+      "id": "proof",
       "source_paths": [
         "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs"
-      ],
-      "allocation": {
-        "numerator": "1",
-        "denominator": "2722258935367507707706996859454145691648"
-      }
+      ]
     },
     {
-      "id": "ledger",
+      "allocation": {
+        "denominator": "2722258935367507707706996859454145691648",
+        "numerator": "1"
+      },
       "definition": "A declared canonicality or confirmation property fails under the joint native W1, branch DAA, timestamp and cumulative-work rules.",
+      "id": "ledger",
       "source_paths": [
         "trillionnium/crates/trnm-pon-node/src/consensus.rs",
         "trillionnium/crates/trnm-pon-node/src/store.rs"
-      ],
-      "allocation": {
-        "numerator": "1",
-        "denominator": "2722258935367507707706996859454145691648"
-      }
+      ]
     },
     {
-      "id": "transport",
+      "allocation": {
+        "denominator": "2722258935367507707706996859454145691648",
+        "numerator": "1"
+      },
       "definition": "A peer/session/message is accepted under the wrong authenticated identity, context or freshness in the declared security game.",
+      "id": "transport",
       "source_paths": [
-        "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs"
-      ],
-      "allocation": {
-        "numerator": "1",
-        "denominator": "2722258935367507707706996859454145691648"
-      }
+        "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+      ]
     },
     {
-      "id": "recovery",
+      "allocation": {
+        "denominator": "2722258935367507707706996859454145691648",
+        "numerator": "1"
+      },
       "definition": "Migration or recovery authorizes stale state, omits a historic liability or repeats an external effect.",
+      "id": "recovery",
       "source_paths": [
         "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs",
         "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs"
-      ],
-      "allocation": {
-        "numerator": "1",
-        "denominator": "2722258935367507707706996859454145691648"
-      }
+      ]
     },
     {
-      "id": "release",
+      "allocation": {
+        "denominator": "2722258935367507707706996859454145691648",
+        "numerator": "1"
+      },
       "definition": "A current-use path permits unauthorized, revoked, stale or incorrectly identified loaded bytes.",
+      "id": "release",
       "source_paths": [
         "trillionnium/crates/trnm-release-bundle/src/pq_release.rs"
-      ],
-      "allocation": {
-        "numerator": "1",
-        "denominator": "2722258935367507707706996859454145691648"
-      }
+      ]
     },
     {
-      "id": "application",
+      "allocation": {
+        "denominator": "2722258935367507707706996859454145691648",
+        "numerator": "1"
+      },
       "definition": "A task/payment/settlement/FinalUse effect crosses an owner boundary without the complete valid contract and effect identity.",
+      "id": "application",
       "source_paths": [
         "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs",
         "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs",
         "trillionnium/crates/trnm-service-settlement/src/native_budget.rs"
-      ],
-      "allocation": {
-        "numerator": "1",
-        "denominator": "2722258935367507707706996859454145691648"
-      }
+      ]
     }
   ],
+  "experiment": {
+    "horizon": "UNSPECIFIED: no finite deployment lifetime or stopping rule is qualified; include prior preprocessing and surviving authority after retirement.",
+    "id": "trnm-pq128-proposed-lifetime-experiment-v1",
+    "model": "quantum-adaptive-lifetime",
+    "profile": "pon-nakamoto-v1-pq-research-native-pnw1",
+    "source_revision": "e6aed30916d244a0e60ac06c90e1b97abd53225b"
+  },
+  "primitives": [
+    {
+      "construction": "SHA-256; native W1 and other role mapping still requires joint qualification",
+      "fixed_across_epochs": true,
+      "id": "sha256",
+      "public_parameter_id": "FIPS180-4/SHA-256",
+      "query_budget": {
+        "assumption_id": null,
+        "basis": "unknown",
+        "coverage": [
+          "online",
+          "offline",
+          "preprocessing",
+          "failed",
+          "unpublished",
+          "recursive",
+          "shared-primitive"
+        ],
+        "maximum": null
+      },
+      "reset_at_epoch": false
+    },
+    {
+      "construction": "SHA-512; PQ profile commitments and state roles require exact owner mapping",
+      "fixed_across_epochs": true,
+      "id": "sha512",
+      "public_parameter_id": "FIPS180-4/SHA-512",
+      "query_budget": {
+        "assumption_id": null,
+        "basis": "unknown",
+        "coverage": [
+          "online",
+          "offline",
+          "preprocessing",
+          "failed",
+          "unpublished",
+          "recursive",
+          "shared-primitive"
+        ],
+        "maximum": null
+      },
+      "reset_at_epoch": false
+    },
+    {
+      "construction": "SHAKE128; native PQ algorithm internal uses require exact parameter mapping",
+      "fixed_across_epochs": true,
+      "id": "shake128",
+      "public_parameter_id": "FIPS202/SHAKE128",
+      "query_budget": {
+        "assumption_id": null,
+        "basis": "unknown",
+        "coverage": [
+          "online",
+          "offline",
+          "preprocessing",
+          "failed",
+          "unpublished",
+          "recursive",
+          "shared-primitive"
+        ],
+        "maximum": null
+      },
+      "reset_at_epoch": false
+    },
+    {
+      "construction": "SHAKE256; native PQ algorithm internal uses require exact parameter mapping",
+      "fixed_across_epochs": true,
+      "id": "shake256",
+      "public_parameter_id": "FIPS202/SHAKE256",
+      "query_budget": {
+        "assumption_id": null,
+        "basis": "unknown",
+        "coverage": [
+          "online",
+          "offline",
+          "preprocessing",
+          "failed",
+          "unpublished",
+          "recursive",
+          "shared-primitive"
+        ],
+        "maximum": null
+      },
+      "reset_at_epoch": false
+    }
+  ],
+  "purpose": "research-model",
+  "schema": "trnm-pq128-lifetime-budget-v1",
+  "target_bits": 128,
   "terms": [
     {
-      "id": "signature-lifetime-unqualified",
+      "assumption_ids": [
+        "experiment_complete",
+        "implementation_refinement",
+        "independent_custody",
+        "network_and_consensus",
+        "preprocessing_and_advice",
+        "adversary_resource_bound",
+        "shared_oracle_instantiation",
+        "whole_chain_coverage",
+        "independent_review"
+      ],
+      "bound": null,
       "covers": [
         "signature"
       ],
       "experiment_id": "trnm-pq128-proposed-lifetime-experiment-v1",
-      "profile": "pon-nakamoto-v1-pq-research-native-pnw1",
-      "model": "quantum-adaptive-lifetime",
-      "status": "unknown",
-      "bound": null,
-      "scope": "whole-lifetime",
-      "opportunities": null,
-      "theorem": null,
+      "id": "signature-lifetime-unqualified",
       "loss_ids": [],
+      "model": "quantum-adaptive-lifetime",
+      "obligations": [
+        "Concrete quantum multi-user/multi-message forgery bound is not instantiated.",
+        "Map all key epochs, signing/verification interfaces and contextual authority entrypoints; NIST categories do not supply epsilon."
+      ],
+      "opportunities": null,
       "primitive_ids": [
         "shake128",
         "shake256"
       ],
+      "profile": "pon-nakamoto-v1-pq-research-native-pnw1",
+      "scope": "whole-lifetime",
+      "status": "unknown",
+      "theorem": null
+    },
+    {
       "assumption_ids": [
         "experiment_complete",
         "implementation_refinement",
@@ -269,29 +292,30 @@
         "whole_chain_coverage",
         "independent_review"
       ],
-      "obligations": [
-        "Concrete quantum multi-user/multi-message forgery bound is not instantiated.",
-        "Map all key epochs, signing/verification interfaces and contextual authority entrypoints; NIST categories do not supply epsilon."
-      ]
-    },
-    {
-      "id": "commitment-lifetime-unqualified",
+      "bound": null,
       "covers": [
         "commitment"
       ],
       "experiment_id": "trnm-pq128-proposed-lifetime-experiment-v1",
-      "profile": "pon-nakamoto-v1-pq-research-native-pnw1",
-      "model": "quantum-adaptive-lifetime",
-      "status": "unknown",
-      "bound": null,
-      "scope": "whole-lifetime",
-      "opportunities": null,
-      "theorem": null,
+      "id": "commitment-lifetime-unqualified",
       "loss_ids": [],
+      "model": "quantum-adaptive-lifetime",
+      "obligations": [
+        "Complete per-purpose encoding, binding and actual shared-hash construction mapping is missing.",
+        "Include preprocessing/advice, multi-target dimensions and joint model replacement; an unrestricted compressor attack is not a complete W1 forgery.",
+        "TCV3 sequential readback covers complete explicitly declared ancestors under a separately selected full-content pin; historical provenance, undeclared semantic dependencies, the complete transitive implementation graph and shared-oracle game mapping remain unproved."
+      ],
+      "opportunities": null,
       "primitive_ids": [
         "sha256",
         "sha512"
       ],
+      "profile": "pon-nakamoto-v1-pq-research-native-pnw1",
+      "scope": "whole-lifetime",
+      "status": "unknown",
+      "theorem": null
+    },
+    {
       "assumption_ids": [
         "experiment_complete",
         "implementation_refinement",
@@ -303,28 +327,28 @@
         "whole_chain_coverage",
         "independent_review"
       ],
-      "obligations": [
-        "Complete per-purpose encoding, binding and actual shared-hash construction mapping is missing.",
-        "Include preprocessing/advice, multi-target dimensions and joint model replacement; an unrestricted compressor attack is not a complete W1 forgery."
-      ]
-    },
-    {
-      "id": "proof-lifetime-unqualified",
+      "bound": null,
       "covers": [
         "proof"
       ],
       "experiment_id": "trnm-pq128-proposed-lifetime-experiment-v1",
-      "profile": "pon-nakamoto-v1-pq-research-native-pnw1",
-      "model": "quantum-adaptive-lifetime",
-      "status": "unknown",
-      "bound": null,
-      "scope": "whole-lifetime",
-      "opportunities": null,
-      "theorem": null,
+      "id": "proof-lifetime-unqualified",
       "loss_ids": [],
+      "model": "quantum-adaptive-lifetime",
+      "obligations": [
+        "Native PNW1 relation-to-implementation and complete input binding need independent qualification.",
+        "Any separate succinct backend needs its own exact PCS/Fiat-Shamir/recursive quantum proof; no P3 or RISC0 component estimate is imported."
+      ],
+      "opportunities": null,
       "primitive_ids": [
         "sha256"
       ],
+      "profile": "pon-nakamoto-v1-pq-research-native-pnw1",
+      "scope": "whole-lifetime",
+      "status": "unknown",
+      "theorem": null
+    },
+    {
       "assumption_ids": [
         "experiment_complete",
         "implementation_refinement",
@@ -336,28 +360,28 @@
         "whole_chain_coverage",
         "independent_review"
       ],
-      "obligations": [
-        "Native PNW1 relation-to-implementation and complete input binding need independent qualification.",
-        "Any separate succinct backend needs its own exact PCS/Fiat-Shamir/recursive quantum proof; no P3 or RISC0 component estimate is imported."
-      ]
-    },
-    {
-      "id": "ledger-lifetime-unqualified",
+      "bound": null,
       "covers": [
         "ledger"
       ],
       "experiment_id": "trnm-pq128-proposed-lifetime-experiment-v1",
-      "profile": "pon-nakamoto-v1-pq-research-native-pnw1",
-      "model": "quantum-adaptive-lifetime",
-      "status": "unknown",
-      "bound": null,
-      "scope": "whole-lifetime",
-      "opportunities": null,
-      "theorem": null,
+      "id": "ledger-lifetime-unqualified",
       "loss_ids": [],
+      "model": "quantum-adaptive-lifetime",
+      "obligations": [
+        "Cheapest legal quantum strategy and actual resource-to-query reduction remain open.",
+        "Specify network, resource, stopping/confirmation rule and adaptive branch history together; correct W1 evaluation is not a work-cost lower bound."
+      ],
+      "opportunities": null,
       "primitive_ids": [
         "sha256"
       ],
+      "profile": "pon-nakamoto-v1-pq-research-native-pnw1",
+      "scope": "whole-lifetime",
+      "status": "unknown",
+      "theorem": null
+    },
+    {
       "assumption_ids": [
         "experiment_complete",
         "implementation_refinement",
@@ -369,31 +393,31 @@
         "whole_chain_coverage",
         "independent_review"
       ],
-      "obligations": [
-        "Cheapest legal quantum strategy and actual resource-to-query reduction remain open.",
-        "Specify network, resource, stopping/confirmation rule and adaptive branch history together; correct W1 evaluation is not a work-cost lower bound."
-      ]
-    },
-    {
-      "id": "transport-lifetime-unqualified",
+      "bound": null,
       "covers": [
         "transport"
       ],
       "experiment_id": "trnm-pq128-proposed-lifetime-experiment-v1",
-      "profile": "pon-nakamoto-v1-pq-research-native-pnw1",
-      "model": "quantum-adaptive-lifetime",
-      "status": "unknown",
-      "bound": null,
-      "scope": "whole-lifetime",
-      "opportunities": null,
-      "theorem": null,
+      "id": "transport-lifetime-unqualified",
       "loss_ids": [],
+      "model": "quantum-adaptive-lifetime",
+      "obligations": [
+        "Concrete composed KEM/authentication/session game and actual deployed interfaces are not qualified.",
+        "Include failed sessions, identity selection, replay/eclipsing and verifier-resource assumptions; do not substitute observed sessions for all adversary queries."
+      ],
+      "opportunities": null,
       "primitive_ids": [
         "sha256",
         "sha512",
         "shake128",
         "shake256"
       ],
+      "profile": "pon-nakamoto-v1-pq-research-native-pnw1",
+      "scope": "whole-lifetime",
+      "status": "unknown",
+      "theorem": null
+    },
+    {
       "assumption_ids": [
         "experiment_complete",
         "implementation_refinement",
@@ -405,28 +429,28 @@
         "whole_chain_coverage",
         "independent_review"
       ],
-      "obligations": [
-        "Concrete composed KEM/authentication/session game and actual deployed interfaces are not qualified.",
-        "Include failed sessions, identity selection, replay/eclipsing and verifier-resource assumptions; do not substitute observed sessions for all adversary queries."
-      ]
-    },
-    {
-      "id": "recovery-lifetime-unqualified",
+      "bound": null,
       "covers": [
         "recovery"
       ],
       "experiment_id": "trnm-pq128-proposed-lifetime-experiment-v1",
-      "profile": "pon-nakamoto-v1-pq-research-native-pnw1",
-      "model": "quantum-adaptive-lifetime",
-      "status": "unknown",
-      "bound": null,
-      "scope": "whole-lifetime",
-      "opportunities": null,
-      "theorem": null,
+      "id": "recovery-lifetime-unqualified",
       "loss_ids": [],
+      "model": "quantum-adaptive-lifetime",
+      "obligations": [
+        "Full-state recovery/migration and independent monotonic witness assumptions remain unproved.",
+        "Retain consumed effects, revoked generations and unknown-provider effects across chain reorg and full-machine rollback; no invented custody-failure probability."
+      ],
+      "opportunities": null,
       "primitive_ids": [
         "sha512"
       ],
+      "profile": "pon-nakamoto-v1-pq-research-native-pnw1",
+      "scope": "whole-lifetime",
+      "status": "unknown",
+      "theorem": null
+    },
+    {
       "assumption_ids": [
         "experiment_complete",
         "implementation_refinement",
@@ -438,30 +462,30 @@
         "whole_chain_coverage",
         "independent_review"
       ],
-      "obligations": [
-        "Full-state recovery/migration and independent monotonic witness assumptions remain unproved.",
-        "Retain consumed effects, revoked generations and unknown-provider effects across chain reorg and full-machine rollback; no invented custody-failure probability."
-      ]
-    },
-    {
-      "id": "release-lifetime-unqualified",
+      "bound": null,
       "covers": [
         "release"
       ],
       "experiment_id": "trnm-pq128-proposed-lifetime-experiment-v1",
-      "profile": "pon-nakamoto-v1-pq-research-native-pnw1",
-      "model": "quantum-adaptive-lifetime",
-      "status": "unknown",
-      "bound": null,
-      "scope": "whole-lifetime",
-      "opportunities": null,
-      "theorem": null,
+      "id": "release-lifetime-unqualified",
       "loss_ids": [],
+      "model": "quantum-adaptive-lifetime",
+      "obligations": [
+        "Independent root/quorum/revocation and current loaded-byte FinalUse composition are not qualified.",
+        "A historical valid signature or successful download does not prove current execution authority or actual model use."
+      ],
+      "opportunities": null,
       "primitive_ids": [
         "sha512",
         "shake128",
         "shake256"
       ],
+      "profile": "pon-nakamoto-v1-pq-research-native-pnw1",
+      "scope": "whole-lifetime",
+      "status": "unknown",
+      "theorem": null
+    },
+    {
       "assumption_ids": [
         "experiment_complete",
         "implementation_refinement",
@@ -473,46 +497,29 @@
         "whole_chain_coverage",
         "independent_review"
       ],
-      "obligations": [
-        "Independent root/quorum/revocation and current loaded-byte FinalUse composition are not qualified.",
-        "A historical valid signature or successful download does not prove current execution authority or actual model use."
-      ]
-    },
-    {
-      "id": "application-lifetime-unqualified",
+      "bound": null,
       "covers": [
         "application"
       ],
       "experiment_id": "trnm-pq128-proposed-lifetime-experiment-v1",
-      "profile": "pon-nakamoto-v1-pq-research-native-pnw1",
-      "model": "quantum-adaptive-lifetime",
-      "status": "unknown",
-      "bound": null,
-      "scope": "whole-lifetime",
-      "opportunities": null,
-      "theorem": null,
+      "id": "application-lifetime-unqualified",
       "loss_ids": [],
+      "model": "quantum-adaptive-lifetime",
+      "obligations": [
+        "Complete cross-owner refinement, independent evaluation/custody and external effect binding remain unqualified.",
+        "Separate implementation and trust assumptions from probabilistic cryptographic events; prove coverage and absence of omitted shared-model losses."
+      ],
+      "opportunities": null,
       "primitive_ids": [
         "sha256",
         "sha512",
         "shake128",
         "shake256"
       ],
-      "assumption_ids": [
-        "experiment_complete",
-        "implementation_refinement",
-        "independent_custody",
-        "network_and_consensus",
-        "preprocessing_and_advice",
-        "adversary_resource_bound",
-        "shared_oracle_instantiation",
-        "whole_chain_coverage",
-        "independent_review"
-      ],
-      "obligations": [
-        "Complete cross-owner refinement, independent evaluation/custody and external effect binding remain unqualified.",
-        "Separate implementation and trust assumptions from probabilistic cryptographic events; prove coverage and absence of omitted shared-model losses."
-      ]
+      "profile": "pon-nakamoto-v1-pq-research-native-pnw1",
+      "scope": "whole-lifetime",
+      "status": "unknown",
+      "theorem": null
     }
   ]
 }

@@ -1,3 +1,28 @@
+**Protocol branch consolidation, 2026-11-13 UTC — HOLD:**
+
+Compose checkpoint/Root source from PR #947
+`d5f57aa038b80a29b0f02a8af78ae3b6584666f1` with the reviewed #940-relative
+increments from #941 `84f681a46bb999d075ebb836e1533c5cf95a8f46` and #946
+`64da09be60d96e2b602451d0ed313e5b78084ed6`. Preserve V6 receipt/history-floor
+semantics, the bounded Linux ownership probe and conservative other-Unix refusal,
+the PQ account validator, bounded retained-cache writes and explicit TCV3 API.
+Preserve the original evidence archives and every prior failure on its own source.
+
+The final ownership contract revalidates after a complete frame and before any
+checkpoint read or advance. A connect-only liveness probe has no operation to
+authorize and must not consume journal state. Keep #947's existing complete-request
+refusal control and #946's stopped-child fixture ownership. The superseded #946
+test requiring immediate fencing from a connect-only probe is incompatible with
+this contract; retain it in its original Git history, replace that current selector
+with a normal connect-only continuity/no-journal-change test, and require the
+complete-request control explicitly. Keep the bounded recovery/policy selectors
+from #941 and bind all selectors in the source-contract checks.
+
+This composition changes the tested source. Previous native test counts are not
+attributed to it. Original transport deadlines, capacity limits, namespaces,
+failure observations, false/null qualification fields and production HOLD remain
+unchanged. No native execution or production activation is claimed by this entry.
+
 **Checkpoint formatter follow-up, 2026-11-12 UTC — HOLD:**
 
 Continue the published socket-probe evidence for source
@@ -111,6 +136,170 @@ business-intent deduplication. Independent state survival, distributed quorum
 recovery/reconfiguration, full provider-frontier witnessing, ordinary M15 and
 FinalUse assembly, bounded provider atomic deduplication and original service
 qualification remain open. No production activation or whole-chain claim.
+
+**Bounded retained-cache population and fixture corrections, 2026-11-12 — HOLD:**
+
+The original complete C3 observation on
+`f0fa8c3c0372d0c5dafccd2683b31fda322e42f2` remains retained. Its default DA
+library reported 741 passed and one failed. The unchanged 65/128 capacity
+control passed in that lane. Its all-features DA library reported 739 passed
+and three failed, including the same capacity control with
+Invalid("RS46 provider deadline"). A source-visible transaction reduction did
+not establish success in both configurations or the exact physical latency
+cause. C1/C2/C3 failures are never rewritten by a later successful observation.
+
+Use the existing chunk batch in retained populate_cache, bounded by its original
+eight-member limit and by the maximum single-chunk payload size. Keep fresh
+arena reads, complete payload prevalidation, every original deadline check,
+manifest publication, the existing hash/writer/WAL/quota boundary, and final
+complete verification/readback. The cold capacity fixture still uses model
+N-1 chunks plus one environment chunk, six slots and the original ten-second
+absolute deadline. Its source-derived transaction counts change from 132/258
+to 76/147 for 65/128 original chunks; these are not measured speedups or proof
+of the particular C3 deadline-return branch.
+
+Both C3 DA lanes failed the new paired-cache expired-entry test's comparison
+of the CellErrorV1 wrapper with the bare underlying I/O display. Correct only
+that expectation: require the typed I/O error, TimedOut kind and original
+underlying message. Preserve the preceding real 250 ms writer wait, 750 ms
+elapsed bound, two-table expiry/rollback and all no-write assertions.
+
+C3's all-features short-TTL control failed its meaningful fixture phase guard:
+the real request arrived just before signed expiry, and the backend frame became
+ready after expiry. The later error/no-output assertions were not executed and
+must not be credited. Before minting the same two-second signed TTL, wait for
+one selected next wall-second within the original setup deadline. A missed
+window or signing across that second refuses the fixture; there is no new
+selected window, future issue time, network retry or renewed request budget.
+A late wake still leaves only the selected second's actual remaining time;
+the original transfer/expiry/no-publication guards decide admissibility.
+Retain the original request/overall deadlines and every actual network action.
+
+The new candidate must independently pass the same complete ninety-command
+gate. Each DA lane also requires the existing retention writer-contention,
+cold-cache real-peer, eight-chunk reader-refusal, and short-TTL controls by
+exact name, alongside all earlier required methods. Workloads and production
+budgets remain unchanged.
+
+Re-anchor the same twenty-one directly registered implementation objects to
+this checkpoint with unchanged bytes and unchanged Root dependency register.
+All eight lifetime terms remain unknown/null. This partial direct inventory
+does not prove transitive composition, historical migration, public WAN,
+independent custody, W1/DAA hardness or whole-chain qualification. Ordinary
+TCV3 caller integration and production qualification remain unchanged and unqualified.
+
+**Bounded peer cleanup and atomic retained-cache staging, 2026-11-12 — HOLD:**
+
+The complete single-threaded observation on
+`13bdc38023d57607a9ba81f52e123f7fb556bec3` retained three unsuccessful commands.
+The default DA command was explicitly interrupted by the operator after a
+read-only join/accept wait observation; it had no complete native summary.
+The all-features DA library reported 733 passed and one failed, with
+CacheWriterBusy from the original 65/128 capacity control. That error can also
+mean an expired deadline and does not prove another writer existed. PQ exact
+control 41 exhausted the unchanged production 250 ms witness exchange budget;
+without an authenticated matching receipt, the node refused local commit.
+Checkpoint's 58 methods including four socket controls and the other recorded
+checks remain separate observations. All original failures and source/provider
+receipts are retained; none is rewritten as a success.
+
+The existing slow fragmented-handshake fixture could reject before dialing and
+then wait indefinitely for its peer. Bound fixture cleanup while preserving the
+original full fetch entry and its 120 ms / 600 ms / unchanged-deadline / byte
+assertions. Add a separate actual production socket-handshake observation and an
+explicit no-connection cleanup control. Required-connection fixtures still
+reject a missing connection.
+
+The retained-plan path previously staged each of six verified shards through
+separate manifest and chunk transactions. Add a narrow paired cache batch with
+at most eight members and 32 MiB of complete inputs, checking every canonical
+single-chunk manifest, content pin and payload before the existing writer
+boundary. Group the six slots of each original chunk into one such transaction
+in build and catalog staging. Keep the existing FULL pager, WAL/reader refusal,
+quota triggers, writer identity and caller deadline; publish a plan only after
+its full build succeeds. Preserve the original cold empty cache, source-file
+deletion, 65/128 workloads, six slots and ten-second absolute deadline.
+The source-derived transaction count falls from 13N+2 to 2N+2; this is not yet a
+runtime performance claim. Require the unchanged capacity control plus new late
+invalid-input, quota rollback, actual deadline propagation, reader refusal and
+cold-reopen observations on the new source.
+
+The PQ exchange cap, fail-closed path and receipt requirement are unchanged.
+A later successful control is a new source-bound observation and cannot erase
+the prior measured budget refusal or establish its physical timing cause.
+
+Re-anchor the same twenty-one directly registered implementation objects to
+this source checkpoint. Their bytes and the Root dependency register remain
+unchanged; this partial direct inventory is not the complete call graph. All
+eight lifetime terms stay unknown/null. Ordinary callers, public WAN,
+historical migration, independent custody, W1/DAA hardness, FinalUse and
+whole-chain production qualification remain unproved.
+
+**PQ retained-control synchronization and CI harness alignment, 2026-11-12 — HOLD:**
+
+The first joint source `921acc94fa7af15cb1728ab2718c62f48ad93c89`
+completed its observations with three failed commands retained: each complete
+DA library lane passed 733 methods and failed the existing 65/128-chunk capacity
+control at its original ten-second absolute deadline; the checkpoint package
+exposed a copied-lease test scheduling race. All fifteen new TCV3 methods ran
+successfully in both lanes, and the 63 exact PQ controls and strict Clippy
+passed. Those successes do not replace the retained full-library failures.
+
+The copied-lease test assumed an idle first owner while the second owner's
+live-listener probe wakes it. The existing production guard correctly rejects
+the replaced lease inode. Synchronize the test with a confirmed POSIX stop,
+retain its live listener and original lock, restore the original lease before
+resuming the positive case, and require actual service afterward. Add a separate
+negative case that resumes before restoration and requires actual fencing with
+unchanged journal bytes. Keep production guards, the original three selectors,
+Cargo graphs and protocol formats unchanged; require the new fourth selector
+in the hosted checkpoint step and its failure-propagation controls.
+
+The first local harness omitted the repository CI's existing
+`RUST_TEST_THREADS=1`. Subsequent observations use that setting and explicit
+single-threaded DA/checkpoint invocation while retaining the original deadlines
+and workloads. This is a new observation on its own committed source, not a
+rewrite of the prior results or proof that every parallel failure was caused
+by scheduling. Preserve both complete observation sets.
+
+Re-anchor the same twenty-one declared implementation objects to this source
+checkpoint. Their byte identities and all eight unknown/null probability terms
+remain unchanged, as do the Root register's frozen scope and unproved bounds.
+Ordinary callers, public WAN qualification, historical migration, independent
+custody, W1/DAA hardness, FinalUse and production gates remain unqualified.
+
+**PQ entry configuration and declared content-lineage continuation, 2026-11-12 America/New_York — HOLD:**
+
+Continue the copied-lease/V5 integration at #940, retaining the complete #939
+history and all original failures. Apply the existing account/profile validator
+before constructing a PQ network policy or preparing a public PQ History call.
+Keep the existing classical-route refusal precedence, valid development/PQ
+combinations, signed formats, network domains and original business budgets.
+Preserve the tests-only failing source and repaired source as separate native
+observations. Four additional named controls extend the original 52 plus seven
+supplemental methods; the old execution counts are not reassigned.
+
+The additive [TCV3 contract](specs/pon/CELL_CONTENT_LINEAGE_CLOSURE_V3.md) binds
+every complete TCV2 member and selected root under a fresh SHA-512 domain.
+Every declared TMR1 ancestor must be present as complete content. The existing
+retained-set owner checks its exact roster, epoch and windows, then reads actual
+CellStore bytes through TCV2 with one cumulative session and original deadline.
+Missing ancestors, ambiguous legacy aliases, invalid graphs and false content
+claims refuse the aggregate observation. The format has independent limits of
+sixteen versions, sixteen levels and 32 MiB metadata. It supplies a sequential
+content observation, without switching ordinary callers or proving historical
+provenance, undeclared semantic dependencies, custody or current FinalUse.
+
+Register the new direct implementation and changed public entry in the existing
+eight-domain lifetime source inventory. Review all twenty-one declared files
+against the actual runtime checkpoint; this is source coverage, not a proof of
+transitive dependencies, a shared-oracle reduction or a numerical failure bound.
+All eight terms remain unknown/null. Keep the Root register and its independent
+custody, recovery, migration, W1/DAA, whole-chain and production gates unchanged.
+Run the exact committed source, retained native rosters, new content controls,
+locked graphs, strict Clippy, formatting and source/link negative controls before
+assigning any final component result. Hosted HEAD and merge observations retain
+their own source and execution status.
 
 **System security combined source and retained execution, 2026-11-12 UTC — HOLD:**
 

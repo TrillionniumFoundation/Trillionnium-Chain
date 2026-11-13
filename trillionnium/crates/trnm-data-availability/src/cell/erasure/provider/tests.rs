@@ -233,6 +233,68 @@ fn csp1_roundtrip_keeps_independent_source_operation_context_and_slot_pins() {
 }
 
 #[test]
+fn provider_six_shard_cache_batch_rejects_late_bad_pins_and_wires_before_any_write() {
+    let fixture = Fixture::new();
+    let contracts: [_; CELL_RS46_TOTAL_SHARDS_V1] =
+        std::array::from_fn(|slot| fixture.contract(slot, 1));
+    let staged = std::array::from_fn(|slot| {
+        (
+            &contracts[slot],
+            contracts[slot].operation(),
+            fixture.wires[slot].as_slice(),
+        )
+    });
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("six-shards.sqlite");
+    let target = cache(&path);
+    let before = target.cache_usage().unwrap();
+    assert_eq!(before.chunk_rows, 0);
+    assert_eq!(before.manifest_rows, 0);
+
+    let mut wrong_pin = staged;
+    wrong_pin[CELL_RS46_TOTAL_SHARDS_V1 - 1].1[0] ^= 1;
+    assert!(matches!(
+        CellRs46ShardProviderV1::cache_shard_batch(&wrong_pin, &target, deadline()),
+        Err(CellErrorV1::Invalid("RS46 provider operation pin"))
+    ));
+    assert_eq!(target.cache_usage().unwrap(), before);
+
+    let mut changed_wire = fixture.wires[CELL_RS46_TOTAL_SHARDS_V1 - 1].clone();
+    *changed_wire.last_mut().unwrap() ^= 1;
+    let mut wrong_wire = staged;
+    wrong_wire[CELL_RS46_TOTAL_SHARDS_V1 - 1].2 = &changed_wire;
+    assert!(matches!(
+        CellRs46ShardProviderV1::cache_shard_batch(&wrong_wire, &target, deadline()),
+        Err(CellErrorV1::Invalid("RS46 provider payload pin"))
+    ));
+    assert_eq!(target.cache_usage().unwrap(), before);
+
+    CellRs46ShardProviderV1::cache_shard_batch(&staged, &target, deadline()).unwrap();
+    let after = target.cache_usage().unwrap();
+    assert_eq!(after.chunk_rows, CELL_RS46_TOTAL_SHARDS_V1 as u64);
+    assert_eq!(after.manifest_rows, CELL_RS46_TOTAL_SHARDS_V1 as u64);
+    drop(target);
+
+    let reopened = CellStoreV1::open_read_only(&path).unwrap();
+    assert_eq!(reopened.cache_usage().unwrap(), after);
+    for (slot, contract) in contracts.iter().enumerate() {
+        let manifest = reopened
+            .manifest(contract.manifest().id())
+            .unwrap()
+            .unwrap();
+        assert_eq!(manifest.encode(), contract.manifest().encode());
+        reopened.verify_complete(&manifest).unwrap();
+        assert_eq!(
+            reopened
+                .chunk(manifest.chunks()[0].sha256)
+                .unwrap()
+                .unwrap(),
+            fixture.wires[slot]
+        );
+    }
+}
+
+#[test]
 fn provider_reopens_full_descriptor_and_reads_actual_bytes_without_cache() {
     let dir = tempfile::tempdir().unwrap();
     let fixture = Fixture::new();
