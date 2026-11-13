@@ -1,3 +1,28 @@
+**Source consolidation and retained native controls, 2026-11-13 UTC — HOLD:**
+
+Continue the existing #847 candidate `b683714cdd5ba241c16c335a81aebc12c1581902`
+with the original #830 resource-owner head
+`bb3f13ed78edd367381275a3ae4752f1f4da4c22`, #829 learning/readback head
+`0cdc6ca1878854dd794aad25adfb072bc5fa4422`, and #948 followthrough head
+`a4aebf12ffb73c0f5ae8912048153bdd0cae9c4b`. Keep finite local reservations,
+confirmed process exits, original-operation recovery, confirmation chainwork
+and storage-epoch checks, and fresh settlement-journal readback fences together.
+Preserve current independent security/lifetime controls, raw artifact archives,
+original evidence bytes, and newer source-contract definitions when their older
+metadata conflicts. Rebind exact source pins only after the complete integration
+source is fixed; intermediate pins must continue to refuse changed bytes.
+
+The strict named W1 completion reader and the retained frozen roster now include
+all current History source declarations: 38 successful controls and the one
+ignored child fixture required by its parent. The five additions already existed
+in `b683714c`: four detached-budget controls and the native-completion handoff
+control. The older 28, 33, and 36 success counts cannot certify this current
+roster. No original test name is removed, and a name or aggregate count alone
+cannot substitute for its unique successful terminal observation. This is a
+source/reader repair, not a claim that the complete native suites executed here.
+Local synthetic reader/control tests retain their own execution scope. Full
+current-source qualification, independent resource/service bounds, model gain,
+whole-chain PQ acceptance, and production activation remain HOLD.
 
 **PoN and learning-outcome composition, 2026-11-11 America/New_York — HOLD:**
 

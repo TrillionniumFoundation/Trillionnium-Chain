@@ -10,6 +10,7 @@ import sys
 import tempfile
 import unittest
 
+from check_w1_native_roster import ROSTERS
 from w1_native_controls import GROUPS, NativeControlError, SUITES, validate_log
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -21,7 +22,7 @@ COUNTS = {
     "legal-native-controls": (13, 0),
     "factorial-kernel-tests": (14, 0), "factorial-example-tests": (11, 0),
     "header-binding-tests": (1, 0), "history-w1-tests": (5, 0),
-    "history-import-tests": (33, 1), "cpu-completion-tests": (11, 0),
+    "history-import-tests": (38, 1), "cpu-completion-tests": (11, 0),
 }
 HISTORY = [
     "deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline",
@@ -32,6 +33,11 @@ HISTORY = [
     "deadline_controls::history_control_resource_expiry_refuses_late_success",
     "deadline_controls::history_control_resource_expiry_keeps_original_resource_error",
     "deadline_controls::history_owner_resource_expiry_never_invokes_exclusive_or_shared_action",
+    "detached_budget_controls::shared_detached_history_before_native_completion_keeps_sticky_budget_refusal",
+    "detached_budget_controls::shared_detached_history_continues_from_real_deficit_without_new_credit",
+    "detached_budget_controls::shared_detached_history_refill_cannot_renew_original_deadline",
+    "detached_budget_controls::shared_detached_history_refill_keeps_original_resource_cancellation",
+    "shared_history_native_completion_handoff_settles_before_next_packet",
 ]
 
 
@@ -99,6 +105,25 @@ class NativeGateTests(unittest.TestCase):
         self.assertEqual(self.run_gate(), 0)
         self.assertEqual(self.run_gate("legal"), 0)
 
+    def test_fixture_counts_match_frozen_complete_named_rosters(self):
+        for suite, profile in [('factorial-example-tests', 'factorial-example'),
+                               ('history-import-tests', 'history-import')]:
+            roster = ROSTERS[profile]
+            ignored = len(roster['ignored'])
+            self.assertEqual(COUNTS[suite], (len(roster['names']) - ignored, ignored))
+
+
+    def test_previous_incomplete_positive_fixture_is_refused(self):
+        for suite, old_passes, ignored in [('factorial-example-tests', 6, 0),
+                                          ('history-import-tests', 28, 1)]:
+            original = self.logs[suite]
+            self.logs[suite] = original.replace(
+                f'test result: ok. {COUNTS[suite][0]} passed;',
+                f'test result: ok. {old_passes} passed;', 1)
+            self.assertNotEqual(self.run_gate(), 0)
+            self.logs[suite] = original
+
+
     def test_frozen_names_equal_current_native_source_and_retained_counts(self):
         shared = source_names(NODE + "examples/support/w1_cost_producers.rs",
                               "w1_cost_producers::observed_search_tests::")
@@ -107,6 +132,8 @@ class NativeGateTests(unittest.TestCase):
                                "ingress::history_import::tests::")
         deadline = source_names(NODE + "src/ingress/history_import_deadline_tests.rs",
                                 "ingress::history_import::tests::deadline_controls::")
+        detached = source_names(NODE + "src/ingress/history_import_detached_budget_tests.rs",
+                                "ingress::history_import::tests::detached_budget_controls::")
         expected = {
             "legal-native-controls": shared | source_names(
                 NODE + "examples/pon_w1_legal_strategy_v1.rs", "tests::"),
@@ -118,7 +145,7 @@ class NativeGateTests(unittest.TestCase):
                            "pon_work::legal_attempt::low_rank::tests::"),
             "header-binding-tests": source_names(NODE + "tests/work_header_binding.rs", ""),
             "history-w1-tests": {name for name in history if name.split("::")[-1].startswith("history_w1_")},
-            "history-import-tests": history | deadline,
+            "history-import-tests": history | deadline | detached,
             "cpu-completion-tests": source_names(
                 NODE + "src/ingress/public_v3/scalar_cpu_completion_tests.rs",
                 "ingress::public_v3::scalar_cpu::completion_tests::"),
@@ -203,7 +230,9 @@ class NativeGateTests(unittest.TestCase):
     def test_original_old_counts_cannot_certify_the_current_roster(self):
         for suite, old, current in (("legal-native-controls", 8, 13),
                                     ("factorial-example-tests", 6, 11),
-                                    ("history-import-tests", 28, 33)):
+                                    ("history-import-tests", 28, 38),
+                                    ("history-import-tests", 33, 38),
+                                    ("history-import-tests", 36, 38)):
             self.rejects(suite, self.logs[suite].replace(f"{current} passed;", f"{old} passed;"))
 
     def test_factorial_example_rejects_missing_duplicate_replaced_or_failed_named_control(self):

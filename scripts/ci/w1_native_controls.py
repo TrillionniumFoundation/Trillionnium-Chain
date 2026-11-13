@@ -82,6 +82,10 @@ SUITES = {'legal-native-controls': {'passed': ['tests::exact_shards_reject_unfro
                                      'ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry',
                                      'ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account',
                                      'ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen',
+                                     'ingress::history_import::tests::detached_budget_controls::shared_detached_history_before_native_completion_keeps_sticky_budget_refusal',
+                                     'ingress::history_import::tests::detached_budget_controls::shared_detached_history_continues_from_real_deficit_without_new_credit',
+                                     'ingress::history_import::tests::detached_budget_controls::shared_detached_history_refill_cannot_renew_original_deadline',
+                                     'ingress::history_import::tests::detached_budget_controls::shared_detached_history_refill_keeps_original_resource_cancellation',
                                      'ingress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account',
                                      'ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart',
                                      'ingress::history_import::tests::history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors',
@@ -100,6 +104,7 @@ SUITES = {'legal-native-controls': {'passed': ['tests::exact_shards_reject_unfro
                                      'ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1',
                                      'ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks',
                                      'ingress::history_import::tests::shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit',
+                                     'ingress::history_import::tests::shared_history_native_completion_handoff_settles_before_next_packet',
                                      'ingress::history_import::tests::shared_history_paid_deficit_refuses_without_waiting_under_original_writer',
                                      'ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer'],
                           'ignored': {'ingress::history_import::tests::history_kill_cut_child': 'subprocess '
