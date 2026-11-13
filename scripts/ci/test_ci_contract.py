@@ -287,6 +287,47 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
     def test_actual_lane_preserves_quorum_reference_and_retained_vector_checks(self):
         check_independent_conformance(self.script, self.lanes)
 
+    def test_stateful_snapshot_cannot_disappear_duplicate_skip_swallow_or_move(self):
+        # This literal is independent of the checker's expected inventory.
+        command = '    python3 formal/pon-nakamoto-v1/test_stateful_tail_snapshot.py -v\n'
+        self.assertEqual(self.script.count(command), 1)
+        changes = {
+            'missing': self.script.replace(command, ''),
+            'duplicate': self.script.replace(command, command * 2),
+            'comment': self.script.replace(command, '    # ' + command.lstrip()),
+            'stub': self.script.replace(command, '    true # ' + command.lstrip()),
+            'conditional skip': self.script.replace(command, '    if false; then\n' + command + '    fi\n'),
+            'early success': self.script.replace(command, '    exit 0\n' + command),
+            'swallowed failure': self.script.replace(command, command.rstrip() + ' || true\n'),
+            'wrong lane': self.script.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+            'zero-match discovery': self.script.replace(command,
+                "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'missing_test_stateful_tail_snapshot.py' -v\n"),
+        }
+        for change, candidate in changes.items():
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                check_independent_conformance(candidate, self.lanes)
+
+    def test_journal_cleanup_cannot_disappear_duplicate_skip_swallow_or_move(self):
+        # This literal is independent of the checker's expected inventory.
+        command = '    python3 formal/pon-nakamoto-v1/test_pq_root_journal_cleanup.py -v\n'
+        self.assertEqual(self.script.count(command), 1)
+        changes = {
+            'missing': self.script.replace(command, ''),
+            'duplicate': self.script.replace(command, command * 2),
+            'comment': self.script.replace(command, '    # ' + command.lstrip()),
+            'stub': self.script.replace(command, '    true # ' + command.lstrip()),
+            'conditional skip': self.script.replace(command, '    if false; then\n' + command + '    fi\n'),
+            'early success': self.script.replace(command, '    exit 0\n' + command),
+            'swallowed failure': self.script.replace(command, command.rstrip() + ' || true\n'),
+            'wrong lane': self.script.replace(command, '').replace('  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+            'zero-match discovery': self.script.replace(command,
+                "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'missing_test_pq_root_journal_cleanup.py' -v\n"),
+        }
+        for change, candidate in changes.items():
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                check_independent_conformance(candidate, self.lanes)
+
+
     def test_pq_migration_commands_cannot_be_removed_skipped_repointed_or_moved(self):
         for command in PQ_MIGRATION_TEST_COMMANDS:
             self.assertEqual(self.script.count(command), 1)
@@ -1806,6 +1847,25 @@ class CiContractTests(unittest.TestCase):
                     path.unlink()
                 path.write_bytes(original)
 
+    def test_journal_cleanup_file_cannot_be_deleted_or_symlinked(self):
+        relative = 'formal/pon-nakamoto-v1/test_pq_root_journal_cleanup.py'
+        path = self.root / relative
+        original = path.read_bytes()
+        try:
+            path.unlink()
+            with self.subTest(change='deleted'), self.assertRaisesRegex(
+                    ValueError, 'root recovery CI suite must remain a regular source file'):
+                validate(self.root)
+            path.symlink_to('test_pq_root_recovery_policy_v1.py')
+            with self.subTest(change='symlink'), self.assertRaisesRegex(
+                    ValueError, 'root recovery CI suite must remain a regular source file'):
+                validate(self.root)
+        finally:
+            if path.is_symlink():
+                path.unlink()
+            path.write_bytes(original)
+
+
     def test_pq_lifetime_budget_commands_cannot_disappear_or_move(self):
         path = 'scripts/ci/ci_job.sh'
         for command in ('    python3 scripts/ci/test_pq_lifetime_budget.py\n',
@@ -2862,6 +2922,7 @@ class MergedQualificationLaneTests(unittest.TestCase):
             "    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v\n",
             '    python3 formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_v2.py -v\n',
             '    python3 formal/pon-nakamoto-v1/test_pq_root_effect_readback_v2.py -v\n',
+            '    python3 formal/pon-nakamoto-v1/test_pq_root_journal_cleanup.py -v\n',
             '    python3 scripts/ci/test_pq_root_dependency_register.py\n',
             '    python3 scripts/ci/pq_root_dependency_register.py\n',
             '    python3 scripts/ci/test_run_pq_root_native_v3.py\n',

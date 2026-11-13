@@ -14,6 +14,7 @@ from functools import lru_cache
 import json
 from math import comb
 from pathlib import Path
+from types import MappingProxyType
 from typing import Mapping
 
 
@@ -130,7 +131,26 @@ def make_optimal_tail(model: Model):
     A policy may select a different action after each observed outcome. A path
     crossing its resource budget is killed. Credit already reaching the target
     counts as success, so the event is a crossing by the stated horizon.
+
+    The query owns an immutable construction-time snapshot. Caller-owned
+    mappings and nested sequences must remain stable until this call returns.
+    Later model changes require a new query.
     """
+    # Preserve existing input validation before copying caller-owned records.
+    validate(model)
+    model = Model(
+        actions=MappingProxyType({
+            state: tuple(Action(action.name, tuple(
+                Transition(t.probability, t.next_state, t.credit, t.resource)
+                for t in action.outcomes
+            )) for action in actions)
+            for state, actions in model.actions.items()
+        }),
+        potential=MappingProxyType(dict(model.potential)),
+        z=model.z,
+        gamma=model.gamma,
+    )
+    # Validate the captured graph itself; no alias survives into the cache.
     validate(model)
 
     @lru_cache(maxsize=None)
