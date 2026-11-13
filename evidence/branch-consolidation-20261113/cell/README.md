@@ -43,7 +43,8 @@ that composition and its controls.
 
 ## Review method and preservation
 
-The ledger records every full branch head, merge base, original core-path set,
+The ledger records every full branch head, merge base, and original core-path
+set through the [assigned snapshot](assigned-tip-snapshot.json), along with
 source outcome and exact historical/starting/selected Git blobs. It covers
 113 distinct source variants, including four additional old runtime
 producer files and three TPQ1 C-oracle files. Repeated six-file Cell deltas in

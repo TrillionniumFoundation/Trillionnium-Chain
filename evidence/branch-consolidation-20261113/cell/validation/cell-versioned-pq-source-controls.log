@@ -1,0 +1,6 @@
+test_unpinned_pq_named_nested_module_rejects_renamed_native_file (scripts.ci.test_pq_research_integration.CorpusGateTests.test_unpinned_pq_named_nested_module_rejects_renamed_native_file) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.631s
+
+OK
