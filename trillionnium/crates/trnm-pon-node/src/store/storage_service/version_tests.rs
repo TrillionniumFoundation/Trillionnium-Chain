@@ -651,8 +651,12 @@ fn native_version_member_gc_requires_successor_native_effect() {
             deadline(),
         )
         .unwrap();
-        next.reserve_version(next_contract.clone(), next_request.expected_catalog, deadline())
-            .unwrap();
+        next.reserve_version(
+            next_contract.clone(),
+            next_request.expected_catalog,
+            deadline(),
+        )
+        .unwrap();
         next.acknowledge_version(next_contract.operation, &cache, deadline())
             .unwrap();
         while node
