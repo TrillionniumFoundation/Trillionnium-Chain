@@ -1,0 +1,150 @@
+{
+  "bytes": 128805,
+  "deadlines_or_assertions_changed": false,
+  "file_count": 11,
+  "files": [
+    {
+      "bytes": 6059,
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-da-full-library/driver.py",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-da-full-library/driver.py",
+      "sha256": "d15465778df62e95293f172775105d29f8c0c940f33099d87878fd3f1b9ac89c"
+    },
+    {
+      "bytes": 1108,
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-da-full-library/environment.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-da-full-library/environment.json",
+      "sha256": "7b7d27edc53b9ec6a7c4b56ff3aacf287bb156a1866f06df40fd3f1acefc75a5"
+    },
+    {
+      "bytes": 97047,
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-da-full-library/native-combined.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-da-full-library/native-combined.log",
+      "sha256": "c0d8e29a365bfa2ee29906cf1f44bb959e4f37ad869d9ba17d305b954b0fe241"
+    },
+    {
+      "bytes": 4430,
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-da-full-library/receipt.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-da-full-library/receipt.json",
+      "sha256": "4935b95f413a4b3b119fd5adf3d956cfa4c4f3d1953e4ab4292c57b61a762f58"
+    },
+    {
+      "bytes": 6059,
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-da-quiet-control/driver.py",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-da-quiet-control/driver.py",
+      "sha256": "d15465778df62e95293f172775105d29f8c0c940f33099d87878fd3f1b9ac89c"
+    },
+    {
+      "bytes": 1108,
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-da-quiet-control/environment.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-da-quiet-control/environment.json",
+      "sha256": "7b7d27edc53b9ec6a7c4b56ff3aacf287bb156a1866f06df40fd3f1acefc75a5"
+    },
+    {
+      "bytes": 264,
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-da-quiet-control/native-combined.log",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-da-quiet-control/native-combined.log",
+      "sha256": "1e297e292834aa3803a0c0d6f7d45e8b250127b60a7f42ceaa122e582c7685a5"
+    },
+    {
+      "bytes": 4584,
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-da-quiet-control/receipt.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-da-quiet-control/receipt.json",
+      "sha256": "c5373ae8d6f18532fcd27f93932c3a125cc6a38c758fb30d46793ce109c618dc"
+    },
+    {
+      "bytes": 868,
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-da-quiet-sequence.json",
+      "relative_to_artifact_root": "297bb40798ca1b4e4a987ef00582067282cda4e9-da-quiet-sequence.json",
+      "sha256": "17e3b34cc72420f4b38455138863bd4d91fd771e783a1778e4fb1daab14d2a18"
+    },
+    {
+      "bytes": 904,
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/host-snapshot-at-quiet-20261111-d6cb.json",
+      "relative_to_artifact_root": "host-snapshot-at-quiet-20261111-d6cb.json",
+      "sha256": "3b169523177ac134a8d5a578add7d9f9e441c965b7d163f8410345d3aa1a607d"
+    },
+    {
+      "bytes": 6374,
+      "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/host-snapshot-before-quiet-20261111-d6cb.json",
+      "relative_to_artifact_root": "host-snapshot-before-quiet-20261111-d6cb.json",
+      "sha256": "7ae011bd65d6ed232ec0c8cb3c61ad362720f7b6376541cc2c927fb120d412d9"
+    }
+  ],
+  "first_run_causal_diagnosis_established": false,
+  "integration_tests_repeated": false,
+  "outcomes": [
+    {
+      "binary_stable": true,
+      "counts": {
+        "failed": 0,
+        "filtered_out": 740,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 1
+      },
+      "exit_code": 0,
+      "library_suite_passed": false,
+      "native_execution_status": "PINNED_AND_OBSERVED",
+      "receipt": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-da-quiet-control/receipt.json",
+      "scope": "quiet-control",
+      "source_stable": true,
+      "status": "diagnostic_passed"
+    },
+    {
+      "binary_stable": true,
+      "counts": {
+        "failed": 1,
+        "filtered_out": 0,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 740
+      },
+      "exit_code": 101,
+      "library_suite_passed": false,
+      "native_execution_status": "PINNED_AND_OBSERVED",
+      "receipt": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-da-full-library/receipt.json",
+      "scope": "full-library",
+      "source_stable": true,
+      "status": "diagnostic_failed"
+    }
+  ],
+  "prior_failures_preserved": true,
+  "prior_manifest": {
+    "bytes": 92496,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/stable-artifacts-297bb40798ca1b4e4a987ef00582067282cda4e9.json",
+    "relative_to_artifact_root": "stable-artifacts-297bb40798ca1b4e4a987ef00582067282cda4e9.json",
+    "sha256": "b8cd4bdc3c7055ffd4f9d82e4a70608a6239f5bd84f1370e22727ed0e480b5e6"
+  },
+  "prior_manifest_unchanged": true,
+  "scope": "coordinated quiet control and conditional replay of the original complete DA library",
+  "sequence": {
+    "driver_sha256": "d15465778df62e95293f172775105d29f8c0c940f33099d87878fd3f1b9ac89c",
+    "full_library_argv": [
+      "/home/qian-qi/.cargo/bin/rustup",
+      "run",
+      "1.95.0",
+      "/usr/bin/python3",
+      "-u",
+      "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/quiet-driver-d15465778df62e95293f172775105d29f8c0c940f33099d87878fd3f1b9ac89c.py",
+      "--scope",
+      "full-library"
+    ],
+    "full_library_executed": true,
+    "full_library_exit": 1,
+    "quiet_argv": [
+      "/home/qian-qi/.cargo/bin/rustup",
+      "run",
+      "1.95.0",
+      "/usr/bin/python3",
+      "-u",
+      "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/quiet-driver-d15465778df62e95293f172775105d29f8c0c940f33099d87878fd3f1b9ac89c.py",
+      "--scope",
+      "quiet-control"
+    ],
+    "quiet_exit": 0,
+    "source": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "status": "library_failed"
+  },
+  "source": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+  "tree": "129267332b2ef87d3d66d014fddeb894faa9379f"
+}

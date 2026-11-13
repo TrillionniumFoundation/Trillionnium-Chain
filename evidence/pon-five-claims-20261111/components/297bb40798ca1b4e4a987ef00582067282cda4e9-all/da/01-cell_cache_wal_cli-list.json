@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_cache_wal_cli-c447e0fb4604698c",
+    "--list",
+    "--format",
+    "terse"
+  ],
+  "child_reaped": true,
+  "cwd": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability",
+  "elapsed_ns": 3152348,
+  "exit_code": 0,
+  "label": "01-cell_cache_wal_cli-list",
+  "owned_pid": 91354,
+  "performance_measurement": false,
+  "started_unix_ns": 1794394507471633895,
+  "status": "command_succeeded",
+  "stderr": {
+    "bytes": 0,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/01-cell_cache_wal_cli-list.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 94,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/01-cell_cache_wal_cli-list.stdout.log",
+    "sha256": "c3c57e48d701cfa5a3ffc9d468d0d0917d650291168d7c87507fde0c7b219bc8"
+  }
+}

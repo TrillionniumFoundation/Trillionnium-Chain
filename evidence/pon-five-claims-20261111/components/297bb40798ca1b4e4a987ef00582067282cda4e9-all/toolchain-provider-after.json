@@ -1,0 +1,34 @@
+{
+  "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo": {
+    "bytes": 42185192,
+    "sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66"
+  },
+  "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo-clippy": {
+    "bytes": 1263912,
+    "sha256": "b71b1263063707608daa1e9b231ad9d87507c11d6aa178ede2b01d8372d5effb"
+  },
+  "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/clippy-driver": {
+    "bytes": 20339280,
+    "sha256": "81bd985ee50d78e9d8c5810f6ca836614d1bf95e0e8142f1ec5f42eb250ed729"
+  },
+  "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc": {
+    "bytes": 644784,
+    "sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6"
+  },
+  "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt": {
+    "bytes": 5295560,
+    "sha256": "56b31ad3ec8fe0277a2884a189e243b8f04e9b48e5fd22e547c1516c5f8fd34c"
+  },
+  "/home/qian-qi/chain-stark-route-validation-7e8b/provider-clippy-eeeaafbc742d-retry01/trnm-pq-provider-3.5.9.wUXuiklK/install/bin/openssl": {
+    "bytes": 8933408,
+    "sha256": "65b8f0423f3031a5f0eea5e3d571a24bcaaf79fb8a1b3ee68ad2e7438b3dbac0"
+  },
+  "/home/qian-qi/chain-stark-route-validation-7e8b/provider-clippy-eeeaafbc742d-retry01/trnm-pq-provider-3.5.9.wUXuiklK/install/lib/libcrypto.a": {
+    "bytes": 12381776,
+    "sha256": "b4bf11b6c0308d7342a2e332b9ddc95096aae3e7159e40ee06662889a457b2c5"
+  },
+  "/home/qian-qi/chain-stark-route-validation-7e8b/provider-clippy-eeeaafbc742d-retry01/trnm-pq-provider-3.5.9.wUXuiklK/install/lib/libssl.a": {
+    "bytes": 2123138,
+    "sha256": "f355167951857505b5b0305fd2e8ea8f224fa29d780211175d32767b07234727"
+  }
+}

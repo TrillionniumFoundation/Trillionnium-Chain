@@ -1,0 +1,25 @@
+{
+  "base_commit": "9675a51d4c2edb7133d3d9127015c2723d8f71ac",
+  "source_patch_draft_sha256": "6f5665358b161d49692ac1dab1e2703f87d495efebaaf9e3adb2e1498f13e546",
+  "before_sha256": {
+    "trillionnium/crates/trnm-pon-node/src/ingress.rs": "0bde112a70c964ef91a5417216269cfaf864e3aea46ea33ebefcaf38ef04df4c",
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs": "e7a8e2fb7566f7e69b0faf19a13ccd029b4b7b34baf4309467afdb8f524bfde3",
+    "trillionnium/crates/trnm-pon-node/src/store.rs": "3f3ed66ea8779867df8f44cd0dd6c57942778d5a0a809cca7370db04eae23990",
+    "trillionnium/crates/trnm-pon-node/src/ingress/submit_activation_history_tests.rs": null,
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs": "e5b85a9f3e3504e2a6c05b5c5bb0ccdf704c3e53a14f87018e051a3d60020149"
+  },
+  "after_sha256": {
+    "trillionnium/crates/trnm-pon-node/src/ingress.rs": "271903baedf7aadc41a8a985450840b738f0a2916b015af63252ae59000c543b",
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs": "50e88203338f8ccb3ea6cb6721ba0aa3c4e5d4dbfe49af71ebcc4ac8af4ea13e",
+    "trillionnium/crates/trnm-pon-node/src/store.rs": "fd638ddde61e9d91e639b859be5e514913d54e4f33e51853e6a4271da80357a5",
+    "trillionnium/crates/trnm-pon-node/src/ingress/submit_activation_history_tests.rs": "f3c7e247e52c95fa9e693a69a80ce9da1813c178fc05b6e68568455595546acb",
+    "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs": "3b253c1302f1b67e78ee61a42872504b197df0daee3e961021f2dd2d0d09d5e3"
+  },
+  "rustfmt_exit": 0,
+  "rustfmt_stdout": "",
+  "rustfmt_stderr": "",
+  "diff_check_exit": 0,
+  "diff_check_stdout": "",
+  "diff_check_stderr": "",
+  "native_tests_executed": false
+}

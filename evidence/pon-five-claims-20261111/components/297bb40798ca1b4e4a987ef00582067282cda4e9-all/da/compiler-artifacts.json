@@ -1,0 +1,818 @@
+[
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_cell_adoption-a735a1ef19763c97",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_cell_adoption-a735a1ef19763c97"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": true,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "bin"
+      ],
+      "name": "trnm-cell-adoption",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/src/bin/trnm-cell-adoption.rs",
+      "test": true
+    }
+  },
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_cell_discovery-886084e361c47f39",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_cell_discovery-886084e361c47f39"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": true,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "bin"
+      ],
+      "name": "trnm-cell-discovery",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/src/bin/trnm-cell-discovery.rs",
+      "test": true
+    }
+  },
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_persistent_cli-e7959ba45649113d",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_persistent_cli-e7959ba45649113d"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": false,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "test"
+      ],
+      "name": "cell_persistent_cli",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/tests/cell_persistent_cli.rs",
+      "test": true
+    }
+  },
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_adoption_cli-54ea48ddfb060810",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_adoption_cli-54ea48ddfb060810"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": false,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "test"
+      ],
+      "name": "cell_adoption_cli",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/tests/cell_adoption_cli.rs",
+      "test": true
+    }
+  },
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/examples/cell_serving_ab_observer-41a3406802792dbe",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/examples/cell_serving_ab_observer-41a3406802792dbe"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": false,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "example"
+      ],
+      "name": "cell_serving_ab_observer",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/examples/cell_serving_ab_observer.rs",
+      "test": false
+    }
+  },
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/examples/cell_sealed_research_next_use_v1-94b490bc9dfb3d94",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/examples/cell_sealed_research_next_use_v1-94b490bc9dfb3d94"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": false,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "example"
+      ],
+      "name": "cell_sealed_research_next_use_v1",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_next_use_v1.rs",
+      "test": false
+    }
+  },
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/examples/cell_bep52_cost_v1-e4ddc15a419a0fb9",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/examples/cell_bep52_cost_v1-e4ddc15a419a0fb9"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": false,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "example"
+      ],
+      "name": "cell_bep52_cost_v1",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/examples/cell_bep52_cost_v1.rs",
+      "test": false
+    }
+  },
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/examples/cell_signed_sealed_pipeline_v1-eca69481293cb510",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/examples/cell_signed_sealed_pipeline_v1-eca69481293cb510"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": false,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "example"
+      ],
+      "name": "cell_signed_sealed_pipeline_v1",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/examples/cell_signed_sealed_pipeline_v1.rs",
+      "test": false
+    }
+  },
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_release_cli-976da714a129e38f",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_release_cli-976da714a129e38f"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": false,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "test"
+      ],
+      "name": "cell_release_cli",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/tests/cell_release_cli.rs",
+      "test": true
+    }
+  },
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_closure_cli-710e4425e4aaadbe",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_closure_cli-710e4425e4aaadbe"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": false,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "test"
+      ],
+      "name": "cell_closure_cli",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/tests/cell_closure_cli.rs",
+      "test": true
+    }
+  },
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/examples/cell_rs46_cost_v1-7e1e5075247796c9",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/examples/cell_rs46_cost_v1-7e1e5075247796c9"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": false,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "example"
+      ],
+      "name": "cell_rs46_cost_v1",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/examples/cell_rs46_cost_v1.rs",
+      "test": false
+    }
+  },
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_tensor_cli-01c0ff6c929d5bb4",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_tensor_cli-01c0ff6c929d5bb4"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": false,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "test"
+      ],
+      "name": "cell_tensor_cli",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/tests/cell_tensor_cli.rs",
+      "test": true
+    }
+  },
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/pq_cell_cli-5acecb2a0ba1b894",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/pq_cell_cli-5acecb2a0ba1b894"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": false,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "test"
+      ],
+      "name": "pq_cell_cli",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/tests/pq_cell_cli.rs",
+      "test": true
+    }
+  },
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_cache_wal_cli-c447e0fb4604698c",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_cache_wal_cli-c447e0fb4604698c"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": false,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "test"
+      ],
+      "name": "cell_cache_wal_cli",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/tests/cell_cache_wal_cli.rs",
+      "test": true
+    }
+  },
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_provider_ready_cli-6a234193b4ce88f5",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_provider_ready_cli-6a234193b4ce88f5"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": false,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "test"
+      ],
+      "name": "cell_provider_ready_cli",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/tests/cell_provider_ready_cli.rs",
+      "test": true
+    }
+  },
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/trnm-cell",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/trnm-cell"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": false
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": true,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "bin"
+      ],
+      "name": "trnm-cell",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs",
+      "test": true
+    }
+  },
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/trnm-cell-discovery",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/trnm-cell-discovery"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": false
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": true,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "bin"
+      ],
+      "name": "trnm-cell-discovery",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/src/bin/trnm-cell-discovery.rs",
+      "test": true
+    }
+  },
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_discovery_cli-b0001582b550d769",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_discovery_cli-b0001582b550d769"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": false,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "test"
+      ],
+      "name": "cell_discovery_cli",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/tests/cell_discovery_cli.rs",
+      "test": true
+    }
+  },
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_fetch_deadline_cli-20d46916f99e2ec2",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_fetch_deadline_cli-20d46916f99e2ec2"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": false,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "test"
+      ],
+      "name": "cell_fetch_deadline_cli",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/tests/cell_fetch_deadline_cli.rs",
+      "test": true
+    }
+  },
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/examples/cell_delta_workload_observer-48263eefa9ec4b8a",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/examples/cell_delta_workload_observer-48263eefa9ec4b8a"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": false,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "example"
+      ],
+      "name": "cell_delta_workload_observer",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/examples/cell_delta_workload_observer.rs",
+      "test": false
+    }
+  },
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/trnm-cell-adoption",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/trnm-cell-adoption"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": false
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": true,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "bin"
+      ],
+      "name": "trnm-cell-adoption",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/src/bin/trnm-cell-adoption.rs",
+      "test": true
+    }
+  },
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/examples/cell_residency_observer-19e1f794a45f3e63",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/examples/cell_residency_observer-19e1f794a45f3e63"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": false,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "example"
+      ],
+      "name": "cell_residency_observer",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/examples/cell_residency_observer.rs",
+      "test": false
+    }
+  },
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_cell-082545a3bcb4bee9",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_cell-082545a3bcb4bee9"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": true,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "bin"
+      ],
+      "name": "trnm-cell",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs",
+      "test": true
+    }
+  },
+  {
+    "executable": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_data_availability-64b25e344716c90a",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_data_availability-64b25e344716c90a"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability#0.1.0",
+    "profile": {
+      "debug_assertions": false,
+      "debuginfo": 0,
+      "opt_level": "3",
+      "overflow_checks": false,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "lib"
+      ],
+      "doc": true,
+      "doctest": true,
+      "edition": "2021",
+      "kind": [
+        "lib"
+      ],
+      "name": "trnm_data_availability",
+      "src_path": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability/src/lib.rs",
+      "test": true
+    }
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "all": [
+    "cli_bootstrap_only_fetch_uses_real_signed_records_and_exact_shared_response_budget",
+    "cli_private_key_length_permissions_and_symlink_fail_without_secret_output",
+    "cli_rejects_record_pin_mismatch_and_mutated_records_before_bootstrap_dial",
+    "cli_requires_explicit_profile_and_rejects_unknown_or_duplicate_arguments_before_init",
+    "cli_wrong_cell_context_cannot_discover_provider_or_publish_payload"
+  ],
+  "filter": null,
+  "selected": [
+    "cli_bootstrap_only_fetch_uses_real_signed_records_and_exact_shared_response_budget",
+    "cli_private_key_length_permissions_and_symlink_fail_without_secret_output",
+    "cli_rejects_record_pin_mismatch_and_mutated_records_before_bootstrap_dial",
+    "cli_requires_explicit_profile_and_rejects_unknown_or_duplicate_arguments_before_init",
+    "cli_wrong_cell_context_cannot_discover_provider_or_publish_payload"
+  ]
+}
