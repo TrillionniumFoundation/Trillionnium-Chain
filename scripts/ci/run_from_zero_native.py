@@ -34,7 +34,10 @@ from contract_wire import H, header_decode, tx_decode
 TARGET = 'public_v3_from_zero'
 SOURCE = 'trillionnium/crates/trnm-pon-node/tests/' + TARGET + '.rs'
 FORMAT_SUPPORT = 'trillionnium/crates/trnm-pon-node/examples/support/w1_from_zero.rs'
-FORMAT_TEST_MODULES = ('public_v3_from_zero/fresh_challenge.rs',)
+FORMAT_TEST_MODULES = ('public_v3_from_zero/fresh_challenge.rs',
+                       'public_v3_from_zero/sp27_receiver_controls.rs',
+                       'public_v3_from_zero/sp27_receiver_strata.rs',
+                       'public_v3_from_zero/sp27_receiver_campaign.rs')
 TESTS = (
     'caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct',
     'from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection',

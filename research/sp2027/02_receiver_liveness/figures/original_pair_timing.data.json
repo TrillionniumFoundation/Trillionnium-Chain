@@ -1,0 +1,165 @@
+{
+  "causal_claim": false,
+  "clock_domains_combined": false,
+  "fixed_order_pair_repetitions": 1,
+  "mechanism_status": "UNKNOWN",
+  "missing_confirmation_endpoint_imputed": false,
+  "phases": [
+    {
+      "business_started_ns": 118889,
+      "client_confirmed_before_original_window_end": true,
+      "client_confirmed_transactions": 1,
+      "confirmation_ended_ns": 2704367684,
+      "independent_history_replays": [
+        {
+          "history_call_index": 0,
+          "page_number_in_recorded_order": 1,
+          "pointer": "/phases/0/independent_history_page_replay/0",
+          "replay_accepted": true,
+          "replay_ended_ns": 812085313,
+          "replay_error": null,
+          "replay_started_ns": 214308336
+        },
+        {
+          "history_call_index": 1,
+          "page_number_in_recorded_order": 2,
+          "pointer": "/phases/0/independent_history_page_replay/1",
+          "replay_accepted": true,
+          "replay_ended_ns": 1111919504,
+          "replay_error": null,
+          "replay_started_ns": 823899814
+        },
+        {
+          "history_call_index": 2,
+          "page_number_in_recorded_order": 3,
+          "pointer": "/phases/0/independent_history_page_replay/2",
+          "replay_accepted": true,
+          "replay_ended_ns": 1409922551,
+          "replay_error": null,
+          "replay_started_ns": 1123591541
+        },
+        {
+          "history_call_index": 3,
+          "page_number_in_recorded_order": 4,
+          "pointer": "/phases/0/independent_history_page_replay/3",
+          "replay_accepted": true,
+          "replay_ended_ns": 1708111848,
+          "replay_error": null,
+          "replay_started_ns": 1422498497
+        },
+        {
+          "history_call_index": 4,
+          "page_number_in_recorded_order": 5,
+          "pointer": "/phases/0/independent_history_page_replay/4",
+          "replay_accepted": true,
+          "replay_ended_ns": 2007231965,
+          "replay_error": null,
+          "replay_started_ns": 1720370617
+        },
+        {
+          "history_call_index": 5,
+          "page_number_in_recorded_order": 6,
+          "pointer": "/phases/0/independent_history_page_replay/5",
+          "replay_accepted": true,
+          "replay_ended_ns": 2308087211,
+          "replay_error": null,
+          "replay_started_ns": 2019524254
+        },
+        {
+          "history_call_index": 6,
+          "page_number_in_recorded_order": 7,
+          "pointer": "/phases/0/independent_history_page_replay/6",
+          "replay_accepted": true,
+          "replay_ended_ns": 2703467550,
+          "replay_error": null,
+          "replay_started_ns": 2319590234
+        }
+      ],
+      "last_successful_ack_ns": 201950838,
+      "mode": "attack-free-baseline",
+      "phase_clock_origin": "original phase traffic epoch; separate epoch for each panel",
+      "phase_index": 0,
+      "pointer": "/phases/0",
+      "recorded_submission_count": 7,
+      "requested_window_ns": 4000000000,
+      "successful_ack_count": 7,
+      "successful_ack_endpoints_ns": [
+        17346252,
+        33546319,
+        49712796,
+        109348238,
+        125537159,
+        141857457,
+        201950838
+      ],
+      "workers": 0
+    },
+    {
+      "business_started_ns": 78123550,
+      "client_confirmed_before_original_window_end": false,
+      "client_confirmed_transactions": 0,
+      "confirmation_ended_ns": null,
+      "independent_history_replays": [
+        {
+          "history_call_index": 0,
+          "page_number_in_recorded_order": 1,
+          "pointer": "/phases/1/independent_history_page_replay/0",
+          "replay_accepted": true,
+          "replay_ended_ns": 2371303109,
+          "replay_error": null,
+          "replay_started_ns": 1368272452
+        },
+        {
+          "history_call_index": 1,
+          "page_number_in_recorded_order": 2,
+          "pointer": "/phases/1/independent_history_page_replay/1",
+          "replay_accepted": true,
+          "replay_ended_ns": 3074714316,
+          "replay_error": null,
+          "replay_started_ns": 2472222292
+        },
+        {
+          "history_call_index": 2,
+          "page_number_in_recorded_order": 3,
+          "pointer": "/phases/1/independent_history_page_replay/2",
+          "replay_accepted": true,
+          "replay_ended_ns": 3775018595,
+          "replay_error": null,
+          "replay_started_ns": 3179073849
+        },
+        {
+          "history_call_index": 3,
+          "page_number_in_recorded_order": 4,
+          "pointer": "/phases/1/independent_history_page_replay/3",
+          "replay_accepted": false,
+          "replay_ended_ns": 4066591277,
+          "replay_error": "PUBLIC_REQUEST_DEADLINE",
+          "replay_started_ns": 3877903180
+        }
+      ],
+      "last_successful_ack_ns": 1270197394,
+      "mode": "from-zero-pressure",
+      "phase_clock_origin": "original phase traffic epoch; separate epoch for each panel",
+      "phase_index": 1,
+      "pointer": "/phases/1",
+      "recorded_submission_count": 7,
+      "requested_window_ns": 4000000000,
+      "successful_ack_count": 7,
+      "successful_ack_endpoints_ns": [
+        277285053,
+        488618140,
+        668894890,
+        779531685,
+        998213778,
+        1075526599,
+        1270197394
+      ],
+      "workers": 16
+    }
+  ],
+  "raw_record_rewritten": false,
+  "schema": "sp27-original-pair-timing-figure-data-v1",
+  "source_report_bytes": 11152091,
+  "source_report_schema": "public-v3-signed-confirmation-pressure-v1",
+  "source_report_sha256": "4a4ec5d92810f51df792a2f1f08e4af4c9cb47c107c5ed3e3a8e2ef71dae9a1d"
+}

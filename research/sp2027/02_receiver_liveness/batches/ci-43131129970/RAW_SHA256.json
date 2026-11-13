@@ -1,0 +1,1327 @@
+{
+  "available-cpus.txt": {
+    "bytes": 4,
+    "sha256": "b2f03f42d35e331b1b8f8b03648dab495a27d703b10d8df4fe5c3346f34de4cc",
+    "zip_crc32": "f5447e20"
+  },
+  "controller-cgroup.txt": {
+    "bytes": 46,
+    "sha256": "0dcb3ba0655f52452a0222c39d59295eae59ff9f296a86539ce24ffef1387abd",
+    "zip_crc32": "10a3be44"
+  },
+  "kernel.txt": {
+    "bytes": 40,
+    "sha256": "771248a24fa95b65311b5e3442aae1b5325e04ea7d64a1ee77e0fb1f79b1f0fa",
+    "zip_crc32": "6c08e816"
+  },
+  "lscpu.json": {
+    "bytes": 4633,
+    "sha256": "65f12c33e22051311486d4e6c22ab280b9e6584e63bb3ef925f4b0c2ebb15d60",
+    "zip_crc32": "fc5a3e9e"
+  },
+  "processes-before.txt": {
+    "bytes": 5673,
+    "sha256": "67b7cf0947cb68197ac4e5e06b13fae258cb699d3bef19c75c6229be4213f64e",
+    "zip_crc32": "1e3cb7ef"
+  },
+  "public-fixture-parent.json": {
+    "bytes": 3236,
+    "sha256": "d11ce68d9cd518cf0dc296f7f3997995fb83167455af91cd349ae2c82fcddda4",
+    "zip_crc32": "edd7a2aa"
+  },
+  "source.json": {
+    "bytes": 423,
+    "sha256": "acc2c877d3714271b9bee3fb0379f51e225d5a0a2f39220a36e8ee2c48408ece",
+    "zip_crc32": "825815d4"
+  },
+  "sp27-receiver-strata-host/actual-systemd-parent-after.log": {
+    "bytes": 200,
+    "sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+    "zip_crc32": "b37d4686"
+  },
+  "sp27-receiver-strata-host/actual-systemd-parent.log": {
+    "bytes": 200,
+    "sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+    "zip_crc32": "b37d4686"
+  },
+  "sp27-receiver-strata-host/after-provision.json": {
+    "bytes": 1617,
+    "sha256": "366c45f629ea1280adf29e0fcea982bf2a8b8d8f31119e683b2eef1b7389d885",
+    "zip_crc32": "96c57d29"
+  },
+  "sp27-receiver-strata-host/before-provision.json": {
+    "bytes": 2784,
+    "sha256": "e38dc7f6c7278e995c2fc7ff189ab4f453f9eba526b530ad67b8c2faffde683b",
+    "zip_crc32": "243c678c"
+  },
+  "sp27-receiver-strata-host/child-final-load-state.log": {
+    "bytes": 10,
+    "sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76",
+    "zip_crc32": "132d2814"
+  },
+  "sp27-receiver-strata-host/child-load-state.log": {
+    "bytes": 10,
+    "sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76",
+    "zip_crc32": "132d2814"
+  },
+  "sp27-receiver-strata-host/child-result.json": {
+    "bytes": 348,
+    "sha256": "f24acb3bcd9de12548a2457d1317e4eb517b5f76d4f2a73580eee4ecb4726b97",
+    "zip_crc32": "62448ea9"
+  },
+  "sp27-receiver-strata-host/controller-result.json": {
+    "bytes": 9590,
+    "sha256": "585d1e2992ebb72ccff8cbdea18f8c5276d34e4cbdbc740608321bfa79795f35",
+    "zip_crc32": "a93bbc97"
+  },
+  "sp27-receiver-strata-host/inside-after.json": {
+    "bytes": 1677,
+    "sha256": "7253c5507ac176bb8cf2a622cc5b262b3697880708342eee1a3deee80c928085",
+    "zip_crc32": "cb6b3612"
+  },
+  "sp27-receiver-strata-host/inside-before.json": {
+    "bytes": 1666,
+    "sha256": "3108822a6d57f93aad1855096b348053ed99e0e0b96065bd9ab606a048b12407",
+    "zip_crc32": "c7d0b16c"
+  },
+  "sp27-receiver-strata-host/install-reviewed-unit.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata-host/outside-after.json": {
+    "bytes": 1650,
+    "sha256": "7a3c1c2d809994036854df4d213daa3fc2cca7033b6df7a8f85a8e9acdfe3b0e",
+    "zip_crc32": "00a9ac1d"
+  },
+  "sp27-receiver-strata-host/parent-properties.log": {
+    "bytes": 146,
+    "sha256": "313ae0beb72fab5cfa2506271e7b1bab522a702995c7be248e46b91311afe343",
+    "zip_crc32": "f132333d"
+  },
+  "sp27-receiver-strata-host/seal-parent-directory.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata-host/seal-parent-receipt.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata-host/start-fixed-parent.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata-host/systemd-reload.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata-host/systemd-run.log": {
+    "bytes": 56123,
+    "sha256": "4311df3d5811d8fab9e781f5be06b700f241c4634600575e4bbc915fdd14ea7d",
+    "zip_crc32": "ae228856"
+  },
+  "sp27-receiver-strata-host/unprovisioned-parent.json": {
+    "bytes": 229,
+    "sha256": "8141d0f99d8dde3a4ebd71cdd60aabe3fd6528da8a8e126ab36ac94264db1d22",
+    "zip_crc32": "794c098a"
+  },
+  "sp27-receiver-strata/build/process.json": {
+    "bytes": 921,
+    "sha256": "31ffd59663ab84c3387da21650a27ca0da734773f6b2c9fc7dfb5a860ae80241",
+    "zip_crc32": "6949627c"
+  },
+  "sp27-receiver-strata/build/stderr": {
+    "bytes": 7177,
+    "sha256": "388a8daffbe01901c88585e0f30d8056580933f8f998a5e1aa97f1e7c0c22b30",
+    "zip_crc32": "1151dcd7"
+  },
+  "sp27-receiver-strata/build/stdout": {
+    "bytes": 110225,
+    "sha256": "c1c76874f9b890f269f0c37c77a36f1b5c4f9ba95ea2961bdb3c835d64b1ee15",
+    "zip_crc32": "36ad3f03"
+  },
+  "sp27-receiver-strata/execution-start.json": {
+    "bytes": 160,
+    "sha256": "df0ae669ae5f53410af8087af47928f3a11e368831b3e663c59432caf1279170",
+    "zip_crc32": "aa2e9675"
+  },
+  "sp27-receiver-strata/manifest.json": {
+    "bytes": 63720,
+    "sha256": "a52c95660608cc6da4d1265e3dc350e23fffd667c86c3baa07144c21086b5fb6",
+    "zip_crc32": "1f08b86d"
+  },
+  "sp27-receiver-strata/native/business-acquisition-started.json": {
+    "bytes": 147,
+    "sha256": "78b02ce231ac4fd5cc96269adf782c94b5a323636605eca0aaa6fe4f15726666",
+    "zip_crc32": "f2a99e04"
+  },
+  "sp27-receiver-strata/native/business-acquisition.json": {
+    "bytes": 694983,
+    "sha256": "7a5a464285e2cc8a674da23146eada5c9b4c3cb5803812836988a5221223d03b",
+    "zip_crc32": "767d76ad"
+  },
+  "sp27-receiver-strata/native/control-000-transport/independent-client/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b",
+    "zip_crc32": "659f94b9"
+  },
+  "sp27-receiver-strata/native/control-000-transport/independent-client/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/control-000-transport/receiver/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc",
+    "zip_crc32": "e4781527"
+  },
+  "sp27-receiver-strata/native/control-000-transport/receiver/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/control-001-early-reject/independent-client/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b",
+    "zip_crc32": "659f94b9"
+  },
+  "sp27-receiver-strata/native/control-001-early-reject/independent-client/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/control-001-early-reject/receiver/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc",
+    "zip_crc32": "e4781527"
+  },
+  "sp27-receiver-strata/native/control-001-early-reject/receiver/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/control-002-late-reject/independent-client/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b",
+    "zip_crc32": "659f94b9"
+  },
+  "sp27-receiver-strata/native/control-002-late-reject/independent-client/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/control-002-late-reject/receiver/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc",
+    "zip_crc32": "e4781527"
+  },
+  "sp27-receiver-strata/native/control-002-late-reject/receiver/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/control-003-valid-expensive/independent-client/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b",
+    "zip_crc32": "659f94b9"
+  },
+  "sp27-receiver-strata/native/control-003-valid-expensive/independent-client/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/control-003-valid-expensive/receiver/native.sqlite": {
+    "bytes": 1310720,
+    "sha256": "8a0d635a2ff6756b88f66586a34d3e4f95dde6aa6562f36bf9754771c8355376",
+    "zip_crc32": "3a68f600"
+  },
+  "sp27-receiver-strata/native/control-003-valid-expensive/receiver/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/control-004-valid-expensive/independent-client/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b",
+    "zip_crc32": "659f94b9"
+  },
+  "sp27-receiver-strata/native/control-004-valid-expensive/independent-client/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/control-004-valid-expensive/receiver/native.sqlite": {
+    "bytes": 1310720,
+    "sha256": "82e2c3bf28e5d161fa34c77daa823499e8600aa33fc0ea828e18609a7382cf1d",
+    "zip_crc32": "38b1a066"
+  },
+  "sp27-receiver-strata/native/control-004-valid-expensive/receiver/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/control-005-late-reject/independent-client/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b",
+    "zip_crc32": "659f94b9"
+  },
+  "sp27-receiver-strata/native/control-005-late-reject/independent-client/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/control-005-late-reject/receiver/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc",
+    "zip_crc32": "e4781527"
+  },
+  "sp27-receiver-strata/native/control-005-late-reject/receiver/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/control-006-early-reject/independent-client/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b",
+    "zip_crc32": "659f94b9"
+  },
+  "sp27-receiver-strata/native/control-006-early-reject/independent-client/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/control-006-early-reject/receiver/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc",
+    "zip_crc32": "e4781527"
+  },
+  "sp27-receiver-strata/native/control-006-early-reject/receiver/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/control-007-transport/independent-client/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b",
+    "zip_crc32": "659f94b9"
+  },
+  "sp27-receiver-strata/native/control-007-transport/independent-client/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/control-007-transport/receiver/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc",
+    "zip_crc32": "e4781527"
+  },
+  "sp27-receiver-strata/native/control-007-transport/receiver/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/health-000/independent-client/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b",
+    "zip_crc32": "659f94b9"
+  },
+  "sp27-receiver-strata/native/health-000/independent-client/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/health-000/receiver/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc",
+    "zip_crc32": "e4781527"
+  },
+  "sp27-receiver-strata/native/health-000/receiver/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/health-001/independent-client/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b",
+    "zip_crc32": "659f94b9"
+  },
+  "sp27-receiver-strata/native/health-001/independent-client/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/health-001/receiver/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc",
+    "zip_crc32": "e4781527"
+  },
+  "sp27-receiver-strata/native/health-001/receiver/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/health-002/independent-client/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b",
+    "zip_crc32": "659f94b9"
+  },
+  "sp27-receiver-strata/native/health-002/independent-client/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/health-002/receiver/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc",
+    "zip_crc32": "e4781527"
+  },
+  "sp27-receiver-strata/native/health-002/receiver/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/health-003/independent-client/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b",
+    "zip_crc32": "659f94b9"
+  },
+  "sp27-receiver-strata/native/health-003/independent-client/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/health-003/receiver/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc",
+    "zip_crc32": "e4781527"
+  },
+  "sp27-receiver-strata/native/health-003/receiver/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/health-004/independent-client/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "89a7a1d1e4031493d500fc2e949671182511be0604fbf843cb26546b611ddb2b",
+    "zip_crc32": "659f94b9"
+  },
+  "sp27-receiver-strata/native/health-004/independent-client/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/health-004/receiver/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "94f8fec47740132b1876878cdb5372f4f2493018e9c64382c9ad46e08c1052fc",
+    "zip_crc32": "e4781527"
+  },
+  "sp27-receiver-strata/native/health-004/receiver/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/host-after.json": {
+    "bytes": 452,
+    "sha256": "30b58dc9301d6bbc4beee3cedc37ff8c311699e0836b27903248c5ddac2ce46a",
+    "zip_crc32": "d92c8ff7"
+  },
+  "sp27-receiver-strata/native/host-before.json": {
+    "bytes": 450,
+    "sha256": "6bdb7762e52bc8bf83da6883f2542a7c1eaa8ce134396e1f7ff6009840154c9a",
+    "zip_crc32": "9245c537"
+  },
+  "sp27-receiver-strata/native/identity-after.json": {
+    "bytes": 1234,
+    "sha256": "5b51f80f13a7d0232a45ef7fc92b95158b4400304223ca94df236669a56c2f02",
+    "zip_crc32": "ae2d5c59"
+  },
+  "sp27-receiver-strata/native/identity-before.json": {
+    "bytes": 1234,
+    "sha256": "5b51f80f13a7d0232a45ef7fc92b95158b4400304223ca94df236669a56c2f02",
+    "zip_crc32": "ae2d5c59"
+  },
+  "sp27-receiver-strata/native/inputs/arm-000.json": {
+    "bytes": 1584865,
+    "sha256": "1a0b822cad04c315897dc9581255cde0b702c04530e084c3645fd57a502d05a9",
+    "zip_crc32": "e0023c31"
+  },
+  "sp27-receiver-strata/native/inputs/arm-001.json": {
+    "bytes": 1584868,
+    "sha256": "81f3e3e8c2c07a4e0160ba1d2750de7f4543e00de602a9a84110a5c02eed6b4f",
+    "zip_crc32": "06cb7b2b"
+  },
+  "sp27-receiver-strata/native/inputs/arm-002.json": {
+    "bytes": 1584867,
+    "sha256": "7551ca5fd9aabf12e8c6ff770adb5a202cd16d9985b0638c66250ce2efa686b9",
+    "zip_crc32": "9c15cb1e"
+  },
+  "sp27-receiver-strata/native/inputs/arm-003.json": {
+    "bytes": 1584871,
+    "sha256": "085912b09e424eac2456fe0751ad10cd3cd3a9f27934886c87fb7dfa13fa2a3f",
+    "zip_crc32": "2f34fcd5"
+  },
+  "sp27-receiver-strata/native/plan.json": {
+    "bytes": 6074,
+    "sha256": "9da6830b66eacf59fb53d0695aa25f6b4ecfcb723c19a004599be049e32625c5",
+    "zip_crc32": "0a785cb8"
+  },
+  "sp27-receiver-strata/native/producer/native.sqlite": {
+    "bytes": 499712,
+    "sha256": "2372f2898610a77f9aa8b42f208a29d5789d858c5067074e75ca57831db849d0",
+    "zip_crc32": "f0c0a28e"
+  },
+  "sp27-receiver-strata/native/producer/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/raw/control-000-transport-host-after.json": {
+    "bytes": 451,
+    "sha256": "e8deee1917a65f33939fb7a577a3d1e292d054d49395ad77d1c7b75dac118ad7",
+    "zip_crc32": "b84e5ecd"
+  },
+  "sp27-receiver-strata/native/raw/control-000-transport-host-before.json": {
+    "bytes": 451,
+    "sha256": "3b48b3e04d99d9f1c9b87b39d0e00d747df61aacf5aa3c80bdcf3e867b3e979f",
+    "zip_crc32": "65d8e603"
+  },
+  "sp27-receiver-strata/native/raw/control-000-transport-index.json": {
+    "bytes": 864,
+    "sha256": "3ad9155465dd4766f39795993b7ab8025e0e3776b0faacf99ecbf315fbd4e947",
+    "zip_crc32": "2cac054a"
+  },
+  "sp27-receiver-strata/native/raw/control-000-transport-invoked.json": {
+    "bytes": 182,
+    "sha256": "5c823deb5c390f5ee868f7fbc467493d885b304b574256ace0e619f64a1e0450",
+    "zip_crc32": "d6af575f"
+  },
+  "sp27-receiver-strata/native/raw/control-000-transport-started.json": {
+    "bytes": 663,
+    "sha256": "6434a3995b65f79c4a433fcc8fb6aaecabc57a5392e3a3b6805e9a8dcd235454",
+    "zip_crc32": "59e39ea7"
+  },
+  "sp27-receiver-strata/native/raw/control-000-transport.json": {
+    "bytes": 2137684,
+    "sha256": "3fa5f154302971d60fabcd95ef9e8e7df4cfcf792798ee6b2b1ee470b7609619",
+    "zip_crc32": "01d95920"
+  },
+  "sp27-receiver-strata/native/raw/control-001-early-reject-host-after.json": {
+    "bytes": 451,
+    "sha256": "8faf1ab259b267c39bde531933ece2a84c0a0f1329ee032e4f63bec46d2d1c5e",
+    "zip_crc32": "61be0256"
+  },
+  "sp27-receiver-strata/native/raw/control-001-early-reject-host-before.json": {
+    "bytes": 451,
+    "sha256": "9c6051efc7a3d44d969dfbd9bc824c839d35cc107361810216121e13e416e3b6",
+    "zip_crc32": "5afb7eca"
+  },
+  "sp27-receiver-strata/native/raw/control-001-early-reject-index.json": {
+    "bytes": 873,
+    "sha256": "149fcd7172ea8771db1df1004aaad72ce6cc930a76ddee194e2674108303cee9",
+    "zip_crc32": "889beabe"
+  },
+  "sp27-receiver-strata/native/raw/control-001-early-reject-invoked.json": {
+    "bytes": 185,
+    "sha256": "6df0ebf62988a11024e8c22d0cc9f087a62597c96a1e10d4d982baaaf9517a77",
+    "zip_crc32": "3f9d337d"
+  },
+  "sp27-receiver-strata/native/raw/control-001-early-reject-started.json": {
+    "bytes": 669,
+    "sha256": "589f57d70cf180362ecba5bca5b84af75ed945bb494569c5afe32c9f14df99c0",
+    "zip_crc32": "a8c92176"
+  },
+  "sp27-receiver-strata/native/raw/control-001-early-reject.json": {
+    "bytes": 2126280,
+    "sha256": "0a7105ac963ada28813b4e90295aa54f9ffa66605c78da01208ee6d2da61a96d",
+    "zip_crc32": "9388362c"
+  },
+  "sp27-receiver-strata/native/raw/control-002-late-reject-host-after.json": {
+    "bytes": 452,
+    "sha256": "04c8832154e10212ac8d20dc1343b8ba977823b4b8d358866a8009eda59955c6",
+    "zip_crc32": "9edd3a84"
+  },
+  "sp27-receiver-strata/native/raw/control-002-late-reject-host-before.json": {
+    "bytes": 451,
+    "sha256": "86486f706c5b84ec5f85cca40939b52e291f111a34e244ba472a241a7d424213",
+    "zip_crc32": "d74c451a"
+  },
+  "sp27-receiver-strata/native/raw/control-002-late-reject-index.json": {
+    "bytes": 870,
+    "sha256": "337166ddcd68c4c560d916ad85f21a24c15551b6b3e627f5492d13b38b19d15d",
+    "zip_crc32": "d978cc5b"
+  },
+  "sp27-receiver-strata/native/raw/control-002-late-reject-invoked.json": {
+    "bytes": 184,
+    "sha256": "aecf0d22b6a5c0dfe3b33df6fa8d4f8f26a88e067f5121b3f7c2da749ff9dc20",
+    "zip_crc32": "941f71a5"
+  },
+  "sp27-receiver-strata/native/raw/control-002-late-reject-started.json": {
+    "bytes": 667,
+    "sha256": "b8b0eb132e092ef1b2c62cbc557e0078d2721dc6ddbb7a7e5408ce452eb619ef",
+    "zip_crc32": "e78f2702"
+  },
+  "sp27-receiver-strata/native/raw/control-002-late-reject.json": {
+    "bytes": 2136647,
+    "sha256": "64e70f6eaef94e53d2195fdac1f26ea2b36a1ae4dc5c4a8a9b27044da377b0b7",
+    "zip_crc32": "2bc2ce27"
+  },
+  "sp27-receiver-strata/native/raw/control-003-valid-expensive-host-after.json": {
+    "bytes": 452,
+    "sha256": "c5340956f305a8b9a4e626f2c2d7da483cc2421de0f08788ef4de11cf2bc75c3",
+    "zip_crc32": "2ecd3fb6"
+  },
+  "sp27-receiver-strata/native/raw/control-003-valid-expensive-host-before.json": {
+    "bytes": 452,
+    "sha256": "8d9a4f1067c25adb695352125bae3ee78f2c5d12bf96777d4290aeca54909a5f",
+    "zip_crc32": "c9d6cbb3"
+  },
+  "sp27-receiver-strata/native/raw/control-003-valid-expensive-index.json": {
+    "bytes": 882,
+    "sha256": "4bb67fa3ce275227e61c1d629c9ab35152e085b8c096ec6372cd9b3ac2257d52",
+    "zip_crc32": "48fbe93f"
+  },
+  "sp27-receiver-strata/native/raw/control-003-valid-expensive-invoked.json": {
+    "bytes": 188,
+    "sha256": "1b85b22e772335155f31d5e88bba27fbd47d3e3d8bd73ba1ab434a08ad56f3ea",
+    "zip_crc32": "c27f003e"
+  },
+  "sp27-receiver-strata/native/raw/control-003-valid-expensive-started.json": {
+    "bytes": 675,
+    "sha256": "796f3738cc8d2722b70a1364b8e1120b610ebae015749dcc1a4004cac2bd0e80",
+    "zip_crc32": "d0e40e2f"
+  },
+  "sp27-receiver-strata/native/raw/control-003-valid-expensive.json": {
+    "bytes": 2165540,
+    "sha256": "c88b30675e691f59e092746a824efb513ec4aebbc729d55cf58569ec4f7df999",
+    "zip_crc32": "a7117817"
+  },
+  "sp27-receiver-strata/native/raw/control-004-valid-expensive-host-after.json": {
+    "bytes": 452,
+    "sha256": "3608cad2772d769fe7f1b9e28db89fa92ef511504741ba35b813ce509a13cbe6",
+    "zip_crc32": "ad50a091"
+  },
+  "sp27-receiver-strata/native/raw/control-004-valid-expensive-host-before.json": {
+    "bytes": 452,
+    "sha256": "3a8108aaea5259bf1068e720ead7f8df748fd241f6ceba920eb7ad3e4a421a6c",
+    "zip_crc32": "bdee1c26"
+  },
+  "sp27-receiver-strata/native/raw/control-004-valid-expensive-index.json": {
+    "bytes": 882,
+    "sha256": "91983a159916068114aa61f8f7859ccb0acf90065ee0a21f3caf869695b3c6ad",
+    "zip_crc32": "f1e1ed73"
+  },
+  "sp27-receiver-strata/native/raw/control-004-valid-expensive-invoked.json": {
+    "bytes": 188,
+    "sha256": "86ea0df40f5a93e2a9685735825dd80b33ed5fc227a834d60f91f01e5bc299fe",
+    "zip_crc32": "82202b95"
+  },
+  "sp27-receiver-strata/native/raw/control-004-valid-expensive-started.json": {
+    "bytes": 675,
+    "sha256": "67ffb36ea6e7892425b40ff95a2967c1f0a0b414be59c143573fc05fdb5f0268",
+    "zip_crc32": "6825ddf4"
+  },
+  "sp27-receiver-strata/native/raw/control-004-valid-expensive.json": {
+    "bytes": 2077920,
+    "sha256": "7aa1aa5f756e890158b7407ace7247f0597da3565b8fd0808c6f2cdaec36450b",
+    "zip_crc32": "c8241f64"
+  },
+  "sp27-receiver-strata/native/raw/control-005-late-reject-host-after.json": {
+    "bytes": 452,
+    "sha256": "e7ebdcc77481fc23aa1bc633cba75d58bcc7b0dee3514a2610b174a84f6bd4aa",
+    "zip_crc32": "85d1018a"
+  },
+  "sp27-receiver-strata/native/raw/control-005-late-reject-host-before.json": {
+    "bytes": 452,
+    "sha256": "5eaa2ab2fb7a4b865baaeccf085de0452913f1f61c9bac5ccac33e0a6855025f",
+    "zip_crc32": "4148f22d"
+  },
+  "sp27-receiver-strata/native/raw/control-005-late-reject-index.json": {
+    "bytes": 870,
+    "sha256": "ff92cf866cd379b828c0fa600176be06f3edf8caed2665aa8e8388a9873d0ca4",
+    "zip_crc32": "a1898f08"
+  },
+  "sp27-receiver-strata/native/raw/control-005-late-reject-invoked.json": {
+    "bytes": 184,
+    "sha256": "e8a0a3f5e5a5440dcaf513b0ce149dfce881920775380f22684e887c8083cbaa",
+    "zip_crc32": "e7a85996"
+  },
+  "sp27-receiver-strata/native/raw/control-005-late-reject-started.json": {
+    "bytes": 667,
+    "sha256": "51c85af714ff24fd0944a8363875ff3245961cdc8d1b8467d4f07af053f2f6c4",
+    "zip_crc32": "ddaf8fb3"
+  },
+  "sp27-receiver-strata/native/raw/control-005-late-reject.json": {
+    "bytes": 2149018,
+    "sha256": "4ee5f8905b2d32303dcdd3d44591c572f7a294a318e8579cd6b10c34bd89e190",
+    "zip_crc32": "7cd52309"
+  },
+  "sp27-receiver-strata/native/raw/control-006-early-reject-host-after.json": {
+    "bytes": 452,
+    "sha256": "2ef5fbb9c5abc8faa5b91d6f65ba0899d4cb82d680b13df24753acf59ece7ae7",
+    "zip_crc32": "b7622a26"
+  },
+  "sp27-receiver-strata/native/raw/control-006-early-reject-host-before.json": {
+    "bytes": 452,
+    "sha256": "020d8490433eef620abde85189df6ed56d73206cc7a10872fb3a652a9e969403",
+    "zip_crc32": "29a1262e"
+  },
+  "sp27-receiver-strata/native/raw/control-006-early-reject-index.json": {
+    "bytes": 874,
+    "sha256": "e2d92ce3a531fbbf3db4486560ea259ce386a435426721a6826e7be526cf2ba1",
+    "zip_crc32": "d29d6ce2"
+  },
+  "sp27-receiver-strata/native/raw/control-006-early-reject-invoked.json": {
+    "bytes": 186,
+    "sha256": "b91a24c8c2fe58f876f663b16c5e41c98ae2176f1b71cb56faa37299171cd7f8",
+    "zip_crc32": "c8700218"
+  },
+  "sp27-receiver-strata/native/raw/control-006-early-reject-started.json": {
+    "bytes": 670,
+    "sha256": "32f3938f6157a6a42ac423117df1a7cd562d0083e7710db76f5158e8c7e32f11",
+    "zip_crc32": "ca2a4629"
+  },
+  "sp27-receiver-strata/native/raw/control-006-early-reject.json": {
+    "bytes": 2138667,
+    "sha256": "21d3cd742e140e6f80b4571d97bb76a1ab492d97285dd13010184008a532d361",
+    "zip_crc32": "74c7ff1c"
+  },
+  "sp27-receiver-strata/native/raw/control-007-transport-host-after.json": {
+    "bytes": 452,
+    "sha256": "579cb2f5e80abb95c6841e3685dc861d8bb783056da915df3e4e69492d0c3320",
+    "zip_crc32": "b9eecb8d"
+  },
+  "sp27-receiver-strata/native/raw/control-007-transport-host-before.json": {
+    "bytes": 452,
+    "sha256": "ef9c0db843a7fb62f30532545aaff305068ab09014a7276e6f506be9b481d20d",
+    "zip_crc32": "18ef8a34"
+  },
+  "sp27-receiver-strata/native/raw/control-007-transport-index.json": {
+    "bytes": 865,
+    "sha256": "b6ce6a5314b9fe21c5b628add74b9be9501b097e9a6bd50643e80169e9603d6a",
+    "zip_crc32": "10f38f0c"
+  },
+  "sp27-receiver-strata/native/raw/control-007-transport-invoked.json": {
+    "bytes": 183,
+    "sha256": "510c34c7dfb7fbfd8f6ad465bab00bf3e7dfefba27521f74de3d78dfef887df6",
+    "zip_crc32": "acc47ba2"
+  },
+  "sp27-receiver-strata/native/raw/control-007-transport-started.json": {
+    "bytes": 664,
+    "sha256": "10062e7526c95ec528a1a252a6451f7c30afb537be5635eb2a72458fcd33d6f8",
+    "zip_crc32": "fe343237"
+  },
+  "sp27-receiver-strata/native/raw/control-007-transport.json": {
+    "bytes": 2126228,
+    "sha256": "b969347cf3d860ad6d31150aba1294e05f80a60caacf11d1ea365e7954febe35",
+    "zip_crc32": "c0cf16da"
+  },
+  "sp27-receiver-strata/native/raw/health-000-host-after.json": {
+    "bytes": 450,
+    "sha256": "8bab24d868fb8caf84abe5da9e270129e0de6d0be4b2791c4c79cc835e09c1de",
+    "zip_crc32": "731b04c6"
+  },
+  "sp27-receiver-strata/native/raw/health-000-host-before.json": {
+    "bytes": 450,
+    "sha256": "cbf61d18596141f642b455a800793ee12203206ff06a567d348eeb4997e9649f",
+    "zip_crc32": "e900d081"
+  },
+  "sp27-receiver-strata/native/raw/health-000-index.json": {
+    "bytes": 847,
+    "sha256": "c7c98ae22830f9f6e3c9fb184848368f631a000283c03abad3726d17fd698888",
+    "zip_crc32": "6a4a0e6c"
+  },
+  "sp27-receiver-strata/native/raw/health-000-invoked.json": {
+    "bytes": 171,
+    "sha256": "16a189a6240919a852dba3360e5b0a1fe8d1d68abec51c3f7022085838a68997",
+    "zip_crc32": "1d80af42"
+  },
+  "sp27-receiver-strata/native/raw/health-000-started.json": {
+    "bytes": 637,
+    "sha256": "4e799b630172a2c6a9016091333ba2ca0ee535c2a516cb3bc0e6bd98f48d53aa",
+    "zip_crc32": "d6aa6459"
+  },
+  "sp27-receiver-strata/native/raw/health-000.json": {
+    "bytes": 1809893,
+    "sha256": "ec78fdd1cff0b07abf1885a527f69804890cf185716b6a73b45d93d5a8baf84c",
+    "zip_crc32": "00aa8922"
+  },
+  "sp27-receiver-strata/native/raw/health-001-host-after.json": {
+    "bytes": 450,
+    "sha256": "ea4320b89eec00bb3db74213534861a1c549f2a6128e2f065ddc8163eebbc934",
+    "zip_crc32": "3df5772c"
+  },
+  "sp27-receiver-strata/native/raw/health-001-host-before.json": {
+    "bytes": 450,
+    "sha256": "fff9a09661be4f5c58707a28cc36d354fedb9333310cd15e71edb02c604fa224",
+    "zip_crc32": "1b47afa8"
+  },
+  "sp27-receiver-strata/native/raw/health-001-index.json": {
+    "bytes": 847,
+    "sha256": "241893ef78d441d6b89a89357c2ef97880f14e120454ee682bd86817c1886087",
+    "zip_crc32": "4909b3e4"
+  },
+  "sp27-receiver-strata/native/raw/health-001-invoked.json": {
+    "bytes": 171,
+    "sha256": "106ccd8dbe72479ffe92b4d1f1d189fceccb9b38f5dc7dd059388b97a920c4f5",
+    "zip_crc32": "a80474ce"
+  },
+  "sp27-receiver-strata/native/raw/health-001-started.json": {
+    "bytes": 637,
+    "sha256": "06ed1791e2f4b62187063365c9d96165a144cfb4c5d5b23081af60cced06e122",
+    "zip_crc32": "da444fbd"
+  },
+  "sp27-receiver-strata/native/raw/health-001.json": {
+    "bytes": 1822114,
+    "sha256": "dc56158b46afacf6d9731fffbd0bc1722d5d6b235827214cc677643c5f6d9718",
+    "zip_crc32": "b7aca245"
+  },
+  "sp27-receiver-strata/native/raw/health-002-host-after.json": {
+    "bytes": 450,
+    "sha256": "13cdb058cb0a045d29d0fbb13a447f6724989bbfe4234bb9e29aebcdbc69dcf3",
+    "zip_crc32": "c7b8de98"
+  },
+  "sp27-receiver-strata/native/raw/health-002-host-before.json": {
+    "bytes": 450,
+    "sha256": "84951210c4ff2a921f54b6a3d552b6fb371a79eee6ffdbdb2f3235dfa7a62613",
+    "zip_crc32": "b7baa91e"
+  },
+  "sp27-receiver-strata/native/raw/health-002-index.json": {
+    "bytes": 847,
+    "sha256": "f65f995fe2d6be4346a642ef5711c0bccd68997f334b0e033076b9401f6a5dd3",
+    "zip_crc32": "216f32ef"
+  },
+  "sp27-receiver-strata/native/raw/health-002-invoked.json": {
+    "bytes": 171,
+    "sha256": "dec9897dbd7d87fe4848c3db990b163a17f1cc124bd50ac074bc6d64cbade194",
+    "zip_crc32": "adf81e1b"
+  },
+  "sp27-receiver-strata/native/raw/health-002-started.json": {
+    "bytes": 637,
+    "sha256": "1132aadb26c41adc2d66543b94e25d94cbeb084e2381e8e5e3640ae3616d4e18",
+    "zip_crc32": "cf763391"
+  },
+  "sp27-receiver-strata/native/raw/health-002.json": {
+    "bytes": 1785082,
+    "sha256": "5b2ff8d08c6c140c10230e5c45501f1be5b78a83565634b131e2b9596eb3838e",
+    "zip_crc32": "4e632df7"
+  },
+  "sp27-receiver-strata/native/raw/health-003-host-after.json": {
+    "bytes": 452,
+    "sha256": "2a7be956b75f842bf2f7085c51390f7d46a69a9888bfbbbdd5b210758f3812c7",
+    "zip_crc32": "c18a5a82"
+  },
+  "sp27-receiver-strata/native/raw/health-003-host-before.json": {
+    "bytes": 452,
+    "sha256": "d6012e80c289ea1e2ed4d2c0a0d06f94454cd303fc8fb820544166b686388537",
+    "zip_crc32": "4c73725b"
+  },
+  "sp27-receiver-strata/native/raw/health-003-index.json": {
+    "bytes": 850,
+    "sha256": "bed53bed11ab332c75b66a4c8642419ce7d929a65ffb5e03740977f5a712c9c1",
+    "zip_crc32": "81b60657"
+  },
+  "sp27-receiver-strata/native/raw/health-003-invoked.json": {
+    "bytes": 171,
+    "sha256": "ad549f03d8c7de1d9079638f6e367dcdbaef8c656002a6350b9b4f70fcab3613",
+    "zip_crc32": "d284fe1d"
+  },
+  "sp27-receiver-strata/native/raw/health-003-started.json": {
+    "bytes": 640,
+    "sha256": "667ce5575cb0135373af3cc1d9ff216e38f756a1663415d748e436365d0dbd9a",
+    "zip_crc32": "9939fc9f"
+  },
+  "sp27-receiver-strata/native/raw/health-003.json": {
+    "bytes": 1846862,
+    "sha256": "df17f4eb8c023f1a60148efdc6d65aaea397e2ca0b2f0514e0e7273cb9429f39",
+    "zip_crc32": "8ccf0392"
+  },
+  "sp27-receiver-strata/native/raw/health-004-host-after.json": {
+    "bytes": 452,
+    "sha256": "33bf4e4ec1d2aa4c07e21c9ac993ca8da728066465d509ecda993a084f5ce366",
+    "zip_crc32": "de8bf825"
+  },
+  "sp27-receiver-strata/native/raw/health-004-host-before.json": {
+    "bytes": 452,
+    "sha256": "1c372210a9a02f7b9473b08c4145c45383580da7761ba9fcf33934b40be06763",
+    "zip_crc32": "5f65a21e"
+  },
+  "sp27-receiver-strata/native/raw/health-004-index.json": {
+    "bytes": 851,
+    "sha256": "943224b5a4674f62cf5f137011bd7e62c31d6e482c133aa86f850d000619cc53",
+    "zip_crc32": "56ffb1c2"
+  },
+  "sp27-receiver-strata/native/raw/health-004-invoked.json": {
+    "bytes": 172,
+    "sha256": "ae127187c225d2dd29c20436b11320312b782ceb3de87f76a1edb40967a7338e",
+    "zip_crc32": "6e3047e4"
+  },
+  "sp27-receiver-strata/native/raw/health-004-started.json": {
+    "bytes": 641,
+    "sha256": "c0d71e9ca5d4cd038947b011e397e81bf086e259636ff9ba3df8ccf2040303bb",
+    "zip_crc32": "86557960"
+  },
+  "sp27-receiver-strata/native/raw/health-004.json": {
+    "bytes": 1822103,
+    "sha256": "cfd8ab9a85798f61ec25b14762d7e3d2d7188b4f078a8c45767ee5f5d4eebce8",
+    "zip_crc32": "5be04c78"
+  },
+  "sp27-receiver-strata/native/report.json": {
+    "bytes": 26667,
+    "sha256": "1b3cf90df86740e14dc194d1c92552ab454af0fe2d1d8fff704a11ef5e534064",
+    "zip_crc32": "b606ce94"
+  },
+  "sp27-receiver-strata/native/strata-acquisition-started.json": {
+    "bytes": 280,
+    "sha256": "d53c078d2f5874e59fcbee169700ce580a6d77c6dfe7967354d1e9424d9f9e21",
+    "zip_crc32": "132f5fdb"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/context/native.sqlite": {
+    "bytes": 147456,
+    "sha256": "1f6187ae8c4827ec1d5351930e09b981cd802b494a0d45671a6573c1d105caa1",
+    "zip_crc32": "ed46b764"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/context/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/negative-000.json": {
+    "bytes": 100671,
+    "sha256": "46e3767a1f8d0b7c8a445b784db422f80e68043b268e9035897923ec781c042d",
+    "zip_crc32": "88e8b297"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/negative-001.json": {
+    "bytes": 100895,
+    "sha256": "8882c6ed4711f59a59f1c46d26d9fc88989f041bc658073782a7c71b486a981b",
+    "zip_crc32": "009fe9ca"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/negative-002.json": {
+    "bytes": 100895,
+    "sha256": "bad1be4f16c4a574470f0fd3ab57618938f079b792962265ac827351eebad1de",
+    "zip_crc32": "77eb938d"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/negative-003.json": {
+    "bytes": 100895,
+    "sha256": "3d24361222171eaf1b0e9ddc8cfa85284855cacb4815fd8d6da84cb101416067",
+    "zip_crc32": "33b4da55"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/negative-004.json": {
+    "bytes": 100895,
+    "sha256": "359384844485792f15c1095bd0a8408476862721573b3061176cf47d58624e14",
+    "zip_crc32": "5cf6dd13"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/negative-005.json": {
+    "bytes": 100671,
+    "sha256": "0b16f1e2ad9b8fb2ac3a42ecd42d447a3f53dc448a65f875b950d4ffa059d2db",
+    "zip_crc32": "56b906f6"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/negative-006.json": {
+    "bytes": 100671,
+    "sha256": "d8cd2dd444b1ceca978407717fc5af0d67ceff002fc03adfabcea2541989622d",
+    "zip_crc32": "5a519c67"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/negative-007.json": {
+    "bytes": 100671,
+    "sha256": "72142ca9b7b030cb4367c9ebcb1b083eaae91c5169b3b974cdc352b5a28e6c7b",
+    "zip_crc32": "4996d701"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/negative-008.json": {
+    "bytes": 100671,
+    "sha256": "86956dfe79b258bc53ee91aa6304fd94aa3c2ce4bc5ff7b4087e96fccb00ff17",
+    "zip_crc32": "8e1521bb"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/negative-009.json": {
+    "bytes": 100671,
+    "sha256": "630e3182f4e527bb46b1e592ec953e9eeaa46d0da8d3de456fd0bb6b09c20c48",
+    "zip_crc32": "852d130d"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/negative-010.json": {
+    "bytes": 100895,
+    "sha256": "e076c51900f09953db3003fe3b89b17e0e8671e27b56786633ec2c8e5e5d7490",
+    "zip_crc32": "8ad1cee7"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/negative-011.json": {
+    "bytes": 100895,
+    "sha256": "315455c6b39a177373ad695dc85aecacf7836010b6a57246c74158d4b8c16a08",
+    "zip_crc32": "9584c0c7"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/negative-012.json": {
+    "bytes": 101343,
+    "sha256": "18134be710296e349c34fbcebd63eaa05ce35b8d2a8e1b7279c678001ba70c13",
+    "zip_crc32": "2bae54d0"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/negative-013.json": {
+    "bytes": 102465,
+    "sha256": "01117e77daa1f07ab0097e60d690fee56469d0a7f0c3a3e28c32483e198bca1d",
+    "zip_crc32": "71ffd9b8"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/negative-014.json": {
+    "bytes": 100671,
+    "sha256": "01e5462471e1f34c2f9ee28ab9601ac2058dd06407bdbfa39cabcbc4dbe13454",
+    "zip_crc32": "7da71872"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/negative-015.json": {
+    "bytes": 100671,
+    "sha256": "b300eb21d81fecb27e7e9bca888df4eaad0eef17f45761f1f62a2cdf56360a76",
+    "zip_crc32": "31a926f7"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-000-started.json": {
+    "bytes": 67,
+    "sha256": "989fe7037f7ced08a485afd6d9bd247bd72b35af0c35d64f77e2781b9f4cfdd1",
+    "zip_crc32": "85019b9a"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-000.json": {
+    "bytes": 99387,
+    "sha256": "afddefbb9468eac72e1ba298171e48cec9824af9290bf3979223cc12d22f1286",
+    "zip_crc32": "87de3d8a"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-001-started.json": {
+    "bytes": 67,
+    "sha256": "06d611efb58d35bb3330e490deec3bafce440cebeb0f857e5f31f73e7b01f719",
+    "zip_crc32": "3dbdfcff"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-001.json": {
+    "bytes": 99387,
+    "sha256": "8ca16e881d08c6b33e619960ca46c890fe6c8def3643c495b1aa6e5f2c335f36",
+    "zip_crc32": "7b162f0e"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-002-started.json": {
+    "bytes": 67,
+    "sha256": "d43cceac567d14f23ba8d31537c39e669a40bd1bb4ed5d1cd07ffbdbfd9855a9",
+    "zip_crc32": "2f085311"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-002.json": {
+    "bytes": 99386,
+    "sha256": "c6c2b0357ea1195cd6db55b4b8677f2acf4134dd23f8aa550e2a0f24ac15adae",
+    "zip_crc32": "6e373765"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-003-started.json": {
+    "bytes": 67,
+    "sha256": "7aa7c19972daf1fc174b6b89aca216df7e6fdd34dd662761a71fa7b2f94e84bf",
+    "zip_crc32": "97b43474"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-003.json": {
+    "bytes": 99387,
+    "sha256": "676f540191b3cef41ef7c08c41f457d89b22b3d9a5eb0071450ca69f96234ab3",
+    "zip_crc32": "d5cfa575"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-004-started.json": {
+    "bytes": 67,
+    "sha256": "88b8abe659d232f12500ad6772f1efaf77c4329cf89924416548d5e723a762c2",
+    "zip_crc32": "0a630ccd"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-004.json": {
+    "bytes": 99386,
+    "sha256": "9afce1a616d0c982cf6888dc9dc4e0ba05567b6568e8db354babd37ab4ee8275",
+    "zip_crc32": "9ef1fd2c"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-005-started.json": {
+    "bytes": 67,
+    "sha256": "619a7816fd64215ffe54669982b8419151be06033cdfc6f2f9842581f9ccf7ee",
+    "zip_crc32": "b2df6ba8"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-005.json": {
+    "bytes": 99386,
+    "sha256": "be0e7c1459e48b8452408d68aa8c8b9fb236aec8024269080e37f52cb747bdcf",
+    "zip_crc32": "2a12ecc2"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-006-started.json": {
+    "bytes": 67,
+    "sha256": "8fe7aaaceda1fb0ae85f00c0dbf85ad1db6863bc93691b4eb2bee2e8b8ab81d5",
+    "zip_crc32": "a06ac446"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-006.json": {
+    "bytes": 99387,
+    "sha256": "a9a3ef2e9b43fc53e13ba6bf2c380ffd306a3fd8531ab23107149ea8b0b7e736",
+    "zip_crc32": "36220208"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-007-started.json": {
+    "bytes": 67,
+    "sha256": "051456257a18e44f2c9aa032ee4cbf173e7c320fa4c3ad247e733543ae7d1ef1",
+    "zip_crc32": "18d6a323"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-007.json": {
+    "bytes": 99387,
+    "sha256": "a32d20586428b0b45b9c909a0b254196a821ffaea08dc20f99476bebae2f9120",
+    "zip_crc32": "2dadf932"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-008-started.json": {
+    "bytes": 67,
+    "sha256": "8af3cb848bdc0398b4123ee2304a5e1a42cd8c4dbd5de3ab0f884f1a55b34e95",
+    "zip_crc32": "40b5b375"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-008.json": {
+    "bytes": 99386,
+    "sha256": "370812be5b5303a14073363bc4a8e7ac996502441c1b111c7f39c9db6662288f",
+    "zip_crc32": "f97e16ee"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-009-started.json": {
+    "bytes": 67,
+    "sha256": "56308e99c0753c2bb68e93ab02ea48bd4e6186e35154e0ec5ebd9b8deb92265b",
+    "zip_crc32": "f809d410"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-009.json": {
+    "bytes": 99387,
+    "sha256": "83010e330d976729acb2b7340c9bf3f4a6d6e5cdda8d3041a1275d4c53833c6b",
+    "zip_crc32": "63b86221"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-010-started.json": {
+    "bytes": 68,
+    "sha256": "e2f3d9cd2cd1fb5159e71d0017f49f2e572356d4d3f606ad960dac1045d59fe9",
+    "zip_crc32": "b1beddc3"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-010.json": {
+    "bytes": 99387,
+    "sha256": "aedc798a75f8485d77dad19ade150076079c8a8f5b0c9652feb4c7d574468bc3",
+    "zip_crc32": "c8a35d63"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-011-started.json": {
+    "bytes": 68,
+    "sha256": "37a09dc79cb93b6686da33aef076b9436ef4527cc95cf338d40a08876ce6c649",
+    "zip_crc32": "0902baa6"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-011.json": {
+    "bytes": 99388,
+    "sha256": "54eb3c17c92a59afa363f647f4499219924ec58abd5d085db095d9adf192e730",
+    "zip_crc32": "99078fd1"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-012-started.json": {
+    "bytes": 68,
+    "sha256": "bb6732d4841424545512078c1caebb85f4578630d886da4b9813c3031afbfc65",
+    "zip_crc32": "1bb71548"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-012.json": {
+    "bytes": 99388,
+    "sha256": "15694a5676c14adbc3ba510268f7365446758e6b4c66da5eddb5bcdb0e57c976",
+    "zip_crc32": "89844de5"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-013-started.json": {
+    "bytes": 68,
+    "sha256": "5b3aa82b57376302eec2761cf63ee1574828774b774b4046ee4120946a5ba821",
+    "zip_crc32": "a30b722d"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-013.json": {
+    "bytes": 99388,
+    "sha256": "55819ab458fc3feb153e64f946f29d0b0e5a81bc622d08c5c3f1fecc8d4eccd0",
+    "zip_crc32": "ff2b8a9c"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-014-started.json": {
+    "bytes": 68,
+    "sha256": "0a1e610211a6973fe306f449a5e84bf927c2ffa7a5904f1401160766c7956b29",
+    "zip_crc32": "3edc4a94"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-014.json": {
+    "bytes": 99387,
+    "sha256": "fe724305a21f0dac3c41d508078212c8d617daa9f6a290d4ebe659cb6219e682",
+    "zip_crc32": "5ec2d46c"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-015-started.json": {
+    "bytes": 68,
+    "sha256": "6095c36cc6663eab575cc3632e9e84ef727349d529c899890081436ecd047a58",
+    "zip_crc32": "86602df1"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-015.json": {
+    "bytes": 99388,
+    "sha256": "30ad0ef02cef388ed68e09545ee6ab85019fd6ff1cfd86d4bca520ffaf207443",
+    "zip_crc32": "bd02a5c1"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-000/native.sqlite": {
+    "bytes": 196608,
+    "sha256": "0e76dc33c606a22138f2b0d348d6e84096f5949c261460c98bacb3ff75dc4556",
+    "zip_crc32": "1a4e2f6a"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-000/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-001/native.sqlite": {
+    "bytes": 196608,
+    "sha256": "4ba95e4975fb65a6acbdcad976c8e67e10621634e1b26800c7718e7d8e81a502",
+    "zip_crc32": "ce98aee0"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-001/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-002/native.sqlite": {
+    "bytes": 196608,
+    "sha256": "379b791da32f7db81eed84d204b186fccdae9d154f54faf4c0118e24e3997f54",
+    "zip_crc32": "c650dd5f"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-002/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-003/native.sqlite": {
+    "bytes": 196608,
+    "sha256": "6fbd23cdd7a660011fa3401b837bae5091f1db0afff66f87020db1428f0ee382",
+    "zip_crc32": "8186ee68"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-003/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-004/native.sqlite": {
+    "bytes": 196608,
+    "sha256": "52e04a4ddac4ba343c57db90e1597ba2e1355a3433a2b32824ba2d3e3a8494b6",
+    "zip_crc32": "e695ebe1"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-004/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-005/native.sqlite": {
+    "bytes": 196608,
+    "sha256": "d32009fa794cd2aceb10803898e48b0ba7d93a3d8cc27ec4f779571a6c3fc316",
+    "zip_crc32": "b147690d"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-005/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-006/native.sqlite": {
+    "bytes": 196608,
+    "sha256": "9497e20649f2dd0e212b12f5429bfe8dfdfd2fc14f645603e1753dfe06f9c06f",
+    "zip_crc32": "4f4cc6fb"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-006/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-007/native.sqlite": {
+    "bytes": 196608,
+    "sha256": "e74ded30bf86bc7042bb75a608407d452444890852655a94c453b458a920205b",
+    "zip_crc32": "1c5f5d92"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-007/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-008/native.sqlite": {
+    "bytes": 196608,
+    "sha256": "5724395c693451ac22546677d95fd46dbbbdcee760f5b608c294e148f395888c",
+    "zip_crc32": "cfce1ed0"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-008/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-009/native.sqlite": {
+    "bytes": 196608,
+    "sha256": "7482e8e8bf740e702cf629798d56147365d7861e2ee3d3951e394adb5ad4394d",
+    "zip_crc32": "f667f8ec"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-009/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-010/native.sqlite": {
+    "bytes": 196608,
+    "sha256": "dab2eb4837fe46dfaada59627b1b6f1270a517d43c13e5f96f444a890d902a6d",
+    "zip_crc32": "b32bf147"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-010/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-011/native.sqlite": {
+    "bytes": 196608,
+    "sha256": "7062389d3b4d42fbe52832229324477879f2ef45f5cd4a9d1c8bf3f0d2eaf82c",
+    "zip_crc32": "46f0aa47"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-011/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-012/native.sqlite": {
+    "bytes": 196608,
+    "sha256": "38572bb240fc838e601526728dff2f838999393c63aecaf8304dc691de033ff8",
+    "zip_crc32": "e716f83b"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-012/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-013/native.sqlite": {
+    "bytes": 196608,
+    "sha256": "9e20b482ad05e25fcf7b2f74a38b1bf894142718ce5dcd687ac00d9231683bd6",
+    "zip_crc32": "68a34bea"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-013/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-014/native.sqlite": {
+    "bytes": 196608,
+    "sha256": "6d490163dc6c444e5c6b78f84be2a83e00cc2c2cc5b615e847d540436c8f8f83",
+    "zip_crc32": "9d4c67dd"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-014/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-015/native.sqlite": {
+    "bytes": 196608,
+    "sha256": "bc3a317f2b1590b026b240f1f5ee014f7a703135ac5b50b52a76ea6978d96237",
+    "zip_crc32": "1bb802cc"
+  },
+  "sp27-receiver-strata/native/strata-acquisition/valid-producer-015/owner.lock": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/native/strata-input-acquisition-native.json": {
+    "bytes": 9563023,
+    "sha256": "0b0efc8c2abe37d04f332dc48bbb2d64e4236f687134bccc0efd021d124cbb2e",
+    "zip_crc32": "0ff9c705"
+  },
+  "sp27-receiver-strata/native/strata-inputs-index.json": {
+    "bytes": 1199,
+    "sha256": "512ce3825f37b507ed1be7cf1ae141020d5cacdca8b75ba7662ea4b98b6c027e",
+    "zip_crc32": "f85907f1"
+  },
+  "sp27-receiver-strata/preparation.json": {
+    "bytes": 4899,
+    "sha256": "003be12c20f13dbb494f5456625794bb2bf2eed6fed539a68bc1ab948aa8ff84",
+    "zip_crc32": "af269b52"
+  },
+  "sp27-receiver-strata/public_v3_from_zero": {
+    "bytes": 12504464,
+    "sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+    "zip_crc32": "bfab59ed"
+  },
+  "sp27-receiver-strata/run/process.json": {
+    "bytes": 939,
+    "sha256": "04afe26ee95f8cda0d9feb459ee405cb639a25db04fd964b9045fc55437c615d",
+    "zip_crc32": "90290934"
+  },
+  "sp27-receiver-strata/run/stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "zip_crc32": "00000000"
+  },
+  "sp27-receiver-strata/run/stdout": {
+    "bytes": 611,
+    "sha256": "30e5889520c438d3f4b40b6b3bdc05c3b3a5f5c593dead742cac5399521a4d7a",
+    "zip_crc32": "96cbc87f"
+  }
+}

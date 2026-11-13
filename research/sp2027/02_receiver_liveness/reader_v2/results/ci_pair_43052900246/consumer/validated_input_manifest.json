@@ -1,0 +1,21 @@
+{
+  "analyzer_sha256": "9719f822394e6295a7787be0be2c8d394d25ab19e8d17be543e4145f6bae9acc",
+  "inputs": [
+    {
+      "bytes": 17073,
+      "name": "contract.json",
+      "sha256": "72452d71efaaba880a8e26b6246b55b5d7b47182c752b98b4dc00f3fccf77ddd"
+    },
+    {
+      "bytes": 1280,
+      "name": "schedule.jsonl",
+      "sha256": "0b71697686a9da830bdc0e32ef77ebb3dc2de2ca23638d2251093f1c5e764a64"
+    },
+    {
+      "bytes": 65242,
+      "name": "events.jsonl",
+      "sha256": "4da1cc91ea6bffffaa2ca4eb944a95199a770d35f1db48dc3bf5d2ac54a93e12"
+    }
+  ],
+  "schema": "sp27-analysis-input-identity-v1"
+}

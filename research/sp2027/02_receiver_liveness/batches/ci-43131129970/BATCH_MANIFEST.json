@@ -1,0 +1,127 @@
+{
+  "artifact_id": 13906427974,
+  "files": {
+    "ARTIFACT_PARTS.json": {
+      "bytes": 1013,
+      "sha256": "ecb41915401b6a4cc3db351e54e54e34e7e338d735eee09408c389a0c641d042"
+    },
+    "INTAKE_RECEIPT.json": {
+      "bytes": 2057,
+      "sha256": "d6905a145e42d58ffad39f7813d06c4f7a374c659d81d6642557b97e0345ba52"
+    },
+    "RAW_SHA256.json": {
+      "bytes": 54193,
+      "sha256": "bd15778a5503213d8bda73b7e0b75e8318ccd1be5813fb8d3ae3c793611a38d7"
+    },
+    "README.md": {
+      "bytes": 7980,
+      "sha256": "d7bd7dc7449e66c852245d021d46f4a58c37cc063dd9be3b11025d05c4ba6590"
+    },
+    "RECONSTRUCTION_RECEIPT.json": {
+      "bytes": 420,
+      "sha256": "9d72c37e9733cba1b538a65fed52189099be705b2c71f48cb5ab0ed0bfaddda3"
+    },
+    "STRATA_CI_AUDIT.json": {
+      "bytes": 23415,
+      "sha256": "dc02e746b93d4f20d594182737749f88a08a7771b528bd0f0ef4bc12d673be77"
+    },
+    "artifact-13906427974.zip.part00": {
+      "bytes": 4000000,
+      "sha256": "1aca5e7be7f0c917f73f4d57c2c1b8e6627330ed74d7d179adcd644d25a3712e"
+    },
+    "artifact-13906427974.zip.part01": {
+      "bytes": 4000000,
+      "sha256": "325d8e384642143969fc1c01c7450bbde0722139c19cb386c9322145041793ba"
+    },
+    "artifact-13906427974.zip.part02": {
+      "bytes": 16966,
+      "sha256": "0fbd42513259d900f0785c7190ca74d2e6a877f2db6e196e91b0af4dbc1492db"
+    },
+    "artifact-metadata.json": {
+      "bytes": 954,
+      "sha256": "91b3efb459242815626681fcf2cbdb56749b08d2586646c1568812362e6ffcf6"
+    },
+    "audit_original.py": {
+      "bytes": 13092,
+      "sha256": "0b592ade14ce8849a075f9f417fc39878158c1f830496ae7091f15b7acde9826"
+    },
+    "intake_original_zip.py": {
+      "bytes": 7954,
+      "sha256": "d4c6e505026e5387c405c80198eac49881746461c0d901b2a082fc852f54c362"
+    },
+    "job-130895252279.decoded.log": {
+      "bytes": 184197,
+      "sha256": "cde1e8cfd8bc37f96a711c6521633d529335aa09b57aa841c3c3f25781e94d57"
+    },
+    "jobs.json": {
+      "bytes": 2164,
+      "sha256": "93493b522db00e03d7fabcd1a6569fefd7aaa4ec03217c557f8dee6e5cccda64"
+    },
+    "reconstruct_archive.py": {
+      "bytes": 1893,
+      "sha256": "064212bb4d6cd3124adf6daf907b97efb1a62b430e74763079f7781be0ae0980"
+    },
+    "run.json": {
+      "bytes": 16680,
+      "sha256": "571c909f7a1e9a60a5ed7be331e20700bad1a2d46fa955d1fb68bd15c5d7f7ad"
+    },
+    "strata_analysis_v1/CONSUMER_RECEIPT.json": {
+      "bytes": 129192,
+      "sha256": "51e0e351a93f3fe70fef3e809c0e2204a1eb7dcfbe5c5fd9d7c3e03f8e66c8f1"
+    },
+    "strata_analysis_v1/connection_records.jsonl": {
+      "bytes": 7404965,
+      "sha256": "1472ef67a0ec1f83c94a93c49670ae6eac2268df6f0dc992cd37e8e5aff67f7a"
+    },
+    "strata_analysis_v1/frozen_06_consumption/consumer/operations.csv": {
+      "bytes": 8660,
+      "sha256": "d624e81067311ee5ad8494910661a5cd9ddd857f0725f82c6e4dfcc150d9dd50"
+    },
+    "strata_analysis_v1/frozen_06_consumption/consumer/summary.json": {
+      "bytes": 76081,
+      "sha256": "62608533f1d4ae0da36f0bc3b6c8be327dda2991c63ccbb6f6bdc76074c97a70"
+    },
+    "strata_analysis_v1/frozen_06_consumption/consumer/validated_input_manifest.json": {
+      "bytes": 603,
+      "sha256": "9ebd71dc543f565e3178545ae45f200088b88a985862b986e29c063005990375"
+    },
+    "strata_analysis_v1/frozen_06_consumption/contract.json": {
+      "bytes": 25787,
+      "sha256": "bce2a0f5207df21bbc01f59b36dae35ebbbb02727eee1fca3f3ffd1ac41ab247"
+    },
+    "strata_analysis_v1/frozen_06_consumption/decisions.json": {
+      "bytes": 6899,
+      "sha256": "b224a2c1bdf20456cf70c0af5545beaff875e570c2603802d3b09865d029aa64"
+    },
+    "strata_analysis_v1/frozen_06_consumption/events.jsonl": {
+      "bytes": 61176,
+      "sha256": "fd9f5dc78ad1a215b7902b33bb71ea1c738fcd8085aa2c4d3974856a932018e4"
+    },
+    "strata_analysis_v1/frozen_06_consumption/prepared_business_identity.json": {
+      "bytes": 754,
+      "sha256": "a13b3a62c11afaee539fe77b211017117890270832e778f960913bae58be5d4c"
+    },
+    "strata_analysis_v1/frozen_06_consumption/schedule.jsonl": {
+      "bytes": 9944,
+      "sha256": "fda6a0e2ca20302c9fba4a3f5e811cb828cd19f92c34d47d6c2129561de2b9e8"
+    },
+    "strata_analysis_v1/phase_ledger.json": {
+      "bytes": 15538510,
+      "sha256": "a47b652b04653073244dd5454ff91c9f19f7b446334cba9c4582f95b325a813b"
+    },
+    "strata_analysis_v1/phase_table.csv": {
+      "bytes": 5081,
+      "sha256": "d176d82ba04a04fdf659b20380e7b79ef85b60b12b112cc89f790e40347eb73b"
+    },
+    "strata_analysis_v1/phase_table.json": {
+      "bytes": 15584,
+      "sha256": "d287da40852043ce1076cb1b92f3afe8890878214e6572cdd0f0c84d5dde5518"
+    }
+  },
+  "later_coordinator_ack_scope": "separate appended records; frozen file hashes remain unchanged",
+  "original_zip_sha256": "c56b845bda15360abe3e45b2b3d3893d0990984220afd5bdcfb754b6e1bb9f82",
+  "run_id": 43131129970,
+  "schema": "sp27-02-append-only-delivery-batch-manifest-v1",
+  "self_excluded": "BATCH_MANIFEST.json",
+  "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9"
+}

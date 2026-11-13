@@ -1,0 +1,9 @@
+{
+  "bytes": 5536414,
+  "native_experiments_executed": 0,
+  "original_sha256": "a426ab09abffc6aa128dd5875be6ec33d72da55ca538bdd9867d0b56feaee073",
+  "reconstruct_script_sha256": "064212bb4d6cd3124adf6daf907b97efb1a62b430e74763079f7781be0ae0980",
+  "reconstructed_sha256": "a426ab09abffc6aa128dd5875be6ec33d72da55ca538bdd9867d0b56feaee073",
+  "rewrapped": false,
+  "schema": "sp27-original-zip-reconstruction-check-v1"
+}

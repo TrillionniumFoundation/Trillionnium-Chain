@@ -1,0 +1,548 @@
+{
+  "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+  "collector_analysis_contract_version": "sp27-02-strata-analysis-v1",
+  "estimated_full_lifecycle_cost": null,
+  "evidence_scope": "archival_reanalysis",
+  "experiment_id": "ci-43131129970-job-130895252279-artifact-13906427974",
+  "mechanism_status": "UNKNOWN",
+  "new_native_experiments": 0,
+  "planned_campaign_phases": 13,
+  "pool_with_other_batches": false,
+  "runs": [
+    {
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-000/fresh-native-ledger",
+      "clock_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-000/original-traffic-epoch",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "event_coverage_complete": false,
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "health-000",
+        "planned_index": 0,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "observer_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-000/independent-native-verifier",
+      "profile_id": "strata/initial-health",
+      "recovery": null,
+      "resource_inventory_complete": false,
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-000",
+      "window_end_ns": 4000000000,
+      "window_start_ns": 0
+    },
+    {
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-001/fresh-native-ledger",
+      "clock_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-001/original-traffic-epoch",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "event_coverage_complete": false,
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "health-001",
+        "planned_index": 1,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "observer_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-001/independent-native-verifier",
+      "profile_id": "strata/initial-health",
+      "recovery": null,
+      "resource_inventory_complete": false,
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-001",
+      "window_end_ns": 4000000000,
+      "window_start_ns": 0
+    },
+    {
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-002/fresh-native-ledger",
+      "clock_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-002/original-traffic-epoch",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "event_coverage_complete": false,
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "health-002",
+        "planned_index": 2,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "observer_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-002/independent-native-verifier",
+      "profile_id": "strata/initial-health",
+      "recovery": null,
+      "resource_inventory_complete": false,
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-002",
+      "window_end_ns": 4000000000,
+      "window_start_ns": 0
+    },
+    {
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-000-transport/fresh-native-ledger",
+      "clock_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-000-transport/original-traffic-epoch",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "event_coverage_complete": false,
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "control-000-transport",
+        "planned_index": 3,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "observer_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-000-transport/independent-native-verifier",
+      "profile_id": "strata/transport",
+      "recovery": null,
+      "resource_inventory_complete": false,
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-000-transport",
+      "window_end_ns": 4000000000,
+      "window_start_ns": 0
+    },
+    {
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-001-early-reject/fresh-native-ledger",
+      "clock_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-001-early-reject/original-traffic-epoch",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "event_coverage_complete": false,
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "control-001-early-reject",
+        "planned_index": 4,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "observer_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-001-early-reject/independent-native-verifier",
+      "profile_id": "strata/early-reject",
+      "recovery": null,
+      "resource_inventory_complete": false,
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-001-early-reject",
+      "window_end_ns": 4000000000,
+      "window_start_ns": 0
+    },
+    {
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-002-late-reject/fresh-native-ledger",
+      "clock_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-002-late-reject/original-traffic-epoch",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "event_coverage_complete": false,
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "control-002-late-reject",
+        "planned_index": 5,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "observer_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-002-late-reject/independent-native-verifier",
+      "profile_id": "strata/late-reject",
+      "recovery": null,
+      "resource_inventory_complete": false,
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-002-late-reject",
+      "window_end_ns": 4000000000,
+      "window_start_ns": 0
+    },
+    {
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-003-valid-expensive/fresh-native-ledger",
+      "clock_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-003-valid-expensive/original-traffic-epoch",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "event_coverage_complete": false,
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "control-003-valid-expensive",
+        "planned_index": 6,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "observer_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-003-valid-expensive/independent-native-verifier",
+      "profile_id": "strata/valid-expensive",
+      "recovery": null,
+      "resource_inventory_complete": false,
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-003-valid-expensive",
+      "window_end_ns": 4000000000,
+      "window_start_ns": 0
+    },
+    {
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-003/fresh-native-ledger",
+      "clock_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-003/original-traffic-epoch",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "event_coverage_complete": false,
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "health-003",
+        "planned_index": 7,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "observer_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-003/independent-native-verifier",
+      "profile_id": "strata/midpoint-sentinel",
+      "recovery": null,
+      "resource_inventory_complete": false,
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-003",
+      "window_end_ns": 4000000000,
+      "window_start_ns": 0
+    },
+    {
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-004-valid-expensive/fresh-native-ledger",
+      "clock_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-004-valid-expensive/original-traffic-epoch",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "event_coverage_complete": false,
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "control-004-valid-expensive",
+        "planned_index": 8,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "observer_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-004-valid-expensive/independent-native-verifier",
+      "profile_id": "strata/valid-expensive",
+      "recovery": null,
+      "resource_inventory_complete": false,
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-004-valid-expensive",
+      "window_end_ns": 4000000000,
+      "window_start_ns": 0
+    },
+    {
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-005-late-reject/fresh-native-ledger",
+      "clock_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-005-late-reject/original-traffic-epoch",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "event_coverage_complete": false,
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "control-005-late-reject",
+        "planned_index": 9,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "observer_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-005-late-reject/independent-native-verifier",
+      "profile_id": "strata/late-reject",
+      "recovery": null,
+      "resource_inventory_complete": false,
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-005-late-reject",
+      "window_end_ns": 4000000000,
+      "window_start_ns": 0
+    },
+    {
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-006-early-reject/fresh-native-ledger",
+      "clock_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-006-early-reject/original-traffic-epoch",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "event_coverage_complete": false,
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "control-006-early-reject",
+        "planned_index": 10,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "observer_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-006-early-reject/independent-native-verifier",
+      "profile_id": "strata/early-reject",
+      "recovery": null,
+      "resource_inventory_complete": false,
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-006-early-reject",
+      "window_end_ns": 4000000000,
+      "window_start_ns": 0
+    },
+    {
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-007-transport/fresh-native-ledger",
+      "clock_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-007-transport/original-traffic-epoch",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "event_coverage_complete": false,
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "control-007-transport",
+        "planned_index": 11,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "observer_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-007-transport/independent-native-verifier",
+      "profile_id": "strata/transport",
+      "recovery": null,
+      "resource_inventory_complete": false,
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/control-007-transport",
+      "window_end_ns": 4000000000,
+      "window_start_ns": 0
+    },
+    {
+      "chain_instance_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-004/fresh-native-ledger",
+      "clock_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-004/original-traffic-epoch",
+      "confirmation_policy": {
+        "min_depth": 6,
+        "policy_id": "installed-depth-and-required-work",
+        "require_native_window_gate": true,
+        "required_work_delta": "0c",
+        "semantics": "first_observed",
+        "window_end_rule": "exclusive"
+      },
+      "event_coverage_complete": false,
+      "identity": {
+        "binary_sha256": "52093ac76963ae8bb2a2e9b17bfb23fe82e706bf6b45f5aacc788a751a66bcd5",
+        "config_sha256": null,
+        "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+        "source_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582"
+      },
+      "metadata": {
+        "adapter_version": "sp27-02-strata-analysis-v1",
+        "business_schedule_timestamp_missing": true,
+        "campaign_qualification": "COLLECTED_CONTROL_SERIES",
+        "causal_mechanism_status": "UNKNOWN",
+        "config_freeze_complete": false,
+        "control_arrival_is_not_business_arrival": true,
+        "cryptography_reexecuted_by_python": false,
+        "native_phase_attempted": true,
+        "native_phase_completed": true,
+        "native_phase_id": "health-004",
+        "planned_index": 12,
+        "prospective_registration": false,
+        "source_path_attestation": "compiled native independent replay and confirmation path"
+      },
+      "observer_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-004/independent-native-verifier",
+      "profile_id": "strata/terminal-sentinel",
+      "recovery": null,
+      "resource_inventory_complete": false,
+      "run_id": "ci-43131129970-job-130895252279-artifact-13906427974/health-004",
+      "window_end_ns": 4000000000,
+      "window_start_ns": 0
+    }
+  ],
+  "schema": "sp27-confirmed-goodput-contract-v1",
+  "statistical_significance_claimed": false
+}

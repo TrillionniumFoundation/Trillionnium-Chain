@@ -1,0 +1,20 @@
+{
+  "schema": "sp27-02-execution-owner-ack-v1",
+  "reviewer": "/root",
+  "contract_sha256": "fd063440ee6d10ccaaf28ca70a0fc371e1a1a77cd67ac52f95f1cef885863920",
+  "actual_independent_reconsumption": true,
+  "consumer_result_sha256": "a8a24ee0766e42ea8700bcd47803510dd9ce61559318e64efbae937de1f58be3",
+  "confirmed_by_phase": [
+    1,
+    0
+  ],
+  "denominators_by_phase": [
+    1,
+    1
+  ],
+  "prior_Agent06_author_acknowledgement": "NOT_OBSERVED",
+  "coordinator_acceptance": "NOT_OBSERVED",
+  "native_experiments_added_by_readback": 0,
+  "semantics": "strict endpoint < T and preserved native final gate true",
+  "identical_raw_inputs_required": true
+}

@@ -1,0 +1,47 @@
+{
+  "all_file_crc_verified": true,
+  "archive": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/artifact-13906427974.verified.zip",
+  "archive_bytes": 8016966,
+  "archive_sha256": "c56b845bda15360abe3e45b2b3d3893d0990984220afd5bdcfb754b6e1bb9f82",
+  "artifact_id": 13906427974,
+  "extract_file_mode": "0444",
+  "metadata": {
+    "path": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/artifact-metadata.json",
+    "sha256": "91b3efb459242815626681fcf2cbdb56749b08d2586646c1568812362e6ffcf6"
+  },
+  "missing_or_failed_report_repaired": false,
+  "native_experiments_executed": 0,
+  "original_extraction": "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals",
+  "platform_archive_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13906427974/zip",
+  "platform_artifact_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13906427974",
+  "report_projections": [
+    {
+      "first_divergence": null,
+      "health_gate_passed": true,
+      "member": "sp27-receiver-strata/native/report.json",
+      "pressure_controls_executed": 8,
+      "qualification": "COLLECTED_CONTROL_SERIES",
+      "read_status": "READ"
+    }
+  ],
+  "run_id": 43131129970,
+  "schema": "sp27-ci-original-archive-intake-v1",
+  "scientific_success_determined": false,
+  "script_sha256": "d4c6e505026e5387c405c80198eac49881746461c0d901b2a082fc852f54c362",
+  "source_head": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+  "source_identity": {
+    "base": null,
+    "candidate": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+    "kind": "head",
+    "prospective_merge": null,
+    "schema": "trnm-ci-source-v1",
+    "tested_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+    "tested_tree": "ccf72585d2ac3b361ec169a62a607d7bce055582",
+    "tests_executed_by_identity_check": false,
+    "tracked_bytes": 2554250398,
+    "tracked_entries": 27909,
+    "tracked_worktree_verified": true
+  },
+  "uncompressed_file_bytes": 77209748,
+  "zip_file_members": 265
+}

@@ -1,0 +1,27 @@
+{
+  "schema": "sp27-ci-artifact-ordered-parts-v1",
+  "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43052900246/artifacts/13871459353",
+  "original_size_bytes": 8297569,
+  "original_sha256": "8b21d753e0ac85ffdca7bc3e0a5f953d4dfffb24c7a10cc9ae394dcfe6590307",
+  "parts": [
+    {
+      "path": "artifact.zip.part-00",
+      "offset": 0,
+      "size_bytes": 4000000,
+      "sha256": "01259020faf1585760dc17e5d54769c22549b1045a6495074fdc3d8ad54ef3eb"
+    },
+    {
+      "path": "artifact.zip.part-01",
+      "offset": 4000000,
+      "size_bytes": 4000000,
+      "sha256": "e55b63f599d3cd0d13cafe8838ffd82ccef2313b60a08fca7b4d93ac72c63ac9"
+    },
+    {
+      "path": "artifact.zip.part-02",
+      "offset": 8000000,
+      "size_bytes": 297569,
+      "sha256": "c62cd4ea62872cbe9b6cb75a4bbf446dc49a0c95693fe9787e299156c0fc3714"
+    }
+  ],
+  "raw_bytes_modified": false
+}

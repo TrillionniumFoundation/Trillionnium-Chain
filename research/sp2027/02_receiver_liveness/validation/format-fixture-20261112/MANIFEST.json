@@ -1,0 +1,256 @@
+{
+  "archive": {
+    "bytes": 119593,
+    "path": "records.zip",
+    "sha256": "66bc0000acec909100e639c34ba35d9d1d7cd4f920624a32ddd12d61c5af4f05"
+  },
+  "evidence_package_parent": "a6e79dfbfc30d829a8527d0546091d005ecdce06",
+  "executed_scientific_source": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+  "fixture_after_sha256": "bd208eb66ae8c301de55a67df19691f5b4c69eea2bbc84092ce6a25e35050f99",
+  "fixture_before_sha256": "d94052e5777392461da80c3470d08222cc72f14a0e82f9b477b9fcf0da3f870b",
+  "mechanism_conclusion": "UNCHANGED_UNKNOWN",
+  "members": {
+    "ci-original/job-130895274019.api.json": {
+      "bytes": 3242,
+      "sha256": "270e08c3f7947fcab4c435225249f469ca87e5c61e4e635889f908ceb8b86fc9"
+    },
+    "ci-original/job-130895274019.log": {
+      "bytes": 211728,
+      "sha256": "9d0b319d0857a93e64d495e13ca1b708e5d16fe0a7ffb6ae681e0245a4b29a59"
+    },
+    "ci-original/run-43131136331.api.json": {
+      "bytes": 15148,
+      "sha256": "c59d43177e8bb67f7532ceed63a0f59d61dc1bbbdd998f45a36ade5d2e283a06"
+    },
+    "local-repair/001-github-identity.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/001-github-identity.stdin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/001-github-identity.stdout": {
+      "bytes": 10,
+      "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981"
+    },
+    "local-repair/002-initial-branch.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/002-initial-branch.stdin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/002-initial-branch.stdout": {
+      "bytes": 50,
+      "sha256": "f478bf231c96aae16e1c5513e8f7e60f384cd94612185c8d802497c7f1a21505"
+    },
+    "local-repair/003-initial-head.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/003-initial-head.stdin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/003-initial-head.stdout": {
+      "bytes": 41,
+      "sha256": "736d35d1bcb9c23d55b303a9262aeaecc305d5840addf434820b175033da4429"
+    },
+    "local-repair/004-initial-tree.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/004-initial-tree.stdin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/004-initial-tree.stdout": {
+      "bytes": 41,
+      "sha256": "1c242703b6e5a1de355248622d64e1f51fcc08d37750001f0cd3fb80f2078a36"
+    },
+    "local-repair/005-initial-clean.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/005-initial-clean.stdin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/005-initial-clean.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/006-remote-a6-confirmed.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/006-remote-a6-confirmed.stdin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/006-remote-a6-confirmed.stdout": {
+      "bytes": 41,
+      "sha256": "736d35d1bcb9c23d55b303a9262aeaecc305d5840addf434820b175033da4429"
+    },
+    "local-repair/007-draft-pr-at-a6.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/007-draft-pr-at-a6.stdin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/007-draft-pr-at-a6.stdout": {
+      "bytes": 20195,
+      "sha256": "f33c3b2431069389e5b3f5b9c4f647016c4500579c9a8239620853dddcfa4804"
+    },
+    "local-repair/008-preflight-before-fixture-repair.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/008-preflight-before-fixture-repair.stdin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/008-preflight-before-fixture-repair.stdout": {
+      "bytes": 180,
+      "sha256": "2290b6c2897f0cd046a12928a1aabf36499371af30277ef1a915b7b6d755c67c"
+    },
+    "local-repair/009-fail-before-positive-fixture.stderr": {
+      "bytes": 1335,
+      "sha256": "0e89ee7a5005602a5e3fc17ce4b4c7dd557cd29cfe87bd348e5fb417ced196e9"
+    },
+    "local-repair/009-fail-before-positive-fixture.stdin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/009-fail-before-positive-fixture.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/010-preflight-before-test-source-edit.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/010-preflight-before-test-source-edit.stdin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/010-preflight-before-test-source-edit.stdout": {
+      "bytes": 180,
+      "sha256": "2290b6c2897f0cd046a12928a1aabf36499371af30277ef1a915b7b6d755c67c"
+    },
+    "local-repair/011-pass-after-complete-driver-suite.stderr": {
+      "bytes": 24541,
+      "sha256": "5ae1a877a2481035a8a962173baba22ade6c0d9c685d2baa758d57fa7a275140"
+    },
+    "local-repair/011-pass-after-complete-driver-suite.stdin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/011-pass-after-complete-driver-suite.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/012-diff-check.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/012-diff-check.stdin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/012-diff-check.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/013-exact-fixture-diff.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/013-exact-fixture-diff.stdin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/013-exact-fixture-diff.stdout": {
+      "bytes": 4309,
+      "sha256": "9e09a30282c35e733b867643c51be5815a1cee709224355c77e9f55b84a78ff2"
+    },
+    "local-repair/014-changed-paths.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/014-changed-paths.stdin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-repair/014-changed-paths.stdout": {
+      "bytes": 40,
+      "sha256": "8e90bb6f2f27c8de4547c2c0176508e722a5168019b16a0560be5c4e5775e9cc"
+    },
+    "local-repair/FILES_MANIFEST.json": {
+      "bytes": 6960,
+      "sha256": "76dd8f5b335ab2554f21ed1fb169449328a0671f759c7d16a229bed9ba010a10"
+    },
+    "local-repair/REPAIR_RECEIPT.json": {
+      "bytes": 1004,
+      "sha256": "a7ea7c6968d8ddac375e11d3fd654cb09ba033362edf488d30e0c7ac76a74fbf"
+    },
+    "local-repair/RESULT.json": {
+      "bytes": 395,
+      "sha256": "b78803ea7a062424527e87a6f0f2b810d46712fc02ffc8e925baba597f95a25d"
+    },
+    "local-repair/STATUS.json": {
+      "bytes": 407,
+      "sha256": "c8c062b3945868d565fa7b38a96fd689a22616deaa89f2c67e56c91334b8601a"
+    },
+    "local-repair/ledger.jsonl": {
+      "bytes": 26736,
+      "sha256": "24367c5b77848ba34f95d1b7655ddb387006840064e9e5a485d8c97a3f64115d"
+    },
+    "local-repair/test_run_from_zero_native.after.py": {
+      "bytes": 128861,
+      "sha256": "bd208eb66ae8c301de55a67df19691f5b4c69eea2bbc84092ce6a25e35050f99"
+    },
+    "local-repair/test_run_from_zero_native.before.py": {
+      "bytes": 127795,
+      "sha256": "d94052e5777392461da80c3470d08222cc72f14a0e82f9b477b9fcf0da3f870b"
+    },
+    "tools/package_format_fixture_commit_v1.py": {
+      "bytes": 15355,
+      "sha256": "dda7eb60963320fcddf001ba69f8b85d430d2e4b1d3ad7177017ffb71243f83f"
+    },
+    "tools/repair_format_fixture_v1.py": {
+      "bytes": 9372,
+      "sha256": "f5052e77b4f6a56aef08f6a6f882f1b856bdcb987f311a2cc59bbd31d46873ee"
+    }
+  },
+  "native_experiments": 0,
+  "observations": {
+    "local_entire_suite_after": {
+      "exit_code": 0,
+      "result": "OK",
+      "tests": 149
+    },
+    "local_targeted_before": {
+      "errors": 1,
+      "exit_code": 1,
+      "tests": 1
+    }
+  },
+  "original_ci": {
+    "job_id": 130895274019,
+    "log_sha256": "9d0b319d0857a93e64d495e13ca1b708e5d16fe0a7ffb6ae681e0245a4b29a59",
+    "run_id": 43131136331,
+    "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+    "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43131136331/job/130895274019"
+  },
+  "original_results_rewritten": false,
+  "production_driver_changed": false,
+  "raw_member_bytes_modified": false,
+  "schema": "sp27-format-fixture-validation-records-v1",
+  "scientific_samples": 0,
+  "source_scope": "Only the existing positive format-copy test fixture changed; historical source/raw batches remain intact."
+}

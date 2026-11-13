@@ -1,0 +1,24 @@
+{
+  "schema": "sp27-original-artifact-parts-v1",
+  "source_commit": "ff35430d27eea56dd803e05aa6d48573e37ed4c9",
+  "run_id": 43131129775,
+  "job_id": 130895251212,
+  "artifact_id": 13907325153,
+  "original_size_bytes": 5536414,
+  "original_sha256": "a426ab09abffc6aa128dd5875be6ec33d72da55ca538bdd9867d0b56feaee073",
+  "parts": [
+    {
+      "path": "artifact-13907325153.zip.part00",
+      "offset": 0,
+      "size_bytes": 4000000,
+      "sha256": "031f03a87d95da29b8629243aa9b1a04f3522a736a12496fc7f86e71200da4ee"
+    },
+    {
+      "path": "artifact-13907325153.zip.part01",
+      "offset": 4000000,
+      "size_bytes": 1536414,
+      "sha256": "b91865b11f832cde7cee3b8adf3d160e0fd8aa22b6d6e146daaf923d980a50d5"
+    }
+  ],
+  "transformation": "consecutive original ZIP bytes only; concatenate in declared order"
+}

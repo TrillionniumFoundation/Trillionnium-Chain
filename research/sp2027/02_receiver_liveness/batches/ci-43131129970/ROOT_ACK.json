@@ -1,0 +1,121 @@
+{
+  "actor": "root in current SP27-02 task",
+  "actual_command": [
+    "python3",
+    "-B",
+    "research/sp2027/02_receiver_liveness/audit_strata_ci.py",
+    "--input",
+    "/workspace/scratch/e8159a5f91bf/provenance/ci-43131129970/verified/originals/sp27-receiver-strata",
+    "--out",
+    "/workspace/scratch/e8159a5f91bf/provenance/root-strata-reconsume-v1",
+    "--experiment-id",
+    "ci-43131129970-job-130895252279-artifact-13906427974"
+  ],
+  "adapter_sha256": "04378a888cad5555afc76e38dd63f2cad50fcde6d91f2417e67ac6b902bbe2c5",
+  "analysis_qualification": "COLLECTED_CONTROL_SERIES",
+  "consumer_receipt_sha256": "51e0e351a93f3fe70fef3e809c0e2204a1eb7dcfbe5c5fd9d7c3e03f8e66c8f1",
+  "contract_freeze_sha256": "fa048f1c0f92b421c34738bfee05e88d0923aed0ab5f3787ef6a411c2cb8e2f3",
+  "frozen_06_summary_sha256": "62608533f1d4ae0da36f0bc3b6c8be327dda2991c63ccbb6f6bdc76074c97a70",
+  "mechanism_status": "UNKNOWN",
+  "native_collector_first_divergence": null,
+  "new_native_experiments": 0,
+  "original_agent06_owner_or_coordinator_ack": "NOT_OBSERVED",
+  "outputs": [
+    {
+      "byte_identical_to_measurement_agent_output": true,
+      "bytes": 129192,
+      "path": "CONSUMER_RECEIPT.json",
+      "sha256": "51e0e351a93f3fe70fef3e809c0e2204a1eb7dcfbe5c5fd9d7c3e03f8e66c8f1"
+    },
+    {
+      "byte_identical_to_measurement_agent_output": true,
+      "bytes": 7404965,
+      "path": "connection_records.jsonl",
+      "sha256": "1472ef67a0ec1f83c94a93c49670ae6eac2268df6f0dc992cd37e8e5aff67f7a"
+    },
+    {
+      "byte_identical_to_measurement_agent_output": true,
+      "bytes": 8660,
+      "path": "frozen_06_consumption/consumer/operations.csv",
+      "sha256": "d624e81067311ee5ad8494910661a5cd9ddd857f0725f82c6e4dfcc150d9dd50"
+    },
+    {
+      "byte_identical_to_measurement_agent_output": true,
+      "bytes": 76081,
+      "path": "frozen_06_consumption/consumer/summary.json",
+      "sha256": "62608533f1d4ae0da36f0bc3b6c8be327dda2991c63ccbb6f6bdc76074c97a70"
+    },
+    {
+      "byte_identical_to_measurement_agent_output": true,
+      "bytes": 603,
+      "path": "frozen_06_consumption/consumer/validated_input_manifest.json",
+      "sha256": "9ebd71dc543f565e3178545ae45f200088b88a985862b986e29c063005990375"
+    },
+    {
+      "byte_identical_to_measurement_agent_output": true,
+      "bytes": 25787,
+      "path": "frozen_06_consumption/contract.json",
+      "sha256": "bce2a0f5207df21bbc01f59b36dae35ebbbb02727eee1fca3f3ffd1ac41ab247"
+    },
+    {
+      "byte_identical_to_measurement_agent_output": true,
+      "bytes": 6899,
+      "path": "frozen_06_consumption/decisions.json",
+      "sha256": "b224a2c1bdf20456cf70c0af5545beaff875e570c2603802d3b09865d029aa64"
+    },
+    {
+      "byte_identical_to_measurement_agent_output": true,
+      "bytes": 61176,
+      "path": "frozen_06_consumption/events.jsonl",
+      "sha256": "fd9f5dc78ad1a215b7902b33bb71ea1c738fcd8085aa2c4d3974856a932018e4"
+    },
+    {
+      "byte_identical_to_measurement_agent_output": true,
+      "bytes": 754,
+      "path": "frozen_06_consumption/prepared_business_identity.json",
+      "sha256": "a13b3a62c11afaee539fe77b211017117890270832e778f960913bae58be5d4c"
+    },
+    {
+      "byte_identical_to_measurement_agent_output": true,
+      "bytes": 9944,
+      "path": "frozen_06_consumption/schedule.jsonl",
+      "sha256": "fda6a0e2ca20302c9fba4a3f5e811cb828cd19f92c34d47d6c2129561de2b9e8"
+    },
+    {
+      "byte_identical_to_measurement_agent_output": true,
+      "bytes": 15538510,
+      "path": "phase_ledger.json",
+      "sha256": "a47b652b04653073244dd5454ff91c9f19f7b446334cba9c4582f95b325a813b"
+    },
+    {
+      "byte_identical_to_measurement_agent_output": true,
+      "bytes": 5081,
+      "path": "phase_table.csv",
+      "sha256": "d176d82ba04a04fdf659b20380e7b79ef85b60b12b112cc89f790e40347eb73b"
+    },
+    {
+      "byte_identical_to_measurement_agent_output": true,
+      "bytes": 15584,
+      "path": "phase_table.json",
+      "sha256": "d287da40852043ce1076cb1b92f3afe8890878214e6572cdd0f0c84d5dde5518"
+    }
+  ],
+  "process_exit_code": 0,
+  "raw_inputs_rewritten": false,
+  "reader_sha256": "8f684b5aabb7b759f910c2cc7c78ec3b79013ee1f59065101629f54ed3fc5f7b",
+  "schema": "sp27-02-strata-root-reconsume-v1",
+  "scope": "Independent repeated analysis invocation in the same task environment using the same verified immutable input directory; not an independent native replicate",
+  "validated_native_counts": {
+    "attempted_phases": 13,
+    "completed_phases": 13,
+    "healthy_completed_phases": 5,
+    "helper_invoked_phases": 13,
+    "incomplete_phases": 0,
+    "planned_phases": 13,
+    "pressure_controls_attempted": 8,
+    "pressure_controls_executed": 8,
+    "pressure_controls_planned": 8,
+    "pressure_controls_unstarted": 0,
+    "unstarted_phases": 0
+  }
+}
