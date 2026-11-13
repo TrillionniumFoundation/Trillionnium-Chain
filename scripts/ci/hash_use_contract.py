@@ -27,10 +27,11 @@ MAX_DEPTH = 64
 # These are reviewed input identities, not cryptographic security assumptions.
 # Changing source or semantics requires a new review; inspect never regenerates.
 REVIEWED_SEMANTICS_SHA256 = "29189f8e96a255472577479d46204b2b403a1f8e27806da6aa616e417ced0b5b"
-# Preserve the 31-path/19-use review. Only the proof-binding descriptor changes
-# here to the reviewed 139-input W1 mapping; this is not a source-authentication
-# or current-use approval. The selected upstream profile remains withdrawn.
-REVIEWED_SOURCE_MAP_SHA256 = "5255345f514f5ac0e0abc92a9c756f35c81eed4c880c0108019be408b0fd4d69"
+# Preserve the 31-path/19-use semantics. At 975ab093, five selected source
+# identities and the proof descriptor's 140-input W1 map were separately reviewed.
+# New exported APIs outside these declared uses are not a complete callgraph
+# review or current-use approval. The selected upstream profile remains withdrawn.
+REVIEWED_SOURCE_MAP_SHA256 = "75490c688e5bf5eab404cc57a716fc9fc51a3fd66d7e37285b10d3801471aadd"
 
 USES = {
     "model-legacy-root": "model",

@@ -21,6 +21,8 @@ import sys
 import traceback
 import unittest
 
+import w1_qrom_supplemental_controls as supplemental
+
 ROOT = Path(__file__).resolve().parents[2]
 ROSTER = 'config/pon/w1-qrom-current-required-tests-v1.json'
 ROSTER_SHA256 = 'e48c23d4d6737d0143798a5c93a194310ebdf7ba1a0cb87bdf3a36af65b8f581'
@@ -37,7 +39,14 @@ FALSE_FIELDS = (
 )
 REQUIRED_STAGES = (
     'observations', 'checkout', 'source_before', 'preflight', 'named_tests',
-    'historical_drift', 'implementation', 'source_after',
+    'historical_drift', 'implementation',
+    'supplemental_historical_controls',
+    'supplemental_historical_mapping',
+    'supplemental_current_mapping',
+    'supplemental_budget_unknown',
+    'supplemental_budget_hypothetical',
+    'supplemental_report_scopes',
+    'source_after',
 )
 
 
@@ -400,10 +409,14 @@ def verify(root, out, kind, source, head, base, steps):
                 and sha(stderr) == drift['historical_stderr_sha256']
                 and strict_json(stderr) == drift['historical_result'],
                 'retained historical process output differs')
+        # Recheck both actual named receipts after the relocated report-scope step.
+        # A successful process or copied report cannot replace complete controls.
+        supplemental_digests = supplemental.verify_completions(root, out / 'supplemental')
         identities = {'candidate_source': before, 'named_tests_sha256': sha(names_raw),
             'implementation_sha256': sha(implementation_raw), 'historical_drift_sha256': sha(drift_raw),
             'required_named_controls': roster['expected_tests'],
-            'historical_job_sha256': historical_job}
+            'historical_job_sha256': historical_job,
+            'supplemental_completion_sha256': supplemental_digests}
     except (Exception, SystemExit) as error:
         errors.append(str(error))
     report = {'schema': 'TRNM-W1-QROM-CURRENT-CI-OBSERVATION1',

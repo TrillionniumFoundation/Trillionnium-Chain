@@ -19,12 +19,21 @@ from types import FunctionType, ModuleType
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = 'config/pon/w1-lifetime-current-source-v2.json'
-CONTRACT_SHA256 = '0bd3d81028088f8e9317fbcdfa46d41b4d21936c916b46714deb055ca362a612'
-LEGACY = 'scripts/w1_lifetime_ledger.py'
+CONTRACT_SHA256 = 'e8f022e735020e29b166d75f848f56c283610992d09ee4f56ce586b417d5b9b9'
+# Exact offline evidence fixture from 1a14f7d4; its SOURCE_BASE stays 7150d96a.
+# scripts/w1_lifetime_ledger.py is the separate current successor, left unchanged.
+LEGACY = 'tests/fixtures/w1-lifetime-historical-7150/ledger.py'
 LEGACY_SHA256 = '7e494ba406c63442dfbd17147d006b967cb07d7f6c886ce5779a0f2f05fceef6'
-CURRENT = 'f6edf2d549ab2a6b83bda3945daf71aa0b025c80'
+CURRENT = '975ab0937243949b73cdbea9f13902802bbd7d00'
 HISTORICAL = '7150d96a2112875b4afcf3023361a5cef4a0e4b1'
-CHANGED = ('trillionnium/Cargo.lock', 'trillionnium/crates/trnm-pon-node/src/store.rs')
+CHANGED = (
+    'trillionnium/crates/trnm-crypto-primitives/Cargo.toml',
+    'trillionnium/Cargo.lock',
+    'trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs',
+    'trillionnium/crates/trnm-pon-node/src/store.rs',
+    'trillionnium/crates/trnm-pon-node/src/consensus.rs',
+    'formal/pon-nakamoto-v1/quantum_oracle_resources.py',
+)
 MAX_BYTES = 2 * 1024 * 1024
 QUALIFICATION = {
     'production_activation': False, 'consensus_admission': False,
