@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from daa_shadow_journal import ShadowHeader, ShadowJournal, JournalError, UnknownEffect, ZERO
+from daa_shadow_journal import ShadowHeader, ShadowJournal, JournalError, UnknownEffect, SCHEMA, ZERO
 
 
 def sha(blob: bytes) -> bytes:
