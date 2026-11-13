@@ -70,7 +70,7 @@ class AuthorityEffectTests(unittest.TestCase):
         self.assertEqual({row['id']: row['effect_scope'] for row in result['routes']},
                          EXPECTED_SCOPES)
         self.assertEqual(result['source_revision'],
-                         '2bb56596e637908c44b5a2ef5984c9c37c7d3cc8')
+                         '57b069ae1e7ed32ff95e4f2a18a74d5eadcda550')
         self.assertEqual(result['source_files_sha256'], self.original['source_files_sha256'])
         for name in ('coverage_complete', 'whole_chain_pq_qualified', 'production_activation',
                      'provenance_authenticated', 'call_graph_proved',
@@ -149,6 +149,7 @@ class AuthorityEffectTests(unittest.TestCase):
 
     def test_source_revision_schema_purpose_and_route_context_drift_refuse(self):
         for field, value in (('source_revision', '0' * 40),
+                             ('source_revision', '2bb56596e637908c44b5a2ef5984c9c37c7d3cc8'),
                              ('source_revision', '893738947a50dc42819b56e632192de4f9f24fa0'),
                              ('source_revision', '523bee8709645e7dbc3455f1dc74737f7067af62'),
                              ('source_revision', 'b3bc526b96d3a8e2ad0be7faa4f00f11d9f7ea53'),
@@ -217,6 +218,7 @@ class AuthorityEffectTests(unittest.TestCase):
             '6227e644777beec35d8676cc04c31ffdf269b187414bdd27ec99daac6c861421',
             'cc7d52233e88755ea58efc96987f593c9eda92a4dda854a40a771eebc09b2b2d',
             'd7159f4fe718a6c59220e449d92480abc9fc5677d74329b1eb4b9d0eafaff9ee',
+            '4dc3fd4c60ee7548adb5b50f8658a8ff9529dcbbeae98bb590f03458a707f0a6',
         ):
             with self.subTest(old_export_pin=old_digest):
                 self.data = deepcopy(self.original)

@@ -298,9 +298,34 @@ keep their original source identities. The inspector still returns
 `source_revision_bound = false`; it supplies no native execution, custody,
 cryptographic lifetime bound or production qualification.
 
-### 2026-11-13 current 45-source mapping
+### 2026-11-13 typed weak-key source continuation
 
-The current root source review binds all **45 declared files** to the exact
+The current source review binds the same **45 declared files** at
+`57b069ae1e7ed32ff95e4f2a18a74d5eadcda550`, tree
+`887f402546a4d1449919915a82f122acf3d0d49d`. The canonical source-map digest is
+`e877eae7f4c1f7df4874c49f0bf6e2fc5b27f15912d9a0532e6704bb8e112a95`.
+
+Exactly one declared digest changes from the retained mapping below:
+`trillionnium/crates/trnm-crypto-primitives/src/lib.rs` changes from
+`4dc3fd4c60ee7548adb5b50f8658a8ff9529dcbbeae98bb590f03458a707f0a6` to
+`83fe52804bfbc593e2768c3a88764b532539deb8c9e866ee7305286491e16115`.
+The typed `WeakEd25519Key` cause preserves the established decode, canonical
+point and weak-key checks and the existing error display. It permits the
+reviewed operator consumer to distinguish `ACTOR_WEAK_KEY` from `ACTOR_KEY`
+without changing the set of accepted keys. That consumer is outside this
+45-path inventory; reviewing the shared export does not extend this roster.
+
+The other 44 source hashes, six authority roles, 18 shared-hash use groups,
+operation limits, deadlines and unknown lifetime bounds remain fixed.
+All existing test methods remain, including the exact 225ab historical
+map reconstruction. Their refusal cases now also retain the prior B review
+label and pre-continuation crypto digest. No native execution result is
+transferred by rebinding these source bytes. `source_revision_bound = false`,
+`status = HOLD` and all existing false qualification fields remain unchanged.
+
+### Retained initial 45-source mapping, 2026-11-13
+
+That root source review bound all **45 declared files** to the exact
 regular bytes in commit
 `b683714cdd5ba241c16c335a81aebc12c1581902`, tree
 `f11a77d95b665207206282f691efc9d1225f26ea`.
@@ -308,7 +333,7 @@ The prior 45-file map retained review context
 `225ab38e1e5f7e0852a28372bd8dd769eec1084b` and canonical digest
 `844d27717babb9b3a286cd28915a06b0cd1152ffcf151ffdf6c30a01708bd9fe`.
 That context predates some retained V6 source files; it was not their Git
-provenance. The current source revision contains every declared file.
+provenance. That source revision contains every declared file.
 
 Exactly six declared digests change. The other 39 source hashes, the 45-path
 roster, all six authority roles, 18 hash-use groups, shared primitive identities,

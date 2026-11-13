@@ -19,7 +19,7 @@ The new [machine register](../../config/pon/pq128-lifetime-composition-v2.json),
 The current legacy V1 budget declares **21 source paths** at
 `2bb56596e637908c44b5a2ef5984c9c37c7d3cc8`. The current root inventory
 declares **45 paths**, all present with the reviewed bytes at
-`b683714cdd5ba241c16c335a81aebc12c1581902`. The latter is also this
+`57b069ae1e7ed32ff95e4f2a18a74d5eadcda550`. The latter is also this
 mapping's review context. Child manifest bytes are independently frozen in
 the bridge; a review context does not attest the commit containing the
 metadata update or a native execution.
@@ -50,9 +50,20 @@ revision `12e510b211110d93d9ead07e02c07a1eecc28ae9` and root review context
 `eedc1db827d97aab0be4c43e58713a2e2f2a3d0331e045a509f0941557834028`.
 Current child manifest SHA-256 digests are
 `3ed0e9d451ff885fb27a4a6f7449ca9050eb44707d801a3a40d675fcf5ceaed4` and
-`a94b3e01c8a78a796496182dc268fe23b6fe844e27edec7553876c735ce37cc8`, respectively.
+`4144d308e76fd73f14c197765e354273059bfc8f7480541eaa3f715c31b132cf`, respectively.
 Added controls explicitly
 reject the old input pins and the omitted witness population.
+
+The immediately preceding root review context
+`b683714cdd5ba241c16c335a81aebc12c1581902` and root-manifest SHA-256
+`a94b3e01c8a78a796496182dc268fe23b6fe844e27edec7553876c735ce37cc8` remain historical identities.
+The current source continuation changes only the root inventory's crypto
+export digest to the reviewed typed weak-key error implementation. It leaves
+the legacy 21-path input and its source lock unchanged. The bridge retains the
+same 21/45/1/65 path counts, four shared primitive scopes, six unknown role
+populations and conditional arithmetic. Both superseded root identity fields
+are now explicit refusal cases; neither a new source label nor a passing
+inventory supplies runtime or production qualification.
 
 An exact manifest change requires a new review. One source map cannot silently
 overwrite the other. Missing inputs, locks, sources, changed bytes, conflicting

@@ -557,7 +557,12 @@ class ReviewedSourceTests(ContractCase):
 
     def test_each_superseded_source_pin_is_refused_under_the_current_review(self):
         current = deepcopy(self.data)
-        for path, digest in PREVIOUS_SOURCE_PINS.items():
+        superseded = list(PREVIOUS_SOURCE_PINS.items())
+        superseded.append((
+            "trillionnium/crates/trnm-crypto-primitives/src/lib.rs",
+            "4dc3fd4c60ee7548adb5b50f8658a8ff9529dcbbeae98bb590f03458a707f0a6",
+        ))
+        for path, digest in superseded:
             with self.subTest(path=path):
                 self.assertNotEqual(current["source_files_sha256"][path], digest)
                 self.data = deepcopy(current)
@@ -580,7 +585,8 @@ class ReviewedSourceTests(ContractCase):
         self.inspect_refuses()
 
     def test_review_base_is_not_replaceable_with_current_head_or_short_alias(self):
-        for revision in ("main", "HEAD", "080c33c", "0" * 40):
+        for revision in ("main", "HEAD", "080c33c", "0" * 40,
+                         "b683714cdd5ba241c16c335a81aebc12c1581902"):
             with self.subTest(revision=revision):
                 self.data["review_base_revision"] = revision
                 self.write()

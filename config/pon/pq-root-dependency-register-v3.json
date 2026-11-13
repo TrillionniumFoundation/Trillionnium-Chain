@@ -795,7 +795,7 @@
     "wire_equivalence_proved": false
   },
   "purpose": "declared-root-dependency-and-query-obligation-inventory",
-  "review_base_revision": "b683714cdd5ba241c16c335a81aebc12c1581902",
+  "review_base_revision": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
   "roles": {
     "anchor-response": {
       "action_coverage": [
@@ -1348,7 +1348,7 @@
     "trillionnium/Cargo.lock": "86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e",
     "trillionnium/Cargo.toml": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b",
     "trillionnium/crates/trnm-crypto-primitives/Cargo.toml": "ab2554b1c8ec1010735fa55ed1b16d45376f4936885dc3cc6f0121917250256d",
-    "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "4dc3fd4c60ee7548adb5b50f8658a8ff9529dcbbeae98bb590f03458a707f0a6",
+    "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "83fe52804bfbc593e2768c3a88764b532539deb8c9e866ee7305286491e16115",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_candidate.rs": "2f775934937dc0997579ca43132c3a2aee262103ec66ca4a4be08d3b8f4f93f4",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs": "9b03c4f4a22175fe183e045bc1a2e25282232a4bb156281970f542e7277ebf1b",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs": "2b638555857b20c2d1e5888757c0b96612a00c6eec62ebc056acc35ed1659ba1",

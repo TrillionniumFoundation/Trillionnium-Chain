@@ -140,10 +140,10 @@
       "sha256": "3ed0e9d451ff885fb27a4a6f7449ca9050eb44707d801a3a40d675fcf5ceaed4"
     },
     "root": {
-      "declared_revision": "b683714cdd5ba241c16c335a81aebc12c1581902",
+      "declared_revision": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
       "path": "config/pon/pq-root-dependency-register-v3.json",
       "revision_semantics": "review-base-context-not-all-source-revision",
-      "sha256": "a94b3e01c8a78a796496182dc268fe23b6fe844e27edec7553876c735ce37cc8"
+      "sha256": "4144d308e76fd73f14c197765e354273059bfc8f7480541eaa3f715c31b132cf"
     }
   },
   "primitive_scope_bridge": {
@@ -356,7 +356,7 @@
       }
     }
   },
-  "review_base_revision": "b683714cdd5ba241c16c335a81aebc12c1581902",
+  "review_base_revision": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
   "root_event_relation": {
     "common_failure_obligations": [
       "same-complete-statement-purpose-and-current-roster",

@@ -628,7 +628,7 @@ impl AccountArchive {
             return Err(ArchiveError::Budget);
         }
         let mut db = Connection::open(path)?;
-        let names: Vec<String> = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name")?
+        let names: Vec<String> = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT GLOB 'sqlite_*' ORDER BY name")?
             .query_map([], |r| r.get(0))?.collect::<std::result::Result<_, _>>()?;
         let expected = [
             "archive_active",

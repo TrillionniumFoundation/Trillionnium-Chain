@@ -23,7 +23,7 @@ SCHEMA = "trnm-pq128-lifetime-composition-v2"
 RESULT_SCHEMA = "trnm-pq128-lifetime-composition-result-v2"
 ARITHMETIC_SCHEMA = "trnm-pq128-root-composition-arithmetic-v2"
 DEFAULT_MANIFEST = "config/pon/pq128-lifetime-composition-v2.json"
-REVIEW_BASE = "b683714cdd5ba241c16c335a81aebc12c1581902"
+REVIEW_BASE = "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550"
 EXPERIMENT_ID = "trnm-proposed-joint-lifetime-experiment-v2"
 COMMON_GAME = "uninstantiated-common-root-game-v2"
 MAX_BYTES = legacy.MAX_BYTES
@@ -37,7 +37,7 @@ INPUTS = {
     },
     "root": {
         "path": root_register.DEFAULT_MANIFEST,
-        "sha256": "a94b3e01c8a78a796496182dc268fe23b6fe844e27edec7553876c735ce37cc8",
+        "sha256": "4144d308e76fd73f14c197765e354273059bfc8f7480541eaa3f715c31b132cf",
         "declared_revision": root_register.REVIEW_BASE,
         "revision_semantics": "review-base-context-not-all-source-revision",
     },

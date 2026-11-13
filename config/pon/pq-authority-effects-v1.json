@@ -1,6 +1,6 @@
 {
   "schema": "trnm-pq-authority-effects-v1",
-  "source_revision": "2bb56596e637908c44b5a2ef5984c9c37c7d3cc8",
+  "source_revision": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
   "purpose": "curated-source-consistency-only",
   "coverage_complete": false,
   "whole_chain_pq_qualified": false,
@@ -187,7 +187,7 @@
     "formal/pon-nakamoto-v1/strict_signature.py": "73bc57699d1104d568130d565a090a555bfb13e9c70748cc77a84f3594e2a49e",
     "formal/release-finality-v2/protocol.py": "f91a5e61ce796217a7ea862cfcc8ceb0369a5512280b113b21175fd65618f961",
     "formal/release-finality-v2/verify_certificate.py": "11a734fb9c3a6931f801a5d4a97ba45aae5b6310b07016d94d0673397d720169",
-    "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "4dc3fd4c60ee7548adb5b50f8658a8ff9529dcbbeae98bb590f03458a707f0a6",
+    "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "83fe52804bfbc593e2768c3a88764b532539deb8c9e866ee7305286491e16115",
     "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell-discovery.rs": "16d3b164f80c0e22e2457bb99291e901a4dc30aa7e7a0fa636713e6a80d91fe2",
     "trillionnium/crates/trnm-data-availability/src/bin/unix/pq.rs": "4dbf789d4b56036042c2562f52c39285511c7a077416ea8d25bc43e55abee303",
     "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs": "5459086595bdaedcd1f74881b51a4b14eb83524948a1a2c05a36cc5b37b1943f",

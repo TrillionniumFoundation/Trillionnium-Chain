@@ -307,6 +307,18 @@ class InventoryContractTests(ContractCase):
                     with self.assertRaises(composition.CompositionError):
                         composition.validate_manifest(data)
 
+        # The pre-typed-error root input remains a refused historical identity.
+        for field, value in (
+            ("sha256", "a94b3e01c8a78a796496182dc268fe23b6fe844e27edec7553876c735ce37cc8"),
+            ("declared_revision", "b683714cdd5ba241c16c335a81aebc12c1581902"),
+        ):
+            with self.subTest(root_continuation_field=field):
+                data = load(MANIFEST)
+                self.assertNotEqual(data["input_manifests"]["root"][field], value)
+                data["input_manifests"]["root"][field] = value
+                with self.assertRaises(composition.CompositionError):
+                    composition.validate_manifest(data)
+
     def test_previous_five_role_population_cannot_omit_the_witness(self):
         data = load(MANIFEST)
         population = data["conditional_root_arithmetic"]["family_population"]

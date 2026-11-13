@@ -4,7 +4,7 @@
 
 The [register](../../config/pon/pq-authority-effects-v1.json) binds seven reviewed
 routes to the current listed source checkpoint
-`2bb56596e637908c44b5a2ef5984c9c37c7d3cc8`. The
+`57b069ae1e7ed32ff95e4f2a18a74d5eadcda550`. The
 [checker](../../scripts/ci/pq_authority_effect_register.py) enforces their exact
 effect scopes and source sets, and compares 44 actual regular files with a fixed
 reviewed SHA-256 lock. Successful checking reports `source_consistency: PASS`
@@ -18,7 +18,33 @@ a signature, context comparison, downloaded artifact or certificate observation
 must not be recorded as a different downstream permission. That original source
 inventory did not itself establish a classical bypass of a PQ owner.
 
-## Current consolidation source binding, 2026-11-13
+## Current typed weak-key source continuation, 2026-11-13
+
+The reviewed source checkpoint is `57b069ae1e7ed32ff95e4f2a18a74d5eadcda550`, tree
+`887f402546a4d1449919915a82f122acf3d0d49d`. All 44 declared regular Git blobs were
+read from that immutable checkpoint and matched to the isolated checkout.
+The canonical source lock is
+`590cd9d4f64a27b233a272c0c91ac9343eead7096b475b13b1f129f095fb5d08`.
+
+Only `trillionnium/crates/trnm-crypto-primitives/src/lib.rs` changes from the
+retained consolidation source map, from SHA-256
+`4dc3fd4c60ee7548adb5b50f8658a8ff9529dcbbeae98bb590f03458a707f0a6` to
+`83fe52804bfbc593e2768c3a88764b532539deb8c9e866ee7305286491e16115`.
+It exposes a typed `WeakEd25519Key` error while retaining the existing
+canonical decoding, point-validation and weak-key refusal order and the
+same error display. The accepted key set is unchanged by this continuation.
+The reviewed companion operator consumer uses that typed cause to retain
+`ACTOR_WEAK_KEY` rather than classifying it as `ACTOR_KEY`; that consumer is
+outside these 44 curated paths and acquires no coverage from this map.
+
+The other 43 source digests, all seven routes, effect scopes and qualification
+fields remain unchanged. The retained `2bb56596e637908c44b5a2ef5984c9c37c7d3cc8` label and
+pre-continuation crypto digest are now explicit refusal controls alongside
+every earlier negative identity. This is a source consistency update: it
+does not transfer historical native results, prove complete authority
+reachability, or change any `false` qualification field.
+
+## Retained consolidation source binding, 2026-11-13
 
 The source checkpoint is `2bb56596e637908c44b5a2ef5984c9c37c7d3cc8`, tree
 `18cfc660131170a5b0c5c7244987a9fcebfb7e62`. All 44 selected regular Git blobs
