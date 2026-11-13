@@ -1159,6 +1159,17 @@ NATIVE_REQUIRED_PATHS |= frozenset(('config/pon/pq128-lifetime-composition-v2.js
  'scripts/w1_p3_sampling_audit.py',
  'scripts/w1_risc0_deep_event_audit.py'))
 
+# Explicitly retain the five reviewed consolidation controls.
+# These source pins do not grant runtime or production qualification.
+CONSOLIDATION_CONTROL_REQUIRED_PATHS = frozenset((
+    "scripts/ci/chain_system_security.py",
+    "scripts/ci/test_chain_system_security.py",
+    "docs/security/SYSTEM_SECURITY_BLOCKERS_V1.md",
+    "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/packed_branch_regression_tests.rs",
+    "formal/pon-nakamoto-v1/test_pq_sqlite_schema_names.py",
+))
+NATIVE_REQUIRED_PATHS |= CONSOLIDATION_CONTROL_REQUIRED_PATHS
+
 def is_pq_source(parts: tuple[str, ...]) -> bool:
     """Recognize pq.rs, cell_pq and operator_pq_auth as well as older prefixes."""
     return any(

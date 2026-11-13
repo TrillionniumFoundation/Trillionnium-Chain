@@ -11,6 +11,28 @@ and [budget checker](../../scripts/ci/pq_lifetime_budget.py) extend the existing
 [whole-chain claim guard](WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md). They do not
 transfer an observation or security estimate from another candidate to this one.
 
+## Current consolidation source binding, 2026-11-13
+
+The unchanged **21-path** event roster now binds to source checkpoint
+`2bb56596e637908c44b5a2ef5984c9c37c7d3cc8`, tree
+`18cfc660131170a5b0c5c7244987a9fcebfb7e62`. Each SHA-256 comes from
+the exact regular Git blob named by that checkpoint. The source lock and
+`experiment.source_revision` name the same checkpoint; the lock-byte SHA-256 is
+`0e3f0676473d0c0f585af436cfd566bf68acc369517129a78eb75f685bb75dc1`.
+
+The prior 21-path declaration named
+`e6aed30916d244a0e60ac06c90e1b97abd53225b`. It remains a historical
+source identity. The earlier 15-path records below retain their original
+rosters, dates, digests and observations; they are not the active 21-path lock.
+Binding metadata does not replay those observations on this successor.
+
+Only the reviewed source mapping changes. The original event sets, numerical
+allocations, assumptions, unknown terms and query budgets remain unchanged.
+The actual lifetime bound stays null; all qualification fields remain false
+and the result stays HOLD. This listed-path review supplies no native execution,
+complete dependency closure, production activation or cryptographic proof.
+The metadata successor must pass its own ordinary source and contract checks.
+
 ## 1. Specify the claim before assigning numbers
 
 Fix a security experiment consisting of the protocol/profile and implementation
@@ -286,7 +308,7 @@ validation. The lifetime bound remains unknown.
 
 ### Earlier composed-source mapping
 
-The current 15-path lock is reviewed against the published runtime checkpoint
+The then-reviewed 15-path lock is reviewed against the published runtime checkpoint
 [`ef6df12a042912664df64f2112c2b1c600dce9fa`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/ef6df12a042912664df64f2112c2b1c600dce9fa),
 whose Git tree is `5e89951169fe2d5ef7418c3dc23984babda172ce`.
 Its lock-byte SHA-256 is
@@ -317,9 +339,9 @@ regenerate it from arbitrary current bytes.
 
 ### Preceding composed-source mappings
 
-### Current composed-source mapping
+### Retained earlier composed-source mapping
 
-The current 15-path lock is independently reviewed against exact source
+The then-reviewed 15-path lock is independently reviewed against exact source
 `b7e38fdc2e43c468692abc52aec03737f2df7f1b`, tree
 `b75d318fc7b7b027a810f4a70a9cd91e0b3930f8`. Its lock-byte SHA-256 is
 `af0ceb6ae756031305b9b73f1b6695664c830558fed7a13b6c2e7ff255592f92`.

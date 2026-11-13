@@ -136,6 +136,52 @@ class CorpusGateTests(unittest.TestCase):
         self.assertFalse(result["cryptographic_acceptance"])
         self.assertFalse(result["node_activated"])
 
+    def test_consolidation_controls_require_each_path_and_pin(self):
+        # Independent literals preserve the selected five-path review scope.
+        paths = (
+            "scripts/ci/chain_system_security.py",
+            "scripts/ci/test_chain_system_security.py",
+            "docs/security/SYSTEM_SECURITY_BLOCKERS_V1.md",
+            "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/packed_branch_regression_tests.rs",
+            "formal/pon-nakamoto-v1/test_pq_sqlite_schema_names.py",
+        )
+        original = copy.deepcopy(self.manifest)
+        for path in paths:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=path, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(path)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][path]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+
+    def test_consolidation_control_bytes_are_bound_without_qualification(self):
+        paths = (
+            "scripts/ci/chain_system_security.py",
+            "scripts/ci/test_chain_system_security.py",
+            "docs/security/SYSTEM_SECURITY_BLOCKERS_V1.md",
+            "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/packed_branch_regression_tests.rs",
+            "formal/pon-nakamoto-v1/test_pq_sqlite_schema_names.py",
+        )
+        for path in paths:
+            target = self.root / path
+            original = target.read_bytes()
+            try:
+                target.write_bytes(original + b"changed consolidation control")
+                with self.subTest(path=path), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                target.write_bytes(original)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
     def test_deep_event_and_sampler_inputs_cannot_omit_pins_or_change_bytes(self):
         # Independent literals: neither helper declarations nor the checker's
         # required roster supply this source-integrity regression inventory.

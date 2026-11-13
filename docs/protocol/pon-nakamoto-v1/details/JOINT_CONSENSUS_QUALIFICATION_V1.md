@@ -1,8 +1,10 @@
 # Joint difficulty, time and credit qualification contract V1
 
-Status: **research contract; HOLD_NO_GO**. The reviewed native source is
-`e2a02f9271b49f146e70806c8a66e161b5973971`, the PR #835 candidate, not the
-public default branch. The
+Status: **research contract; HOLD_NO_GO**. The reviewed listed source is
+`2bb56596e637908c44b5a2ef5984c9c37c7d3cc8`, tree
+`18cfc660131170a5b0c5c7244987a9fcebfb7e62`. The prior PR #835 source,
+`e2a02f9271b49f146e70806c8a66e161b5973971`, retains its historical identity.
+The
 [single development plan](../../../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
 continues to own implementation order and promotion. This document specifies
 the [qualification reader](../../../../formal/pon-nakamoto-v1/joint_consensus_qualification.py)
@@ -62,10 +64,19 @@ these thresholds is supplied by V1.
 The machine contract contains exactly **23 SHA-256 source pins**. The roster
 is fixed in the reader; omission, addition or changed bytes requires review.
 Their canonical map also has a separately fixed digest in the checker,
-`f043830de62972528c8464f02e26a2fad21cb9dd40d6b2067ed565b7275e7877`,
+`c142b6758d90e01e1960dc5f7fb110209fa9fd40c25fca22f4010acbc085a459`,
 verified against the listed Git blobs at the reviewed commit. Editing source
 and JSON hashes together still fails that anchor. A new anchor requires a
 reviewed checker change; there is no automatic repinning option.
+
+The preceding PR #835 map digest,
+`f043830de62972528c8464f02e26a2fad21cb9dd40d6b2067ed565b7275e7877`,
+is retained here as a historical identifier, not an accepted alternate anchor.
+The successor keeps the same 23 source paths, eighteen unknown parameters,
+thirteen open obligations, sixteen unknown cost points, null probability
+bounds and false qualification flags. The explicit old/unknown revision
+control remains separate from byte-digest checks. Updating this mapping
+does not rerun native code or transfer a historical execution receipt.
 
 | Group | Count | Reviewed scope |
 | --- | ---: | --- |

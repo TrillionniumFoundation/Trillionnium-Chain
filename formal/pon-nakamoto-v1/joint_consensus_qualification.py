@@ -28,11 +28,11 @@ COST_CONTRACT = "formal/pon-nakamoto-v1/fixed_probability_contract_v1.json"
 DEVNET = "config/pon/devnet-v1.json"
 MAX_JSON_BYTES = 262144
 MAX_SOURCE_BYTES = 2097152
-REVIEWED_NATIVE_COMMIT = "e2a02f9271b49f146e70806c8a66e161b5973971"
+REVIEWED_NATIVE_COMMIT = "2bb56596e637908c44b5a2ef5984c9c37c7d3cc8"
 # Independently anchored in the checker, after comparing all 23 source files to
 # the named Git commit. Editing source bytes and their JSON hashes alone cannot
 # preserve a claim about that reviewed source. A new anchor needs code review.
-REVIEWED_SOURCE_MAP_SHA256 = "f043830de62972528c8464f02e26a2fad21cb9dd40d6b2067ed565b7275e7877"
+REVIEWED_SOURCE_MAP_SHA256 = "c142b6758d90e01e1960dc5f7fb110209fa9fd40c25fca22f4010acbc085a459"
 
 # Deliberately a named scope, not a claim to cover every dependency or entrypoint.
 # Omission/addition requires code review; no CLI automatically repins a source.

@@ -3,10 +3,8 @@
 **HOLD. Curated source consistency only; incomplete authority coverage.**
 
 The [register](../../config/pon/pq-authority-effects-v1.json) binds seven reviewed
-routes to the current reviewed source
-`813620f387199bef3eae2493e2af07c70444db58`. The
-
-`b7e38fdc2e43c468692abc52aec03737f2df7f1b`. The
+routes to the current listed source checkpoint
+`2bb56596e637908c44b5a2ef5984c9c37c7d3cc8`. The
 [checker](../../scripts/ci/pq_authority_effect_register.py) enforces their exact
 effect scopes and source sets, and compares 44 actual regular files with a fixed
 reviewed SHA-256 lock. Successful checking reports `source_consistency: PASS`
@@ -20,15 +18,31 @@ a signature, context comparison, downloaded artifact or certificate observation
 must not be recorded as a different downstream permission. That original source
 inventory did not itself establish a classical bypass of a PQ owner.
 
+## Current consolidation source binding, 2026-11-13
+
+The source checkpoint is `2bb56596e637908c44b5a2ef5984c9c37c7d3cc8`, tree
+`18cfc660131170a5b0c5c7244987a9fcebfb7e62`. All 44 selected regular Git blobs
+were independently read and hashed. The canonical source lock, including the
+checkpoint identifier, is
+`3d0640c0ad771093e014a5a03b9a7b4e7ff1cd3edaa4e08e09647ceb7a8ac417`.
+
+The manifest, checker and independent positive assertion select this exact
+checkpoint. All prior revision-rejection controls, including the stale
+`813620f387199bef3eae2493e2af07c70444db58` label, remain present.
+The seven route definitions, 44-path roster, effect scopes and false
+qualification fields are unchanged. New source observations do not make
+historical native runs evidence for this successor, and do not establish
+complete call-graph coverage, runtime reachability or production qualification.
+The earlier source mismatches and their exit-2 observations remain retained.
+
 ## Retained pre-freeze V6 composition note
 
-The integrated V6 executor changes a selected authority source. Preserve the
-prior fixed 813620f lock and its source mismatch until the complete combination
-has a real Git commit. Then rebind all 44 selected paths from that exact commit,
-including the independent test literals. The newly retained stale-813 negative
-becomes applicable to that successor. No source, native or production claim is
-promoted by this temporary metadata state. Historical V6 observations below
-retain their original source identities.
+Before the complete combination had a fixed Git identity, the changed V6
+executor was intentionally left under the prior 813620f lock, retaining its
+source mismatch and the pending stale-813 negative. The current consolidation
+binding above resolves that metadata mismatch against its exact checkpoint;
+it does not erase the refusal or transfer historical acceptance. Historical
+V6 observations below retain their original source identities.
 
 ## Retained source-composition continuation, 2026-11-12
 

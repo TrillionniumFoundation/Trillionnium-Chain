@@ -54,6 +54,15 @@ class JointQualificationTests(unittest.TestCase):
                     "execution_authority"):
             self.assertIs(report[key], False)
 
+    def test_prior_or_unknown_source_revision_is_refused(self):
+        self.assertEqual(self.original["reviewed_native_source_commit"],
+                         "2bb56596e637908c44b5a2ef5984c9c37c7d3cc8")
+        for revision in ("e2a02f9271b49f146e70806c8a66e161b5973971", "0" * 40):
+            with self.subTest(revision=revision):
+                data = deepcopy(self.original)
+                data["reviewed_native_source_commit"] = revision
+                self.reject(data, "REVIEWED_SOURCE")
+
     def test_both_owner_implementations_and_work_relation_are_bound(self):
         pins = q.inspect(self.root)["source_sha256"]
         for path in (
