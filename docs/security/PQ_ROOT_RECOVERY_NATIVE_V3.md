@@ -193,12 +193,19 @@ entirely between checks remains outside that observation guarantee. The
 transition material and historical continuity; it supplies no algorithm switch
 or migration authorization.
 
-The [native runner](../../scripts/ci/run_pq_root_native_v3.py) executes four
+The [native runner](../../scripts/ci/run_pq_root_native_v3.py) executes five
 explicit Cargo selectors for crypto structure, actual crypto integration, native
-kernel and native owner integration tests. Every exact name and matching nonempty
+cached-key invariants, kernel and native owner integration tests. Every exact name and matching nonempty
 summary is required, with zero failed, ignored or measured tests. Filtered
 unrelated tests are recorded separately. Synthetic parser controls do not count
 as native crypto execution.
+
+The [signature cost continuation](PQ_ROOT_SIGNATURE_COST_V1.md) retains successful
+ML-DSA-87 public-key expansion inside each immutable roster. It does not retain
+signature acceptance or current authority, and it preserves each original budget
+reservation and deadline check. Its separate native example distinguishes four
+approval signatures from six successor proofs and component timings from owner
+replay or Cell access.
 
 The runner verifies exact committed source bytes before and after execution and
 retains all attempted commands and raw output, including failures. Existing V2

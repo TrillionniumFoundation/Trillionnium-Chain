@@ -1,0 +1,41 @@
+{
+  "schema": "trnm-root-journal-cleanup-post-validation-materialization-v1",
+  "started_utc": "2026-11-09T14:14:06.839733+00:00",
+  "implementation_commit": "0f6598454b0d743259579e7e193b1158e5c9353d",
+  "implementation_tree": "b3cab76d5cf4321d94a6b8c64f578717d749c83e",
+  "argv": [
+    "git",
+    "sparse-checkout",
+    "set",
+    "--cone",
+    ".github",
+    "config",
+    "docs",
+    "formal",
+    "scripts",
+    "tests",
+    "trillionnium",
+    "qualification"
+  ],
+  "before": {
+    "block_size": 4096,
+    "available_bytes": 2342047744,
+    "free_bytes": 5794795520
+  },
+  "source_before_after_checks_completed_before_this_operation": true,
+  "sparse_state_is_not_a_canonical_source_verification": true,
+  "git_objects_preserved": true,
+  "repository_external_logs_preserved": true,
+  "other_checkouts_touched": false,
+  "returncode": 0,
+  "elapsed_seconds": 0.4934892849996686,
+  "after": {
+    "block_size": 4096,
+    "available_bytes": 3451310080,
+    "free_bytes": 6904057856
+  },
+  "finished_utc": "2026-11-09T14:14:07.333322+00:00",
+  "observed_available_bytes_increase": 1109262336,
+  "implementation_files_unchanged": true,
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

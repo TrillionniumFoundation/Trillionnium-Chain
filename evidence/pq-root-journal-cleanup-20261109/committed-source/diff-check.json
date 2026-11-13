@@ -1,0 +1,24 @@
+{
+  "name": "diff-check",
+  "argv": [
+    "git",
+    "diff",
+    "--check",
+    "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+    "0f6598454b0d743259579e7e193b1158e5c9353d"
+  ],
+  "cwd": "/workspace/scratch/ab60bfa410b1/root-cleanup",
+  "started_utc": "2026-11-09T14:02:50.129700+00:00",
+  "tested_commit": "0f6598454b0d743259579e7e193b1158e5c9353d",
+  "tested_tree": "b3cab76d5cf4321d94a6b8c64f578717d749c83e",
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "elapsed_seconds": 0.1695247620009468,
+  "returncode": 0,
+  "log": "/workspace/scratch/ab60bfa410b1/root-cleanup-validation/exact-commit/diff-check.log",
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "head_after": "0f6598454b0d743259579e7e193b1158e5c9353d",
+  "tree_after": "b3cab76d5cf4321d94a6b8c64f578717d749c83e",
+  "finished_utc": "2026-11-09T14:02:50.353043+00:00"
+}

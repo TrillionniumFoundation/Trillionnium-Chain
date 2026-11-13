@@ -1,11 +1,10 @@
 use super::*;
+use crate::ingress::pq_network::tls_fixtures as fixtures;
+use fixtures::Fixture;
 use std::{
     io::{Read, Write},
     thread,
 };
-#[path = "fixtures.rs"]
-mod fixtures;
-use fixtures::Fixture;
 
 #[cfg(target_os = "linux")]
 #[path = "shared_tests.rs"]

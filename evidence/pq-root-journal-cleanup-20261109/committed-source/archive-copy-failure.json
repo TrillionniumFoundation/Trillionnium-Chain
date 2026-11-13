@@ -1,0 +1,32 @@
+{
+  "schema": "trnm-root-journal-cleanup-archive-failure-v1",
+  "recorded_at_utc": "2026-11-09T14:12:56.052977+00:00",
+  "operation": "create post-execution evidence archive",
+  "command": [
+    "python3",
+    "/workspace/scratch/ab60bfa410b1/root-cleanup-validation/archive-exact-records.py"
+  ],
+  "returncode": 1,
+  "failed_path": "/workspace/scratch/ab60bfa410b1/root-cleanup/evidence/pq-root-journal-cleanup-20261109",
+  "exception": "OSError: [Errno 28] No space left on device",
+  "failed_at": "TARGET.mkdir(parents=True)",
+  "archive_directory_created": false,
+  "source_before_and_after_already_passed": true,
+  "source_changed_to_accommodate_archive": false,
+  "disk_observation": {
+    "workspace_capacity": "63G",
+    "workspace_used": "60G",
+    "workspace_available": "0",
+    "workspace_use_percent": 100,
+    "workspace_inode_use_percent": 23,
+    "tmpfs_available": "1.3G"
+  },
+  "cleanup_performed_at_recording": false,
+  "implementation_commit": "0f6598454b0d743259579e7e193b1158e5c9353d",
+  "follow_up_manifest_check": {
+    "returncode": 1,
+    "exception": "FileNotFoundError: [Errno 2] No such file or directory",
+    "path": "/workspace/scratch/ab60bfa410b1/root-cleanup-evidence-upload-manifest.json",
+    "manifest_absent_because_archive_creation_failed": true
+  }
+}

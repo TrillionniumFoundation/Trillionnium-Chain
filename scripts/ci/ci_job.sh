@@ -15,6 +15,7 @@ case "${1:?required job}" in
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v
     python3 formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_v2.py -v
     python3 formal/pon-nakamoto-v1/test_pq_root_effect_readback_v2.py -v
+    python3 formal/pon-nakamoto-v1/test_pq_root_journal_cleanup.py -v
     python3 scripts/ci/test_pq_root_dependency_register.py
     python3 scripts/ci/pq_root_dependency_register.py
     python3 scripts/ci/test_run_pq_root_native_v3.py

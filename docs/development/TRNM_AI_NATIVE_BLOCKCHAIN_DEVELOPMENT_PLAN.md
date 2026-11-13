@@ -14787,3 +14787,49 @@ remains the Node lane's explicit dependency. Final composition still needs
 source corpus/register/inventory rebinding and exact-source checks. Public
 discovery, independently administered custody, ordinary FinalUse, production
 and whole-chain PQ acceptance remain HOLD.
+### 2026-11-09 V2 SQLite initialization cleanup continuation
+
+Continue from PR #837 delivery `44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0`
+with the [SQLite lifetime correction](../security/PQ_ROOT_SQLITE_LIFETIME_20261109.md).
+Move the three V2 journal initialization PRAGMAs into the existing connection
+cleanup scope, preserving transaction, persistence and authority semantics.
+Four real-SQLite component tests check initialization errors, commit, body
+rollback and deferred commit failure; their local working-tree invocation
+passes 4/4. Make the direct-file suite mandatory in the repository-truth root
+structure prefix, with parser controls for missing, duplicate, skipped,
+swallowed or relocated execution. Keep every original native selector and Host
+gate unchanged. Deliberately re-freeze current source/dependency pins after
+review; never regenerate them during acceptance.
+
+This continuation has not rerun native suites or the full mandatory lanes.
+The prior 42/42 local commands, original hosted 0/3 campaign and retained
+ResourceWarnings remain tied to their recorded sources. The cleanup does not
+uniquely attribute those warnings, close any whole-chain P0, certify independent
+operators or enable production. Results on this PR #837 continuation are not
+source integration or acceptance on the separate PR #835 candidate.
+### 2026-11-09 root signature-cost continuation
+
+The [root signature-cost contract](../security/PQ_ROOT_SIGNATURE_COST_V1.md)
+keeps low-frequency dual-family authority distinct from existing ML-DSA-65
+Cell release and chunk verification. Retain at most three successful
+ML-DSA-87 mathematical public-key expansions inside each immutable V3 roster;
+clones share that retained state, while fresh wire decoding remains cold.
+Preserve every signature, complete statement, current-authority and original
+budget check. Keep signed bytes, semantic identity, AND thresholds and provider
+requirements unchanged. No signature success or release authority is cached.
+
+Add a native component observation comparing fresh roster decoding plus full
+quorum verification against full verification under a retained roster, with
+explicit warmups, A-B-B-A samples, raw timings and equal reservation counters.
+Report four current signatures, six successor possessions and their ten-signature
+composition separately from complete frames and actual owner transitions.
+Measure the same committed source with the fixed toolchain and provider before
+reporting any timings; retain attempted commands and failures. These observations
+do not establish Cell, Node, history-replay, complete-transition or throughput gains.
+
+Production activation, whole-chain PQ qualification and composition coverage
+remain false. All eight actual domain failure bounds remain unknown. Independent
+custody, common-restore survival, real external effects, explicit migration and
+complete lifetime/QROM obligations remain open. This component continuation
+does not relabel the observed Ed25519 main revision as migrated or turn a local
+performance observation into a security qualification.

@@ -1,7 +1,7 @@
 {
   "schema": "trnm-pq-native-tls-required-tests-v1",
   "expected_controls": {
-    "lib": 16,
+    "lib": 20,
     "cli": 4,
     "feature-off": 1
   },
@@ -26,7 +26,11 @@
       "ingress::pq_network::tls::tests::actual_tcp_bio_refuses_byte_65537_before_openssl_and_preserves_durable_debit",
       "ingress::pq_network::tls::tests::tls_local_server_certificate_constraints_refuse_before_serving",
       "ingress::pq_network::tls::tests::tls_local_client_certificate_time_purpose_and_root_leaf_refuse",
-      "ingress::pq_network::tls::tests::tls_local_role_specific_certificates_accept_without_client_hostname"
+      "ingress::pq_network::tls::tests::tls_local_role_specific_certificates_accept_without_client_hostname",
+      "ingress::pq_network::tls::diagnostics::tests::observations_keep_first_bio_cause_and_never_export_error_text",
+      "ingress::pq_network::tls::diagnostics::tests::observations_do_not_promote_quoted_witness_deadlines",
+      "ingress::pq_network::tls::io::buffer_tests::buffered_ciphertext_is_charged_before_release_and_cannot_outlive_its_deadline",
+      "ingress::pq_network::tls::io::buffer_tests::buffered_ciphertext_rejects_byte_65537_and_keeps_exact_durable_debit"
     ],
     "cli": [
       "ordinary_binary_pq_tls_serve_dispatches_original_node_and_preserves_replay_after_exit",

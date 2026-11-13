@@ -391,6 +391,7 @@ NATIVE_RELEASE_BLOCK = '''    (
 ROOT_RECOVERY_STRUCTURE_BLOCK = """    python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v
     python3 formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_v2.py -v
     python3 formal/pon-nakamoto-v1/test_pq_root_effect_readback_v2.py -v
+    python3 formal/pon-nakamoto-v1/test_pq_root_journal_cleanup.py -v
     python3 scripts/ci/test_pq_root_dependency_register.py
     python3 scripts/ci/pq_root_dependency_register.py
     python3 scripts/ci/test_run_pq_root_native_v3.py
@@ -426,6 +427,7 @@ ROOT_RECOVERY_NATIVE_BLOCK = '''    # Execute root components before the retaine
 ROOT_RECOVERY_TEST_FILES = (
     'formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_v2.py',
     'formal/pon-nakamoto-v1/test_pq_root_effect_readback_v2.py',
+    'formal/pon-nakamoto-v1/test_pq_root_journal_cleanup.py',
     'formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_native_v2.py',
     'formal/pon-nakamoto-v1/test_pq_root_effect_readback_native_v2.py',
     'formal/pon-nakamoto-v1/test_pq_root_recovery_journal_native_v2.py',
@@ -746,6 +748,7 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
     python3 -m unittest discover -s formal/pon-nakamoto-v1 -p 'test_pq_root_recovery_policy_v1.py' -v
     python3 formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_v2.py -v
     python3 formal/pon-nakamoto-v1/test_pq_root_effect_readback_v2.py -v
+    python3 formal/pon-nakamoto-v1/test_pq_root_journal_cleanup.py -v
     python3 scripts/ci/test_pq_root_dependency_register.py
     python3 scripts/ci/pq_root_dependency_register.py
     python3 scripts/ci/test_run_pq_root_native_v3.py

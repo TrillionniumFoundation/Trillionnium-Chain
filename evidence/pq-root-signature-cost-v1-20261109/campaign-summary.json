@@ -1,0 +1,840 @@
+{
+  "actual_lifetime_failure_bound": null,
+  "all_commands_exit_zero": false,
+  "all_workspace_tests_executed": false,
+  "commands": [
+    {
+      "argv": [
+        "rustc",
+        "--version",
+        "--verbose"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 0.06528368799990858,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "rustc-version",
+      "observed_executable_identity_authenticated": false,
+      "pid": 60,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:34:40Z",
+      "stderr": {
+        "bytes": 0,
+        "path": "rustc-version.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 196,
+        "path": "rustc-version.stdout",
+        "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "cargo",
+        "--version"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 0.016510486999322893,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "cargo-version",
+      "observed_executable_identity_authenticated": false,
+      "pid": 66,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:34:40Z",
+      "stderr": {
+        "bytes": 0,
+        "path": "cargo-version.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 36,
+        "path": "cargo-version.stdout",
+        "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 0.11497207600041293,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "project-preflight",
+      "observed_executable_identity_authenticated": false,
+      "pid": 61,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:34:40Z",
+      "stderr": {
+        "bytes": 0,
+        "path": "project-preflight.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 162,
+        "path": "project-preflight.stdout",
+        "sha256": "ee2d4ac89a4d38fc84c2ac166ed4f559f88e5ae7df7c3cb302b04ebb054930df"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_root_dependency_register.py"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 0.5179017900009057,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "root-register-controls",
+      "observed_executable_identity_authenticated": false,
+      "pid": 72,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:34:41Z",
+      "stderr": {
+        "bytes": 141,
+        "path": "root-register-controls.stderr",
+        "sha256": "5e3dded24a942a14e8cff04c1edd2ef31ffeee1c8891e0aa36d683f6befb49bf"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "root-register-controls.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "cargo",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all-features",
+        "--format-version=1"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 0.6166080299990426,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "cargo-graph",
+      "observed_executable_identity_authenticated": false,
+      "pid": 68,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:34:41Z",
+      "stderr": {
+        "bytes": 0,
+        "path": "cargo-graph.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 869178,
+        "path": "cargo-graph.stdout",
+        "sha256": "d9c35d0d20797fdddbe9b4a8290e1800263a6059907a63f07ea9a9f2b11a1022"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/pq_root_dependency_register.py"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 0.12444373699872813,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "root-register",
+      "observed_executable_identity_authenticated": false,
+      "pid": 78,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:34:41Z",
+      "stderr": {
+        "bytes": 0,
+        "path": "root-register.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 7177,
+        "path": "root-register.stdout",
+        "sha256": "1d81685bdf07a24c3f8f8c292ea9fa4bf28a3b138b5d9018f3e15f40525707f3"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "cargo",
+        "tree",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-features"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 0.16581829499955347,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "cargo-tree",
+      "observed_executable_identity_authenticated": false,
+      "pid": 79,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:34:41Z",
+      "stderr": {
+        "bytes": 0,
+        "path": "cargo-tree.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 17172,
+        "path": "cargo-tree.stdout",
+        "sha256": "a7ee753eae9d47dd6d529288061b149158d485ed86510b42e2e39f0210d64ff4"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_run_pq_root_native_v3.py"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 0.16516543200123124,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "native-v3-runner-controls",
+      "observed_executable_identity_authenticated": false,
+      "pid": 86,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:34:41Z",
+      "stderr": {
+        "bytes": 110,
+        "path": "native-v3-runner-controls.stderr",
+        "sha256": "34a82a30511a2175a5286cff0751874e9220ce5fb08cab87b09cc04e220f6b31"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "native-v3-runner-controls.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_run_pq_root_continuation_v4.py"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 0.27174111799831735,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "native-v4-runner-controls",
+      "observed_executable_identity_authenticated": false,
+      "pid": 90,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:34:41Z",
+      "stderr": {
+        "bytes": 101,
+        "path": "native-v4-runner-controls.stderr",
+        "sha256": "921b60a7fd52e978fbb551cacd29df2d6708879400278e1fcc70fceeb0c6f8e0"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "native-v4-runner-controls.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 0.3922531700009131,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "corpus",
+      "observed_executable_identity_authenticated": false,
+      "pid": 91,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:34:42Z",
+      "stderr": {
+        "bytes": 0,
+        "path": "corpus.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 557,
+        "path": "corpus.stdout",
+        "sha256": "dac8828ba9f935f602a9adf11eef8bb79ad23edea7b890b661ab11d1dd55d1a6"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 24.879868586000157,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "format",
+      "observed_executable_identity_authenticated": false,
+      "pid": 87,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:34:41Z",
+      "stderr": {
+        "bytes": 0,
+        "path": "format.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "format.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 90.04710515400075,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "corpus-controls",
+      "observed_executable_identity_authenticated": false,
+      "pid": 92,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:34:42Z",
+      "stderr": {
+        "bytes": 155,
+        "path": "corpus-controls.stderr",
+        "sha256": "f92bf724ebf942ecd35900b3a55277ef06832d353ecdde308cf6d08702d56462"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "corpus-controls.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/pq_chain_claim_guard.py"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 0.11503166799957398,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "claim-guard",
+      "observed_executable_identity_authenticated": false,
+      "pid": 1138,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:36:12Z",
+      "stderr": {
+        "bytes": 0,
+        "path": "claim-guard.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 4835,
+        "path": "claim-guard.stdout",
+        "sha256": "1071e58361cfdbc4b70e270822fc6984fe5f82331614be861ea41db0b9d6b7ec"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_chain_claim_guard.py"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 0.5205548920002911,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "claim-guard-controls",
+      "observed_executable_identity_authenticated": false,
+      "pid": 1139,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:36:12Z",
+      "stderr": {
+        "bytes": 148,
+        "path": "claim-guard-controls.stderr",
+        "sha256": "8d4f74b5e3ca18780d090a9cccdd743b54de6abac6008648832adba862d5b806"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "claim-guard-controls.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 5.558476089001488,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "source-integrity-controls",
+      "observed_executable_identity_authenticated": false,
+      "pid": 1140,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:36:13Z",
+      "stderr": {
+        "bytes": 6414,
+        "path": "source-integrity-controls.stderr",
+        "sha256": "f7ede1530b77565a9a900144ec46a550fa07e420eefe556e1a5f558acb7b96b1"
+      },
+      "stdout": {
+        "bytes": 484,
+        "path": "source-integrity-controls.stdout",
+        "sha256": "a8bca5ca2a2e88461e840e49d7dbb8881582ee0f7d1f0472ca687ded5f152a83"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-crypto-primitives",
+        "--lib",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 167.4658070559999,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "default-crypto",
+      "observed_executable_identity_authenticated": false,
+      "pid": 93,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:35:06Z",
+      "stderr": {
+        "bytes": 2041,
+        "path": "default-crypto.stderr",
+        "sha256": "fae39707fb24dede8e6b2b6fe7ae1f9f5334ce9328437e1096128f0f2067fb01"
+      },
+      "stdout": {
+        "bytes": 18593,
+        "path": "default-crypto.stdout",
+        "sha256": "a0e15f2b538b2b88dc62e45fb5caaac50500e9d0d5dd3ace8eaac2ea51b92223"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 97.55173895500047,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "repository-and-links",
+      "observed_executable_identity_authenticated": false,
+      "pid": 2203,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:36:18Z",
+      "stderr": {
+        "bytes": 0,
+        "path": "repository-and-links.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 307,
+        "path": "repository-and-links.stdout",
+        "sha256": "485dfb3c204507b77aa5c192182c37d6f6a947895d7bc1acac4ed1a11c145a0c"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 0.21543875699899218,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "ci-contract",
+      "observed_executable_identity_authenticated": false,
+      "pid": 2462,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:37:56Z",
+      "stderr": {
+        "bytes": 0,
+        "path": "ci-contract.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 180,
+        "path": "ci-contract.stdout",
+        "sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_contract.py"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 13.825523608000367,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "ci-contract-controls",
+      "observed_executable_identity_authenticated": false,
+      "pid": 2463,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:37:56Z",
+      "stderr": {
+        "bytes": 18021,
+        "path": "ci-contract-controls.stderr",
+        "sha256": "39cce2e2c96950e6f6358c3f75d9b337a8e171d7c5331c34c8933cf280baba29"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "ci-contract-controls.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_root_custody_review_v1.py"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 0.5874810590012203,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "custody-controls",
+      "observed_executable_identity_authenticated": false,
+      "pid": 2985,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:38:10Z",
+      "stderr": {
+        "bytes": 119,
+        "path": "custody-controls.stderr",
+        "sha256": "4247d856bf473fd79baca147f6bec744321d6ea8c2dbfb1ab103e371b06f0105"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "custody-controls.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_root_migration_review_v1.py"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 0.7757482509987312,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "migration-controls",
+      "observed_executable_identity_authenticated": false,
+      "pid": 2989,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:38:10Z",
+      "stderr": {
+        "bytes": 132,
+        "path": "migration-controls.stderr",
+        "sha256": "666b56e46df1882b8257cf5872b5b60713c2f1151c861b7e3ba0e32f77b203fb"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "migration-controls.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/test_pq_root_recovery_signatures_native_v2.py",
+        "-v"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 52.29902615900028,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "v2-native-signatures",
+      "observed_executable_identity_authenticated": false,
+      "pid": 2994,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:38:11Z",
+      "stderr": {
+        "bytes": 2496,
+        "path": "v2-native-signatures.stderr",
+        "sha256": "a7b1bb8f97013c9967cf6f57ec2621b046560600e4983a244b53eef2f5b1acfa"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "v2-native-signatures.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/test_pq_root_effect_readback_native_v2.py",
+        "-v"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 7.419005481000568,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "v2-native-readback",
+      "observed_executable_identity_authenticated": false,
+      "pid": 3510,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:39:04Z",
+      "stderr": {
+        "bytes": 1074,
+        "path": "v2-native-readback.stderr",
+        "sha256": "a65acf2d93cdec77471afd40643d855f5d2467e2e9ab9a858ef84e32d0deb101"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "v2-native-readback.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-release-bundle",
+        "--lib",
+        "--",
+        "--test-threads=1"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 111.44344169000033,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "default-release",
+      "observed_executable_identity_authenticated": false,
+      "pid": 2432,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:37:54Z",
+      "stderr": {
+        "bytes": 435,
+        "path": "default-release.stderr",
+        "sha256": "faab89724e53f1ecb8baae50107e145b60d47af73e9108acef11bbbbea5eec76"
+      },
+      "stdout": {
+        "bytes": 4921,
+        "path": "default-release.stdout",
+        "sha256": "fbf546353d8539d59c22a9fe46d91838db2cf4b89ad6e953845ffbffc8b3953f"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "formal/pon-nakamoto-v1/test_pq_root_recovery_journal_native_v2.py",
+        "-v"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 666.08284542,
+      "exit_code": 1,
+      "launch_error": null,
+      "name": "v2-native-journal",
+      "observed_executable_identity_authenticated": false,
+      "pid": 3601,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:39:11Z",
+      "stderr": {
+        "bytes": 7454,
+        "path": "v2-native-journal.stderr",
+        "sha256": "1082adb56891bf31ed5b213bc7016443c0d4a0be0f7266230059363d96b40152"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "v2-native-journal.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/run_pq_root_native_v3.py",
+        "--out",
+        "/workspace/scratch/a6fe7c2e72c7/pq-validation/frozen-campaign-c9fb3fa6/native-v3"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 664.5131467909996,
+      "exit_code": 1,
+      "launch_error": null,
+      "name": "native-v3",
+      "observed_executable_identity_authenticated": false,
+      "pid": 3922,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:39:45Z",
+      "stderr": {
+        "bytes": 0,
+        "path": "native-v3.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 5544,
+        "path": "native-v3.stdout",
+        "sha256": "cfbd8cde23b965c4c30ebd8a6c93e01f87d7632048b53362676b2cb393cb4681"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/run_pq_root_continuation_v4.py",
+        "--out",
+        "/workspace/scratch/a6fe7c2e72c7/pq-validation/frozen-campaign-c9fb3fa6/native-v4"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 982.0710585919987,
+      "exit_code": 1,
+      "launch_error": null,
+      "name": "native-v4",
+      "observed_executable_identity_authenticated": false,
+      "pid": 8631,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T13:50:50Z",
+      "stderr": {
+        "bytes": 0,
+        "path": "native-v4.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 1683,
+        "path": "native-v4.stdout",
+        "sha256": "77a046940b6027a54816a482e598cac1cbfb427e0a2616993e478c4894b5eea8"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "cargo",
+        "clippy",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 333.108781854,
+      "exit_code": 101,
+      "launch_error": null,
+      "name": "strict-workspace-clippy",
+      "observed_executable_identity_authenticated": false,
+      "pid": 8773,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T14:07:12Z",
+      "stderr": {
+        "bytes": 8521,
+        "path": "strict-workspace-clippy.stderr",
+        "sha256": "3b3427b8f788cdc7cd7b88d4a7f44b7c45d9031a436438b403f4eea071a46725"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "strict-workspace-clippy.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "cargo",
+        "run",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--release",
+        "-p",
+        "trnm-crypto-primitives",
+        "--features",
+        "pq-native-openssl",
+        "--example",
+        "pq_root_v3_cost_observation",
+        "--",
+        "--rounds",
+        "8"
+      ],
+      "cwd": "/workspace/scratch/a6fe7c2e72c7/chain-pq",
+      "elapsed_seconds": 70.3884800220003,
+      "exit_code": 0,
+      "launch_error": null,
+      "name": "cost-observation",
+      "observed_executable_identity_authenticated": false,
+      "pid": 10347,
+      "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+      "started_utc": "2026-11-09T14:12:45Z",
+      "stderr": {
+        "bytes": 2274,
+        "path": "cost-observation.stderr",
+        "sha256": "03eaaf8230b25dbddec1bb8f83eefebacb5fa9339c3ea3073c518a0943a72584"
+      },
+      "stdout": {
+        "bytes": 470753,
+        "path": "cost-observation.stdout",
+        "sha256": "55223b204dbcc990255e7db48bc0e0e279ed12933c65d66d3ecc10d903e00007"
+      },
+      "timed_out": false
+    }
+  ],
+  "complete_source_endpoints_match": true,
+  "completed_commands": 29,
+  "composition_coverage_proved": false,
+  "continuous_source_immutability_enforced": false,
+  "full_protocol_lane_executed": false,
+  "independent_execution_authentication": false,
+  "production_activation": false,
+  "schema": "trnm-pq-root-signature-cost-campaign-v1",
+  "source": "c9fb3fa61e2aadbdeaf39e85a7e21604d72581b7",
+  "status": "HOLD",
+  "whole_chain_pq_qualified": false
+}

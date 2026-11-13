@@ -1,0 +1,9 @@
+{
+  "path": "evidence/pon-pq-tpq1-native-v1/native-test.log",
+  "base": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+  "current_before_bytes": 0,
+  "current_before_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+  "restored_bytes": 918,
+  "restored_blob": "08a3ee020dc978572c56c81b0ea1f834a6ebf4f7",
+  "matches_pinned_original": true
+}

@@ -1,0 +1,21 @@
+{
+  "name": "dependency-controls",
+  "argv": [
+    "python3",
+    "scripts/ci/test_pq_root_dependency_register.py"
+  ],
+  "cwd": "/workspace/scratch/ab60bfa410b1/root-cleanup",
+  "started_utc": "2026-11-09T14:02:50.224452+00:00",
+  "tested_commit": "0f6598454b0d743259579e7e193b1158e5c9353d",
+  "tested_tree": "b3cab76d5cf4321d94a6b8c64f578717d749c83e",
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "elapsed_seconds": 2.542593136000505,
+  "returncode": 0,
+  "log": "/workspace/scratch/ab60bfa410b1/root-cleanup-validation/exact-commit/dependency-controls.log",
+  "log_sha256": "832f9e046ca16d0b270910182ad53b3819639e6dcfa95533334384672b2623be",
+  "head_after": "0f6598454b0d743259579e7e193b1158e5c9353d",
+  "tree_after": "b3cab76d5cf4321d94a6b8c64f578717d749c83e",
+  "finished_utc": "2026-11-09T14:02:52.794740+00:00"
+}

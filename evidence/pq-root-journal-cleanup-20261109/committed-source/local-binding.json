@@ -1,0 +1,137 @@
+{
+  "schema": "pq-root-journal-cleanup-local-binding-v1",
+  "started_utc": "2026-11-09T13:51:42.276582+00:00",
+  "expected_base": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+  "expected_commit": "0f6598454b0d743259579e7e193b1158e5c9353d",
+  "expected_tree": "b3cab76d5cf4321d94a6b8c64f578717d749c83e",
+  "branch": "fix/chain-root-journal-cleanup-ab60-20261109",
+  "operations": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "returncode": 0,
+      "output": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0\n"
+    },
+    {
+      "argv": [
+        "git",
+        "symbolic-ref",
+        "--short",
+        "HEAD"
+      ],
+      "returncode": 0,
+      "output": "fix/chain-root-journal-cleanup-ab60-20261109\n"
+    },
+    {
+      "argv": [
+        "git",
+        "write-tree"
+      ],
+      "returncode": 0,
+      "output": "b3cab76d5cf4321d94a6b8c64f578717d749c83e\n"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--name-only"
+      ],
+      "returncode": 0,
+      "output": ""
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "returncode": 0,
+      "output": "M  config/pon/pq-cross-branch-corpus-v1.json\nM  config/pon/pq-root-dependency-register-v3.json\nM  docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md\nA  docs/security/PQ_ROOT_SQLITE_LIFETIME_20261109.md\nM  formal/pon-nakamoto-v1/pq_root_recovery_journal_v2.py\nA  formal/pon-nakamoto-v1/test_pq_root_journal_cleanup.py\nM  scripts/ci/check_ci_contract.py\nM  scripts/ci/ci_job.sh\nM  scripts/ci/pq_root_dependency_register.py\nM  scripts/ci/test_ci_contract.py\n"
+    },
+    {
+      "argv": [
+        "git",
+        "fetch",
+        "--no-tags",
+        "origin",
+        "refs/heads/fix/chain-root-journal-cleanup-ab60-20261109:refs/remotes/origin/fix/chain-root-journal-cleanup-ab60-20261109"
+      ],
+      "returncode": 0,
+      "output": "From https://github.com/TrillionniumFoundation/Trillionnium-Chain\n * [new branch]      fix/chain-root-journal-cleanup-ab60-20261109 -> origin/fix/chain-root-journal-cleanup-ab60-20261109\n"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "refs/remotes/origin/fix/chain-root-journal-cleanup-ab60-20261109"
+      ],
+      "returncode": 0,
+      "output": "0f6598454b0d743259579e7e193b1158e5c9353d\n"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "0f6598454b0d743259579e7e193b1158e5c9353d^{tree}"
+      ],
+      "returncode": 0,
+      "output": "b3cab76d5cf4321d94a6b8c64f578717d749c83e\n"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "-s",
+        "--format=%P",
+        "0f6598454b0d743259579e7e193b1158e5c9353d"
+      ],
+      "returncode": 0,
+      "output": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0\n"
+    },
+    {
+      "argv": [
+        "git",
+        "write-tree"
+      ],
+      "returncode": 0,
+      "output": "b3cab76d5cf4321d94a6b8c64f578717d749c83e\n"
+    },
+    {
+      "argv": [
+        "git",
+        "update-ref",
+        "HEAD",
+        "0f6598454b0d743259579e7e193b1158e5c9353d",
+        "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0"
+      ],
+      "returncode": 0,
+      "output": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "returncode": 0,
+      "output": "0f6598454b0d743259579e7e193b1158e5c9353d\n"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "returncode": 0,
+      "output": ""
+    }
+  ],
+  "remote_writes": false,
+  "reset_used": false,
+  "binding_completed": true,
+  "finished_utc": "2026-11-09T13:51:49.409598+00:00"
+}

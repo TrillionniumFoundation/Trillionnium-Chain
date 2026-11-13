@@ -1,0 +1,587 @@
+{
+  "schema": "trnm-pq-hosted-source-gates-observation-v1",
+  "observed_at_utc": "2026-11-09 14:33:04 UTC",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "candidate_source_sha": "d239bc8f683da7cdc8a4b9dc8e763d67e74680f6",
+  "candidate_source_tree": "37032e79799b9b21acc5b7f4ed1d74cc6bf97185",
+  "run_id": 42631476072,
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42631476072",
+  "evidence_source": "GitHub Actions workflow job API step summaries; all four source-control steps observed completed/success",
+  "scope": "Source preparation and retained source/claim controls only. All four complete jobs were still in_progress with null conclusion at observation time; this is not complete native campaign qualification.",
+  "source_control_gate": {
+    "workflow_path": ".github/workflows/pon-pq-system-continuation.yml",
+    "workflow_blob_sha": "70bc322e71f992794259a3f37bd8397c6f16907a",
+    "step_name": "Require retained source and claim controls",
+    "all_four_lanes_passed": true,
+    "inventory_command": [
+      "python3",
+      "scripts/refresh_distributed_source_inventory.py",
+      "--check"
+    ],
+    "relation": "The unconditionally executed step uses set -euo pipefail; inventory --check is its final run-command.sh invocation.",
+    "exact_workflow_step": "      - name: Require retained source and claim controls\n        shell: bash\n        run: |\n          set -euo pipefail\n          for test_file in test_ci_source_integrity.py test_record_pq_native_command.py test_pq_research_integration.py test_pq_chain_claim_guard.py test_pq_authority_surface_scan.py; do\n            bash \"$PQ_OUT/run-command.sh\" \"${test_file%.py}\" python3 -m unittest discover -s scripts/ci -p \"$test_file\" -v\n          done\n          bash \"$PQ_OUT/run-command.sh\" pq-source python3 scripts/ci/check_pq_research_integration.py\n          bash \"$PQ_OUT/run-command.sh\" pq-hold python3 scripts/ci/pq_chain_claim_guard.py\n          bash \"$PQ_OUT/run-command.sh\" repository python3 scripts/ci/check_repository.py\n          bash \"$PQ_OUT/run-command.sh\" inventory python3 scripts/refresh_distributed_source_inventory.py --check\n"
+  },
+  "cost_observation_scope": {
+    "workflow_blob_sha": "70bc322e71f992794259a3f37bd8397c6f16907a",
+    "step_name": "Observe complete component costs with unchanged native budgets",
+    "trnm_pon_node_ignored_lib_tests": [
+      "store::history_page::tests::inline_record_tests::history_inline_record_complete_call_cost",
+      "ingress::public_v3::pq_identity::verifier_cache::tests::pq_caller_authentication_complete_cost",
+      "account_archive_prototype::native_root_digest::tests::native_root_digest_paired_complete_root_cost_observation"
+    ],
+    "trnm_mvcc_fee_ignored_lib_tests": [
+      "pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_full_binding_cost"
+    ],
+    "root_signature_example_present_in_workflow": false,
+    "root_signature_example": "trillionnium/crates/trnm-crypto-primitives/examples/pq_root_v3_cost_observation.rs",
+    "separate_cpq1_job_example": "pq_profile_bench",
+    "separate_cpq1_job_arguments": [
+      "--samples",
+      "64"
+    ],
+    "actual_cost_execution_claimed": false,
+    "exact_workflow_step": "      - name: Observe complete component costs with unchanged native budgets\n        if: ${{ !cancelled() && steps.pq_build.outcome == 'success' }}\n        shell: bash\n        run: |\n          set -euo pipefail\n          export TRNM_PQ_AUTH_COST_DIRECTORY=\"$PQ_OUT/pq-authentication-cost\"\n          export TRNM_NATIVE_ROOT_DIGEST_COST_OUTPUT=\"$PQ_OUT/native-root-digest-cost.jsonl\"\n          failed=0\n          for selector in \\\n            store::history_page::tests::inline_record_tests::history_inline_record_complete_call_cost \\\n            ingress::public_v3::pq_identity::verifier_cache::tests::pq_caller_authentication_complete_cost \\\n            account_archive_prototype::native_root_digest::tests::native_root_digest_paired_complete_root_cost_observation; do\n            label=\"cost-${selector##*::}\"\n            if ! bash \"$PQ_OUT/run-command.sh\" \"$label\" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --lib --all-features \"$selector\" -- --exact --ignored --show-output --test-threads=1; then\n              failed=1\n            elif ! python3 scripts/ci/check_required_native_test.py \"$PQ_OUT/$label.log\" --test \"$selector\" > \"$PQ_OUT/$label-execution.json\"; then\n              failed=1\n            fi\n          done\n          selector=pon_commitment::unchanged_snapshot_tests::unchanged_snapshot_full_binding_cost\n          label=\"cost-${selector##*::}\"\n          if ! bash \"$PQ_OUT/run-command.sh\" \"$label\" cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-mvcc-fee --lib \"$selector\" -- --exact --ignored --show-output --test-threads=1; then\n            failed=1\n          elif ! python3 scripts/ci/check_required_native_test.py \"$PQ_OUT/$label.log\" --test \"$selector\" > \"$PQ_OUT/$label-execution.json\"; then\n            failed=1\n          fi\n          test \"$failed\" = 0\n"
+  },
+  "jobs": [
+    {
+      "id": 129208592598,
+      "name": "PQ network and witness (ubuntu-24.04, head)",
+      "status": "in_progress",
+      "conclusion": null,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42631476072/job/129208592598",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Prepare exact-source command records",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Require retained source and claim controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Install the original pinned compiler",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Prepare the independently pinned OpenSSL provider",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Record compiler, exact locked graph and formatting",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 7
+        },
+        {
+          "name": "Execute every required native effect and rejection control",
+          "status": "pending",
+          "conclusion": null,
+          "number": 8
+        },
+        {
+          "name": "Require admitted migration handoff and checkpoint endpoint ownership",
+          "status": "pending",
+          "conclusion": null,
+          "number": 9
+        },
+        {
+          "name": "Execute anchored NPQ6 migration and source-preservation controls",
+          "status": "pending",
+          "conclusion": null,
+          "number": 10
+        },
+        {
+          "name": "Refuse classical submit recovery for retained PQ network owners",
+          "status": "pending",
+          "conclusion": null,
+          "number": 11
+        },
+        {
+          "name": "Require native TLS and ordinary binary controls from actual registries",
+          "status": "pending",
+          "conclusion": null,
+          "number": 12
+        },
+        {
+          "name": "Require the explicit TLS witness CLI controls from the actual binary",
+          "status": "pending",
+          "conclusion": null,
+          "number": 13
+        },
+        {
+          "name": "Require original transaction scope controls",
+          "status": "pending",
+          "conclusion": null,
+          "number": 14
+        },
+        {
+          "name": "Require actual build-fence cache requalification",
+          "status": "pending",
+          "conclusion": null,
+          "number": 15
+        },
+        {
+          "name": "Preserve native control records before the complete regression",
+          "status": "pending",
+          "conclusion": null,
+          "number": 16
+        },
+        {
+          "name": "Preserve the complete original Node library regression suite",
+          "status": "pending",
+          "conclusion": null,
+          "number": 17
+        },
+        {
+          "name": "Check strict Clippy without rewriting source",
+          "status": "pending",
+          "conclusion": null,
+          "number": 18
+        },
+        {
+          "name": "Observe complete component costs with unchanged native budgets",
+          "status": "pending",
+          "conclusion": null,
+          "number": 19
+        },
+        {
+          "name": "Preserve complete records including failures",
+          "status": "pending",
+          "conclusion": null,
+          "number": 20
+        },
+        {
+          "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "status": "pending",
+          "conclusion": null,
+          "number": 40
+        }
+      ]
+    },
+    {
+      "id": 129208592851,
+      "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)",
+      "status": "in_progress",
+      "conclusion": null,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42631476072/job/129208592851",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Prepare exact-source command records",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Require retained source and claim controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Install the original pinned compiler",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Prepare the independently pinned OpenSSL provider",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 6
+        },
+        {
+          "name": "Record compiler, exact locked graph and formatting",
+          "status": "pending",
+          "conclusion": null,
+          "number": 7
+        },
+        {
+          "name": "Execute every required native effect and rejection control",
+          "status": "pending",
+          "conclusion": null,
+          "number": 8
+        },
+        {
+          "name": "Require admitted migration handoff and checkpoint endpoint ownership",
+          "status": "pending",
+          "conclusion": null,
+          "number": 9
+        },
+        {
+          "name": "Execute anchored NPQ6 migration and source-preservation controls",
+          "status": "pending",
+          "conclusion": null,
+          "number": 10
+        },
+        {
+          "name": "Refuse classical submit recovery for retained PQ network owners",
+          "status": "pending",
+          "conclusion": null,
+          "number": 11
+        },
+        {
+          "name": "Require native TLS and ordinary binary controls from actual registries",
+          "status": "pending",
+          "conclusion": null,
+          "number": 12
+        },
+        {
+          "name": "Require the explicit TLS witness CLI controls from the actual binary",
+          "status": "pending",
+          "conclusion": null,
+          "number": 13
+        },
+        {
+          "name": "Require original transaction scope controls",
+          "status": "pending",
+          "conclusion": null,
+          "number": 14
+        },
+        {
+          "name": "Require actual build-fence cache requalification",
+          "status": "pending",
+          "conclusion": null,
+          "number": 15
+        },
+        {
+          "name": "Preserve native control records before the complete regression",
+          "status": "pending",
+          "conclusion": null,
+          "number": 16
+        },
+        {
+          "name": "Preserve the complete original Node library regression suite",
+          "status": "pending",
+          "conclusion": null,
+          "number": 17
+        },
+        {
+          "name": "Check strict Clippy without rewriting source",
+          "status": "pending",
+          "conclusion": null,
+          "number": 18
+        },
+        {
+          "name": "Observe complete component costs with unchanged native budgets",
+          "status": "pending",
+          "conclusion": null,
+          "number": 19
+        },
+        {
+          "name": "Preserve complete records including failures",
+          "status": "pending",
+          "conclusion": null,
+          "number": 20
+        },
+        {
+          "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "status": "pending",
+          "conclusion": null,
+          "number": 40
+        }
+      ]
+    },
+    {
+      "id": 129208592917,
+      "name": "PQ network and witness (ubuntu-24.04-arm, head)",
+      "status": "in_progress",
+      "conclusion": null,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42631476072/job/129208592917",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Prepare exact-source command records",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Require retained source and claim controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Install the original pinned compiler",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Prepare the independently pinned OpenSSL provider",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Record compiler, exact locked graph and formatting",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 7
+        },
+        {
+          "name": "Execute every required native effect and rejection control",
+          "status": "pending",
+          "conclusion": null,
+          "number": 8
+        },
+        {
+          "name": "Require admitted migration handoff and checkpoint endpoint ownership",
+          "status": "pending",
+          "conclusion": null,
+          "number": 9
+        },
+        {
+          "name": "Execute anchored NPQ6 migration and source-preservation controls",
+          "status": "pending",
+          "conclusion": null,
+          "number": 10
+        },
+        {
+          "name": "Refuse classical submit recovery for retained PQ network owners",
+          "status": "pending",
+          "conclusion": null,
+          "number": 11
+        },
+        {
+          "name": "Require native TLS and ordinary binary controls from actual registries",
+          "status": "pending",
+          "conclusion": null,
+          "number": 12
+        },
+        {
+          "name": "Require the explicit TLS witness CLI controls from the actual binary",
+          "status": "pending",
+          "conclusion": null,
+          "number": 13
+        },
+        {
+          "name": "Require original transaction scope controls",
+          "status": "pending",
+          "conclusion": null,
+          "number": 14
+        },
+        {
+          "name": "Require actual build-fence cache requalification",
+          "status": "pending",
+          "conclusion": null,
+          "number": 15
+        },
+        {
+          "name": "Preserve native control records before the complete regression",
+          "status": "pending",
+          "conclusion": null,
+          "number": 16
+        },
+        {
+          "name": "Preserve the complete original Node library regression suite",
+          "status": "pending",
+          "conclusion": null,
+          "number": 17
+        },
+        {
+          "name": "Check strict Clippy without rewriting source",
+          "status": "pending",
+          "conclusion": null,
+          "number": 18
+        },
+        {
+          "name": "Observe complete component costs with unchanged native budgets",
+          "status": "pending",
+          "conclusion": null,
+          "number": 19
+        },
+        {
+          "name": "Preserve complete records including failures",
+          "status": "pending",
+          "conclusion": null,
+          "number": 20
+        },
+        {
+          "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "status": "pending",
+          "conclusion": null,
+          "number": 40
+        }
+      ]
+    },
+    {
+      "id": 129208592971,
+      "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+      "status": "in_progress",
+      "conclusion": null,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42631476072/job/129208592971",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Prepare exact-source command records",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Require retained source and claim controls",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Install the original pinned compiler",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Prepare the independently pinned OpenSSL provider",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 6
+        },
+        {
+          "name": "Record compiler, exact locked graph and formatting",
+          "status": "pending",
+          "conclusion": null,
+          "number": 7
+        },
+        {
+          "name": "Execute every required native effect and rejection control",
+          "status": "pending",
+          "conclusion": null,
+          "number": 8
+        },
+        {
+          "name": "Require admitted migration handoff and checkpoint endpoint ownership",
+          "status": "pending",
+          "conclusion": null,
+          "number": 9
+        },
+        {
+          "name": "Execute anchored NPQ6 migration and source-preservation controls",
+          "status": "pending",
+          "conclusion": null,
+          "number": 10
+        },
+        {
+          "name": "Refuse classical submit recovery for retained PQ network owners",
+          "status": "pending",
+          "conclusion": null,
+          "number": 11
+        },
+        {
+          "name": "Require native TLS and ordinary binary controls from actual registries",
+          "status": "pending",
+          "conclusion": null,
+          "number": 12
+        },
+        {
+          "name": "Require the explicit TLS witness CLI controls from the actual binary",
+          "status": "pending",
+          "conclusion": null,
+          "number": 13
+        },
+        {
+          "name": "Require original transaction scope controls",
+          "status": "pending",
+          "conclusion": null,
+          "number": 14
+        },
+        {
+          "name": "Require actual build-fence cache requalification",
+          "status": "pending",
+          "conclusion": null,
+          "number": 15
+        },
+        {
+          "name": "Preserve native control records before the complete regression",
+          "status": "pending",
+          "conclusion": null,
+          "number": 16
+        },
+        {
+          "name": "Preserve the complete original Node library regression suite",
+          "status": "pending",
+          "conclusion": null,
+          "number": 17
+        },
+        {
+          "name": "Check strict Clippy without rewriting source",
+          "status": "pending",
+          "conclusion": null,
+          "number": 18
+        },
+        {
+          "name": "Observe complete component costs with unchanged native budgets",
+          "status": "pending",
+          "conclusion": null,
+          "number": 19
+        },
+        {
+          "name": "Preserve complete records including failures",
+          "status": "pending",
+          "conclusion": null,
+          "number": 20
+        },
+        {
+          "name": "Post Run actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+          "status": "pending",
+          "conclusion": null,
+          "number": 40
+        }
+      ]
+    }
+  ]
+}

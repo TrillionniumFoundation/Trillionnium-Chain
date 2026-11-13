@@ -343,6 +343,7 @@ SOURCE_PATHS = sorted(set(
      NATIVE_WITNESS_PROVIDER, NATIVE_WITNESS_RECEIPTS,
      NODE + "tests/root_witness_v6_receipts_native.rs",
      CRYPTO + "src/pq_root_v3/tests.rs", CRYPTO + "tests/pq_root_v3_native.rs",
+     CRYPTO + "examples/pq_root_v3_cost_observation.rs",
      RELEASE + "src/root_recovery_v3_tests.rs",
      NODE + "tests/root_recovery_v3_native.rs",
      NODE + "tests/support/root_recovery_v3_fixture.rs",

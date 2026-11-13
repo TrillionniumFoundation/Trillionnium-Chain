@@ -1,0 +1,13 @@
+{
+  "name": "diff-check-final",
+  "argv": [
+    "git",
+    "diff",
+    "--check"
+  ],
+  "started_utc": "2026-11-09T13:38:46.511415+00:00",
+  "elapsed_seconds": 0.08580774000074598,
+  "returncode": 0,
+  "log": "/workspace/scratch/ab60bfa410b1/root-cleanup-validation/diff-check-final.log",
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

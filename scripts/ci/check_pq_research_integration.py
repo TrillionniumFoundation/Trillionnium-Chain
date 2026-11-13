@@ -120,6 +120,8 @@ NATIVE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/context.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/io.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/diagnostics.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/io/buffer_tests.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/fixtures.rs",
     "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/tests.rs",
     "trillionnium/crates/trnm-pon-node/src/pq_tls_cli.rs",
@@ -734,6 +736,13 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "trillionnium/crates/trnm-data-availability/src/cell/residency/version.rs",
     "trillionnium/crates/trnm-data-availability/src/cell/residency/version_tests.rs",
 ))
+# SQLite journal connection cleanup must remain part of the merged source set.
+# Its local controls do not qualify native root recovery or external custody.
+CONVERGENCE_REQUIRED_PATHS |= frozenset((
+    'docs/security/PQ_ROOT_SQLITE_LIFETIME_20261109.md',
+    'formal/pon-nakamoto-v1/test_pq_root_journal_cleanup.py',
+))
+
 NATIVE_REQUIRED_PATHS |= CONVERGENCE_REQUIRED_PATHS
 RECOVERY_RELEASE_REQUIRED_PATHS = frozenset((
     "trillionnium/crates/trnm-checkpoint-store/Cargo.toml",
@@ -943,6 +952,8 @@ NATIVE_REQUIRED_PATHS |= frozenset((
     "config/pon/pq-root-dependency-register-v3.json",
     "docs/security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md",
     "docs/security/PQ_ROOT_RECOVERY_NATIVE_V3.md",
+    "docs/security/PQ_ROOT_SIGNATURE_COST_V1.md",
+    "trillionnium/crates/trnm-crypto-primitives/examples/pq_root_v3_cost_observation.rs",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs",
     "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs",
     "trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs",

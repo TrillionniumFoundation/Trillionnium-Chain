@@ -3,6 +3,7 @@
 //! task/WAN/PKI/custody/production qualification.
 use super::*;
 mod context;
+mod diagnostics;
 mod io;
 pub use context::PqTlsIdentity;
 
@@ -93,6 +94,7 @@ impl PqTlsClient {
 pub struct PqTlsServer {
     inner: PqServer,
     context: context::TlsContext,
+    refusal_records: std::sync::atomic::AtomicUsize,
 }
 impl PqTlsServer {
     pub fn new(
@@ -105,6 +107,7 @@ impl PqTlsServer {
         Ok(Self {
             inner: PqServer::new(policy, signer)?,
             context,
+            refusal_records: std::sync::atomic::AtomicUsize::new(0),
         })
     }
     pub(super) fn selected_policy(&self) -> &PqNetworkPolicy {
@@ -116,16 +119,34 @@ impl PqTlsServer {
         node: &Mutex<Node>,
         deadline: Instant,
     ) -> Result<()> {
-        self.inner.charge_connection(node, deadline)?;
-        let mut channel =
-            io::Channel::accept(stream, deadline, &self.context, node, &self.inner.policy)?;
-        let wire = self
-            .inner
-            .read_request_body(node, deadline, &mut |bytes| channel.read_exact(bytes))?;
-        let response = self
-            .inner
-            .handle_admitted(node, &wire, deadline, channel.admission())?;
-        channel.write_frame(&response)
+        let observation = diagnostics::Observation::new();
+        let result = (|| {
+            observation.stage("ingress_admission");
+            self.inner.charge_connection(node, deadline)?;
+            observation.stage("tls_handshake");
+            let mut channel = io::Channel::accept_observed(
+                stream,
+                deadline,
+                &self.context,
+                node,
+                &self.inner.policy,
+                &observation,
+            )?;
+            observation.stage("request_read");
+            let wire = self
+                .inner
+                .read_request_body(node, deadline, &mut |bytes| channel.read_exact(bytes))?;
+            observation.stage("request_dispatch");
+            let response =
+                self.inner
+                    .handle_admitted(node, &wire, deadline, channel.admission())?;
+            observation.stage("response_write");
+            channel.write_frame(&response)
+        })();
+        if let Err(error) = &result {
+            observation.emit(error, deadline, &self.refusal_records);
+        }
+        result
     }
 }
 

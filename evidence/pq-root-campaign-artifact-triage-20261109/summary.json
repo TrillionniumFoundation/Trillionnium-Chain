@@ -1,0 +1,127 @@
+{
+  "schema": "trnm-native-campaign-offline-readback-v1",
+  "comparison_source": "offline complete ZIP comparison, not execution",
+  "source_reader_git_blob": "edc27a50c9cd3ba18e8568e3daf5e957d3bdfad8",
+  "output_json_sha256": "13a0355165bf12236186e0d034da2c96cc4c8125aed9d7408577da04c350a665",
+  "artifacts": [
+    {
+      "run": 42587477765,
+      "head": "0d99924005b70b1308bf3e62c53e9300fbb4aac4",
+      "artifact_id": 13659748476,
+      "zip_sha256": "06fdbd610d0c96982cf447fdbb30d89b028dfa2013c9a9f890bbaaa76e4962a9",
+      "runs": 3,
+      "successful": 0
+    },
+    {
+      "run": 42645192695,
+      "head": "cc4576a5911138d724ab0f397642ea03f6b5943f",
+      "artifact_id": 13691406748,
+      "zip_sha256": "96f920034ff4be76ec69108e23844f8dc7c1c25ec76df282986f8cc55df0e924",
+      "runs": 3,
+      "successful": 0
+    }
+  ],
+  "original_workload": {
+    "phase_seconds": 30,
+    "phases_per_run": 3,
+    "attacker_counts": [
+      0,
+      24,
+      24
+    ],
+    "seed_transfers": 1024,
+    "seed_blocks": 4,
+    "business_blocks": 21,
+    "receiver_cpu_max": "25000 100000",
+    "receiver_memory_max": "2147483648",
+    "controller_cpu_max": "400000 100000"
+  },
+  "totals": {
+    "original_runs": 6,
+    "passed_runs": 0,
+    "original_phases": 18,
+    "passed_phases": 0,
+    "host_ready_phases": 18,
+    "receiver_client_equal_phases": 0,
+    "paid_cpu_depletion_phases": 0,
+    "pressure_window_confirmations": 6
+  },
+  "mode_summaries": [
+    {
+      "mode": "baseline",
+      "count": 6,
+      "attacker_ready": 0,
+      "pressure_window_rounds_per_phase": "1/2",
+      "submissions_range": [
+        12,
+        13
+      ],
+      "successful_submissions_range": [
+        11,
+        12
+      ],
+      "work_failed_range": [
+        0,
+        0
+      ],
+      "executor_refusals_range": [
+        0,
+        1
+      ],
+      "request_deadline_diagnostic_phases": 0
+    },
+    {
+      "mode": "from-zero",
+      "count": 6,
+      "attacker_ready": 24,
+      "pressure_window_rounds_per_phase": "0/1",
+      "work_failed_range": [
+        1321,
+        1350
+      ],
+      "executor_refusals_range": [
+        1322,
+        1351
+      ],
+      "request_deadline_diagnostic_phases": 6
+    },
+    {
+      "mode": "late-product",
+      "count": 6,
+      "attacker_ready": 24,
+      "pressure_window_rounds_per_phase": "0/1",
+      "work_failed_range": [
+        1210,
+        1236
+      ],
+      "executor_refusals_range": [
+        1211,
+        1236
+      ],
+      "request_deadline_diagnostic_phases": 4
+    }
+  ],
+  "refusal_controls": {
+    "wrong_zip_digest": {
+      "exit_code": 1,
+      "stderr_terminal": "ValueError: ARTIFACT_SHA_MISMATCH",
+      "stdout_bytes": 0
+    },
+    "wrong_source_head": {
+      "exit_code": 1,
+      "stderr_terminal": "ValueError: WRONG_EXECUTED_COMMIT",
+      "stdout_bytes": 0
+    }
+  },
+  "unproven": [
+    "unique CPU or state root cause",
+    "independent operator execution",
+    "cryptographic reduction",
+    "whole-chain bad-event bound",
+    "production effect permission"
+  ],
+  "status": "HOLD_NO_GO",
+  "production_activation": false,
+  "whole_chain_pq_qualified": false,
+  "actual_lifetime_failure_bound": null
+}

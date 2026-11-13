@@ -1,0 +1,11 @@
+{
+  "observed_at_utc": "2026-11-09T13:41:08.591228+00:00",
+  "known_task_git_calls": "source restoration sessions 76193 and 66521 completed; original checkout session 46684 became unresumable across environment interruption",
+  "visible_git_processes": [],
+  "process_scope": "executor-visible processes and recorded task sessions; not a host-wide process attestation",
+  "lock_present": true,
+  "lock_bytes": 0,
+  "lock_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "preserved_at": "/workspace/scratch/ab60bfa410b1/root-cleanup-validation/interrupted-checkout-index.lock",
+  "removed_from_git_lock_location": true
+}
