@@ -1,0 +1,133 @@
+{
+  "schema": "trnm-1ba-exact-codeql-and-count-repair-observation-v1",
+  "source": "1ba59caf7ebd471595761d70891cb71bfe35d3f9",
+  "tree": "0ca060a0f2100f698b0870a42b8c29b69be33c3e",
+  "codeql": {
+    "producer_run": 41772430557,
+    "head": "1ba59caf7ebd471595761d70891cb71bfe35d3f9",
+    "status": "completed",
+    "conclusion": "success",
+    "producer_jobs": [
+      {
+        "id": 126384984136,
+        "name": "Analyze (actions)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 126384984286,
+        "name": "Analyze (python)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 126384984434,
+        "name": "Analyze (rust)",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "exporter_run": 41772435786,
+    "exporter_job": 126384998881,
+    "exporter_conclusion": "success",
+    "original_deadline_seconds": 1200,
+    "observed_wait_poll_lines": 12,
+    "source_before": {
+      "base": null,
+      "candidate": "1ba59caf7ebd471595761d70891cb71bfe35d3f9",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "1ba59caf7ebd471595761d70891cb71bfe35d3f9",
+      "tested_tree": "0ca060a0f2100f698b0870a42b8c29b69be33c3e",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 934337790,
+      "tracked_entries": 8085,
+      "tracked_worktree_verified": true
+    },
+    "source_after": {
+      "base": null,
+      "candidate": "1ba59caf7ebd471595761d70891cb71bfe35d3f9",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "1ba59caf7ebd471595761d70891cb71bfe35d3f9",
+      "tested_tree": "0ca060a0f2100f698b0870a42b8c29b69be33c3e",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 934337790,
+      "tracked_entries": 8085,
+      "tracked_worktree_verified": true
+    },
+    "log": {
+      "bytes": 125599,
+      "git_blob": "71557059a001855e2376f1585a77d87a28343a3d",
+      "sha256": "606b73b020b9277556f58f635fe6312690fadcce704237f4e55d191a6efdec40"
+    },
+    "artifact": {
+      "id": 13296161893,
+      "bytes": 247355,
+      "sha256": "392bbc308e37d03569391ef4468dcd2fa6566245e8ebf487a943d7cebcd43198",
+      "zip_byte_readback_performed": false
+    }
+  },
+  "w1_count": {
+    "run": 41772435719,
+    "job": 126384999079,
+    "job_conclusion": "success",
+    "architecture": "x64",
+    "source_kind": "head",
+    "original_history_passed": 28,
+    "original_history_ignored": 1,
+    "cpu_completion_passed": 11,
+    "history_inventory": {
+      "case_start_identifiers": [
+        "ingress::history_import::tests::actual_detached_m06_cannot_continue_after_original_cpu_account_is_fenced",
+        "ingress::history_import::tests::committed_history_keeps_original_deadline_inside_native_activation",
+        "ingress::history_import::tests::concurrent_false_product_wrong_root_and_honest_history_share_one_account",
+        "ingress::history_import::tests::deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline",
+        "ingress::history_import::tests::deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu",
+        "ingress::history_import::tests::deadline_controls::late_admission_keeps_committed_identity_paid_cpu_and_exact_retry",
+        "ingress::history_import::tests::deadline_controls::metered_expiry_preserves_native_errors_and_settles_the_original_account",
+        "ingress::history_import::tests::deadline_controls::scope_expiry_preserves_cleanup_native_error_and_cold_reopen",
+        "ingress::history_import::tests::expired_history_never_starts_an_epoch_or_a_cpu_account",
+        "ingress::history_import::tests::first_history_resource_failure_preserves_cold_account_and_clean_restart",
+        "ingress::history_import::tests::history_codec_snapshot_preserves_legacy_bytes_identity_and_deferred_profile_errors",
+        "ingress::history_import::tests::history_decode_cannot_renew_the_original_w1_deadline",
+        "ingress::history_import::tests::history_host_rejection_keeps_native_boundaries_nonce_and_original_paid_account",
+        "ingress::history_import::tests::history_kill_cut_child",
+        "ingress::history_import::tests::history_w1_checks_host_once_at_every_native_boundary_without_refill",
+        "ingress::history_import::tests::history_w1_checks_host_once_at_every_real_progress_boundary",
+        "ingress::history_import::tests::history_w1_host_cancellation_keeps_original_error_deadline_and_paid_account",
+        "ingress::history_import::tests::history_w1_host_change_at_selected_and_unselected_boundaries_refuses_and_retries",
+        "ingress::history_import::tests::history_w1_original_deadline_precedes_resource_and_complete_work",
+        "ingress::history_import::tests::observed_expired_history_keeps_failure_and_unentered_phases_null",
+        "ingress::history_import::tests::observed_history_retains_complete_native_path_and_real_w1_cancellation",
+        "ingress::history_import::tests::one_history_close_cannot_clear_another_imports_live_epoch",
+        "ingress::history_import::tests::pinned_activation_failure_keeps_committed_packet_and_retry_does_not_repeat_w1",
+        "ingress::history_import::tests::pinned_completion_requires_existing_owner_and_expired_completion_cannot_mint_one",
+        "ingress::history_import::tests::pinned_final_packet_and_known_completion_keep_one_owner_without_repeating_w1",
+        "ingress::history_import::tests::real_sigkill_history_cuts_preserve_debt_fence_and_committed_blocks",
+        "ingress::history_import::tests::shared_admission_owner_wait_observes_control_deadline_and_original_two_second_limit",
+        "ingress::history_import::tests::shared_history_paid_deficit_refuses_without_waiting_under_original_writer",
+        "ingress::history_import::tests::shared_history_refill_full_w1_and_actual_m06_release_the_original_writer"
+      ],
+      "complete_summary": "test result: ok. 28 passed; 0 failed; 1 ignored; 0 measured; 955 filtered out; finished in 22.97s",
+      "plain_success_lines": 24,
+      "ignored_fixture": "ingress::history_import::tests::history_kill_cut_child",
+      "codec_exact_success_rows": 1,
+      "scope": "29 actual module case starts, including the original ignored child. Several successful cases emit structured stdout before their completion; the native full summary and original workflow check establish 28 passed, not a claim of 28 uninterrupted whole-line success records."
+    },
+    "log": {
+      "bytes": 206810,
+      "git_blob": "1af3434a316485f499f0ede2680057a9a30fd319",
+      "sha256": "416c7ecca5faf0483f584f127b275f1fa6d665bf00e9c6855a3d97dce22fd866"
+    },
+    "scope": "One original factorial grid job at this source only. Other grid cells and fresh-challenge performance are independent."
+  },
+  "scope": "Actual original job logs and API status. Default scan/export completion does not establish absence of vulnerabilities, complete native/Host/protocol acceptance, or production activation. No results transferred to a newer source.",
+  "remaining": {
+    "fresh_challenge_open": true,
+    "original_campaign_open": true,
+    "production_activation": false
+  }
+}

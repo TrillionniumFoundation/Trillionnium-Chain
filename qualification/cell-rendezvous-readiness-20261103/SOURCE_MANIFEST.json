@@ -1,0 +1,346 @@
+{
+  "schema": "chain-cell-readiness-published-inputs-v1",
+  "parents": [
+    "9f04640877078204d367f753eba684d94e705a74",
+    "4204c4b0b1300cbb5d5325d9915a161173983491"
+  ],
+  "scope": "All staged changes relative to first parent except this manifest, to avoid self-reference. Historical #697 inputs retain their original bytes.",
+  "files": [
+    {
+      "path": ".github/workflows/trnm-required-baseline.yml",
+      "mode": "100644",
+      "git_blob": "a479a7872a28816a83158964f14a7aba799a136a",
+      "sha256": "23f3c0993ccf950cf6bab6d04fec0d9a82c80f190545cdff8fdd9554aa2ca560",
+      "bytes": 34276
+    },
+    {
+      "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "mode": "100644",
+      "git_blob": "5fd0d5cc8573c656e2eb7cb5cbcd0fdd21d576a1",
+      "sha256": "045f6ddc1654dca43137d67f1d4046f0448af30e6004f6e82024cf04f806e32c",
+      "bytes": 411202
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/INDEPENDENT_REVIEW.md",
+      "mode": "100644",
+      "git_blob": "d2688a4d154188a14a3d6872c60b13315fe872eb",
+      "sha256": "830102ccd7cbe3ce095071dadd009c635ebfdb6a0bd96ee6b47f0773f578a395",
+      "bytes": 1377
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/README.md",
+      "mode": "100644",
+      "git_blob": "1164626638abe7434a713aebacadbf79986301aa",
+      "sha256": "d9eeed06128f740fa3f71cd4425151a87884caf4bba73afbd090d5bdeb1f3860",
+      "bytes": 4864
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/REPRODUCTION.json",
+      "mode": "100644",
+      "git_blob": "309b7be22c4de59112bac81d25410297cb4b2c1c",
+      "sha256": "6cdb89a1e4dab98778ea485d96423a0375c288a8c87fc613ac91296520dd31aa",
+      "bytes": 4062
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/cargo-invocation-control/Cargo.lock",
+      "mode": "100644",
+      "git_blob": "17a5846365a202e309be58219cee0446b01220d9",
+      "sha256": "16e3ee9c3fc8b40c8fd3f8636739864508832668eeb7b77726592bf663b06f29",
+      "bytes": 167
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/cargo-invocation-control/Cargo.toml",
+      "mode": "100644",
+      "git_blob": "200f082db582c3ae60c1abb7c0a0b9f0c329f739",
+      "sha256": "ca163a9ffc427f2ec9574b19da42ca3ef23d672f3862c3254a0cb298b4477ba9",
+      "bytes": 72
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/cargo-invocation-control/capture.py",
+      "mode": "100644",
+      "git_blob": "b2440904f2214752df7889352a9552fd3cb61f6d",
+      "sha256": "8799a66af6bc42d6a7f7aed0941eed676078979750e31e26f09f94458f4eb432",
+      "bytes": 283
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/cargo-invocation-control/command.log",
+      "mode": "100644",
+      "git_blob": "dd710dc95f05da0cd91b3dab4f87ebe657df50d4",
+      "sha256": "de9312e4fb457e79a8531835673ed1d4a8f59262e82dc6abf45ce0d2f135233b",
+      "bytes": 470
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/cargo-invocation-control/invocation.json",
+      "mode": "100644",
+      "git_blob": "c3f9451f66f940405b6b76b98b14e18ec6a04b10",
+      "sha256": "37b3c341025739172b77e8ee95c69d256f011479ced0dc113640bfcb787ab0e1",
+      "bytes": 538
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/cargo-invocation-control/tests/architecture_delivery_compare.rs",
+      "mode": "100644",
+      "git_blob": "ea4cfa95d14775392e3a09865b701dcc5173bc90",
+      "sha256": "6bb8e21b1b83365aad47788bb0493f6cee3e7231bc5eb29fcf69367d18fabfcd",
+      "bytes": 40
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/ci-contract.log",
+      "mode": "100644",
+      "git_blob": "92a3e47248ccd54f73fc4dbd33ebad59b1389eb3",
+      "sha256": "94518a76575e23390cd612172692ce8908c8cad40cfbb59352a309e53b796294",
+      "bytes": 180
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/diff-check.log",
+      "mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/final-check-0.log",
+      "mode": "100644",
+      "git_blob": "7318b8aef8720c4622cc09fe286130fcb5bc20a0",
+      "sha256": "f04520965ff8ad6c9cbd489b2ff93c01e99a27cd11a29328c540c7af76c0530f",
+      "bytes": 5826
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/original-failure-derived.json",
+      "mode": "100644",
+      "git_blob": "6e6a2f2fd28c125a1f5f2828125b6442ea0043ad",
+      "sha256": "a4ebc0466440177ecf3b527f6e0086fc5c926985c45bace61906281225f2197e",
+      "bytes": 20833
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/original-rust-shard.json",
+      "mode": "100644",
+      "git_blob": "8bf1a333e23b870de95e92000e4c0a506cdb93ce",
+      "sha256": "17137f426e583a28c1c651a7581721225b428c10a4bdce5d3b180d21add9b0c2",
+      "bytes": 1195
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/original-rust-shard.sh",
+      "mode": "100644",
+      "git_blob": "f3f9a99c48fd9b02258ed12f3ef4d4821a2b9779",
+      "sha256": "d2862f4fc7477983a3b6877e4f310a8bfeb6d663d419b577da210d3ea62e55ea",
+      "bytes": 9325
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/original-source.json",
+      "mode": "100644",
+      "git_blob": "bbcae1777e5ec43960b27c43e5146be380b7e077",
+      "sha256": "ed60c8f3ac926cf036370052bd0f7678358870e5e733424577b2377ad6d3624c",
+      "bytes": 421
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/preflight.log",
+      "mode": "100644",
+      "git_blob": "926d86709b68c2c344eba0aab02d6462de793634",
+      "sha256": "4b399248e59083227a4f6f2d07cb605e7b764617a6728d3e1b7b7f3ca5086b97",
+      "bytes": 180
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/test_architecture_delivery_host.log",
+      "mode": "100644",
+      "git_blob": "6a66648d2bbbf9c0f2635427e67e993b7b258578",
+      "sha256": "5510ce9243d225f6cb494aff7a40bba0e0de6cb3edb60dd5658e828ab451477a",
+      "bytes": 1625
+    },
+    {
+      "path": "qualification/architecture-fixed-host-20261103/test_rust_baseline_shards.log",
+      "mode": "100644",
+      "git_blob": "d4e126956edd2e44009c2160615be95f28c37511",
+      "sha256": "d8c4ef7b37805a41a5fdc671bfbae8d5b7265e2be09f6f18298bb254c5400e95",
+      "bytes": 1559
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/COMPOSITION.json",
+      "mode": "100644",
+      "git_blob": "450dc8da1084d366f6d69a2b33bf9d7a761e0512",
+      "sha256": "3a1dadb6938709f4dd5fd21b8bc9f3f7e6433fbbe4ebd1bf71c0e0e0fc63bf36",
+      "bytes": 983
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/FINAL_INPUT_BINDING.json",
+      "mode": "100644",
+      "git_blob": "3652b6351cee6cb5a3f170efe5c0970e6c5de7ee",
+      "sha256": "b9a08f718dc5bf4cd0bf2a7a3faaf0e824880e9b65c7c20e4214db24ae386610",
+      "bytes": 176555
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/INDEPENDENT_REVIEW.md",
+      "mode": "100644",
+      "git_blob": "6f8536e1217f8daec883447c8cf277a80fc97e6d",
+      "sha256": "17f56e860bb57987179c0585dd5742caf00cd97816b3bd56806b26bd033fb679",
+      "bytes": 1555
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/INITIAL_COMPOSITION.json",
+      "mode": "100644",
+      "git_blob": "2e5be8db43d2ce0e48376ea820f75667cf790656",
+      "sha256": "c072e7d4c12dadb881da65cd50a08680992b2d66d814811f056cc9db42972f19",
+      "bytes": 815
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/LOCAL_COMMANDS.json",
+      "mode": "100644",
+      "git_blob": "739fa748536794154e27f7bbe04caeed3af567fe",
+      "sha256": "6a19c8876f869cb7d1f3f886fea2f9ce1f20d80292374dea81451d2b49ea8897",
+      "bytes": 117717
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/LOCKED_GRAPH.json",
+      "mode": "100644",
+      "git_blob": "946a98efc505ebc18daf53afddac5f8df90cba59",
+      "sha256": "029c700ab28f35f13715723706989fc5f96b02da837bebc7b2a6e3aebdc376c5",
+      "bytes": 260468
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/MARKDOWN_LINKS.json",
+      "mode": "100644",
+      "git_blob": "b9adab0a2b9f702e08372ae651e2db7559e79a73",
+      "sha256": "88373cb40a60a85f4d4ca8ed634ffc6ba5c282242bf81a8220395ac5ee219e6f",
+      "bytes": 51398
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/NATIVE_INPUTS_AT_EXECUTION.json",
+      "mode": "100644",
+      "git_blob": "9999188df2af699f74bf83d1e78c840561c94f96",
+      "sha256": "3c62742701f58f77a635ea0f9c906fe39d8726f3f75030725cd6c742c00d3986",
+      "bytes": 173541
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/NEGATIVE_MUTATION.json",
+      "mode": "100644",
+      "git_blob": "9e7ac196fce530d1e0916400cd999a51311dbe0e",
+      "sha256": "f093907cb4b5e8e172a5aab48edadad4f85580c02021e10ecc804f974f4f1e69",
+      "bytes": 806
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/ORIGINAL_HOSTED_FAILURE.json",
+      "mode": "100644",
+      "git_blob": "1f6c803d85297fbaa6b9e5856a904d162a9ac841",
+      "sha256": "0deab03ab227276d0b6b721403a8f1dbe1330a25652f49ea12217744603f73a4",
+      "bytes": 738
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/README.md",
+      "mode": "100644",
+      "git_blob": "ff9244a31deb0e864acff1e22fa8204ce0d3b201",
+      "sha256": "b0abde3632db1e4a6af20f227bbe30af6aa416d6744a8fcbcfdbb036e20b1a33",
+      "bytes": 7014
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/RETAINED_TESTS.json",
+      "mode": "100644",
+      "git_blob": "456eebfd4eea354f9b42b4cf0fa8f2f0fffda94c",
+      "sha256": "bc7b659f851ffb20c3f075d8408ba119912dc7687055d630d767794c73e5d6d1",
+      "bytes": 2836
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/TOOLCHAIN.json",
+      "mode": "100644",
+      "git_blob": "cf0d599c87c9451815a20edf6d924db018455fb5",
+      "sha256": "a4b60b79d0fe5d23d6cab5ed506b5e28213cc063fd8a81001b257bc6799aedf6",
+      "bytes": 581
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/WHITESPACE_CHECK.json",
+      "mode": "100644",
+      "git_blob": "e985740f9bae4643623a8b92f2c2ce0cb9fe9d61",
+      "sha256": "fa4145fee168d6623f23c8389f717426ad12f197394fd72b44e1dcceb5211f75",
+      "bytes": 644
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/candidate-before-comment.rs.txt",
+      "mode": "100644",
+      "git_blob": "c942b9ac09abc4fd74d85842f9dd34bb6199f24e",
+      "sha256": "39a4feba4d8f5255e62c9141a0b150b87600517067ee308095de456655fb91eb",
+      "bytes": 45694
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/negative-mutant.rs.txt",
+      "mode": "100644",
+      "git_blob": "78faf39168efe9a2352fa08d4f53e086062f0f69",
+      "sha256": "a3957f72ec655e7ac5008954b8b526578a2a28184c694286d81019591df5fa13",
+      "bytes": 45365
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/original-tests.rs.txt",
+      "mode": "100644",
+      "git_blob": "1b0e61bc5acaebbcd095fd6fbd7ae1eb7cd1e233",
+      "sha256": "c36a09c69b05c143653b5081f3ef8c35d172e732721d283edb33366043313cfd",
+      "bytes": 41759
+    },
+    {
+      "path": "qualification/cell-rendezvous-readiness-20261103/parent-format-only.patch.json",
+      "mode": "100644",
+      "git_blob": "47c534abfe637e35772aac83c8584b23b5c232a5",
+      "sha256": "989636564ebf1f868fcb9968e284e09304278839bc0c1dd37265f8f0f743095e",
+      "bytes": 1656
+    },
+    {
+      "path": "scripts/ci/native_test_runner.py",
+      "mode": "100644",
+      "git_blob": "8ce1715e023b16909e4b313252550a5636da2163",
+      "sha256": "da8af869bd1897ff40ab704511b7f8bcc77d47d98e1311eaff3e0b01604638c5",
+      "bytes": 2237
+    },
+    {
+      "path": "scripts/ci/run_architecture_delivery_native.py",
+      "mode": "100644",
+      "git_blob": "8ff42f879d23b35cdb41d40a3a338206513576ea",
+      "sha256": "3cb4518b9eaa24bc16d300f2ebb0e8e6986346ccd219a19079b728d4634789c2",
+      "bytes": 16163
+    },
+    {
+      "path": "scripts/ci/run_from_zero_host.py",
+      "mode": "100644",
+      "git_blob": "b2b8a981cc788c692b4d95d3d231b8bd16a99a15",
+      "sha256": "f1b83fe95f481fbdb8d3fa393c72ed2c1168bf355b95e1efb983d93c6b6c3a64",
+      "bytes": 22883
+    },
+    {
+      "path": "scripts/ci/run_history_native.py",
+      "mode": "100644",
+      "git_blob": "bd6138ef9b8fd30e2bf1d890cd123970521f16b5",
+      "sha256": "da3682248b1a69db045fbbc2727507392b6f093a93092d604ba47ce01daaff4b",
+      "bytes": 21410
+    },
+    {
+      "path": "scripts/ci/rust_baseline_shards.py",
+      "mode": "100644",
+      "git_blob": "bb23b0816af871634cd180b3368117a7de08c068",
+      "sha256": "5755f515491b4a19ef4e285eafc983ae208cf67bcdfb8e09991f532f118fda14",
+      "bytes": 9462
+    },
+    {
+      "path": "scripts/ci/test_architecture_delivery_host.py",
+      "mode": "100644",
+      "git_blob": "b6b51b234bfb60519bd82228f315a29560fa0c24",
+      "sha256": "c90e2df09a4e54aa2a38f8de9005c7e17b50fea1fd4007b9c9f19137fabebd46",
+      "bytes": 13730
+    },
+    {
+      "path": "scripts/ci/test_rust_baseline_shards.py",
+      "mode": "100644",
+      "git_blob": "7c1dbfa17911f8d7fc164cd8221394c50b26ac0f",
+      "sha256": "d54ff8960663ee8f73c6520b98830bf6ce5d109e5b7ec25064b03a87ab679efb",
+      "bytes": 10655
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs",
+      "mode": "100644",
+      "git_blob": "6a9660b4cd43fcb480a6f6859b01f60eff766312",
+      "sha256": "016f15c41972bfa560383de9876d79b3964ec41776220c1d7f2f376525e51ab9",
+      "bytes": 45766
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import_deadline_tests.rs",
+      "mode": "100644",
+      "git_blob": "73e5d3d02611833848409254fc1b37452542e463",
+      "sha256": "d9565603de428d2b8f771cf1c35bb9cd1b33ac01abf78db6f094d034a2b22d2f",
+      "bytes": 7756
+    }
+  ]
+}

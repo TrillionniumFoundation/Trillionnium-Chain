@@ -1,0 +1,28 @@
+{
+  "whole_composition": {
+    "argv": [
+      "git",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "exit_code": 2,
+    "stdout": "qualification/architecture-fixed-host-20261103/cargo-invocation-control/command.log:10: new blank line at EOF.\n",
+    "stderr": ""
+  },
+  "historical_log_preserved_exactly_from_second_parent": true,
+  "all_other_changed_paths": {
+    "argv": [
+      "git",
+      "diff",
+      "--cached",
+      "--check",
+      "--",
+      ".",
+      ":(exclude)qualification/architecture-fixed-host-20261103/cargo-invocation-control/command.log"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+}

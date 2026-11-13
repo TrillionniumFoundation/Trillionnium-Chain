@@ -1,0 +1,57 @@
+{
+  "schema": "trnm.cell-retention-ack-deadline-independent-review.v1",
+  "reviewer": "hepta_blockers",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "source_commit": "44d3def32f515b98fc41f074fe1b88e97f046191",
+  "base_commit": "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029",
+  "inputs": [
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+      "before": {
+        "git_blob_sha": "4208027258d124deb0ea1b4a9fea6d60ec81dea1",
+        "sha256": "60b64f4f4ea28ef8b43f1e9680bef06d0294c7fd99800600420ad56d569f86ad",
+        "bytes": 57337
+      },
+      "after": {
+        "git_blob_sha": "02a4b76bca4de77f1fd45e914f7e84610f5315e8",
+        "sha256": "275a28259b98a0d2b5fe9948908ad86a7f10c1072b187e0927f10b3eff1d4629",
+        "bytes": 60429
+      }
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/retention/tests.rs",
+      "before": {
+        "git_blob_sha": "8b35329519e7014104d6cb155481142cd5bb5610",
+        "sha256": "7225d6c7428c1e7b0a9d2c98449d812e466ce315f74f3ce787c6c7cd0bfe2af2",
+        "bytes": 48022
+      },
+      "after": {
+        "git_blob_sha": "e0a8163edbb451d68605bf26e8544ca1a42dc3fa",
+        "sha256": "8c72f6a39a0f8fbf853916a48e4b481b3f9c31441b0e2e45043d356e7500ff03",
+        "bytes": 55653
+      }
+    }
+  ],
+  "scope": "Only the retention ACK/reconciliation production delta and appended tests, plus the relevant existing OperationControl, repair call sites, payload verification, row validation and retirement transaction. Other files in the full 44d integration were not reviewed here.",
+  "conclusion": "No confirmed new blocker found in this narrow static review.",
+  "findings": [
+    "The original absolute deadline is carried through one sticky OperationControl. A checkpoint/deadline refusal from the first payload verification returns directly; a non-control payload error is followed by another deadline check before any initial debit or copy.",
+    "The initial debit is durably written before payload copy. The ACK write and readback keep the same operation deadline; this does not renew the budget after copying.",
+    "The added write transaction is IMMEDIATE. It bounds writer acquisition and COMMIT busy time by min(original busy timeout, remaining original time), revalidates schema inside the transaction, and rereads the prior obligation there.",
+    "The prior-row constraints retain contract/offset/reservation identity, prevent status or initial-byte rewind, and require repair bytes unchanged. Existing repair callers reach this ACK write after their separate durable repair charge, so the equality check does not itself remove their intended increment.",
+    "Cancellation after COMMIT returns an uncertain outcome without undoing the durable debit/ACK. The complete committed row is reread and checked before an ordinary success.",
+    "The original busy timeout is restored on the ordinary Result success/error paths after the transaction closure. As with the existing retirement helper, a restoration error propagates and can supersede the previous error; panic/process death are not a finally guarantee.",
+    "The six appended tests cover three writer-delay paths, schema substitution before copy/debit, post-COMMIT cancellation with cold retry, and a stale ACK's refusal to rewind retirement. Existing test bytes are retained as an exact prefix."
+  ],
+  "checks": {
+    "old_tests_exact_prefix": true,
+    "deadline_constants_relaxed": false,
+    "native_or_sql_executed_by_reviewer": false,
+    "source_modified_by_reviewer": false
+  },
+  "boundaries": [
+    "Cooperative checkpoints and SQLite busy limits are not hard preemption of every filesystem/SQLite call; initial metadata reads and a running kernel operation can overrun before the next check.",
+    "This review does not establish the full Cell availability/failure-domain gate, all legacy retention paths, exact combined CI success, or other 44d changes.",
+    "Actual original native controls and their source-bound qualification remain required."
+  ]
+}

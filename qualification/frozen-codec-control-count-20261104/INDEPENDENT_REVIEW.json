@@ -1,0 +1,38 @@
+{
+  "schema": "chain.w1.history-count.source-review.v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "base_commit": "1bac21f81fc8be67a566dddfed4da6b2fd87ad30",
+  "inputs": [
+    {
+      "role": "old workflow",
+      "git_blob": "a2e0f3586abf676b03c12b26597261aac35438b9",
+      "bytes": 25127,
+      "sha256": "62fdee39880003f50853f3c00c8278ebbeca5d852bba4d96b8a106003fb43444"
+    },
+    {
+      "role": "owner workflow",
+      "git_blob": "aa9d7597904d2d0bec32a502160c46ae255381be",
+      "bytes": 25524,
+      "sha256": "fa217ee369629c19431de4f5b9406d1b72f314cc4208864c428247d280d32633"
+    },
+    {
+      "role": "unchanged test source",
+      "git_blob": "c75147a7ec1c51fc402bb5bf2c9a88994b2a1ff7",
+      "bytes": 64314,
+      "sha256": "76f8cb72599e4780766179da9d2705768f2d24d6383f036a621d496c3958ed2b"
+    }
+  ],
+  "mechanical_reverse_equal": true,
+  "findings": [],
+  "observations": [
+    "Only the expected History passed count changes from 27 to 28; the exact existing ignored count remains 1.",
+    "The only added five lines require the exact full Rust codec selector to appear once with an ok result.",
+    "Both existing final-resource deadline selectors, all original commands, matrix entries and budgets are byte-identical after reversing those two edits.",
+    "The codec selector corresponds to exactly one existing #[test] function in the unchanged Rust blob."
+  ],
+  "boundaries": [
+    "This is a narrow read-only source review; no CI, Rust execution, artifact, corpus-pin update or whole-campaign acceptance was verified here.",
+    "The previously reported original 28-pass/1-ignored job is peer evidence, not independently replayed by this source review."
+  ],
+  "executions": 0
+}

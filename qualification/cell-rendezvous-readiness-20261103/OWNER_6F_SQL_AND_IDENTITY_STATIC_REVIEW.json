@@ -1,0 +1,71 @@
+{
+  "schema": "trnm-sql-commit-and-identity-lift-static-review-v1",
+  "reviewed_commits": [
+    "056303b5193809597d4b5ec1f075dfc5109fe888",
+    "41dd661222285728720b97519da1f5a024c7716b",
+    "6f458c4fbf07a0a44d7d7a6f451aa960c1b0a029"
+  ],
+  "read_inputs": [
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic.rs",
+      "blob": "ba1ebbe9e2b8f8b4d38c0d03037647d35f8b9b3b",
+      "sha256": "00690218ed29e02e0ab428d421ce35ebd851bd4a71267732cad2ef531c5544e9"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "blob": "d137e38fc08738f4e6d6b81712f7c7423624a8c2",
+      "sha256": "3af5e48fcd8084fd687265a5f3407aaa0258de6453d252597de03ff58efe0889"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype.rs",
+      "blob": "45c458780452e82c2e59ac34ae8a200a167a6647",
+      "sha256": "2edad490035fa2193e4222e00048e8f847bde8bd61b10b9f02c6148abd686d7f"
+    }
+  ],
+  "additional_reviewed_diffs": [
+    {
+      "path": ".github/workflows/pon-branch-encoding-acceptance.yml",
+      "blob": "8a88f024f9947c59c945aa2d3011c68f00fb2e96"
+    },
+    {
+      "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+      "blob": "0cfbce49376fc0c3147f9b7558c8101ac3a24be4"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/account_archive_prototype/native_store.rs",
+      "blob": "d137e38fc08738f4e6d6b81712f7c7423624a8c2"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "blob": "900b9dc8034856c6ee04caf0e1fd99bdbda6fc76"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/history_arithmetic/tests.rs",
+      "blob": "27b6342619ee051c57944de88b4bbab33ff4627c"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/src/store/reorg_cancellation.rs",
+      "blob": "435d0b6a113b42660fc6a2365fbf12881a56e022"
+    }
+  ],
+  "findings": [
+    "Four authenticated-backend commit call sites retain the same Transaction::commit invocation and propagate its original Result after recording telemetry. No new cancellation fence or retry occurs after durable commit.",
+    "Observation locks are try_lock and no guard spans the commit. Unknown CPU, abandoned/unwinding calls and observation failure are explicit. Under contention the telemetry may have incomplete in-flight accounting and has no consensus/permission authority.",
+    "Wall intervals include observer/clock overhead and SQLite commit API failure cleanup; they are neither isolated SQL-statement nor physical fsync timing.",
+    "Node::lift at equal requested/current depth iterates an empty range and returns node.digest. The new early return bypasses only arithmetic-cache lookup/insertion for that identity. It does not skip SQL node loading, graph validation or a cancellation callback.",
+    "Original identity-loop assertions remain. Additional one-hash inputs exercise the same 8192-entry cache capacity and original clear-on-full behavior.",
+    "The subsequent store/reorg/test-file patch changes formatting around the same expressions; no string literal, result propagation, resource parameter or runtime assertion was changed."
+  ],
+  "limits": [
+    "Read-only source/diff review, no local parser/compiler/native/Host execution.",
+    "The independent 651b review applies specifically to 056→41dd; the identity-lift follow-up is separately identified.",
+    "Cold scoped reuse can retain all original checks without implying every existing sealed-frontier scoped traversal reads every SQL subtree."
+  ],
+  "qualification": {
+    "static_review_no_confirmed_new_blocker": true,
+    "native": false,
+    "host": false,
+    "performance": false,
+    "production": false
+  }
+}

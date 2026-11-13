@@ -1,0 +1,203 @@
+{
+  "active_owner_exact_files": {
+    ".github/workflows/trnm-required-baseline.yml": {
+      "mode": "100644",
+      "sha": "beff089827ed0c138edb8b653026a9be7cc1f4a6",
+      "type": "blob"
+    },
+    "config/pon/pq-cross-branch-corpus-v1.json": {
+      "mode": "100644",
+      "sha": "75fa9f3ed9bf52c26b140b8bd6ebac9d809c23f8",
+      "type": "blob"
+    },
+    "scripts/ci/public_fixture_host_lease.py": {
+      "mode": "100644",
+      "sha": "69ecbe1183ef9e6123d3014376f9c50a3f43a063",
+      "type": "blob"
+    },
+    "scripts/ci/run_from_zero_host.py": {
+      "mode": "100644",
+      "sha": "b7d6c49f3f21a946ed5dd20147205dcee9b0f17b",
+      "type": "blob"
+    },
+    "scripts/ci/run_history_native.py": {
+      "mode": "100644",
+      "sha": "fd305e7735a9bf4969bdf7166b435dfeed46b0f2",
+      "type": "blob"
+    },
+    "scripts/ci/run_public_fixture_native.py": {
+      "mode": "100644",
+      "sha": "253fbc7806b6631f5a29220ea42b0711f853f278",
+      "type": "blob"
+    },
+    "scripts/ci/rust_baseline_shards.py": {
+      "mode": "100644",
+      "sha": "1721caeab93868a5c0f3c1fe0ce4dbb7f0f3dd49",
+      "type": "blob"
+    },
+    "scripts/ci/test_rust_baseline_shards.py": {
+      "mode": "100644",
+      "sha": "6d6cf3c4720a8e0e862639c2755b67cfcab742d6",
+      "type": "blob"
+    },
+    "trillionnium/crates/trnm-pon-node/tests/support/current_elf_host.rs": {
+      "mode": "100644",
+      "sha": "243f28fca0fb179927a0fabedc8f480bebfeffb8",
+      "type": "blob"
+    }
+  },
+  "actual_fixed_host_provisioned": false,
+  "added_paths_before_new_receipts": [
+    "qualification/architecture-fixed-host-20261103/INDEPENDENT_REVIEW.md",
+    "qualification/architecture-fixed-host-20261103/README.md",
+    "qualification/architecture-fixed-host-20261103/REPRODUCTION.json",
+    "qualification/architecture-fixed-host-20261103/cargo-invocation-control/Cargo.lock",
+    "qualification/architecture-fixed-host-20261103/cargo-invocation-control/Cargo.toml",
+    "qualification/architecture-fixed-host-20261103/cargo-invocation-control/capture.py",
+    "qualification/architecture-fixed-host-20261103/cargo-invocation-control/command.log",
+    "qualification/architecture-fixed-host-20261103/cargo-invocation-control/invocation.json",
+    "qualification/architecture-fixed-host-20261103/cargo-invocation-control/tests/architecture_delivery_compare.rs",
+    "qualification/architecture-fixed-host-20261103/ci-contract.log",
+    "qualification/architecture-fixed-host-20261103/diff-check.log",
+    "qualification/architecture-fixed-host-20261103/final-check-0.log",
+    "qualification/architecture-fixed-host-20261103/original-failure-derived.json",
+    "qualification/architecture-fixed-host-20261103/original-rust-shard.json",
+    "qualification/architecture-fixed-host-20261103/original-rust-shard.sh",
+    "qualification/architecture-fixed-host-20261103/original-source.json",
+    "qualification/architecture-fixed-host-20261103/preflight.log",
+    "qualification/architecture-fixed-host-20261103/test_architecture_delivery_host.log",
+    "qualification/architecture-fixed-host-20261103/test_rust_baseline_shards.log",
+    "qualification/cell-rendezvous-readiness-20261103/COMPOSITION.json",
+    "qualification/cell-rendezvous-readiness-20261103/FINAL_INPUT_BINDING.json",
+    "qualification/cell-rendezvous-readiness-20261103/INDEPENDENT_REVIEW.md",
+    "qualification/cell-rendezvous-readiness-20261103/INITIAL_COMPOSITION.json",
+    "qualification/cell-rendezvous-readiness-20261103/LOCAL_COMMANDS.json",
+    "qualification/cell-rendezvous-readiness-20261103/LOCKED_GRAPH.json",
+    "qualification/cell-rendezvous-readiness-20261103/MARKDOWN_LINKS.json",
+    "qualification/cell-rendezvous-readiness-20261103/NATIVE_INPUTS_AT_EXECUTION.json",
+    "qualification/cell-rendezvous-readiness-20261103/NEGATIVE_MUTATION.json",
+    "qualification/cell-rendezvous-readiness-20261103/ORIGINAL_HOSTED_FAILURE.json",
+    "qualification/cell-rendezvous-readiness-20261103/OWNER_8A74_MERGE.json",
+    "qualification/cell-rendezvous-readiness-20261103/PIN_CORRECTION.json",
+    "qualification/cell-rendezvous-readiness-20261103/README.md",
+    "qualification/cell-rendezvous-readiness-20261103/RETAINED_TESTS.json",
+    "qualification/cell-rendezvous-readiness-20261103/SOURCE_MANIFEST.json",
+    "qualification/cell-rendezvous-readiness-20261103/TOOLCHAIN.json",
+    "qualification/cell-rendezvous-readiness-20261103/WHITESPACE_CHECK.json",
+    "qualification/cell-rendezvous-readiness-20261103/candidate-before-comment.rs.txt",
+    "qualification/cell-rendezvous-readiness-20261103/negative-mutant.rs.txt",
+    "qualification/cell-rendezvous-readiness-20261103/original-tests.rs.txt",
+    "qualification/cell-rendezvous-readiness-20261103/parent-format-only.patch.json"
+  ],
+  "all_other_owner_paths_exact": true,
+  "cell_sha256": "016f15c41972bfa560383de9876d79b3964ec41776220c1d7f2f376525e51ab9",
+  "combined_small_control_executions": 296,
+  "composition_tree_before_new_receipts": "bb05c1966164628e0ada898344b5856d83093789",
+  "first_parent": "4a32fe3418ea9b6eb18a44c93d8a282fa83fb426",
+  "historical_helper_source_reachable_at": "4a32fe3418ea9b6eb18a44c93d8a282fa83fb426",
+  "native_new_composition_executed": false,
+  "only_differing_rust_source": "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs",
+  "original_service_and_performance_qualified": false,
+  "owner_parent": "12171edc890df1611bf68503038bfad3d66a5a88",
+  "owner_paths_checked": 7644,
+  "owner_paths_differing": [
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs"
+  ],
+  "owner_paths_removed": [],
+  "owner_tree": "f1dbe225a2a8fe22e53e755c666ca11d1cfb04e3",
+  "retired_active_helpers": {
+    "scripts/ci/native_test_runner.py": {
+      "mode": "100644",
+      "sha": "8ce1715e023b16909e4b313252550a5636da2163",
+      "type": "blob"
+    },
+    "scripts/ci/run_architecture_delivery_native.py": {
+      "mode": "100644",
+      "sha": "8ff42f879d23b35cdb41d40a3a338206513576ea",
+      "type": "blob"
+    },
+    "scripts/ci/test_architecture_delivery_host.py": {
+      "mode": "100644",
+      "sha": "b6b51b234bfb60519bd82228f315a29560fa0c24",
+      "type": "blob"
+    }
+  },
+  "review": {
+    "independent_lease_and_launcher_review": {
+      "all_reviewed_inputs_equal_current_composition": true,
+      "bytes": 3007,
+      "executed": false,
+      "file": "OWNER_12171_INDEPENDENT_REVIEW.json",
+      "input_files": 5,
+      "result": "no_new_blocking_defect_found_in_reviewed_scope",
+      "sha256": "00f0f7683e880aa9b019724179dea4b44049bc0b49cb0b813cbf4ae2134ff78f"
+    },
+    "own_scope": "Rust current-ELF shim, adopted run_from_zero_host delta and active overlap removal; source inspection only, no actual Host qualification"
+  },
+  "schema": "chain-owner-host-framework-supersession-v1",
+  "scope": "DRAFT / SHADOW_ONLY / DENY_ALL / HOLD_NO_GO",
+  "small_control_execution_counts": {
+    "boundary": 16,
+    "claim": 22,
+    "corpus": 34,
+    "driver": 104,
+    "host": 78,
+    "integrity": 34,
+    "shard": 8
+  },
+  "source_bound_control_receipts": {
+    "OWNER_12171_CONTROLS.json": {
+      "bytes": 452969,
+      "sha256": "0e3c56e5678002debf26e1a1f29e161a33640a81fb78c4b95bfc077be4a97cb9"
+    },
+    "OWNER_12171_HOST_CONTROLS.json": {
+      "bytes": 140120,
+      "sha256": "89a6210fd3873077ce84b5c60f3910d632965b3d52aa84358021498b6eb49303"
+    },
+    "owner-12171-controls/run_controls.py": {
+      "bytes": 3799,
+      "sha256": "637a4c04f23da3ab0aeea275b1fe86b57c218e04e8a0a59ab9e99689f7f8284b"
+    },
+    "owner-12171-controls/run_host_control.py": {
+      "bytes": 1746,
+      "sha256": "3eafb018098e96077ab2ff808f2418fdef329bafb940f1237c3d56aa66ff5d7d"
+    }
+  },
+  "sparse_import_negative_retained": {
+    "first": {
+      "argv": [
+        "python3",
+        "scripts/ci/test_from_zero_host_ci.py",
+        "-v"
+      ],
+      "elapsed_ns": 155990262,
+      "exit_code": 1,
+      "stderr": "Traceback (most recent call last):\n  File \"/tmp/chain-cell-startup-current-20261103/scripts/ci/test_from_zero_host_ci.py\", line 17, in <module>\n    import run_from_zero_host as host\n  File \"/tmp/chain-cell-startup-current-20261103/scripts/ci/run_from_zero_host.py\", line 27, in <module>\n    import run_public_fixture_native as architecture\n  File \"/tmp/chain-cell-startup-current-20261103/scripts/ci/run_public_fixture_native.py\", line 31, in <module>\n    import architecture_compare as business\nModuleNotFoundError: No module named 'architecture_compare'\n",
+      "stderr_sha256": "d16640adb1d87af65e4511e43f3ac32ee56424a1ecf620ea11518fc60b04dc36",
+      "stdout": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "second": {
+      "actual_fixed_host_provisioned": false,
+      "argv": [
+        "python3",
+        "scripts/ci/test_from_zero_host_ci.py",
+        "-v"
+      ],
+      "cwd": "/tmp/chain-cell-startup-current-20261103",
+      "elapsed_ns": 138424917,
+      "exit_code": 1,
+      "native_business_executed": false,
+      "passed": false,
+      "schema": "chain-original-host-controls-after-exact-sparse-hydration-v1",
+      "source_unchanged": true,
+      "stderr": "Traceback (most recent call last):\n  File \"/tmp/chain-cell-startup-current-20261103/scripts/ci/test_from_zero_host_ci.py\", line 20, in <module>\n    from test_architecture_host_ci import ArchitectureAdapterControls\n  File \"/tmp/chain-cell-startup-current-20261103/scripts/ci/test_architecture_host_ci.py\", line 18, in <module>\n    from test_architecture_compare import simulated_report\nModuleNotFoundError: No module named 'test_architecture_compare'\n",
+      "stderr_sha256": "3e3487853c066653e600637f98fbd82235168c237553f71984cab5f9d634a02e",
+      "stdout": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "second_input_map_equals_positive_except_one_new_module": true,
+    "second_input_map_sha256": "fbea1c894f47d1a5be8335dd6dbfe06da960a42a00df701dceebb3ea1bd23efc"
+  }
+}

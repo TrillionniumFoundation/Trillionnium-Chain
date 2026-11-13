@@ -1,0 +1,69 @@
+{
+  "schema": "trnm-branch-encoding-count-correction-v1",
+  "observations": [
+    {
+      "job_id": 126404257659,
+      "architecture": "x86_64",
+      "source": "44d3def32f515b98fc41f074fe1b88e97f046191",
+      "run_id": 41778472916,
+      "log_bytes": 212060,
+      "log_sha256": "89d63e4c19ba98ed0ea1b1163105389fe472c39cc6ddaa3788ecab1614714daf",
+      "test_rows": [
+        "test account_archive_prototype::native_store::tests::native_account_delta_credit_before_debit_preserves_maximum_aggregate ... ok",
+        "test account_archive_prototype::native_store::tests::native_complete_account_root_arithmetic_cache_matches_uncached_growth_and_removal ... ok",
+        "test account_archive_prototype::native_store::tests::native_empty_constants_match_wire_and_keep_owned_copy_isolation ... ok",
+        "test account_archive_prototype::native_store::tests::native_empty_constants_paired_cost_observation ... ignored, explicit constant-table observation; not full-node performance",
+        "test account_archive_prototype::native_store::tests::native_empty_constants_parallel_callers_keep_independent_values ... ok",
+        "test account_archive_prototype::native_store::tests::native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity ... ok",
+        "test account_archive_prototype::native_store::tests::native_lift_cache_collisions_keep_exact_math_and_bounded_replacement ... ok",
+        "test account_archive_prototype::native_store::tests::native_lift_cache_complete_graph_cost_observation ... ignored, explicit bounded-cache complete-graph diagnostic; not a business SLO"
+      ],
+      "summaries": [
+        "test result: ok. 6 passed; 0 failed; 2 ignored; 0 measured; 982 filtered out; finished in 0.09s"
+      ],
+      "original_job_conclusion": "failure",
+      "failure_reason": "Original complete module ran 6 passed / 2 ignored; the following stale workflow grep required 5 passed / 1 ignored."
+    },
+    {
+      "job_id": 126404257700,
+      "architecture": "aarch64",
+      "source": "44d3def32f515b98fc41f074fe1b88e97f046191",
+      "run_id": 41778472916,
+      "log_bytes": 211928,
+      "log_sha256": "29107863cbc15cfc8d512d82c632df55052fb6beb1da396e1a719f05a77c891a",
+      "test_rows": [
+        "test account_archive_prototype::native_store::tests::native_account_delta_credit_before_debit_preserves_maximum_aggregate ... ok",
+        "test account_archive_prototype::native_store::tests::native_complete_account_root_arithmetic_cache_matches_uncached_growth_and_removal ... ok",
+        "test account_archive_prototype::native_store::tests::native_empty_constants_match_wire_and_keep_owned_copy_isolation ... ok",
+        "test account_archive_prototype::native_store::tests::native_empty_constants_paired_cost_observation ... ignored, explicit constant-table observation; not full-node performance",
+        "test account_archive_prototype::native_store::tests::native_empty_constants_parallel_callers_keep_independent_values ... ok",
+        "test account_archive_prototype::native_store::tests::native_lift_arithmetic_cache_binds_every_input_and_keeps_fixed_capacity ... ok",
+        "test account_archive_prototype::native_store::tests::native_lift_cache_collisions_keep_exact_math_and_bounded_replacement ... ok",
+        "test account_archive_prototype::native_store::tests::native_lift_cache_complete_graph_cost_observation ... ignored, explicit bounded-cache complete-graph diagnostic; not a business SLO"
+      ],
+      "summaries": [
+        "test result: ok. 6 passed; 0 failed; 2 ignored; 0 measured; 982 filtered out; finished in 0.07s"
+      ],
+      "original_job_conclusion": "failure",
+      "failure_reason": "Original complete module ran 6 passed / 2 ignored; the following stale workflow grep required 5 passed / 1 ignored."
+    }
+  ],
+  "frozen_owner_count_fix": {
+    "commit": "a10c39025cdc03d3265b031d6547b11e0350da2c",
+    "parent": "44d3def32f515b98fc41f074fe1b88e97f046191",
+    "workflow_blob": "73e995142a6363d5e9c7eea52915e4dd5b303717",
+    "corpus_blob": "0ba939ce56e952d929a091213927b2d5a162ec96",
+    "other_paths_changed": 0
+  },
+  "candidate_strengthening": {
+    "workflow_blob": "ebed0cc5d4076974112fc8b09279b1a370c2dc79",
+    "only_added_check": "Exactly one successful native_lift_cache_collisions_keep_exact_math_and_bounded_replacement test line.",
+    "original_module_command_unchanged": true,
+    "original_deadline_25_minutes_unchanged": true,
+    "original_matrix_four_cells_unchanged": true,
+    "ignored_tests_remain": 2,
+    "ignored_complete_graph_diagnostic_promoted_to_SLO": false
+  },
+  "native_reexecuted_for_composition": false,
+  "qualification": "PENDING_ORIGINAL_SOURCE_AND_MERGE_JOBS"
+}

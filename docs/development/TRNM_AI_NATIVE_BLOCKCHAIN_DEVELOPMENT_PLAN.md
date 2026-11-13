@@ -9066,6 +9066,7 @@ pass. The initial generated-table drift errors remain recorded alongside the
 subsequent correction; full public and scientific acceptance remains open.
 
 
+<<<<<<< HEAD
 ### 2026-11-03 current PQ admission and verifier composition
 
 Continue existing #698 on top of #688 at
@@ -14489,3 +14490,20 @@ latency/failure distributions; and ordinary Hepta FinalUse/cold recovery. Six
 declared provider names and local successful downloads do not close them. No
 consensus, funding, model-quality, production or whole-chain PQ qualification
 is granted by these component changes.
+=======
+## 2026-11-04 — Frozen 44d owner, retained readiness, and generated fuzz ASM lock
+
+The #699 successor preserves the entire frozen owner `a10c39025cdc03d3265b031d6547b11e0350da2c` tree. Its production source is exactly `44d3def32f515b98fc41f074fe1b88e97f046191`; a10 only corrects the original branch-encoding module count and its corpus pin. The ordered parents are the previous #699 head `c806dd9ab640e87ca3fc507a8aeada53c2053990` and a10. The existing rendezvous readiness test overlay remains `6a9660b4cd43fcb480a6f6859b01f60eff766312`. No owner ref, main ref, production deadline, resource limit, or ignored diagnostic is changed.
+
+The independent fuzz workspace still had the old lock after the owner enabled SHA-2 ASM on Linux x86_64/aarch64. The actual pinned `nightly-2026-10-01` command `cargo fetch --locked --manifest-path tests/fuzz/Cargo.toml` failed with exit 101 on the old bytes. In source `2c5349cb785d83e007b06c7af4ab1262277ad870`, original run 41779987720 / job 126409090815 then ran ordinary Cargo generation, the identical locked command (exit 0), and offline locked metadata (exit 0). The actual generated lock is Git blob `3ec34f1a2e3ebc54399b1ee8e2cef140186d7d08`, 33,605 bytes, SHA256 `8a76c46560cea2f973f1a40cbbaf32f12e542f3b6c963a1061fb01dce045de4d`. The 146-to-147 package transition contains only sha2-asm 0.6.4 and the sha2 dependency edge; all other 145 package records are unchanged. Eight graph controls passed. This experiment compiled no package tests and ran no sanitizer fuzz mutations.
+
+Original 44d branch-encoding run 41778472916 produced six successful native-store tests and two ignored diagnostics on both x86_64 job 126404257659 and aarch64 job 126404257700, then failed its stale 5/1 grep. The owner a10 6/2 correction is adopted. The composition additionally requires exactly one successful line for the new collision/replacement test, while preserving the entire original module command, four-cell matrix, 25-minute deadline, and two ignored diagnostics. The corresponding workflow and generated fuzz lock corpus pins are updated to their exact new bytes; all 384 corpus pins and 20 original inline workflow pins were checked against the composed tree.
+
+The new independent `chain-published-fuzz-lock.yml` job first runs the original locked fetch on the exact published head with a fresh Cargo home, requires unchanged lock bytes, and checks offline metadata. It does not regenerate a lock or replace the original complete quality/fuzz gate. This published-source result is pending at commit time.
+
+The DA ACK/deadline independent review is bound to the two exact 44d source files and finds no confirmed blocker in its narrow static scope. The composing agent also read the exact eight-way arithmetic cache, PQ cold-recovery, ASM selection, and new test inventory. The separate eight-way cache peer review is pending; the earlier identity-lift review is not reused for it. All owner evidence and original failures remain in history. No local preflight or native execution was possible in the composing environment; actual hosted preflight and original native gates remain required.
+
+The previous c806 original artifacts were independently read back in run 41777955458 / job 126402598642 and durably checkpointed at `8b30c42f783a0d2c1d7148989ecd314a6a8ea532`. They retain 3/27 planned campaign confirmations, 0/18 pressure confirmations, and 0/6 original four-second root passes. Eight c806 CPU job statuses are successful, but they do not qualify this successor or the protocol/DA/performance gates. Nested Host costs and SQL observation samples are not added together or represented as a full business-cost proof.
+
+Exact source readbacks, the actual generator log, original branch-count failure logs, peer review, commands, hashes, and composition boundaries are in `qualification/frozen-44d-lock-composition-20261104/`. The new source remains **DRAFT / SHADOW_ONLY / DENY_ALL / HOLD_NO_GO** until its own original head and prospective-merge gates meet every original requirement.
+>>>>>>> e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29

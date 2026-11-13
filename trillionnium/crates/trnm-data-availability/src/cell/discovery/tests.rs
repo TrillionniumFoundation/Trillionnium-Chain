@@ -5,7 +5,7 @@ use std::{
     path::{Path, PathBuf},
     sync::{
         atomic::{AtomicBool, AtomicU64, Ordering},
-        Arc,
+        mpsc, Arc,
     },
     thread::{self, JoinHandle},
 };
@@ -141,6 +141,18 @@ struct Rendezvous {
 }
 impl Rendezvous {
     fn start(path: &Path, providers: &[SocketAddr]) -> Self {
+        Self::start_after_setup(path, providers, || {})
+    }
+    fn start_after_setup(
+        path: &Path,
+        providers: &[SocketAddr],
+        before_initialize: impl FnOnce() + Send + 'static,
+    ) -> Self {
+        // Only the readiness wait uses this finite setup budget. Shutdown/join
+        // remains synchronous; this is not a hard cancellation limit. Request,
+        // signed TTL and server lifetime parameters remain unchanged.
+        let started = Instant::now();
+        let setup_deadline = started + limits().overall_timeout;
         let listener = TcpListener::bind("127.0.0.1:0").unwrap();
         let address = listener.local_addr().unwrap();
         let addresses = policy(providers);
@@ -148,25 +160,49 @@ impl Rendezvous {
         let owned = directory.clone();
         let shutdown = Arc::new(AtomicBool::new(false));
         let stop = shutdown.clone();
+        let (ready, initialized) = mpsc::sync_channel(1);
         let handle = thread::spawn(move || {
-            serve_cell_rendezvous(
-                &listener,
-                &owned,
-                &addresses,
-                &stop,
-                CellRendezvousLimitsV1 {
-                    request_timeout: Duration::from_millis(250),
-                    lifetime: Duration::from_secs(30),
-                    max_connections: 64,
-                },
-            )
+            let bounds = CellRendezvousLimitsV1 {
+                request_timeout: Duration::from_millis(250),
+                lifetime: Duration::from_secs(30),
+                max_connections: 64,
+            };
+            let initialization: CellResultV1<()> = (|| {
+                before_initialize();
+                bounds.validate()?;
+                addresses.validate()?;
+                listener.set_nonblocking(true)?;
+                Ok(())
+            })();
+            let _ = ready.send(
+                initialization
+                    .as_ref()
+                    .map(|_| ())
+                    .map_err(ToString::to_string),
+            );
+            initialization?;
+            serve_cell_rendezvous(&listener, &owned, &addresses, &stop, bounds)
         });
-        Self {
+        let rendezvous = Self {
             address,
             directory,
             shutdown,
             handle: Some(handle),
-        }
+        };
+        // A bound socket is not proof that its serving thread is initialized.
+        // A real readiness message consumes no connection, signature or record
+        // slot, preserving every original count assertion below.
+        let result =
+            initialized.recv_timeout(setup_deadline.saturating_duration_since(Instant::now()));
+        eprintln!(
+            "cell_discovery phase=rendezvous_ready elapsed_ns={} outcome={result:?}",
+            started.elapsed().as_nanos()
+        );
+        assert!(
+            matches!(result, Ok(Ok(()))),
+            "rendezvous initialization must finish before use"
+        );
+        rendezvous
     }
     fn stop(mut self) -> CellRendezvousReportV1 {
         self.shutdown.store(true, Ordering::Relaxed);
@@ -181,6 +217,64 @@ impl Drop for Rendezvous {
         }
     }
 }
+
+#[test]
+fn rendezvous_fixture_waits_for_initialization_before_starting_request_budget() {
+    let temp = tempfile::tempdir().unwrap();
+    let path = temp.path().join("delayed-rendezvous");
+    let endpoint = "127.0.0.1:31234".parse().unwrap();
+    let setup_deadline = deadline();
+    let (entered, initializing) = mpsc::sync_channel(1);
+    let (release, released) = mpsc::sync_channel(1);
+    let (returned, returning) = mpsc::sync_channel(1);
+    let owner = thread::spawn(move || {
+        let server = Rendezvous::start_after_setup(&path, &[endpoint], move || {
+            entered.send(()).unwrap();
+            released
+                .recv_timeout(setup_deadline.saturating_duration_since(Instant::now()))
+                .unwrap();
+        });
+        returned.send(server).unwrap();
+    });
+    initializing
+        .recv_timeout(setup_deadline.saturating_duration_since(Instant::now()))
+        .unwrap();
+    // Hold real initialization for one complete original request allowance.
+    // The constructor must not expose an unready endpoint during this interval.
+    let early = returning.recv_timeout(limits().request_timeout);
+    let waited = matches!(early, Err(mpsc::RecvTimeoutError::Timeout));
+    release.send(()).unwrap();
+    let bootstrap = match early {
+        Ok(server) => server,
+        Err(mpsc::RecvTimeoutError::Timeout) => returning
+            .recv_timeout(setup_deadline.saturating_duration_since(Instant::now()))
+            .unwrap(),
+        Err(error) => panic!("rendezvous constructor failed: {error}"),
+    };
+    owner.join().unwrap();
+    assert!(
+        waited,
+        "fixture exposed its endpoint before real initialization"
+    );
+    let addresses = policy(&[endpoint, bootstrap.address]);
+    let value = record(
+        request([11; 32]),
+        endpoint,
+        1,
+        1,
+        wall_now().unwrap().as_secs(),
+    );
+    let published =
+        announce_cell_provider(&value, bootstrap.address, &addresses, limits(), deadline())
+            .unwrap();
+    assert_eq!(published.connection_attempts, 1);
+    assert_eq!(published.received_response_bytes, 41);
+    assert_eq!(bootstrap.directory.usage().unwrap().retained_identities, 1);
+    let served = bootstrap.stop();
+    assert_eq!(served.connections, 1);
+    assert_eq!(served.rejected_requests, 0);
+}
+
 fn fixture(path: &Path) -> (CellStoreV1, CellManifestV1, Vec<u8>, PathBuf) {
     let input = path.join("input");
     let bytes: Vec<_> = (0_u32..4097)
