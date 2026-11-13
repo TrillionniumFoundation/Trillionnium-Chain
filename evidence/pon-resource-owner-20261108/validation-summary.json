@@ -1,0 +1,72 @@
+{
+  "schema": "pon-local-resource-owner-validation-v1",
+  "status": "HOLD_NO_GO",
+  "test_source_commit": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+  "test_source_tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+  "test_source_complete": true,
+  "tracked_entries": 23333,
+  "tracked_bytes": 2380365122,
+  "native_selected_suites": {
+    "owner_core": 23,
+    "scalar_cpu": 60,
+    "root_rejection": 7,
+    "r14_compatibility": 1,
+    "native_packet_observer": 15,
+    "accepted_task_observation": 4,
+    "observer_process_envelope": 4
+  },
+  "native_selected_passed": 114,
+  "native_selected_failed": 0,
+  "native_selected_ignored": 0,
+  "native_gates_passed": 11,
+  "static_gates_passed": 11,
+  "static_test_counts": [
+    43,
+    50,
+    57,
+    151
+  ],
+  "static_tests_passed": 301,
+  "all_workspace_native_tests_executed": false,
+  "workspace_fmt_passed": true,
+  "strict_workspace_all_targets_all_features_clippy_passed": true,
+  "locked_offline_graph": {
+    "source_commit": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+    "argv": [
+      "/home/qq/.cargo/bin/cargo",
+      "metadata",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--all-features",
+      "--format-version",
+      "1"
+    ],
+    "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+    "exit_code": 0,
+    "packages": 181,
+    "workspace_members": 26,
+    "lockfile_sha256": "05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c",
+    "metadata_sha256": "733169a5b8861ae41155fa30b5fd5ed8cd4459605eea03f158bb8e3dccdf9ee2",
+    "versions": {
+      "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+      "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+      "python": "Python 3.14.4",
+      "system_openssl": "3.5.5",
+      "kernel": "Linux 7.0.0-38-generic x86_64 GNU/Linux"
+    },
+    "node_lib_test_opt_level": "3",
+    "node_lib_test_profile_evidence": "../independent-audit.json",
+    "other_artifact_profiles_not_inferred": true
+  },
+  "independent_audit_sha256": "21a91ba9af34852f9df2fcb30cdd3c81165d07c2041879e001098c6828744a38",
+  "physical_resource_bound_qualified": false,
+  "honest_service_bound_qualified": false,
+  "all_entrypoints_shared_owner_qualified": false,
+  "complete_w1_backend_qualified": false,
+  "pq128_qualified": false,
+  "production_activation_qualified": false,
+  "preliminary_failure_records_retained": true,
+  "date_convention": "User-facing work date 2026-11-08 America/New_York; raw executor timestamps retained in UTC."
+}

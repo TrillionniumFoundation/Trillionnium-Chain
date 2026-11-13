@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/check_repository.py"
+  ],
+  "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+  "end_utc": "2026-11-09T02:54:37.253404+00:00",
+  "exit_code": 0,
+  "expected_head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+  "expected_tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+  "identity_after": {
+    "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+    "status": "",
+    "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4"
+  },
+  "index": 4,
+  "name": "repository-markdown",
+  "start_utc": "2026-11-09T02:54:31.073147+00:00",
+  "state": "completed",
+  "stderr": {
+    "bytes": 0,
+    "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/04-repository-markdown.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 307,
+    "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/04-repository-markdown.stdout.log",
+    "sha256": "bbb0eb354d818187e49d5a4f40dd7316b037f99b626a5d1de1d73ccf9620e667"
+  },
+  "wall_ns": 6180167391
+}

@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "python3",
+    "scripts/refresh_distributed_source_inventory.py",
+    "--check"
+  ],
+  "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+  "end_utc": "2026-11-09T02:54:31.046391+00:00",
+  "exit_code": 0,
+  "expected_head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+  "expected_tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+  "identity_after": {
+    "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+    "status": "",
+    "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4"
+  },
+  "index": 3,
+  "name": "source-inventory",
+  "start_utc": "2026-11-09T02:54:31.000074+00:00",
+  "state": "completed",
+  "stderr": {
+    "bytes": 0,
+    "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/03-source-inventory.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 35,
+    "path": "/home/qq/work/chain-rejection-resource-owner-956149-results/c1-static/03-source-inventory.stdout.log",
+    "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+  },
+  "wall_ns": 46199374
+}

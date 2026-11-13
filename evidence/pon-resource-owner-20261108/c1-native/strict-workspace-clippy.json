@@ -1,0 +1,37 @@
+{
+  "name": "strict-workspace-clippy",
+  "argv": [
+    "/home/qq/.cargo/bin/cargo",
+    "clippy",
+    "--manifest-path",
+    "trillionnium/Cargo.toml",
+    "--locked",
+    "--offline",
+    "--workspace",
+    "--all-targets",
+    "--all-features",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/home/qq/work/chain-rejection-resource-owner-956149-20261108",
+  "started_utc": "2026-11-09T03:03:23.140614+00:00",
+  "finished_utc": "2026-11-09T03:04:25.585959+00:00",
+  "wall_seconds": 62.445358108961955,
+  "exit_code": 0,
+  "child_user_cpu_seconds": 110.60179899999997,
+  "child_system_cpu_seconds": 13.304123,
+  "children_maxrss_highwater_kib": 2130756,
+  "source_before": {
+    "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+    "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+    "status": ""
+  },
+  "source_after": {
+    "head": "8fed7514193e06058f4eaf18f362a8fb968ce96f",
+    "tree": "1ebc5d4c252eacb727da67945892a9ae0b8d76c4",
+    "status": ""
+  },
+  "log_bytes": 6163,
+  "log_sha256": "180ec8c00f171d0919d21b6aaa4aba56d62d885ea8c9b31e34f1f421d68434a2"
+}
