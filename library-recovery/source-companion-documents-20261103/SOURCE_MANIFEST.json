@@ -1,0 +1,426 @@
+{
+  "schema": "source-companion-documents-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "repository_private_at_publication": false,
+  "parent_commit": "006495792a738f116f5a4c98ae0f0d81dd2f76b1",
+  "branch": "chore/chain-library-small-source-20261103-gpt6",
+  "candidate_count": 6,
+  "candidate_bytes": 34048,
+  "frozen_candidate_union_size": 6116,
+  "original_candidate_sets_unchanged": true,
+  "preserved_source_executed": false,
+  "reproduction_commands_executed": false,
+  "scientific_or_runtime_acceptance": false,
+  "historical_result_claims_requalified": false,
+  "original_archive_and_history_completeness_proven": false,
+  "all_library_source_synced": false,
+  "eligible_to_clear_library": false,
+  "library_deletion_performed": false,
+  "boundaries": [
+    "DRAFT",
+    "SHADOW_ONLY",
+    "DENY_ALL",
+    "HOLD_NO_GO"
+  ],
+  "candidates": [
+    {
+      "git_blob_sha": "10cde117941f79544f71db9f59cbe18d7f553e34",
+      "sha256": "be866a4cd365062a7bba757b32f7e550519d0ab03cf9d527e07d05dd77e4704c",
+      "bytes": 5868,
+      "relative_path": "objects/10cde117941f79544f71db9f59cbe18d7f553e34.md",
+      "candidate_group": "original-5456",
+      "candidate_types": [
+        "embedded-code-review"
+      ],
+      "original_occurrences": [
+        {
+          "file": "Trillionnium-PQ-gate-v2-offline-kit.zip",
+          "member": "security/pq/README.md",
+          "archive_chain": []
+        }
+      ],
+      "role": "historical source-companion documentation with reproduction commands",
+      "selected_original_occurrence": {
+        "file": "Trillionnium-PQ-gate-v2-offline-kit.zip",
+        "member": "security/pq/README.md",
+        "archive_chain": []
+      },
+      "original_package": {
+        "name": "Trillionnium-PQ-gate-v2-offline-kit.zip",
+        "sha256": "eba7fefb03dbc0216c9284a9da03c19048aa74e43064bedd3750fb4d4e87b31a",
+        "bytes": 27193
+      },
+      "attribution_basis": "The document names this project or its original interfaces and reproduction commands. The exact original package also contains the already byte-verified implementation/test peers listed here. This establishes its source-companion archival context, not sole historical authorship, canonical production placement, current test success or a scientific acceptance claim.",
+      "same_original_package_verified_source_peers": [
+        {
+          "git_blob_sha": "37404b30965e9d6aa1bc702ec39046a7dd29b822",
+          "original_member": "security/pq/tests/test_pq_audit.py",
+          "original_archive_chain": [],
+          "verified_peer_reference": {
+            "git_blob_sha": "37404b30965e9d6aa1bc702ec39046a7dd29b822",
+            "sha256": "2cf34bba4ec23684f2a93a5dd8dfb3710fecbc113d5536b50a24c8e9c6d9e5c0",
+            "bytes": 14631,
+            "repo": "TrillionniumFoundation/Trillionnium-Chain",
+            "commit": "dc2db4a765e4664527b98e050204276533fce0cd",
+            "path": "library-recovery/small-source-20261103/objects/37404b30965e9d6aa1bc702ec39046a7dd29b822.py",
+            "ref": "refs/heads/chore/chain-library-small-source-20261103-gpt6"
+          }
+        },
+        {
+          "git_blob_sha": "cd4243a710de98003784f0e70a3e5fd2a1333609",
+          "original_member": "security/pq/tools/pq_audit.py",
+          "original_archive_chain": [],
+          "verified_peer_reference": {
+            "git_blob_sha": "cd4243a710de98003784f0e70a3e5fd2a1333609",
+            "sha256": "9b92cdd8356439dc0190ba1ff67999f2f76de02bc740084e95fb3375dc32aff3",
+            "bytes": 22338,
+            "repo": "TrillionniumFoundation/Trillionnium-Chain",
+            "commit": "dc2db4a765e4664527b98e050204276533fce0cd",
+            "path": "library-recovery/small-source-20261103/objects/cd4243a710de98003784f0e70a3e5fd2a1333609.py",
+            "ref": "refs/heads/chore/chain-library-small-source-20261103-gpt6"
+          }
+        }
+      ],
+      "original_document_title": "# Trillionnium-Chain — Whole-Chain PQ-128 Hardening Kit (offline, unintegrated)",
+      "reuse_existing_blob": false,
+      "repository_blob_probe_status": 404,
+      "probe_scope": "Specific target repository exact-blob lookup only; not a global repository/history absence proof.",
+      "preserved_source_executed": false,
+      "commands_executed": false,
+      "historical_claims_requalified": false,
+      "scientific_or_runtime_acceptance": false
+    },
+    {
+      "git_blob_sha": "252b38b41b4c709e049e3d9fe02164786df0e7b3",
+      "sha256": "c14645fd221868480254bf0faf1b8f845d25a0fb51794a8fb3b24bf095baa2ac",
+      "bytes": 3088,
+      "relative_path": "objects/252b38b41b4c709e049e3d9fe02164786df0e7b3.md",
+      "candidate_group": "original-5456",
+      "candidate_types": [
+        "embedded-code-review"
+      ],
+      "original_occurrences": [
+        {
+          "file": "chain-model-release-network-2e9fa256.zip",
+          "member": "chain-model-release-network-2e9fa256/README.md",
+          "archive_chain": []
+        }
+      ],
+      "role": "historical source-companion documentation with reproduction commands",
+      "selected_original_occurrence": {
+        "file": "chain-model-release-network-2e9fa256.zip",
+        "member": "chain-model-release-network-2e9fa256/README.md",
+        "archive_chain": []
+      },
+      "original_package": {
+        "name": "chain-model-release-network-2e9fa256.zip",
+        "sha256": "36abc178f91852e939c3a960bc9e39333788cbc3a4b8cb089c0226b0fd47e741",
+        "bytes": 126618
+      },
+      "attribution_basis": "The document names this project or its original interfaces and reproduction commands. The exact original package also contains the already byte-verified implementation/test peers listed here. This establishes its source-companion archival context, not sole historical authorship, canonical production placement, current test success or a scientific acceptance claim.",
+      "same_original_package_verified_source_peers": [
+        {
+          "git_blob_sha": "e528f61c2998545fd417fc6ce1458c10ab3f00db",
+          "original_member": "chain-model-release-network-2e9fa256/chain-model-release-network.patch",
+          "original_archive_chain": [],
+          "verified_peer_reference": {
+            "git_blob_sha": "e528f61c2998545fd417fc6ce1458c10ab3f00db",
+            "sha256": "bdcef7071df30dc141a481fc2f0ed33ed1d863dc5d7b3e1f0236c92d0121f0cb",
+            "bytes": 245422,
+            "repo": "TrillionniumFoundation/Trillionnium-Chain",
+            "commit": "4cc0c9e911f01d7e0e482d5fc589f382bf01991e",
+            "path": "library-recovery/followup-source-20261103/objects/e528f61c2998545fd417fc6ce1458c10ab3f00db.patch",
+            "ref": "refs/heads/chore/chain-library-small-source-20261103-gpt6"
+          }
+        }
+      ],
+      "original_document_title": "# 七层模型发布与分发：源码交付",
+      "reuse_existing_blob": false,
+      "repository_blob_probe_status": 404,
+      "probe_scope": "Specific target repository exact-blob lookup only; not a global repository/history absence proof.",
+      "preserved_source_executed": false,
+      "commands_executed": false,
+      "historical_claims_requalified": false,
+      "scientific_or_runtime_acceptance": false
+    },
+    {
+      "git_blob_sha": "3494edde6b31e57d629d453bc65d398e6b0abbb2",
+      "sha256": "740654d8bf6c0548ac8f1b9796d1a70853b6602a7885df2e9a803fc3ead0b4f7",
+      "bytes": 4237,
+      "relative_path": "objects/3494edde6b31e57d629d453bc65d398e6b0abbb2.md",
+      "candidate_group": "original-5456",
+      "candidate_types": [
+        "embedded-code-review"
+      ],
+      "original_occurrences": [
+        {
+          "file": "trnm-pq128-preflight-20261030.zip",
+          "member": "trnm-pq128-preflight/README.md",
+          "archive_chain": []
+        }
+      ],
+      "role": "historical source-companion documentation with reproduction commands",
+      "selected_original_occurrence": {
+        "file": "trnm-pq128-preflight-20261030.zip",
+        "member": "trnm-pq128-preflight/README.md",
+        "archive_chain": []
+      },
+      "original_package": {
+        "name": "trnm-pq128-preflight-20261030.zip",
+        "sha256": "63de7c54843957e55a08d7926d4e7e533af225db93de3e56a63e76b1cd047fbe",
+        "bytes": 20951
+      },
+      "attribution_basis": "The document names this project or its original interfaces and reproduction commands. The exact original package also contains the already byte-verified implementation/test peers listed here. This establishes its source-companion archival context, not sole historical authorship, canonical production placement, current test success or a scientific acceptance claim.",
+      "same_original_package_verified_source_peers": [
+        {
+          "git_blob_sha": "4ca132033c0862fad6e20490817dffb880045680",
+          "original_member": "trnm-pq128-preflight/pq_preflight.py",
+          "original_archive_chain": [],
+          "verified_peer_reference": {
+            "git_blob_sha": "4ca132033c0862fad6e20490817dffb880045680",
+            "sha256": "4525497a5029f85855fbd51454a2ab705690e166a121f15cdb0829347840b2f0",
+            "bytes": 17136,
+            "repo": "TrillionniumFoundation/Trillionnium-Chain",
+            "commit": "dc2db4a765e4664527b98e050204276533fce0cd",
+            "path": "library-recovery/small-source-20261103/objects/4ca132033c0862fad6e20490817dffb880045680.py",
+            "ref": "refs/heads/chore/chain-library-small-source-20261103-gpt6"
+          }
+        },
+        {
+          "git_blob_sha": "5f90b43458de740fa5715077dd5da2f0748814d5",
+          "original_member": "trnm-pq128-preflight/tests/test_pq_preflight.py",
+          "original_archive_chain": [],
+          "verified_peer_reference": {
+            "git_blob_sha": "5f90b43458de740fa5715077dd5da2f0748814d5",
+            "sha256": "2dee32d3fde1939b72f5ee80e9e05a08758d3403f3b175bf87ff08422b65cca6",
+            "bytes": 10595,
+            "repo": "TrillionniumFoundation/Trillionnium-Chain",
+            "commit": "dc2db4a765e4664527b98e050204276533fce0cd",
+            "path": "library-recovery/small-source-20261103/objects/5f90b43458de740fa5715077dd5da2f0748814d5.py",
+            "ref": "refs/heads/chore/chain-library-small-source-20261103-gpt6"
+          }
+        }
+      ],
+      "original_document_title": "# Trillionnium-Chain 整链 PQ-128 证据门禁（离线预审工具）",
+      "reuse_existing_blob": false,
+      "repository_blob_probe_status": 404,
+      "probe_scope": "Specific target repository exact-blob lookup only; not a global repository/history absence proof.",
+      "preserved_source_executed": false,
+      "commands_executed": false,
+      "historical_claims_requalified": false,
+      "scientific_or_runtime_acceptance": false
+    },
+    {
+      "git_blob_sha": "35acb73fa2ab8a1a264b4b2c2fffc01942d5c84f",
+      "sha256": "638c9498a41d0ce622b5a07ecdc043c70e1a28b73255a5bd3f6d1e7caba3ff52",
+      "bytes": 5177,
+      "relative_path": "objects/35acb73fa2ab8a1a264b4b2c2fffc01942d5c84f.md",
+      "candidate_group": "original-5456",
+      "candidate_types": [
+        "embedded-code-review"
+      ],
+      "original_occurrences": [
+        {
+          "file": "trnm-pq-pql5-native-research-v2.zip",
+          "member": "PQ_PQL5_NATIVE_QUORUM_RESEARCH_V1.md",
+          "archive_chain": []
+        },
+        {
+          "file": "trnm-pq-pql5-native-research.zip",
+          "member": "PQ_PQL5_NATIVE_QUORUM_RESEARCH_V1.md",
+          "archive_chain": []
+        }
+      ],
+      "role": "historical source-companion documentation with reproduction commands",
+      "selected_original_occurrence": {
+        "file": "trnm-pq-pql5-native-research.zip",
+        "member": "PQ_PQL5_NATIVE_QUORUM_RESEARCH_V1.md",
+        "archive_chain": []
+      },
+      "original_package": {
+        "name": "trnm-pq-pql5-native-research.zip",
+        "sha256": "9f3b040fe66a1b399b273cbf48108bbf87c29bc6764480c0463ee0ed0981dc16",
+        "bytes": 13317
+      },
+      "attribution_basis": "The document names this project or its original interfaces and reproduction commands. The exact original package also contains the already byte-verified implementation/test peers listed here. This establishes its source-companion archival context, not sole historical authorship, canonical production placement, current test success or a scientific acceptance claim.",
+      "same_original_package_verified_source_peers": [
+        {
+          "git_blob_sha": "b582a1c79c277f4b1f96c50195c90103a0061260",
+          "original_member": "test_pq_pql5_native_verify.py",
+          "original_archive_chain": [],
+          "verified_peer_reference": {
+            "git_blob_sha": "b582a1c79c277f4b1f96c50195c90103a0061260",
+            "sha256": "d374e0de4fe0c7578d01038bfa0855e54b01e4c8d30bd307a37f164bffd83648",
+            "bytes": 12593,
+            "repo": "TrillionniumFoundation/Trillionnium-Chain",
+            "commit": "dc2db4a765e4664527b98e050204276533fce0cd",
+            "path": "library-recovery/small-source-20261103/objects/b582a1c79c277f4b1f96c50195c90103a0061260.py",
+            "ref": "refs/heads/chore/chain-library-small-source-20261103-gpt6"
+          }
+        }
+      ],
+      "original_document_title": "# PQL5N — independent native ML-DSA-65 quorum verifier (HOLD_NO_GO)",
+      "reuse_existing_blob": false,
+      "repository_blob_probe_status": 404,
+      "probe_scope": "Specific target repository exact-blob lookup only; not a global repository/history absence proof.",
+      "preserved_source_executed": false,
+      "commands_executed": false,
+      "historical_claims_requalified": false,
+      "scientific_or_runtime_acceptance": false
+    },
+    {
+      "git_blob_sha": "c092e7844ef66445dff0d98b46a76e5dd35646c8",
+      "sha256": "05862ed039dce67f0ff4295d9d236ea06a881ebbf3a6b16abbf7a0f367c6697b",
+      "bytes": 5357,
+      "relative_path": "objects/c092e7844ef66445dff0d98b46a76e5dd35646c8.md",
+      "candidate_group": "original-5456",
+      "candidate_types": [
+        "embedded-code-review"
+      ],
+      "original_occurrences": [
+        {
+          "file": "trillionnium-pq-hardening.zip",
+          "member": "security/pq/README.md",
+          "archive_chain": []
+        }
+      ],
+      "role": "historical source-companion documentation with reproduction commands",
+      "selected_original_occurrence": {
+        "file": "trillionnium-pq-hardening.zip",
+        "member": "security/pq/README.md",
+        "archive_chain": []
+      },
+      "original_package": {
+        "name": "trillionnium-pq-hardening.zip",
+        "sha256": "f1a4894b0f5f7d175003af68651ddb0da6a010272e3be3033b9014905610b9aa",
+        "bytes": 20843
+      },
+      "attribution_basis": "The document names this project or its original interfaces and reproduction commands. The exact original package also contains the already byte-verified implementation/test peers listed here. This establishes its source-companion archival context, not sole historical authorship, canonical production placement, current test success or a scientific acceptance claim.",
+      "same_original_package_verified_source_peers": [
+        {
+          "git_blob_sha": "504d62722755e91dc20e38a9421fc3cb1080a35e",
+          "original_member": "security/pq/tests/test_pq_audit.py",
+          "original_archive_chain": [],
+          "verified_peer_reference": {
+            "git_blob_sha": "504d62722755e91dc20e38a9421fc3cb1080a35e",
+            "sha256": "73c840351fd88c67d4f7770939353def1f6c31426972c6bb6a9435656ff7a4b6",
+            "bytes": 9391,
+            "repo": "TrillionniumFoundation/Trillionnium-Chain",
+            "commit": "4cc0c9e911f01d7e0e482d5fc589f382bf01991e",
+            "path": "library-recovery/followup-source-20261103/objects/504d62722755e91dc20e38a9421fc3cb1080a35e.py",
+            "ref": "refs/heads/chore/chain-library-small-source-20261103-gpt6"
+          }
+        },
+        {
+          "git_blob_sha": "667ebaf8df644577027d0ac79dedd7ebc6bb3921",
+          "original_member": "security/pq/tools/pq_audit.py",
+          "original_archive_chain": [],
+          "verified_peer_reference": {
+            "git_blob_sha": "667ebaf8df644577027d0ac79dedd7ebc6bb3921",
+            "sha256": "e7896538d9e3a054c82e2a506654a9409dde20671e36b8c3c97dd95b05d8fb42",
+            "bytes": 17726,
+            "repo": "TrillionniumFoundation/Trillionnium-Chain",
+            "commit": "4cc0c9e911f01d7e0e482d5fc589f382bf01991e",
+            "path": "library-recovery/followup-source-20261103/objects/667ebaf8df644577027d0ac79dedd7ebc6bb3921.py",
+            "ref": "refs/heads/chore/chain-library-small-source-20261103-gpt6"
+          }
+        }
+      ],
+      "original_document_title": "# Trillionnium-Chain — Whole-Chain PQ-128 Hardening Kit (offline, unintegrated)",
+      "reuse_existing_blob": false,
+      "repository_blob_probe_status": 404,
+      "probe_scope": "Specific target repository exact-blob lookup only; not a global repository/history absence proof.",
+      "preserved_source_executed": false,
+      "commands_executed": false,
+      "historical_claims_requalified": false,
+      "scientific_or_runtime_acceptance": false
+    },
+    {
+      "git_blob_sha": "e3a02dcfaa0396a09b10bc9416d74ddddd6f8e86",
+      "sha256": "e2b9c9cf407a00444f2dfce75a10a2fbf7863ea09fecf81191726fc64f27a16b",
+      "bytes": 10321,
+      "relative_path": "objects/e3a02dcfaa0396a09b10bc9416d74ddddd6f8e86.md",
+      "candidate_group": "original-5456",
+      "candidate_types": [
+        "embedded-code-review"
+      ],
+      "original_occurrences": [
+        {
+          "file": "README(4).md",
+          "member": "README(4).md",
+          "archive_chain": []
+        },
+        {
+          "file": "Trillionnium-Chain-PQ128-Audit-Kit.zip",
+          "member": "trnm-pq-security-kit/README.md",
+          "archive_chain": []
+        }
+      ],
+      "role": "historical source-companion documentation with reproduction commands",
+      "selected_original_occurrence": {
+        "file": "Trillionnium-Chain-PQ128-Audit-Kit.zip",
+        "member": "trnm-pq-security-kit/README.md",
+        "archive_chain": []
+      },
+      "original_package": {
+        "name": "Trillionnium-Chain-PQ128-Audit-Kit.zip",
+        "sha256": "42f90103dd5bda647f176ae05e7f3216a4a795db4455035db29ab9d5b34b133f",
+        "bytes": 19900
+      },
+      "attribution_basis": "The document names this project or its original interfaces and reproduction commands. The exact original package also contains the already byte-verified implementation/test peers listed here. This establishes its source-companion archival context, not sole historical authorship, canonical production placement, current test success or a scientific acceptance claim.",
+      "same_original_package_verified_source_peers": [
+        {
+          "git_blob_sha": "bfe5a082a1247734061412689b09520ce1e1aaf1",
+          "original_member": "trnm-pq-security-kit/pq_readiness.py",
+          "original_archive_chain": [],
+          "verified_peer_reference": {
+            "git_blob_sha": "bfe5a082a1247734061412689b09520ce1e1aaf1",
+            "sha256": "756d1157daf995411a346ed3385c1e8ba3a8a4ff1b74b2254e3bdd594f6008c8",
+            "bytes": 18477,
+            "repo": "TrillionniumFoundation/Trillionnium-Chain",
+            "commit": "dc2db4a765e4664527b98e050204276533fce0cd",
+            "path": "library-recovery/small-source-20261103/objects/bfe5a082a1247734061412689b09520ce1e1aaf1.py",
+            "ref": "refs/heads/chore/chain-library-small-source-20261103-gpt6"
+          }
+        },
+        {
+          "git_blob_sha": "1c1b6a5497f45b59c678bd46e7e80a4c4a54cc4c",
+          "original_member": "trnm-pq-security-kit/quantum_difficulty_screen.py",
+          "original_archive_chain": [],
+          "verified_peer_reference": {
+            "git_blob_sha": "1c1b6a5497f45b59c678bd46e7e80a4c4a54cc4c",
+            "sha256": "686a529e3a1b2cb141735b5ce359cac723a5db57815e0d323da444a8d96dcf13",
+            "bytes": 1794,
+            "repo": "TrillionniumFoundation/Trillionnium-Chain",
+            "commit": "dc2db4a765e4664527b98e050204276533fce0cd",
+            "path": "library-recovery/small-source-20261103/objects/1c1b6a5497f45b59c678bd46e7e80a4c4a54cc4c.py",
+            "ref": "refs/heads/chore/chain-library-small-source-20261103-gpt6"
+          }
+        },
+        {
+          "git_blob_sha": "13bec805ac70651210f09307f6adc9293c71c96f",
+          "original_member": "trnm-pq-security-kit/tests/test_pq_readiness.py",
+          "original_archive_chain": [],
+          "verified_peer_reference": {
+            "git_blob_sha": "13bec805ac70651210f09307f6adc9293c71c96f",
+            "sha256": "3ba718760bd0c871db3682138f1526b58bc22ebf42e8edc8f28c50339fb52b34",
+            "bytes": 8307,
+            "repo": "TrillionniumFoundation/Trillionnium-Chain",
+            "commit": "dc2db4a765e4664527b98e050204276533fce0cd",
+            "path": "library-recovery/small-source-20261103/objects/13bec805ac70651210f09307f6adc9293c71c96f.py",
+            "ref": "refs/heads/chore/chain-library-small-source-20261103-gpt6"
+          }
+        }
+      ],
+      "original_document_title": "# Trillionnium-Chain：整链抗量子证据核验工具（离线交付）",
+      "reuse_existing_blob": false,
+      "repository_blob_probe_status": 404,
+      "probe_scope": "Specific target repository exact-blob lookup only; not a global repository/history absence proof.",
+      "preserved_source_executed": false,
+      "commands_executed": false,
+      "historical_claims_requalified": false,
+      "scientific_or_runtime_acceptance": false
+    }
+  ],
+  "notices": []
+}

@@ -1,0 +1,333 @@
+diff --git a/security/pq/README.md b/security/pq/README.md
+index c092e78..10cde11 100644
+--- a/security/pq/README.md
++++ b/security/pq/README.md
+@@ -68,3 +68,7 @@ The CLI returns exit code `1` if any mandatory blocker exists, `2` for input err
+ - [NIST FIPS 204 (ML-DSA)](https://csrc.nist.gov/pubs/fips/204/final)
+ - [RISC Zero 3.0 cryptographic security model](https://dev.risczero.com/api/security-model): RISC-V STARK 96, recursion 99, Groth16 is not post-quantum.
+ - [Bailey and Sattath, 2024, quantum difficulty attack](https://arxiv.org/abs/2403.08023): an adversarial model for certain PoW protocols, **not** a demonstrated exploit of this repository.
++
++## V2 hardening update (2026-10-31)
++
++An incremental security review identified **policy-shrinking and source-scan omissions in this offline auditor**. The v2 revision adds code-level minimum 128-bit and quantum-solver requirements, detects skipped source files and symlinks, and checks the exact Git checkout root. See `docs/V2_AUDITOR_HARDENING_20261031.md` and `test-results-v2.txt`. The offline suite has 26 passing synthetic tests; this is **not** a Trillionnium-Chain integration or PQ-128 qualification.
+diff --git a/security/pq/tests/test_pq_audit.py b/security/pq/tests/test_pq_audit.py
+index 504d627..37404b3 100644
+--- a/security/pq/tests/test_pq_audit.py
++++ b/security/pq/tests/test_pq_audit.py
+@@ -180,6 +180,100 @@ class GateTests(unittest.TestCase):
+         self.e['live_consensus_proof']['independent_crypto_review_passed'] = False
+         self.assertEqual(self.run_audit()['verdict'], 'BLOCKED')
+ 
++    def test_editable_policy_cannot_lower_128_bit_target(self):
++        self.prepare_synthetic_pass()
++        reduced = copy.deepcopy(POLICY)
++        reduced['minimum_quantum_security_bits'] = 0
++        r = auditor.perform_audit(self.repo, reduced, self.e, mode='release')
++        self.assertEqual(r['verdict'], 'BLOCKED')
++        self.assertIn('policy:min-quantum-bits',
++                      [c['id'] for c in r['checks'] if c['status'] == 'BLOCKER'])
++
++    def test_extra_solver_class_in_policy_must_be_tested(self):
++        self.prepare_synthetic_pass()
++        expanded = copy.deepcopy(POLICY)
++        expanded['required_solver_cases'].append('quantum_memory_tradeoff')
++        r = auditor.perform_audit(self.repo, expanded, self.e, mode='release')
++        self.assertEqual(r['verdict'], 'BLOCKED')
++        self.assertIn('pon:solver:quantum_memory_tradeoff',
++                      [c['id'] for c in r['checks'] if c['status'] == 'BLOCKER'])
++
++    def test_editable_policy_cannot_remove_quantum_solver_families(self):
++        self.prepare_synthetic_pass()
++        reduced = copy.deepcopy(POLICY)
++        reduced['required_solver_cases'] = []
++        r = auditor.perform_audit(self.repo, reduced, self.e, mode='release')
++        self.assertEqual(r['verdict'], 'BLOCKED')
++        self.assertIn('policy:solver-minimum',
++                      [c['id'] for c in r['checks'] if c['status'] == 'BLOCKER'])
++        self.assertIn('pon:solver:zero_or_low_rank', [c['id'] for c in r['checks']])
++
++    def test_policy_cannot_redirect_w1_manifest_to_innocent_file(self):
++        self.prepare_synthetic_pass()
++        reduced = copy.deepcopy(POLICY)
++        reduced['proof']['candidate_manifest_path'] = 'evidence/artifact.txt'
++        r = auditor.perform_audit(self.repo, reduced, self.e, mode='release')
++        self.assertEqual(r['verdict'], 'BLOCKED')
++        self.assertIn('policy:fixed-w1-manifest',
++                      [c['id'] for c in r['checks'] if c['status'] == 'BLOCKER'])
++
++    def test_policy_cannot_change_referenced_repo(self):
++        self.prepare_synthetic_pass()
++        reduced = copy.deepcopy(POLICY)
++        reduced['repository'] = 'other/unknown'
++        r = auditor.perform_audit(self.repo, reduced, self.e, mode='release')
++        self.assertEqual(r['verdict'], 'BLOCKED')
++
++    def test_oversized_source_file_must_block_release(self):
++        (self.repo / 'skipped.rs').write_bytes(b'x' * 3_000_001)
++        subprocess.run(['git', 'add', 'skipped.rs'], cwd=self.repo, check=True)
++        subprocess.run(['git', 'commit', '-qm', 'add oversized source fixture'], cwd=self.repo, check=True)
++        self.e['source_commit'] = subprocess.check_output(['git','rev-parse','HEAD'], cwd=self.repo,
++                                                         text=True).strip()
++        self.prepare_synthetic_pass()
++        r = self.run_audit()
++        self.assertEqual(r['verdict'], 'BLOCKED')
++        self.assertEqual(r['classic_crypto_review_leads']['skipped_count'], 1)
++        self.assertEqual(r['classic_crypto_review_leads']['skipped_files'][0]['path'], 'skipped.rs')
++        self.assertIn('scan:complete', [c['id'] for c in r['checks'] if c['status'] == 'BLOCKER'])
++
++    def test_internal_symlink_artifact_not_valid_evidence(self):
++        self.prepare_synthetic_pass()
++        (self.repo / 'evidence' / 'alias.txt').symlink_to('artifact.txt')
++        self.e['artifacts']['synthetic']['path'] = 'evidence/alias.txt'
++        self.assertEqual(self.run_audit(mode='scan')['verdict'], 'BLOCKED')
++
++    def test_source_symlink_cannot_be_silently_skipped(self):
++        (self.repo / 'linked.rs').symlink_to('node.rs')
++        subprocess.run(['git', 'add', 'linked.rs'], cwd=self.repo, check=True)
++        subprocess.run(['git', 'commit', '-qm', 'add source alias'], cwd=self.repo, check=True)
++        self.e['source_commit'] = subprocess.check_output(['git','rev-parse','HEAD'], cwd=self.repo,
++                                                         text=True).strip()
++        self.prepare_synthetic_pass()
++        r = self.run_audit()
++        self.assertEqual(r['verdict'], 'BLOCKED')
++        self.assertEqual(r['classic_crypto_review_leads']['skipped_count'], 1)
++
++    def test_nested_directory_is_not_git_checkout_root(self):
++        self.prepare_synthetic_pass()
++        child = self.repo / 'subdir'
++        child.mkdir()
++        r = auditor.perform_audit(child, POLICY, self.e, mode='release')
++        self.assertEqual(r['verdict'], 'BLOCKED')
++        self.assertIn('git:head', [c['id'] for c in r['checks'] if c['status'] == 'BLOCKER'])
++
++    def test_empty_source_tree_does_not_qualify(self):
++        (self.repo / 'node.rs').unlink()
++        subprocess.run(['git', 'add', '-u'], cwd=self.repo, check=True)
++        subprocess.run(['git', 'commit', '-qm', 'drop only source fixture'], cwd=self.repo, check=True)
++        self.e['source_commit'] = subprocess.check_output(['git','rev-parse','HEAD'], cwd=self.repo,
++                                                         text=True).strip()
++        self.prepare_synthetic_pass()
++        r = self.run_audit()
++        self.assertEqual(r['verdict'], 'BLOCKED')
++        self.assertIn('scan:source-present',
++                      [c['id'] for c in r['checks'] if c['status'] == 'BLOCKER'])
++
+ 
+ if __name__ == '__main__':
+     unittest.main()
+diff --git a/security/pq/tools/pq_audit.py b/security/pq/tools/pq_audit.py
+index 667ebaf..cd4243a 100755
+--- a/security/pq/tools/pq_audit.py
++++ b/security/pq/tools/pq_audit.py
+@@ -16,7 +16,7 @@ import sys
+ from pathlib import Path
+ 
+ EXCLUDED_DIRS = {'.git', 'target', 'node_modules', '.venv', 'venv', 'dist', 'build', '__pycache__'}
+-SOURCE_SUFFIXES = {'.rs', '.go', '.ts', '.tsx', '.js', '.sol', '.c', '.h', '.cc', '.cpp', '.hpp', '.proto'}
++SOURCE_SUFFIXES = {'.rs', '.go', '.ts', '.tsx', '.js', '.sol', '.c', '.h', '.cc', '.cpp', '.hpp', '.proto', '.py', '.sh'}
+ CLASSIC_RE = re.compile(r'(?i)(?<![a-z0-9])(?:ed25519|ecdsa|secp256k1|secp256r1|p256|schnorr|rsa(?:_pss)?|groth16|bn254)(?![a-z0-9])')
+ AUTH_RE = re.compile(r'(?i)\b(?:verify|verification|authorize|authorization|admission|handoff|governance|provider|identity|nonce|signer|signature|recovery|upgrade|validator|finality|consensus|transaction|account|authenticate)\b')
+ CRITICAL_ROUTES = ('transaction', 'account-rotation', 'task-auth', 'node-ingress', 'hepta-handoff',
+@@ -25,6 +25,19 @@ CRITICAL_ROUTES = ('transaction', 'account-rotation', 'task-auth', 'node-ingress
+                    'governance-upgrade', 'recovery', 'cross-chain')
+ ACCEPTED_MODES = {'pq-only', 'hybrid-and', 'inactive'}
+ VALID_SHA = re.compile(r'^[a-fA-F0-9]{40}$')
++# These minimums are part of the auditor, not just editable JSON policy. Removing
++# a solver case or lowering security bits in the policy must block qualification.
++MIN_QUANTUM_SECURITY_BITS = 128
++REQUIRED_REPOSITORY = 'TrillionniumFoundation/Trillionnium-Chain'
++REQUIRED_W1_MANIFEST = (
++    'trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json'
++)
++REQUIRED_SOLVER_CASES = frozenset((
++    'zero_or_low_rank', 'special_matrices', 'precompute_amortization',
++    'multi_challenge_batch', 'hardware_gpu_asic', 'reversible_quantum_oracle',
++    'invalid_proof_worst_case', 'timestamp_difficulty_manipulation',
++    'deep_fork_reorganization',
++))
+ 
+ 
+ def load_json(path: Path):
+@@ -39,6 +52,13 @@ def report_check(checks, name, ok, description, severity='BLOCKER'):
+ def inside_repo(repo: Path, relative: str) -> Path:
+     if not isinstance(relative, str) or not relative or Path(relative).is_absolute():
+         raise ValueError('artifact path must be nonempty and relative')
++    # A source-controlled evidence path must not use any symlink component,
++    # including a symlink pointing to another path *inside* the repository.
++    cursor = repo
++    for component in Path(relative).parts:
++        cursor = cursor / component
++        if cursor.is_symlink():
++            raise ValueError('symlink in evidence or manifest path')
+     p = (repo / relative).resolve()
+     if not p.is_relative_to(repo.resolve()):
+         raise ValueError('artifact escapes repository root')
+@@ -83,6 +103,10 @@ def git_revision(repo: Path):
+     try:
+         sha = subprocess.run(['git', '-C', str(repo), 'rev-parse', 'HEAD'], capture_output=True,
+                              text=True, timeout=10, check=True).stdout.strip()
++        top = subprocess.run(['git', '-C', str(repo), 'rev-parse', '--show-toplevel'],
++                             capture_output=True, text=True, timeout=10, check=True).stdout.strip()
++        if Path(top).resolve() != repo.resolve():
++            return None, None  # Nested subdirectory is not an exact checkout root.
+         dirty = subprocess.run(['git', '-C', str(repo), 'status', '--porcelain', '--untracked-files=all'],
+                                capture_output=True, text=True, timeout=10, check=True).stdout.strip()
+         return sha, bool(dirty)
+@@ -91,33 +115,90 @@ def git_revision(repo: Path):
+ 
+ 
+ def scan_source(repo: Path, limit=1500):
+-    """Review leads only: classic signature presence does NOT prove live authority."""
++    """Review leads ONLY. Missing, oversized or skipped source files BLOCK release.
++
++    This is NOT full code-flow analysis. Completeness here means only that all
++    configured source file suffixes were read, not that all authority paths exist
++    in the set or that code execution paths were classified.
++    """
+     hits = []
++    skipped = []
++    skipped_count = 0
+     files_examined = 0
+-    for folder, dirs, files in os.walk(repo):
+-        dirs[:] = sorted(d for d in dirs if d not in EXCLUDED_DIRS and not (Path(folder) / d).is_symlink())
++    truncated = False
++
++    def record_skip(rel, reason):
++        nonlocal skipped_count
++        skipped_count += 1
++        if len(skipped) < 100:
++            skipped.append({'path': str(rel), 'reason': reason})
++
++    def walk_error(error):
++        record_skip(getattr(error, 'filename', '<unknown>'), str(error))
++
++    for folder, dirs, files in os.walk(repo, onerror=walk_error):
++        live_dirs = []
++        for d in sorted(dirs):
++            if d in EXCLUDED_DIRS:
++                continue
++            path = Path(folder) / d
++            if path.is_symlink():
++                record_skip(path.relative_to(repo).as_posix(), 'symlink directory not inspected')
++            else:
++                live_dirs.append(d)
++        dirs[:] = live_dirs
+         for filename in sorted(files):
+             p = Path(folder) / filename
+-            if p.suffix.lower() not in SOURCE_SUFFIXES or p.is_symlink():
++            if p.suffix.lower() not in SOURCE_SUFFIXES:
++                continue
++            rel = p.relative_to(repo).as_posix()
++            if p.is_symlink():
++                record_skip(rel, 'symlink source file not inspected')
+                 continue
+             try:
+                 if p.stat().st_size > 3_000_000:
++                    record_skip(rel, 'source file exceeds 3 MB review limit')
+                     continue
+-                files_examined += 1
+-                rel = p.relative_to(repo).as_posix()
+                 with p.open('r', encoding='utf-8', errors='replace') as f:
++                    files_examined += 1
+                     for ln, line in enumerate(f, 1):
+                         pattern = CLASSIC_RE.search(line)
+                         if pattern:
+                             fingerprint = hashlib.sha256((rel + '\0' + str(ln) + '\0' + line.rstrip('\n')).encode('utf-8')).hexdigest()[:24]
+-                            hits.append({'fingerprint': fingerprint, 'path': rel, 'line': ln, 'algorithm': pattern.group(0),
++                            hits.append({'fingerprint': fingerprint, 'path': rel, 'line': ln,
++                                         'algorithm': pattern.group(0),
+                                          'authority_hint_on_line': bool(AUTH_RE.search(line)),
+                                          'excerpt': line.strip()[:220], 'review_status': 'UNREVIEWED'})
+                             if len(hits) >= limit:
+-                                return {'files_examined': files_examined, 'truncated': True, 'hits': hits}
+-            except (UnicodeError, OSError):
+-                continue
+-    return {'files_examined': files_examined, 'truncated': False, 'hits': hits}
++                                truncated = True
++                                break
++                if truncated:
++                    break
++            except (UnicodeError, OSError) as exc:
++                record_skip(rel, 'source file could not be fully read: ' + str(exc))
++        if truncated:
++            break
++    return {'files_examined': files_examined, 'truncated': truncated,
++            'skipped_count': skipped_count, 'skipped_files': skipped, 'hits': hits}
++
++
++def check_policy_contract(policy, checks):
++    bits = policy.get('minimum_quantum_security_bits')
++    report_check(checks, 'policy:min-quantum-bits',
++                 type(bits) is int and bits >= MIN_QUANTUM_SECURITY_BITS,
++                 "editable policy may not lower the auditor's 128-bit minimum")
++    report_check(checks, 'policy:target-repository',
++                 policy.get('repository') == REQUIRED_REPOSITORY,
++                 'repository selector must match this whole-chain audit')
++    proof = policy.get('proof')
++    manifest = proof.get('candidate_manifest_path') if isinstance(proof, dict) else None
++    report_check(checks, 'policy:fixed-w1-manifest', manifest == REQUIRED_W1_MANIFEST,
++                 'W1 path may not be omitted or silently redirected')
++    cases = policy.get('required_solver_cases')
++    report_check(checks, 'policy:solver-minimum',
++                 isinstance(cases, list) and all(isinstance(x, str) for x in cases)
++                 and len(cases) == len(set(cases)) and REQUIRED_SOLVER_CASES.issubset(cases),
++                 'quantum solver case set may grow but may not drop required adversarial classes')
+ 
+ 
+ def check_authority(policy, evidence, repo, artifacts, checks):
+@@ -174,7 +255,11 @@ def check_proof(policy, evidence, repo, artifacts, checks):
+                  'name and freeze the actual *live* consensus proof backend (may differ from W1 candidate)')
+     report_check(checks, 'live-proof:pq128-bound',
+                  isinstance(live.get('conservative_quantum_soundness_bits'), int) and
+-                 live['conservative_quantum_soundness_bits'] >= policy.get('minimum_quantum_security_bits', 128),
++                 type(live['conservative_quantum_soundness_bits']) is int and
++                 live['conservative_quantum_soundness_bits'] >= max(
++                     MIN_QUANTUM_SECURITY_BITS,
++                     policy.get('minimum_quantum_security_bits')
++                     if type(policy.get('minimum_quantum_security_bits')) is int else MIN_QUANTUM_SECURITY_BITS),
+                  'requires independent, concrete quantum soundness bounds across complete proof composition')
+     for field in ('independent_crypto_review_passed', 'no_groth16_or_classical_proof_fallback',
+                   'guest_verifier_transcript_parameter_bound', 'real_invalid_receipts_rejected',
+@@ -192,7 +277,10 @@ def check_pow(policy, evidence, repo, artifacts, checks):
+         report_check(checks, 'pon:' + field, pow_e.get(field) is True,
+                      'quantum cost model and executable adversarial validation required')
+     cases = pow_e.get('solver_cases', {})
+-    for case in policy.get('required_solver_cases', []):
++    configured = policy.get('required_solver_cases')
++    all_cases = REQUIRED_SOLVER_CASES.union(
++        x for x in (configured if isinstance(configured, list) else []) if isinstance(x, str))
++    for case in sorted(all_cases):
+         report_check(checks, 'pon:solver:' + case, cases.get(case) == 'tested',
+                      'solver class must be compared under equivalent constraints')
+     check_artifacts(repo, pow_e.get('artifacts'), artifacts, checks, 'pon:evidence')
+@@ -220,6 +308,7 @@ def perform_audit(repo: Path, policy: dict, evidence: dict, mode='scan', include
+     sha, dirty = git_revision(repo) if repo.exists() else (None, None)
+     report_check(checks, 'policy:schema', policy.get('schema_version') == 1 and evidence.get('schema_version') == 1,
+                  'expected v1 policy and evidence schemas')
++    check_policy_contract(policy, checks)
+     report_check(checks, 'repo:exists', repo.is_dir(), 'repository directory must exist')
+     if mode == 'release':
+         report_check(checks, 'git:head', bool(sha and VALID_SHA.fullmatch(sha)), 'release gate requires a Git commit')
+@@ -244,7 +333,8 @@ def perform_audit(repo: Path, policy: dict, evidence: dict, mode='scan', include
+     check_proof(policy, evidence, repo, artifacts, checks)
+     check_pow(policy, evidence, repo, artifacts, checks)
+     check_recovery_and_capacity(policy, evidence, repo, artifacts, checks)
+-    hits = scan_source(repo) if include_scan and repo.is_dir() else {'files_examined': 0, 'truncated': False, 'hits': []}
++    hits = scan_source(repo) if include_scan and repo.is_dir() else {
++        'files_examined': 0, 'truncated': False, 'skipped_count': 0, 'skipped_files': [], 'hits': []}
+     if mode == 'release':
+         report_check(checks, 'scan:enabled', include_scan, 'release must scan classic-cryptography and proof usages')
+         reviewed = evidence.get('classic_usage_dispositions', {})
+@@ -256,7 +346,11 @@ def perform_audit(repo: Path, policy: dict, evidence: dict, mode='scan', include
+                          'each classic signature/proof site must be traced and explicitly reviewed; presence alone is not vulnerability')
+             check_artifacts(repo, entry.get('artifacts'), artifacts, checks,
+                             'classic-use:' + fp + ':evidence')
+-    report_check(checks, 'scan:complete', not hits['truncated'], 'source heuristic inventory must not be truncated')
++    report_check(checks, 'scan:complete', not hits['truncated'] and hits['skipped_count'] == 0,
++                 'source heuristic inventory must not skip unreadable, symlinked or oversized source files')
++    if mode == 'release':
++        report_check(checks, 'scan:source-present', hits['files_examined'] > 0,
++                     'release cannot qualify an empty or entirely unscannable source tree')
+     blockers = [x for x in checks if x['status'] == 'BLOCKER']
+     return {
+         'claim': 'Whole-chain PQ-128 (evidence completeness only)',

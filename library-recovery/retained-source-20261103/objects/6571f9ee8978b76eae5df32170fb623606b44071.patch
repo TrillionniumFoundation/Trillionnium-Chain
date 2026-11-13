@@ -1,0 +1,910 @@
+diff --git a/docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md b/docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md
+index a9853a1..cc1c5f6 100644
+--- a/docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md
++++ b/docs/protocol/pon-nakamoto-v1/details/CELL_P2P_V1.md
+@@ -598,3 +598,34 @@ for every requested release, not just available popular chunks. The 72-hour
+ minimum and replica objective are development coverage, not current production
+ guarantees. Long-term durability and permissionless incentives need independent
+ review and funded sustained observations.
++
++## Bounded provider order within one acquisition session
++
++The configured-peer and discovered-peer fetch paths retain at most eight
++per-provider failed-attempt counters for the current session. Before fetching
++each manifest or chunk, they snapshot those counters and stably prefer fewer
++failures; equal counters retain the original cyclic order. Snapshotting before
++sorting keeps the comparator stable while concurrent chunk workers finish.
++The provider list remains fixed during the session. Bootstrap discovery does
++not write these provider counters, and the discovery expiry can only shorten
++the original deadline.
++
++This is an ordering hint, not a persisted reputation or an exclusion decision.
++Every configured provider remains a fallback for each object, including a
++provider that lacked a different object earlier. A local manifest-persistence
++failure is returned directly and never treated as a remote failure. Every
++object still attempts each provider at most once, and the original connection,
++received-byte and absolute-time reservations remain shared across all members.
++Canonical manifest, context, chunk and complete-release verification remain
++mandatory; neither a successful response nor a preferred position selects a
++release or grants installation authority.
++
++The native regression uses an actual empty provider and an actual complete
++provider with one worker. Two manifests and four chunks require six successful
++requests. Under the unchanged seven-connection reservation, the previous order
++spent three connections on the empty provider and failed with only four useful
++requests. The session hint completes with six useful requests and one rejection.
++The existing disjoint-provider, corrupt-byte, exact aggregate-budget, deadline,
++resumption and create-only publication controls remain in the library suite.
++This finite control shows avoided repeated failed attempts; general throughput,
++independent failure-domain availability and the PN5 WAN target remain unqualified.
+diff --git a/trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs b/trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs
+index 1b0e61b..586ea9d 100644
+--- a/trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs
++++ b/trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs
+@@ -945,6 +945,7 @@ fn oversized_and_partial_tcp_replies_debit_actual_bytes_and_do_not_reopen_attemp
+         overall: deadline(),
+         requests_left: &requests,
+         responses: &responses,
++        peer_failures: Default::default(),
+     };
+     let mut observed = CellDiscoveryObservationV1::default();
+     let body = request([11; 32]).encode();
+@@ -986,6 +987,7 @@ fn slowloris_retains_one_absolute_deadline_and_counts_partial_response_bytes() {
+         overall: original,
+         requests_left: &requests,
+         responses: &responses,
++        peer_failures: Default::default(),
+     };
+     let mut observed = CellDiscoveryObservationV1::default();
+     let body = request([11; 32]).encode();
+@@ -1044,6 +1046,7 @@ fn bad_advertisement_cannot_trigger_an_unscoped_dial_or_grant_a_candidate() {
+         overall: deadline(),
+         requests_left: &requests,
+         responses: &responses,
++        peer_failures: Default::default(),
+     };
+     let options = CellDiscoveryOptionsV1 {
+         request: pin,
+@@ -1108,6 +1111,7 @@ fn four_bootstraps_exhaust_exact_eight_attempts_and_64_validation_slots_without_
+         overall: deadline(),
+         requests_left: &requests,
+         responses: &responses,
++        peer_failures: Default::default(),
+     };
+     let mut observed = CellDiscoveryObservationV1::default();
+     assert!(transport::discover(&directory, &options, &transport, &mut observed).is_err());
+diff --git a/trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs b/trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs
+index d01fe30..9bcfa4f 100644
+--- a/trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs
++++ b/trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs
+@@ -84,6 +84,7 @@ pub fn fetch_discovered_cell_to_file(
+         overall,
+         requests_left: &requests_left,
+         responses: &responses,
++        peer_failures: Default::default(),
+     };
+     let mut observation = CellDiscoveryObservationV1::default();
+     let (peers, expires) = discover(directory, options, &transport, &mut observation)?;
+@@ -365,6 +366,7 @@ pub fn announce_cell_provider(
+         overall,
+         requests_left: &requests_left,
+         responses: &responses,
++        peer_failures: Default::default(),
+     };
+     let mut observation = CellDiscoveryObservationV1 {
+         record_validation_attempts: 1,
+diff --git a/trillionnium/crates/trnm-data-availability/src/cell/network.rs b/trillionnium/crates/trnm-data-availability/src/cell/network.rs
+index 323064b..0711018 100644
+--- a/trillionnium/crates/trnm-data-availability/src/cell/network.rs
++++ b/trillionnium/crates/trnm-data-availability/src/cell/network.rs
+@@ -155,6 +155,7 @@ fn fetch_cell_inner(
+         overall: deadline,
+         requests_left: &requests_left,
+         responses: &responses,
++        peer_failures: Default::default(),
+     };
+     fetch_cell_in_session(store, pinned, peers, limits, &transport, output)
+ }
+@@ -318,9 +319,10 @@ pub(super) fn fetch_manifest_observed(
+         None => {
+             let mut received = None;
+             let mut last_io = None;
+-            for peer in peers {
++            for peer_index in transport.peer_indices(peers.len(), 0)? {
++                let peer = peers[peer_index];
+                 let candidate =
+-                    request(*peer, 1, pinned, MAX_MANIFEST_BYTES, transport).and_then(|wire| {
++                    request(peer, 1, pinned, MAX_MANIFEST_BYTES, transport).and_then(|wire| {
+                         let manifest = CellManifestV1::decode(&wire)?;
+                         require(manifest.id() == pinned, "manifest digest")?;
+                         require(
+@@ -337,6 +339,7 @@ pub(super) fn fetch_manifest_observed(
+                         break;
+                     }
+                     Err(error) => {
++                        transport.peer_failed(peer_index);
+                         rejected += 1;
+                         if let CellErrorV1::Io(error) = error {
+                             last_io = Some(error);
+@@ -364,17 +367,25 @@ fn download_chunk(
+     transport: &RequestContext<'_>,
+ ) -> CellResultV1<(Vec<u8>, SocketAddr, usize)> {
+     let mut last_io = None;
+-    for offset in 0..peers.len() {
+-        let peer = peers[(order + offset) % peers.len()];
++    for (attempt, peer_index) in transport
++        .peer_indices(peers.len(), order)?
++        .into_iter()
++        .enumerate()
++    {
++        let peer = peers[peer_index];
+         let candidate =
+             request(peer, 2, chunk.sha256, chunk.size as usize, transport).and_then(|bytes| {
+                 verify_chunk(chunk, &bytes)?;
+                 Ok(bytes)
+             });
+         match candidate {
+-            Ok(bytes) => return Ok((bytes, peer, offset)),
+-            Err(CellErrorV1::Io(error)) => last_io = Some(error),
+-            Err(_) => (),
++            Ok(bytes) => return Ok((bytes, peer, attempt)),
++            Err(error) => {
++                transport.peer_failed(peer_index);
++                if let CellErrorV1::Io(error) = error {
++                    last_io = Some(error);
++                }
++            }
+         }
+     }
+     Err(unavailable_with_transport_cause(transport, last_io))
+@@ -488,6 +499,34 @@ pub(super) struct RequestContext<'a> {
+     pub(super) overall: Instant,
+     pub(super) requests_left: &'a AtomicU64,
+     pub(super) responses: &'a ResponseBudget,
++    /// The configured/discovered provider list stays fixed for one session.
++    /// Bootstrap discovery does not populate these provider ordering hints.
++    pub(super) peer_failures: [AtomicU64; 8],
++}
++
++impl RequestContext<'_> {
++    /// Snapshot once before sorting: concurrent workers must not change the
++    /// comparator's ordering. Equal scores retain the original cyclic order.
++    /// Every configured peer remains a fallback for every missing object,
++    /// including a peer that previously lacked a different required member.
++    fn peer_indices(&self, count: usize, start: usize) -> CellResultV1<Vec<usize>> {
++        require(count <= self.peer_failures.len(), "configured peer count")?;
++        let failures: Vec<_> = self.peer_failures[..count]
++            .iter()
++            .map(|failure| failure.load(Ordering::Relaxed))
++            .collect();
++        let mut indices: Vec<_> = (0..count).map(|offset| (start + offset) % count).collect();
++        indices.sort_by_key(|index| failures[*index]);
++        Ok(indices)
++    }
++
++    fn peer_failed(&self, index: usize) {
++        let _ = self.peer_failures[index].fetch_update(
++            Ordering::Relaxed,
++            Ordering::Relaxed,
++            |failures| Some(failures.saturating_add(1)),
++        );
++    }
+ }
+ 
+ pub(super) struct ResponseBudget {
+@@ -780,6 +819,7 @@ mod budget_tests {
+                 overall: Instant::now() + Duration::from_secs(5),
+                 requests_left: &requests_left,
+                 responses: &responses,
++                peer_failures: Default::default(),
+             };
+             let succeeded = thread::scope(|scope| {
+                 let clients: Vec<_> = (0..4)
+diff --git a/trillionnium/crates/trnm-data-availability/src/cell/release.rs b/trillionnium/crates/trnm-data-availability/src/cell/release.rs
+index a336f12..0686428 100644
+--- a/trillionnium/crates/trnm-data-availability/src/cell/release.rs
++++ b/trillionnium/crates/trnm-data-availability/src/cell/release.rs
+@@ -119,6 +119,7 @@ pub fn fetch_release_to_file(
+         overall: deadline,
+         requests_left: &requests_left,
+         responses: &responses,
++        peer_failures: Default::default(),
+     };
+     let mut report = CellReleaseFetchReportV1 {
+         release_id: pinned,
+diff --git a/trillionnium/crates/trnm-data-availability/src/cell/release_tests.rs b/trillionnium/crates/trnm-data-availability/src/cell/release_tests.rs
+index d2c5225..cd959f2 100644
+--- a/trillionnium/crates/trnm-data-availability/src/cell/release_tests.rs
++++ b/trillionnium/crates/trnm-data-availability/src/cell/release_tests.rs
+@@ -268,6 +268,53 @@ fn release_fetch_collects_all_members_from_two_distinct_loopback_stores() {
+     assert_eq!(report.connection_attempts, a.finish() + b.finish());
+ }
+ 
++#[test]
++fn release_fetch_reuses_observed_peer_failures_within_original_connection_budget() {
++    let fixture = Fixture::new();
++    let empty_path = fixture.path("empty.sqlite");
++    let empty_store = CellStoreV1::open(&empty_path, cache_config()).unwrap();
++    drop(empty_store);
++    let empty = Peer::start(&empty_path);
++    let available = Peer::start(&fixture.origin_path);
++    let receiver = fixture.cache("receiver.sqlite");
++    let output = fixture.path("complete.tcr");
++    let mut reservation = limits();
++    // Two actual manifests and four actual chunks, plus one observed empty
++    // provider. The single worker makes the session's request order explicit.
++    // No request, byte or absolute-time reservation is renewed after a miss.
++    reservation.peer.max_connections = 7;
++    reservation.peer.parallelism = 1;
++    let result = fetch_release_to_file(
++        &receiver,
++        &fixture.release,
++        fixture.release.id(),
++        &[empty.address, available.address],
++        reservation,
++        &output,
++    );
++    let empty_requests = empty.finish();
++    let available_requests = available.finish();
++    let report = result.unwrap_or_else(|error| {
++        panic!(
++            "complete release failed: {error}; empty_requests={empty_requests}, available_requests={available_requests}"
++        )
++    });
++    assert_eq!(empty_requests, 1);
++    assert_eq!(available_requests, 6);
++    assert_eq!(report.connection_attempts, 7);
++    assert_eq!(report.rejected_responses, 1);
++    assert_eq!(report.downloaded_chunks, 4);
++    assert_eq!(report.downloaded_bytes, 40_000);
++    assert_eq!(
++        report.received_response_bytes,
++        fixture.successful_response_bytes() + 9
++    );
++    receiver
++        .verify_release_complete(&fixture.release, limits().release)
++        .unwrap();
++    assert_eq!(fs::read(&output).unwrap(), fixture.release.encode());
++}
++
+ #[test]
+ fn post_link_failure_preserves_complete_marker_for_same_identity_readback() {
+     let fixture = Fixture::new();
+diff --git a/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs b/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs
+index e0a0ad9..c487c8f 100644
+--- a/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs
++++ b/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs
+@@ -471,6 +471,19 @@ pub fn validate_state(state: &State, cfg: &Config) -> Result<()> {
+             (1..=MAX_GENERATIONS).contains(&generation),
+             "PQ2_GENERATION",
+         )?;
++        // Each retained rotation consumed one nonce. Imported generation one
++        // additionally consumed the CLAIM nonce above the source checkpoint.
++        let minimum_nonce = match imported {
++            Some(imported) => imported
++                .original_nonce
++                .checked_add(generation)
++                .ok_or("PQ2_AUTHORITY_NONCE")?,
++            None => generation - 1,
++        };
++        require(
++            field(account, "nonce")? >= minimum_nonce,
++            "PQ2_AUTHORITY_NONCE",
++        )?;
+         expected.insert(auth_key(name));
+         let mut used = BTreeSet::new();
+         for current in 1..=generation {
+diff --git a/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs b/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs
+index a5a8144..be78290 100644
+--- a/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs
++++ b/trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs
+@@ -55,6 +55,40 @@ fn ordinary(
+         None,
+     )
+ }
++fn rotation(
++    cfg: &Config,
++    parent: &State,
++    account: Hash,
++    nonce: u64,
++    generation: u64,
++    prior: &Key,
++    next: &Key,
++) -> Vec<u8> {
++    fixture::signed(
++        &common(cfg, account, nonce, generation),
++        wire::ROTATE,
++        &[
++            (generation + 1).to_be_bytes().as_slice(),
++            &authority_digest(parent, account, cfg).unwrap(),
++        ]
++        .concat(),
++        &[
++            Witness {
++                key: prior,
++                role: 3,
++                generation,
++                carried: false,
++            },
++            Witness {
++                key: next,
++                role: 4,
++                generation: generation + 1,
++                carried: true,
++            },
++        ],
++        None,
++    )
++}
+ fn transfer_payload(recipient: Hash, amount: u64) -> Vec<u8> {
+     [
+         recipient.as_slice(),
+@@ -154,6 +188,30 @@ fn real_pq_positive_funding_registration_state_resolved_transfer_and_zero_credit
+ fn dual_rotation_keeps_stable_task_permissions_and_actual_key_reads() {
+     let (cfg, state, _, owner, provider) = setup();
+     let next = Key::public_test_seed(105);
++    // A genesis key starts at generation one without consuming a nonce. Its
++    // first real dual-signed rotation must therefore remain valid at nonce one.
++    let minimum = execute(
++        &state,
++        &cfg,
++        1,
++        owner.id,
++        &[rotation(&cfg, &state, owner.id, 1, 1, &owner, &next)],
++        Some(1001),
++    )
++    .unwrap();
++    let name = hex::encode(owner.id);
++    let account_key = format!("account:{name}");
++    assert_eq!(minimum.state[&account_key]["nonce"], 1);
++    validate_state(&minimum.state, &cfg).unwrap();
++    let mut reverted = minimum.state.clone();
++    reverted.get_mut(&account_key).unwrap()["nonce"] = json!(0);
++    assert_eq!(
++        (
++            validate_state(&reverted, &cfg),
++            execute(&reverted, &cfg, 2, owner.id, &[], Some(1002)).is_err(),
++        ),
++        (Err("PQ2_AUTHORITY_NONCE"), true)
++    );
+     let budget = 50_000_u64;
+     let deadline = 20_u64;
+     let task = hash(
+@@ -177,31 +235,7 @@ fn dual_rotation_keeps_stable_task_permissions_and_actual_key_reads() {
+     .concat();
+     let reserve = ordinary(&cfg, &owner, owner.id, 1, 1, 2, &payload);
+     let reserved = execute(&state, &cfg, 1, owner.id, &[reserve], Some(1001)).unwrap();
+-    let rotation_payload = [
+-        2_u64.to_be_bytes().as_slice(),
+-        &authority_digest(&reserved.state, owner.id, &cfg).unwrap(),
+-    ]
+-    .concat();
+-    let rotate = fixture::signed(
+-        &common(&cfg, owner.id, 2, 1),
+-        wire::ROTATE,
+-        &rotation_payload,
+-        &[
+-            Witness {
+-                key: &owner,
+-                role: 3,
+-                generation: 1,
+-                carried: false,
+-            },
+-            Witness {
+-                key: &next,
+-                role: 4,
+-                generation: 2,
+-                carried: true,
+-            },
+-        ],
+-        None,
+-    );
++    let rotate = rotation(&cfg, &reserved.state, owner.id, 2, 1, &owner, &next);
+     let rotated = execute(
+         &reserved.state,
+         &cfg,
+@@ -212,7 +246,6 @@ fn dual_rotation_keeps_stable_task_permissions_and_actual_key_reads() {
+     )
+     .unwrap();
+     assert_eq!(rotated.metrics.signature_verifications, 2);
+-    let name = hex::encode(owner.id);
+     assert_eq!(
+         rotated.state[&auth_key(&name)],
+         authority(2, next.id, false)
+@@ -452,6 +485,75 @@ fn anchored_migration_conserves_all_accounts_tasks_rewards_and_claims_once() {
+         );
+         assert!(execute(&reverted, &cfg, 2, new_owner.id, &[], Some(1502)).is_err());
+     }
++    // CLAIM consumes source_nonce + 1, and every later real dual-signed key
++    // rotation consumes one more nonce. Retaining later key generations while
++    // rewinding only the account nonce must fail the complete State grammar.
++    let next_owner = Key::public_test_seed(104);
++    let last_owner = Key::public_test_seed(105);
++    let keys = [&new_owner, &next_owner, &last_owner];
++    let mut rotated_state = out.state.clone();
++    for (index, pair) in keys.windows(2).enumerate() {
++        let generation = index as u64 + 1;
++        let nonce = 8 + generation;
++        let height = generation + 1;
++        let raw = rotation(
++            &cfg,
++            &rotated_state,
++            owner,
++            nonce,
++            generation,
++            pair[0],
++            pair[1],
++        );
++        let rotated = execute(
++            &rotated_state,
++            &cfg,
++            height,
++            pair[1].id,
++            &[raw],
++            Some(1500 + height),
++        )
++        .unwrap();
++        assert_eq!(rotated.metrics.signature_verifications, 2);
++        assert_eq!(rotated.state[&format!("account:{name}")]["nonce"], nonce);
++        validate_state(&rotated.state, &cfg).unwrap();
++        for reverted_nonce in 8..nonce {
++            let mut reverted = rotated.state.clone();
++            reverted.get_mut(&format!("account:{name}")).unwrap()["nonce"] = json!(reverted_nonce);
++            assert_eq!(
++                (
++                    validate_state(&reverted, &cfg),
++                    execute(
++                        &reverted,
++                        &cfg,
++                        height + 1,
++                        pair[1].id,
++                        &[],
++                        Some(1501 + height),
++                    )
++                    .is_err(),
++                ),
++                (Err("PQ2_AUTHORITY_NONCE"), true),
++                "generation {} retained nonce {reverted_nonce}",
++                generation + 1
++            );
++        }
++        rotated_state = rotated.state;
++    }
++    let after_rotation = ordinary(&cfg, &last_owner, owner, 11, 3, 3, &[207; 32]);
++    let rotated_cancelled = execute(
++        &rotated_state,
++        &cfg,
++        4,
++        last_owner.id,
++        &[after_rotation],
++        Some(1504),
++    )
++    .unwrap();
++    assert_eq!(rotated_cancelled.state[&task]["status"], "cancelled");
++    // A coherent earlier branch remains valid with its own generation and
++    // nonce; this check must not introduce local history into consensus State.
++    validate_state(&out.state, &cfg).unwrap();
+     assert!(execute(&out.state, &cfg, 2, new_owner.id, &[raw], Some(1502)).is_err());
+     let cancel = ordinary(&cfg, &new_owner, owner, 9, 1, 3, &[207; 32]);
+     let cancelled = execute(&out.state, &cfg, 2, new_owner.id, &[cancel], Some(1502)).unwrap();
+@@ -549,6 +651,40 @@ fn migration_refuses_omissions_ambiguous_ids_untranslated_liabilities_and_unboun
+         .get_mut(&format!("account:{}", hex::encode(owner)))
+         .unwrap()["nonce"] = json!(u64::MAX);
+     assert!(synthetic_repin(registry.clone(), &cfg, nonce).is_err());
++    // A source nonce of MAX - 1 still permits its one final CLAIM. A retained
++    // second generation would require an unrepresentable additional nonce.
++    let mut last_nonce = material.clone();
++    let name = hex::encode(owner);
++    last_nonce
++        .state
++        .get_mut(&format!("account:{name}"))
++        .unwrap()["nonce"] = json!(u64::MAX - 1);
++    let final_anchor = synthetic_repin(registry.clone(), &cfg, last_nonce).unwrap();
++    let (final_cfg, final_state, _) =
++        genesis_with_trusted_migration(&[], 1500, final_anchor).unwrap();
++    let final_key = Key::public_test_seed(103);
++    let last_claim = claim(&final_cfg, owner, u64::MAX, &a, &final_key);
++    let last = execute(
++        &final_state,
++        &final_cfg,
++        1,
++        final_key.id,
++        &[last_claim],
++        Some(1501),
++    )
++    .unwrap();
++    assert_eq!(last.state[&format!("account:{name}")]["nonce"], u64::MAX);
++    validate_state(&last.state, &final_cfg).unwrap();
++    let mut impossible = last.state;
++    impossible.insert(status_key(&name, 1), authority(1, final_key.id, true));
++    install_key(&mut impossible, &name, 2, b.id, &b.spki);
++    assert_eq!(
++        (
++            validate_state(&impossible, &final_cfg),
++            execute(&impossible, &final_cfg, 2, final_key.id, &[], Some(1502)).is_err(),
++        ),
++        (Err("PQ2_AUTHORITY_NONCE"), true)
++    );
+     for (key, field, value) in [
+         (
+             format!("task:{}", hex::encode([207; 32])),
+diff --git a/trillionnium/crates/trnm-pon-node/src/ingress.rs b/trillionnium/crates/trnm-pon-node/src/ingress.rs
+index 6488481..e51c889 100644
+--- a/trillionnium/crates/trnm-pon-node/src/ingress.rs
++++ b/trillionnium/crates/trnm-pon-node/src/ingress.rs
+@@ -1160,6 +1160,32 @@ fn dispatch_shared_with_execution_observation(
+     control: &trnm_mvcc_fee::pon_executor::ExecutionControl<'_, Error>,
+     observation: Option<&public_v3::request_observation::TaskObservation>,
+     public_proof_before_unowned_task: bool,
++) -> Result<Value> {
++    dispatch_shared_with_execution_completion(
++        node,
++        request,
++        progress,
++        verify,
++        control,
++        observation,
++        public_proof_before_unowned_task,
++        &|_| Ok(()),
++    )
++}
++
++/// The private completion callback runs only after the reacquired native owner
++/// checks current parent/task/material eligibility. Verification stays outside
++/// that lock, and full-W1 but unregistered work receives no scheduling benefit.
++#[allow(clippy::too_many_arguments)]
++fn dispatch_shared_with_execution_completion(
++    node: &Mutex<Node>,
++    request: Request,
++    progress: &mut dyn FnMut(u64) -> Result<()>,
++    verify: impl FnOnce(Packet) -> Result<WorkCheckedPacket>,
++    control: &trnm_mvcc_fee::pon_executor::ExecutionControl<'_, Error>,
++    observation: Option<&public_v3::request_observation::TaskObservation>,
++    public_proof_before_unowned_task: bool,
++    completion: &dyn Fn(&WorkCheckedPacket) -> Result<()>,
+ ) -> Result<Value> {
+     use public_v3::SubmitPhase;
+     match request {
+@@ -1229,7 +1255,8 @@ fn dispatch_shared_with_execution_observation(
+             let (id, clock) = observe_submit_phase(observation, SubmitPhase::Admission, || {
+                 let clock = now()?;
+                 let checked = owner.attach_owner_work(checked, owner_permit)?;
+-                let id = owner.admit_work_checked_with_control(checked, clock, control)?;
++                let id = owner
++                    .admit_work_checked_with_completion(checked, clock, control, completion)?;
+                 Ok((id, clock))
+             })?;
+             observe_submit_phase(observation, SubmitPhase::SubmitResult, || {
+@@ -2766,7 +2793,7 @@ mod tests {
+                 |row| row.get(0),
+             )
+             .unwrap();
+-        let error = dispatch_shared_with_execution_observation(
++        let error = dispatch_shared_with_execution_completion(
+             &node,
+             Request::Submit {
+                 packet: hex::encode(packet.encode().unwrap()),
+@@ -2784,6 +2811,7 @@ mod tests {
+             &ExecutionControl::new(&|_| Ok(()), &()),
+             None,
+             true,
++            &|_| panic!("corrupt parent must not receive completion priority"),
+         )
+         .unwrap_err();
+         assert_eq!(error.to_string(), "ROOT");
+diff --git a/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs b/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs
+index ed129c7..329945a 100644
+--- a/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs
++++ b/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs
+@@ -1537,7 +1537,7 @@ fn public_dispatch(
+                     None
+                 }
+             };
+-            super::dispatch_shared_with_execution_observation(
++            super::dispatch_shared_with_execution_completion(
+                 node,
+                 NativeRequest::Submit { packet },
+                 &mut progress,
+@@ -1626,11 +1626,7 @@ fn public_dispatch(
+                         m.work_failed += 1;
+                     }
+                     drop(m);
+-                    let checked = result?;
+-                    if let Some(live) = live_cpu.and_then(|cpu| cpu.live.as_ref()) {
+-                        live.work_verified(&checked)?;
+-                    }
+-                    Ok(checked)
++                    result
+                 },
+                 &ExecutionControl::new(
+                     &|_| {
+@@ -1644,6 +1640,12 @@ fn public_dispatch(
+                 ),
+                 observation,
+                 true,
++                &|checked| {
++                    if let Some(live) = live_cpu.and_then(|cpu| cpu.live.as_ref()) {
++                        live.work_verified(checked)?;
++                    }
++                    Ok(())
++                },
+             )
+         }
+         Request::GrowthSubmitV1 { .. }
+diff --git a/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs b/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs
+index 12132a6..35b9ff3 100644
+--- a/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs
++++ b/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs
+@@ -500,8 +500,10 @@ impl LiveRequestCpu {
+         Ok(())
+     }
+     /// Only the private packet owning an actually verified complete W1 relation
+-    /// may enter this stage. It remains the very same charged request. Existing
+-    /// ledger packets, claimed tickets and failed/partial W1 do not call this.
++    /// may enter this stage, after the native owner has checked its current
++    /// parent/task/material eligibility. It remains the same charged request.
++    /// Existing ledger packets, unregistered tasks, claimed tickets and
++    /// failed/partial W1 do not call this.
+     pub(super) fn work_verified(&self, checked: &crate::store::WorkCheckedPacket) -> Result<()> {
+         self.checkpoint()?;
+         // Hashing the canonical complete packet is paid by this same original
+diff --git a/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs b/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs
+index 12bf025..39a08d9 100644
+--- a/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs
++++ b/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_completion_tests.rs
+@@ -410,6 +410,152 @@ fn same_valid_w1_native_invalid_packet_cannot_reacquire_completion_priority() {
+     );
+ }
+ 
++#[test]
++fn unregistered_zero_task_cannot_claim_pure_pon_completion_priority() {
++    use super::super::{
++        public_dispatch, MutationCpuMeasurement, PaidMutationCpuPermit, PublicMetrics,
++        PublicPolicy, PublicServer, Request,
++    };
++    use crate::ingress::DevelopmentIdentity;
++    use trnm_crypto_primitives::pon_work;
++
++    let (directory, settings, valid) = packet();
++    let mut candidate = valid.clone();
++    let node = Mutex::new(Node::open(&directory.path().join("receiver"), settings, 1).unwrap());
++    let before = node.lock().unwrap().read_active().unwrap();
++    let zeros = vec![0; pon_work::CELLS];
++    let prepared = pon_work::PreparedTask::new(&zeros, &zeros).unwrap();
++    let unregistered = pon_work::task_id(&zeros, &zeros).unwrap();
++    assert_ne!(candidate.header.work_task, unregistered);
++    candidate.header.work_task = unregistered;
++    for nonce in 0..4096 {
++        candidate.header.nonce = nonce;
++        candidate.proof = prepared.prove(candidate.header.challenge()).unwrap();
++        if pon_work::precheck_proof_statement(
++            candidate.header.challenge(),
++            candidate.header.work_task,
++            candidate.header.target,
++            &candidate.proof,
++        )
++        .is_ok()
++        {
++            break;
++        }
++    }
++    // This is genuine full W1, not a forged ticket or an injected verifier.
++    WorkCheckedPacket::verify(candidate.clone()).unwrap();
++    let server = PublicServer::new_process_cold(
++        DevelopmentIdentity::from_secret_hex(&hex::encode([71; 32])).unwrap(),
++        PublicPolicy::pure_pon(Duration::from_secs(2)).unwrap(),
++    )
++    .unwrap()
++    .with_pure_admission_v2()
++    .unwrap();
++    let domain = server.mutation_cpu_domain();
++    let stop = Arc::new(AtomicBool::new(false));
++    let cancelled = Arc::new(AtomicBool::new(false));
++    let metrics = Mutex::new(PublicMetrics::default());
++    let deadline = Instant::now() + Duration::from_secs(5);
++    let permit =
++        PaidMutationCpuPermit::acquire_before(&server, &metrics, deadline, &stop, &cancelled)
++            .unwrap();
++    permit
++        .live
++        .bind_public_request(deadline, stop.clone(), cancelled.clone())
++        .unwrap();
++    let measurement = MutationCpuMeasurement::for_permit(Some(&permit));
++    let outcome = public_dispatch(
++        &node,
++        Request::Submit {
++            packet: hex::encode(candidate.encode().unwrap()),
++        },
++        deadline,
++        &stop,
++        &cancelled,
++        &metrics,
++        PublicDispatchObservation {
++            observation: None,
++            mutation_cpu: Some(&measurement),
++            arithmetic_facts: server.pure_admission_v2.as_deref(),
++            public_product: None,
++        },
++    );
++    assert_eq!(outcome.unwrap_err().to_string(), "TASK");
++    let completion = domain.observe_completion_work().unwrap();
++    permit.finish(&measurement, &server, &metrics).unwrap();
++    assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
++    assert!(node
++        .lock()
++        .unwrap()
++        .packet(candidate.id().unwrap())
++        .is_err());
++    assert_eq!(metrics.lock().unwrap().work_started, 1);
++    assert_eq!(metrics.lock().unwrap().work_failed, 0);
++    assert!(
++        domain
++            .observe_actual_flow()
++            .unwrap()
++            .unwrap()
++            .balance_identity_verified
++    );
++    assert_eq!(
++        completion.live_completions, 0,
++        "unregistered task received priority"
++    );
++    assert_eq!(
++        completion.retained_identities, 0,
++        "unregistered task consumed an epoch identity"
++    );
++    // A legal retry still receives the original benefit in this same cold
++    // epoch, then its exact durable duplicate neither replays nor promotes.
++    for existing in [false, true] {
++        let deadline = Instant::now() + Duration::from_secs(5);
++        let permit =
++            PaidMutationCpuPermit::acquire_before(&server, &metrics, deadline, &stop, &cancelled)
++                .unwrap();
++        permit
++            .live
++            .bind_public_request(deadline, stop.clone(), cancelled.clone())
++            .unwrap();
++        let measurement = MutationCpuMeasurement::for_permit(Some(&permit));
++        let reply = public_dispatch(
++            &node,
++            Request::Submit {
++                packet: hex::encode(valid.encode().unwrap()),
++            },
++            deadline,
++            &stop,
++            &cancelled,
++            &metrics,
++            PublicDispatchObservation {
++                observation: None,
++                mutation_cpu: Some(&measurement),
++                arithmetic_facts: server.pure_admission_v2.as_deref(),
++                public_product: None,
++            },
++        )
++        .unwrap();
++        assert_eq!(reply["block"], hex::encode(valid.id().unwrap()));
++        let completion = domain.observe_completion_work().unwrap();
++        assert_eq!(completion.live_completions, usize::from(!existing));
++        assert_eq!(completion.retained_identities, 1);
++        permit.finish(&measurement, &server, &metrics).unwrap();
++        assert!(
++            domain
++                .observe_actual_flow()
++                .unwrap()
++                .unwrap()
++                .balance_identity_verified
++        );
++    }
++    assert_eq!(metrics.lock().unwrap().work_started, 2);
++    assert_eq!(metrics.lock().unwrap().work_failed, 0);
++    assert_eq!(
++        domain.observe_completion_work().unwrap().live_completions,
++        0
++    );
++}
++
+ #[test]
+ fn completion_work_claim_is_atomic_across_real_verifiers_and_domain_clones() {
+     let (_directory, _settings, packet) = packet();
+diff --git a/trillionnium/crates/trnm-pon-node/src/store.rs b/trillionnium/crates/trnm-pon-node/src/store.rs
+index cc30aad..cacec00 100644
+--- a/trillionnium/crates/trnm-pon-node/src/store.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store.rs
+@@ -4110,31 +4110,39 @@ impl Node {
+         checked: WorkCheckedPacket,
+         observed_now: u64,
+         control: &ExecutionControl<'_, Error>,
++    ) -> Result<Hash> {
++        self.admit_work_checked_with_completion(checked, observed_now, control, &|_| Ok(()))
++    }
++    /// A scheduling benefit may follow only the same owner's current full
++    /// parent/task/material checks. Complete W1 alone also verifies mathematical
++    /// relations for tasks that this branch has never registered. Such work
++    /// must not consume the shared epoch's bounded completion identities.
++    pub(crate) fn admit_work_checked_with_completion(
++        &mut self,
++        checked: WorkCheckedPacket,
++        observed_now: u64,
++        control: &ExecutionControl<'_, Error>,
++        completion: &dyn Fn(&WorkCheckedPacket) -> Result<()>,
+     ) -> Result<Hash> {
+         let _measurement = (self.state_backend == StateBackend::AuthenticatedV1).then(|| {
+             self.authenticated_arithmetic
+                 .history
+                 .observe(native_authenticated::HistoryStage::Admission)
+         });
+-        let WorkCheckedPacket {
+-            packet,
+-            work: verified_work,
+-            owner_permit,
+-        } = checked;
+         let checked_parent = match self.check_admission_context_for_permit(
+-            &packet,
++            &checked.packet,
+             observed_now,
+-            owner_permit.as_ref(),
++            checked.owner_permit.as_ref(),
+             &mut || (control.progress)(ExecutionProgress::BeforeParentBinding),
+         )? {
+             CheckedAdmissionContext::Existing(id) => return Ok(id),
+             CheckedAdmissionContext::Parent(parent) => parent,
+         };
+         ensure(
+-            self.owner_policy.is_some() == owner_permit.is_some(),
++            self.owner_policy.is_some() == checked.owner_permit.is_some(),
+             "OWNER_TASK_PERMIT_REQUIRED",
+         )?;
+-        if let (Some(owner), Some(permit)) = (&self.owner_policy, &owner_permit) {
++        if let (Some(owner), Some(permit)) = (&self.owner_policy, &checked.owner_permit) {
+             ensure(
+                 std::sync::Arc::ptr_eq(&owner.policy, &permit.policy),
+                 "OWNER_TASK_STALE_POLICY",
+@@ -4142,7 +4150,7 @@ impl Node {
+             ensure(
+                 permit.facts.packet_sha256
+                     == crate::operator_task_policy::digest_bytes(
+-                        &self.settings.encode_packet(&packet)?,
++                        &self.settings.encode_packet(&checked.packet)?,
+                     ),
+                 "OWNER_TASK_PACKET_CHANGED",
+             )?;
+@@ -4157,6 +4165,11 @@ impl Node {
+                 )
+                 .map_err(owner_error)?;
+         }
++        let WorkCheckedPacket {
++            packet,
++            work: verified_work,
++            owner_permit,
++        } = &checked;
+         // Only immutable permit/atomic flags are consulted while M06 or SQL run.
+         // No journal mutex/RefCell guard or filesystem write is held across either.
+         let mining_progress = self.mining_progress_snapshot()?;
+@@ -4177,7 +4190,7 @@ impl Node {
+         let guarded_control = ExecutionControl::new(&guarded_progress, control.worker_accounting);
+         let control = &guarded_control;
+         let progress = control.progress;
+-        let bytes = self.settings.encode_packet(&packet)?;
++        let bytes = self.settings.encode_packet(packet)?;
+         let h = &packet.header;
+         let id = packet.id()?;
+         let parent = self.record(h.parent)?;
+@@ -4190,7 +4203,7 @@ impl Node {
+             checked_parent
+         } else {
+             drop(checked_parent);
+-            self.check_admission_parent(&packet, &mut || {
++            self.check_admission_parent(packet, &mut || {
+                 progress(ExecutionProgress::BeforeParentBinding)
+             })?
+         };
+@@ -4199,6 +4212,10 @@ impl Node {
+             eligibility: registered_task,
+             ..
+         } = checked_parent;
++        // Only the same owner's current parent/epoch/task/material checks can
++        // reach this callback. Full M06, output roots and durable fences still
++        // follow; this grants scheduling priority, never block authority.
++        completion(&checked)?;
+         let (executed, rejection_scope) = self.execute_derived_core_with_rejection(
+             &prior,
+             ExecutionRequest {
