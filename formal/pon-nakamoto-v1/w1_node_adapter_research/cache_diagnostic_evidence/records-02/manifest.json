@@ -1,0 +1,72 @@
+{
+  "result": "FAILED",
+  "commands": [
+    {
+      "label": "original-preflight",
+      "args": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-02/original-preflight.stdout",
+      "stderr": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-02/original-preflight.stderr"
+    },
+    {
+      "label": "checkout",
+      "args": [
+        "git",
+        "checkout",
+        "-b",
+        "fix/chain-w1-preprocess-diag-20261110-1017-035f",
+        "f2ad7e1389588a9913e308df8633277ae7c22f4d"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-02/checkout.stdout",
+      "stderr": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-02/checkout.stderr"
+    },
+    {
+      "label": "pre-edit-preflight",
+      "args": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-02/pre-edit-preflight.stdout",
+      "stderr": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-02/pre-edit-preflight.stderr"
+    },
+    {
+      "label": "diagnostic-lock",
+      "args": [
+        "/home/qq/.cargo/bin/cargo",
+        "+1.95.0",
+        "generate-lockfile",
+        "--offline",
+        "--manifest-path",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/source/formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.toml"
+      ],
+      "exit_code": 0,
+      "stdout": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-02/diagnostic-lock.stdout",
+      "stderr": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-02/diagnostic-lock.stderr"
+    },
+    {
+      "label": "diagnostic-format",
+      "args": [
+        "/home/qq/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/source/formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/Cargo.toml",
+        "--all"
+      ],
+      "exit_code": 1,
+      "stdout": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-02/diagnostic-format.stdout",
+      "stderr": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/records-02/diagnostic-format.stderr"
+    }
+  ],
+  "scope": "isolated instrumented diagnostic; never a formal ABBA/performance sample",
+  "formal_receiver_samples": 0,
+  "new_complete_w1_proofs": 0,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO",
+  "error": "ValueError('diagnostic-format failed')"
+}

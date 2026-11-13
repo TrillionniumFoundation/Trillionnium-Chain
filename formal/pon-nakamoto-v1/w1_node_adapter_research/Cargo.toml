@@ -24,3 +24,10 @@ codegen-units = 1
 lto = "thin"
 
 [workspace]
+
+# Isolated diagnostic only: exact vendor copy with stderr cache request/miss events.
+[patch.crates-io]
+p3-dft = { path = "diagnostic_vendor/p3-dft-0.8.0" }
+
+p3-uni-stark = { path = "diagnostic_vendor/p3-uni-stark-0.8.0" }
+p3-fri = { path = "diagnostic_vendor/p3-fri-0.8.0" }

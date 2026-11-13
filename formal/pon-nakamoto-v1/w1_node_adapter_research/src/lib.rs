@@ -20,7 +20,7 @@ use sha2::{Digest, Sha256};
 use trnm_pon_node::{Node, Packet};
 use w1_full_public_stark_research::arith_carry_air::Dot8PackedCarryAir;
 use w1_full_public_stark_research::proof_config::{
-    PACKED_CARRY_COMPONENT, SCHEDULE_SHA_COMPONENT, W1Proof, config,
+    Dft, PACKED_CARRY_COMPONENT, SCHEDULE_SHA_COMPONENT, W1Proof, config_with_dft,
 };
 use w1_full_public_stark_research::proof_wire::{Component, limits, scan_proof};
 use w1_full_public_stark_research::public::{Expected, PUBLIC_BYTES, PublicStatement};
@@ -361,20 +361,33 @@ pub fn verify_bundle<'a>(
     mut progress: impl FnMut(Stage) -> Result<()>,
 ) -> Result<VerifiedBundle<'a>> {
     progress(Stage::BeforeProof)?;
+    let mut phases = Vec::new();
+    let start = Instant::now();
     // Own immutability plus repeated fixed scans binds admission to exact decode bytes.
     scan_proof(&bundle.sha, Component::ScheduledSha).map_err(err)?;
     scan_proof(&bundle.arithmetic, Component::PackedCarry).map_err(err)?;
     let sha_proof = decode(&bundle.sha, Component::ScheduledSha)?;
     let arithmetic_proof = decode(&bundle.arithmetic, Component::PackedCarry)?;
     let statement = PublicStatement::decode(&bundle.public).map_err(err)?;
+    phases.push(Phase {
+        stage: "fixed_shape_scans_and_decode".into(),
+        wall_seconds: start.elapsed().as_secs_f64(),
+    });
+    let start = Instant::now();
     let (sha_plan, original_arithmetic) = statement.plans(&bundle.plan.expected()?)?;
     let arithmetic = Dot8PackedCarryAir::new(original_arithmetic.rows().to_vec()).map_err(err)?;
     drop(original_arithmetic);
     let sha = ScheduledShaAir::public_only(&sha_plan);
-    let mut phases = Vec::new();
+    phases.push(Phase {
+        stage: "canonical_plans_and_public_only_air".into(),
+        wall_seconds: start.elapsed().as_secs_f64(),
+    });
     progress(Stage::BeforeShaSetup)?;
     let start = Instant::now();
-    let sha_config = config(SCHEDULE_SHA_COMPONENT);
+    // Share only transform-shape twiddle tables within this request. Both
+    // component transcripts and complete public preprocessing stay independent.
+    let dft = Dft::default();
+    let sha_config = config_with_dft(SCHEDULE_SHA_COMPONENT, dft.clone());
     let (pp, vk) = setup_preprocessed(&sha_config, &sha, 13)
         .map_err(|e| format!("{e:?}"))?
         .ok_or("missing SHA preprocessing")?;
@@ -393,7 +406,7 @@ pub fn verify_bundle<'a>(
     });
     progress(Stage::BeforeArithmeticSetup)?;
     let start = Instant::now();
-    let arithmetic_config = config(PACKED_CARRY_COMPONENT);
+    let arithmetic_config = config_with_dft(PACKED_CARRY_COMPONENT, dft);
     let (pp, vk) = setup_preprocessed(&arithmetic_config, &arithmetic, 14)
         .map_err(|e| format!("{e:?}"))?
         .ok_or("missing arithmetic preprocessing")?;
@@ -439,24 +452,28 @@ pub fn verify_reserved_bundle<'a>(
 }
 
 pub fn check_current_node(node: &Node, bundle: &PreparedBundle) -> Result<()> {
+    check_current_packet(node, &bundle.plan, &bundle.packet)
+}
+
+/// Shared live-context checks for the research adapter and native comparator.
+/// This check creates no proof capability and does not perform native admission.
+pub fn check_current_packet(node: &Node, plan: &OperatorPlan, packet: &Packet) -> Result<()> {
     let settings = node.settings();
     require(
-        hex::encode(settings.network()) == bundle.plan.network
-            && hex::encode(settings.parameters()) == bundle.plan.parameters
-            && hex::encode(settings.genesis()) == bundle.plan.genesis,
+        hex::encode(settings.network()) == plan.network
+            && hex::encode(settings.parameters()) == plan.parameters
+            && hex::encode(settings.genesis()) == plan.genesis,
         "current Node context",
     )?;
     require(
-        node.parent_height(bundle.packet.header.parent)
+        node.parent_height(packet.header.parent)
             .map_err(err)?
             .checked_add(1)
-            == Some(bundle.packet.header.height),
+            == Some(packet.header.height),
         "current Node parent height",
     )?;
     require(
-        node.expected_target(bundle.packet.header.parent)
-            .map_err(err)?
-            == bundle.packet.header.target,
+        node.expected_target(packet.header.parent).map_err(err)? == packet.header.target,
         "current Node target",
     )
 }
@@ -471,26 +488,51 @@ pub fn admit(
     activate: bool,
     mut progress: impl FnMut(Stage) -> Result<()>,
 ) -> Result<Value> {
+    let mut native_phases = Vec::new();
+    let start = Instant::now();
     progress(Stage::BeforeNodeAdmission)?;
     check_current_node(node, verified.bundle)?;
     let before = node.active().map_err(err)?;
+    native_phases.push(Phase {
+        stage: "current_context_and_before_observation".into(),
+        wall_seconds: start.elapsed().as_secs_f64(),
+    });
     let start = Instant::now();
     let id = node
         .admit(&verified.bundle.packet, observed_now)
         .map_err(|e| format!("NODE_ADMISSION:{e}"))?;
     let native_admission_seconds = start.elapsed().as_secs_f64();
+    native_phases.push(Phase {
+        stage: "native_admission".into(),
+        wall_seconds: native_admission_seconds,
+    });
     // From here on, the durable native fact may not be rewritten as cancellation.
+    let start = Instant::now();
     let late_cancellation = progress(Stage::NodeCommitted).err();
+    native_phases.push(Phase {
+        stage: "postcommit_checkpoint".into(),
+        wall_seconds: start.elapsed().as_secs_f64(),
+    });
     let mut activation_error = None;
     if activate && late_cancellation.is_none() {
+        let start = Instant::now();
         match progress(Stage::BeforeActivation).and_then(|_| node.activate(id).map_err(err)) {
             Ok(_) => (),
             Err(e) => activation_error = Some(e),
         }
+        native_phases.push(Phase {
+            stage: "activation_checkpoint_and_call".into(),
+            wall_seconds: start.elapsed().as_secs_f64(),
+        });
     }
+    let start = Instant::now();
     let observation = node
         .exact_packet_observation(&verified.bundle.packet)
         .map_err(err);
+    native_phases.push(Phase {
+        stage: "native_packet_observation".into(),
+        wall_seconds: start.elapsed().as_secs_f64(),
+    });
     Ok(
         json!({"schema":"trnm-w1-node-adapter-admission-v3","profile":PROFILE,
         "operation":verified.bundle.operation,"block":hex::encode(id),"both_real_proofs_verified":true,
@@ -501,6 +543,9 @@ pub fn admit(
         "active_before":hex::encode(before.0),"generation_before":before.1,
         "native_observation":observation.as_ref().ok(),"native_observation_error":observation.as_ref().err(),
         "proof_phases":verified.phases,"proof_start":verified.proof_start,
+        "native_detail_metrics":{"schema":"trnm-w1-native-admission-metrics-v1",
+            "phases_are_disjoint":true,"phases":native_phases,
+            "scope":"inside adapter admit; excludes Node open/recovery and enclosing CLI phases; do not add to enclosing phase times"},
         "qualification":"HOLD_NO_GO","production_activation":false}),
     )
 }

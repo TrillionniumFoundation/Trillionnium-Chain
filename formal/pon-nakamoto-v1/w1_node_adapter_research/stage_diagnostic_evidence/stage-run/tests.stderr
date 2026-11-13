@@ -1,0 +1,9 @@
+warning: trnm-sqlite-io-boundary@0.1.0: trnm SQLite I/O boundary UNQUALIFIED: external native build override CARGO_ENCODED_RUSTFLAGS
+   Compiling w1-node-adapter-research v0.1.0 (/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/source/formal/pon-nakamoto-v1/w1_node_adapter_research)
+    Finished `release` profile [optimized] target(s) in 40.23s
+     Running unittests src/lib.rs (/home/qq/work/w1-dft-resume-20261110-035f-diag-1138/target/release/deps/w1_node_adapter_research-30fa468c73ffeb07)
+     Running unittests src/main.rs (/home/qq/work/w1-dft-resume-20261110-035f-diag-1138/target/release/deps/w1_node_adapter_research-5425035c07825724)
+     Running tests/node_bridge.rs (/home/qq/work/w1-dft-resume-20261110-035f-diag-1138/target/release/deps/node_bridge-cdf4a9cae8e68e7f)
+     Running tests/proof_start_owner.rs (/home/qq/work/w1-dft-resume-20261110-035f-diag-1138/target/release/deps/proof_start_owner-3652229031345ebe)
+     Running tests/receiver_metrics.rs (/home/qq/work/w1-dft-resume-20261110-035f-diag-1138/target/release/deps/receiver_metrics-34a2503c9e201b1f)
+   Doc-tests w1_node_adapter_research

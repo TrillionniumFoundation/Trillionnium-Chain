@@ -1,0 +1,9 @@
+{
+  "schema": "trnm-w1-proof-start-owner-policy-v1",
+  "owner_id": "27b909a62ca3a62a1f737c75d0fa58f45554f3ae8f6a9cfb5852640e49bf7e67",
+  "profile": "w1-pnh1-native-node-scheduled-p3-research-v1",
+  "network": "fea4299db5ff104bb64366f7594c7e7594c487771f10e928dc1e92e3527dec3f",
+  "parameters": "421ce068252e628ebe5ecbf8af07f3e5178bd494bb45020eedc6303e423f5aba",
+  "genesis": "98d4daf6f15e9dbdae8614515f3f99a9e5ecb714a3315a01a10bf3cd3cfe15f3",
+  "maximum_starts": 1
+}

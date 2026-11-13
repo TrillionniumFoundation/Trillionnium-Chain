@@ -1,0 +1,195 @@
+{
+  "result": "CACHE_DIAGNOSTIC_COMPLETE",
+  "source": "d12cd31e43f984196f01a517341c2017071dd697",
+  "commands": [
+    {
+      "label": "preflight",
+      "args": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "graph",
+      "args": [
+        "/home/qq/.cargo/bin/cargo",
+        "+1.95.0",
+        "metadata",
+        "--format-version",
+        "1",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/source/formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.toml"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "all-feature-graph",
+      "args": [
+        "/home/qq/.cargo/bin/cargo",
+        "+1.95.0",
+        "metadata",
+        "--all-features",
+        "--format-version",
+        "1",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/source/formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.toml"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "tests",
+      "args": [
+        "/home/qq/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--release",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/source/formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.toml",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "strict-clippy",
+      "args": [
+        "/home/qq/.cargo/bin/cargo",
+        "+1.95.0",
+        "clippy",
+        "--release",
+        "--all-targets",
+        "--all-features",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/source/formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.toml",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "owner-init",
+      "args": [
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/target/release/w1-node-adapter-research",
+        "owner-init",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/checks-probe-04/independent-policy.json",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/checks-probe-04/owner"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "one-retained-proof-probe",
+      "args": [
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/target/release/w1-node-adapter-research",
+        "exercise",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/source/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/source/formal/pon-nakamoto-v1/w1_node_adapter_research/fixtures/node-input-v1",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/checks-probe-04/receiver",
+        "none",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/checks-probe-04/owner",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/checks-probe-04/independent-policy.json"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "source-after",
+      "args": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "d12cd31e43f984196f01a517341c2017071dd697",
+        "--output",
+        "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/checks-probe-04/source-after.json"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "formal_ABBA_samples": 0,
+  "new_complete_w1_proofs": 0,
+  "retained_proof_replays_attempted": 1,
+  "qualification": "HOLD_NO_GO",
+  "adapter_methods": 27,
+  "binary": {
+    "path": "/home/qq/work/w1-dft-resume-20261110-035f-diag-1017/target/release/w1-node-adapter-research",
+    "bytes": 8401448,
+    "sha256": "cc80eb2ad1d7a42cc9546e3959f17ddc90255aa3eb324f4429cf063ab0c87a8d"
+  },
+  "cache_keys": [
+    {
+      "key": "coset (13, 13755031170719881902)",
+      "requests": 1,
+      "misses": 1,
+      "hits": 0
+    },
+    {
+      "key": "coset (13, 2774854036902473000)",
+      "requests": 1,
+      "misses": 1,
+      "hits": 0
+    },
+    {
+      "key": "coset (13, 7)",
+      "requests": 2,
+      "misses": 1,
+      "hits": 1
+    },
+    {
+      "key": "coset (13, 7710304075565836564)",
+      "requests": 1,
+      "misses": 1,
+      "hits": 0
+    },
+    {
+      "key": "coset (14, 13755031170719881902)",
+      "requests": 1,
+      "misses": 1,
+      "hits": 0
+    },
+    {
+      "key": "coset (14, 5916915546922738528)",
+      "requests": 1,
+      "misses": 1,
+      "hits": 0
+    },
+    {
+      "key": "coset (14, 6875003240251177195)",
+      "requests": 1,
+      "misses": 1,
+      "hits": 0
+    },
+    {
+      "key": "coset (14, 7)",
+      "requests": 2,
+      "misses": 1,
+      "hits": 1
+    },
+    {
+      "key": "inverse 13",
+      "requests": 1,
+      "misses": 1,
+      "hits": 0
+    },
+    {
+      "key": "inverse 14",
+      "requests": 1,
+      "misses": 1,
+      "hits": 0
+    }
+  ],
+  "total_requests": 12,
+  "total_misses": 10,
+  "total_hits": 2,
+  "scope": "one instrumented retained proof plus native replay; logging changes time; not an ABBA or resource/service qualification"
+}

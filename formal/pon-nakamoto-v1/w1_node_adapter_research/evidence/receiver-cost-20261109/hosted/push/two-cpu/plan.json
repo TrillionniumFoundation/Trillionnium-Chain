@@ -1,0 +1,81 @@
+{
+  "schema": "trnm-w1-local-receiver-comparison-v1",
+  "planned_order": [
+    {
+      "index": 0,
+      "variant": "N"
+    },
+    {
+      "index": 1,
+      "variant": "P"
+    },
+    {
+      "index": 2,
+      "variant": "P"
+    },
+    {
+      "index": 3,
+      "variant": "N"
+    },
+    {
+      "index": 4,
+      "variant": "N"
+    },
+    {
+      "index": 5,
+      "variant": "P"
+    },
+    {
+      "index": 6,
+      "variant": "P"
+    },
+    {
+      "index": 7,
+      "variant": "N"
+    }
+  ],
+  "binary": "/home/runner/work/_temp/w1-target/release/w1-node-adapter-research",
+  "expected_binary_sha256": "733eedf0f3c1922a232fc373f3a0c014748225f7b11b24bae0cdc5e537bbb58c",
+  "input_identity": {
+    "packet_sha256": "332e27b1b01c745cc25dd1f0d923217a81967da477d074417033b795c35c431a",
+    "operator_plan_sha256": "042cec561b64b4423a7d60898ad87d65dabf37d77cd08bc7aa5724faad474ed7",
+    "packet_bytes": 49508
+  },
+  "application_payload_bytes": {
+    "N": 49508,
+    "P": 4023864
+  },
+  "payload_scope": "actual application input files; proof arm retains the native packet; independent operator plan/policy are provisioned separately; no measured network framing",
+  "shared_operator_plan_bytes": 1126,
+  "genesis": "98d4daf6f15e9dbdae8614515f3f99a9e5ecb714a3315a01a10bf3cd3cfe15f3",
+  "proof_start_policy": {
+    "schema": "trnm-w1-proof-start-owner-policy-v1",
+    "owner_id": "d9ecada229536cd16a4c9b525ad6d0de965c64c2b779c069ecefb4c2e084c44d",
+    "profile": "w1-pnh1-native-node-scheduled-p3-research-v1",
+    "network": "fea4299db5ff104bb64366f7594c7e7594c487771f10e928dc1e92e3527dec3f",
+    "parameters": "421ce068252e628ebe5ecbf8af07f3e5178bd494bb45020eedc6303e423f5aba",
+    "genesis": "98d4daf6f15e9dbdae8614515f3f99a9e5ecb714a3315a01a10bf3cd3cfe15f3",
+    "maximum_starts": 4
+  },
+  "cpu_affinity": [
+    0,
+    1
+  ],
+  "rayon_num_threads": 2,
+  "expected_kernel_limits": {
+    "cpu.max": "200000 100000",
+    "memory.max": "2147483648",
+    "memory.swap.max": "0",
+    "pids.max": "256"
+  },
+  "per_process_timeout_seconds": 120.0,
+  "platform": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.39",
+  "python_version": "3.12.3",
+  "fresh_node_directories": true,
+  "new_complete_proofs": 0,
+  "distinct_input_tasks": 1,
+  "network_transport_measured": false,
+  "fresh_prover_cost_measured": false,
+  "production_activation": false,
+  "qualification": "HOLD_NO_GO"
+}

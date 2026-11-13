@@ -1,0 +1,39 @@
+{
+  "source": "0512570ceeffa078522eb2009c92a0f18c67aa64",
+  "events": [
+    {
+      "stage": "public_table",
+      "key": "13",
+      "seconds": 0.001837113
+    },
+    {
+      "stage": "lde",
+      "key": "[(32768, 139)]",
+      "seconds": 0.012502113
+    },
+    {
+      "stage": "mmcs_commit",
+      "key": "[(32768, 139)]",
+      "seconds": 0.101948035
+    },
+    {
+      "stage": "public_table",
+      "key": "14",
+      "seconds": 0.00411789
+    },
+    {
+      "stage": "lde",
+      "key": "[(65536, 180)]",
+      "seconds": 0.02652466
+    },
+    {
+      "stage": "mmcs_commit",
+      "key": "[(65536, 180)]",
+      "seconds": 0.259868835
+    }
+  ],
+  "samples_per_stage": 1,
+  "formal_ABBA_samples": 0,
+  "new_complete_W1_proofs": 0,
+  "scope": "instrumented diagnostic; no causal or service qualification"
+}

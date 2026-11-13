@@ -1,0 +1,32 @@
+{
+  "source": "d12cd31e43f984196f01a517341c2017071dd697",
+  "commands": [
+    {
+      "label": "preflight",
+      "exit_code": 0,
+      "args": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ]
+    },
+    {
+      "label": "repository-links",
+      "exit_code": 0,
+      "args": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/check_repository.py"
+      ]
+    },
+    {
+      "label": "source-negatives",
+      "exit_code": 2,
+      "args": [
+        "/usr/bin/python3",
+        "-B",
+        "scripts/ci/test_verify_ci_source.py"
+      ]
+    }
+  ],
+  "result": "FAILED"
+}
