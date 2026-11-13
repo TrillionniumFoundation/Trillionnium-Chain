@@ -1190,7 +1190,7 @@ fn decode_request_v2(body: &[u8]) -> Result<RequestV2, ExternalCheckpointAuthori
         OP_LOAD_V2 if body.len() == 41 && body[6..9] == [0, 0, 0] => Ok(RequestV2::Load {
             scope: body[9..41].try_into().expect("fixed load scope"),
         }),
-        OP_COMPARE_AND_ADVANCE_V2 if body[6] <= 1 && body[7..9] == [0, 0] => {
+        OP_COMPARE_AND_ADVANCE_V2 if body.len() >= 41 && body[6] <= 1 && body[7..9] == [0, 0] => {
             let scope: [u8; 32] = body[9..41].try_into().expect("fixed compare scope");
             let expected_start = 41;
             let target_start = expected_start + if body[6] == 1 { CHECKPOINT_BYTES_V2 } else { 0 };
@@ -1786,6 +1786,41 @@ mod tests {
         assert!(authority.load_checked([1; 32]).is_err());
         assert_eq!(fs::metadata(&anchor).unwrap().len(), 1024 * 1024);
         assert_eq!(fs::metadata(&log).unwrap().len(), 0);
+    }
+
+    #[test]
+    fn short_compare_requests_are_rejected_before_scope_decode() {
+        let first = checkpoint(0, [0; 32]);
+        for expected in [None, Some(first)] {
+            let target = match expected {
+                None => first,
+                Some(previous) => checkpoint(1, previous.checkpoint_checksum()),
+            };
+            let body =
+                encode_request_v2(RequestV2::CompareAndAdvance(Box::new(CompareRequestV2 {
+                    expected,
+                    target,
+                })));
+            // Every prefix shorter than the fixed scope is a protocol error.
+            // This exercises only the in-memory codec, without a socket or store.
+            for length in 0..41 {
+                assert!(
+                    matches!(
+                        decode_request_v2(&body[..length]),
+                        Err(ExternalCheckpointAuthorityErrorV2::Protocol(_))
+                    ),
+                    "short compare prefix length {length}"
+                );
+            }
+            let decoded = decode_request_v2(&body).expect("complete compare request");
+            match decoded {
+                RequestV2::CompareAndAdvance(decoded) => {
+                    assert_eq!(decoded.expected, expected);
+                    assert_eq!(decoded.target, target);
+                }
+                RequestV2::Load { .. } => panic!("compare decoded as load"),
+            }
+        }
     }
 
     #[test]

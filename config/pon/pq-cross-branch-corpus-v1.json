@@ -1927,7 +1927,7 @@
     "trillionnium/crates/trnm-checkpoint-store/Cargo.toml": "55f5d41a3c6dcb329f7136b1e665ffe5d8f6d9b3",
     "trillionnium/crates/trnm-checkpoint-store/examples/checkpoint_fault_domain_probe.rs": "bbdd8fd6aeeedd3bcd84c4619301c07f27d6d208",
     "trillionnium/crates/trnm-checkpoint-store/src/journal_checkpoint_v1.rs": "85e768c20161ecc32064e3e253b73f2070f30583",
-    "trillionnium/crates/trnm-checkpoint-store/src/lib.rs": "e6b6661061fe85ad3d8e1b4778b9ba4b63dc4de9",
+    "trillionnium/crates/trnm-checkpoint-store/src/lib.rs": "7ecab54bbee6e6726587acc4be17a64d5fdefb9c",
     "trillionnium/crates/trnm-checkpoint-store/src/live_journal_v2.rs": "566c2a94f11ea4949cace063f8b2e6dab57e0397",
     "trillionnium/crates/trnm-checkpoint-store/src/main.rs": "d7d098f7249a1fc80ab84c34eb309e4f094de889",
     "trillionnium/crates/trnm-checkpoint-store/src/node_commit_ledger_v1.rs": "3fab900e20dee7ca4bd34f3e46294bf011d7f9c6",
