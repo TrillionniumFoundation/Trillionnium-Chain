@@ -1,0 +1,24 @@
+{
+  "schema": "trnm.independent-model-audit-selection.v1",
+  "source_root": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01",
+  "source_is_closed": true,
+  "expected_audit_sha256": "dafdda4567e04327ecad53e2d6e1ddd85c48e5933438920b30d403f07bc15bef",
+  "expected_run_manifest_sha256": "749e76889a692997a2467cc8fa78afe5d912ddd6a526b35ae11ea671c7029e3c",
+  "excluded_pycache": [
+    "__pycache__/funding_audit.cpython-314.pyc",
+    "__pycache__/identity_audit.cpython-314.pyc",
+    "__pycache__/journal_audit.cpython-314.pyc",
+    "__pycache__/reports_audit.cpython-314.pyc"
+  ],
+  "unique_sqlite_exception": [
+    "evidence/cgj3-snapshot/children-v3.sqlite",
+    "evidence/cgj3-snapshot/children-v3.sqlite-wal",
+    "evidence/cgj3-snapshot/children-v3.sqlite-shm"
+  ],
+  "scope": "Copy the closed audit's 22 original artifacts only; retain complete original manifests. The three named audit-copy SQLite/WAL/SHM files are authorized metadata exceptions, read as bytes without SQLite connections. No original model SQLite/payload or active independent-physical-review is traversed.",
+  "hash_rule": "Final closed run-manifest controls current snapshot hashes. Preserve the distinct old before-copy-open SHM record without rewriting it.",
+  "relative_layout": "Original relative audit paths remain at staging root; original code/md/log get .txt and an outer original-to-archive map. Archive metadata goes under _archive/.",
+  "model_reexecution": false,
+  "repository_write": false,
+  "qualification": "PASS-HOLD; all original false scope/authority flags retained"
+}

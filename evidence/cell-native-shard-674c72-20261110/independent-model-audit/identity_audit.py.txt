@@ -1,0 +1,101 @@
+"""Recompute small metadata wire pins without copying model payload."""
+import hashlib
+from funding_audit import need
+
+
+class Cursor:
+    def __init__(self, data):
+        self.data, self.offset = data, 0
+
+    def take(self, length):
+        need(0 <= length <= len(self.data) - self.offset, "truncated small metadata wire")
+        value = self.data[self.offset:self.offset+length]
+        self.offset += length
+        return value
+
+    def number(self, width):
+        return int.from_bytes(self.take(width), "big")
+
+    def sized(self, width):
+        return self.take(self.number(width))
+
+    def end(self):
+        need(self.offset == len(self.data), "metadata trailing bytes")
+
+
+def audit_identity(e, native):
+    pins = native["operation_pins"]
+    spec = e.json("original-source-inputs.json")
+    execution = e.json("independent-execution-inputs.json")
+    version = e.raw("bep52/owner-version.tcv1")
+    content = e.raw("owner-content.tcv2")
+    snapshot = e.raw("owner-release-snapshot.cts1")
+    handoff = e.raw("owner-handoff.chb1", 2048)
+    domains = {
+        "tcv1": (b"TRNM/Cell/CompleteVersion/v1\0", version),
+        "tcv2": (b"TRNM/Cell/CompleteVersionContent/v2\0", content),
+        "cts1": (b"TRNM/Cell/TensorReleaseSnapshot/v1\0", snapshot),
+        "chb1": (b"TRNM/Cell/HostSealedDualContext/v1\0", handoff)}
+    for key, (domain, raw) in domains.items():
+        need(hashlib.sha512(domain + raw).hexdigest() == pins[key], "independent " + key + " commitment")
+    c = Cursor(content)
+    need(c.take(4) == b"TCV2" and c.sized(4) == version, "TCV2 exact embedded TCV1")
+    c = Cursor(snapshot)
+    need(c.take(4) == b"CTS1" and c.sized(4) == version, "CTS1 exact embedded TCV1")
+    tensor_wire = c.sized(4)
+    composition_file, composition_profile = c.number(2), c.take(32).hex()
+    c.end()
+    c = Cursor(handoff)
+    need(c.take(4) == b"CHB1", "CHB1")
+    descriptor = dict(operation=c.take(32).hex(), owner_generation=c.number(8),
+                      content=c.take(64).hex(), version=c.take(64).hex(),
+                      model_closure=c.take(32).hex(), environment_closure=c.take(32).hex(),
+                      model_generation=c.number(8), environment_generation=c.number(8),
+                      family=c.sized(1).decode("ascii"))
+    for key in ("base", "parent", "tokenizer", "layout", "runtime"):
+        descriptor[key] = c.take(32).hex()
+    descriptor["worker_path"] = c.sized(2).decode("ascii")
+    descriptor["runtime_snapshot_path"] = c.sized(2).decode("ascii")
+    descriptor["runtime_snapshot_sha256"] = c.take(32).hex()
+    c.end()
+    need(pins["operation"] == descriptor["operation"] == spec["operation"] == execution["operation"], "single OP")
+    need(pins["tcv1"] == native["input"]["tcv1"] == descriptor["version"] and
+         pins["tcv2"] == native["input"]["tcv2"] == descriptor["content"], "exact content/version")
+    need(pins["cts1"] == native["snapshot"]["cts1"] == native["native_shard_cycle"]["cts1"], "single CTS1")
+    snapshot_spec = spec["snapshot"]
+    need(snapshot_spec["composition_file"] in spec["model"] and
+         snapshot_spec["material_profile"] == spec["material_profile"], "original composition source")
+    # The example visits its pinned BTreeMap in path order; CTS1 stores the
+    # resulting file index and the derived loader profile, not either name.
+    file_index = sorted(spec["model"]).index(snapshot_spec["composition_file"])
+    loader = hashlib.sha256(b"TRNM/Cell/SealedResearchLoader/v2\0")
+    for value in (b"composition", snapshot_spec["composition_profile"].encode(),
+                  snapshot_spec["material_profile"].encode()):
+        loader.update(len(value).to_bytes(4, "big"))
+        loader.update(value)
+    loader.update(bytes.fromhex(snapshot_spec["worker_sha256"]))
+    need(composition_file == file_index and composition_profile == loader.hexdigest(), "composition rule encoding")
+    need(pins["chb1"] == native["handoff"]["descriptor"] == execution["descriptor"], "single handoff")
+    worker, runtime = "scripts/llm_cell_sealed_worker_v1.py", "runtime/runtime-snapshot.json"
+    need(descriptor["worker_path"] == worker and descriptor["runtime_snapshot_path"] == runtime, "worker paths")
+    need(descriptor["runtime"] == spec["environment"][worker]["sha256"] == execution["environment_pins"][worker],
+         "exact sealed worker source")
+    need(descriptor["runtime_snapshot_sha256"] == spec["environment"][runtime]["sha256"] ==
+         execution["environment_pins"][runtime], "runtime snapshot")
+    need(execution["environment_pins"] == {p: v["sha256"] for p, v in spec["environment"].items()}, "all environment pins")
+    need(execution["requests"] == spec["requests"], "exact originally pinned requests")
+    need(execution["parent"] == spec["parent"], "exact originally pinned parent")
+    need(execution["material_profile"] == spec["material_profile"] and execution["output"] == spec["output"] and
+         execution["python"] == spec["python"]["path"] and execution["python_sha256"] == spec["python"]["sha256"],
+         "original material, output and interpreter grant")
+    need(descriptor["model_generation"] == spec["parent"]["generation"] == execution["parent"]["generation"] and
+         descriptor["parent"] == spec["parent"]["file_sha256"] and descriptor["layout"] == spec["parent"]["contract"],
+         "original selected parent")
+    need(spec["seconds"] == 300 and spec["runtime_rss_bytes"] == execution["runtime_rss_bytes"] == 8*1024**3 and
+         spec["threads"] == execution["threads"] == 4 and
+         spec["max_snapshot_bytes"] == execution["max_snapshot_bytes"] == 512*1024**2, "original scope")
+    return dict(pins=pins, descriptor=descriptor, spec=spec, execution=execution,
+                independently_recomputed=["tcv1", "tcv2", "cts1", "chb1"],
+                tensor_wire_sha256=hashlib.sha256(tensor_wire).hexdigest(),
+                inner_canonical_owner_validation_reexecuted=False)
+

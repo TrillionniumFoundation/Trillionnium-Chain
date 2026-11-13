@@ -1,0 +1,89 @@
+   Compiling serde_json v1.0.149
+    Checking trnm-protocol v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-protocol)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-sqlite-io-boundary)
+    Checking trnm-crypto-primitives v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-crypto-primitives)
+    Checking trnm-task-kernel v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-task-kernel)
+    Checking trnm-data-availability v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-data-availability)
+    Checking trnm-verification-profiles v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-verification-profiles)
+    Checking trnm-mvcc-fee v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-mvcc-fee)
+    Checking trnm-service-settlement v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-service-settlement)
+    Checking trnm-release-bundle v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-release-bundle)
+    Checking trnm-mempool v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-mempool)
+    Checking trnm-transport v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-transport)
+    Checking trnm-pon-node v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-pon-node)
+error: the loop variable `slot` is used to index `valid`
+   --> crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/recovery.rs:595:21
+    |
+595 |         for slot in 0..6 {
+    |                     ^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.95.0/index.html#needless_range_loop
+    = note: `-D clippy::needless-range-loop` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::needless_range_loop)]`
+help: consider using an iterator and enumerate()
+    |
+595 -         for slot in 0..6 {
+595 +         for (slot, <item>) in valid.iter_mut().enumerate() {
+    |
+
+error: the loop variable `slot` is used to index `valid`
+   --> crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/recovery.rs:612:25
+    |
+612 |             for slot in 0..6 {
+    |                         ^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.95.0/index.html#needless_range_loop
+help: consider using an iterator and enumerate()
+    |
+612 -             for slot in 0..6 {
+612 +             for (slot, <item>) in valid.iter().enumerate() {
+    |
+
+error: the loop variable `slot` is used to index `valid`
+   --> crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/recovery.rs:647:25
+    |
+647 |             for slot in 0..6 {
+    |                         ^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.95.0/index.html#needless_range_loop
+help: consider using an iterator and enumerate()
+    |
+647 -             for slot in 0..6 {
+647 +             for (slot, <item>) in valid.iter_mut().enumerate() {
+    |
+
+error: could not compile `trnm-pon-node` (lib) due to 3 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: items after a test module
+   --> crates/trnm-pon-node/src/lib.rs:799:1
+    |
+799 |   pub(crate) mod packet_encoding_tests {
+    |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+905 |   pub use store::{
+    |  _________^
+906 | |     native_cell_shard_parent_group_subject_v3, NativeCellGroupedChildCpuV3,
+    | |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+907 | |     NativeCellGroupedShardPlanReadbackV3, NativeCellGroupedShardRecoveryBudgetV3,
+    | |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+908 | |     NativeCellGroupedShardRecoveryFailureV3, NativeCellGroupedShardRecoveryReadbackV3,
+    | |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+909 | |     NativeCellGroupedShardRepairRequestV3, NativeCellGroupedShardStorageRequestV3,
+    | |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+910 | |     NativeCellShardGroupChildV3, NativeCellShardGroupJournalConfigV3,
+    | |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+911 | |     NativeCellShardGroupJournalV3, NativeCellShardGroupKindV3,
+    | |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+912 | |     NativeCellShardParentGroupReadbackV3, NativeCellShardParentGroupV3,
+    | |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+913 | |     NATIVE_CELL_SHARD_PARENT_GROUP_WIDTH_V3,
+    | |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+914 | | };
+    | |_^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.95.0/index.html#items_after_test_module
+    = note: `-D clippy::items-after-test-module` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::items_after_test_module)]`
+    = help: move the items to before the test module was defined
+
+error: could not compile `trnm-pon-node` (lib test) due to 4 previous errors

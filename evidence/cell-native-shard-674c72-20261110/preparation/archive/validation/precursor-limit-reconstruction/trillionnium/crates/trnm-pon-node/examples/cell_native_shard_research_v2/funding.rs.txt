@@ -1,0 +1,153 @@
+//! Real local development task-reserve transactions, never invented funding rows.
+use super::*;
+use trnm_crypto_primitives::{sign_hex, signing_key_from_hex};
+use trnm_mvcc_fee::continuity_v1;
+use trnm_protocol::pon_wire::Envelope;
+
+pub(super) const RETAIN_UNTIL: u64 = 100;
+pub(super) const REPAIR_DEADLINE: u64 = 90;
+const FUNDING_EXPIRES: u64 = 200;
+const AMOUNT: u64 = 100;
+
+pub(super) fn open_node(path: &Path) -> Result<Node> {
+    let settings = Settings::development_with_profiles(
+        Some(1),
+        "native-public-evaluation-dev-v1",
+        continuity_v1::PROFILE,
+    )?
+    .with_permanent_account_growth_v2("native-cell-shard-research-v2")?;
+    Ok(Node::open_with_permanent_account_growth_v2(path, settings)?)
+}
+
+pub(super) fn budget_config(node: &Node) -> NativeBudgetConfigV1 {
+    NativeBudgetConfigV1 {
+        network: node.settings().network(),
+        parameters: node.settings().parameters(),
+        genesis: node.settings().genesis(),
+        max_records: 4_096,
+    }
+}
+
+/// Unique tasks for every root/member/storage/repair claim. At most sixteen
+/// monetary expirations occupy one height, preserving the native M06 rule.
+/// Funding is finished before fixing the catalog plan's current anchor.
+pub(super) fn fund_all(
+    node: &mut Node,
+    beneficiaries: &[Hash],
+    deadline: Instant,
+) -> Result<Vec<NativeFundingSourceV1>> {
+    check(!beneficiaries.is_empty(), "nonempty native funding roster")?;
+    let key = signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()])))
+        .map_err(|_| "development signing key")?;
+    let sender = development_public(0)?;
+    let mut sources = Vec::with_capacity(beneficiaries.len());
+    for batch in beneficiaries.chunks(16) {
+        before(deadline)?;
+        let nonce = node.next_nonce(sender)?;
+        let mut transactions = Vec::with_capacity(batch.len());
+        for (local, beneficiary) in batch.iter().enumerate() {
+            before(deadline)?;
+            let index = sources.len();
+            let nonce = nonce
+                .checked_add(local as u64)
+                .ok_or("funding nonce overflow")?;
+            let until = FUNDING_EXPIRES + index as u64 / 16;
+            let task = hash(
+                b"task-instance-v3",
+                &[
+                    &node.settings().network(),
+                    &node.settings().parameters(),
+                    &sender,
+                    &nonce.to_le_bytes(),
+                    beneficiary,
+                    &AMOUNT.to_le_bytes(),
+                    &until.to_le_bytes(),
+                ],
+            );
+            let mut payload = task.to_vec();
+            payload.extend(beneficiary);
+            payload.extend(AMOUNT.to_le_bytes());
+            payload.extend(until.to_le_bytes());
+            let mut transaction = Envelope {
+                network: node.settings().network(),
+                sender,
+                nonce,
+                expiry: 1_000,
+                fee_limit: 1_000_000,
+                tag: 2,
+                payload,
+                signature: [0; 64],
+            };
+            transaction.signature = hex::decode(sign_hex(
+                &key,
+                &transaction
+                    .signing_digest()
+                    .map_err(|_| "native funding signing digest")?,
+            ))?
+            .try_into()
+            .map_err(|_| "native signature size")?;
+            transactions.push(
+                transaction
+                    .encode()
+                    .map_err(|_| "native funding transaction encoding")?,
+            );
+            sources.push(NativeFundingSourceV1::Task(task));
+        }
+        let (parent, height) = node.active()?;
+        let packet = node.make_growth_consensus_maintenance(
+            parent,
+            transactions,
+            development_public(3)?,
+            1 + 10 * (height + 1),
+            4_096,
+        )?;
+        before(deadline)?;
+        let tip = node.admit_growth(&packet, 100_000)?;
+        node.activate(tip)?;
+        before(deadline)?;
+    }
+    for (index, (source, beneficiary)) in sources.iter().zip(beneficiaries).enumerate() {
+        let row = node
+            .native_funding_observation(*source)?
+            .row
+            .ok_or("native task reserve missing")?;
+        check(
+            row["remaining"].as_u64() == Some(AMOUNT)
+                && row["deadline"].as_u64() == Some(FUNDING_EXPIRES + index as u64 / 16)
+                && row["provider"].as_str() == Some(hex::encode(beneficiary).as_str()),
+            "actual native task funding readback",
+        )?;
+        before(deadline)?;
+    }
+    Ok(sources)
+}
+
+pub(super) fn policy_claim(
+    operation: Hash,
+    label: &[u8],
+    index: usize,
+    source: NativeFundingSourceV1,
+    binding: (Hash, Hash, Hash),
+    resources: NativeBudgetResourcesV1,
+) -> (NativeBudgetPolicyV1, NativeBudgetClaimV1) {
+    let (claim, subject, beneficiary) = binding;
+    let budget = identity(operation, label, index);
+    (
+        NativeBudgetPolicyV1 {
+            budget,
+            source,
+            monetary_cap: AMOUNT,
+            deadline: RETAIN_UNTIL,
+            resource_cap: resources.clone(),
+            max_inflight: 1,
+        },
+        NativeBudgetClaimV1 {
+            claim,
+            budget,
+            subject,
+            beneficiary,
+            monetary_reservation: AMOUNT,
+            resource_reservation: resources,
+        },
+    )
+}

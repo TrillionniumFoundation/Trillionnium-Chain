@@ -1,0 +1,10 @@
+{
+  "errors": [],
+  "native_tests_executed_by_collector": false,
+  "original_manifests_preserved": 0,
+  "payload_bytes": 1051311,
+  "runtime_or_production_qualification": false,
+  "schema": "trnm.checked-build-e6-preflight-copy-verification.v1",
+  "source_modified": false,
+  "verified_files": 31
+}

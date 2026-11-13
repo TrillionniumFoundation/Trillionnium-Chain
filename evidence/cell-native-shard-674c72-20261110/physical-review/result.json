@@ -1,0 +1,15 @@
+{
+  "assertion_groups": 16,
+  "audit_elapsed_seconds": 0.057979985838755965,
+  "build_executed": false,
+  "launch_sha256": "b125250e1d3624cad95085135d649db1a16ae000a5120585df96dbdb2bf97d0b",
+  "model_executed": false,
+  "original_databases_opened": false,
+  "passed": true,
+  "qualification": "PASS-HOLD",
+  "raw_files": 17,
+  "raw_originals_unchanged": true,
+  "script_sha256": "a790136fdad01c63d8f5f56d2fe0287093a11ffaaeb5562e09ad9b2c3dd3d53c",
+  "source_files": 8,
+  "summary_sha256": "85330031fe216cac833dda4192fdfc43cf8e6ca14206246a34fc6ae1740c12e1"
+}

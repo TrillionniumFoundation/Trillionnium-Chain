@@ -1,0 +1,15 @@
+{
+  "model_build_not_rerun": true,
+  "operation": "23120317a3cc20853fbcf0de37924311788e251d59395afc1816b4f6b2b7bbdc",
+  "original_bytes": 656702,
+  "original_files": 35,
+  "original_manifest_sha256": "88025fb7d0c613ff57954434ed62c2cfbebc4abd2a1fe8b1c016cac1b4da42a7",
+  "original_model_sqlite_not_opened": true,
+  "original_source": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231",
+  "production_activation": false,
+  "result": "PASS-HOLD",
+  "schema": "trnm.closed-physical-review-curated-packet.v1",
+  "source_bytes_and_exact_membership_verified": true,
+  "source_runtime_commit": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+  "source_runtime_tree": "6a0f38318b3cfb021240cda7f3d266c28aa76e78"
+}

@@ -1,0 +1,42 @@
+    Checking rusqlite v0.39.0
+    Checking trnm-task-kernel v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-task-kernel)
+    Checking trnm-sqlite-io-boundary v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-sqlite-io-boundary)
+    Checking trnm-data-availability v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-data-availability)
+    Checking trnm-service-settlement v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-service-settlement)
+    Checking trnm-mvcc-fee v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-mvcc-fee)
+    Checking trnm-pon-node v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-pon-node)
+error[E0428]: the name `Run` is defined multiple times
+   --> crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/recovery.rs:393:1
+    |
+379 | struct Run<'a, 'b> {
+    | ------------------ previous definition of the type `Run` here
+...
+393 | struct Run<'a, 'b> {
+    | ^^^^^^^^^^^^^^^^^^ `Run` redefined here
+    |
+    = note: `Run` must be defined only once in the type namespace of this module
+
+error[E0592]: duplicate definitions with name `recover_native_cell_grouped_shard_plan_v3`
+   --> crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/recovery.rs:296:5
+    |
+296 | /     pub fn recover_native_cell_grouped_shard_plan_v3(
+297 | |         &mut self,
+298 | |         budgets: &mut NativeBudgetStoreV1,
+299 | |         mut targets: NativeCellPagedRetainedShardPlanTargetsV2<'_>,
+...   |
+305 | |         Box<NativeCellGroupedShardRecoveryFailureV3>,
+306 | |     > {
+    | |_____^ duplicate definitions for `recover_native_cell_grouped_shard_plan_v3`
+...
+407 | /     pub fn recover_native_cell_grouped_shard_plan_v3(
+408 | |         &mut self,
+409 | |         budgets: &mut NativeBudgetStoreV1,
+410 | |         mut targets: NativeCellPagedRetainedShardPlanTargetsV2<'_>,
+...   |
+416 | |         Box<NativeCellGroupedShardRecoveryFailureV3>,
+417 | |     > {
+    | |_____- other definition for `recover_native_cell_grouped_shard_plan_v3`
+
+Some errors have detailed explanations: E0428, E0592.
+For more information about an error, try `rustc --explain E0428`.
+error: could not compile `trnm-pon-node` (lib) due to 2 previous errors

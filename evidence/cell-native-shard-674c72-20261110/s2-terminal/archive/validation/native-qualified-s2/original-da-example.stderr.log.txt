@@ -1,0 +1,2 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running unittests examples/cell_sealed_research_next_use_v2.rs (/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/examples/cell_sealed_research_next_use_v2-1bad5a80098a9f42)

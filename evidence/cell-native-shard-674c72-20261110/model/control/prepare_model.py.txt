@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+"""Prepare fresh native-RS46 research inputs without changing independent bytes."""
+import hashlib
+import json
+from pathlib import Path
+
+OLD = Path('/home/qq/work/chain-cell-capacity-dc0357-20261109')
+REPO = Path('/home/qq/work/chain-cell-native-shard-674c72-20261110')
+BASE = Path(str(REPO) + '-validation')
+OLD_SPEC_SHA = '488b838dfdf05ab9768fff18ee81c0874b7bb471cbceeefdf15ab42c5dde6d48'
+
+
+def sha(path):
+    h = hashlib.sha256()
+    with path.open('rb') as source:
+        for block in iter(lambda: source.read(1024 * 1024), b''):
+            h.update(block)
+    return h.hexdigest()
+
+
+def write(path, value):
+    with path.open('x') as output:
+        json.dump(value, output, sort_keys=True, indent=2)
+        output.write('\n')
+
+
+def main():
+    prior = Path(str(OLD) + '-validation/source-inputs.v2.json')
+    assert sha(prior) == OLD_SPEC_SHA, 'original independent spec changed'
+    spec = json.loads(prior.read_text())
+    operation = hashlib.sha256(
+        b'TRNM/native-funded-paged-rs46-research/674c72/attempt-01\0'
+        + bytes.fromhex(OLD_SPEC_SHA)
+    ).hexdigest()
+    output = BASE / ('real-native-' + operation[:12] + '-attempt-01')
+    assert not output.exists(), 'operation output already exists; do not replay'
+    spec['operation'] = operation
+    spec['output'] = str(output)
+    observed = []
+    for category in ('model', 'environment'):
+        for logical, item in spec[category].items():
+            previous = Path(item['path'])
+            selected = REPO / previous.relative_to(OLD) if previous.is_relative_to(OLD) else previous
+            assert selected.is_file() and not selected.is_symlink(), logical
+            digest = sha(selected)
+            assert digest == item['sha256'], 'independent input mismatch: ' + logical
+            item['path'] = str(selected)
+            observed.append({'category': category, 'logical': logical,
+                             'previous_path': str(previous), 'selected_path': str(selected),
+                             'sha256': digest, 'size': selected.stat().st_size})
+    python = Path(spec['python']['path'])
+    assert sha(python) == spec['python']['sha256'], 'independent Python changed'
+    observed.append({'category': 'python', 'logical': 'python',
+                     'previous_path': str(python), 'selected_path': str(python),
+                     'sha256': sha(python), 'size': python.stat().st_size})
+    assert len(observed) == 31
+    assert (spec['seconds'], spec['max_snapshot_bytes'], spec['runtime_rss_bytes'], spec['threads']) == (
+        300, 536870912, 8589934592, 4), 'original limits changed'
+    BASE.mkdir(exist_ok=True)
+    source = BASE / 'source-inputs.native-v2.json'
+    audit = BASE / 'source-inputs.native-v2.verification.json'
+    write(source, spec)
+    write(audit, {'schema': 'trnm.native-rs46-independent-input-migration.v1',
+                  'source_sha256': OLD_SPEC_SHA, 'operation': operation,
+                  'inputs': observed, 'same_independent_bytes': True,
+                  'model_efficacy_qualified': False, 'production_activation': False})
+    print(json.dumps({'prepared': True, 'operation': operation, 'output': str(output),
+                      'spec': str(source), 'spec_sha256': sha(source),
+                      'audit': str(audit), 'audit_sha256': sha(audit),
+                      'logical_inputs': 31}), flush=True)
+
+
+if __name__ == '__main__':
+    main()

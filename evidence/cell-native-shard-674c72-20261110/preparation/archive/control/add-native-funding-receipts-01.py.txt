@@ -1,0 +1,121 @@
+import pathlib,subprocess,json,hashlib,os
+repo=pathlib.Path('/home/qq/work/chain-cell-native-shard-674c72-20261110')
+control=pathlib.Path('/home/qq/work/chain-cell-native-shard-674c72-20261110-control')
+env=os.environ.copy()
+toolchain=pathlib.Path('/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu')
+env.update({'PATH':str(toolchain/'bin')+':'+env['PATH'],'RUSTC':str(toolchain/'bin/rustc'),'RUSTDOC':str(toolchain/'bin/rustdoc'),'CARGO_HOME':'/home/qq/.cargo','LD_LIBRARY_PATH':str(toolchain/'lib')})
+with (control/'funding-receipt-preflight.log').open('wb') as f:
+ result=subprocess.run(['bash','scripts/project-preflight.sh'],cwd=repo,env=env,stdout=f,stderr=subprocess.STDOUT)
+if result.returncode:raise RuntimeError('preflight failed')
+base=repo/'trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2'
+def once(text,old,new):
+ if text.count(old)!=1:raise RuntimeError('source lease mismatch: '+old[:90])
+ return text.replace(old,new)
+funding=(base/'funding.rs').read_text()
+funding=once(funding,'use super::*;','use super::*;\nuse sha2::{Digest, Sha256};')
+funding=once(funding,'    beneficiaries: &[Hash],\n    deadline: Instant,','    beneficiaries: &[Hash],\n    receipt_path: &Path,\n    deadline: Instant,')
+funding=once(funding,'    check(!beneficiaries.is_empty(), "nonempty native funding roster")?;','''    before(deadline)?;
+    check(!beneficiaries.is_empty(), "nonempty native funding roster")?;
+    let started = Instant::now();
+    let mut receipt = OpenOptions::new().write(true).create_new(true).open(receipt_path)?;
+    append_receipt(&mut receipt, &json!({
+        "schema": "trnm.cell-native-shard-funding-receipt.v2",
+        "event": "begin", "expected_tasks": beneficiaries.len(),
+        "known_development_keys": true, "native_ledger_coins_are_development_only": true,
+        "independent_real_money_funding": false, "service_fee_paid": false
+    }), deadline)?;''')
+funding=once(funding,'        let mut transactions = Vec::with_capacity(batch.len());','        let mut transactions = Vec::with_capacity(batch.len());\n        let batch_start = sources.len();')
+funding=once(funding,'''            transactions.push(
+                transaction
+                    .encode()
+                    .map_err(|_| "native funding transaction encoding")?,
+            );''','''            let wire = transaction.encode().map_err(|_| "native funding transaction encoding")?;
+            append_receipt(&mut receipt, &json!({
+                "schema": "trnm.cell-native-shard-funding-receipt.v2",
+                "event": "signed_transaction", "index": index,
+                "source": NativeFundingSourceV1::Task(task).key(),
+                "sender": hex::encode(sender), "nonce": nonce,
+                "provider": hex::encode(beneficiary), "amount": AMOUNT,
+                "native_deadline_height": until, "transaction_expiry_height": transaction.expiry,
+                "signed_wire_hex": hex::encode(&wire),
+                "signed_wire_sha256": hex::encode(Sha256::digest(&wire)),
+                "elapsed_ns": started.elapsed().as_nanos() as u64
+            }), deadline)?;
+            transactions.push(wire);''')
+funding=once(funding,'''        node.activate(tip)?;
+        before(deadline)?;''','''        node.activate(tip)?;
+        append_receipt(&mut receipt, &json!({
+            "schema": "trnm.cell-native-shard-funding-receipt.v2",
+            "event": "block_admitted", "first_index": batch_start,
+            "end_index_exclusive": sources.len(), "block": hex::encode(tip),
+            "parent": hex::encode(parent), "height": node.active()?.1,
+            "elapsed_ns": started.elapsed().as_nanos() as u64
+        }), deadline)?;
+        before(deadline)?;''')
+funding=once(funding,'''        let row = node
+            .native_funding_observation(*source)?
+            .row
+            .ok_or("native task reserve missing")?;
+        check(
+            row["remaining"].as_u64() == Some(AMOUNT)
+                && row["deadline"].as_u64() == Some(FUNDING_EXPIRES + index as u64 / 16)
+                && row["provider"].as_str() == Some(hex::encode(beneficiary).as_str()),
+            "actual native task funding readback",
+        )?;''','''        let observation = node.native_funding_observation(*source)?;
+        let row = observation.row.ok_or("native task reserve missing")?;
+        let matched = row["remaining"].as_u64() == Some(AMOUNT)
+            && row["deadline"].as_u64() == Some(FUNDING_EXPIRES + index as u64 / 16)
+            && row["provider"].as_str() == Some(hex::encode(beneficiary).as_str());
+        let anchor = observation.anchor;
+        append_receipt(&mut receipt, &json!({
+            "schema": "trnm.cell-native-shard-funding-receipt.v2",
+            "event": "native_funding_readback", "index": index,
+            "source": source.key(), "matches_expected": matched, "row": row,
+            "anchor": {
+                "network": hex::encode(anchor.network), "parameters": hex::encode(anchor.parameters),
+                "genesis": hex::encode(anchor.genesis), "block": hex::encode(anchor.block),
+                "state_root": hex::encode(anchor.state_root), "height": anchor.height,
+                "generation": anchor.generation
+            },
+            "elapsed_ns": started.elapsed().as_nanos() as u64
+        }), deadline)?;
+        check(matched, "actual native task funding readback")?;''')
+funding=once(funding,'    Ok(sources)\n}', '''    append_receipt(&mut receipt, &json!({
+        "schema": "trnm.cell-native-shard-funding-receipt.v2",
+        "event": "complete", "observed_tasks": sources.len(),
+        "elapsed_ns": started.elapsed().as_nanos() as u64
+    }), deadline)?;
+    Ok(sources)
+}
+
+fn append_receipt(file: &mut fs::File, record: &Value, deadline: Instant) -> Result<()> {
+    before(deadline)?;
+    serde_json::to_writer(&mut *file, record)?;
+    file.write_all(b"\\n")?;
+    file.sync_data()?;
+    before(deadline)
+}''')
+module=(base/'mod.rs').read_text()
+module=once(module,'let sources = funding::fund_all(&mut node, &beneficiaries, deadline)?;',
+'''let sources = funding::fund_all(
+        &mut node, &beneficiaries, &directory.join("funding.jsonl"), deadline,
+    )?;
+    report["native_shard_cycle"]["funding_receipts"] = json!("native-shards/funding.jsonl");''')
+tests=(base/'tests.rs').read_text()
+tests=once(tests,'    assert_eq!(report["native_shard_cycle"]["complete"], true);','''    assert_eq!(report["native_shard_cycle"]["complete"], true);
+    let funding: Vec<Value> = fs::read_to_string(
+        directory.path().join("native-shards/funding.jsonl")
+    ).unwrap().lines().map(|line| serde_json::from_str(line).unwrap()).collect();
+    let expected_tasks = version.manifests().len() + 1 + 8 * chunks;
+    assert_eq!(funding.iter().filter(|row| row["event"] == "signed_transaction").count(), expected_tasks);
+    assert_eq!(funding.iter().filter(|row| row["event"] == "native_funding_readback"
+        && row["matches_expected"] == true).count(), expected_tasks);
+    assert_eq!(funding.last().unwrap()["event"], "complete");''')
+changes=[('funding.rs',funding),('mod.rs',module),('tests.rs',tests)]
+records=[]
+for name,text in changes:
+ p=base/name
+ records.append({'path':str(p.relative_to(repo)),'before_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'after_sha256':hashlib.sha256(text.encode()).hexdigest()})
+for name,text in changes:(base/name).write_text(text)
+(control/'funding-receipt-applied.json').write_text(json.dumps(records,indent=2))
+print(json.dumps({'applied':True,'files':records}),flush=True)

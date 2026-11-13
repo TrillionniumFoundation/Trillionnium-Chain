@@ -1,0 +1,294 @@
+{
+  "artifact": {
+    "executable": "/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/examples/cell_native_shard_research_next_use_v2",
+    "features": [
+      "default",
+      "pq-native-openssl"
+    ],
+    "filenames": [
+      "/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/examples/cell_native_shard_research_next_use_v2"
+    ],
+    "fresh": false,
+    "manifest_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "package_id": "path+file:///home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-pon-node#0.1.0",
+    "profile": {
+      "debug_assertions": true,
+      "debuginfo": 2,
+      "opt_level": "3",
+      "overflow_checks": true,
+      "test": false
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "bin"
+      ],
+      "doc": false,
+      "doctest": false,
+      "edition": "2021",
+      "kind": [
+        "example"
+      ],
+      "name": "cell_native_shard_research_next_use_v2",
+      "src_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_next_use_v2.rs",
+      "test": false
+    }
+  },
+  "debug_snapshot": {
+    "bytes": 212347272,
+    "frozen": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/checked-test-profile-s3/binaries/debug-unexecuted-f84afd9343d2e8cbdeab9668342016513526559968673f9945db02fd9d1ae9b5.elf",
+    "sha256": "f84afd9343d2e8cbdeab9668342016513526559968673f9945db02fd9d1ae9b5",
+    "source": "/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/examples/cell_native_shard_research_next_use_v2"
+  },
+  "frozen_binary": {
+    "bytes": 270156976,
+    "frozen": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/checked-test-profile-s3/binaries/checked-test-main-07b711687a223e670280e72c1397e628ef05e97183b60cb9decd66120631226e.elf",
+    "sha256": "07b711687a223e670280e72c1397e628ef05e97183b60cb9decd66120631226e",
+    "source": "/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/examples/cell_native_shard_research_next_use_v2"
+  },
+  "model_executed": false,
+  "native_limits_changed": false,
+  "node_libraries": [
+    {
+      "executable": null,
+      "features": [
+        "default",
+        "pq-native-openssl"
+      ],
+      "filenames": [
+        "/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libtrnm_pon_node-8bafe93622eb1f61.rlib",
+        "/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libtrnm_pon_node-8bafe93622eb1f61.rmeta"
+      ],
+      "fresh": true,
+      "manifest_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "package_id": "path+file:///home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-pon-node#0.1.0",
+      "profile": {
+        "debug_assertions": true,
+        "debuginfo": 2,
+        "opt_level": "3",
+        "overflow_checks": true,
+        "test": false
+      },
+      "reason": "compiler-artifact",
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "trnm_pon_node",
+        "src_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-pon-node/src/lib.rs",
+        "test": true
+      }
+    }
+  ],
+  "performance_comparison_with_c3_debug_270s": false,
+  "profile_command": "test",
+  "qualified_build": true,
+  "raw_stderr_sha256": "3b311c50f67dff7ce20bb1bd74c0b7e51126df203f93a95e1a67a9750a602528",
+  "raw_stdout_sha256": "43bd655a7e446812d8a462ae2bddf2bdb172d74060aa1e5661a5fdbedc47d9f7",
+  "rustc_invocation": {
+    "raw": "CARGO=/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo CARGO_BIN_NAME=cell_native_shard_research_next_use_v2 CARGO_CRATE_NAME=cell_native_shard_research_next_use_v2 CARGO_MANIFEST_DIR=/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-pon-node CARGO_MANIFEST_PATH=/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-pon-node/Cargo.toml CARGO_PKG_AUTHORS='Trillionnium Contributors' CARGO_PKG_DESCRIPTION='' CARGO_PKG_HOMEPAGE='' CARGO_PKG_LICENSE=MIT CARGO_PKG_LICENSE_FILE='' CARGO_PKG_NAME=trnm-pon-node CARGO_PKG_README=README.md CARGO_PKG_REPOSITORY='' CARGO_PKG_RUST_VERSION='' CARGO_PKG_VERSION=0.1.0 CARGO_PKG_VERSION_MAJOR=0 CARGO_PKG_VERSION_MINOR=1 CARGO_PKG_VERSION_PATCH=0 CARGO_PKG_VERSION_PRE='' CARGO_PRIMARY_PACKAGE=1 LD_LIBRARY_PATH='/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps:/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib' /home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc --crate-name cell_native_shard_research_next_use_v2 --edition=2021 crates/trnm-pon-node/examples/cell_native_shard_research_next_use_v2.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type bin --emit=dep-info,link -C opt-level=3 -C embed-bitcode=no -C debuginfo=2 -C debug-assertions=on --cfg 'feature=\"default\"' --cfg 'feature=\"pq-native-openssl\"' --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values(\"default\", \"pq-native-openssl\"))' -C metadata=ab9f6b527132cc8c -C extra-filename=-6eb4783291f0f915 --out-dir /home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/examples -L dependency=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps --extern fs2=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libfs2-9cb6e884d92e2e11.rlib --extern getrandom=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libgetrandom-fb28937e3395f8bf.rlib --extern hex=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libhex-1558f6adc06e3fa8.rlib --extern libc=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/liblibc-8a30b4e392f7c92e.rlib --extern nix=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libnix-db1978108b63981f.rlib --extern openssl=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libopenssl-c8864449e135a562.rlib --extern rusqlite=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/librusqlite-6d887950edab588f.rlib --extern rustix=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/librustix-2ddee526af794e19.rlib --extern serde=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libserde-3bd1ca99d837caa4.rlib --extern serde_json=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libserde_json-f0d4891802ba697c.rlib --extern sha2=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libsha2-fafdf068c84600ef.rlib --extern tempfile=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libtempfile-cd84dcd16baa0017.rlib --extern trnm_crypto_primitives=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libtrnm_crypto_primitives-5e295247336dbb60.rlib --extern trnm_data_availability=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libtrnm_data_availability-60f036ab2bee6cc9.rlib --extern trnm_mempool=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libtrnm_mempool-6b692f2ffb93df30.rlib --extern trnm_mvcc_fee=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libtrnm_mvcc_fee-153d5ef7b83be333.rlib --extern trnm_pon_node=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libtrnm_pon_node-8bafe93622eb1f61.rlib --extern trnm_protocol=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libtrnm_protocol-10a9b461ad55d750.rlib --extern trnm_release_bundle=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libtrnm_release_bundle-cc5848fb77defdd6.rlib --extern trnm_service_settlement=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libtrnm_service_settlement-61157f505e1a4428.rlib --extern trnm_sqlite_io_boundary=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libtrnm_sqlite_io_boundary-627f99162b444da7.rlib --extern trnm_transport=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libtrnm_transport-a3ce364ac5999f75.rlib --extern zeroize=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libzeroize-9917054cf4892abb.rlib -L native=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/build/libsqlite3-sys-0b4e9332de508ef1/out -L native=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/build/sha2-asm-5496e21e45cba969/out -L native=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/build/sha2-asm-5496e21e45cba969/out -L native=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/build/trnm-sqlite-io-boundary-6eadf8fe8239b4a5/out -L native=/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib",
+    "tokens": [
+      "CARGO=/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "CARGO_BIN_NAME=cell_native_shard_research_next_use_v2",
+      "CARGO_CRATE_NAME=cell_native_shard_research_next_use_v2",
+      "CARGO_MANIFEST_DIR=/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-pon-node",
+      "CARGO_MANIFEST_PATH=/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "CARGO_PKG_AUTHORS=Trillionnium Contributors",
+      "CARGO_PKG_DESCRIPTION=",
+      "CARGO_PKG_HOMEPAGE=",
+      "CARGO_PKG_LICENSE=MIT",
+      "CARGO_PKG_LICENSE_FILE=",
+      "CARGO_PKG_NAME=trnm-pon-node",
+      "CARGO_PKG_README=README.md",
+      "CARGO_PKG_REPOSITORY=",
+      "CARGO_PKG_RUST_VERSION=",
+      "CARGO_PKG_VERSION=0.1.0",
+      "CARGO_PKG_VERSION_MAJOR=0",
+      "CARGO_PKG_VERSION_MINOR=1",
+      "CARGO_PKG_VERSION_PATCH=0",
+      "CARGO_PKG_VERSION_PRE=",
+      "CARGO_PRIMARY_PACKAGE=1",
+      "LD_LIBRARY_PATH=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps:/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/lib",
+      "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+      "--crate-name",
+      "cell_native_shard_research_next_use_v2",
+      "--edition=2021",
+      "crates/trnm-pon-node/examples/cell_native_shard_research_next_use_v2.rs",
+      "--error-format=json",
+      "--json=diagnostic-rendered-ansi,artifacts,future-incompat",
+      "--crate-type",
+      "bin",
+      "--emit=dep-info,link",
+      "-C",
+      "opt-level=3",
+      "-C",
+      "embed-bitcode=no",
+      "-C",
+      "debuginfo=2",
+      "-C",
+      "debug-assertions=on",
+      "--cfg",
+      "feature=\"default\"",
+      "--cfg",
+      "feature=\"pq-native-openssl\"",
+      "--check-cfg",
+      "cfg(docsrs,test)",
+      "--check-cfg",
+      "cfg(feature, values(\"default\", \"pq-native-openssl\"))",
+      "-C",
+      "metadata=ab9f6b527132cc8c",
+      "-C",
+      "extra-filename=-6eb4783291f0f915",
+      "--out-dir",
+      "/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/examples",
+      "-L",
+      "dependency=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps",
+      "--extern",
+      "fs2=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libfs2-9cb6e884d92e2e11.rlib",
+      "--extern",
+      "getrandom=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libgetrandom-fb28937e3395f8bf.rlib",
+      "--extern",
+      "hex=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libhex-1558f6adc06e3fa8.rlib",
+      "--extern",
+      "libc=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/liblibc-8a30b4e392f7c92e.rlib",
+      "--extern",
+      "nix=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libnix-db1978108b63981f.rlib",
+      "--extern",
+      "openssl=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libopenssl-c8864449e135a562.rlib",
+      "--extern",
+      "rusqlite=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/librusqlite-6d887950edab588f.rlib",
+      "--extern",
+      "rustix=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/librustix-2ddee526af794e19.rlib",
+      "--extern",
+      "serde=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libserde-3bd1ca99d837caa4.rlib",
+      "--extern",
+      "serde_json=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libserde_json-f0d4891802ba697c.rlib",
+      "--extern",
+      "sha2=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libsha2-fafdf068c84600ef.rlib",
+      "--extern",
+      "tempfile=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libtempfile-cd84dcd16baa0017.rlib",
+      "--extern",
+      "trnm_crypto_primitives=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libtrnm_crypto_primitives-5e295247336dbb60.rlib",
+      "--extern",
+      "trnm_data_availability=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libtrnm_data_availability-60f036ab2bee6cc9.rlib",
+      "--extern",
+      "trnm_mempool=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libtrnm_mempool-6b692f2ffb93df30.rlib",
+      "--extern",
+      "trnm_mvcc_fee=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libtrnm_mvcc_fee-153d5ef7b83be333.rlib",
+      "--extern",
+      "trnm_pon_node=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libtrnm_pon_node-8bafe93622eb1f61.rlib",
+      "--extern",
+      "trnm_protocol=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libtrnm_protocol-10a9b461ad55d750.rlib",
+      "--extern",
+      "trnm_release_bundle=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libtrnm_release_bundle-cc5848fb77defdd6.rlib",
+      "--extern",
+      "trnm_service_settlement=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libtrnm_service_settlement-61157f505e1a4428.rlib",
+      "--extern",
+      "trnm_sqlite_io_boundary=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libtrnm_sqlite_io_boundary-627f99162b444da7.rlib",
+      "--extern",
+      "trnm_transport=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libtrnm_transport-a3ce364ac5999f75.rlib",
+      "--extern",
+      "zeroize=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libzeroize-9917054cf4892abb.rlib",
+      "-L",
+      "native=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/build/libsqlite3-sys-0b4e9332de508ef1/out",
+      "-L",
+      "native=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/build/sha2-asm-5496e21e45cba969/out",
+      "-L",
+      "native=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/build/sha2-asm-5496e21e45cba969/out",
+      "-L",
+      "native=/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/build/trnm-sqlite-io-boundary-6eadf8fe8239b4a5/out",
+      "-L",
+      "native=/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install/lib"
+    ]
+  },
+  "sha2_libraries": [
+    {
+      "executable": null,
+      "features": [
+        "asm",
+        "default",
+        "sha2-asm",
+        "std"
+      ],
+      "filenames": [
+        "/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libsha2-fafdf068c84600ef.rlib",
+        "/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libsha2-fafdf068c84600ef.rmeta"
+      ],
+      "fresh": true,
+      "manifest_path": "/home/qq/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.9/Cargo.toml",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#sha2@0.10.9",
+      "profile": {
+        "debug_assertions": true,
+        "debuginfo": 2,
+        "opt_level": "3",
+        "overflow_checks": true,
+        "test": false
+      },
+      "reason": "compiler-artifact",
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "lib"
+        ],
+        "name": "sha2",
+        "src_path": "/home/qq/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.9/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "executable": null,
+      "features": [
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libsha2-cc9e293ea097342a.rlib",
+        "/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/deps/libsha2-cc9e293ea097342a.rmeta"
+      ],
+      "fresh": true,
+      "manifest_path": "/home/qq/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.9/Cargo.toml",
+      "package_id": "registry+https://github.com/rust-lang/crates.io-index#sha2@0.10.9",
+      "profile": {
+        "debug_assertions": true,
+        "debuginfo": 0,
+        "opt_level": "3",
+        "overflow_checks": true,
+        "test": false
+      },
+      "reason": "compiler-artifact",
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "lib"
+        ],
+        "name": "sha2",
+        "src_path": "/home/qq/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.9/src/lib.rs",
+        "test": true
+      }
+    }
+  ],
+  "source": {
+    "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "status": "",
+    "tree": "6a0f38318b3cfb021240cda7f3d266c28aa76e78"
+  },
+  "wall_seconds": 300,
+  "worker_rss_bytes": 8589934592,
+  "worker_threads": 4
+}

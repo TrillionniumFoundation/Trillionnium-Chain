@@ -1,0 +1,33 @@
+import pathlib,subprocess,os,json,time,sys,hashlib
+root=pathlib.Path('/home/qq/work/chain-cell-native-shard-674c72-20261110')
+result_dir=pathlib.Path('/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/native-example-attempt01')
+result_dir.mkdir(parents=True,exist_ok=False)
+toolchain=pathlib.Path('/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu')
+provider=pathlib.Path('/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install')
+temp=result_dir/'tmp';temp.mkdir()
+env=os.environ.copy()
+env.update({'PATH':str(toolchain/'bin')+':'+env['PATH'],'RUSTC':str(toolchain/'bin/rustc'),'RUSTDOC':str(toolchain/'bin/rustdoc'),'CARGO_HOME':'/home/qq/.cargo','CARGO_TARGET_DIR':'/home/qq/work/chain-cell-native-shard-674c72-20261110-target','CARGO_BUILD_JOBS':'2','CARGO_INCREMENTAL':'0','TMPDIR':str(temp),'LD_LIBRARY_PATH':str(toolchain/'lib'),'OPENSSL_DIR':str(provider),'TRNM_PQ_OPENSSL':str(provider/'bin/openssl')})
+cargo=str(toolchain/'bin/cargo')
+rustfmt=str(toolchain/'bin/rustfmt')
+paths=['trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs','trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_next_use_v2.rs']+['trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/'+f for f in ['mod.rs','funding.rs','recovery.rs','tests.rs']]
+commands=[
+ ('preflight',['bash','scripts/project-preflight.sh'],root),
+ ('rustfmt',[rustfmt,'--edition','2021','--config','skip_children=true',*paths],root),
+ ('check',[cargo,'check','--offline','--jobs','2','-p','trnm-pon-node','--features','pq-native-openssl','--example','cell_native_shard_research_next_use_v2'],root/'trillionnium'),
+ ('node-example',[cargo,'test','--locked','--offline','--jobs','2','-p','trnm-pon-node','--features','pq-native-openssl','--example','cell_native_shard_research_next_use_v2','--','--test-threads=1'],root/'trillionnium'),
+ ('da-original-example',[cargo,'test','--locked','--offline','--jobs','2','-p','trnm-data-availability','--example','cell_sealed_research_next_use_v2','--','--test-threads=1'],root/'trillionnium'),
+ ('clippy-node-example',[cargo,'clippy','--locked','--offline','--jobs','2','-p','trnm-pon-node','--features','pq-native-openssl','--example','cell_native_shard_research_next_use_v2','--','-D','warnings'],root/'trillionnium'),
+ ('clippy-da-example',[cargo,'clippy','--locked','--offline','--jobs','2','-p','trnm-data-availability','--example','cell_sealed_research_next_use_v2','--','-D','warnings'],root/'trillionnium'),
+]
+records=[]
+for name,command,cwd in commands:
+ start=time.time()
+ print(json.dumps({'stage':name,'state':'started','command':command,'cwd':str(cwd),'time':start}),flush=True)
+ with (result_dir/(name+'.log')).open('wb') as log:
+  process=subprocess.run(command,cwd=cwd,env=env,stdout=log,stderr=subprocess.STDOUT)
+ record={'stage':name,'command':command,'cwd':str(cwd),'start':start,'end':time.time(),'returncode':process.returncode,'log_sha256':hashlib.sha256((result_dir/(name+'.log')).read_bytes()).hexdigest()}
+ records.append(record);(result_dir/'result.json').write_text(json.dumps(records,indent=2))
+ print(json.dumps(record),flush=True)
+ if process.returncode:
+  print((result_dir/(name+'.log')).read_text(errors='replace')[-12000:],flush=True);sys.exit(process.returncode)
+print(json.dumps({'state':'complete','passed':True,'stages':len(records)}),flush=True)

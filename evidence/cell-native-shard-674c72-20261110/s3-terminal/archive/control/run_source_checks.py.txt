@@ -1,0 +1,72 @@
+#!/usr/bin/env python3
+"""Retain source-bound Python controls in a fresh external observation directory."""
+import datetime
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import time
+
+repo = Path('/home/qq/work/chain-cell-native-shard-674c72-20261110')
+head, tree, label = sys.argv[1:]
+destination = Path(str(repo) + '-validation') / label
+destination.mkdir(mode=0o700)
+temporary = destination / 'tmp'
+temporary.mkdir(mode=0o700)
+os.environ['TMPDIR'] = str(temporary)
+os.environ['PYTHONDONTWRITEBYTECODE'] = '1'
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def ident():
+    actual = [subprocess.check_output(['git', *args], cwd=repo, text=True).strip()
+              for args in [('rev-parse', 'HEAD'), ('rev-parse', 'HEAD^{tree}'),
+                           ('status', '--porcelain', '--untracked-files=all')]]
+    assert actual == [head, tree, ''], 'exact clean source required'
+    return {'head': head, 'tree': tree, 'status': ''}
+
+
+before = ident()
+runner_sha256 = sha(Path(__file__))
+with (destination / 'start.json').open('x') as output:
+    json.dump({'identity': before, 'runner_sha256': runner_sha256,
+               'TMPDIR': str(temporary), 'PYTHONDONTWRITEBYTECODE': '1'}, output, indent=2, sort_keys=True)
+    output.write('\n')
+gates = [
+    ('preflight', ['bash', 'scripts/project-preflight.sh']),
+    ('exact-source', ['python3', 'scripts/ci/verify_ci_source.py', '--kind', 'head', '--expected-head', head]),
+    ('authority-controls', ['python3', '-m', 'unittest', 'scripts/ci/test_pq_authority_effect_register.py']),
+    ('authority-reader', ['python3', 'scripts/ci/pq_authority_effect_register.py', '--root', '.']),
+    ('source-integrity-negatives', ['python3', 'scripts/ci/test_ci_source_integrity.py']),
+    ('repository-and-links', ['python3', 'scripts/ci/check_repository.py']),
+    ('exact-source-end', ['python3', 'scripts/ci/verify_ci_source.py', '--kind', 'head', '--expected-head', head]),
+]
+results = []
+for name, command in gates:
+    ident()
+    began = time.monotonic()
+    with (destination / (name + '.stdout.log')).open('xb') as output, \
+            (destination / (name + '.stderr.log')).open('xb') as error:
+        process = subprocess.run(command, cwd=repo, stdout=output, stderr=error, timeout=1800)
+    row = {'name': name, 'command': command, 'exit_code': process.returncode,
+           'elapsed_seconds': time.monotonic() - began,
+           'stdout_sha256': sha(destination / (name + '.stdout.log')),
+           'stderr_sha256': sha(destination / (name + '.stderr.log'))}
+    results.append(row)
+    print(json.dumps(row), flush=True)
+after = ident()
+assert sha(Path(__file__)) == runner_sha256, 'source controller changed during gates'
+summary = {'schema': 'trnm.native-shard-source-checks.v2', 'identity': after,
+           'runner_sha256': runner_sha256, 'TMPDIR': str(temporary),
+           'completed_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+           'gates': results, 'passed': all(row['exit_code'] == 0 for row in results)}
+with (destination / 'observation.json').open('x') as output:
+    json.dump(summary, output, indent=2, sort_keys=True)
+    output.write('\n')
+print(json.dumps(summary), flush=True)
+raise SystemExit(0 if summary['passed'] else 1)

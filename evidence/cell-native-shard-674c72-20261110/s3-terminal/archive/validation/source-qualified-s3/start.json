@@ -1,0 +1,10 @@
+{
+  "PYTHONDONTWRITEBYTECODE": "1",
+  "TMPDIR": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/source-qualified-s3/tmp",
+  "identity": {
+    "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "status": "",
+    "tree": "6a0f38318b3cfb021240cda7f3d266c28aa76e78"
+  },
+  "runner_sha256": "b8829eced75d362c085b0768e5085b5c5af1d2310aef77e268df46f71c0c814a"
+}

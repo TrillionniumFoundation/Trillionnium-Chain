@@ -1,0 +1,41 @@
+[
+  {
+    "stage": "example_check",
+    "returncode": 0,
+    "command": [
+      "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "check",
+      "--locked",
+      "--offline",
+      "--jobs",
+      "2",
+      "-p",
+      "trnm-pon-node",
+      "--features",
+      "pq-native-openssl",
+      "--example",
+      "cell_native_shard_research_next_use_v2"
+    ]
+  },
+  {
+    "stage": "node_grouped",
+    "returncode": 101,
+    "command": [
+      "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--jobs",
+      "2",
+      "-p",
+      "trnm-pon-node",
+      "--features",
+      "pq-native-openssl",
+      "--lib",
+      "native_grouped",
+      "--",
+      "--nocapture",
+      "--test-threads=1"
+    ]
+  }
+]

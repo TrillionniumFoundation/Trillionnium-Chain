@@ -1,0 +1,272 @@
+{
+  "binary": "/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/examples/cell_native_shard_research_next_use_v2",
+  "binary_sha256": "f84afd9343d2e8cbdeab9668342016513526559968673f9945db02fd9d1ae9b5",
+  "completed_at": "2026-11-10T06:01:39.413337+00:00",
+  "gates": [
+    {
+      "command": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "elapsed_seconds": 0.03165151900611818,
+      "exit_code": 0,
+      "name": "preflight",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "c27e73a9200cdd86e67a0a33ade2544ec59587c2867c275db30ca8839c1afda3"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "f41d6e0ac2b40e49c1dff96110f6ed68445eaef7"
+      ],
+      "elapsed_seconds": 1.5228094060439616,
+      "exit_code": 0,
+      "name": "exact-source",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "318d5046adf84763ec499714b8c59336c60dc69f248cd4ff30c3403d3c11eb42"
+    },
+    {
+      "command": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "metadata",
+        "--locked",
+        "--offline",
+        "--format-version",
+        "1",
+        "--features",
+        "trnm-pon-node/pq-native-openssl"
+      ],
+      "elapsed_seconds": 0.1652994710020721,
+      "exit_code": 0,
+      "name": "cargo-graph",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "8c5c32a1b931dc71895347c6993eed60c3b7ce904f8439f14a0bb192e877abf6",
+      "workspace_packages": 26
+    },
+    {
+      "command": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--jobs",
+        "2",
+        "-p",
+        "trnm-pon-node",
+        "--features",
+        "pq-native-openssl",
+        "--lib",
+        "store::storage_service::",
+        "--",
+        "--test-threads=1"
+      ],
+      "elapsed_seconds": 303.7467937138863,
+      "exit_code": 0,
+      "missing_original_tests": [],
+      "name": "node-storage",
+      "original_roster_preserved": true,
+      "stderr_sha256": "624378730ff58deaa4070ddd0a072612758b02f88ce18f02b0deb3fad266c161",
+      "stdout_sha256": "1d625226a53458ad9d0db9c2c7c750940215dbda7e464a1c38f7b5b19e306b33",
+      "successful_names": [
+        "store::storage_service::shard::plan::grouped_v3::journal::tests::group_child_journal_bounds_full_64_group_1024_child_roster",
+        "store::storage_service::shard::plan::grouped_v3::journal::tests::group_child_journal_cold_open_retains_real_pending_and_done",
+        "store::storage_service::shard::plan::grouped_v3::journal::tests::group_child_journal_exclusive_owner_and_replaced_path_are_refused",
+        "store::storage_service::shard::plan::grouped_v3::journal::tests::group_child_journal_expiry_and_structural_bounds_cannot_start_children",
+        "store::storage_service::shard::plan::grouped_v3::journal::tests::group_child_journal_foreign_snapshot_history_and_context_are_refused",
+        "store::storage_service::shard::plan::grouped_v3::journal::tests::group_child_journal_missing_changed_and_foreign_rosters_refuse_without_new_history",
+        "store::storage_service::shard::plan::grouped_v3::journal::tests::group_child_journal_readonly_refusal_preserves_corrupt_context_chain_and_snapshot",
+        "store::storage_service::shard::plan::grouped_v3::journal::tests::group_child_journal_refusal_preserves_foreign_and_old_database_bytes",
+        "store::storage_service::shard::plan::grouped_v3::journal::tests::group_child_journal_schema_caps_and_oversized_non_null_sql_are_not_null",
+        "store::storage_service::tests::cache_quota::cache_deletion_and_cache_quota_failure_cannot_release_actual_paid_retention",
+        "store::storage_service::tests::height_window::native_cell_repair_height_window_preserves_recovery_without_reserving_new_work",
+        "store::storage_service::tests::height_window::native_cell_storage_height_window_refuses_before_reservation_and_recovers_original_effect",
+        "store::storage_service::tests::native_cell_expired_storage_request_creates_no_budget_or_physical_obligation",
+        "store::storage_service::tests::native_cell_failed_initial_copy_needs_a_separate_funded_repair_and_preserves_unknown_cost",
+        "store::storage_service::tests::native_cell_physical_writer_wait_spends_original_storage_deadline",
+        "store::storage_service::tests::native_cell_repair_cpu_owner_cannot_move_threads_or_resume_after_exhaustion",
+        "store::storage_service::tests::native_cell_retirement_cannot_release_a_pending_effect_before_reconciliation",
+        "store::storage_service::tests::native_cell_retirement_rejects_another_chain_and_reconciles_orphaned_funding",
+        "store::storage_service::tests::native_cell_storage_escrow_replay_and_reorg_keep_physical_obligation",
+        "store::storage_service::tests::native_cell_storage_subject_and_real_byte_block_capacity_are_required_before_effect",
+        "store::storage_service::tests::release::native_release_complete_tasks_reopen_and_shared_members_keep_original_effects",
+        "store::storage_service::tests::release::native_release_interrupted_members_need_distinct_repairs_without_redispatch",
+        "store::storage_service::tests::release::native_release_outer_history_cannot_invent_missing_member_intents",
+        "store::storage_service::tests::release::native_release_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement",
+        "store::storage_service::tests::release::native_release_repair_scope_deadline_and_exact_old_reconciliation_remain_distinct",
+        "store::storage_service::tests::release::native_release_scope_alias_and_late_funding_errors_precede_every_reservation",
+        "store::storage_service::tests::replay_owner::native_cell_cancelled_native_funding_reconciles_old_effects_without_new_dispatch",
+        "store::storage_service::tests::replay_owner::native_cell_completed_repair_refuses_foreign_owner_and_recovers_orphaned_effect",
+        "store::storage_service::tests::replay_owner::native_cell_completed_retain_refuses_foreign_owner_and_recovers_orphaned_effect",
+        "store::storage_service::tests::replay_owner::native_cell_pending_repair_refuses_foreign_owner_and_recovers_orphaned_effect",
+        "store::storage_service::tests::replay_owner::native_cell_pending_retain_refuses_foreign_owner_and_recovers_orphaned_effect",
+        "store::storage_service::tests::shard::native_shard_pending_initial_effect_cannot_dispatch_even_with_source_present",
+        "store::storage_service::tests::shard::native_shard_real_funding_target_readback_and_repair_keep_original_debits",
+        "store::storage_service::tests::shard::native_shard_unknown_repair_never_reissues_and_foreign_owner_cannot_retire",
+        "store::storage_service::tests::version::native_version_outer_history_cannot_invent_missing_member_intents",
+        "store::storage_service::tests::version::native_version_pending_monetary_effect_cannot_retry_copy_with_a_new_source",
+        "store::storage_service::tests::version::native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement",
+        "store::storage_service::tests::version::native_version_scheduler_pending_metadata_accepts_only_new_funded_copy_then_reopens_done",
+        "store::storage_service::tests::version::native_version_scope_alias_and_late_funding_errors_precede_every_reservation",
+        "store::storage_service::tests::version::shard_plan::native_complete_version_to_complete_local_shard_plan_reopens_without_sources_or_new_debits",
+        "store::storage_service::tests::version::shard_plan::paged_tests::grouped_v3_tests::native_grouped_cold_repair_uses_four_original_shards_and_preserves_done_debits",
+        "store::storage_service::tests::version::shard_plan::paged_tests::grouped_v3_tests::native_grouped_done_reconcile_survives_unrelated_native_block_and_child_reopen",
+        "store::storage_service::tests::version::shard_plan::paged_tests::grouped_v3_tests::native_grouped_late_alias_foreign_child_and_short_caps_preflight_before_effects",
+        "store::storage_service::tests::version::shard_plan::paged_tests::grouped_v3_tests::native_grouped_pending_and_unstarted_children_never_redispatch_initial_copy",
+        "store::storage_service::tests::version::shard_plan::paged_tests::grouped_v3_tests::native_grouped_pending_parent_cannot_recreate_missing_child_history",
+        "store::storage_service::tests::version::shard_plan::paged_tests::grouped_v3_tests::native_grouped_repair_requires_distinct_complete_parent_authority_before_effects",
+        "store::storage_service::tests::version::shard_plan::paged_tests::grouped_v3_tests::native_grouped_storage_keeps_six_parents_eighteen_children_and_cold_done_readback",
+        "store::storage_service::tests::version::shard_plan::paged_tests::native_paged_shard_plan_checks_last_page_before_any_provider_effect",
+        "store::storage_service::tests::version::shard_plan::paged_tests::native_paged_shard_plan_corrupt_last_page_refuses_before_any_effect_or_debit",
+        "store::storage_service::tests::version::shard_plan::paged_tests::native_paged_shard_plan_counts_retired_provider_history_before_first_new_effect",
+        "store::storage_service::tests::version::shard_plan::paged_tests::native_paged_shard_plan_reopens_done_without_sources_or_fresh_allowance",
+        "store::storage_service::tests::version::shard_plan::paged_tests::native_paged_shard_plan_unknown_final_slot_never_replays_source_copy",
+        "store::storage_service::tests::version::shard_plan::paged_tests::recovery_tests::native_paged_shard_recovery_missing_quorum_preserves_whole_attempt_charge",
+        "store::storage_service::tests::version::shard_plan::paged_tests::recovery_tests::native_paged_shard_recovery_pending_last_page_never_redispatches_the_original_repair",
+        "store::storage_service::tests::version::shard_plan::paged_tests::recovery_tests::native_paged_shard_recovery_preflights_last_page_authority_and_exact_global_budget",
+        "store::storage_service::tests::version::shard_plan::paged_tests::recovery_tests::native_paged_shard_recovery_repairs_both_pages_from_four_original_targets_and_reopens_done",
+        "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_automatic_recovery_uses_four_targets_after_all_sources_are_deleted",
+        "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_pending_repair_cannot_redispatch_and_needs_independent_new_funding",
+        "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_preflight_cpu_and_metadata_fail_closed_without_hidden_copies",
+        "store::storage_service::tests::version::shard_plan::recovery::native_shard_plan_recovery_refuses_missing_quorum_without_spending_new_repairs_or_refunding_reads"
+      ]
+    },
+    {
+      "command": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--jobs",
+        "2",
+        "-p",
+        "trnm-pon-node",
+        "--features",
+        "pq-native-openssl",
+        "--example",
+        "cell_native_shard_research_next_use_v2",
+        "--",
+        "--test-threads=1"
+      ],
+      "elapsed_seconds": 113.0271783049684,
+      "exit_code": 0,
+      "full_scope_observed": true,
+      "name": "grouped-example",
+      "stderr_sha256": "2f73364f4a1de902c7cf379adb3302d3b7bf33343c19e974bbd32c5441a14572",
+      "stdout_sha256": "3412b658777dccc27499aca6fb2c17ed842a043d5ad8cc78ca89727e31ebb014",
+      "test_summaries": [
+        "ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 15.82s"
+      ]
+    },
+    {
+      "command": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--jobs",
+        "2",
+        "-p",
+        "trnm-data-availability",
+        "--example",
+        "cell_sealed_research_next_use_v2",
+        "--",
+        "--test-threads=1"
+      ],
+      "elapsed_seconds": 0.11368809104897082,
+      "exit_code": 0,
+      "full_scope_observed": true,
+      "name": "original-da-example",
+      "stderr_sha256": "d194165aa9bfabe4d143e8727e030dbe624a3d205a88880d88c579ca6cd70469",
+      "stdout_sha256": "055b489da2514493d22e04864ca0483f1012f823ca6e7a7918ccdb1260833730",
+      "test_summaries": [
+        "ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s"
+      ]
+    },
+    {
+      "command": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--jobs",
+        "2",
+        "--all-targets",
+        "-p",
+        "trnm-data-availability",
+        "-p",
+        "trnm-pon-node",
+        "--features",
+        "trnm-pon-node/pq-native-openssl",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "elapsed_seconds": 34.838929555844516,
+      "exit_code": 0,
+      "name": "strict-clippy",
+      "stderr_sha256": "66e10396a31f5a385b7170d6e8b2e667b0a9560fbdbbe3d7c356c572166d56ad",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "elapsed_seconds": 6.82124620093964,
+      "exit_code": 0,
+      "name": "fmt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+        "build",
+        "--locked",
+        "--offline",
+        "--jobs",
+        "2",
+        "-p",
+        "trnm-pon-node",
+        "--features",
+        "pq-native-openssl",
+        "--example",
+        "cell_native_shard_research_next_use_v2"
+      ],
+      "elapsed_seconds": 26.817938588093966,
+      "exit_code": 0,
+      "name": "actual-model-binary",
+      "stderr_sha256": "bd09d06e7beb0c680ae7a5f0af1fbbc5f2aaf269c0a33bcdfc9bfec51fbad7d5",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "f41d6e0ac2b40e49c1dff96110f6ed68445eaef7"
+      ],
+      "elapsed_seconds": 1.5235538710840046,
+      "exit_code": 0,
+      "name": "exact-source-end",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "318d5046adf84763ec499714b8c59336c60dc69f248cd4ff30c3403d3c11eb42"
+    }
+  ],
+  "identity": {
+    "head": "f41d6e0ac2b40e49c1dff96110f6ed68445eaef7",
+    "status": "",
+    "tree": "0e75a266b6582f3acb48cd3d41dcef7309e63dc7"
+  },
+  "passed": true,
+  "schema": "trnm.native-grouped-shard-exact-native-gates.v1"
+}

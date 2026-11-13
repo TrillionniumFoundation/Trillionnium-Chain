@@ -1,0 +1,8 @@
+{
+  "checkpoint": "S3",
+  "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+  "tree": "6a0f38318b3cfb021240cda7f3d266c28aa76e78",
+  "parent": "f41d6e0ac2b40e49c1dff96110f6ed68445eaef7",
+  "clean": true,
+  "runtime_code_and_config_identical_to_s2": true
+}

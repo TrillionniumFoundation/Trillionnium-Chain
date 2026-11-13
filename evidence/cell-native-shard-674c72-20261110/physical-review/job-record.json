@@ -1,0 +1,58 @@
+{
+  "schema": "trnm.independent-physical-review-job.v1",
+  "job_id": "1a1c43c43a9-cf39-1ba",
+  "status": {
+    "at_unix_ms": 1794293693171,
+    "audit_recorded": true,
+    "automatic_retry": false,
+    "cancelled": false,
+    "exit_code": 0,
+    "job_id": "1a1c43c43a9-cf39-1ba",
+    "launch_nonce": "50518296921c6830596e00f1bec5fc55",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 529,
+        "stored": 529
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "state": "succeeded",
+    "terminal_publication_confirmed": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "stdout": {
+    "eof": true,
+    "next_offset": 529,
+    "offset": 0,
+    "size": 529,
+    "text": "{\"assertion_groups\": 16, \"audit_elapsed_seconds\": 0.057979985838755965, \"build_executed\": false, \"launch_sha256\": \"b125250e1d3624cad95085135d649db1a16ae000a5120585df96dbdb2bf97d0b\", \"model_executed\": false, \"original_databases_opened\": false, \"passed\": true, \"qualification\": \"PASS-HOLD\", \"raw_files\": 17, \"raw_originals_unchanged\": true, \"script_sha256\": \"a790136fdad01c63d8f5f56d2fe0287093a11ffaaeb5562e09ad9b2c3dd3d53c\", \"source_files\": 8, \"summary_sha256\": \"85330031fe216cac833dda4192fdfc43cf8e6ca14206246a34fc6ae1740c12e1\"}\n"
+  },
+  "stderr": {
+    "eof": true,
+    "next_offset": 0,
+    "offset": 0,
+    "size": 0,
+    "text": ""
+  },
+  "launch_reconciliation": "First start acknowledgement timed out; same idempotency key returned reused:true for the single terminal job; no second execution.",
+  "idempotency_key": "independent-physical-review-231-s3-01",
+  "expected_script_sha256": "a790136fdad01c63d8f5f56d2fe0287093a11ffaaeb5562e09ad9b2c3dd3d53c"
+}

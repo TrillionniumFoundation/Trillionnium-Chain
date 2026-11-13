@@ -1,0 +1,22 @@
+   Compiling libc v0.2.184
+   Compiling rustix v1.1.4
+   Compiling serde_json v1.0.149
+   Compiling rusqlite v0.39.0
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-crypto-primitives)
+   Compiling getrandom v0.4.2
+   Compiling getrandom v0.2.17
+   Compiling fs2 v0.4.3
+   Compiling tempfile v3.27.0
+   Compiling trnm-data-availability v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-data-availability)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.88s
+     Running unittests examples/cell_sealed_research_next_use_v2.rs (/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/examples/cell_sealed_research_next_use_v2-1bad5a80098a9f42)
+
+running 5 tests
+test linux::bep52::tests::explicit_endpoint_allowances_fit_one_total ... ok
+test linux::bep52::tests::old_network_profile_unknown_fields_and_missing_grants_are_refused ... ok
+test linux::bep52::tests::same_operation_transfer_handles_cross_member_cache_dedup ... ok
+test linux::snapshot::tests::actual_worker_and_closed_composition_profile_are_required ... ok
+test linux::snapshot::tests::dense_roster_rejects_unknown_dtype_duplicate_fields_and_layout_gaps ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+

@@ -1,0 +1,25 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 41s
+     Running unittests examples/cell_native_shard_research_next_use_v2.rs (/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/examples/cell_native_shard_research_next_use_v2-3e2ece6cd88ccb25)
+
+running 7 tests
+test cell_native_shard_research_v2::tests::expired_callback_cannot_start_funding_or_remove_original_caches ... ok
+test cell_native_shard_research_v2::tests::native_callback_cold_reconstructs_all_pages_from_four_original_providers ... 
+thread 'cell_native_shard_research_v2::tests::native_callback_cold_reconstructs_all_pages_from_four_original_providers' (2660317) panicked at crates/trnm-pon-node/examples/cell_native_shard_research_v2/tests.rs:224:13:
+native callback failed: actual complete wire-cache union readback; retained_fixture=/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/v3-component-attempt03/tmp/.tmpRW3NRG
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+test original::bep52::tests::explicit_endpoint_allowances_fit_one_total ... ok
+test original::bep52::tests::old_network_profile_unknown_fields_and_missing_grants_are_refused ... ok
+test original::bep52::tests::same_operation_transfer_handles_cross_member_cache_dedup ... ok
+test original::snapshot::tests::actual_worker_and_closed_composition_profile_are_required ... ok
+test original::snapshot::tests::dense_roster_rejects_unknown_dtype_duplicate_fields_and_layout_gaps ... ok
+
+failures:
+
+failures:
+    cell_native_shard_research_v2::tests::native_callback_cold_reconstructs_all_pages_from_four_original_providers
+
+test result: FAILED. 6 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.24s
+
+error: test failed, to rerun pass `-p trnm-pon-node --example cell_native_shard_research_next_use_v2`

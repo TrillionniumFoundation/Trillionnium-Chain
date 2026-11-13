@@ -1,0 +1,281 @@
+{
+  "all_blob_records": "git-blob-identities.json",
+  "cargo_execution_performed": false,
+  "cargo_manifest_comparison": [
+    {
+      "path": "trillionnium/Cargo.lock",
+      "same_bytes": false
+    },
+    {
+      "path": "trillionnium/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-audit-events/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-bench/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-checkpoint-store/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-checkpoint-types/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-control-plane/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-data-availability/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-escrow-vault/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-executor/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-governance-guard/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-mempool/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-oracle/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-peer-lease/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "same_bytes": false
+    },
+    {
+      "path": "trillionnium/crates/trnm-protocol/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-release-bundle/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-research-protocol/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-service-settlement/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-sqlite-io-boundary/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-state-import/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-task-kernel/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-transport/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-types/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-verification-profiles/Cargo.toml",
+      "same_bytes": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-worker-agent/Cargo.toml",
+      "same_bytes": true
+    }
+  ],
+  "changed_existing_historical_evidence_paths": [],
+  "commands": "commands.json",
+  "comparison": {
+    "base": "06233be630f8eff6cea59cd5111e5941135a4aa5",
+    "candidate": "d9c725f27b197f71208754b0a5ac0717798d3587",
+    "candidate_tree": "a71a4ede1686baa27c1eb985472928920be41f30"
+  },
+  "complete_lock_records": "native-lock-records.json",
+  "existing_complete_copy_entry_retains_explicit_route": true,
+  "lock_summary": {
+    "added_packages": [],
+    "c3_package_count": 181,
+    "changed_records": [
+      {
+        "after": {
+          "dependencies": [
+            "fs2",
+            "getrandom 0.2.17",
+            "hex",
+            "libc",
+            "nix",
+            "openssl",
+            "rusqlite",
+            "rustix",
+            "serde",
+            "serde_json",
+            "sha2",
+            "tempfile",
+            "trnm-crypto-primitives",
+            "trnm-data-availability",
+            "trnm-mempool",
+            "trnm-mvcc-fee",
+            "trnm-protocol",
+            "trnm-release-bundle",
+            "trnm-service-settlement",
+            "trnm-sqlite-io-boundary",
+            "trnm-transport",
+            "zeroize"
+          ],
+          "name": "trnm-pon-node",
+          "version": "0.1.0"
+        },
+        "before": {
+          "dependencies": [
+            "fs2",
+            "hex",
+            "libc",
+            "nix",
+            "openssl",
+            "rusqlite",
+            "rustix",
+            "serde",
+            "serde_json",
+            "sha2",
+            "tempfile",
+            "trnm-crypto-primitives",
+            "trnm-data-availability",
+            "trnm-mempool",
+            "trnm-mvcc-fee",
+            "trnm-protocol",
+            "trnm-release-bundle",
+            "trnm-service-settlement",
+            "trnm-sqlite-io-boundary",
+            "trnm-transport",
+            "zeroize"
+          ],
+          "name": "trnm-pon-node",
+          "version": "0.1.0"
+        },
+        "identity": [
+          "trnm-pon-node",
+          "0.1.0",
+          ""
+        ]
+      }
+    ],
+    "node_development_after": {
+      "getrandom": "=0.2.17",
+      "rusqlite": {
+        "features": [
+          "trace"
+        ],
+        "version": "=0.39.0"
+      }
+    },
+    "node_development_before": {
+      "rusqlite": {
+        "features": [
+          "trace"
+        ],
+        "version": "=0.39.0"
+      }
+    },
+    "node_nondev_manifest_semantics_equal": true,
+    "removed_packages": [],
+    "s0_package_count": 181
+  },
+  "model_efficacy_proved": false,
+  "native_tests_executed": false,
+  "observed_at_utc": "2026-11-10T05:47:54.077567+00:00",
+  "original_source_lines_preserved_with_additions_only": true,
+  "original_source_prefix_review": [
+    {
+      "appended_bytes": 627,
+      "line_edit_kinds": [
+        "equal",
+        "insert"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "preserves_all_c3_lines_in_order": true,
+      "preserves_entire_c3_prefix": false
+    },
+    {
+      "appended_bytes": 637,
+      "line_edit_kinds": [
+        "equal",
+        "insert"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "preserves_all_c3_lines_in_order": true,
+      "preserves_entire_c3_prefix": true
+    },
+    {
+      "appended_bytes": 627,
+      "line_edit_kinds": [
+        "equal",
+        "insert"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
+      "preserves_all_c3_lines_in_order": true,
+      "preserves_entire_c3_prefix": true
+    },
+    {
+      "appended_bytes": 626,
+      "line_edit_kinds": [
+        "equal",
+        "insert"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs",
+      "preserves_all_c3_lines_in_order": true,
+      "preserves_entire_c3_prefix": true
+    },
+    {
+      "appended_bytes": 712,
+      "line_edit_kinds": [
+        "equal",
+        "insert"
+      ],
+      "path": "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan.rs",
+      "preserves_all_c3_lines_in_order": true,
+      "preserves_entire_c3_prefix": true
+    }
+  ],
+  "original_test_count": 44,
+  "original_test_prefix_preserved": true,
+  "original_test_preservation": "original-storage-test-preservation.json",
+  "original_test_roster": "original-storage-test-roster.json",
+  "prior_failed_review": "prior-overstrong-prefix-failure-inventory.json",
+  "publication_or_production_qualification": false,
+  "runtime_reachability_proved": false,
+  "schema": "trnm.independent-native-shard-source-provenance.v1",
+  "scope": "Exact committed Git blobs, source test-name roster and frozen Cargo manifest/lock records only.",
+  "working_head_before": "368db622152e51bf1efbbfedf6f6a87a80ae094b"
+}

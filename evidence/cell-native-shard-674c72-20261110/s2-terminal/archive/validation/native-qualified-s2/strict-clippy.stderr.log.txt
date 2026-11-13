@@ -1,0 +1,8 @@
+    Checking openssl-sys v0.9.117
+    Checking openssl v0.10.81
+    Checking trnm-crypto-primitives v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-crypto-primitives)
+    Checking trnm-data-availability v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-data-availability)
+    Checking trnm-release-bundle v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-release-bundle)
+    Checking trnm-mvcc-fee v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-mvcc-fee)
+    Checking trnm-pon-node v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-pon-node)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 34.69s

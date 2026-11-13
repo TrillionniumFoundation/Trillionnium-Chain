@@ -1,0 +1,80 @@
+[
+  {
+    "stage": "preflight",
+    "command": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "start": 1794284291.6411846,
+    "end": 1794284291.6632016,
+    "returncode": 0,
+    "log_sha256": "c27e73a9200cdd86e67a0a33ade2544ec59587c2867c275db30ca8839c1afda3"
+  },
+  {
+    "stage": "rustfmt",
+    "command": [
+      "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+      "--edition",
+      "2021",
+      "--config",
+      "skip_children=true",
+      "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs",
+      "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_next_use_v2.rs",
+      "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/mod.rs",
+      "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/funding.rs",
+      "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/recovery.rs",
+      "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/tests.rs"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110",
+    "start": 1794284291.6635714,
+    "end": 1794284291.685924,
+    "returncode": 0,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "stage": "check",
+    "command": [
+      "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "check",
+      "--offline",
+      "--jobs",
+      "2",
+      "-p",
+      "trnm-pon-node",
+      "--features",
+      "pq-native-openssl",
+      "--example",
+      "cell_native_shard_research_next_use_v2"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium",
+    "start": 1794284291.6863194,
+    "end": 1794284292.1897812,
+    "returncode": 0,
+    "log_sha256": "8d25f912054e30134ff4e3865d99517413cf088074983638ebd458fc81c42541"
+  },
+  {
+    "stage": "node-example",
+    "command": [
+      "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "--jobs",
+      "2",
+      "-p",
+      "trnm-pon-node",
+      "--features",
+      "pq-native-openssl",
+      "--example",
+      "cell_native_shard_research_next_use_v2",
+      "--",
+      "--test-threads=1"
+    ],
+    "cwd": "/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium",
+    "start": 1794284292.190184,
+    "end": 1794284446.4458911,
+    "returncode": 101,
+    "log_sha256": "951b53cb56df5b8a4618ac6a2919a8fc6e51c741b6ae28e7ba524f67d728b5b5"
+  }
+]

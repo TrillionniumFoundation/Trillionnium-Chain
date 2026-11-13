@@ -1,0 +1,6 @@
+{
+  "bytes": 212347272,
+  "frozen": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/checked-test-profile-s3/binaries/debug-unexecuted-f84afd9343d2e8cbdeab9668342016513526559968673f9945db02fd9d1ae9b5.elf",
+  "sha256": "f84afd9343d2e8cbdeab9668342016513526559968673f9945db02fd9d1ae9b5",
+  "source": "/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/examples/cell_native_shard_research_next_use_v2"
+}

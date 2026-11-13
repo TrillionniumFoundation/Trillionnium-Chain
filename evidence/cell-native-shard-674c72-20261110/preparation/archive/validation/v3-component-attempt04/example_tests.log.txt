@@ -1,0 +1,15 @@
+   Compiling trnm-pon-node v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.62s
+     Running unittests examples/cell_native_shard_research_next_use_v2.rs (/home/qq/work/chain-cell-native-shard-674c72-20261110-target/debug/examples/cell_native_shard_research_next_use_v2-3e2ece6cd88ccb25)
+
+running 7 tests
+test cell_native_shard_research_v2::tests::expired_callback_cannot_start_funding_or_remove_original_caches ... ok
+test cell_native_shard_research_v2::tests::native_callback_cold_reconstructs_all_pages_from_four_original_providers ... ok
+test original::bep52::tests::explicit_endpoint_allowances_fit_one_total ... ok
+test original::bep52::tests::old_network_profile_unknown_fields_and_missing_grants_are_refused ... ok
+test original::bep52::tests::same_operation_transfer_handles_cross_member_cache_dedup ... ok
+test original::snapshot::tests::actual_worker_and_closed_composition_profile_are_required ... ok
+test original::snapshot::tests::dense_roster_rejects_unknown_dtype_duplicate_fields_and_layout_gaps ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 15.64s
+

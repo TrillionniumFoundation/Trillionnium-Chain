@@ -1,0 +1,61 @@
+{
+  "completed_at": "2026-11-10T06:28:14.665737+00:00",
+  "config_sha256": "111d10f2e6eea734ed016ae6ccdd3624b0394d6ef21357584e7b989b08fe832d",
+  "end_identity": {
+    "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "status": "",
+    "tree": "6a0f38318b3cfb021240cda7f3d266c28aa76e78"
+  },
+  "independent_real_money": false,
+  "last_stage": "complete research next-use",
+  "memory_end": {
+    "cpu.max": "400000 100000",
+    "cpu.stat": "usage_usec 229586639\nuser_usec 218386071\nsystem_usec 11200567\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 2398\nnr_throttled 2\nthrottled_usec 2246888\nnr_bursts 0\nburst_usec 0",
+    "io.stat_unavailable": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1c420eb26-cf39-12d.service/io.stat'",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+    "memory.max": "8589934592",
+    "memory.peak": "4202799104"
+  },
+  "memory_start": {
+    "cpu.max": "400000 100000",
+    "cpu.stat": "usage_usec 38331\nuser_usec 26226\nsystem_usec 12104\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 0\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+    "io.stat_unavailable": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1c420eb26-cf39-12d.service/io.stat'",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+    "memory.max": "8589934592",
+    "memory.peak": "18812928"
+  },
+  "native_error": null,
+  "native_process": {
+    "elapsed_seconds": 236.08394552301615,
+    "exit_code": 0,
+    "system_seconds": 10.21055,
+    "user_seconds": 215.32221,
+    "wait4_ru_maxrss_kib": 1432444,
+    "watchdog_kill": false,
+    "watchdog_term": false
+  },
+  "native_result_sha256": "83960ffeade28b32c3365e6486a646cd92f6d7dec78a19703f084c4c8036da13",
+  "native_seconds": 300,
+  "native_started": true,
+  "operation": "23120317a3cc20853fbcf0de37924311788e251d59395afc1816b4f6b2b7bbdc",
+  "operation_pins": {
+    "bep52_plan": "fec516f77633a58dc1e60927ba7158103ca36c3f743efd05f0b566ad4317995b7b733d23031a173217533d82b049fce0eceb6ebf3d14b022941872ba475b4360",
+    "chb1": "23daa985f5c646840c6f7f7bbd88017d59f6445a8b3b88232f87589d81d9e5a3e5cb639b2a196b3961d4a2700651d05ad036c4b0aabd436b14259936047965a8",
+    "cts1": "dd644852ec5bb6ec68048477838b97f10b4e3117cf49644505ffab737b0c7898d4bf915d73d2f013d43eafe860dff6beb500745e2cd0b7b66e62c7e8baf7552e",
+    "operation": "23120317a3cc20853fbcf0de37924311788e251d59395afc1816b4f6b2b7bbdc",
+    "tcv1": "76e318b243995ff788bdfc4ef317395a525eeb1c3d751b549c0791a4da4e51deb4366338fcd0330b816252c9bcf5195b4de3247408afdad3386d94bf34e879dd",
+    "tcv2": "1ae64d141b4fcb979c18c846d0795237400eff1ad76abfd8d972c8a35196efee16448d1652e920ddb1fc3d58c32c4a52fb089195d7f51f1f72647f37814c43bb"
+  },
+  "passed": true,
+  "production_activation": false,
+  "schema": "trnm.native-paged-rs46-real-model-observation.v2",
+  "source_sha256": "83e4ab28cd84813c1a489c4c53222764b6437edf0eaad8924776c0777ff61835",
+  "start_identity": {
+    "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "status": "",
+    "tree": "6a0f38318b3cfb021240cda7f3d266c28aa76e78"
+  },
+  "started_at": "2026-11-10T06:24:14.864576+00:00",
+  "wrapper_elapsed_seconds": 239.8010175221134,
+  "wrapper_sha256": "120c70fb52909072eacf84251a44ff6c62f777479685db2cacf8cc1846a9e139"
+}

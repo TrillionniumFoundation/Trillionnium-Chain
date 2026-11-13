@@ -1,0 +1,113 @@
+{
+  "control": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-model-audit-23120317-attempt01",
+  "failed_checks": [],
+  "files": {
+    "README.md": {
+      "bytes": 5251,
+      "sha256": "b18e0e7e4fdd42e724313980e7f5138598e63a4953a36d2edf4091c4f8e45c7b"
+    },
+    "__pycache__/funding_audit.cpython-314.pyc": {
+      "bytes": 14945,
+      "sha256": "7a877fce527531cc7c8652b00a460db7029fda9e0e763c88028f0de4dece7784"
+    },
+    "__pycache__/identity_audit.cpython-314.pyc": {
+      "bytes": 10892,
+      "sha256": "5d9169d19edb397aa73a3e9ea1e6c79086c4324f1cc09f1e4525d9f4092ac9dc"
+    },
+    "__pycache__/journal_audit.cpython-314.pyc": {
+      "bytes": 68358,
+      "sha256": "014863d0eceeba1c5591144774f2f90d118dc5f6df5aabe2ee53dade1616a49e"
+    },
+    "__pycache__/reports_audit.cpython-314.pyc": {
+      "bytes": 22028,
+      "sha256": "0d12228df0a620cf2694fbc743ae68561f430c586bb12792cea80614f6af2154"
+    },
+    "audit.stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "audit.stdout.log": {
+      "bytes": 178,
+      "sha256": "732ce4adbc8b483109ef0f5de8db6329743ee29622e2845f2550c38876738475"
+    },
+    "audit_model_run.py": {
+      "bytes": 13997,
+      "sha256": "e84827946b35b391fcf6b48d488dbedf34ba4dff44d6b5b0d72cf18ab75b4d12"
+    },
+    "evidence/audit.json": {
+      "bytes": 19958,
+      "sha256": "dafdda4567e04327ecad53e2d6e1ddd85c48e5933438920b30d403f07bc15bef"
+    },
+    "evidence/cgj3-history.jsonl": {
+      "bytes": 3943665,
+      "sha256": "65bcafb655d2cdc8ba13aed79cf575b14d47b1caa3a6256f5221f2e5fdac9584"
+    },
+    "evidence/cgj3-readback.json": {
+      "bytes": 3380163,
+      "sha256": "46e6898cc05a66b63936f2c539d8948ad12f19470ea4ed243f58c73c702925e7"
+    },
+    "evidence/cgj3-snapshot/children-v3.sqlite": {
+      "bytes": 5632000,
+      "sha256": "3f87276a87e0faf1d3461d1cb9f3062e4989ff065ce543cc0c27232911ce4001"
+    },
+    "evidence/cgj3-snapshot/children-v3.sqlite-shm": {
+      "bytes": 32768,
+      "sha256": "10f41820dd58749857f4e111101a4b84208a1c62309a53a472c623f3e3510054"
+    },
+    "evidence/cgj3-snapshot/children-v3.sqlite-wal": {
+      "bytes": 4268352,
+      "sha256": "becb4c246fe7df0a8d4a3bf3283207361ca15106117eb3b24a2dc2ebc7bc3b59"
+    },
+    "evidence/current-funding-rows.json": {
+      "bytes": 86227,
+      "sha256": "d7f3388d543ee2ff2a5c3f6d360b74e842bb5aac722781d9bc3272306bc9e20e"
+    },
+    "evidence/funding-bindings.json": {
+      "bytes": 32850,
+      "sha256": "5ef9fd3a5c1fbd553b0e8d475afd796cd00c8c2e47849dc9f6a9092901e29bd5"
+    },
+    "funding_audit.py": {
+      "bytes": 6951,
+      "sha256": "c18694206529ab811bbd3fdf10efa9b58e723f9b91852433b4e02d0b998d3919"
+    },
+    "identity_audit.py": {
+      "bytes": 5954,
+      "sha256": "0d5a62aecc99123609a1ba031e41506fe444acabb83bdb646fecc48f6e339c03"
+    },
+    "invocation.json": {
+      "bytes": 1056,
+      "sha256": "a2da80fa28158d9c3b12f746bfc874448a941faf4678164a44fab917ce8f5744"
+    },
+    "journal_audit.py": {
+      "bytes": 38009,
+      "sha256": "c85a6965960d39792702a06b59d8011733cc92e22cd074392c0875c3cad9c033"
+    },
+    "manifest.json": {
+      "bytes": 1399,
+      "sha256": "473456043504740974d0a7893406ef75fc901cac5d7db183d251efe4a7d8e577"
+    },
+    "raw-process-status.json": {
+      "bytes": 731,
+      "sha256": "c01649e3df49b384c43b354a259f6e99d6eef9e72487542fa234ffc8a89c5f9b"
+    },
+    "raw-process-tool-envelope.json": {
+      "bytes": 953,
+      "sha256": "3f52ffb62ae6d72da24ba77f2edf24be6f96bcd01fa56623ad828c43b29d6c7e"
+    },
+    "reports_audit.py": {
+      "bytes": 10203,
+      "sha256": "52c5859a2034eb4b0160c2c8a3ce1b51fbcc7b128f2476d6064c2d0fa0edc7af"
+    },
+    "test_journal_audit.py": {
+      "bytes": 12848,
+      "sha256": "334ac3fddb1dfefc7742ebdcf02edf70d7e474a9c300ba564caf15c49b39a09d"
+    }
+  },
+  "model_reexecuted": false,
+  "native_result_sha256": "83960ffeade28b32c3365e6486a646cd92f6d7dec78a19703f084c4c8036da13",
+  "original_sqlite_opened": false,
+  "repository_changed": false,
+  "returncode": 0,
+  "schema": "trnm.real-model-independent-audit-run.v1",
+  "status": "PASS-HOLD"
+}

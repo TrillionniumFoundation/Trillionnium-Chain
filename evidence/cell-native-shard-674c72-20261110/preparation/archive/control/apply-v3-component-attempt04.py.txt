@@ -1,0 +1,60 @@
+import pathlib,hashlib,json,subprocess,os,sqlite3
+root=pathlib.Path('/home/qq/work/chain-cell-native-shard-674c72-20261110');validation=pathlib.Path(str(root)+'-validation');out=validation/'v3-component-attempt04';out.mkdir(exist_ok=False)
+relative='trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/mod.rs';p=root/relative
+expected_head='368db622152e51bf1efbbfedf6f6a87a80ae094b';expected_sha='d7ac1505839181edadd6f29a32ae9e9322d0e7c36c23a800e54b824227933710'
+head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=root).decode().strip()
+if head!=expected_head:raise RuntimeError('S1 head changed '+head)
+if hashlib.sha256(p.read_bytes()).hexdigest()!=expected_sha:raise RuntimeError('helper lease')
+fixture=validation/'v3-component-attempt03/tmp/.tmpRW3NRG'
+if not fixture.is_dir():raise RuntimeError('actual failed fixture missing')
+(out/'failed-helper-s1.rs.txt').write_bytes(p.read_bytes())
+identity={'qualification':'prequalification failure only; not exact S2/model evidence','head':head,'tree':subprocess.check_output(['git','rev-parse','HEAD^{tree}'],cwd=root).decode().strip(),'helper_sha256':expected_sha,'helper_git_blob':subprocess.check_output(['git','rev-parse','HEAD:'+relative],cwd=root).decode().strip(),'fixture':str(fixture),'raw_log':str(validation/'v3-component-attempt03/example_tests.log'),'fixture_files':{str(f.relative_to(fixture)):f.stat().st_size for f in fixture.rglob('*') if f.is_file()}}
+(out/'failure-source-identity.json').write_text(json.dumps(identity,indent=2))
+def digest(path):
+ h=hashlib.sha256()
+ with path.open('rb') as f:
+  for block in iter(lambda:f.read(1048576),b''):h.update(block)
+ return h.hexdigest()
+cache=fixture/'native-shards/delivery.sqlite';images=[f for f in [cache,pathlib.Path(str(cache)+'-wal')] if f.exists()];before={str(f):digest(f) for f in images}
+db=sqlite3.connect('file:'+str(cache)+'?mode=ro',uri=True)
+quota=db.execute('SELECT used_bytes,chunk_rows,manifest_rows FROM cell_cache_quota_v4').fetchone()
+chunks=db.execute('SELECT coalesce(sum(length(bytes)),0),count(*) FROM cell_chunks_v1').fetchone()
+manifests=db.execute('SELECT coalesce(sum(length(wire)),0),count(*) FROM cell_manifests_v1').fetchone();db.close()
+if before!={str(f):digest(f) for f in images}:raise RuntimeError('readonly image changed')
+(out/'failed-wire-cache-accounting.json').write_text(json.dumps({'stored_quota':dict(zip(['logical_bytes','chunk_rows','manifest_rows'],quota)),'chunk_payload_bytes':chunks[0],'manifest_wire_bytes':manifests[0],'key_bytes':32*(chunks[1]+manifests[1]),'computed_logical_bytes':chunks[0]+manifests[0]+32*(chunks[1]+manifests[1]),'image_sha256':before,'old_admission':json.loads((fixture/'native-shards/storage-wire-cache-config.json').read_text())},indent=2))
+with (out/'preflight.log').open('w') as log:r=subprocess.run(['bash','scripts/project-preflight.sh'],cwd=root,stdout=log,stderr=subprocess.STDOUT)
+if r.returncode:raise RuntimeError('preflight failed')
+if hashlib.sha256(p.read_bytes()).hexdigest()!=expected_sha:raise RuntimeError('helper changed during evidence')
+old='''    let logical = chunk_union.values().try_fold(0_u64, |sum, size| {
+        sum.checked_add(u64::from(*size))
+            .ok_or("wire-cache logical-byte overflow")
+    })?;'''
+new='''    let logical = manifest_union.values().try_fold(0_u64, |sum, manifest| {
+        let bytes = u64::try_from(manifest.encode().len())
+            .map_err(|_| "wire-cache manifest-byte overflow")?;
+        sum.checked_add(bytes).and_then(|value| value.checked_add(32))
+            .ok_or("wire-cache logical-byte overflow")
+    })?;
+    let logical = chunk_union.values().try_fold(logical, |sum, size| {
+        sum.checked_add(u64::from(*size)).and_then(|value| value.checked_add(32))
+            .ok_or("wire-cache logical-byte overflow")
+    })?;'''
+source=p.read_text()
+if source.count(old)!=1:raise RuntimeError('exact helper patch cardinality')
+p.write_text(source.replace(old,new))
+tc=pathlib.Path('/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu')
+with (out/'fmt.log').open('w') as log:r=subprocess.run([str(tc/'bin/rustfmt'),'--edition','2021',str(p)],cwd=root,stdout=log,stderr=subprocess.STDOUT)
+if r.returncode:raise RuntimeError('fmt failed')
+changed=subprocess.check_output(['git','diff','--name-only','--','*.rs','*.toml','Cargo.lock'],cwd=root).decode().splitlines()
+if changed!=[relative]:raise RuntimeError('unexpected source diff '+repr(changed))
+(out/'manifest.json').write_text(json.dumps({'source_base':head,'only_changed':relative,'sha256':digest(p)},indent=2))
+tmp=out/'tmp';tmp.mkdir();env=os.environ.copy();ssl='/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install'
+env.update(RUSTC=str(tc/'bin/rustc'),RUSTDOC=str(tc/'bin/rustdoc'),CARGO_HOME='/home/qq/.cargo',LD_LIBRARY_PATH=str(tc/'lib'),CARGO_BUILD_JOBS='2',CARGO_INCREMENTAL='0',CARGO_TARGET_DIR=str(root)+'-target',TMPDIR=str(tmp),OPENSSL_DIR=ssl,TRNM_PQ_OPENSSL=ssl+'/bin/openssl')
+cargo=str(tc/'bin/cargo');common=['--locked','--offline','--jobs','2'];node=['-p','trnm-pon-node','--features','pq-native-openssl']
+steps=[('example_check',[cargo,'check',*common,*node,'--example','cell_native_shard_research_next_use_v2']),('strict_clippy',[cargo,'clippy',*common,'--all-targets','-p','trnm-data-availability','-p','trnm-pon-node','--features','trnm-pon-node/pq-native-openssl','--','-D','warnings']),('example_tests',[cargo,'test',*common,*node,'--example','cell_native_shard_research_next_use_v2','--','--nocapture','--test-threads=1']),('original_da5',[cargo,'test',*common,'-p','trnm-data-availability','--example','cell_sealed_research_next_use_v2','--','--test-threads=1']),('actual_example_build',[cargo,'build',*common,*node,'--example','cell_native_shard_research_next_use_v2'])]
+results=[]
+for label,command in steps:
+ with (out/(label+'.log')).open('w') as log:r=subprocess.run(command,cwd=root/'trillionnium',env=env,stdout=log,stderr=subprocess.STDOUT)
+ results.append({'stage':label,'returncode':r.returncode,'command':command});(out/'results.json').write_text(json.dumps(results,indent=2))
+ print(json.dumps(results[-1]),flush=True);print(''.join((out/(label+'.log')).read_text().splitlines(True)[-180:]),flush=True)
+ if r.returncode:break

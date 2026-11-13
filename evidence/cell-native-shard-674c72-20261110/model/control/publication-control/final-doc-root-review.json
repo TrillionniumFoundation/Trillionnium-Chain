@@ -1,0 +1,17 @@
+{
+  "after": {
+    "docs/development/specs/pon/CELL_NATIVE_SHARD_RESEARCH_V2.md": "c67e53b4b7687ca830abe8306b3604bdac788bbcce3748a5f4222b404654d791",
+    "evidence/cell-native-shard-674c72-20261110/README.md": "ebfc1c3f7ab93de0d3e78403a171bea064f404c6b8ee62c8bcb50c9b775fa56a"
+  },
+  "before": {
+    "docs/development/specs/pon/CELL_NATIVE_SHARD_RESEARCH_V2.md": "58e66ff5a4f1ee2dd95598cc58063c84f9a73c5ca1b81c69d2e746d633338f7a",
+    "evidence/cell-native-shard-674c72-20261110/README.md": "a675971ea44d5a6c4cc40fc5aa1f564521b2e8064f9a6e261f26887e8ea5033b"
+  },
+  "changes": [
+    "explicit 128-chunk bounded sample and unbenchmarked structural/GPU/concurrency scope",
+    "qualification flags terminology"
+  ],
+  "main_plan_unchanged": true,
+  "runtime_source_unchanged": true,
+  "schema": "trnm.native-model-doc-root-review.v1"
+}

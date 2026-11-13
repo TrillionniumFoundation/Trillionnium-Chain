@@ -1,0 +1,649 @@
+{
+  "actual_m12_claim_count": 79,
+  "current_catalog_payload_integrity_inferred_from_funding": false,
+  "final_anchor": {
+    "block": "6205678c374bec394678b7fbc21fd1a018f0c8d5328328492a0268842a4047bf",
+    "generation": 5,
+    "genesis": "94e765f4e93579b0f173594cc85af66e53d83de93a1de5540577553e339f4ae1",
+    "height": 5,
+    "network": "83ddb1c5214daae53fdb7ed45d8b23498b6532d0b3dd11311b358c2ad7f2d190",
+    "parameters": "34555e10faffc14d6e4b5e737d63b9ea3d996020454083fbacd4735d84057b09",
+    "state_root": "9e4a7e0c681264b8ac0e40913f3e381d688c66864a3d1fadff7b834ecfececed"
+  },
+  "funding_by_source": {
+    "task:000404c1ffc277f6777546709446027f0f1a4157ee946b21de1565cfb31ff53c": {
+      "amount": 1600,
+      "deadline": 204,
+      "nonce": 66,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "4616ac31afb0eeb44a065ab813ecb7c5f472ae0cc466e0b66b85702b312bf91f",
+      "source": "task:000404c1ffc277f6777546709446027f0f1a4157ee946b21de1565cfb31ff53c"
+    },
+    "task:0064ce955ac5c043e23b8eedca42c7271b1bb3636e1aec6248296aefcf22b9f8": {
+      "amount": 1600,
+      "deadline": 204,
+      "nonce": 71,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "b5fa6292ebd1f370bef2a835a626b0fb1602b821f8e6c99fdf11ee656962bc49",
+      "source": "task:0064ce955ac5c043e23b8eedca42c7271b1bb3636e1aec6248296aefcf22b9f8"
+    },
+    "task:00e52c361aa10adedf1b684813c990266e65dd04f3b8d4912a33cb1c7d462b4a": {
+      "amount": 100,
+      "deadline": 200,
+      "nonce": 15,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:00e52c361aa10adedf1b684813c990266e65dd04f3b8d4912a33cb1c7d462b4a"
+    },
+    "task:0156fbb1a57dda8478b5f357f23e537c76924aedf2f36e8606dd2ff174d46d9e": {
+      "amount": 1600,
+      "deadline": 203,
+      "nonce": 63,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "4616ac31afb0eeb44a065ab813ecb7c5f472ae0cc466e0b66b85702b312bf91f",
+      "source": "task:0156fbb1a57dda8478b5f357f23e537c76924aedf2f36e8606dd2ff174d46d9e"
+    },
+    "task:0246451034002f0d9602f17d3bf9c39afec7a14fbbe6ad0355491b763a50bc1d": {
+      "amount": 1600,
+      "deadline": 202,
+      "nonce": 46,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8",
+      "source": "task:0246451034002f0d9602f17d3bf9c39afec7a14fbbe6ad0355491b763a50bc1d"
+    },
+    "task:03879218f39ca860d51658c6c4e6054796393503bedc2e8d52932205052d9cbe": {
+      "amount": 1600,
+      "deadline": 203,
+      "nonce": 62,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "4616ac31afb0eeb44a065ab813ecb7c5f472ae0cc466e0b66b85702b312bf91f",
+      "source": "task:03879218f39ca860d51658c6c4e6054796393503bedc2e8d52932205052d9cbe"
+    },
+    "task:06cf7e0e81bdce26add791190f99a37ddef8cec1c553dce27751b598f1d4780a": {
+      "amount": 1600,
+      "deadline": 204,
+      "nonce": 72,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "b5fa6292ebd1f370bef2a835a626b0fb1602b821f8e6c99fdf11ee656962bc49",
+      "source": "task:06cf7e0e81bdce26add791190f99a37ddef8cec1c553dce27751b598f1d4780a"
+    },
+    "task:0daf016995507b77413f39e835302a9d16b97432a4004db222e20539ec5be88a": {
+      "amount": 1500,
+      "deadline": 204,
+      "nonce": 79,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "4616ac31afb0eeb44a065ab813ecb7c5f472ae0cc466e0b66b85702b312bf91f",
+      "source": "task:0daf016995507b77413f39e835302a9d16b97432a4004db222e20539ec5be88a"
+    },
+    "task:16d1c4385f0972ce4e15acf370f63082e3f4206313bdf25b6707b7ce08bea029": {
+      "amount": 1600,
+      "deadline": 202,
+      "nonce": 48,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8",
+      "source": "task:16d1c4385f0972ce4e15acf370f63082e3f4206313bdf25b6707b7ce08bea029"
+    },
+    "task:183b1fb8163129a7cefc29bc6cf81852f388d04aee7f6b91916e460d50a79ab2": {
+      "amount": 100,
+      "deadline": 201,
+      "nonce": 31,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:183b1fb8163129a7cefc29bc6cf81852f388d04aee7f6b91916e460d50a79ab2"
+    },
+    "task:1ad7be495c1329e517843b80afd44dd0d6d1928f04095b7e3955c07e4465e09f": {
+      "amount": 100,
+      "deadline": 200,
+      "nonce": 16,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:1ad7be495c1329e517843b80afd44dd0d6d1928f04095b7e3955c07e4465e09f"
+    },
+    "task:1e0e8b0c982a63500ecbda3001e9ca409140e09e6780c5a8c7f57a7c39185774": {
+      "amount": 100,
+      "deadline": 201,
+      "nonce": 30,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:1e0e8b0c982a63500ecbda3001e9ca409140e09e6780c5a8c7f57a7c39185774"
+    },
+    "task:1ee576ce4227a23f340128252d99f4cb423f74297cbb45dd3664c17570ee73b1": {
+      "amount": 100,
+      "deadline": 201,
+      "nonce": 26,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:1ee576ce4227a23f340128252d99f4cb423f74297cbb45dd3664c17570ee73b1"
+    },
+    "task:213f61000da79bfd67be24127e572fa2552b10fb1c5df91d09c4686fdb2133d6": {
+      "amount": 1600,
+      "deadline": 204,
+      "nonce": 77,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "4616ac31afb0eeb44a065ab813ecb7c5f472ae0cc466e0b66b85702b312bf91f",
+      "source": "task:213f61000da79bfd67be24127e572fa2552b10fb1c5df91d09c4686fdb2133d6"
+    },
+    "task:229abdac70ae129fd3b5862ad73e0ec08b6cb5e172f7c571b495a4e514edd4e4": {
+      "amount": 100,
+      "deadline": 201,
+      "nonce": 22,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:229abdac70ae129fd3b5862ad73e0ec08b6cb5e172f7c571b495a4e514edd4e4"
+    },
+    "task:230f2d37929fb184f6e431146ac86af3461f82e0babd17182d41ff1ea376ad4d": {
+      "amount": 100,
+      "deadline": 201,
+      "nonce": 19,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:230f2d37929fb184f6e431146ac86af3461f82e0babd17182d41ff1ea376ad4d"
+    },
+    "task:260d77bc0ffb7578a2ac6624808d298f207c3b58d66e525dc39dfa0ac95d5aff": {
+      "amount": 1600,
+      "deadline": 203,
+      "nonce": 60,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "b5fa6292ebd1f370bef2a835a626b0fb1602b821f8e6c99fdf11ee656962bc49",
+      "source": "task:260d77bc0ffb7578a2ac6624808d298f207c3b58d66e525dc39dfa0ac95d5aff"
+    },
+    "task:28d443c0d939d79c6159af83135c08b318df6a01557a3bd52e93fc1ce98bfac9": {
+      "amount": 100,
+      "deadline": 200,
+      "nonce": 12,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:28d443c0d939d79c6159af83135c08b318df6a01557a3bd52e93fc1ce98bfac9"
+    },
+    "task:3050293ddafed798a188b1a5ab99b4fd164f7673c6977f1e8ffaf0d2777ea269": {
+      "amount": 1600,
+      "deadline": 204,
+      "nonce": 78,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "4616ac31afb0eeb44a065ab813ecb7c5f472ae0cc466e0b66b85702b312bf91f",
+      "source": "task:3050293ddafed798a188b1a5ab99b4fd164f7673c6977f1e8ffaf0d2777ea269"
+    },
+    "task:3526f75ccad63517f00fd88718269fd7ad80f66ae714ececa0e4c4ab4a609b72": {
+      "amount": 1600,
+      "deadline": 204,
+      "nonce": 70,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "b5fa6292ebd1f370bef2a835a626b0fb1602b821f8e6c99fdf11ee656962bc49",
+      "source": "task:3526f75ccad63517f00fd88718269fd7ad80f66ae714ececa0e4c4ab4a609b72"
+    },
+    "task:35a4c02cf700743b16ffe47ac61ef89f8a72d26c0cb6e9f1bc24bb3d377d49c9": {
+      "amount": 1600,
+      "deadline": 202,
+      "nonce": 34,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:35a4c02cf700743b16ffe47ac61ef89f8a72d26c0cb6e9f1bc24bb3d377d49c9"
+    },
+    "task:3b93db4358f41bc0afc03f9f193e53e180831ab3bda152d8d3b389d60d4ecb1e": {
+      "amount": 100,
+      "deadline": 200,
+      "nonce": 9,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:3b93db4358f41bc0afc03f9f193e53e180831ab3bda152d8d3b389d60d4ecb1e"
+    },
+    "task:3eae6801cdade2d0dcc96b228d6ea37349a8e6b681e28bfcde4826246fd80e50": {
+      "amount": 1600,
+      "deadline": 203,
+      "nonce": 56,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "b5fa6292ebd1f370bef2a835a626b0fb1602b821f8e6c99fdf11ee656962bc49",
+      "source": "task:3eae6801cdade2d0dcc96b228d6ea37349a8e6b681e28bfcde4826246fd80e50"
+    },
+    "task:4050f179190ad1cde6141522571fabae9e8113565320b7216b579c1375352812": {
+      "amount": 1600,
+      "deadline": 202,
+      "nonce": 39,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "79ff17be1447f408a50b56fa5816a80d8db8377ae7188f89efc0225303f1ef21",
+      "source": "task:4050f179190ad1cde6141522571fabae9e8113565320b7216b579c1375352812"
+    },
+    "task:41824a2a063df8d2accd54e0e47b9c78c901bfb25f9f4528aabfb71d259ed847": {
+      "amount": 100,
+      "deadline": 200,
+      "nonce": 5,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:41824a2a063df8d2accd54e0e47b9c78c901bfb25f9f4528aabfb71d259ed847"
+    },
+    "task:462bfe47ad679f27ee414aab736a45551e3733715f3fc498b7128038f44af9d0": {
+      "amount": 1600,
+      "deadline": 202,
+      "nonce": 38,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "79ff17be1447f408a50b56fa5816a80d8db8377ae7188f89efc0225303f1ef21",
+      "source": "task:462bfe47ad679f27ee414aab736a45551e3733715f3fc498b7128038f44af9d0"
+    },
+    "task:4859f5fb5a934b7077c9631de23c3cf528d4c7da6e01ae5ddad6d6a8c359ca05": {
+      "amount": 1600,
+      "deadline": 203,
+      "nonce": 59,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "b5fa6292ebd1f370bef2a835a626b0fb1602b821f8e6c99fdf11ee656962bc49",
+      "source": "task:4859f5fb5a934b7077c9631de23c3cf528d4c7da6e01ae5ddad6d6a8c359ca05"
+    },
+    "task:49357189f61899d4cb00b7aa4b254ce9711f29d3e65078c9facd1f7ce7c7df51": {
+      "amount": 100,
+      "deadline": 200,
+      "nonce": 3,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:49357189f61899d4cb00b7aa4b254ce9711f29d3e65078c9facd1f7ce7c7df51"
+    },
+    "task:4eb5a8ae7e3f27d20a83b1e703eccadaf2473ecab3436e76144139fa33baf2c5": {
+      "amount": 1600,
+      "deadline": 203,
+      "nonce": 57,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "b5fa6292ebd1f370bef2a835a626b0fb1602b821f8e6c99fdf11ee656962bc49",
+      "source": "task:4eb5a8ae7e3f27d20a83b1e703eccadaf2473ecab3436e76144139fa33baf2c5"
+    },
+    "task:50ee6abedf4662444de11c784ac28ed241c4a5976b5669bbb5262e24b2d375bf": {
+      "amount": 1600,
+      "deadline": 202,
+      "nonce": 45,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8",
+      "source": "task:50ee6abedf4662444de11c784ac28ed241c4a5976b5669bbb5262e24b2d375bf"
+    },
+    "task:520fba57205097150e8fea50c7f5863e51695f94890166b7b6fec0ee950760f1": {
+      "amount": 100,
+      "deadline": 201,
+      "nonce": 23,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:520fba57205097150e8fea50c7f5863e51695f94890166b7b6fec0ee950760f1"
+    },
+    "task:55d8bdf49b467ca4ea747f13dc8b9e16ad697cf0336ec1a047758c14c179b4fa": {
+      "amount": 100,
+      "deadline": 200,
+      "nonce": 1,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:55d8bdf49b467ca4ea747f13dc8b9e16ad697cf0336ec1a047758c14c179b4fa"
+    },
+    "task:5b4ec5170590ed2653667738de56161c13c79a2e0f122ad5442db65edb7b97e9": {
+      "amount": 100,
+      "deadline": 200,
+      "nonce": 4,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:5b4ec5170590ed2653667738de56161c13c79a2e0f122ad5442db65edb7b97e9"
+    },
+    "task:5cdf0bc7987cd7a6bce7a3d4920e208c4efcb79f9ad928062217c711d7b495e4": {
+      "amount": 1500,
+      "deadline": 203,
+      "nonce": 55,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "505ea94896fd4d052b04cbd8d0fcfdbcdcd8ee2ee5a2f1821554c036595efb54",
+      "source": "task:5cdf0bc7987cd7a6bce7a3d4920e208c4efcb79f9ad928062217c711d7b495e4"
+    },
+    "task:61ec60a298232f4572b0d2c96c5ae2c83f0dc87b3be77c9035bf021073f808d8": {
+      "amount": 100,
+      "deadline": 201,
+      "nonce": 29,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:61ec60a298232f4572b0d2c96c5ae2c83f0dc87b3be77c9035bf021073f808d8"
+    },
+    "task:663d250d437b7cfd016881af9c2ab4d1df97b7fd83688c8f73446fa7926659ba": {
+      "amount": 1600,
+      "deadline": 202,
+      "nonce": 33,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:663d250d437b7cfd016881af9c2ab4d1df97b7fd83688c8f73446fa7926659ba"
+    },
+    "task:680c5bd52b0cd8fcc1068bea8c5b310a41a158aab9318875580029cb90767df6": {
+      "amount": 1600,
+      "deadline": 203,
+      "nonce": 64,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "4616ac31afb0eeb44a065ab813ecb7c5f472ae0cc466e0b66b85702b312bf91f",
+      "source": "task:680c5bd52b0cd8fcc1068bea8c5b310a41a158aab9318875580029cb90767df6"
+    },
+    "task:69c86d1ece3c1ea9af04b4c33db939ea91cb283a263f463f9e275207b384e733": {
+      "amount": 1500,
+      "deadline": 204,
+      "nonce": 67,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "4616ac31afb0eeb44a065ab813ecb7c5f472ae0cc466e0b66b85702b312bf91f",
+      "source": "task:69c86d1ece3c1ea9af04b4c33db939ea91cb283a263f463f9e275207b384e733"
+    },
+    "task:6c3a7902147379a40a19466f65603d5828b97bacf8370e2616559fc7ca15b94b": {
+      "amount": 100,
+      "deadline": 200,
+      "nonce": 10,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:6c3a7902147379a40a19466f65603d5828b97bacf8370e2616559fc7ca15b94b"
+    },
+    "task:71b81461a07d3fcdf437ddd4d82505f3e38f41b68bbbeb93cc743b93310ef16f": {
+      "amount": 1600,
+      "deadline": 204,
+      "nonce": 74,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "4616ac31afb0eeb44a065ab813ecb7c5f472ae0cc466e0b66b85702b312bf91f",
+      "source": "task:71b81461a07d3fcdf437ddd4d82505f3e38f41b68bbbeb93cc743b93310ef16f"
+    },
+    "task:7438a07977b3f8cd254e422eb5a62bb5edbb95601cdb778379fc9bce841d93b1": {
+      "amount": 100,
+      "deadline": 201,
+      "nonce": 27,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:7438a07977b3f8cd254e422eb5a62bb5edbb95601cdb778379fc9bce841d93b1"
+    },
+    "task:7eab2affb535a9d15d9c704bead2851fa3669ede2d529c79919e03114e680f20": {
+      "amount": 100,
+      "deadline": 201,
+      "nonce": 25,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:7eab2affb535a9d15d9c704bead2851fa3669ede2d529c79919e03114e680f20"
+    },
+    "task:8eb2327b4a97cd9a5b982d5cc20d2e20ffee5df569b7c1ea1745c3fd9393f420": {
+      "amount": 1600,
+      "deadline": 204,
+      "nonce": 68,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "b5fa6292ebd1f370bef2a835a626b0fb1602b821f8e6c99fdf11ee656962bc49",
+      "source": "task:8eb2327b4a97cd9a5b982d5cc20d2e20ffee5df569b7c1ea1745c3fd9393f420"
+    },
+    "task:903891b61abb331a93b55259a36c0febcf12866a3be76137edd6e9474f6b1fc6": {
+      "amount": 100,
+      "deadline": 200,
+      "nonce": 6,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:903891b61abb331a93b55259a36c0febcf12866a3be76137edd6e9474f6b1fc6"
+    },
+    "task:93620fadddc8839580170b8609465de080e44129b1738dc539731b8161fc0e8e": {
+      "amount": 1500,
+      "deadline": 204,
+      "nonce": 73,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "b5fa6292ebd1f370bef2a835a626b0fb1602b821f8e6c99fdf11ee656962bc49",
+      "source": "task:93620fadddc8839580170b8609465de080e44129b1738dc539731b8161fc0e8e"
+    },
+    "task:9692ac0c5a8c384c2bf2eb0f9f42621c1f5bae47eb8bf19c50e331fffc2f584a": {
+      "amount": 100,
+      "deadline": 200,
+      "nonce": 14,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:9692ac0c5a8c384c2bf2eb0f9f42621c1f5bae47eb8bf19c50e331fffc2f584a"
+    },
+    "task:9825e40927b2f8e4697fd3fbb29712cc1f7b9bd35eef76d618d6ee831b354d7f": {
+      "amount": 1500,
+      "deadline": 203,
+      "nonce": 61,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "b5fa6292ebd1f370bef2a835a626b0fb1602b821f8e6c99fdf11ee656962bc49",
+      "source": "task:9825e40927b2f8e4697fd3fbb29712cc1f7b9bd35eef76d618d6ee831b354d7f"
+    },
+    "task:9a99192815917663f6c8f9402b689fea224d9359f438c5f5586eef018d76be67": {
+      "amount": 100,
+      "deadline": 201,
+      "nonce": 18,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:9a99192815917663f6c8f9402b689fea224d9359f438c5f5586eef018d76be67"
+    },
+    "task:9b3e86420a6693c30cbbb9a66a33aa884f95701750ba16fce234527b1eb6e25e": {
+      "amount": 1600,
+      "deadline": 202,
+      "nonce": 35,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:9b3e86420a6693c30cbbb9a66a33aa884f95701750ba16fce234527b1eb6e25e"
+    },
+    "task:9dc295ae7357ff57ddff8469320074e998b263b8ed4d339b10a943fea3d3b242": {
+      "amount": 1600,
+      "deadline": 202,
+      "nonce": 40,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "79ff17be1447f408a50b56fa5816a80d8db8377ae7188f89efc0225303f1ef21",
+      "source": "task:9dc295ae7357ff57ddff8469320074e998b263b8ed4d339b10a943fea3d3b242"
+    },
+    "task:a16896f3ffbd3c6e160676336866ed524a4235008ebec3becb5b00069cebc337": {
+      "amount": 100,
+      "deadline": 200,
+      "nonce": 2,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:a16896f3ffbd3c6e160676336866ed524a4235008ebec3becb5b00069cebc337"
+    },
+    "task:a9b6de3a196d3a3bd2712f56b1ba74d973a889fb64dc219ab15059cd28731a8b": {
+      "amount": 100,
+      "deadline": 201,
+      "nonce": 21,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:a9b6de3a196d3a3bd2712f56b1ba74d973a889fb64dc219ab15059cd28731a8b"
+    },
+    "task:adc3b53ea5f878615cd56cf8b293cba77805c40864addf6baf55f054775c9125": {
+      "amount": 100,
+      "deadline": 201,
+      "nonce": 17,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:adc3b53ea5f878615cd56cf8b293cba77805c40864addf6baf55f054775c9125"
+    },
+    "task:b580a3d73c30e27b6b1b09089e33b2e3e4e9c16a4e1f6dc88d69601169a1d41e": {
+      "amount": 1600,
+      "deadline": 203,
+      "nonce": 58,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "b5fa6292ebd1f370bef2a835a626b0fb1602b821f8e6c99fdf11ee656962bc49",
+      "source": "task:b580a3d73c30e27b6b1b09089e33b2e3e4e9c16a4e1f6dc88d69601169a1d41e"
+    },
+    "task:b797e55e7294620cec864e7ece7a46648b16c3bc31e4c70b4fa03e016f94c666": {
+      "amount": 1600,
+      "deadline": 204,
+      "nonce": 75,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "4616ac31afb0eeb44a065ab813ecb7c5f472ae0cc466e0b66b85702b312bf91f",
+      "source": "task:b797e55e7294620cec864e7ece7a46648b16c3bc31e4c70b4fa03e016f94c666"
+    },
+    "task:b84c711e32cb64d2c019fe812661a219b8a5bc7b7332b903471dda338bb9f117": {
+      "amount": 1600,
+      "deadline": 204,
+      "nonce": 65,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "4616ac31afb0eeb44a065ab813ecb7c5f472ae0cc466e0b66b85702b312bf91f",
+      "source": "task:b84c711e32cb64d2c019fe812661a219b8a5bc7b7332b903471dda338bb9f117"
+    },
+    "task:baaf712949dae58546e62f77429f79d7866cf76aca30e395215b6683836a1077": {
+      "amount": 1600,
+      "deadline": 204,
+      "nonce": 69,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "b5fa6292ebd1f370bef2a835a626b0fb1602b821f8e6c99fdf11ee656962bc49",
+      "source": "task:baaf712949dae58546e62f77429f79d7866cf76aca30e395215b6683836a1077"
+    },
+    "task:bca8ea9ae4b685c0bfa9e5c79d2b3a266805a49c95c798fce4f9bcbdd523aa94": {
+      "amount": 1600,
+      "deadline": 203,
+      "nonce": 53,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "505ea94896fd4d052b04cbd8d0fcfdbcdcd8ee2ee5a2f1821554c036595efb54",
+      "source": "task:bca8ea9ae4b685c0bfa9e5c79d2b3a266805a49c95c798fce4f9bcbdd523aa94"
+    },
+    "task:c5ac189080f291438293c47166e5219ffd6b1adbd340f62567b34fd69d49c20e": {
+      "amount": 1600,
+      "deadline": 204,
+      "nonce": 76,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "4616ac31afb0eeb44a065ab813ecb7c5f472ae0cc466e0b66b85702b312bf91f",
+      "source": "task:c5ac189080f291438293c47166e5219ffd6b1adbd340f62567b34fd69d49c20e"
+    },
+    "task:c6a95ccd734bfc27c89992d27e52e3f7e33998c9cf20cb102e2399471063c8b9": {
+      "amount": 1600,
+      "deadline": 202,
+      "nonce": 44,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8",
+      "source": "task:c6a95ccd734bfc27c89992d27e52e3f7e33998c9cf20cb102e2399471063c8b9"
+    },
+    "task:c8c86ffce1c50de5f95ed81331d9ccbf6ef8f3efdc52cb4f73ee2b2942413f2e": {
+      "amount": 1600,
+      "deadline": 203,
+      "nonce": 52,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "505ea94896fd4d052b04cbd8d0fcfdbcdcd8ee2ee5a2f1821554c036595efb54",
+      "source": "task:c8c86ffce1c50de5f95ed81331d9ccbf6ef8f3efdc52cb4f73ee2b2942413f2e"
+    },
+    "task:cb57e016c7faf7dda631be6d84a76a74e825de5a3003d7e3f560c61ed1764ebd": {
+      "amount": 1600,
+      "deadline": 203,
+      "nonce": 50,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "505ea94896fd4d052b04cbd8d0fcfdbcdcd8ee2ee5a2f1821554c036595efb54",
+      "source": "task:cb57e016c7faf7dda631be6d84a76a74e825de5a3003d7e3f560c61ed1764ebd"
+    },
+    "task:d0b612f6b41052bbe34aba53fa9b121f2467923c3a8fcaef8b38610a39bea27f": {
+      "amount": 100,
+      "deadline": 201,
+      "nonce": 28,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:d0b612f6b41052bbe34aba53fa9b121f2467923c3a8fcaef8b38610a39bea27f"
+    },
+    "task:d44913e3cf2895604465321ec0431bdc6c974fdaebf011a40366deef9f16a377": {
+      "amount": 100,
+      "deadline": 200,
+      "nonce": 13,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:d44913e3cf2895604465321ec0431bdc6c974fdaebf011a40366deef9f16a377"
+    },
+    "task:d754f9f8de7cd79c711f1be9b0538bd6ecd7bb6682ebe6815c629b8fc675a203": {
+      "amount": 1600,
+      "deadline": 202,
+      "nonce": 47,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8",
+      "source": "task:d754f9f8de7cd79c711f1be9b0538bd6ecd7bb6682ebe6815c629b8fc675a203"
+    },
+    "task:d893c6f2aa8a22f7d2970f19669ce5f5aa6c625a418569517942604c5fc4afc9": {
+      "amount": 1600,
+      "deadline": 203,
+      "nonce": 51,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "505ea94896fd4d052b04cbd8d0fcfdbcdcd8ee2ee5a2f1821554c036595efb54",
+      "source": "task:d893c6f2aa8a22f7d2970f19669ce5f5aa6c625a418569517942604c5fc4afc9"
+    },
+    "task:d93d3856186310667cdb165b6c2a623f5fce7819c11a1b45588ade89ab882754": {
+      "amount": 1500,
+      "deadline": 202,
+      "nonce": 43,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "79ff17be1447f408a50b56fa5816a80d8db8377ae7188f89efc0225303f1ef21",
+      "source": "task:d93d3856186310667cdb165b6c2a623f5fce7819c11a1b45588ade89ab882754"
+    },
+    "task:dabaca61945f037d2047e48afce8f301e51d3c3d03a946c42e46b48b59b12ae3": {
+      "amount": 100,
+      "deadline": 200,
+      "nonce": 11,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:dabaca61945f037d2047e48afce8f301e51d3c3d03a946c42e46b48b59b12ae3"
+    },
+    "task:dbea96d24a1ed126d6f026ccc0df511695f58bbf9583cee9d36599b98a19d484": {
+      "amount": 100,
+      "deadline": 201,
+      "nonce": 24,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:dbea96d24a1ed126d6f026ccc0df511695f58bbf9583cee9d36599b98a19d484"
+    },
+    "task:dc73be444f3bac39bb06623ec09d915ac61e5373d5e368320ed5185ec7fcdf34": {
+      "amount": 1500,
+      "deadline": 202,
+      "nonce": 37,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:dc73be444f3bac39bb06623ec09d915ac61e5373d5e368320ed5185ec7fcdf34"
+    },
+    "task:e1a0d49414049cb77b85dc2e94a2e2f3797bb7b82997b88ac0be00ff6528dcc3": {
+      "amount": 100,
+      "deadline": 201,
+      "nonce": 20,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:e1a0d49414049cb77b85dc2e94a2e2f3797bb7b82997b88ac0be00ff6528dcc3"
+    },
+    "task:e64e62662e551aa435b14163601c5981f5d4191e38d00f74092bc8297e70e1b3": {
+      "amount": 100,
+      "deadline": 200,
+      "nonce": 7,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:e64e62662e551aa435b14163601c5981f5d4191e38d00f74092bc8297e70e1b3"
+    },
+    "task:ee88fd892eb83bfe994cd1fc2ee7666446366075fa1856f34baf505061e51ff0": {
+      "amount": 1600,
+      "deadline": 203,
+      "nonce": 54,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "505ea94896fd4d052b04cbd8d0fcfdbcdcd8ee2ee5a2f1821554c036595efb54",
+      "source": "task:ee88fd892eb83bfe994cd1fc2ee7666446366075fa1856f34baf505061e51ff0"
+    },
+    "task:ef1786f459e7872080814b8791f8962f74e7cbc49e3891b807488df2f018e1ba": {
+      "amount": 1600,
+      "deadline": 202,
+      "nonce": 41,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "79ff17be1447f408a50b56fa5816a80d8db8377ae7188f89efc0225303f1ef21",
+      "source": "task:ef1786f459e7872080814b8791f8962f74e7cbc49e3891b807488df2f018e1ba"
+    },
+    "task:f22165a27c1cad04fba787506121bdc0bc8989375e55654173bd4adba4eda29d": {
+      "amount": 1600,
+      "deadline": 202,
+      "nonce": 36,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:f22165a27c1cad04fba787506121bdc0bc8989375e55654173bd4adba4eda29d"
+    },
+    "task:f3813f0f2381eb2725ed413c9ec11680b96a79b76e6c363e3247f5ff5367effc": {
+      "amount": 1500,
+      "deadline": 203,
+      "nonce": 49,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "bcf78c3e466a88caea8cf400afcf0dbe72054b679a4c78d49f293c08912afbf8",
+      "source": "task:f3813f0f2381eb2725ed413c9ec11680b96a79b76e6c363e3247f5ff5367effc"
+    },
+    "task:f706d28774112301c7bc35b853e1784dc958f8ac2ddc72c0ee0edac0c8fc9717": {
+      "amount": 1600,
+      "deadline": 201,
+      "nonce": 32,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:f706d28774112301c7bc35b853e1784dc958f8ac2ddc72c0ee0edac0c8fc9717"
+    },
+    "task:fa418ae639f7b365d0a91e573633a28fd07fe5af71198ff1cb947e7e18333340": {
+      "amount": 1600,
+      "deadline": 202,
+      "nonce": 42,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "79ff17be1447f408a50b56fa5816a80d8db8377ae7188f89efc0225303f1ef21",
+      "source": "task:fa418ae639f7b365d0a91e573633a28fd07fe5af71198ff1cb947e7e18333340"
+    },
+    "task:fc50f9f2fe404a0a83afdc2cf08a3c43e0c7569a43ba1397773d6c752e27f3ba": {
+      "amount": 100,
+      "deadline": 200,
+      "nonce": 8,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "source": "task:fc50f9f2fe404a0a83afdc2cf08a3c43e0c7569a43ba1397773d6c752e27f3ba"
+    }
+  },
+  "signature_validation": "original native admission; audit verifies wire hash/fields/Task IDs",
+  "total_reserved": 79100
+}

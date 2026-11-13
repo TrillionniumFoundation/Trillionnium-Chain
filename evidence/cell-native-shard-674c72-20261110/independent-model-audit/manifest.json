@@ -1,0 +1,41 @@
+{
+  "files": {
+    "README.md": {
+      "bytes": 5251,
+      "sha256": "b18e0e7e4fdd42e724313980e7f5138598e63a4953a36d2edf4091c4f8e45c7b"
+    },
+    "audit_model_run.py": {
+      "bytes": 13997,
+      "sha256": "e84827946b35b391fcf6b48d488dbedf34ba4dff44d6b5b0d72cf18ab75b4d12"
+    },
+    "funding_audit.py": {
+      "bytes": 6951,
+      "sha256": "c18694206529ab811bbd3fdf10efa9b58e723f9b91852433b4e02d0b998d3919"
+    },
+    "identity_audit.py": {
+      "bytes": 5954,
+      "sha256": "0d5a62aecc99123609a1ba031e41506fe444acabb83bdb646fecc48f6e339c03"
+    },
+    "journal_audit.py": {
+      "bytes": 38009,
+      "sha256": "c85a6965960d39792702a06b59d8011733cc92e22cd074392c0875c3cad9c033"
+    },
+    "reports_audit.py": {
+      "bytes": 10203,
+      "sha256": "52c5859a2034eb4b0160c2c8a3ce1b51fbcc7b128f2476d6064c2d0fa0edc7af"
+    },
+    "test_journal_audit.py": {
+      "bytes": 12848,
+      "sha256": "334ac3fddb1dfefc7742ebdcf02edf70d7e474a9c300ba564caf15c49b39a09d"
+    }
+  },
+  "model_launched": false,
+  "preexecution_auditor_correction": "Resolve human composition path/profile to BTreeMap index and original derived binary profile; no model/repository/data change.",
+  "real_model_audit_executed": false,
+  "schema": "trnm.external-model-audit-candidate.v1",
+  "source": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+  "synthetic_journal_controls": {
+    "failed": 0,
+    "passed": 10
+  }
+}

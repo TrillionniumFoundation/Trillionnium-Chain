@@ -1,0 +1,79 @@
+{
+  "active_physical_review_collected": false,
+  "all_original_checks_passed": true,
+  "audit_snapshot_files_read_as_bytes": true,
+  "candidate_written": false,
+  "copied_final_run_manifest_rows": 21,
+  "copied_original_bytes": 17497671,
+  "copied_original_files": 22,
+  "copied_sqlite_metadata_bytes": 9933120,
+  "copied_sqlite_metadata_files": 3,
+  "entire_original_run_manifest_bytes_preserved": true,
+  "excluded_final_run_manifest_rows": 4,
+  "final_snapshot_vs_before_copy_open": [
+    {
+      "before_and_final_sha_equal": true,
+      "before_copy_open_record": {
+        "bytes": 5632000,
+        "sha256": "3f87276a87e0faf1d3461d1cb9f3062e4989ff065ce543cc0c27232911ce4001"
+      },
+      "final_run_manifest_record": {
+        "bytes": 5632000,
+        "sha256": "3f87276a87e0faf1d3461d1cb9f3062e4989ff065ce543cc0c27232911ce4001"
+      },
+      "original_relative_path": "evidence/cgj3-snapshot/children-v3.sqlite"
+    },
+    {
+      "before_and_final_sha_equal": true,
+      "before_copy_open_record": {
+        "bytes": 4268352,
+        "sha256": "becb4c246fe7df0a8d4a3bf3283207361ca15106117eb3b24a2dc2ebc7bc3b59"
+      },
+      "final_run_manifest_record": {
+        "bytes": 4268352,
+        "sha256": "becb4c246fe7df0a8d4a3bf3283207361ca15106117eb3b24a2dc2ebc7bc3b59"
+      },
+      "original_relative_path": "evidence/cgj3-snapshot/children-v3.sqlite-wal"
+    },
+    {
+      "before_and_final_sha_equal": false,
+      "before_copy_open_record": {
+        "bytes": 32768,
+        "sha256": "dcc417e7908c50ed36c5a13c55c943cbd13dc82076fb371c971538cd11a236d2"
+      },
+      "final_run_manifest_record": {
+        "bytes": 32768,
+        "sha256": "10f41820dd58749857f4e111101a4b84208a1c62309a53a472c623f3e3510054"
+      },
+      "original_relative_path": "evidence/cgj3-snapshot/children-v3.sqlite-shm"
+    }
+  ],
+  "model_reexecuted": false,
+  "original_audit_checks": 12,
+  "original_audit_sha256": "dafdda4567e04327ecad53e2d6e1ddd85c48e5933438920b30d403f07bc15bef",
+  "original_hold_scope": {
+    "coherent_history_rollback_proof": false,
+    "current_catalog_payload_integrity": false,
+    "efficacy_qualified": false,
+    "final_use": false,
+    "future_retention_qualified": false,
+    "independent_failure_domains": false,
+    "independent_operators": false,
+    "model_launched": false,
+    "native_rows_source": "original authenticated Node readback artifacts",
+    "native_task_payment_qualified": false,
+    "original_sqlite_opened": false,
+    "os_thread_peak_independently_measured": false,
+    "parent_settlement_qualified": false,
+    "payload_archived": false,
+    "production_activation": false,
+    "repository_written": false,
+    "second_ledger_query_performed": false
+  },
+  "original_model_sqlite_accessed": false,
+  "original_run_manifest_sha256": "749e76889a692997a2467cc8fa78afe5d912ddd6a526b35ae11ea671c7029e3c",
+  "schema": "trnm.independent-audit-copy-verification.v1",
+  "snapshot_hash_rule": "Use final closed run-manifest; preserve the distinct original before-copy-open SHM record unchanged.",
+  "sqlite_connections_created": false,
+  "status": "PASS-HOLD"
+}

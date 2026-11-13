@@ -1,0 +1,26 @@
+    Checking trnm-pon-node v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-pon-node)
+error[E0308]: mismatched types
+   --> crates/trnm-pon-node/examples/cell_native_shard_research_v2/mod.rs:346:9
+    |
+343 |     let repairs = groups_v3::repair(
+    |                   ----------------- arguments to this function are incorrect
+...
+346 |         &storage,
+    |         ^^^^^^^^ expected `NativeCellGroupedShardStorageRequestV3`, found `&NativeCellGroupedShardStorageRequestV3`
+    |
+note: function defined here
+   --> crates/trnm-pon-node/examples/cell_native_shard_research_v2/groups_v3.rs:312:15
+    |
+312 | pub(super) fn repair(
+    |               ^^^^^^
+...
+315 |     storage: NativeCellGroupedShardStorageRequestV3,
+    |     -----------------------------------------------
+help: consider removing the borrow
+    |
+346 -         &storage,
+346 +         storage,
+    |
+
+For more information about this error, try `rustc --explain E0308`.
+error: could not compile `trnm-pon-node` (example "cell_native_shard_research_next_use_v2") due to 1 previous error

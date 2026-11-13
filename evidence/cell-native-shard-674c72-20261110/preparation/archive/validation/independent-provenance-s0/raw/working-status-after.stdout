@@ -1,0 +1,6 @@
+ M config/pon/pq-authority-effects-v1.json
+ M docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md
+ M docs/security/PQ_AUTHORITY_STORAGE_SOURCE_LOCK_REVIEW_20261109.md
+ M evidence/pq-authority-storage-source-review-20261109/review.json
+ M scripts/ci/pq_authority_effect_register.py
+ M scripts/ci/test_pq_authority_effect_register.py

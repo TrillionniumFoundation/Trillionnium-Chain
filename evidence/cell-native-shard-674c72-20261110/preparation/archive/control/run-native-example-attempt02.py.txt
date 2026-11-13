@@ -1,0 +1,1 @@
+exec(open('/home/qq/work/chain-cell-native-shard-674c72-20261110-control/run-native-example-attempt01.py').read().replace("native-example-attempt01", "native-example-attempt02"))

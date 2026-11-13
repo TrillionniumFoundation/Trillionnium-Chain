@@ -157,6 +157,7 @@ class AuthorityEffectTests(unittest.TestCase):
                              ('source_revision', 'ef6df12a042912664df64f2112c2b1c600dce9fa'),
                              ('source_revision', '88568e2511fcf166e6824947ac97b06b72104385'),
                              ('source_revision', '0f0592ace4b08a1d39e1ffad31beee76ddc4fd66'),
+                             ('source_revision', '06233be630f8eff6cea59cd5111e5941135a4aa5'),
                              ('source_revision', '1f7ff4106f14e5b514d95a9faf2c5eea1233aea5'),
                              ('source_revision', '44e96b1a841a50613d0b93484c5e576caec9f81f'),
                              ('source_revision', '893738947a50dc42819b56e632192de4f9f24fa0'),

@@ -1,0 +1,29 @@
+{
+  "deferred_control": [
+    "run_model.py"
+  ],
+  "deferred_followup": [
+    "future checked-profile build",
+    "actual full-model operation"
+  ],
+  "deferred_validation": [
+    "tmp",
+    "future-checked-profile-build-active",
+    "future-real-model-active",
+    "evidence-staging-closed-preparation-v1",
+    "evidence-staging-s2-terminal-v1"
+  ],
+  "schema": "trnm.s3-terminal-exclusions.v1",
+  "selected_subtree_exclusions": [
+    {
+      "kind": "directory",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/source-qualified-s3/tmp",
+      "reason": "temporary/runtime payload or symlink; contents not read"
+    }
+  ],
+  "source_files_outside_explicit_selection_not_traversed": true,
+  "unexecuted_prepared_controls": [
+    "run-native-example-attempt03.py",
+    "run-v3-precheck-attempt01.py"
+  ]
+}
