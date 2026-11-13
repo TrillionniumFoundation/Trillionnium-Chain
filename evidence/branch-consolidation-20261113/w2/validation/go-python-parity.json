@@ -1,0 +1,110 @@
+{
+  "cases": [
+    {
+      "chainwork_authority": false,
+      "challenge": "e14438e5306e6bf41f7cbecac7478408520cd42c0d07b1538dc8de7588626157",
+      "false_trace_rejected_by_go": true,
+      "full_bytes_equal": true,
+      "proof_sha256": "98f8d9599bc63216f114cacd9f97ba81e99639e45a534c0481becef4db1427a7",
+      "seed": 0,
+      "valid_go_verifier": true,
+      "valid_python_verifier": true
+    },
+    {
+      "chainwork_authority": false,
+      "challenge": "29311142f9a6fca9feb48ec642b076186272f7e73402a256465a29d18f036262",
+      "false_trace_rejected_by_go": true,
+      "full_bytes_equal": true,
+      "proof_sha256": "68cab65dcc3322feaaae25d9e12a0fdc5d19a69068b5678bf1b9071534374fdd",
+      "seed": 1,
+      "valid_go_verifier": true,
+      "valid_python_verifier": true
+    },
+    {
+      "chainwork_authority": false,
+      "challenge": "7d3d21a6e6045697271d616bf9b359d962f6ce29f0d535e3f57880dc786ef05b",
+      "false_trace_rejected_by_go": true,
+      "full_bytes_equal": true,
+      "proof_sha256": "c23381bd3dd82f05999a755eadb30f06ae83a68ee0db37fe7a142693153c11b0",
+      "seed": 2,
+      "valid_go_verifier": true,
+      "valid_python_verifier": true
+    },
+    {
+      "chainwork_authority": false,
+      "challenge": "35fc0bb8936cb61d918cd1cba04d14adac8ae3cb33c4a27f3c57d9602ceb39d6",
+      "false_trace_rejected_by_go": true,
+      "full_bytes_equal": true,
+      "proof_sha256": "e9187447ab10f494d9585a3f6c321231b4c00174bf1cb6a771df731c61f18c7a",
+      "seed": 3,
+      "valid_go_verifier": true,
+      "valid_python_verifier": true
+    },
+    {
+      "chainwork_authority": false,
+      "challenge": "2429cbbef9cc973bc7da8b7b52f5e8233bd129624742f071a7adc1e2b5c7e120",
+      "false_trace_rejected_by_go": true,
+      "full_bytes_equal": true,
+      "proof_sha256": "1443bf72539c8fb14f7e2b7f6b42caa9b496d8c7f92eafb1e540b9504002c40c",
+      "seed": 4,
+      "valid_go_verifier": true,
+      "valid_python_verifier": true
+    },
+    {
+      "chainwork_authority": false,
+      "challenge": "e9a7878527aa608ad98d2f572106f56a6cf24f37d7b32444217d5e7b8ed07ae6",
+      "false_trace_rejected_by_go": true,
+      "full_bytes_equal": true,
+      "proof_sha256": "428cb0545981ba0e5c582d9966e9f1ad27c8101fdb3ab7a6c2fe948e8e6a6a5a",
+      "seed": 5,
+      "valid_go_verifier": true,
+      "valid_python_verifier": true
+    },
+    {
+      "chainwork_authority": false,
+      "challenge": "c6bc9dba6cd505d3c66e84c63a45310dbf4dc5325a64a0f17667463beef30e67",
+      "false_trace_rejected_by_go": true,
+      "full_bytes_equal": true,
+      "proof_sha256": "9ee3484d10438e022a3de8ec47a0847e01ce40b6b5074f8cc451bbcb14434c8a",
+      "seed": 6,
+      "valid_go_verifier": true,
+      "valid_python_verifier": true
+    },
+    {
+      "chainwork_authority": false,
+      "challenge": "f1efe9cb9a39f7da5efb6a44c5969dc3a06e9391f24697651f84561fef0df1cf",
+      "false_trace_rejected_by_go": true,
+      "full_bytes_equal": true,
+      "proof_sha256": "c21b066ce8dacc210778e8b1331e0b58ced8ceb18d9ea8cf3418f0c85b92ca16",
+      "seed": 7,
+      "valid_go_verifier": true,
+      "valid_python_verifier": true
+    },
+    {
+      "chainwork_authority": false,
+      "challenge": "c1902b353844b2ac8c0638eb51ad0d215e6bdb832c06b0a6609c59358d550212",
+      "false_trace_rejected_by_go": true,
+      "full_bytes_equal": true,
+      "proof_sha256": "8d95653734a5e264a5b663d4cade12f735b7c86c537986ef91e1551b663508b2",
+      "seed": 8,
+      "valid_go_verifier": true,
+      "valid_python_verifier": true
+    },
+    {
+      "chainwork_authority": false,
+      "challenge": "f3a276387f77d4157376570a64d23afaceb3cce9d5fff2111e730355708828a8",
+      "false_trace_rejected_by_go": true,
+      "full_bytes_equal": true,
+      "proof_sha256": "6445ddbf8f6d1260e8faf842b3ee6c46ecc4f4b74a572e4ad926291bba582bfd",
+      "seed": 9,
+      "valid_go_verifier": true,
+      "valid_python_verifier": true
+    }
+  ],
+  "count": 10,
+  "go_version_required": "1.23+",
+  "independent_operator_review": false,
+  "native_chain_consensus_authority": false,
+  "schema": "trnm-go-python-w1-full-byte-differential-v0",
+  "source": "stdlib-only separate Go mathematical oracle and Python W1 oracle"
+}

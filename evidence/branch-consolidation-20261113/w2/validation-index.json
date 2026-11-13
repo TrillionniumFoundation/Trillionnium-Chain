@@ -1,0 +1,59 @@
+{
+  "schema": "trnm-w2-consolidation-validation-index-v1",
+  "code_checkpoint": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+  "receipts": [
+    {
+      "path": "validation/w2-admission-cost-controls.json",
+      "log": "validation/w2-admission-cost-controls.log",
+      "tested_commit": "ff7c1ec4f9fed9b3cc9e16e39b9e6cd433f9c375",
+      "observed_status": "command_succeeded",
+      "observed_exit_code": 0,
+      "counts": {
+        "python_methods": 29
+      }
+    },
+    {
+      "path": "validation/w2-go-python-conformance.json",
+      "log": "validation/w2-go-python-conformance.log",
+      "tested_commit": "36ac2df36c3f213c6624d525bd3d09fb743d9e9a",
+      "observed_status": "command_succeeded",
+      "observed_exit_code": 0,
+      "counts": {
+        "go_functions": 2,
+        "python_methods": 2,
+        "full_byte_cases": 10
+      }
+    },
+    {
+      "path": "validation/w2-durable-local-policy.json",
+      "log": "validation/w2-durable-local-policy.log",
+      "tested_commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+      "observed_status": "command_succeeded",
+      "observed_exit_code": 0,
+      "counts": {
+        "python_methods": 4
+      }
+    }
+  ],
+  "totals": {
+    "python_methods": 35,
+    "go_functions": 2,
+    "full_byte_cases_inside_one_python_method": 10
+  },
+  "parity_report": "validation/go-python-parity.json",
+  "source_identity": "All three completed recorder commands verified tracked source bytes before and after their own committed checkpoint. Later audit/documentation edits are not retrospectively tested.",
+  "log_integrity": "Each original receipt contains log_sha256 and log_bytes. Files were relocated into this evidence directory; post-relocation recomputation is pending the root's serialized final sealing step.",
+  "skipped_or_ignored_selected_methods": 0,
+  "environment_observations": [
+    "Initial unrelated /usr/bin/go refused language-version invocation and gofmt was absent from that PATH; no saved receipt for those environment-selection attempts and no test pass claimed.",
+    "Successful Go command used actual go1.27.4 linux/amd64, GOTOOLCHAIN=local, GOWORK=off, GOPROXY=off, GOSUMDB=off. No dependency download or Go rebuild remains pending."
+  ],
+  "unrun": [
+    "Full historical research suites",
+    "Historical vulnerability/falsification/cost drivers",
+    "Native Node/Rust full integration in this W2 lane",
+    "Physical WAN/CPU/GPU/ASIC/independent-custody qualification"
+  ],
+  "production_activation": false
+}
+

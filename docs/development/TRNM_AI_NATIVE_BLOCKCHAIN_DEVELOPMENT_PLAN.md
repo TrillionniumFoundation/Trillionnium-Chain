@@ -14833,3 +14833,26 @@ custody, common-restore survival, real external effects, explicit migration and
 complete lifetime/QROM obligations remain open. This component continuation
 does not relabel the observed Ed25519 main revision as migrated or turn a local
 performance observation into a security qualification.
+
+### 2026-11-13 W2 research branch consolidation
+
+Review 20 assigned W2/formal tips plus four formal-only transfers as 24
+original heads and 95 distinct source variants. Retain source-qualified
+alternatives where SQLite formats, signed profiles, policy ownership or
+restart contracts differ. Preserve 33 original documentation variants and
+failed/HOLD observations through their exact heads before branch retirement.
+
+The selected continuation composes one stateful owner policy with original
+nonrefunding epoch issuance, preserves conservative shared-preparation cost
+and finite/unknown arithmetic, and retains read-only economic models. The
+shared-database research class honors its inherited local floor; capacity,
+lifetime and floor still are not durable shared policy. No schema migration
+is implied.
+
+Retain the independent bounded Go W1 oracle with ordinary controls. Exact
+source receipts record 35 selected Python methods, two Go functions and ten
+full-byte Go/Python cases across three checkpoints. Historical falsification
+and cost workflows were not rerun. These results do not qualify full historic
+suites, native Node, WAN, physical GPU/ASIC cost, independent custody,
+cryptographic soundness or production activation. See
+[evidence and per-tip decisions](../../evidence/branch-consolidation-20261113/w2/README.md).

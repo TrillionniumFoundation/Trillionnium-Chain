@@ -1,0 +1,622 @@
+{
+  "schema": "trnm-w2-consolidation-semantic-ledger-v1",
+  "selected_base": "11a2cba1953f4aaee97e8ed169fcfd9a1517da23",
+  "selected_code_checkpoint": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+  "code_status": "COMMITTED_SELECTED_CONTROLS_PASS",
+  "audit_files_status": "SAVED_UNCOMMITTED_PER_ROOT_RESOURCE_STANDDOWN",
+  "scope": {
+    "original_tips": 24,
+    "root_assigned_tips": 20,
+    "transferred_formal_tips": 4,
+    "source_variants": 95,
+    "historical_document_variants": 33,
+    "node_runtime_crypto_ci_deltas": "Owned by root/source_audit/ci_audit, not closed by this formal ledger"
+  },
+  "source_variant_index": "source-variants.snapshot.json",
+  "source_variant_index_fields": {
+    "original_tip_heads": "cohort and additional_transferred_cohort",
+    "exact_original_blobs": "variants[].branch_blob",
+    "initial_selected_blobs": "variants[].current_blob",
+    "paths": "variants[].path",
+    "per_variant_original_heads": "variants[].tips"
+  },
+  "historical_document_index": "document-variants.snapshot.json",
+  "tips": [
+    {
+      "original_head": "fa704e45c1fea9e99dd35a77142d9b27a09fe7e0",
+      "source_variant_ids": [
+        0,
+        1
+      ],
+      "disposition": "retained_with_local_floor_fix",
+      "selected_sources": [
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_durable_spent.py"
+        }
+      ],
+      "semantic_review": "Retain held-inode shared DELETE/EXTRA database, credential fingerprint, transactional watermark and commit-before-READY. Add inherited local minimum_bits check after authentication and before a spend transaction.",
+      "remaining_boundary": "Capacity, lifetime and minimum_bits are not persisted shared policy; local raises are not restored at reopen. No clone or policy-migration qualification.",
+      "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+    },
+    {
+      "original_head": "9934e70dba5aabf5f02b85bc92ec87544fdf51e8",
+      "source_variant_ids": [
+        2,
+        3,
+        4
+      ],
+      "disposition": "archived_distinct_owner_and_cost_schema",
+      "selected_sources": [
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_durable_spent.py"
+        },
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_durable_spend.py"
+        }
+      ],
+      "semantic_review": "Original user_version=1 WAL paid/clock/policy binds receiver, epoch, capacity and lifetime and rechecks policy. Its superclass-first spend, provisioning and cost-reader schema differ from selected owners.",
+      "remaining_boundary": "Do not claim fa704 persists the alternate policy or attach original latency measurements to selected db379 cost reader; preserve original owner/tests/latency HOLD.",
+      "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+    },
+    {
+      "original_head": "10429dab61b195e8b9bd7e1950081acb4bfd83e0",
+      "source_variant_ids": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "disposition": "archived_distinct_owner_and_injection",
+      "selected_sources": [
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_durable_spend.py"
+        },
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_stateless_receiver.py"
+        }
+      ],
+      "semantic_review": "Original SQLiteSpentOwner uses w2c-durable-paid-spend-local-research-v1 WAL identity/spent and prevalidated durable_spend injection. Selected Gate verifies full caller-bound grants and persists credential/policy floor/capacity/lifetime; common stateless uses monotonic minimum.",
+      "remaining_boundary": "No schema conversion or constructor alias; exact-bit and shared-worker API is not claimed equivalent.",
+      "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+    },
+    {
+      "original_head": "26dd988a1eb3b464cf9a53b8a0c32df390523776",
+      "source_variant_ids": [
+        9,
+        10
+      ],
+      "disposition": "archived_distinct_boot_context_schema",
+      "selected_sources": [
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_durable_spend.py"
+        }
+      ],
+      "semantic_review": "Original user_version=1 WAL authority/spent binds boot_context with receiver, epoch, secret hash and time; selected Gate instead has separate policy-bound tables.",
+      "remaining_boundary": "Preserve boot_context alternative and source-bound evidence. No implicit old-database interpretation.",
+      "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+    },
+    {
+      "original_head": "ca2e9d14d58e0882c3be58a3711428e055ff2eb6",
+      "source_variant_ids": [
+        11,
+        12,
+        13
+      ],
+      "disposition": "archived_distinct_append_log_owner",
+      "selected_sources": [
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_durable_epoch_owner.py"
+        },
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_local_epoch_lease.py"
+        }
+      ],
+      "semantic_review": "Original W2ER hashed nonce append log, 4096-record bound, held dirfd/inode/lifetime lock and fsync differ from selected SQLite fencing and local fresh-secret lease.",
+      "remaining_boundary": "Selected models do not implement the append-log contract. Keep initial SIGKILL-readiness failure, later retry scope, snapshot and unkeyed-log limitations.",
+      "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+    },
+    {
+      "original_head": "db379fe21097ac4501f17f0362fec421d687d412",
+      "source_variant_ids": [
+        14,
+        15,
+        16
+      ],
+      "disposition": "retained_exact",
+      "selected_sources": [
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_durable_epoch_owner.py"
+        },
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_durable_cost.py"
+        }
+      ],
+      "semantic_review": "Retain authority(schema,receiver,seq,epoch)/paid, fresh sequence-plus-nonce startup epoch, transactional old-owner fencing, creator PID and matched cost reader.",
+      "remaining_boundary": "Single original database; no global copied-state custody or hardware/cost qualification.",
+      "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+    },
+    {
+      "original_head": "d575524c95b198d49c1459f58184a65b4f999722",
+      "source_variant_ids": [
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26
+      ],
+      "disposition": "compatible_cost_models_integrated_alternate_owner_archived",
+      "selected_sources": [
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_cost_verdict.py"
+        },
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_stateless_receiver.py"
+        }
+      ],
+      "semantic_review": "Integrate shared-preparation cost once, conservative globally replayable send accounting, known-subtotal overflow refusal even under UNKNOWN, and exact read-only price/joint-triage scripts/tests. Archive SqlitePaidSpendOwner WAL owner(context,capacity,highest_ms)/spent prevalidated injection.",
+      "remaining_boundary": "No mixed claim table, constructor restoration or attacker-cost attestation. USD and CPU components remain separate; all activation flags remain false.",
+      "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+    },
+    {
+      "original_head": "c953a86c9338bc46509ed527e53bd836d66ffce2",
+      "source_variant_ids": [
+        27,
+        28
+      ],
+      "disposition": "retained_exact",
+      "selected_sources": [
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_local_epoch_lease.py"
+        }
+      ],
+      "semantic_review": "Retain pinned private directory/file, receiver-derived exclusive lock, fresh secret/epoch, OS monotonic time, PID guard and weakref atfork cleanup without unlocking parent.",
+      "remaining_boundary": "Keep original atfork secret-retention negative and historical eight-test scope; no new global custody claim.",
+      "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+    },
+    {
+      "original_head": "cab37b3f9ea4cc2565e2902c38c5a36f095ab171",
+      "source_variant_ids": [
+        29,
+        30,
+        31,
+        32
+      ],
+      "disposition": "archived_distinct_policy_bound_wal_owner",
+      "selected_sources": [
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_durable_spend.py"
+        },
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_durable_spent.py"
+        }
+      ],
+      "semantic_review": "Original trnm-w2c-durable-spent-research-v1 WAL meta/spent binds receiver/epoch/capacity/required_bits/lifetime with prevalidated key/per-call connections and exact-bit injection. Selected Gate and fa704 are different contracts.",
+      "remaining_boundary": "Do not claim fa704 subsumes persisted policy. Preserve original durable overhead and honest-latency HOLD; no storage migration.",
+      "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+    },
+    {
+      "original_head": "093ec49ae58da21d79c1fc1df0e3569f4d9e357b",
+      "source_variant_ids": [
+        33,
+        34,
+        35,
+        36
+      ],
+      "disposition": "retained_exact",
+      "selected_sources": [
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_durable_spend.py"
+        },
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_stateless_receiver.py"
+        }
+      ],
+      "semantic_review": "Retain full-grant Gate owner(scope,minimum_bits,capacity,lifetime,last_ms)/paid, secret-bound scope, monotonic policy and commit-before-READY, plus common caller-bound stateless floor.",
+      "remaining_boundary": "Trusted private parent/original storage remains required; Gate is not held-inode fa704. Preserve copied-database failure.",
+      "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+    },
+    {
+      "original_head": "e19245dd880a989b5310cda126ff2f27a6da67d4",
+      "source_variant_ids": [
+        37,
+        38,
+        39
+      ],
+      "disposition": "archived_distinct_signed_grant_and_lifecycle",
+      "selected_sources": [
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_durable_receiver.py"
+        }
+      ],
+      "semantic_review": "Original custom Grant/domain w2c-receiver-durable-spend-research-v1, ticket/claim hashes, WAL epoch/paid, file lock, sticky failure and trusted clock differ from selected common Grant/exclusive-directory owner.",
+      "remaining_boundary": "Keep its matched cost driver and falsification source-bound; never reinterpret custom signed bytes or transfer historical timing.",
+      "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+    },
+    {
+      "original_head": "7573e3ae83fd6090a1005a29fe716b0402b090ff",
+      "source_variant_ids": [
+        40,
+        41
+      ],
+      "disposition": "retained_with_conservative_shared_cost_correction",
+      "selected_sources": [
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_cost_verdict.py"
+        }
+      ],
+      "semantic_review": "Preserve strict input and UNKNOWN handling; d575 shared preparation accounting supersedes the overcharged per-receiver preparation formula, with finite known-subtotal overflow refusal.",
+      "remaining_boundary": "Conditional supplied-cost screen only; no hardware lower bound, public price or authority.",
+      "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+    },
+    {
+      "original_head": "4bf21e2a1e92e07955129c98d2c4f9102d3a1742",
+      "source_variant_ids": [
+        42,
+        43
+      ],
+      "disposition": "archived_distinct_rotate_join_lifecycle",
+      "selected_sources": [
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_durable_receiver.py"
+        }
+      ],
+      "semantic_review": "Original rotate/join WAL owner(receiver,secret_tag,epoch,generation,last_ms)/spent supports shared workers. Selected b517 deliberately retains exclusive-directory lifecycle.",
+      "remaining_boundary": "No join-mode equivalence, mixed schema or global-clone qualification. Original tests/evidence remain required in DAG.",
+      "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+    },
+    {
+      "original_head": "4f367f106f97c92e95cca6a85c59fbc9d01d4a92",
+      "source_variant_ids": [
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51
+      ],
+      "disposition": "retained_exact_research_and_failures",
+      "selected_sources": [
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2d_full_tile_freivalds.py"
+        },
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2e_batched_polynomial.py"
+        }
+      ],
+      "semantic_review": "Retain all 512-state full-tile/two-round projection and five-round W2-E row/column/inner-block polynomial source, witness, tests and original cost/late-rejection records unchanged. Reviewed finite-field assumptions and false-authority outputs.",
+      "remaining_boundary": "Adaptive Fiat-Shamir grinding, global cost and production soundness remain unqualified. Historical vulnerability/cost drivers were not executed.",
+      "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+    },
+    {
+      "original_head": "b517d6f9e1e763742853c0d65f512d53203ec768",
+      "source_variant_ids": [
+        52,
+        53
+      ],
+      "disposition": "retained_exact",
+      "selected_sources": [
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_durable_receiver.py"
+        }
+      ],
+      "semantic_review": "Retain exclusive private-directory flock, DELETE/FULL metadata/paid, durable generation and fresh epoch before common grants, directory fsync and old-paid clearing only under newly committed epoch.",
+      "remaining_boundary": "One original exclusive owner, no rotate/join API or snapshot uniqueness; preserve original abrupt-exit scope.",
+      "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+    },
+    {
+      "original_head": "a4f7fd5bdace75612928be0917f550f7dea864fc",
+      "source_variant_ids": [
+        54,
+        55
+      ],
+      "disposition": "compatible_cost_envelope_integrated",
+      "selected_sources": [
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2_admission_cost_envelope.py"
+        }
+      ],
+      "semantic_review": "Retain strict fields, duplicate/nonfinite refusal, null-unknown four-bit expected/p95 envelope; add finite-input and computed-arithmetic overflow guards.",
+      "remaining_boundary": "Conditional supplied CPU model only; no production difficulty, GPU benchmark or physical honest deadline qualification.",
+      "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+    },
+    {
+      "original_head": "51423e17989d837405c9455a012bc654a21a5e0c",
+      "source_variant_ids": [
+        56,
+        57
+      ],
+      "disposition": "retained_exact_research_and_failures",
+      "selected_sources": [
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2d_product_projection.py"
+        }
+      ],
+      "semantic_review": "Retain PND0 four-matrix product projection, six rounds per relation and separate ticket/statement domains. It checks algebraic products rather than full transcript work hardness.",
+      "remaining_boundary": "Original four-case observations/unqualified amplification remain source-bound; historical comparison/fault driver not executed.",
+      "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+    },
+    {
+      "original_head": "7aa1a1dad78e530329ba03d81f7e7da01296f27d",
+      "source_variant_ids": [
+        58,
+        59
+      ],
+      "disposition": "integrated_with_original_owner_policy",
+      "selected_sources": [
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_receiver_admission.py"
+        }
+      ],
+      "semantic_review": "Port bounded cumulative epoch_issue_limit/issued_total. Expiry, spend and identity changes do not refund original counter. Compose a0 trusted fixed bits in the same pending-grant owner.",
+      "remaining_boundary": "No second budget or new Grant bytes. Finite issuance does not establish Sybil fairness or sustained honest availability.",
+      "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+    },
+    {
+      "original_head": "9386ba1462138b0e235b22050afc9225d90c3cb0",
+      "source_variant_ids": [
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66
+      ],
+      "disposition": "archived_distinct_stateless_and_pfd1_profiles",
+      "selected_sources": [
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_stateless_receiver.py"
+        },
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_stateless_admission.py"
+        },
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2d_full_tile_freivalds.py"
+        },
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2e_batched_polynomial.py"
+        }
+      ],
+      "semantic_review": "Original proposal-only custom Grant shares DOMAIN text with e489 Offer but lacks network field and uses a different ticket domain. Original PFD1 full tape includes 4-byte prefix, separate commitments and default three rounds, unlike selected profiles. Both benchmarks pin original owners/source.",
+      "remaining_boundary": "No raw alias, profile migration or transferred performance. Preserve paired costs and both original local samples without rerunning historical falsification.",
+      "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+    },
+    {
+      "original_head": "658b61cacc539f0c4faf1216f7ff10a77a0bd4d7",
+      "source_variant_ids": [
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79
+      ],
+      "disposition": "go_oracle_integrated_historical_experiments_archived",
+      "selected_sources": [
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/go_oracle/w1.go"
+        },
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/go_oracle/w1_conformance_test.go"
+        },
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/go_oracle/cmd/pon_w1_io/main.go"
+        },
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/test_go_w1_cross_language.py"
+        },
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2b_relation_witness.py"
+        },
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_separated_security_pow.py"
+        }
+      ],
+      "semantic_review": "Retain bounded stdlib Go full W1 arithmetic/transcript and two ordinary original controls, plus ten complete Go/Python parity cases with both full verifiers. Current W2-B full 512-tile replay/statement/product checks remain; current W2-C keeps explicit verified_work false on every path. Historical matched comparison/forgery drivers/full W2 fixture stay at original head.",
+      "remaining_boundary": "Selected Go suite has two functions, not historical four. W2 comparison/fixture archival is not supersession by W1 oracle. No independent reviewer, native chain, hardness or performance qualification.",
+      "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+    },
+    {
+      "original_head": "b50018a58aef05a6f890e104bbb8d1f19642e05e",
+      "source_variant_ids": [
+        54,
+        55,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86
+      ],
+      "disposition": "formal_transfer_closed_compatible_parts_integrated",
+      "selected_sources": [
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2_admission_cost_envelope.py"
+        },
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_durable_spend.py"
+        },
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_receiver_admission.py"
+        },
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_receiver_admission_cost.py"
+        },
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_stateless_receiver.py"
+        }
+      ],
+      "semantic_review": "Cost envelope is retained with finite arithmetic. Archive alternate WAL preverified DurableSpentFence/frontier wrapper; keep selected full-grant Gate. Current common stateless adds monotonic minimum to the older caller-bound code. Stateful owner now composes quota/policy, with explicit cost-caller bits.",
+      "remaining_boundary": "No table alias or hidden restoration of local-first fence. Node/runtime/Host deltas remain source_audit scope.",
+      "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+    },
+    {
+      "original_head": "a0d2b172bbdd9e57f6c72fd02df1764aeaf54a66",
+      "source_variant_ids": [
+        87,
+        88,
+        89,
+        90,
+        91
+      ],
+      "disposition": "formal_transfer_closed_owner_policy_integrated",
+      "selected_sources": [
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_receiver_admission.py"
+        },
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_receiver_admission_cost.py"
+        },
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_stateless_receiver.py"
+        }
+      ],
+      "semantic_review": "Port fixed trusted owner bits, refuse mismatched offers before reservation, require authentic consumed grants to match current policy; combine with 7aa original issuance counter and pass bits from existing cost caller. Archive old proposal-only stateless API/paid-key/cleanup alternative.",
+      "remaining_boundary": "No identical stateless cleanup or fixed-bit API claim. Original forged-policy demonstrations not run; Node/runtime/Host scope remains separate.",
+      "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+    },
+    {
+      "original_head": "e489fa33fe80cae84dcc9bb0de2dad8b50efc69a",
+      "source_variant_ids": [
+        92,
+        93,
+        94
+      ],
+      "disposition": "formal_transfer_closed_retained_exact",
+      "selected_sources": [
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_stateless_admission.py"
+        },
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_stateless_cost.py"
+        }
+      ],
+      "semantic_review": "Retain exact network-bound Offer, receiver/epoch/proposal binding, shared PaidReplayOwner and token-bucket mint limits as separate unactivated research module.",
+      "remaining_boundary": "Not raw-compatible with 938 custom Grant despite shared DOMAIN text. Real transport, durable custody and pricing remain unqualified; cost driver not executed.",
+      "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+    },
+    {
+      "original_head": "fffc600e20386d797039763f5b1b081449342d1a",
+      "source_variant_ids": [
+        60,
+        61,
+        63,
+        64
+      ],
+      "disposition": "formal_transfer_closed_archived_distinct_profile",
+      "selected_sources": [
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_stateless_receiver.py"
+        },
+        {
+          "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+          "path": "formal/pon-nakamoto-v1/w2c_stateless_admission.py"
+        }
+      ],
+      "semantic_review": "Same legacy custom stateless Grant and matched-cost source as 938: preserve exact original schema/cost pairing; selected caller-bound common module and network-bound Offer remain separate.",
+      "remaining_boundary": "No legacy wire alias or timing transfer. Source preserved in original DAG; no historical false-ticket workflow executed.",
+      "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+    }
+  ],
+  "additional_selected_scripts": [
+    {
+      "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+      "path": "scripts/pon_admission_price_model.py"
+    },
+    {
+      "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+      "path": "scripts/pon_p2_joint_triage.py"
+    }
+  ],
+  "mechanical_steps_pending": [
+    "Root final original-head ancestry closure",
+    "Post-relocation verification of each saved receipt log_sha256/log_bytes",
+    "Final selected-blob metadata calculation if desired; commit/path locators above are exact",
+    "Stage audit files and explicitly force-add three ignored .log evidence files",
+    "Final composed source/corpus/CI pin recalculation and validation"
+  ],
+  "preserved_failure_scope": [
+    "ca2 first combined SIGKILL-readiness failure and later bounded retry observations",
+    "c953 pre-fix global atfork secret retention",
+    "Original copied-state/credential custody limitations across durable alternatives",
+    "993/cab37/e192 durable/honest-latency and matched-price failures",
+    "W2-D/E soundness assumptions and late-rejection cost limitations",
+    "938 two prototype-bound local samples",
+    "658 historical broader Go suite and W2 comparison/fixture stay source-bound"
+  ],
+  "qualification": {
+    "production_activation": false,
+    "whole_chain_validation": false,
+    "independent_operator_acceptance": false,
+    "historical_vulnerability_workflows_executed": false
+  },
+  "resource_stop": {
+    "reason": "Root requested no further Git/build/read-extra processes after host thread exhaustion; observed sandbox proxy bridge Resource temporarily unavailable (os error 11).",
+    "stopped_ledger_session": 75461,
+    "exit_code": 130,
+    "tests_completed_before_stop": true
+  }
+}
+

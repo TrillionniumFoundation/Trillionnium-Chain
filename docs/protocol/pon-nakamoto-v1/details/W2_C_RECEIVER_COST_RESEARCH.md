@@ -204,3 +204,27 @@ A restart with copied secret+epoch and lost paid-grant history can still
 replay a paid ticket; the existing negative regression retains that
 failure. The floor is not a durable ledger or a consensus fork-choice rule.
 Production remains HOLD_NO_GO.
+
+## 2026-11-13 stateful owner composition
+
+The selected `ReceiverAdmission` combines two compatible local constraints:
+`7aa1a1dad78e530329ba03d81f7e7da01296f27d` supplies bounded cumulative epoch
+issuance, while `a0d2b172bbdd9e57f6c72fd02df1764aeaf54a66` supplies trusted
+fixed owner bits. The same original pending-grant owner applies both. Expiry,
+spend and identity changes do not refund issuance. Offers match owner bits
+before pending allocation, and consumed authentic grants match current local
+policy. The cost caller explicitly configures its bits. Grant bytes/domains
+are unchanged.
+
+This fixed-bit stateful owner is separate from common caller-bound
+`StatelessReceiverAdmission`, whose selected API uses a monotonic minimum
+floor, and from the network-bound Offer module. Their signed profiles, paid
+identities and cleanup contracts must not be interchanged. The older
+proposal-only alternative remains in original Git history.
+
+Four selected stateful policy/quota controls passed on
+`ff7c1ec4f9fed9b3cc9e16e39b9e6cd433f9c375`; see the exact validation index
+under `evidence/branch-consolidation-20261113/w2/`. Finite issuance can still
+deny later honest callers after exhaustion. It does not establish Sybil
+fairness, sustained service, trusted restart or hardware cost bounds.
+Historical CPU samples above were not rerun or upgraded.

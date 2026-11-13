@@ -1,0 +1,35 @@
+{
+  "schema": "trnm-w2-assigned-tip-snapshot-v1",
+  "selected_base": "11a2cba1953f4aaee97e8ed169fcfd9a1517da23",
+  "full_roster_metadata_location": "source-variants.snapshot.json",
+  "root_assigned_heads": [
+    "fa704e45c1fea9e99dd35a77142d9b27a09fe7e0",
+    "9934e70dba5aabf5f02b85bc92ec87544fdf51e8",
+    "10429dab61b195e8b9bd7e1950081acb4bfd83e0",
+    "26dd988a1eb3b464cf9a53b8a0c32df390523776",
+    "ca2e9d14d58e0882c3be58a3711428e055ff2eb6",
+    "db379fe21097ac4501f17f0362fec421d687d412",
+    "d575524c95b198d49c1459f58184a65b4f999722",
+    "c953a86c9338bc46509ed527e53bd836d66ffce2",
+    "cab37b3f9ea4cc2565e2902c38c5a36f095ab171",
+    "093ec49ae58da21d79c1fc1df0e3569f4d9e357b",
+    "e19245dd880a989b5310cda126ff2f27a6da67d4",
+    "7573e3ae83fd6090a1005a29fe716b0402b090ff",
+    "4bf21e2a1e92e07955129c98d2c4f9102d3a1742",
+    "4f367f106f97c92e95cca6a85c59fbc9d01d4a92",
+    "b517d6f9e1e763742853c0d65f512d53203ec768",
+    "a4f7fd5bdace75612928be0917f550f7dea864fc",
+    "51423e17989d837405c9455a012bc654a21a5e0c",
+    "7aa1a1dad78e530329ba03d81f7e7da01296f27d",
+    "9386ba1462138b0e235b22050afc9225d90c3cb0",
+    "658b61cacc539f0c4faf1216f7ff10a77a0bd4d7"
+  ],
+  "transferred_formal_heads": [
+    "b50018a58aef05a6f890e104bbb8d1f19642e05e",
+    "a0d2b172bbdd9e57f6c72fd02df1764aeaf54a66",
+    "e489fa33fe80cae84dcc9bb0de2dad8b50efc69a",
+    "fffc600e20386d797039763f5b1b081449342d1a"
+  ],
+  "cross_lane_scope": "Formal/research only; native Node/runtime/security changes remain separately assigned."
+}
+
