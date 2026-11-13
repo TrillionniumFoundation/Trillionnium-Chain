@@ -1,0 +1,92 @@
+[
+  {
+    "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+    "sha256": {
+      "base": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf",
+      "loader": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf",
+      "effects": "83a6a768cd501d748e31f5fbc613cf75c23cec9e9f711915d3742c8715b9fcdf"
+    },
+    "all_equal": true
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_phase_host.rs",
+    "sha256": {
+      "base": "d7657fc6c5bd85b630cb4402846ef7e408cb30b7cf4466b4e9e16a67d018a5fd",
+      "loader": "d7657fc6c5bd85b630cb4402846ef7e408cb30b7cf4466b4e9e16a67d018a5fd",
+      "effects": "d7657fc6c5bd85b630cb4402846ef7e408cb30b7cf4466b4e9e16a67d018a5fd"
+    },
+    "all_equal": true
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_support.rs",
+    "sha256": {
+      "base": "cbe45e3260db576700f84277683c293099968fae6b63031c9ba4e4dd197d71d9",
+      "loader": "cbe45e3260db576700f84277683c293099968fae6b63031c9ba4e4dd197d71d9",
+      "effects": "cbe45e3260db576700f84277683c293099968fae6b63031c9ba4e4dd197d71d9"
+    },
+    "all_equal": true
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/tests/support/multiprocess_work.rs",
+    "sha256": {
+      "base": "bf719eed6c8de43e9fadc033520b11d5e52178d22aa4ab9b114037ef232ba1df",
+      "loader": "bf719eed6c8de43e9fadc033520b11d5e52178d22aa4ab9b114037ef232ba1df",
+      "effects": "bf719eed6c8de43e9fadc033520b11d5e52178d22aa4ab9b114037ef232ba1df"
+    },
+    "all_equal": true
+  },
+  {
+    "path": "scripts/pon_public_v3_phase_read.py",
+    "sha256": {
+      "base": "deeadace0e557298728aa10f7636b340a86fe2bd705b2d0ebd0c9b17773f3482",
+      "loader": "deeadace0e557298728aa10f7636b340a86fe2bd705b2d0ebd0c9b17773f3482",
+      "effects": "deeadace0e557298728aa10f7636b340a86fe2bd705b2d0ebd0c9b17773f3482"
+    },
+    "all_equal": true
+  },
+  {
+    "path": "scripts/run_pon_w1_native_campaign.py",
+    "sha256": {
+      "base": "eff0930837331f08882a0d69a6909e8f8dda2b23dad58cf0e6bc60d175f0a431",
+      "loader": "eff0930837331f08882a0d69a6909e8f8dda2b23dad58cf0e6bc60d175f0a431",
+      "effects": "eff0930837331f08882a0d69a6909e8f8dda2b23dad58cf0e6bc60d175f0a431"
+    },
+    "all_equal": true
+  },
+  {
+    "path": "scripts/ci/run_native_phase_host.py",
+    "sha256": {
+      "base": "0d3def84ec4d00fb15e040e14b7c1d8f26908e63eb03f363c4d4f8cb9a8aa7c7",
+      "loader": "0d3def84ec4d00fb15e040e14b7c1d8f26908e63eb03f363c4d4f8cb9a8aa7c7",
+      "effects": "0d3def84ec4d00fb15e040e14b7c1d8f26908e63eb03f363c4d4f8cb9a8aa7c7"
+    },
+    "all_equal": true
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "sha256": {
+      "base": "56969a4e23add3f8da6335b6003f80500633b6ba14fa38d17b1cb05e3a0e7ef9",
+      "loader": "56969a4e23add3f8da6335b6003f80500633b6ba14fa38d17b1cb05e3a0e7ef9",
+      "effects": "aacb25955bcdc06309252aa348f900a78a9c2257ecb4aab891e50162a79587d3"
+    },
+    "all_equal": false
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/src/ingress.rs",
+    "sha256": {
+      "base": "b9509768af22dc936afb340fa0ea4dc71174ee077e0ee033f5598f02e78f40f1",
+      "loader": "b9509768af22dc936afb340fa0ea4dc71174ee077e0ee033f5598f02e78f40f1",
+      "effects": "40572400a127fecb6a2b69b7bb8d8fafecde8f2ae1b6aef634284dfd440567b2"
+    },
+    "all_equal": false
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+    "sha256": {
+      "base": "df389b242de3f75f8ee2448b755726c23b3196f0bef0dc79573c183791118882",
+      "loader": "df389b242de3f75f8ee2448b755726c23b3196f0bef0dc79573c183791118882",
+      "effects": "df389b242de3f75f8ee2448b755726c23b3196f0bef0dc79573c183791118882"
+    },
+    "all_equal": true
+  }
+]
