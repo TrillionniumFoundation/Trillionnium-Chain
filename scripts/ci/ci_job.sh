@@ -107,6 +107,7 @@ case "${1:?required job}" in
     python3 scripts/ci/test_ci_execution.py
     python3 scripts/ci/test_capture_chain_hepta_identity.py
     python3 scripts/ci/test_chain_hepta_qualification.py
+    python3 scripts/ci/test_chain_system_security.py
     python3 scripts/ci/test_chain_hepta_command_binding.py
     python3 scripts/test_cell_learning_business_economics.py
     python3 scripts/test_cell_learning_business_join.py

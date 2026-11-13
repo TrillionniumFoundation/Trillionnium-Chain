@@ -825,6 +825,7 @@ REPOSITORY_TRUTH_BLOCK = r'''    bash scripts/project-preflight.sh --audit
     python3 scripts/ci/test_ci_execution.py
     python3 scripts/ci/test_capture_chain_hepta_identity.py
     python3 scripts/ci/test_chain_hepta_qualification.py
+    python3 scripts/ci/test_chain_system_security.py
     python3 scripts/ci/test_chain_hepta_command_binding.py
     python3 scripts/test_cell_learning_business_economics.py
     python3 scripts/test_cell_learning_business_join.py
@@ -1610,6 +1611,11 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
         require(code_lines(lanes['repository-truth']).count(command) == 1
                 and code_lines(script).count(command) == 1,
                 'STARK route and field controls must execute exactly once in repository-truth')
+    for command in ('python3 scripts/ci/test_chain_hepta_qualification.py',
+                    'python3 scripts/ci/test_chain_system_security.py'):
+        require(code_lines(lanes['repository-truth']).count(command) == 1
+                and code_lines(script).count(command) == 1,
+                'stage and system security reader controls must execute exactly once in repository-truth')
     # Preserve the preceding specific refusal diagnostics when an unrelated
     # required command is moved into this prefix.
     require(code_lines(lanes['repository-truth'])[:3] == code_lines(CREDIT_MODEL_PREFIX),
