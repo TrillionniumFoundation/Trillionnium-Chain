@@ -1,0 +1,9 @@
+test_body_failure_rolls_back_and_preserves_exception (__main__.RootJournalCleanupTests.test_body_failure_rolls_back_and_preserves_exception) ... ok
+test_deferred_commit_failure_rolls_back_and_closes (__main__.RootJournalCleanupTests.test_deferred_commit_failure_rolls_back_and_closes) ... ok
+test_each_setup_failure_closes_without_entering_body (__main__.RootJournalCleanupTests.test_each_setup_failure_closes_without_entering_body) ... ok
+test_success_commits_real_transaction_and_closes (__main__.RootJournalCleanupTests.test_success_commits_real_transaction_and_closes) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.006s
+
+OK

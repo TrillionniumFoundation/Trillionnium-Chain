@@ -1,0 +1,8 @@
+test_journal_cleanup_cannot_disappear_duplicate_skip_swallow_or_move (test_ci_contract.EvaluationQuorumLaneTests.test_journal_cleanup_cannot_disappear_duplicate_skip_swallow_or_move) ... ok
+test_actual_merged_lanes_keep_all_original_controls (test_ci_contract.MergedQualificationLaneTests.test_actual_merged_lanes_keep_all_original_controls) ... ok
+test_independent_literals_keep_original_neighbors_and_unique_commands (test_ci_contract.MergedQualificationLaneTests.test_independent_literals_keep_original_neighbors_and_unique_commands) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.359s
+
+OK

@@ -1,0 +1,75 @@
+{
+  "status": "UNVALIDATED_PENDING_ROOT_FORMAT_AND_NATIVE_GATES",
+  "original_gc_head": "e6c622a16c6770073435f49cf02a6808b56312b0",
+  "original_fee_control_head": "3e44c471187fc6c883693c836cdae6adae4bdafb",
+  "last_committed_source_head_before_this_slice": "f733da79b23b88bb84231806a5bfa20d1789ec98",
+  "source_changes": [
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/release.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/release_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/successor_owner_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/version.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/version_tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/version_retention/owner.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs"
+  ],
+  "same_original_owner_required": true,
+  "new_payment_or_budget_grant": false,
+  "production_activation": false,
+  "native_execution": false,
+  "format_result": "not established; owned attempts interrupted",
+  "final_preflight_only_result": "PASS; 26 packages; remote_policy_mutated false",
+  "observed_session_interruptions": [
+    {
+      "session": 11401,
+      "purpose": "whole workspace cargo fmt",
+      "exit_code": 130
+    },
+    {
+      "session": 74146,
+      "purpose": "metadata-driven scoped formatting preparation",
+      "exit_code": 130
+    },
+    {
+      "session": 81914,
+      "purpose": "explicit nine-file rustfmt edition2021",
+      "exit_code": 130
+    },
+    {
+      "session": 36690,
+      "purpose": "preflight/diff/add/commit pipeline; preflight PASS observed, no commit result observed",
+      "exit_code": 130
+    },
+    {
+      "session": 31933,
+      "purpose": "additional preflight attempt during shared contention",
+      "exit_code": 130
+    },
+    {
+      "session": 4681,
+      "purpose": "status/revision read during shared contention",
+      "exit_code": 130
+    },
+    {
+      "session": 64105,
+      "purpose": "report packaging during shared contention; rerun fully before commit",
+      "exit_code": 130
+    },
+    {
+      "session": 78627,
+      "purpose": "preflight and local commit during shared contention; observed cancellation and no commit at recovery",
+      "exit_code": 130,
+      "preserved_lock_receipt": "implementation/recovery/index-lock-78627.json"
+    }
+  ],
+  "dependency": "Root must retain Cell lane V1 retired_readback and V2 archive object_contract/retired_object_readback. New V3 forwarders delegate to existing physical owner.",
+  "native_controls_added": [
+    "native_cell_successor_requires_completed_journal_effect_and_gc_replay_survives_reuse",
+    "native_release_member_gc_requires_successor_native_effect",
+    "native_version_member_gc_requires_successor_native_effect",
+    "native_no_gain_research_fee_preserves_escrow_source_and_chainwork"
+  ],
+  "source_commit": "ddfaab0ab2110413cd941d77566bee124ec1df60",
+  "static_source_review": "implementation/recovery/frozen-nine-source-review.json"
+}

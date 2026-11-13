@@ -1,0 +1,109 @@
+   Compiling find-msvc-tools v0.1.9
+    Checking typenum v1.20.1
+   Compiling shlex v1.3.0
+   Compiling cc v1.2.59
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.45
+   Compiling version_check v0.9.5
+   Compiling unicode-ident v1.0.24
+   Compiling generic-array v0.14.7
+    Checking cfg-if v1.0.4
+    Checking cmov v0.5.4
+    Checking ctutils v0.4.6
+    Checking zeroize v1.9.1
+    Checking hybrid-array v0.4.15
+   Compiling pkg-config v0.3.32
+   Compiling vcpkg v0.2.15
+    Checking crypto-common v0.2.2
+    Checking block-buffer v0.12.1
+   Compiling syn v2.0.117
+   Compiling libc v0.2.184
+    Checking digest v0.11.3
+   Compiling syn v3.0.9
+    Checking bitflags v2.11.0
+   Compiling sha2-asm v0.6.4
+   Compiling serde_core v1.0.229
+   Compiling semver v1.0.27
+   Compiling rustc_version v0.4.1
+    Checking crypto-common v0.1.7
+    Checking block-buffer v0.10.4
+   Compiling cfg_aliases v0.2.2
+    Checking digest v0.10.7
+   Compiling curve25519-dalek v5.0.0
+    Checking signature v3.0.0
+   Compiling libsqlite3-sys v0.39.1
+   Compiling equivalent v1.0.2
+   Compiling hashbrown v0.16.1
+    Checking cpufeatures v0.2.17
+   Compiling zmij v1.0.21
+    Checking cpufeatures v0.3.1
+   Compiling winnow v1.0.4
+   Compiling indexmap v2.13.1
+    Checking sha2 v0.10.9
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling toml_parser v1.1.3+spec-1.1.0
+    Checking subtle v2.6.1
+   Compiling autocfg v1.5.1
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+    Checking foldhash v0.2.0
+   Compiling serde_json v1.0.149
+    Checking hashbrown v0.17.1
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling num-traits v0.2.19
+    Checking sha2 v0.11.1
+    Checking ed25519 v3.0.0
+   Compiling openssl-sys v0.9.117
+    Checking itoa v1.0.18
+   Compiling serde v1.0.229
+    Checking memchr v2.8.0
+    Checking ed25519-dalek v3.0.0
+   Compiling proc-macro-crate v3.5.0
+    Checking hashlink v0.12.2
+   Compiling borsh v1.8.1
+   Compiling serde_derive v1.0.229
+   Compiling once_cell v1.21.4
+    Checking fallible-iterator v0.3.0
+    Checking fallible-streaming-iterator v0.1.9
+    Checking smallvec v1.15.1
+   Compiling thiserror v1.0.69
+    Checking rusqlite v0.41.1
+   Compiling borsh-derive v1.8.1
+   Compiling thiserror-impl v1.0.69
+    Checking keccak v0.2.2
+    Checking sponge-cursor v0.1.0
+    Checking foreign-types-shared v0.1.1
+   Compiling openssl v0.10.81
+   Compiling anyhow v1.0.103
+    Checking foreign-types v0.3.2
+    Checking shake v0.1.0
+    Checking module-lattice v0.2.3
+   Compiling openssl-macros v0.1.1
+   Compiling rustix v1.1.6
+    Checking hex v0.4.3
+    Checking trnm-protocol v0.1.0 (/workspace/scratch/415d5ba2202d/implementation-fixes/trillionnium/crates/trnm-protocol)
+    Checking ml-dsa v0.1.1
+    Checking linux-raw-sys v0.12.1
+   Compiling getrandom v0.4.2
+    Checking trnm-crypto-primitives v0.1.0 (/workspace/scratch/415d5ba2202d/implementation-fixes/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/workspace/scratch/415d5ba2202d/implementation-fixes/trillionnium/crates/trnm-sqlite-io-boundary)
+    Checking trnm-task-kernel v0.1.0 (/workspace/scratch/415d5ba2202d/implementation-fixes/trillionnium/crates/trnm-task-kernel)
+   Compiling nix v0.30.1
+    Checking fastrand v2.3.0
+    Checking tempfile v3.27.0
+    Checking trnm-verification-profiles v0.1.0 (/workspace/scratch/415d5ba2202d/implementation-fixes/trillionnium/crates/trnm-verification-profiles)
+    Checking fs2 v0.4.3
+    Checking getrandom v0.2.17
+    Checking trnm-data-availability v0.1.0 (/workspace/scratch/415d5ba2202d/implementation-fixes/trillionnium/crates/trnm-data-availability)
+    Checking trnm-mvcc-fee v0.1.0 (/workspace/scratch/415d5ba2202d/implementation-fixes/trillionnium/crates/trnm-mvcc-fee)
+    Checking trnm-service-settlement v0.1.0 (/workspace/scratch/415d5ba2202d/implementation-fixes/trillionnium/crates/trnm-service-settlement)
+    Checking trnm-release-bundle v0.1.0 (/workspace/scratch/415d5ba2202d/implementation-fixes/trillionnium/crates/trnm-release-bundle)
+    Checking trnm-transport v0.1.0 (/workspace/scratch/415d5ba2202d/implementation-fixes/trillionnium/crates/trnm-transport)
+    Checking trnm-mempool v0.1.0 (/workspace/scratch/415d5ba2202d/implementation-fixes/trillionnium/crates/trnm-mempool)
+    Checking trnm-pon-node v0.1.0 (/workspace/scratch/415d5ba2202d/implementation-fixes/trillionnium/crates/trnm-pon-node)
+error: couldn't create a temp dir: No space left on device (os error 28) at path "/workspace/scratch/415d5ba2202d/implementation-target/debug/deps/rmetanCcZmJ"
+
+error: could not compile `trnm-pon-node` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: failed to write file /workspace/scratch/415d5ba2202d/implementation-target/debug/incremental/trnm_pon_node-2ghf85as0mo0i/s-ho4dkuy1io-16d9bdw-working/dep-graph.part.bin: No space left on device (os error 28)"
+
+error: could not compile `trnm-pon-node` (lib test) due to 1 previous error

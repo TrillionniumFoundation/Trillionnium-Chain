@@ -1,0 +1,30 @@
+{
+  "source_head": "55033605dc738908304ae7ac7a6493452c37c4b5",
+  "selected_parent": "4eedd4db6147a0624a052a9e70c2c62688ae8424",
+  "change": "Remove duplicate pre-loop Host check for Shared owner only; preserve fresh check per acquisition/retry and current Control::check final absolute-deadline fence.",
+  "native_controls_added": [
+    "history_owner_each_uncontended_acquisition_observes_host_once_outside_lock",
+    "history_owner_busy_retry_observes_changed_host_before_action",
+    "history_owner_exclusive_rechecks_host_for_each_action",
+    "history_owner_host_observation_crossing_deadline_never_enters_action"
+  ],
+  "native_roster_before": {
+    "passed": 38,
+    "ignored": 1
+  },
+  "native_roster_after": {
+    "passed": 42,
+    "ignored": 1
+  },
+  "witness_assumption_head": "83fe531fb3520bddb83940c8c94838fe3324be77",
+  "witness_model_execution": "not run; retained exact original abstract controls, no target interaction",
+  "validation": {
+    "python_native_roster_controls": "27 passed",
+    "extra_prior_38_count_negative": "1 passed",
+    "rustfmt": "PASS",
+    "git_diff_check": "PASS",
+    "preflight": "PASS",
+    "native_execution": "pending shared root exact-source validation"
+  },
+  "integration_commit": "f733da79b2"
+}

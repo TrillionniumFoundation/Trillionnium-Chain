@@ -1,0 +1,20 @@
+Diff in /workspace/scratch/415d5ba2202d/implementation-fixes/trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/io/buffer_tests.rs:1:
+-use crate::ingress::pq_network::tls_fixtures::Fixture;
+ use super::*;
++use crate::ingress::pq_network::tls_fixtures::Fixture;
+ use std::{net::Shutdown, thread};
+ 
+ fn queued_ciphertext(bytes: Vec<u8>) -> TcpStream {
+Diff in /workspace/scratch/415d5ba2202d/implementation-fixes/trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls.rs:137:
+                 .inner
+                 .read_request_body(node, deadline, &mut |bytes| channel.read_exact(bytes))?;
+             observation.stage("request_dispatch");
+-            let response = self
+-                .inner
+-                .handle_admitted(node, &wire, deadline, channel.admission())?;
++            let response =
++                self.inner
++                    .handle_admitted(node, &wire, deadline, channel.admission())?;
+             observation.stage("response_write");
+             channel.write_frame(&response)
+         })();

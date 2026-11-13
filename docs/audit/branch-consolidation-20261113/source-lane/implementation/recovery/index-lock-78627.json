@@ -1,0 +1,14 @@
+{
+  "session": 78627,
+  "observed_exit_code": 130,
+  "observed_output": "empty; no commit completion or new SHA observed",
+  "head_reobserved_before_recovery": "f733da79b23b88bb84231806a5bfa20d1789ec98",
+  "original_lock_path": "/workspace/scratch/415d5ba2202d/Trillionnium-Chain/.git/worktrees/implementation-fixes/index.lock",
+  "preserved_path": "docs/audit/branch-consolidation-20261113/source-lane/implementation/recovery/index-lock-78627.preserved",
+  "size_bytes": 0,
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "original_mtime_ns": 1794574779362771295,
+  "action": "renamed and retained; no lock content deletion or ref update",
+  "recorded_at": "2026-11-13T13:44:01.311818+00:00",
+  "authorization": "root explicitly requested stale worktree index.lock preservation after confirmed interruption and frozen-file backup"
+}

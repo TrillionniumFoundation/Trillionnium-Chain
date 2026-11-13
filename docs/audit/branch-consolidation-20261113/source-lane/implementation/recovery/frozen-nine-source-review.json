@@ -1,0 +1,59 @@
+{
+  "status": "STATIC_DIFF_REVIEW_ONLY_NATIVE_UNVALIDATED",
+  "base": "f733da79b23b88bb84231806a5bfa20d1789ec98",
+  "preflight": "PASS;26 packages;remote_policy_mutated=false",
+  "source_path_count": 9,
+  "files": {
+    "trillionnium/crates/trnm-data-availability/src/cell/version_retention/owner.rs": {
+      "sha256": "93cd0507bd55ba25c30465d5de962289c6b21591fbe045c3c3cc6f83e3b24122",
+      "bytes": 25657
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs": {
+      "sha256": "7bf0fdfcd63e628a7123ee6e73eb1e5bbb2c4ab62b3749934f2963cd716767e6",
+      "bytes": 47860
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs": {
+      "sha256": "8366e758c564d0666a216ba23b7385635a50233e51b2a3eefb2200253aefc7ea",
+      "bytes": 20738
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/release.rs": {
+      "sha256": "ceb32a13f5d840ad9dd7b5e5e3e3edd215edb34d0092f03324964787108b1726",
+      "bytes": 23330
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/release_tests.rs": {
+      "sha256": "d10b880d183dfed4652e0c0958f19123a10e2fe7ab5a8ccc08c4a51aca2199f3",
+      "bytes": 33241
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/successor_owner_tests.rs": {
+      "sha256": "74b2e616b30443f78c852b0a4dacef73f53c52fc0718df7fca8e895cf7aae56c",
+      "bytes": 7666
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs": {
+      "sha256": "e0231abbe51a622e5dd6090acdcaa6f0fdcfe0d77643c89488a69b6631df2ec0",
+      "bytes": 28205
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/version.rs": {
+      "sha256": "245c0c629f3ade826f293d03adf48ccfe0fd7b583caf50c4aa207ee443a52651",
+      "bytes": 23539
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/version_tests.rs": {
+      "sha256": "6e515c1fb2df2bb341f98748c0c82db2bbe82ed2e0fe06e278f942836e4dc8c3",
+      "bytes": 26554
+    }
+  },
+  "original_component_identity_checks": {
+    "new_successor_test_file_exact_original": true,
+    "native_no_gain_research_fee_preserves_escrow_source_and_chainwork_exact_original": true,
+    "native_release_member_gc_requires_successor_native_effect_exact_original": true,
+    "check_retirement_successor_exact_original": true
+  },
+  "diff_whitespace_check": "PASS",
+  "cargo_run": false,
+  "native_tests_run": false,
+  "format_pass_claimed": false,
+  "root_cell_api_dependency": [
+    "CellRetentionStoreV1::retired_readback",
+    "CellReleaseRetentionStoreV2::object_contract",
+    "CellReleaseRetentionStoreV2::retired_object_readback"
+  ]
+}

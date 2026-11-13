@@ -1,0 +1,137 @@
+{
+  "state": "three axes committed; final native compile deferred to one shared parent build; exact-source metadata pending parent final rebinding",
+  "head": "2fa6a699b68427f8a3d5728305df7d088db9224d",
+  "base": "b683714cdd5ba241c16c335a81aebc12c1581902",
+  "utc": "2026-11-13T11:25:37.866443+00:00",
+  "python_control_suites": [
+    {
+      "path": "scripts/ci/test_w1_factorial_native_gate.py",
+      "returncode": 0,
+      "seconds": 24.716,
+      "log": "/workspace/scratch/415d5ba2202d/source-audit/implementation/validation/test_w1_factorial_native_gate.log",
+      "tail": "....................\n----------------------------------------------------------------------\nRan 20 tests in 24.427s\n\nOK\n"
+    },
+    {
+      "path": "scripts/ci/test_w1_native_roster.py",
+      "returncode": 0,
+      "seconds": 0.315,
+      "log": "/workspace/scratch/415d5ba2202d/source-audit/implementation/validation/test_w1_native_roster.log",
+      "tail": "......\n----------------------------------------------------------------------\nRan 6 tests in 0.003s\n\nOK\n"
+    },
+    {
+      "path": "scripts/ci/test_prepare_artifact_upload.py",
+      "returncode": 0,
+      "seconds": 0.9,
+      "log": "/workspace/scratch/415d5ba2202d/source-audit/implementation/validation/test_prepare_artifact_upload.log",
+      "tail": "........\n----------------------------------------------------------------------\nRan 8 tests in 0.358s\n\nOK\n"
+    },
+    {
+      "path": "scripts/ci/test_cell_storage_convergence_ci.py",
+      "returncode": 0,
+      "seconds": 3.511,
+      "log": "/workspace/scratch/415d5ba2202d/source-audit/implementation/validation/test_cell_storage_convergence_ci.log",
+      "tail": ".........................\n----------------------------------------------------------------------\nRan 25 tests in 3.255s\n\nOK\n"
+    },
+    {
+      "path": "scripts/ci/test_fresh_rejection_report.py",
+      "returncode": 0,
+      "seconds": 29.144,
+      "log": "/workspace/scratch/415d5ba2202d/source-audit/implementation/validation/test_fresh_rejection_report.log",
+      "tail": "..........................\n----------------------------------------------------------------------\nRan 26 tests in 28.752s\n\nOK\n"
+    },
+    {
+      "path": "scripts/test_llm_inherited_runtime.py",
+      "returncode": 0,
+      "seconds": 0.246,
+      "log": "/workspace/scratch/415d5ba2202d/source-audit/implementation/validation/test_llm_inherited_runtime.log",
+      "tail": "......\n----------------------------------------------------------------------\nRan 6 tests in 0.031s\n\nOK\n"
+    },
+    {
+      "path": "scripts/test_llm_parent_material.py",
+      "returncode": 0,
+      "seconds": 5.752,
+      "log": "/workspace/scratch/415d5ba2202d/source-audit/implementation/validation/test_llm_parent_material.log",
+      "tail": "...........\n----------------------------------------------------------------------\nRan 11 tests in 4.958s\n\nOK\n"
+    },
+    {
+      "path": "scripts/test_llm_inherited_operation.py",
+      "returncode": 0,
+      "seconds": 1.281,
+      "log": "/workspace/scratch/415d5ba2202d/source-audit/implementation/validation/test_llm_inherited_operation.log",
+      "tail": ".................\n----------------------------------------------------------------------\nRan 17 tests in 0.845s\n\nOK\n"
+    },
+    {
+      "path": "scripts/test_llm_frozen_evaluation.py",
+      "returncode": 0,
+      "seconds": 0.61,
+      "log": "/workspace/scratch/415d5ba2202d/source-audit/implementation/validation/test_llm_frozen_evaluation.log",
+      "tail": "..........................\n----------------------------------------------------------------------\nRan 26 tests in 0.145s\n\nOK\n"
+    },
+    {
+      "path": "scripts/test_run_learning_service_development.py",
+      "returncode": 0,
+      "seconds": 2.488,
+      "log": "/workspace/scratch/415d5ba2202d/source-audit/implementation/validation/test_run_learning_service_development.log",
+      "tail": "........................\n----------------------------------------------------------------------\nRan 24 tests in 2.201s\n\nOK\n"
+    }
+  ],
+  "additional_ci_observation_guard_tests": {
+    "count": 3,
+    "returncode": 0,
+    "log": "validation/ci-targeted-observation-guards.log"
+  },
+  "rustfmt_workspace": {
+    "returncode": 0,
+    "toolchain": "1.95.0"
+  },
+  "distributed_inventory": {
+    "returncode": 0
+  },
+  "changed_python_ast": {
+    "returncode": 0,
+    "files": 17
+  },
+  "source_only_git_diff_check": {
+    "returncode": 0,
+    "excluded": "evidence/**"
+  },
+  "complete_diff_check": {
+    "returncode": 2,
+    "reason": "original imported evidence logs/patches contain trailing whitespace or final empty lines; original bytes preserved"
+  },
+  "ci_contract": {
+    "returncode": 1,
+    "reason": "expected final rebind: pon-recent-batch-acceptance.yml store.rs pin old 6ef5f01142a33eace66256dd6ecc81d34681d194 versus current a1b349768df8c6867f0926622ad2a90cf1104099",
+    "log": "validation/ci-contract.log"
+  },
+  "full_ci_contract_test_attempt": {
+    "status": "TIMEOUT",
+    "timeout_seconds": 120,
+    "partial_stdout_saved": false,
+    "reason": "driver subprocess captured stdout but timeout exception occurred before file write; transcript preserves exception; no pass claimed"
+  },
+  "adaptation_attempt": {
+    "status": "FAILED_ASSERTION",
+    "reason": "preliminary roster assumed 3 detached controls; current source has 4 plus a fifth handoff addition. Assertion occurred before writing; later shell commands had no set -e and created checkpoint 31779e368. Corrected explicitly in subsequent commit 3fdf3ac06; retained test names verified."
+  },
+  "native_suites_executed": false,
+  "model_experiment_executed": false,
+  "production_activation": false,
+  "cargo_check_first_attempt": {
+    "returncode": 101,
+    "reason": "ENOSPC while writing Node lib/lib-test metadata and incremental dep-graph; 5.7 GiB free on follow-up df, inode use 6%; no source diagnostic",
+    "log": "cargo-check.log"
+  },
+  "build_cache_cleanup": {
+    "removed": "implementation-target/debug/incremental",
+    "approximate_bytes": 317718528,
+    "source_removed": false
+  },
+  "cargo_check_retry": {
+    "returncode": 130,
+    "status": "INTERRUPTED_BY_PARENT_RESOURCE_REQUEST",
+    "log": "cargo-check-retry.log",
+    "flags": "CARGO_INCREMENTAL=0, -j 1; no successful completion claimed"
+  },
+  "own_build_cache_removed": true
+}

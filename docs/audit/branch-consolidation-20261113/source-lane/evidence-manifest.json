@@ -1,0 +1,314 @@
+{
+  "schema": "source-lane-evidence-manifest-v1",
+  "source_commit": "ddfaab0ab2110413cd941d77566bee124ec1df60",
+  "created_utc": "2026-11-13T13:52:18.411029+00:00",
+  "file_count_excluding_manifest": 53,
+  "manifest_self_excluded": true,
+  "original_raw_files_preserved_byte_for_byte": [
+    "implementation/validation/ci-contract.log",
+    "implementation/validation/ci-targeted-observation-guards.log",
+    "implementation/validation/gc-successor-rustfmt.log",
+    "implementation/validation/gc-successor-scoped-rustfmt.log",
+    "implementation/validation/history-owner-controls-python.log",
+    "implementation/validation/history-owner-old-counts.log",
+    "implementation/validation/history-owner-rustfmt.log",
+    "implementation/validation/peer-host-rustfmt.log",
+    "implementation/validation/pq-root-cache-runner.log",
+    "implementation/validation/pq-root-cache-rustfmt.log",
+    "implementation/validation/python-control-results.json",
+    "implementation/validation/sqlite-journal-cleanup-ci-before-roster-fix.log",
+    "implementation/validation/sqlite-journal-cleanup-ci.log",
+    "implementation/validation/sqlite-journal-cleanup.log",
+    "implementation/validation/test_cell_storage_convergence_ci.log",
+    "implementation/validation/test_fresh_rejection_report.log",
+    "implementation/validation/test_llm_frozen_evaluation.log",
+    "implementation/validation/test_llm_inherited_operation.log",
+    "implementation/validation/test_llm_inherited_runtime.log",
+    "implementation/validation/test_llm_parent_material.log",
+    "implementation/validation/test_prepare_artifact_upload.log",
+    "implementation/validation/test_run_learning_service_development.log",
+    "implementation/validation/test_w1_factorial_native_gate.log",
+    "implementation/validation/test_w1_native_roster.log",
+    "implementation/validation/tls-selected-inventory.log",
+    "implementation/validation/tls-selected-port-rustfmt-final.log",
+    "implementation/validation/tls-selected-port-rustfmt.log",
+    "implementation/cargo-check.log",
+    "implementation/cargo-check-retry.log",
+    "implementation/pending-source-rebindings.json"
+  ],
+  "last_preflight": {
+    "result": "PASS",
+    "mode": "--dev",
+    "packages": 26,
+    "remote_policy_mutated": false
+  },
+  "native_execution_for_final_slice": false,
+  "final_source_binding": "root-owned; no final validation claim",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 1644,
+      "sha256": "ea1d95bbe13e725ed69437eae391b82d31650e87f1c3c91d243ac37961bd287b"
+    },
+    {
+      "path": "SOURCE_AUDIT_20261113.md",
+      "bytes": 12472,
+      "sha256": "495d740dd4793abdc56d02372ddebb6ca6cc2a0449cfdb4f92e02ed876629ab7"
+    },
+    {
+      "path": "implementation/IMPLEMENTATION_INTEGRATION_20261113.md",
+      "bytes": 7425,
+      "sha256": "daae49f2840ad665c002858b53ec55dfc81a0441810c83c3ffc689a1f1af710e"
+    },
+    {
+      "path": "implementation/INTEGRATION_ADDENDUM_20261113.md",
+      "bytes": 8599,
+      "sha256": "acb45947796abf741f54bb98059e9ae2c982fd985c01d070ef4c1542ed1840e8"
+    },
+    {
+      "path": "implementation/cargo-check-retry.log",
+      "bytes": 1596,
+      "sha256": "a7518c752841aa3dc4e5252381b363c6f1bfda81091ba1b88860905498da45a5"
+    },
+    {
+      "path": "implementation/cargo-check.log",
+      "bytes": 4991,
+      "sha256": "8698d26dd41396fc664bb2805b089a2baa413cf827c1caa19cb21fb0fd8df61b"
+    },
+    {
+      "path": "implementation/gc-successor-port/report.json",
+      "bytes": 3218,
+      "sha256": "1198caaace80485feb66e9c3a5326ae84c1ac348e7e5929a471097af86abc002"
+    },
+    {
+      "path": "implementation/history-owner-control-port.json",
+      "bytes": 1247,
+      "sha256": "908429b0a21ee010e2d37d31650cb691581630bb83efc5c2a26fee45eb8e3c8d"
+    },
+    {
+      "path": "implementation/peer-host-port.json",
+      "bytes": 1151,
+      "sha256": "a0e594bba474ed51ff894efeff6bacbd3b2ff4b9c2b5d2b37ce4170ed17857ab"
+    },
+    {
+      "path": "implementation/pending-source-rebindings.json",
+      "bytes": 12556,
+      "sha256": "8af530c94e3086d875dbc1fc5ed3c268226e7608eb691e76f0ec87644697b87a"
+    },
+    {
+      "path": "implementation/recovery/frozen-nine-source-review.json",
+      "bytes": 2607,
+      "sha256": "31ae497d92597ee17710a8130c1ce5803c6f494bbf83d6be81ed8d86705f5a76"
+    },
+    {
+      "path": "implementation/recovery/index-lock-78627.json",
+      "bytes": 868,
+      "sha256": "bbc2252e4bbed67f5dc806c00b2fd1d421aa2e71b54cdf5678ad0a8b665526f9"
+    },
+    {
+      "path": "implementation/recovery/index-lock-78627.preserved",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "implementation/tls-selected-port/disposition.json",
+      "bytes": 1244,
+      "sha256": "a199cd68676ec016029b8dff2f43600b0993cb431c3c773a3d7e80d717bb5ce9"
+    },
+    {
+      "path": "implementation/validation/ci-contract.log",
+      "bytes": 1101,
+      "sha256": "67e99b3f71d10aadb64425caf56a8cdff2a35dcbb03af3287e29bbd58dcafef2"
+    },
+    {
+      "path": "implementation/validation/ci-targeted-observation-guards.log",
+      "bytes": 670,
+      "sha256": "68e5b43a21d898fee0123f4a33a85be232183330d14f7cbbeb8763fe6f853e3b"
+    },
+    {
+      "path": "implementation/validation/gc-successor-rustfmt.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "implementation/validation/gc-successor-scoped-rustfmt.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "implementation/validation/history-owner-controls-python.log",
+      "bytes": 4680,
+      "sha256": "06ccf83d8394eafbbaa5cbdd08cc541634cfda8919bc18241da3c9ccfba0629f"
+    },
+    {
+      "path": "implementation/validation/history-owner-old-counts.log",
+      "bytes": 270,
+      "sha256": "d88fd135b820be7db4d2c68437e617131baeafe8c16b72c0bd2c446df77fdf55"
+    },
+    {
+      "path": "implementation/validation/history-owner-rustfmt.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "implementation/validation/peer-host-rustfmt.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "implementation/validation/pq-root-cache-runner.log",
+      "bytes": 1714,
+      "sha256": "0bcfcb65a4ee02dd7815f135e3cdb824d5399d3566647b936817bf6c2dea311a"
+    },
+    {
+      "path": "implementation/validation/pq-root-cache-rustfmt.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "implementation/validation/python-control-results.json",
+      "bytes": 3621,
+      "sha256": "c61aff89ddfd2b43b42dce0d036ac93c6f79e0661b09b6bede92341f20c8860e"
+    },
+    {
+      "path": "implementation/validation/sqlite-journal-cleanup-ci-before-roster-fix.log",
+      "bytes": 3047,
+      "sha256": "19e96be946abb560f55ec159b099d20115045a6f83be2d1e34730cc0cdabc2ee"
+    },
+    {
+      "path": "implementation/validation/sqlite-journal-cleanup-ci.log",
+      "bytes": 642,
+      "sha256": "54aaef3bc7041251ad92d61f2b437390c60a93c40eacd22bfd7401b7ca14aae5"
+    },
+    {
+      "path": "implementation/validation/sqlite-journal-cleanup.log",
+      "bytes": 678,
+      "sha256": "491a90c008bdff984bcaafc3ef2c1139adac991e4f1476e3f456247bec071700"
+    },
+    {
+      "path": "implementation/validation/test_cell_storage_convergence_ci.log",
+      "bytes": 124,
+      "sha256": "1e6e8d5ec8dc32a99ef1c5e1055ffb5e66bd5d5e7a4968ad13520fa0fde3bc8a"
+    },
+    {
+      "path": "implementation/validation/test_fresh_rejection_report.log",
+      "bytes": 126,
+      "sha256": "cc22beb6302bb41d8c9e472af6b74f694cf2f6ecd994149bedd3ced5fc8b9599"
+    },
+    {
+      "path": "implementation/validation/test_llm_frozen_evaluation.log",
+      "bytes": 125,
+      "sha256": "115e12d4b2d865c2c5102705566920a36cc5cd7effedfba032300b676ee9c270"
+    },
+    {
+      "path": "implementation/validation/test_llm_inherited_operation.log",
+      "bytes": 116,
+      "sha256": "731d22d2fb94c7c72a8d3ede037e6b5e83d327027ea92b22ef671caad8a81691"
+    },
+    {
+      "path": "implementation/validation/test_llm_inherited_runtime.log",
+      "bytes": 104,
+      "sha256": "056be428f93d5c221fb5111f4d266e542ea3d7ce13f6fa95f050091739b87b53"
+    },
+    {
+      "path": "implementation/validation/test_llm_parent_material.log",
+      "bytes": 110,
+      "sha256": "59fb1c9cd37a8f073339e0a9022e0d17705cefef75e1bbbc7b2b5e205f917ea3"
+    },
+    {
+      "path": "implementation/validation/test_prepare_artifact_upload.log",
+      "bytes": 106,
+      "sha256": "1b5e2e3544bc939d5c6a9c389db5ca925451ad0eeeed0074c710573927106b84"
+    },
+    {
+      "path": "implementation/validation/test_run_learning_service_development.log",
+      "bytes": 123,
+      "sha256": "d18b39c40940a033bc9c80e18fd57758cb4db441e036b1478f251cfad9b7758c"
+    },
+    {
+      "path": "implementation/validation/test_w1_factorial_native_gate.log",
+      "bytes": 120,
+      "sha256": "6d7db82e0c1eee431174501356d22d80448acafc18f1638096a91e90c4f2aa3d"
+    },
+    {
+      "path": "implementation/validation/test_w1_native_roster.log",
+      "bytes": 104,
+      "sha256": "65378dcad145da2497120819bebfc3c46534dce9714ce064b3d809a56654aca2"
+    },
+    {
+      "path": "implementation/validation/tls-selected-inventory.log",
+      "bytes": 35,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "path": "implementation/validation/tls-selected-port-rustfmt-final.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "implementation/validation/tls-selected-port-rustfmt.log",
+      "bytes": 1047,
+      "sha256": "e38848c038d25dcd9ea98e246f68c5dff4cb042d5f1dc2e54fa12b4207b4b121"
+    },
+    {
+      "path": "implementation/validation-summary.json",
+      "bytes": 6393,
+      "sha256": "d2cf1bd22b9095f4f40e0bb4b7cde86ab7fee7d6ecc18d2017dfcd44e775aebc"
+    },
+    {
+      "path": "node-owner-review/EXTRA_55_DISPOSITIONS.md",
+      "bytes": 36427,
+      "sha256": "12d7436f017bfcc95e3dbba78b528f288831046f61911696f79efd5a9fd8f9fb"
+    },
+    {
+      "path": "node-owner-review/ORIGINAL_30_DISPOSITIONS.md",
+      "bytes": 20954,
+      "sha256": "1f585b74f5d7efbf4ff06ca1ac9088ff911679a93cb6733dd54d3bd6df602a0d"
+    },
+    {
+      "path": "node-owner-review/comparison-scope-correction.json",
+      "bytes": 22584,
+      "sha256": "9031569c0b76d909b2850946136c09f9a224b22c46c0ff58377fac825f5e47d7"
+    },
+    {
+      "path": "node-owner-review/cross-owner-final-join.json",
+      "bytes": 26565,
+      "sha256": "80b49fdd61c902d8e983036ec0ca3056b0c83aac1a98bf5fd424b2f6e7cb9da5"
+    },
+    {
+      "path": "node-owner-review/daa-cross-owner/DAA_CROSS_OWNER_REVIEW.md",
+      "bytes": 4944,
+      "sha256": "006d427557902259adfe12d80d37a2c276f292b021fa2f6859f5159dff7a4db3"
+    },
+    {
+      "path": "node-owner-review/daa-cross-owner/compatible-q4-only.patch",
+      "bytes": 4179,
+      "sha256": "4f05dd55666c1b8c3b762f1e7974a8e8dc31a65a218e952c3c3a43b4ea9db9c3"
+    },
+    {
+      "path": "node-owner-review/daa-cross-owner/review.json",
+      "bytes": 561,
+      "sha256": "7278fe2b81ddcb03cb3f6c356a5ac5526062ddd68d11ede164f9053f18f412c9"
+    },
+    {
+      "path": "node-owner-review/extra-55-disposition-ledger.json",
+      "bytes": 177582,
+      "sha256": "bd8ce6aec183e844ef06627c47ab2b12f267398aa0b8425617aa848a3bfca75f"
+    },
+    {
+      "path": "node-owner-review/original-30-disposition-ledger.json",
+      "bytes": 83332,
+      "sha256": "995f46e8593099098d57df55291fdf87f435dc9bb0236ea0ab794a4344adc4cc"
+    },
+    {
+      "path": "node-owner-review/quantum-cross-owner/QUANTUM_CROSS_OWNER_REVIEW.md",
+      "bytes": 3488,
+      "sha256": "6868187288cababa6d4c06f2c67bbb6b68eaa9096d37547808e4bafe0c01a0e5"
+    },
+    {
+      "path": "node-owner-review/quantum-cross-owner/review.json",
+      "bytes": 4417,
+      "sha256": "bd56f5a48d1cbb8bb585699f358298511776244472b6ffed8eff26e25f2c0201"
+    }
+  ]
+}

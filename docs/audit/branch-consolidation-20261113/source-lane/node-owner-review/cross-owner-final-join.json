@@ -1,0 +1,518 @@
+{
+  "schema": "source-lane-cross-owner-join-v1",
+  "w2": {
+    "evidence_path_at_review": "/workspace/scratch/415d5ba2202d/w2-integration/evidence/branch-consolidation-20261113/w2/tip-ledger.json",
+    "evidence_sha256": "1b33c4ff372fae8ef8f0f4515cebb5cfb71b3e0a3c64c4d3d23b7955c58472ee",
+    "selected_code_checkpoint": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+    "formal_rows": [
+      {
+        "original_head": "b50018a58aef05a6f890e104bbb8d1f19642e05e",
+        "source_variant_ids": [
+          54,
+          55,
+          80,
+          81,
+          82,
+          83,
+          84,
+          85,
+          86
+        ],
+        "disposition": "formal_transfer_closed_compatible_parts_integrated",
+        "selected_sources": [
+          {
+            "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+            "path": "formal/pon-nakamoto-v1/w2_admission_cost_envelope.py"
+          },
+          {
+            "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+            "path": "formal/pon-nakamoto-v1/w2c_durable_spend.py"
+          },
+          {
+            "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+            "path": "formal/pon-nakamoto-v1/w2c_receiver_admission.py"
+          },
+          {
+            "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+            "path": "formal/pon-nakamoto-v1/w2c_receiver_admission_cost.py"
+          },
+          {
+            "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+            "path": "formal/pon-nakamoto-v1/w2c_stateless_receiver.py"
+          }
+        ],
+        "semantic_review": "Cost envelope is retained with finite arithmetic. Archive alternate WAL preverified DurableSpentFence/frontier wrapper; keep selected full-grant Gate. Current common stateless adds monotonic minimum to the older caller-bound code. Stateful owner now composes quota/policy, with explicit cost-caller bits.",
+        "remaining_boundary": "No table alias or hidden restoration of local-first fence. Node/runtime/Host deltas remain source_audit scope.",
+        "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+      },
+      {
+        "original_head": "a0d2b172bbdd9e57f6c72fd02df1764aeaf54a66",
+        "source_variant_ids": [
+          87,
+          88,
+          89,
+          90,
+          91
+        ],
+        "disposition": "formal_transfer_closed_owner_policy_integrated",
+        "selected_sources": [
+          {
+            "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+            "path": "formal/pon-nakamoto-v1/w2c_receiver_admission.py"
+          },
+          {
+            "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+            "path": "formal/pon-nakamoto-v1/w2c_receiver_admission_cost.py"
+          },
+          {
+            "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+            "path": "formal/pon-nakamoto-v1/w2c_stateless_receiver.py"
+          }
+        ],
+        "semantic_review": "Port fixed trusted owner bits, refuse mismatched offers before reservation, require authentic consumed grants to match current policy; combine with 7aa original issuance counter and pass bits from existing cost caller. Archive old proposal-only stateless API/paid-key/cleanup alternative.",
+        "remaining_boundary": "No identical stateless cleanup or fixed-bit API claim. Original forged-policy demonstrations not run; Node/runtime/Host scope remains separate.",
+        "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+      },
+      {
+        "original_head": "e489fa33fe80cae84dcc9bb0de2dad8b50efc69a",
+        "source_variant_ids": [
+          92,
+          93,
+          94
+        ],
+        "disposition": "formal_transfer_closed_retained_exact",
+        "selected_sources": [
+          {
+            "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+            "path": "formal/pon-nakamoto-v1/w2c_stateless_admission.py"
+          },
+          {
+            "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+            "path": "formal/pon-nakamoto-v1/w2c_stateless_cost.py"
+          }
+        ],
+        "semantic_review": "Retain exact network-bound Offer, receiver/epoch/proposal binding, shared PaidReplayOwner and token-bucket mint limits as separate unactivated research module.",
+        "remaining_boundary": "Not raw-compatible with 938 custom Grant despite shared DOMAIN text. Real transport, durable custody and pricing remain unqualified; cost driver not executed.",
+        "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+      },
+      {
+        "original_head": "fffc600e20386d797039763f5b1b081449342d1a",
+        "source_variant_ids": [
+          60,
+          61,
+          63,
+          64
+        ],
+        "disposition": "formal_transfer_closed_archived_distinct_profile",
+        "selected_sources": [
+          {
+            "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+            "path": "formal/pon-nakamoto-v1/w2c_stateless_receiver.py"
+          },
+          {
+            "commit": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
+            "path": "formal/pon-nakamoto-v1/w2c_stateless_admission.py"
+          }
+        ],
+        "semantic_review": "Same legacy custom stateless Grant and matched-cost source as 938: preserve exact original schema/cost pairing; selected caller-bound common module and network-bound Offer remain separate.",
+        "remaining_boundary": "No legacy wire alias or timing transfer. Source preserved in original DAG; no historical false-ticket workflow executed.",
+        "original_dag_preservation": "Root must retain exact original head ancestry or durable archive before remote branch retirement; full-tip ancestry was not recalculated in this lane after resource exhaustion."
+      }
+    ],
+    "test_scope": "Existing Cell/admission lane evidence; this join runs no tests and does not extend qualification to the final merged source."
+  },
+  "c41": {
+    "matrix_path_at_review": "/workspace/scratch/415d5ba2202d/root-formal-audit/variants.json",
+    "matrix_sha256": "90e15bf99e1fd0cd7d15055e7ae6a1d29bc00f812476b3ea9167a9feb40b7503",
+    "matrix_current": "91434d6663bf396e44614a2d7cce5e47cff0fe6b",
+    "source_disposition": "63 formal/research source blobs exactly retained; this is component identity, not execution or whole-head equivalence.",
+    "native_variant": "Root verified no additional native variant; remaining workflow/corpus review belongs to root.",
+    "matrix_row": {
+      "name": "fix/chain-w1-stage-diag-20261110-1138-035f",
+      "sha": "c41c4d8dd6b0c4206e1857b5a860a2f5c3e8270a",
+      "paths": [
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.toml",
+          "branch_blob": "a5727e1306bb9e31fa22590d1e9ac916835b36c7",
+          "current_blob": "a5727e1306bb9e31fa22590d1e9ac916835b36c7",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/Cargo.toml",
+          "branch_blob": "6233c4801f46bcb77971cb5d10b88bfb36323fec",
+          "current_blob": "6233c4801f46bcb77971cb5d10b88bfb36323fec",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/benches/fft.rs",
+          "branch_blob": "a6780a730b87117fcdcb3ff00092caf6e0674fdf",
+          "current_blob": "a6780a730b87117fcdcb3ff00092caf6e0674fdf",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/src/butterflies.rs",
+          "branch_blob": "518497401d25bf8cde151caca4533db8d17ac988",
+          "current_blob": "518497401d25bf8cde151caca4533db8d17ac988",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/src/lib.rs",
+          "branch_blob": "cb3c82f55d6659a2830f20e8a6c30838f04fb6c4",
+          "current_blob": "cb3c82f55d6659a2830f20e8a6c30838f04fb6c4",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/src/naive.rs",
+          "branch_blob": "b68489fce78836c45efc6b44bdb6b7bedcaba4eb",
+          "current_blob": "b68489fce78836c45efc6b44bdb6b7bedcaba4eb",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/src/radix_2_bowers.rs",
+          "branch_blob": "e4fdd3c13d01ab6cb8dd03b145ea615e723bbfdf",
+          "current_blob": "e4fdd3c13d01ab6cb8dd03b145ea615e723bbfdf",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/src/radix_2_dit.rs",
+          "branch_blob": "908f909ee319d188444e98695051c9143e7b5404",
+          "current_blob": "908f909ee319d188444e98695051c9143e7b5404",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/src/radix_2_dit_parallel.rs",
+          "branch_blob": "eed2d61e68353244d91dc001a021e9a9f5eae465",
+          "current_blob": "eed2d61e68353244d91dc001a021e9a9f5eae465",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/src/radix_2_small_batch.rs",
+          "branch_blob": "dab35f1eb2eba0bb24930ab001539f270e6d2fa3",
+          "current_blob": "dab35f1eb2eba0bb24930ab001539f270e6d2fa3",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/src/traits.rs",
+          "branch_blob": "4c3815893f78ce7eb77fccad1d6bd349fbdd58dc",
+          "current_blob": "4c3815893f78ce7eb77fccad1d6bd349fbdd58dc",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/src/twiddle_cache.rs",
+          "branch_blob": "e8f7b0dea14a0056888c081f9f04a70b9b41abfa",
+          "current_blob": "e8f7b0dea14a0056888c081f9f04a70b9b41abfa",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/src/util.rs",
+          "branch_blob": "b798b8b8310192fe5e17248ea68d05f67f05ba0a",
+          "current_blob": "b798b8b8310192fe5e17248ea68d05f67f05ba0a",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/tests/lde_blocks.rs",
+          "branch_blob": "40b9328da9a2455af399d236b198ea0a377cf64e",
+          "current_blob": "40b9328da9a2455af399d236b198ea0a377cf64e",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-dft-0.8.0/tests/testing.rs",
+          "branch_blob": "ba5233f3aff306e30fd321cbf605daf6fc2331d5",
+          "current_blob": "ba5233f3aff306e30fd321cbf605daf6fc2331d5",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-fri-0.8.0/Cargo.toml",
+          "branch_blob": "fe788a441b7f7e9603bca19df06a1dd8ea9a1f68",
+          "current_blob": "fe788a441b7f7e9603bca19df06a1dd8ea9a1f68",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-fri-0.8.0/benches/fold_even_odd.rs",
+          "branch_blob": "86d117a056efd19f7ba484916d558dd5db6fe80d",
+          "current_blob": "86d117a056efd19f7ba484916d558dd5db6fe80d",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-fri-0.8.0/benches/pcs_open.rs",
+          "branch_blob": "8300e46b7a7cd2e0056c0f754c7a8052ff9d2548",
+          "current_blob": "8300e46b7a7cd2e0056c0f754c7a8052ff9d2548",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-fri-0.8.0/src/config.rs",
+          "branch_blob": "7ca64e10c080cab4db97b913b723ea350d6c269a",
+          "current_blob": "7ca64e10c080cab4db97b913b723ea350d6c269a",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-fri-0.8.0/src/hiding_pcs.rs",
+          "branch_blob": "92bd863ea19919dddd558cc3aa57cd19ac2f08ca",
+          "current_blob": "92bd863ea19919dddd558cc3aa57cd19ac2f08ca",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-fri-0.8.0/src/lib.rs",
+          "branch_blob": "18d8a3393e1b77f4398a2b70c656941f32c01290",
+          "current_blob": "18d8a3393e1b77f4398a2b70c656941f32c01290",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-fri-0.8.0/src/pcs_transcript.rs",
+          "branch_blob": "b9c3764a67c70cfac054fca58fe4fdf6630d0cac",
+          "current_blob": "b9c3764a67c70cfac054fca58fe4fdf6630d0cac",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-fri-0.8.0/src/periodic.rs",
+          "branch_blob": "2233c7887c75be4d6b34254de76bdc2a76b8a35b",
+          "current_blob": "2233c7887c75be4d6b34254de76bdc2a76b8a35b",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-fri-0.8.0/src/proof.rs",
+          "branch_blob": "e1e4f532aeadc1a204a5bef91addbf0db390ae22",
+          "current_blob": "e1e4f532aeadc1a204a5bef91addbf0db390ae22",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-fri-0.8.0/src/prover.rs",
+          "branch_blob": "7618593c0694e68cc459c542dad9d1a236970edc",
+          "current_blob": "7618593c0694e68cc459c542dad9d1a236970edc",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-fri-0.8.0/src/transcript.rs",
+          "branch_blob": "739224657bc48b5337225ed63baf7d5fc7c15df1",
+          "current_blob": "739224657bc48b5337225ed63baf7d5fc7c15df1",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-fri-0.8.0/src/two_adic_pcs.rs",
+          "branch_blob": "a269057d3ec9917e8a7d78a77625c5222f03d420",
+          "current_blob": "a269057d3ec9917e8a7d78a77625c5222f03d420",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-fri-0.8.0/src/verifier.rs",
+          "branch_blob": "5bbfa2cd9a1bf3a8adadd1b971c371095db3b635",
+          "current_blob": "5bbfa2cd9a1bf3a8adadd1b971c371095db3b635",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-fri-0.8.0/tests/fri.rs",
+          "branch_blob": "725a15d56ce2b5db5ce9479678eb9d1ffec6bddc",
+          "current_blob": "725a15d56ce2b5db5ce9479678eb9d1ffec6bddc",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-fri-0.8.0/tests/pcs.rs",
+          "branch_blob": "5053e50ac22c5d1a8d48ad7fad88d11408a2bfb0",
+          "current_blob": "5053e50ac22c5d1a8d48ad7fad88d11408a2bfb0",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/Cargo.toml",
+          "branch_blob": "7b1901bb6a0ff9fdd00baf5b40c0e589fb51df0a",
+          "current_blob": "7b1901bb6a0ff9fdd00baf5b40c0e589fb51df0a",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/src/config.rs",
+          "branch_blob": "0dfdf7b7562c8fdb944be9a3a385508b7a6e0888",
+          "current_blob": "0dfdf7b7562c8fdb944be9a3a385508b7a6e0888",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/src/error.rs",
+          "branch_blob": "7ac9ea8b66fcc0a525cd7ef66b40aa46d1516eaf",
+          "current_blob": "7ac9ea8b66fcc0a525cd7ef66b40aa46d1516eaf",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/src/folder.rs",
+          "branch_blob": "4e603647e3946a2704cd3d770c5be76e9224c314",
+          "current_blob": "4e603647e3946a2704cd3d770c5be76e9224c314",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/src/lib.rs",
+          "branch_blob": "98aea2ccff1cfa82711492ff760ab943d760578a",
+          "current_blob": "98aea2ccff1cfa82711492ff760ab943d760578a",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/src/preprocessed.rs",
+          "branch_blob": "181852afb93506135e8afe5934523fbe2a11d263",
+          "current_blob": "181852afb93506135e8afe5934523fbe2a11d263",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/src/proof.rs",
+          "branch_blob": "866da5538755b8bfaf672d2417963df552e3b13e",
+          "current_blob": "866da5538755b8bfaf672d2417963df552e3b13e",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/src/prover.rs",
+          "branch_blob": "95c6df771fdb2fb36c83b7e748a799a5b11c82ea",
+          "current_blob": "95c6df771fdb2fb36c83b7e748a799a5b11c82ea",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/src/security.rs",
+          "branch_blob": "d94c9eb3d9540c4bc269cd11c777db012f402b98",
+          "current_blob": "d94c9eb3d9540c4bc269cd11c777db012f402b98",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/src/sub_builder.rs",
+          "branch_blob": "16eddcb23c33fbf14fed868fc2db50ffad92ea03",
+          "current_blob": "16eddcb23c33fbf14fed868fc2db50ffad92ea03",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/src/symbolic.rs",
+          "branch_blob": "d7557f10676c3228f8ecc42bf59e824d3e0bc225",
+          "current_blob": "d7557f10676c3228f8ecc42bf59e824d3e0bc225",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/src/transcript.rs",
+          "branch_blob": "aeeaa52bca9465dbf492b2bf397ec72c231bb375",
+          "current_blob": "aeeaa52bca9465dbf492b2bf397ec72c231bb375",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/src/verifier.rs",
+          "branch_blob": "de2bc19df0e6fd88940024ab7faffc5a51ffb640",
+          "current_blob": "de2bc19df0e6fd88940024ab7faffc5a51ffb640",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/tests/fib_air.rs",
+          "branch_blob": "69e82d5b08b9e334d17b290d126adb7b33748883",
+          "current_blob": "69e82d5b08b9e334d17b290d126adb7b33748883",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/tests/grinding.rs",
+          "branch_blob": "62b8c38ddb2e357bbb01036d787ad7dc3ee9277d",
+          "current_blob": "62b8c38ddb2e357bbb01036d787ad7dc3ee9277d",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/tests/mul_air.rs",
+          "branch_blob": "ee753cb1dc4a2b18650e8cb14105584a13c14e60",
+          "current_blob": "ee753cb1dc4a2b18650e8cb14105584a13c14e60",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/tests/mul_fib_pair.rs",
+          "branch_blob": "549867fa8bb2e2b170147569560a435d3c8958c0",
+          "current_blob": "549867fa8bb2e2b170147569560a435d3c8958c0",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/tests/no_next_row.rs",
+          "branch_blob": "27f4c37ce3df3a686428c67a22a25890abdd14ea",
+          "current_blob": "27f4c37ce3df3a686428c67a22a25890abdd14ea",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/tests/periodic_air.rs",
+          "branch_blob": "0937c0457caf86ccfce2d004d168ce7da07c40d2",
+          "current_blob": "0937c0457caf86ccfce2d004d168ce7da07c40d2",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/tests/periodic_column_shape.rs",
+          "branch_blob": "3d21469348f257e95ff749f1e981066cd2a94a7e",
+          "current_blob": "3d21469348f257e95ff749f1e981066cd2a94a7e",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/tests/periodic_shape_agreement.rs",
+          "branch_blob": "aefe4af8801d5dd410210530adddcd52fca0a94d",
+          "current_blob": "aefe4af8801d5dd410210530adddcd52fca0a94d",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/tests/preprocessed_no_next_row.rs",
+          "branch_blob": "7baf24053c5eebb8b3fc2047cd017bd73d324708",
+          "current_blob": "7baf24053c5eebb8b3fc2047cd017bd73d324708",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/tests/rc_sub_builder.rs",
+          "branch_blob": "b4a5fa4549b71c4fccdcdbfb51b4d3ff81b689a0",
+          "current_blob": "b4a5fa4549b71c4fccdcdbfb51b4d3ff81b689a0",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/tests/security_params.rs",
+          "branch_blob": "730f3add12b49d2b2d1f05f4cf7243d96c8e1d30",
+          "current_blob": "730f3add12b49d2b2d1f05f4cf7243d96c8e1d30",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/tests/stir_fibonacci.rs",
+          "branch_blob": "64d15bd892a1c86ba57fb1edcdcf44763158ac51",
+          "current_blob": "64d15bd892a1c86ba57fb1edcdcf44763158ac51",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/diagnostic_vendor/p3-uni-stark-0.8.0/tests/transcript_binding.rs",
+          "branch_blob": "27c9fe8b83629acfefc3fac6f476d2b5261d4c72",
+          "current_blob": "27c9fe8b83629acfefc3fac6f476d2b5261d4c72",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/run_receiver_comparison.py",
+          "branch_blob": "675dc1f135fc58df8d1d8e22146237e6fc437a79",
+          "current_blob": "675dc1f135fc58df8d1d8e22146237e6fc437a79",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/src/lib.rs",
+          "branch_blob": "e0a99cd0776078356f257f1556a85e7d4eda09ee",
+          "current_blob": "e0a99cd0776078356f257f1556a85e7d4eda09ee",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/src/main.rs",
+          "branch_blob": "c0a50f4cdd858286cd3cfc6a52b6d8396711f046",
+          "current_blob": "c0a50f4cdd858286cd3cfc6a52b6d8396711f046",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/tests/receiver_metrics.rs",
+          "branch_blob": "1ebbb0af2aff71583bfbf6aafdc7caf0621046bb",
+          "current_blob": "1ebbb0af2aff71583bfbf6aafdc7caf0621046bb",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/tests/test_receiver_comparison.py",
+          "branch_blob": "f1eed97563d4fb7dfa26cc1d6977752b275fa753",
+          "current_blob": "f1eed97563d4fb7dfa26cc1d6977752b275fa753",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_public_stark_research/src/proof_config.rs",
+          "branch_blob": "f466e0214bde12c87e6fb9fee614925b0d9f8d57",
+          "current_blob": "f466e0214bde12c87e6fb9fee614925b0d9f8d57",
+          "state": "exact_blob"
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/w1_public_stark_research/tests/dft_reuse.rs",
+          "branch_blob": "c8ee19f018e6d5361fd4a1335b8c8be9ba26fd69",
+          "current_blob": "c8ee19f018e6d5361fd4a1335b8c8be9ba26fd69",
+          "state": "exact_blob"
+        }
+      ],
+      "counts": {
+        "exact_blob": 63
+      }
+    }
+  }
+}

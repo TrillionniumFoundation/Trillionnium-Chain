@@ -1,0 +1,98 @@
+--- a/trillionnium/crates/trnm-pon-node/src/operator_continuous_lease.rs
++++ b/trillionnium/crates/trnm-pon-node/src/operator_continuous_lease.rs
+@@ -247,10 +247,10 @@
+     let remaining = old.expires.saturating_sub(earliest);
+     let phase = if next_block_height > old.expires {
+         Q4RenewalPhase::Expired
++    } else if remaining < need {
++        Q4RenewalPhase::AtRisk
+     } else if next_block_height < next.not_before {
+         Q4RenewalPhase::AwaitSignedWindow
+-    } else if remaining < need {
+-        Q4RenewalPhase::AtRisk
+     } else {
+         Q4RenewalPhase::WindowOpenByTime
+     };
+--- a/trillionnium/crates/trnm-pon-node/src/operator_continuous_lease_tests.rs
++++ b/trillionnium/crates/trnm-pon-node/src/operator_continuous_lease_tests.rs
+@@ -147,6 +147,27 @@
+         95,
+     );
+ 
++    // New future signed start 95 is legally possible only through height
++    // 100, leaving five inclusion heights. Queue lag 10 + margin 10 is
++    // already impossible even at observation height 50: do not report merely
++    // AwaitSignedWindow when the configured timing budget cannot fit.
++    let future_but_at_risk = forecast_q4_renewal_window(&old, &later, 50, 10, 10).unwrap();
++    assert_eq!(future_but_at_risk.phase, Q4RenewalPhase::AtRisk);
++    assert_eq!(future_but_at_risk.earliest_possible_height, 95);
++    assert_eq!(future_but_at_risk.last_legal_height, 100);
++    assert_eq!(future_but_at_risk.inclusion_slack_blocks, 5);
++    assert_eq!(future_but_at_risk.assumed_queue_lag_blocks, 10);
++    assert_eq!(future_but_at_risk.assumed_safety_margin_blocks, 10);
++
++    // Existing zero-lag case remains AwaitSignedWindow, and an already
++    // expired observed height takes precedence over any remaining timing risk.
++    assert_eq!(
++        forecast_q4_renewal_window(&old, &later, 101, 10, 10)
++            .unwrap()
++            .phase,
++        Q4RenewalPhase::Expired,
++    );
++
+     let mut bad = next.clone();
+     bad.revision = old.revision;
+     assert!(forecast_q4_renewal_window(&old, &bad, 50, 0, 0).is_err());
+--- a/trillionnium/crates/trnm-pon-node/src/store.rs
++++ b/trillionnium/crates/trnm-pon-node/src/store.rs
+@@ -5554,6 +5554,50 @@
+     pub fn parent_height(&self, parent: Hash) -> Result<u64> {
+         Ok(self.record(parent)?.height)
+     }
++    /// Active-branch read-only Q4 forecast. Unlike the generic time-only
++    /// advisor this reads and checks the ACTUAL current parent, authenticated
++    /// lifecycle/source statement and its verified state root first.
++    /// There is no signing, dispatch, slot reservation, inclusion guarantee,
++    /// permission to retry Unknown effects, or mining-mode substitution.
++    /// Reorganization or a changed local generation invalidates the advice.
++    pub fn forecast_q4_renewal_from_active(
++        &self,
++        task: Hash,
++        proposed_lease: &trnm_protocol::qualified_work_task::lifecycle_v2::DemandLeaseV2,
++        assumed_queue_lag_blocks: u64,
++        assumed_safety_margin_blocks: u64,
++    ) -> Result<(Hash, u64, crate::Q4RenewalForecast)> {
++        ensure(
++            matches!(
++                self.settings.task_profile(),
++                OVERLAP_TASK_PROFILE | CONTINUITY_TASK_PROFILE
++            ),
++            "Q4_FORECAST_PROFILE",
++        )?;
++        let (tip, generation, state) = self.read_active()?;
++        let next_height = self
++            .record(tip)?
++            .height
++            .checked_add(1)
++            .ok_or("HEIGHT")?;
++        let actual_lease = qualified_task_lifecycle::eligible_task(
++            &state,
++            task,
++            next_height,
++            &self.settings.app,
++        )?;
++        let forecast = crate::forecast_q4_renewal_window(
++            actual_lease.lease(),
++            proposed_lease,
++            next_height,
++            assumed_queue_lag_blocks,
++            assumed_safety_margin_blocks,
++        )
++        .map_err(|_| Error::from("Q4_FORECAST_REFUSED"))?;
++        ensure(self.active()? == (tip, generation), "ACTIVE_GENERATION_CONFLICT")?;
++        Ok((tip, generation, forecast))
++    }
++
+     pub fn lifecycle_task_lease(
+         &self,
+         parent: Hash,
