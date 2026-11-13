@@ -134,10 +134,10 @@
   },
   "input_manifests": {
     "legacy": {
-      "declared_revision": "2bb56596e637908c44b5a2ef5984c9c37c7d3cc8",
+      "declared_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
       "path": "config/pon/pq128-lifetime-budget-v1.json",
       "revision_semantics": "declared-event-source-revision",
-      "sha256": "3ed0e9d451ff885fb27a4a6f7449ca9050eb44707d801a3a40d675fcf5ceaed4"
+      "sha256": "0315e07ca2988b3b209a6fd2980ca6d9aa22a5bb3aa98b5444a041852b2f0afd"
     },
     "root": {
       "declared_revision": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
@@ -356,7 +356,7 @@
       }
     }
   },
-  "review_base_revision": "57b069ae1e7ed32ff95e4f2a18a74d5eadcda550",
+  "review_base_revision": "0f9b30549328e5be20f4d3e6e27bd132b42d90de",
   "root_event_relation": {
     "common_failure_obligations": [
       "same-complete-statement-purpose-and-current-roster",

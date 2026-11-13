@@ -11,7 +11,33 @@ and [budget checker](../../scripts/ci/pq_lifetime_budget.py) extend the existing
 [whole-chain claim guard](WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md). They do not
 transfer an observation or security estimate from another candidate to this one.
 
-## Current consolidation source binding, 2026-11-13
+## Current client-construction source binding, 2026-11-13
+
+The unchanged **21-path** event roster now binds to source checkpoint
+`0f9b30549328e5be20f4d3e6e27bd132b42d90de`, tree
+`9188a73c6933b3b5e19f3fb927c8eb5891f4f2e2`. Only the listed
+`trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs` digest changes;
+the other twenty declared source files retain their reviewed bytes. The source
+lock and `experiment.source_revision` name this actual source checkpoint.
+The current lock-byte SHA-256 is
+`094dcae805f3872ee621d6554ab26a7a3a34c498e21be669740949ada424ccb2`.
+
+The private client timing value retains one monotonic start across immutable PQ
+pin preparation. Construction and total diagnostics now include that interval.
+An already expired caller deadline refuses before pin preparation, including an
+invalid pin; a live invalid pin retains `PUBLIC_CHALLENGE_SIGNATURE`.
+The common client body, profile checks, signed messages, server admission,
+resource owners and all operational limits retain their existing behavior.
+The two added construction controls make no network request and use no sleep
+or performance threshold.
+
+This mapping change preserves the original event sets, allocations, assumptions,
+unknown terms and query budgets. It supplies no whole-node or cryptographic
+qualification: the actual lifetime bound stays null, qualification fields stay
+false, and the result remains HOLD. The earlier bindings below remain exact
+historical declarations; their observations do not transfer to this source.
+
+## Retained consolidation source binding, 2026-11-13
 
 The unchanged **21-path** event roster now binds to source checkpoint
 `2bb56596e637908c44b5a2ef5984c9c37c7d3cc8`, tree
