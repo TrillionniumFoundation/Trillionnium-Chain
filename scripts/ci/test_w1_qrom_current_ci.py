@@ -108,7 +108,7 @@ class CurrentCiTests(unittest.TestCase):
         self.assertIs(self.mapping['historical_v1']['workflow_passed'], False)
         self.assertEqual(self.drift['historical_exit_code'], 2)
         self.assertEqual([row['observed_bytes'] for row in self.drift['selected_source_differences']],
-                         [11172, 32654])
+                         [11172, 46018, 32654])
 
     def test_named_runner_records_every_real_start_and_success(self):
         report, roster = self.execute_fixture()

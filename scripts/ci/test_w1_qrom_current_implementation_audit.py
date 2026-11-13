@@ -75,7 +75,7 @@ class CurrentImplementationTests(unittest.TestCase):
 
     def test_all_six_local_crates_and_literal_inputs_are_bound(self):
         result = self.report['local_path_closure']
-        self.assertEqual(result['source_files_checked'], 139)
+        self.assertEqual(result['source_files_checked'], 140)
         self.assertTrue(result['source_before_after_equal'])
         manifests = set(self.contract['local_path_closure']['entry_manifests'])
         manifests.update(row['target'] for row in result['path_edges'])
@@ -90,7 +90,8 @@ class CurrentImplementationTests(unittest.TestCase):
         self.assertIn(
             'trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_zero_paired_lazy_v1.rs',
             names)
-        for path in ('src/pq_root_v3.rs', 'src/pq_root_v3/tests.rs', 'tests/pq_root_v3_native.rs'):
+        for path in ('src/pq_root_v3.rs', 'src/pq_root_v3/tests.rs', 'tests/pq_root_v3_native.rs',
+                     'tests/ed25519_rfc8032.rs'):
             self.assertIn('trillionnium/crates/trnm-crypto-primitives/' + path, names)
         self.assertEqual(len(result['literal_include_files']), 8)
 

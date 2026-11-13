@@ -303,7 +303,7 @@ def validate_drift(report, current, legacy):
     expected = [{'path': row['path'], 'historical': old[row['path']], 'current': row,
         'observed_bytes': row['bytes'], 'observed_sha256': row['sha256']}
         for row in current['project_files'] if row != old[row['path']]]
-    require(report.get('selected_source_differences') == expected and len(expected) == 2,
+    require(report.get('selected_source_differences') == expected and len(expected) == 3,
             'historical/current selected-byte differences lost')
 
 

@@ -2972,23 +2972,18 @@ class CellCurrentApiReadbackTests(unittest.TestCase):
             raise AssertionError("original compile-fail observation changed")
         cls.observed = raw.decode("utf-8")
         cls.observation = json.loads((cls.root / cls.OBSERVATION).read_bytes())
-        prefix = "python3 -c '"
-        suffix = "' \"$out/cell-current-api.log\""
-        commands = [line.strip() for line in (cls.root / cls.WORKFLOW).read_text().splitlines()
-                    if line.strip().startswith(prefix) and line.strip().endswith(suffix)]
-        if len(commands) != 1:
-            raise AssertionError("exactly one actual workflow readback command is required")
-        cls.program = commands[0][len(prefix):-len(suffix)]
+        sys.path.insert(0, str(cls.root / "scripts/ci"))
+        import check_cell_current_api
+        cls.reader = check_cell_current_api
+        command = 'python3 scripts/ci/check_cell_current_api.py "$out/cell-current-api.log"'
+        if (cls.root / cls.WORKFLOW).read_text().count(command) != 1:
+            raise AssertionError("exactly one actual source-bound readback command is required")
 
     def observe(self, text):
-        with tempfile.TemporaryDirectory(prefix="trnm-cell-api-readback-") as directory:
-            path = Path(directory) / "observation.log"
-            path.write_text(text)
-            result = subprocess.run(
-                [sys.executable, "-I", "-S", "-B", "-c", self.program, str(path)],
-                capture_output=True, text=True, check=False, timeout=5)
-        self.assertEqual(result.stderr, "")
-        return result.returncode, json.loads(result.stdout)
+        # The unchanged historical log is intentionally read at its historical
+        # source line; the current CLI derives its line from the current source.
+        report = self.reader.inspect(text, 364)
+        return (0 if report["result"] == "PASS" else 1), report
 
     def assert_refused(self, text):
         status, report = self.observe(text)
@@ -3072,6 +3067,24 @@ class CellCurrentApiReadbackTests(unittest.TestCase):
                          "7326da0ad2c31fe599300d928fde84129ce83de0b072ef3bb46799d424aca3eb")
         self.assertIn("(line 364)", self.EXACT_CASE)
         self.assertEqual(self.observed.count(self.EXACT_CASE), 1)
+
+    def test_current_source_location_is_derived_and_wrong_locations_stay_refused(self):
+        source = (self.root / self.reader.SOURCE).read_text()
+        line = self.reader.source_line(source)
+        shifted = self.observed.replace("(line 364)", "(line " + str(line) + ")")
+        self.assertEqual(self.reader.inspect(shifted, line)["result"], "PASS")
+        self.assertEqual(self.reader.inspect(shifted, line + 1)["result"], "FAIL")
+        self.assertEqual(self.reader.source_line("// Unrelated insertion.\n" + source), line + 1)
+
+    def test_missing_or_ambiguous_source_example_is_refused(self):
+        source = (self.root / self.reader.SOURCE).read_text()
+        for changed in (source.replace("```compile_fail,E0308", "```compile_fail,E0309"),
+                        source.replace("let _ = proof.release_at(300);", "let _ = proof.release_at(301);"),
+                        source.replace("pub struct VerifiedCellPqReleaseV2", "pub struct DifferentProof"),
+                        source + source):
+            with self.subTest(changed=changed[-80:]):
+                with self.assertRaises(ValueError):
+                    self.reader.source_line(changed)
 
 
 

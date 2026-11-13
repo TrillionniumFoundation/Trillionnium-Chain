@@ -28,6 +28,7 @@ ROSTER = 'config/pon/w1-qrom-required-tests-v1.json'
 REQUIRED_STAGES = (
     'observations', 'checkout', 'source_before', 'preflight', 'named_tests',
     'historical_controls', 'implementation', 'current_implementation',
+    'historical_checkout', 'historical_source_before', 'historical_source_after',
     'budget_unknown', 'budget_hypothetical',
     'report_scopes', 'source_after',
 )
@@ -99,7 +100,7 @@ def named_fixture(test_id: str, skipped: bool = False):
 class WorkflowGateTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.workflow_text = WORKFLOW.read_text()
+        cls.workflow_text = WORKFLOW.read_text().split('  qrom-current-supplemental:\n', 1)[1]
         cls.codes = {step: embedded_python(cls.workflow_text, step)
                      for step in ('named_tests', 'report_scopes', 'status')}
         cls.roster_bytes = (ROOT / ROSTER).read_bytes()
@@ -157,6 +158,11 @@ class WorkflowGateTests(unittest.TestCase):
         }
         for name in ('source-before.json', 'source-after.json'):
             write_json(out / name, identity)
+        historical_identity = dict(identity, tested_commit='0c830e0be8939ce80c8443c9ad68021b87343a00',
+                                   tested_tree='273d0c1c69cd9bdfb85dc027bfdd8a49c2121c2c',
+                                   candidate='0c830e0be8939ce80c8443c9ad68021b87343a00')
+        for name in ('historical-source-before.json', 'historical-source-after.json'):
+            write_json(out / name, historical_identity)
         return root, out
 
     def execute(self, step, root, out, *, steps=None):
@@ -306,13 +312,32 @@ class WorkflowGateTests(unittest.TestCase):
                 self.assertIs(report['all_named_controls_passed'], False)
 
     def test_status_rejects_exit_zero_without_named_completion(self):
-        for name in ('named-tests.json', *supplemental.OUTPUTS.values()):
+        for name in ('named-tests.json', 'historical-source-before.json',
+                     'historical-source-after.json', *supplemental.OUTPUTS.values()):
             with self.subTest(completion=name):
                 root, out = self.completed_workspace()
                 (out / name).unlink()  # All other evidence and step successes remain.
                 result = self.execute('status', root, out)
                 self.assertNotEqual(result[0], 0, 'successful steps cannot replace a completion record')
                 self.assertIs(read_json(out / 'ci-status.json')['all_required_observations_passed'], False)
+        for mutation in ('wrong_tree', 'wrong_commit', 'boolean_count', 'changed_after'):
+            with self.subTest(historical_identity=mutation):
+                root, out = self.completed_workspace()
+                before = read_json(out / 'historical-source-before.json')
+                after = deepcopy(before)
+                if mutation == 'wrong_tree':
+                    before['tested_tree'] = after['tested_tree'] = 'd' * 40
+                elif mutation == 'wrong_commit':
+                    before['tested_commit'] = after['tested_commit'] = HEAD
+                elif mutation == 'boolean_count':
+                    before['tracked_entries'] = after['tracked_entries'] = True
+                else:
+                    after['tracked_bytes'] += 1
+                write_json(out / 'historical-source-before.json', before)
+                write_json(out / 'historical-source-after.json', after)
+                result = self.execute('status', root, out)
+                self.assertNotEqual(result[0], 0, 'successful steps cannot replace pinned historical identity')
+                self.assertIsNotNone(read_json(out / 'ci-status.json')['historical_named_source_error'])
 
     def test_status_independently_rechecks_named_ids_and_boolean_scope(self):
         for mutation in ('missing_success', 'duplicate_success', 'skip', 'scope_zero', 'passed_one'):
