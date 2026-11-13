@@ -591,6 +591,47 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             check_independent_conformance(unbound, self.lanes)
 
+    def test_restored_cell_and_parent_controls_keep_exact_lane_order_and_failures(self):
+        # Independent names: the checker inventory cannot remove its own coverage.
+        controls = (
+            ('scripts/test_llm_cell_release.py',
+             'scripts/ci/test_llm_cell_handoff_deadline.py'),
+            ('scripts/test_llm_runtime_parent_step_v2.py',
+             'scripts/test_llm_neural_read_worker.py'),
+            ('scripts/test_llm_runtime_parent_step_task_v2.py',
+             'scripts/test_llm_runtime_parent_step_v2.py'),
+        )
+        check_independent_conformance(self.script, self.lanes)
+        for path, predecessor in controls:
+            command = '    python3 ' + path + '\n'
+            previous = '    python3 ' + predecessor + '\n'
+            self.assertEqual(self.script.count(command), 1)
+            self.assertIn(previous + command, self.script)
+            changes = {
+                'missing': self.script.replace(command, ''),
+                'duplicate': self.script.replace(command, command * 2),
+                'comment': self.script.replace(command, '    # ' + command.lstrip()),
+                'stub': self.script.replace(command, '    true # ' + command.lstrip()),
+                'conditional skip': self.script.replace(
+                    command, '    if false; then\n' + command + '    fi\n'),
+                'conditional swallow': self.script.replace(
+                    command, '    if\n' + command + '    then :; fi\n'),
+                'early success': self.script.replace(command, '    exit 0\n' + command),
+                'swallowed failure': self.script.replace(
+                    command, command.rstrip() + ' || true\n'),
+                'wrong lane': self.script.replace(command, '').replace(
+                    '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+                'other-lane duplicate': self.script.replace(
+                    '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+                'out of order': self.script.replace(command, '').replace(
+                    previous, command + previous),
+            }
+            for label, changed in changes.items():
+                with self.subTest(path=path, change=label):
+                    self.assertNotEqual(changed, self.script)
+                    with self.assertRaises(ValueError):
+                        check_independent_conformance(changed, self.lanes)
+
     def test_current_readers_and_runtime_controls_cannot_be_missing_duplicated_stubbed_or_moved(self):
         # Independent inventory: removing a required command from the checker
         # must not silently remove that command's negative coverage as well.
