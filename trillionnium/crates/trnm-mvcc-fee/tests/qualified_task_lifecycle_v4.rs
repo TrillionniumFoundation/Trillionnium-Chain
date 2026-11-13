@@ -285,7 +285,9 @@ fn all_32_q4_slots_reject_early_reopen_and_allow_only_retention_safe_generation(
 
     let cfg = Config::installed_with_profiles("native-public-evaluation-dev-v1", PROFILE).unwrap();
     let model: Vec<u8> = (0..4096_u32).flat_map(|i| (i % 97).to_le_bytes()).collect();
-    let input: Vec<u8> = (0..4096_u32).flat_map(|i| (i % 101).to_le_bytes()).collect();
+    let input: Vec<u8> = (0..4096_u32)
+        .flat_map(|i| (i % 101).to_le_bytes())
+        .collect();
     let boot = qualified_task_lifecycle::bootstrap_state(&cfg, &model, &input).unwrap();
     let envelope = |nonce: u64, tag: u8, payload: Vec<u8>| {
         let mut tx = Envelope {
@@ -301,7 +303,10 @@ fn all_32_q4_slots_reject_early_reopen_and_allow_only_retention_safe_generation(
         tx.signature = sign(1, &tx.signing_digest().unwrap());
         tx
     };
-    let mut state = Spy { state: boot.state.clone(), writes: 0 };
+    let mut state = Spy {
+        state: boot.state.clone(),
+        writes: 0,
+    };
     for slot in 1..DEMAND_SLOTS {
         let mut fresh = boot.lease.clone();
         fresh.slot = slot;
@@ -312,11 +317,19 @@ fn all_32_q4_slots_reject_early_reopen_and_allow_only_retention_safe_generation(
         fresh.available_until = 1101;
         fresh.demand_id = fresh.derived_demand_id();
         qualified_task_lifecycle::apply_verified_command(
-            &mut state, &envelope(u64::from(slot), 18, fresh.encode().unwrap()), 1, &cfg,
-        ).unwrap();
+            &mut state,
+            &envelope(u64::from(slot), 18, fresh.encode().unwrap()),
+            1,
+            &cfg,
+        )
+        .unwrap();
     }
     assert_eq!(
-        state.state.keys().filter(|key| key.starts_with("qualified-demand-slot-v2:")).count(),
+        state
+            .state
+            .keys()
+            .filter(|key| key.starts_with("qualified-demand-slot-v2:"))
+            .count(),
         usize::from(DEMAND_SLOTS),
     );
     assert_eq!(state.state[qualified_task_lifecycle::GENERATION_KEY], 32);
@@ -338,7 +351,10 @@ fn all_32_q4_slots_reject_early_reopen_and_allow_only_retention_safe_generation(
     let open = envelope(32, 18, replacement.encode().unwrap());
 
     for revoked in [false, true] {
-        let mut branch = Spy { state: state.state.clone(), writes: 0 };
+        let mut branch = Spy {
+            state: state.state.clone(),
+            writes: 0,
+        };
         if revoked {
             let request = DemandRevocationV2 {
                 network: cfg.network,
@@ -349,8 +365,12 @@ fn all_32_q4_slots_reject_early_reopen_and_allow_only_retention_safe_generation(
                 expected_revision: boot.lease.revision,
             };
             qualified_task_lifecycle::apply_verified_command(
-                &mut branch, &envelope(33, 20, request.encode().unwrap()), 2, &cfg,
-            ).unwrap();
+                &mut branch,
+                &envelope(33, 20, request.encode().unwrap()),
+                2,
+                &cfg,
+            )
+            .unwrap();
             assert_eq!(branch.state[&slot_key(0).unwrap()]["status"], "revoked");
         } else {
             assert_eq!(branch.state[&slot_key(0).unwrap()]["status"], "active");
@@ -358,28 +378,33 @@ fn all_32_q4_slots_reject_early_reopen_and_allow_only_retention_safe_generation(
         let retained = branch.state.clone();
         branch.writes = 0;
         for height in [1000, 1100] {
-            let error = qualified_task_lifecycle::apply_verified_command(
-                &mut branch, &open, height, &cfg,
-            ).unwrap_err();
+            let error =
+                qualified_task_lifecycle::apply_verified_command(&mut branch, &open, height, &cfg)
+                    .unwrap_err();
             assert_eq!(error.to_string(), "TASK_RETAINED");
             assert_eq!(branch.state, retained);
             assert_eq!(branch.writes, 0);
         }
-        qualified_task_lifecycle::apply_verified_command(
-            &mut branch, &open, 1101, &cfg,
-        ).unwrap();
+        qualified_task_lifecycle::apply_verified_command(&mut branch, &open, 1101, &cfg).unwrap();
         assert_eq!(branch.writes, 2); // exactly slot + generation key
         assert_eq!(branch.state[qualified_task_lifecycle::GENERATION_KEY], 33);
         assert_eq!(branch.state[&slot_key(0).unwrap()]["status"], "active");
         assert_eq!(branch.state[&slot_key(0).unwrap()]["opened_height"], 1101);
         assert_eq!(
-            branch.state.keys().filter(|key| key.starts_with("qualified-demand-slot-v2:")).count(),
+            branch
+                .state
+                .keys()
+                .filter(|key| key.starts_with("qualified-demand-slot-v2:"))
+                .count(),
             usize::from(DEMAND_SLOTS),
         );
         // Simulated branch rollback to before the open, followed by exact replay.
         // This is not a real Node fork/reorg; separate native tests own that.
         let committed = branch.state.clone();
-        let mut replay = Spy { state: retained, writes: 0 };
+        let mut replay = Spy {
+            state: retained,
+            writes: 0,
+        };
         qualified_task_lifecycle::apply_verified_command(&mut replay, &open, 1101, &cfg).unwrap();
         assert_eq!(replay.state, committed);
         assert_eq!(replay.writes, 2);

@@ -182,7 +182,6 @@ impl Lease {
 #[path = "operator_continuous_lease_tests.rs"]
 pub(crate) mod tests;
 
-
 /// Read-only Q4 overlap forecast for an independently signed *future* source
 /// statement. This never checks a signature or returns admission authority:
 /// the caller must re-read the actual parent, perform original dual-signature
@@ -237,9 +236,7 @@ pub fn forecast_q4_renewal_window(
             && next.not_before <= old.expires
             && next.expires > old.expires,
     )?;
-    check(
-        assumed_queue_lag_blocks <= 1000 && assumed_safety_margin_blocks <= 1000,
-    )?;
+    check(assumed_queue_lag_blocks <= 1000 && assumed_safety_margin_blocks <= 1000)?;
     let need = assumed_queue_lag_blocks
         .checked_add(assumed_safety_margin_blocks)
         .ok_or(PolicyError::Budget)?;

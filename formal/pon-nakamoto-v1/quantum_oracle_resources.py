@@ -91,12 +91,47 @@ def decimal_text(value: Decimal) -> str:
     return format(value, ".30g")
 
 
+def _validate_count_shape(counts: dict, qubits: int, prefix: str) -> None:
+    """Check the same count/depth invariants for stages and serial totals.
+
+    Callers check their own integer domain first: a stage is limited to
+    MAX_COUNT, while accumulated workload totals may reach MAX_DERIVED.
+    This is arithmetic consistency, not verification of a circuit or layout.
+    """
+    if counts["gate_depth"] > counts["gate_count"]:
+        raise ValueError(prefix + "_SHAPE")
+    if counts["toffoli_count"] + counts["direct_t_count"] > counts["gate_count"]:
+        raise ValueError(prefix + "_GATE_SUBTOTAL")
+    for count_key, depth_key in (("gate_count", "gate_depth"),
+                                 ("toffoli_count", "toffoli_depth"),
+                                 ("direct_t_count", "direct_t_depth")):
+        count, depth = counts[count_key], counts[depth_key]
+        if depth > count or bool(count) != bool(depth):
+            raise ValueError(prefix + "_COUNT_DEPTH")
+    if max(counts["toffoli_depth"], counts["direct_t_depth"]) > counts["gate_depth"]:
+        raise ValueError(prefix + "_DEPENDENCY_DEPTH")
+    # Each layer can touch each live wire at most once. Every counted gate
+    # uses at least one wire, and a Toffoli uses three. CNOT arity is not
+    # separately available, so this is only a necessary (permissive) bound.
+    # Counts and depths must describe the same declared schedule. Independent
+    # loose count/depth ceilings cannot justify a shorter physical clock.
+    if counts["gate_count"] + 2 * counts["toffoli_count"] > qubits * counts["gate_depth"]:
+        raise ValueError(prefix + "_GATE_WIDTH_DEPTH")
+    if counts["toffoli_count"] > (qubits // 3) * counts["toffoli_depth"]:
+        raise ValueError(prefix + "_TOFFOLI_WIDTH_DEPTH")
+    if counts["direct_t_count"] > qubits * counts["direct_t_depth"]:
+        raise ValueError(prefix + "_T_WIDTH_DEPTH")
+
+
 @dataclass(frozen=True)
 class Circuit:
     """One stage; qubits count *all live registers*, including persistent memory.
 
-    Counts describe a caller-supplied X/CNOT/Toffoli/T abstraction. winner_compute
-    is the forward computation of the winner predicate, including any garbage.
+    Counts describe one caller-supplied X/CNOT/Toffoli/T schedule, with all
+    depths allowed to conservatively bound that same schedule. They are not
+    unrelated loose ceilings: gate count, live width and depth must admit the
+    declared gate operations. winner_compute is the forward computation of
+    the winner predicate, including any garbage.
     Its inverse is charged independently with identical count/depth. An already
     compute-copy-uncompute component may be used inside it, but is not a phase
     oracle by itself. Stage transitions assume compatible register allocations.
@@ -115,17 +150,9 @@ class Circuit:
             if key != "provenance":
                 integer(value, "CIRCUIT_" + key.upper())
         label(self.provenance, "CIRCUIT_PROVENANCE")
-        if not self.logical_qubits or self.gate_depth > self.gate_count:
+        if not self.logical_qubits:
             raise ValueError("CIRCUIT_SHAPE")
-        if self.toffoli_count + self.direct_t_count > self.gate_count:
-            raise ValueError("CIRCUIT_GATE_SUBTOTAL")
-        for count, depth in ((self.gate_count, self.gate_depth),
-                             (self.toffoli_count, self.toffoli_depth),
-                             (self.direct_t_count, self.direct_t_depth)):
-            if depth > count or bool(count) != bool(depth):
-                raise ValueError("CIRCUIT_COUNT_DEPTH")
-        if max(self.toffoli_depth, self.direct_t_depth) > self.gate_depth:
-            raise ValueError("CIRCUIT_DEPENDENCY_DEPTH")
+        _validate_count_shape(asdict(self), self.logical_qubits, "CIRCUIT")
 
 
 @dataclass(frozen=True)
@@ -203,6 +230,9 @@ class PhysicalModel:
     The union estimate charges every live logical patch at every allocated code
     cycle, plus every distilled T state's caller-supplied residual error. An odd
     code distance is selected against that union estimate for the whole workload.
+    toffoli_decomposition_depth covers the complete decomposition, including
+    its declared T layers; it cannot be smaller than t_depth_per_toffoli. The
+    same decomposition's nonempty T layers cannot exceed its declared T count.
     These are hypothetical parameters, never measured W1 hardware results.
     """
     name: str
@@ -326,6 +356,7 @@ def physical_estimate(counts: dict, qubits: int, instances: int,
     for key, value in counts.items():
         integer(value, "PHYSICAL_" + key.upper(), high=MAX_DERIVED)
     integer(qubits, "PHYSICAL_LOGICAL_QUBITS", 1)
+    _validate_count_shape(counts, qubits, "PHYSICAL")
     integer(instances, "PHYSICAL_INSTANCES", 1)
     with localcontext() as ctx:
         ctx.prec = 100

@@ -294,18 +294,12 @@ fn maintenance_reentry_registers_signed_task_and_independent_client_confirms() {
         manifest,
         signature: [0; 64],
     };
-    let source_key = signing_key_from_hex(&hex::encode(hash(
-        b"DEV-ONLY-KEY",
-        &[&0_u64.to_le_bytes()],
-    )))
-    .unwrap();
-    statement.signature = hex::decode(sign_hex(
-        &source_key,
-        &statement.signing_message().unwrap(),
-    ))
-    .unwrap()
-    .try_into()
-    .unwrap();
+    let source_key =
+        signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()]))).unwrap();
+    statement.signature = hex::decode(sign_hex(&source_key, &statement.signing_message().unwrap()))
+        .unwrap()
+        .try_into()
+        .unwrap();
 
     let revoke = DemandRevocationV2 {
         network: settings.network(),
@@ -322,14 +316,10 @@ fn maintenance_reentry_registers_signed_task_and_independent_client_confirms() {
     let open_id = hash(b"tx-id", &[&open_tx]);
     let registration_id = hash(b"tx-id", &[&registration_tx]);
 
-    let mut reference =
-        Node::open(&dir.path().join("reference"), settings.clone(), 1).unwrap();
-    let mut native = Node::open_with_authenticated_state(
-        &dir.path().join("native"),
-        settings.clone(),
-        2,
-    )
-    .unwrap();
+    let mut reference = Node::open(&dir.path().join("reference"), settings.clone(), 1).unwrap();
+    let mut native =
+        Node::open_with_authenticated_state(&dir.path().join("native"), settings.clone(), 2)
+            .unwrap();
     // Forecast only from the fully checked actual parent. This report is not
     // a signer or dispatcher; real signed tag22 admission remains elsewhere.
     let mut advisory_successor = bootstrap.lease.clone();
@@ -372,23 +362,14 @@ fn maintenance_reentry_registers_signed_task_and_independent_client_confirms() {
         native.activate(id).unwrap();
         if height == 1 {
             revoke_block = Some(id);
+            assert!(native.lifecycle_task_lease(id, revoked_task, 2).is_err());
             assert!(native
-                .lifecycle_task_lease(id, revoked_task, 2)
-                .is_err());
-            assert!(native
-                .forecast_q4_renewal_from_active(
-                    revoked_task,
-                    &advisory_successor,
-                    0,
-                    0,
-                )
+                .forecast_q4_renewal_from_active(revoked_task, &advisory_successor, 0, 0,)
                 .is_err());
         }
         if height == 2 {
             registered_block = Some(id);
-            assert!(native
-                .lifecycle_task_lease(id, new_task, 3)
-                .is_ok());
+            assert!(native.lifecycle_task_lease(id, new_task, 3).is_ok());
         }
         assert_eq!(
             native.read_active().unwrap(),
@@ -402,25 +383,41 @@ fn maintenance_reentry_registers_signed_task_and_independent_client_confirms() {
     // qualified W1 block under the NEW signed task after Maintenance reentry.
     let checked = verify_lifecycle_admission(
         &statement.encode().unwrap(),
-        TaskMaterial { model: &model, input: &input, a: &a, b: &b },
+        TaskMaterial {
+            model: &model,
+            input: &input,
+            a: &a,
+            b: &b,
+        },
         &lease,
         10,
-    ).unwrap();
-    let new_work = reference.make_with_task(
-        parent,
-        vec![],
-        public(0),
-        101,
-        4096,
-        &checked,
-        TaskMaterial { model: &model, input: &input, a: &a, b: &b },
-    ).unwrap();
+    )
+    .unwrap();
+    let new_work = reference
+        .make_with_task(
+            parent,
+            vec![],
+            public(0),
+            101,
+            4096,
+            &checked,
+            TaskMaterial {
+                model: &model,
+                input: &input,
+                a: &a,
+                b: &b,
+            },
+        )
+        .unwrap();
     assert_eq!(new_work.header.work_task, new_task);
     let new_id = reference.admit(&new_work, 100_000).unwrap();
     assert_eq!(native.admit(&new_work, 100_000).unwrap(), new_id);
     reference.activate(new_id).unwrap();
     native.activate(new_id).unwrap();
-    assert_eq!(native.read_active().unwrap(), reference.read_active().unwrap());
+    assert_eq!(
+        native.read_active().unwrap(),
+        reference.read_active().unwrap()
+    );
     let slot = qualified_task_lifecycle::slot_key(1).unwrap();
     let active = native.read_active().unwrap();
     assert_eq!(active.2[&slot]["output_count"], 1);
@@ -430,12 +427,9 @@ fn maintenance_reentry_registers_signed_task_and_independent_client_confirms() {
     // A freshly opened independent consumer independently checks each actual
     // signed PNX1 / full PNW1 packet, not producer status or a hand-entered
     // confirmation Boolean. All accepted bytes remain bound to Revision12.
-    let mut consumer = Node::open_with_authenticated_state(
-        &dir.path().join("consumer"),
-        settings.clone(),
-        1,
-    )
-    .unwrap();
+    let mut consumer =
+        Node::open_with_authenticated_state(&dir.path().join("consumer"), settings.clone(), 1)
+            .unwrap();
     for id in admitted {
         let packet = reference.packet(id).unwrap();
         assert_eq!(consumer.admit(&packet, 100_000).unwrap(), id);
@@ -448,9 +442,7 @@ fn maintenance_reentry_registers_signed_task_and_independent_client_confirms() {
     assert!(consumer
         .lifecycle_task_lease(parent, revoked_task, 11)
         .is_err());
-    let admitted_lease = consumer
-        .lifecycle_task_lease(parent, new_task, 11)
-        .unwrap();
+    let admitted_lease = consumer.lifecycle_task_lease(parent, new_task, 11).unwrap();
     assert_eq!(admitted_lease.slot, 1);
     assert_eq!(admitted_lease.generation, 2);
 
@@ -469,18 +461,11 @@ fn maintenance_reentry_registers_signed_task_and_independent_client_confirms() {
         assert_eq!(receipt.observed_tip, hex::encode(parent));
     }
     drop(consumer);
-    let cold = Node::open_with_authenticated_state(
-        &dir.path().join("consumer"),
-        settings,
-        1,
-    )
-    .unwrap();
+    let cold =
+        Node::open_with_authenticated_state(&dir.path().join("consumer"), settings, 1).unwrap();
     assert_eq!(cold.read_active().unwrap(), native.read_active().unwrap());
-    assert!(cold
-        .lifecycle_task_lease(parent, new_task, 11)
-        .is_ok());
+    assert!(cold.lifecycle_task_lease(parent, new_task, 11).is_ok());
 }
-
 
 /// P0-B: all 32 original demand slots are occupied by actual signed main
 /// envelopes, then both native backends must reject an early replacement.
@@ -530,10 +515,7 @@ fn full_32_slot_maintenance_rejects_premature_native_replacement() {
     native.activate(full).unwrap();
     let before = native.read_active().unwrap();
     assert_eq!(reference.read_active().unwrap(), before);
-    assert_eq!(
-        before.2[qualified_task_lifecycle::GENERATION_KEY],
-        32
-    );
+    assert_eq!(before.2[qualified_task_lifecycle::GENERATION_KEY], 32);
     assert_eq!(
         before
             .2
@@ -553,25 +535,21 @@ fn full_32_slot_maintenance_rejects_premature_native_replacement() {
     let premature = signed(&settings, 1, 32, 18, successor.encode().unwrap());
     for node in [&reference, &native] {
         assert_eq!(
-            node.make_consensus_maintenance(
-                full,
-                vec![premature.clone()],
-                public(0),
-                21,
-                4096,
-            )
-            .unwrap_err()
-            .to_string(),
+            node.make_consensus_maintenance(full, vec![premature.clone()], public(0), 21, 4096,)
+                .unwrap_err()
+                .to_string(),
             "TASK_RETAINED"
         );
         assert_eq!(node.read_active().unwrap(), before);
     }
 
-    let maintenance =
-        admit_pair(&mut reference, &mut native, full, 2, vec![], public(0), 0);
+    let maintenance = admit_pair(&mut reference, &mut native, full, 2, vec![], public(0), 0);
     reference.activate(maintenance).unwrap();
     native.activate(maintenance).unwrap();
-    assert_eq!(reference.read_active().unwrap(), native.read_active().unwrap());
+    assert_eq!(
+        reference.read_active().unwrap(),
+        native.read_active().unwrap()
+    );
     assert_eq!(
         native.read_active().unwrap().2[qualified_task_lifecycle::GENERATION_KEY],
         32
@@ -581,7 +559,6 @@ fn full_32_slot_maintenance_rejects_premature_native_replacement() {
     let reopened = Node::open_with_authenticated_state(&native_path, settings, 1).unwrap();
     assert_eq!(reopened.read_active().unwrap(), before_reopen);
 }
-
 
 /// Release-only native evidence for all Q4 slots exhausted, last-source
 /// revocation, exact 1100/1101 retention cut, heavier reorg, reauthorization
@@ -650,7 +627,15 @@ fn full_slot_native_retention_reclaim_and_heavier_fork_restore() {
         "revoked"
     );
     for height in 3..=1099 {
-        tip = admit_pair(&mut reference, &mut native, tip, height, vec![], public(0), 0);
+        tip = admit_pair(
+            &mut reference,
+            &mut native,
+            tip,
+            height,
+            vec![],
+            public(0),
+            0,
+        );
         reference.activate(tip).unwrap();
         native.activate(tip).unwrap();
     }
@@ -684,7 +669,10 @@ fn full_slot_native_retention_reclaim_and_heavier_fork_restore() {
     );
     reference.activate(replacement).unwrap();
     native.activate(replacement).unwrap();
-    assert_eq!(reference.read_active().unwrap(), native.read_active().unwrap());
+    assert_eq!(
+        reference.read_active().unwrap(),
+        native.read_active().unwrap()
+    );
     assert_eq!(
         native.read_active().unwrap().2[qualified_task_lifecycle::GENERATION_KEY],
         33
@@ -692,13 +680,30 @@ fn full_slot_native_retention_reclaim_and_heavier_fork_restore() {
 
     // Two original PNW1 fork packets beat the shorter replacement branch;
     // rollback restores generation 32, old revoked slot and requester nonce.
-    let fork_1101 =
-        admit_pair(&mut reference, &mut native, retained, 1101, vec![], public(0), 1);
-    let fork_1102 =
-        admit_pair(&mut reference, &mut native, fork_1101, 1102, vec![], public(0), 1);
+    let fork_1101 = admit_pair(
+        &mut reference,
+        &mut native,
+        retained,
+        1101,
+        vec![],
+        public(0),
+        1,
+    );
+    let fork_1102 = admit_pair(
+        &mut reference,
+        &mut native,
+        fork_1101,
+        1102,
+        vec![],
+        public(0),
+        1,
+    );
     reference.activate(fork_1102).unwrap();
     native.activate(fork_1102).unwrap();
-    assert_eq!(reference.read_active().unwrap(), native.read_active().unwrap());
+    assert_eq!(
+        reference.read_active().unwrap(),
+        native.read_active().unwrap()
+    );
     assert_eq!(
         native.read_active().unwrap().2[qualified_task_lifecycle::GENERATION_KEY],
         32
@@ -726,7 +731,10 @@ fn full_slot_native_retention_reclaim_and_heavier_fork_restore() {
     );
     reference.activate(recovered).unwrap();
     native.activate(recovered).unwrap();
-    assert_eq!(reference.read_active().unwrap(), native.read_active().unwrap());
+    assert_eq!(
+        reference.read_active().unwrap(),
+        native.read_active().unwrap()
+    );
     assert_eq!(
         native.read_active().unwrap().2[qualified_task_lifecycle::GENERATION_KEY],
         33

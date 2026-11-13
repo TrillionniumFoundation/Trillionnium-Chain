@@ -103,7 +103,6 @@ fn mode5_lease_edge_forbids_duplicate_or_unknown_json_fields_and_partial_lease()
     assert!(edge.payload().is_err());
 }
 
-
 #[test]
 fn q4_renewal_window_is_advisory_and_never_resurrects_expired_source() {
     let (_, _, edge) = fixture();
@@ -122,28 +121,36 @@ fn q4_renewal_window_is_advisory_and_never_resurrects_expired_source() {
 
     // Inclusion at the final legal height is valid only with no modeled delay.
     assert_eq!(
-        forecast_q4_renewal_window(&old, &next, 100, 0, 0).unwrap().phase,
+        forecast_q4_renewal_window(&old, &next, 100, 0, 0)
+            .unwrap()
+            .phase,
         Q4RenewalPhase::WindowOpenByTime,
     );
     assert_eq!(
-        forecast_q4_renewal_window(&old, &next, 101, 0, 0).unwrap().phase,
+        forecast_q4_renewal_window(&old, &next, 101, 0, 0)
+            .unwrap()
+            .phase,
         Q4RenewalPhase::Expired,
     );
     assert_eq!(
         forecast_q4_renewal_window(&old, &next, 101, 0, 0)
-            .unwrap().inclusion_slack_blocks,
+            .unwrap()
+            .inclusion_slack_blocks,
         0,
     );
 
     let mut later = next.clone();
     later.not_before = 95;
     assert_eq!(
-        forecast_q4_renewal_window(&old, &later, 50, 0, 0).unwrap().phase,
+        forecast_q4_renewal_window(&old, &later, 50, 0, 0)
+            .unwrap()
+            .phase,
         Q4RenewalPhase::AwaitSignedWindow,
     );
     assert_eq!(
         forecast_q4_renewal_window(&old, &later, 50, 0, 0)
-            .unwrap().earliest_possible_height,
+            .unwrap()
+            .earliest_possible_height,
         95,
     );
 
@@ -151,8 +158,7 @@ fn q4_renewal_window_is_advisory_and_never_resurrects_expired_source() {
     // 100, leaving five inclusion heights. Queue lag 10 + margin 10 is
     // already impossible even at observation height 50: do not report merely
     // AwaitSignedWindow when the configured timing budget cannot fit.
-    let future_but_at_risk =
-        forecast_q4_renewal_window(&old, &later, 50, 10, 10).unwrap();
+    let future_but_at_risk = forecast_q4_renewal_window(&old, &later, 50, 10, 10).unwrap();
     assert_eq!(future_but_at_risk.phase, Q4RenewalPhase::AtRisk);
     assert_eq!(future_but_at_risk.earliest_possible_height, 95);
     assert_eq!(future_but_at_risk.last_legal_height, 100);

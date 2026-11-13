@@ -25,7 +25,9 @@ mod operator_continuous_cpu;
 mod operator_continuous_history;
 mod operator_continuous_lease;
 pub mod operator_continuous_policy;
-pub use operator_continuous_lease::{forecast_q4_renewal_window, Q4RenewalForecast, Q4RenewalPhase};
+pub use operator_continuous_lease::{
+    forecast_q4_renewal_window, Q4RenewalForecast, Q4RenewalPhase,
+};
 pub mod operator_continuous_pool;
 mod operator_continuous_recipient;
 mod operator_continuous_recovery;
@@ -44,12 +46,12 @@ pub mod release_finality;
 pub mod release_owner;
 /// Opt-in bounded work-schedule checks; never selected by native admission.
 pub mod research_work_schedule;
+/// Explicit finite cross-process resource reservations for a fixed local Node.
+pub mod resource_owner_v1;
 #[cfg(all(target_os = "linux", feature = "pq-root-v3"))]
 pub mod root_recovery_v3;
 #[cfg(test)]
 mod sp27_cost_attribution_tests;
-/// Explicit finite cross-process resource reservations for a fixed local Node.
-pub mod resource_owner_v1;
 mod store;
 pub use error::{Error, ErrorCode, ErrorKind};
 use serde_json::{json, Value};

@@ -673,10 +673,11 @@ fn signed_lease_cannot_alias_the_reserved_maintenance_task() {
 
 #[test]
 fn maintenance_recovers_signed_task_registration_and_policy_confirmation_after_revoke() {
-    use trnm_protocol::qualified_work_task::{
-        lifecycle_v2::{DemandLeaseV2, SignedLifecycleTaskV2}, TaskPurpose,
-    };
     use trnm_crypto_primitives::{pon_work, qualified_work_task::derive_matrices};
+    use trnm_protocol::qualified_work_task::{
+        lifecycle_v2::{DemandLeaseV2, SignedLifecycleTaskV2},
+        TaskPurpose,
+    };
 
     let dir = tempfile::tempdir().unwrap();
     let settings = settings();
@@ -701,7 +702,9 @@ fn maintenance_recovers_signed_task_registration_and_policy_confirmation_after_r
     assert_eq!(verifier.admit(&first_packet, 100_000).unwrap(), first);
     verifier.activate(first).unwrap();
     assert_eq!(verifier.read_active().unwrap(), node.read_active().unwrap());
-    assert!(node.lifecycle_task_lease(node.active().unwrap().0, old_task, 2).is_err());
+    assert!(node
+        .lifecycle_task_lease(node.active().unwrap().0, old_task, 2)
+        .is_err());
 
     // Fresh real signed requester and source statements, not a renewed or
     // fabricated old permission. The sole work source for this block is the
@@ -746,10 +749,8 @@ fn maintenance_recovers_signed_task_registration_and_policy_confirmation_after_r
         manifest,
         signature: [0; 64],
     };
-    let source_key = signing_key_from_hex(
-        &hex::encode(hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()])),
-    )
-    .unwrap();
+    let source_key =
+        signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()]))).unwrap();
     signed_statement.signature = hex::decode(sign_hex(
         &source_key,
         &signed_statement.signing_message().unwrap(),
@@ -761,10 +762,15 @@ fn maintenance_recovers_signed_task_registration_and_policy_confirmation_after_r
     let register_tx = signed(&settings, 0, 1, 21, signed_statement.encode().unwrap());
     let include = mine(&mut node, 2, vec![open_tx, register_tx.clone()]);
     let registered_packet = node.packet(include).unwrap();
-    assert_eq!(verifier.admit(&registered_packet, 100_000).unwrap(), include);
+    assert_eq!(
+        verifier.admit(&registered_packet, 100_000).unwrap(),
+        include
+    );
     verifier.activate(include).unwrap();
     assert_eq!(verifier.read_active().unwrap(), node.read_active().unwrap());
-    assert!(node.lifecycle_task_lease(include, signed_statement.manifest.matrix_task, 3).is_ok());
+    assert!(node
+        .lifecycle_task_lease(include, signed_statement.manifest.matrix_task, 3)
+        .is_ok());
     assert!(node.lifecycle_task_lease(include, old_task, 3).is_err());
     assert_eq!(
         node.read_active().unwrap().2[continuity_v1::MAINTENANCE_KEY]["useful_output_credit"],
@@ -774,7 +780,10 @@ fn maintenance_recovers_signed_task_registration_and_policy_confirmation_after_r
         let block = mine(&mut node, height, vec![]);
         let bytes = node.packet(block).unwrap().encode().unwrap();
         let independently_decoded = Packet::decode(&bytes).unwrap();
-        assert_eq!(verifier.admit(&independently_decoded, 100_000).unwrap(), block);
+        assert_eq!(
+            verifier.admit(&independently_decoded, 100_000).unwrap(),
+            block
+        );
         verifier.activate(block).unwrap();
         assert_eq!(verifier.read_active().unwrap(), node.read_active().unwrap());
     }
@@ -786,7 +795,9 @@ fn maintenance_recovers_signed_task_registration_and_policy_confirmation_after_r
     corrupt.proof[last] ^= 1;
     assert!(verifier.admit(&corrupt, 100_000).is_err());
     assert_eq!(verifier.read_active().unwrap(), verified_before);
-    let confirmation = node.confirmation(hash(b"tx-id", &[&register_tx]), include, 100_000).unwrap();
+    let confirmation = node
+        .confirmation(hash(b"tx-id", &[&register_tx]), include, 100_000)
+        .unwrap();
     assert!(confirmation.confirmed);
     assert!(!confirmation.reorged);
     assert!(!confirmation.finalized);
@@ -794,10 +805,22 @@ fn maintenance_recovers_signed_task_registration_and_policy_confirmation_after_r
     let independent_confirmation = verifier
         .confirmation(hash(b"tx-id", &[&register_tx]), include, 100_000)
         .unwrap();
-    assert_eq!(independent_confirmation.transaction, confirmation.transaction);
-    assert_eq!(independent_confirmation.included_block, confirmation.included_block);
-    assert_eq!(independent_confirmation.observed_tip, confirmation.observed_tip);
-    assert_eq!(independent_confirmation.required_work_delta, confirmation.required_work_delta);
+    assert_eq!(
+        independent_confirmation.transaction,
+        confirmation.transaction
+    );
+    assert_eq!(
+        independent_confirmation.included_block,
+        confirmation.included_block
+    );
+    assert_eq!(
+        independent_confirmation.observed_tip,
+        confirmation.observed_tip
+    );
+    assert_eq!(
+        independent_confirmation.required_work_delta,
+        confirmation.required_work_delta
+    );
     assert_eq!(independent_confirmation.work_delta, confirmation.work_delta);
     assert!(independent_confirmation.confirmed);
     assert!(!independent_confirmation.reorged);
@@ -811,11 +834,18 @@ fn maintenance_recovers_signed_task_registration_and_policy_confirmation_after_r
     let independent_reopened = Node::open(&verifier_path, settings, 1).unwrap();
     assert_eq!(reopened.read_active().unwrap(), before);
     assert_eq!(independent_reopened.read_active().unwrap(), before);
-    assert!(reopened.confirmation(hash(b"tx-id", &[&register_tx]), include, 100_000)
-        .unwrap().confirmed);
-    assert!(independent_reopened
-        .confirmation(hash(b"tx-id", &[&register_tx]), include, 100_000)
-        .unwrap().confirmed);
+    assert!(
+        reopened
+            .confirmation(hash(b"tx-id", &[&register_tx]), include, 100_000)
+            .unwrap()
+            .confirmed
+    );
+    assert!(
+        independent_reopened
+            .confirmation(hash(b"tx-id", &[&register_tx]), include, 100_000)
+            .unwrap()
+            .confirmed
+    );
 }
 
 /// Native W1 + SQLite boundary: all 32 optional slots can be opened and revoked
@@ -840,7 +870,13 @@ fn native_32_slot_revocation_preserves_maintenance_confirmation_and_reopen() {
         lease.expires = 1001;
         lease.available_until = 1101;
         lease.demand_id = lease.derived_demand_id();
-        opens.push(signed(&settings, 1, u64::from(slot), 18, lease.encode().unwrap()));
+        opens.push(signed(
+            &settings,
+            1,
+            u64::from(slot),
+            18,
+            lease.encode().unwrap(),
+        ));
         leases.push(lease);
     }
     let watched_tx = opens.last().unwrap().clone();
@@ -865,7 +901,11 @@ fn native_32_slot_revocation_preserves_maintenance_confirmation_and_reopen() {
             expected_revision: lease.revision,
         };
         revocations.push(signed(
-            &settings, 1, 32 + slot as u64, 20, request.encode().unwrap(),
+            &settings,
+            1,
+            32 + slot as u64,
+            20,
+            request.encode().unwrap(),
         ));
     }
     mine(&mut node, 2, revocations);
@@ -877,8 +917,13 @@ fn native_32_slot_revocation_preserves_maintenance_confirmation_and_reopen() {
         );
     }
     assert_eq!(node.next_nonce(development_public(1).unwrap()).unwrap(), 64);
-    assert!(node.lifecycle_task_lease(revoked.0, bootstrap.signed.manifest.matrix_task, 3).is_err());
-    assert_eq!(revoked.2[continuity_v1::MAINTENANCE_KEY]["useful_output_credit"], 0);
+    assert!(node
+        .lifecycle_task_lease(revoked.0, bootstrap.signed.manifest.matrix_task, 3)
+        .is_err());
+    assert_eq!(
+        revoked.2[continuity_v1::MAINTENANCE_KEY]["useful_output_credit"],
+        0
+    );
 
     // A signed new generation cannot bypass the retained record during height 3.
     let mut new_lease = bootstrap.lease.clone();
@@ -889,9 +934,15 @@ fn native_32_slot_revocation_preserves_maintenance_confirmation_and_reopen() {
     new_lease.demand_id = new_lease.derived_demand_id();
     let attempted = signed(&settings, 1, 64, 18, new_lease.encode().unwrap());
     let before_refusal = node.read_active().unwrap();
-    let error = node.make_consensus_maintenance(
-        revoked.0, vec![attempted], development_public(0).unwrap(), 31, 4096,
-    ).unwrap_err();
+    let error = node
+        .make_consensus_maintenance(
+            revoked.0,
+            vec![attempted],
+            development_public(0).unwrap(),
+            31,
+            4096,
+        )
+        .unwrap_err();
     assert_eq!(error.to_string(), "TASK_RETAINED");
     assert_eq!(node.read_active().unwrap(), before_refusal);
     assert_eq!(node.next_nonce(development_public(1).unwrap()).unwrap(), 64);
@@ -909,9 +960,13 @@ fn native_32_slot_revocation_preserves_maintenance_confirmation_and_reopen() {
     drop(node);
     let reopened = Node::open(dir.path(), settings, 1).unwrap();
     assert_eq!(reopened.read_active().unwrap(), before);
-    assert!(reopened.confirmation(watched, included, 100_000).unwrap().confirmed);
+    assert!(
+        reopened
+            .confirmation(watched, included, 100_000)
+            .unwrap()
+            .confirmed
+    );
 }
-
 
 /// Opt-in long history test: all heights 1..1108 have real verified W1
 /// maintenance packets. After the only initial lease expires at height 1000,
@@ -923,7 +978,8 @@ fn native_32_slot_revocation_preserves_maintenance_confirmation_and_reopen() {
 fn long_native_retention_safe_sole_slot_reopen_after_1100_maintenance_blocks() {
     use trnm_crypto_primitives::{pon_work, qualified_work_task::derive_matrices};
     use trnm_protocol::qualified_work_task::{
-        lifecycle_v2::{DemandLeaseV2, SignedLifecycleTaskV2}, TaskPurpose,
+        lifecycle_v2::{DemandLeaseV2, SignedLifecycleTaskV2},
+        TaskPurpose,
     };
 
     let dir = tempfile::tempdir().unwrap();
@@ -944,16 +1000,18 @@ fn long_native_retention_safe_sole_slot_reopen_after_1100_maintenance_blocks() {
     }
     let old_parent = node.active().unwrap().0;
     let (old_model, old_input, _, _) = settings.bootstrap_task_material().unwrap();
-    assert!(node.prepare_registered_material_controlled(
-        old_parent,
-        vec![],
-        development_public(0).unwrap(),
-        11011,
-        4096,
-        &old_model,
-        &old_input,
-        &ExecutionControl::new(&|_| Ok(()), &())
-    ).is_err());
+    assert!(node
+        .prepare_registered_material_controlled(
+            old_parent,
+            vec![],
+            development_public(0).unwrap(),
+            11011,
+            4096,
+            &old_model,
+            &old_input,
+            &ExecutionControl::new(&|_| Ok(()), &())
+        )
+        .is_err());
 
     let model: Vec<u8> = (0..4096_u32)
         .flat_map(|i| ((i * 11 + 7) % 97).to_le_bytes())
@@ -994,23 +1052,24 @@ fn long_native_retention_safe_sole_slot_reopen_after_1100_maintenance_blocks() {
         manifest,
         signature: [0; 64],
     };
-    let key = signing_key_from_hex(
-        &hex::encode(hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()])),
-    )
-    .unwrap();
-    statement.signature = hex::decode(sign_hex(
-        &key, &statement.signing_message().unwrap(),
-    ))
-    .unwrap()
-    .try_into()
-    .unwrap();
+    let key =
+        signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0_u64.to_le_bytes()]))).unwrap();
+    statement.signature = hex::decode(sign_hex(&key, &statement.signing_message().unwrap()))
+        .unwrap()
+        .try_into()
+        .unwrap();
 
     let open = signed(&settings, 1, 1, 18, successor.encode().unwrap());
     let register = signed(&settings, 0, 1, 21, statement.encode().unwrap());
     let included = mine(&mut node, 1101, vec![open, register.clone()]);
-    assert!(node.lifecycle_task_lease(included, statement.manifest.matrix_task, 1102).is_ok());
+    assert!(node
+        .lifecycle_task_lease(included, statement.manifest.matrix_task, 1102)
+        .is_ok());
     assert!(node.lifecycle_task_lease(included, old_task, 1102).is_err());
-    assert_eq!(node.read_active().unwrap().2[continuity_v1::MAINTENANCE_KEY]["useful_output_credit"], 0);
+    assert_eq!(
+        node.read_active().unwrap().2[continuity_v1::MAINTENANCE_KEY]["useful_output_credit"],
+        0
+    );
     let slot_state = node.read_active().unwrap().2;
     let new_slot = &slot_state[&qualified_task_lifecycle::slot_key(0).unwrap()];
     assert_eq!(new_slot["opened_height"], 1101);
@@ -1025,9 +1084,13 @@ fn long_native_retention_safe_sole_slot_reopen_after_1100_maintenance_blocks() {
     drop(node);
     let restored = Node::open(dir.path(), settings, 1).unwrap();
     assert_eq!(restored.read_active().unwrap(), before);
-    assert!(restored.confirmation(tx_id, included, 100_000).unwrap().confirmed);
+    assert!(
+        restored
+            .confirmation(tx_id, included, 100_000)
+            .unwrap()
+            .confirmed
+    );
 }
-
 
 /// Exact Q4 signed overlap under revision12: a single pre-signed tag22
 /// remains usable at two inclusion heights on competing authentic W1 branches.
@@ -1054,19 +1117,20 @@ fn q4_presigned_overlap_survives_revocable_branch_and_maintenance_reorg() {
     source_statement.manifest.not_before = successor.not_before;
     source_statement.manifest.expires = successor.expires;
     source_statement.manifest.available_until = successor.available_until;
-    source_statement.manifest.output_meter =
-        source_statement.manifest.derived_output_meter();
+    source_statement.manifest.output_meter = source_statement.manifest.derived_output_meter();
     assert_eq!(
         source_statement.manifest.output_meter,
         bootstrap.signed.manifest.output_meter,
     );
-    let source_key = signing_key_from_hex(
-        &hex::encode(hash(b"DEV-ONLY-KEY", &[&0u64.to_le_bytes()])),
-    ).unwrap();
+    let source_key =
+        signing_key_from_hex(&hex::encode(hash(b"DEV-ONLY-KEY", &[&0u64.to_le_bytes()]))).unwrap();
     source_statement.signature = hex::decode(sign_hex(
         &source_key,
         &source_statement.signing_message().unwrap(),
-    )).unwrap().try_into().unwrap();
+    ))
+    .unwrap()
+    .try_into()
+    .unwrap();
     let presigned = signed(
         &settings,
         1,
@@ -1075,7 +1139,9 @@ fn q4_presigned_overlap_survives_revocable_branch_and_maintenance_reorg() {
         AtomicRenewTaskV4 {
             lease: successor,
             signed: source_statement,
-        }.encode().unwrap(),
+        }
+        .encode()
+        .unwrap(),
     );
 
     let mut node = Node::open(temp.path(), settings.clone(), 2).unwrap();
@@ -1084,16 +1150,22 @@ fn q4_presigned_overlap_survives_revocable_branch_and_maintenance_reorg() {
     }
     let common = node.active().unwrap().0;
     let owner = development_public(0).unwrap();
-    let make_branch = |node: &mut Node, parent: Hash, height: u64,
-                       txs: Vec<Vec<u8>>, skew: u64| -> Hash {
-        let packet = node.make_consensus_maintenance(
-            parent, txs, owner, 1 + height * 10 + skew, 4096,
-        ).unwrap();
-        assert_eq!(packet.header.work_task, continuity_v1::maintenance_task().unwrap());
-        let id = node.admit(&packet, 100_000).unwrap();
-        assert_eq!(node.packet(id).unwrap().encode().unwrap(), packet.encode().unwrap());
-        id
-    };
+    let make_branch =
+        |node: &mut Node, parent: Hash, height: u64, txs: Vec<Vec<u8>>, skew: u64| -> Hash {
+            let packet = node
+                .make_consensus_maintenance(parent, txs, owner, 1 + height * 10 + skew, 4096)
+                .unwrap();
+            assert_eq!(
+                packet.header.work_task,
+                continuity_v1::maintenance_task().unwrap()
+            );
+            let id = node.admit(&packet, 100_000).unwrap();
+            assert_eq!(
+                node.packet(id).unwrap().encode().unwrap(),
+                packet.encode().unwrap()
+            );
+            id
+        };
 
     let original_renewed = make_branch(&mut node, common, 4, vec![presigned.clone()], 0);
     node.activate(original_renewed).unwrap();
@@ -1108,19 +1180,26 @@ fn q4_presigned_overlap_survives_revocable_branch_and_maintenance_reorg() {
     assert_eq!(node.active().unwrap().0, competing5);
     let undone = node.read_active().unwrap().2;
     assert_eq!(undone[&slot]["source_sequence"], 1);
-    assert_eq!(undone[&slot]["output_count"], first_state[&slot]["output_count"]);
+    assert_eq!(
+        undone[&slot]["output_count"],
+        first_state[&slot]["output_count"]
+    );
 
     let competing6 = make_branch(&mut node, competing5, 6, vec![presigned.clone()], 1);
     node.activate(competing6).unwrap();
     let renewed_again = node.read_active().unwrap().2;
     assert_eq!(renewed_again[&slot]["source_sequence"], 2);
-    assert_eq!(renewed_again[&slot]["output_count"], first_state[&slot]["output_count"]);
     assert_eq!(
-        renewed_again[continuity_v1::MAINTENANCE_KEY]["useful_output_credit"], 0,
+        renewed_again[&slot]["output_count"],
+        first_state[&slot]["output_count"]
     );
-    assert!(node.lifecycle_task_lease(
-        competing6, bootstrap.signed.manifest.matrix_task, 7
-    ).is_ok());
+    assert_eq!(
+        renewed_again[continuity_v1::MAINTENANCE_KEY]["useful_output_credit"],
+        0,
+    );
+    assert!(node
+        .lifecycle_task_lease(competing6, bootstrap.signed.manifest.matrix_task, 7)
+        .is_ok());
     let before = node.read_active().unwrap();
     drop(node);
     let restored = Node::open(temp.path(), settings, 1).unwrap();
@@ -1157,7 +1236,13 @@ fn long_native_all_32_retained_slots_reopen_only_after_retention_boundary() {
         lease.expires = 1001;
         lease.available_until = 1101;
         lease.demand_id = lease.derived_demand_id();
-        opens.push(signed(&settings, 1, u64::from(slot), 18, lease.encode().unwrap()));
+        opens.push(signed(
+            &settings,
+            1,
+            u64::from(slot),
+            18,
+            lease.encode().unwrap(),
+        ));
         originals.push(lease);
     }
     mine(&mut node, 1, opens);
@@ -1171,12 +1256,20 @@ fn long_native_all_32_retained_slots_reopen_only_after_retention_boundary() {
     let mut revocations = Vec::new();
     for (slot, lease) in originals.iter().enumerate() {
         revocations.push(signed(
-            &settings, 1, 32 + slot as u64, 20,
+            &settings,
+            1,
+            32 + slot as u64,
+            20,
             DemandRevocationV2 {
-                network: settings.network(), parameters: settings.parameters(),
-                slot: slot as u8, demand_id: lease.demand_id,
-                requester: lease.requester, expected_revision: lease.revision,
-            }.encode().unwrap(),
+                network: settings.network(),
+                parameters: settings.parameters(),
+                slot: slot as u8,
+                demand_id: lease.demand_id,
+                requester: lease.requester,
+                expected_revision: lease.revision,
+            }
+            .encode()
+            .unwrap(),
         ));
     }
     mine(&mut node, 2, revocations);
@@ -1200,9 +1293,15 @@ fn long_native_all_32_retained_slots_reopen_only_after_retention_boundary() {
     premature.available_until = 2201;
     premature.demand_id = premature.derived_demand_id();
     let early_tx = signed(&settings, 1, 64, 18, premature.encode().unwrap());
-    let error = node.make_consensus_maintenance(
-        before.0, vec![early_tx], development_public(0).unwrap(), 11011, 4096,
-    ).unwrap_err();
+    let error = node
+        .make_consensus_maintenance(
+            before.0,
+            vec![early_tx],
+            development_public(0).unwrap(),
+            11011,
+            4096,
+        )
+        .unwrap_err();
     assert_eq!(error.to_string(), "TASK_RETAINED");
     assert_eq!(node.read_active().unwrap(), before);
     assert_eq!(node.next_nonce(development_public(1).unwrap()).unwrap(), 64);
@@ -1221,8 +1320,13 @@ fn long_native_all_32_retained_slots_reopen_only_after_retention_boundary() {
         lease.expires = 2102;
         lease.available_until = 2202;
         lease.demand_id = lease.derived_demand_id();
-        fresh.push(signed(&settings, 1, 64 + u64::from(slot), 18,
-                          lease.encode().unwrap()));
+        fresh.push(signed(
+            &settings,
+            1,
+            64 + u64::from(slot),
+            18,
+            lease.encode().unwrap(),
+        ));
     }
     let watched_tx = fresh.last().unwrap().clone();
     let watched = hash(b"tx-id", &[&watched_tx]);
@@ -1235,7 +1339,8 @@ fn long_native_all_32_retained_slots_reopen_only_after_retention_boundary() {
     }
     assert_eq!(node.next_nonce(development_public(1).unwrap()).unwrap(), 96);
     assert_eq!(
-        after.2[continuity_v1::MAINTENANCE_KEY]["useful_output_credit"], 0,
+        after.2[continuity_v1::MAINTENANCE_KEY]["useful_output_credit"],
+        0,
     );
     for height in 1103..=1110_u64 {
         mine(&mut node, height, vec![]);
@@ -1247,7 +1352,12 @@ fn long_native_all_32_retained_slots_reopen_only_after_retention_boundary() {
     drop(node);
     let reopened = Node::open(dir.path(), settings, 1).unwrap();
     assert_eq!(reopened.read_active().unwrap(), tip);
-    assert!(reopened.confirmation(watched, included, 100_000).unwrap().confirmed);
+    assert!(
+        reopened
+            .confirmation(watched, included, 100_000)
+            .unwrap()
+            .confirmed
+    );
 }
 
 #[test]

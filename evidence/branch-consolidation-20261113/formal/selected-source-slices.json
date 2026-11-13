@@ -1,0 +1,121 @@
+[
+  {
+    "path": "formal/pon-nakamoto-v1/evaluation_bundle.py",
+    "original_source": "3e44c471187fc6c883693c836cdae6adae4bdafb",
+    "original_blob": "477aa66bb71c8c7cae092a3644b720b2d3e824b1",
+    "selected_sha256": "56398f31d090b56586b3c878733e9a8fd69c2d358cef3356cbebab5835879b8c",
+    "selection": "reviewed immutable evaluation inputs and explicit observation-v2 contract"
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/experiments/model_loop.py",
+    "original_source": "3e44c471187fc6c883693c836cdae6adae4bdafb",
+    "original_blob": "867fde8f03b3144d0d74db4a422c2c215d2c46d8",
+    "selected_sha256": "645b2e7331781818e6476773b3f087e99f99fa6d91edda62b9be9d583a46586b",
+    "selection": "reviewed immutable evaluation inputs and explicit observation-v2 contract"
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/experiments/settle_model.py",
+    "original_source": "3e44c471187fc6c883693c836cdae6adae4bdafb",
+    "original_blob": "6ca77cd2623a6917e999dfa0a9e09293ab675d50",
+    "selected_sha256": "51e0e5e7e443e37c361e077497c39c24b6da6c300ff0428bb296bf23a55bb326",
+    "selection": "reviewed immutable evaluation inputs and explicit observation-v2 contract"
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/test_evaluation_bundle.py",
+    "original_source": "3e44c471187fc6c883693c836cdae6adae4bdafb",
+    "original_blob": "093c015c92d792e2c1a2c525754c2c6afe94bd14",
+    "selected_sha256": "6656a8b6308b021a1ff5e2015dc927535f931e4358686c2adc38486e93167689",
+    "selection": "reviewed immutable evaluation inputs and explicit observation-v2 contract"
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/test_settlement_inputs.py",
+    "original_source": "3e44c471187fc6c883693c836cdae6adae4bdafb",
+    "original_blob": "fbd01df5ad44adf190cef07377c086b85eb21ff0",
+    "selected_sha256": "13c83d98a02aa11a678f6ef9a6a4012e03d1e3881a921d84b46e2f1daf480e5d",
+    "selection": "reviewed immutable evaluation inputs and explicit observation-v2 contract"
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/test_work_utility.py",
+    "original_source": "3e44c471187fc6c883693c836cdae6adae4bdafb",
+    "original_blob": "4c015e6c85ea6163f0ce71fd6b23722437423806",
+    "selected_sha256": "3c95daec858433b7b152310c4c16e5512aee1d0c76f47571e64a2dda6c29062e",
+    "selection": "reviewed immutable evaluation inputs and explicit observation-v2 contract"
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/work_utility.py",
+    "original_source": "3e44c471187fc6c883693c836cdae6adae4bdafb",
+    "original_blob": "1ac02852c87f69e0437fe2cee8f7c49498507307",
+    "selected_sha256": "1d6a1b2aaff7ce8899153a69144331d8fa0728f3a0f917c57ecf70985ad8900a",
+    "selection": "reviewed immutable evaluation inputs and explicit observation-v2 contract"
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/experiments/w1_valid_invalid_cost_v1.py",
+    "original_source": "729fa0d5c78d07d2ed71c1f68243f62a22afa7b7",
+    "original_blob": "d53ae7ec5ec886db9baf68c50817f9f3a14c4a45",
+    "selected_sha256": "e9b07c5fed126f7605aaa33bf897aa3950f557d5a15f51a2c145c351422a3399",
+    "selection": "exact committed-source provenance; original structured solver retained"
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/test_w1_structured_cost.py",
+    "original_source": "729fa0d5c78d07d2ed71c1f68243f62a22afa7b7",
+    "original_blob": "2cc0c45a88fede920511d8c8a7d132cf2bd1a0a8",
+    "selected_sha256": "76e735688b88c72c40aa2c5f31aac726afd55e5400d6beae761dccc46cb4d1ab",
+    "selection": "exact committed-source provenance; original structured solver retained"
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/quantum_adversarial_search.py",
+    "source": "360556e9664fcb563877c05e74fd83974a5d9dba",
+    "starting_source": "395af460d0c1b6e48a7ede41f230b2954c52c1a3",
+    "selection": "compatible bounded model fixes; current v3 schema, fixed-target backend and original test methods retained",
+    "selected_sha256": "8f44e524cb432563489a83ee4efdd1a8dfdbb4abf832e0ff3af6e7daec593501"
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/quantum_oracle_resources.py",
+    "source": "360556e9664fcb563877c05e74fd83974a5d9dba",
+    "starting_source": "395af460d0c1b6e48a7ede41f230b2954c52c1a3",
+    "selection": "compatible bounded model fixes; current v3 schema, fixed-target backend and original test methods retained",
+    "selected_sha256": "b567a2d2fde3975c75249e289650edf0e2cb2a91df4a5d7bdbb705cd5ec00080"
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/quantum_network_sim.py",
+    "source": "360556e9664fcb563877c05e74fd83974a5d9dba",
+    "starting_source": "395af460d0c1b6e48a7ede41f230b2954c52c1a3",
+    "selection": "compatible bounded model fixes; current v3 schema, fixed-target backend and original test methods retained",
+    "selected_sha256": "43ab783dd8d43ea980be3ff932ef6479e508a16038390a35be81a93c911a45f2"
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/test_quantum_adversarial_search.py",
+    "source": "360556e9664fcb563877c05e74fd83974a5d9dba",
+    "starting_source": "395af460d0c1b6e48a7ede41f230b2954c52c1a3",
+    "selection": "compatible bounded model fixes; current v3 schema, fixed-target backend and original test methods retained",
+    "selected_sha256": "8f067651f7efb14cbe06ba6f6bf80b91418f0638c1f56827d396f52f139c5cc7"
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/test_quantum_oracle_resources.py",
+    "source": "360556e9664fcb563877c05e74fd83974a5d9dba",
+    "starting_source": "395af460d0c1b6e48a7ede41f230b2954c52c1a3",
+    "selection": "compatible bounded model fixes; current v3 schema, fixed-target backend and original test methods retained",
+    "selected_sha256": "370c88e47cd0cf420e3652f3b2003c29be698a205b4f7c5c82cce79793afe052"
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/test_quantum_resource_clock.py",
+    "source": "360556e9664fcb563877c05e74fd83974a5d9dba",
+    "starting_source": "395af460d0c1b6e48a7ede41f230b2954c52c1a3",
+    "selection": "compatible bounded model fixes; current v3 schema, fixed-target backend and original test methods retained",
+    "selected_sha256": "207c2d76d9fe8759f30f21827d06f6a393b48a2636c09f8b213d2dc607ec1b97"
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/test_quantum_network_sim.py",
+    "source": "360556e9664fcb563877c05e74fd83974a5d9dba",
+    "starting_source": "395af460d0c1b6e48a7ede41f230b2954c52c1a3",
+    "selection": "compatible bounded model fixes; current v3 schema, fixed-target backend and original test methods retained",
+    "selected_sha256": "859f5dfc0ce985939fb7e0627b6c4989d94f591a488b26b884537933f2e7d0dc"
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/experiments/quantum_network_campaign.py",
+    "source": "360556e9664fcb563877c05e74fd83974a5d9dba",
+    "starting_source": "395af460d0c1b6e48a7ede41f230b2954c52c1a3",
+    "selection": "compatible bounded model fixes; current v3 schema, fixed-target backend and original test methods retained",
+    "selected_sha256": "10d6589b0eda5c8b2fcb989ea8ba7e6048ad44bb873de8bd19d73304c14c3cfd"
+  }
+]

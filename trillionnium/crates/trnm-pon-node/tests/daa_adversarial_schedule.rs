@@ -499,10 +499,17 @@ fn isolated_asert_shadows_actual_native_w1_ancestry_without_activation() {
             let median = asert_target(AsertInputs {
                 evaluation_parent_time: parent_mtp,
                 ..input
-            }).unwrap();
+            })
+            .unwrap();
             assert_eq!(raw, initial, "steady native W1 cadence at height {height}");
-            assert!(median <= raw, "MTP never exceeds raw parent time on this monotone branch");
-            assert_eq!(node.packet(packet.id().unwrap()).unwrap().header.target, original_expected);
+            assert!(
+                median <= raw,
+                "MTP never exceeds raw parent time on this monotone branch"
+            );
+            assert_eq!(
+                node.packet(packet.id().unwrap()).unwrap().header.target,
+                original_expected
+            );
             shadow_comparisons += 1;
         }
         parent = packet.id().unwrap();
@@ -516,8 +523,6 @@ fn isolated_asert_shadows_actual_native_w1_ancestry_without_activation() {
     assert_eq!(restored.read_active().unwrap(), before);
     assert_eq!(restored.packet(parent).unwrap().header.target, initial);
 }
-
-
 
 /// Shadow ASERT comparison on two genuinely mined W1 branches. The active
 /// consensus/required-work rules remain the original installed legacy profile.
@@ -534,13 +539,7 @@ fn shadow_asert_distinguishes_two_real_w1_forks_and_survives_cold_reopen() {
     let original_first_target = node.expected_target(genesis).unwrap();
     let mut common = genesis;
     for height in 1..=15_u64 {
-        let packet = extend(
-            &mut node,
-            common,
-            GENESIS_TIME + height * 10,
-            height,
-            0,
-        );
+        let packet = extend(&mut node, common, GENESIS_TIME + height * 10, height, 0);
         verify_work(&packet);
         common = packet.id().unwrap();
     }
@@ -552,13 +551,7 @@ fn shadow_asert_distinguishes_two_real_w1_forks_and_survives_cold_reopen() {
     let mut honest = common;
     let mut altered = common;
     for height in 16..=23_u64 {
-        let a = extend(
-            &mut node,
-            honest,
-            GENESIS_TIME + height * 10,
-            height,
-            0,
-        );
+        let a = extend(&mut node, honest, GENESIS_TIME + height * 10, height, 0);
         let b = extend(
             &mut node,
             altered,
@@ -593,7 +586,8 @@ fn shadow_asert_distinguishes_two_real_w1_forks_and_survives_cold_reopen() {
     let altered_shadow = asert_target(AsertInputs {
         evaluation_parent_time: altered_parent_time,
         ..shadow
-    }).unwrap();
+    })
+    .unwrap();
     assert_ne!(honest_shadow, altered_shadow);
     assert_eq!(
         node.expected_target(honest).unwrap(),
@@ -617,20 +611,28 @@ fn shadow_asert_distinguishes_two_real_w1_forks_and_survives_cold_reopen() {
     drop(node);
     let restored = Node::open(&store, settings, 1).unwrap();
     assert_eq!(restored.read_active().unwrap(), before);
-    assert_eq!(restored.packet(honest).unwrap().header.timestamp, honest_parent_time);
-    assert_eq!(restored.packet(altered).unwrap().header.timestamp, altered_parent_time);
+    assert_eq!(
+        restored.packet(honest).unwrap().header.timestamp,
+        honest_parent_time
+    );
+    assert_eq!(
+        restored.packet(altered).unwrap().header.timestamp,
+        altered_parent_time
+    );
     assert_eq!(
         asert_target(AsertInputs {
             evaluation_parent_time: restored.packet(honest).unwrap().header.timestamp,
             ..shadow
-        }).unwrap(),
+        })
+        .unwrap(),
         honest_shadow,
     );
     assert_eq!(
         asert_target(AsertInputs {
             evaluation_parent_time: restored.packet(altered).unwrap().header.timestamp,
             ..shadow
-        }).unwrap(),
+        })
+        .unwrap(),
         altered_shadow,
     );
     assert_eq!(restored.active().unwrap().0, heavier);
@@ -678,10 +680,7 @@ fn isolated_asert_context_rejects_wrong_anchor_and_uses_real_w1_branch_history()
         max_ancestor_reads: 32,
     };
     let old = node.expected_target(parent).unwrap();
-    let raw = shadow_target_from_ancestry(context, parent, |id| {
-        node.packet(id)
-    })
-    .unwrap();
+    let raw = shadow_target_from_ancestry(context, parent, |id| node.packet(id)).unwrap();
     assert_eq!(raw, context.anchor_target);
     let median = shadow_target_from_ancestry(
         AnchoredResearchContext {
@@ -689,25 +688,35 @@ fn isolated_asert_context_rejects_wrong_anchor_and_uses_real_w1_branch_history()
             ..context
         },
         parent,
-        |id| {
-            node.packet(id)
-        },
+        |id| node.packet(id),
     )
     .unwrap();
     assert!(median < raw, "MTP11 lags raw parent on a monotonic chain");
     assert_eq!(node.expected_target(parent).unwrap(), old);
 
     for bad in [
-        AnchoredResearchContext { parameters: [0x91; 32], ..context },
-        AnchoredResearchContext { anchor_target: [0x44; 32], ..context },
-        AnchoredResearchContext { anchor_block: [0x11; 32], ..context },
-        AnchoredResearchContext { max_ancestor_reads: 2, ..context },
-        AnchoredResearchContext { genesis: [0x22; 32], ..context },
+        AnchoredResearchContext {
+            parameters: [0x91; 32],
+            ..context
+        },
+        AnchoredResearchContext {
+            anchor_target: [0x44; 32],
+            ..context
+        },
+        AnchoredResearchContext {
+            anchor_block: [0x11; 32],
+            ..context
+        },
+        AnchoredResearchContext {
+            max_ancestor_reads: 2,
+            ..context
+        },
+        AnchoredResearchContext {
+            genesis: [0x22; 32],
+            ..context
+        },
     ] {
-        assert!(shadow_target_from_ancestry(bad, parent, |id| {
-            node.packet(id)
-        })
-        .is_err());
+        assert!(shadow_target_from_ancestry(bad, parent, |id| { node.packet(id) }).is_err());
     }
     assert!(
         shadow_target_from_ancestry(context, parent, |id| {
@@ -738,7 +747,10 @@ fn isolated_asert_context_rejects_wrong_anchor_and_uses_real_w1_branch_history()
         ..context
     };
     assert!(shadow_target_from_ancestry(shallow, parent, |id| node.packet(id)).is_err());
-    assert_eq!(node.research_asert_target_indexed(shallow, parent).unwrap(), raw);
+    assert_eq!(
+        node.research_asert_target_indexed(shallow, parent).unwrap(),
+        raw
+    );
     assert_eq!(
         node.research_asert_target_indexed(
             AnchoredResearchContext {
@@ -752,31 +764,36 @@ fn isolated_asert_context_rejects_wrong_anchor_and_uses_real_w1_branch_history()
     );
     // A valid but different height-one W1 fork is not the anchor of the
     // selected parent even if its target, height and genesis are identical.
-    let unrelated_first = extend(
-        &mut node,
-        settings.genesis(),
-        GENESIS_TIME + 10,
-        1,
-        1,
-    )
-    .id()
-    .unwrap();
+    let unrelated_first = extend(&mut node, settings.genesis(), GENESIS_TIME + 10, 1, 1)
+        .id()
+        .unwrap();
     assert_ne!(unrelated_first, context.anchor_block);
-    assert!(
-        node.research_asert_target_indexed(
+    assert!(node
+        .research_asert_target_indexed(
             AnchoredResearchContext {
                 anchor_block: unrelated_first,
                 ..shallow
             },
             parent,
         )
-        .is_err()
-    );
+        .is_err());
     for wrong in [
-        AnchoredResearchContext { parameters: [0x91; 32], ..shallow },
-        AnchoredResearchContext { spacing: 11, ..shallow },
-        AnchoredResearchContext { pow_limit: [0x77; 32], ..shallow },
-        AnchoredResearchContext { anchor_target: [0x44; 32], ..shallow },
+        AnchoredResearchContext {
+            parameters: [0x91; 32],
+            ..shallow
+        },
+        AnchoredResearchContext {
+            spacing: 11,
+            ..shallow
+        },
+        AnchoredResearchContext {
+            pow_limit: [0x77; 32],
+            ..shallow
+        },
+        AnchoredResearchContext {
+            anchor_target: [0x44; 32],
+            ..shallow
+        },
     ] {
         assert!(node.research_asert_target_indexed(wrong, parent).is_err());
     }
@@ -805,10 +822,7 @@ fn isolated_asert_context_rejects_wrong_anchor_and_uses_real_w1_branch_history()
         median
     );
     assert_eq!(
-        shadow_target_from_ancestry(context, parent, |id| {
-            reopened.packet(id)
-        })
-        .unwrap(),
+        shadow_target_from_ancestry(context, parent, |id| { reopened.packet(id) }).unwrap(),
         raw
     );
 }

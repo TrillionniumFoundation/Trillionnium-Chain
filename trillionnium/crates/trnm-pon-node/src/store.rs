@@ -5575,17 +5575,9 @@ impl Node {
             "Q4_FORECAST_PROFILE",
         )?;
         let (tip, generation, state) = self.read_active()?;
-        let next_height = self
-            .record(tip)?
-            .height
-            .checked_add(1)
-            .ok_or("HEIGHT")?;
-        let actual_lease = qualified_task_lifecycle::eligible_task(
-            &state,
-            task,
-            next_height,
-            &self.settings.app,
-        )?;
+        let next_height = self.record(tip)?.height.checked_add(1).ok_or("HEIGHT")?;
+        let actual_lease =
+            qualified_task_lifecycle::eligible_task(&state, task, next_height, &self.settings.app)?;
         let forecast = crate::forecast_q4_renewal_window(
             actual_lease.lease(),
             proposed_lease,
@@ -5594,7 +5586,10 @@ impl Node {
             assumed_safety_margin_blocks,
         )
         .map_err(|_| Error::from("Q4_FORECAST_REFUSED"))?;
-        ensure(self.active()? == (tip, generation), "ACTIVE_GENERATION_CONFLICT")?;
+        ensure(
+            self.active()? == (tip, generation),
+            "ACTIVE_GENERATION_CONFLICT",
+        )?;
         Ok((tip, generation, forecast))
     }
 

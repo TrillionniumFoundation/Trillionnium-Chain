@@ -651,7 +651,9 @@ pub mod daa_research {
             .checked_sub(i128::from(input.anchor_parent_time))
             .and_then(|value| value.checked_sub(ideal))
             .ok_or("ASERT_RESEARCH_RANGE")?;
-        let scaled = deviation.checked_mul(65_536).ok_or("ASERT_RESEARCH_RANGE")?;
+        let scaled = deviation
+            .checked_mul(65_536)
+            .ok_or("ASERT_RESEARCH_RANGE")?;
         let exponent = scaled / i128::from(input.half_life); // truncate toward zero
         let shifts = exponent.div_euclid(65_536);
         let fractional = exponent.rem_euclid(65_536);
@@ -663,7 +665,10 @@ pub mod daa_research {
             + (1_i128 << 47))
             >> 48)
             + 65_536;
-        ensure((65_536..=131_072).contains(&factor), "ASERT_RESEARCH_FACTOR")?;
+        ensure(
+            (65_536..=131_072).contains(&factor),
+            "ASERT_RESEARCH_FACTOR",
+        )?;
         if shifts >= 256 {
             return Ok(input.pow_limit);
         }
@@ -688,7 +693,11 @@ pub mod daa_research {
 
 #[cfg(test)]
 mod daa_research_tests {
-    use super::{check_time, daa_research::{asert_target, AsertInputs}, retarget, Work};
+    use super::{
+        check_time,
+        daa_research::{asert_target, AsertInputs},
+        retarget, Work,
+    };
 
     fn target(hex_text: &str) -> [u8; 32] {
         let mut out = [0_u8; 32];
@@ -706,33 +715,62 @@ mod daa_research_tests {
         value[1] = 0; // 2^240-1
         value
     }
-    fn sample(before: u64, parent: u64, anchor_height: u64,
-              height: u64, spacing: u64, half_life: u64) -> AsertInputs {
-        AsertInputs { anchor_target: base(), anchor_parent_time: before,
-            evaluation_parent_time: parent, anchor_height,
-            candidate_height: height, spacing, half_life, pow_limit: cap() }
+    fn sample(
+        before: u64,
+        parent: u64,
+        anchor_height: u64,
+        height: u64,
+        spacing: u64,
+        half_life: u64,
+    ) -> AsertInputs {
+        AsertInputs {
+            anchor_target: base(),
+            anchor_parent_time: before,
+            evaluation_parent_time: parent,
+            anchor_height,
+            candidate_height: height,
+            spacing,
+            half_life,
+            pow_limit: cap(),
+        }
     }
 
     #[test]
     fn independent_python_vectors_agree_with_native_fixed_point_arithmetic() {
         // Values frozen from separately implemented unbounded Python oracle.
         for (input, expected) in [
-            (sample(0, 10, 1, 2, 10, 7200),
-             "0000000010000000000000000000000000000000000000000000000000000000"),
-            (sample(0, 20, 1, 2, 10, 7200),
-             "000000001003f000000000000000000000000000000000000000000000000000"),
-            (sample(0, 0, 1, 2, 10, 7200),
-             "000000000ffc1000000000000000000000000000000000000000000000000000"),
-            (sample(0, 2000, 1, 80, 10, 7200),
-             "0000000011fa7000000000000000000000000000000000000000000000000000"),
-            (sample(0, 800, 1, 80, 10, 7200),
-             "000000001003f000000000000000000000000000000000000000000000000000"),
-            (sample(2000, 1800, 1, 100, 10, 3600),
-             "000000000cb95000000000000000000000000000000000000000000000000000"),
-            (sample(0, 1 << 20, 1, 2, 10, 3600),
-             "0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"),
-            (sample(1 << 20, 0, 1, 2, 10, 3600),
-             "0000000000000000000000000000000000000000000000000000000000000001"),
+            (
+                sample(0, 10, 1, 2, 10, 7200),
+                "0000000010000000000000000000000000000000000000000000000000000000",
+            ),
+            (
+                sample(0, 20, 1, 2, 10, 7200),
+                "000000001003f000000000000000000000000000000000000000000000000000",
+            ),
+            (
+                sample(0, 0, 1, 2, 10, 7200),
+                "000000000ffc1000000000000000000000000000000000000000000000000000",
+            ),
+            (
+                sample(0, 2000, 1, 80, 10, 7200),
+                "0000000011fa7000000000000000000000000000000000000000000000000000",
+            ),
+            (
+                sample(0, 800, 1, 80, 10, 7200),
+                "000000001003f000000000000000000000000000000000000000000000000000",
+            ),
+            (
+                sample(2000, 1800, 1, 100, 10, 3600),
+                "000000000cb95000000000000000000000000000000000000000000000000000",
+            ),
+            (
+                sample(0, 1 << 20, 1, 2, 10, 3600),
+                "0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            ),
+            (
+                sample(1 << 20, 0, 1, 2, 10, 3600),
+                "0000000000000000000000000000000000000000000000000000000000000001",
+            ),
         ] {
             assert_eq!(asert_target(input).unwrap(), target(expected));
         }
@@ -742,8 +780,10 @@ mod daa_research_tests {
     fn bad_ranges_and_context_are_rejected_without_any_old_rule_change() {
         let mut input = sample(0, 10, 1, 2, 10, 7200);
         input.half_life = 0;
-        assert_eq!(asert_target(input).unwrap_err().to_string(),
-                   "ASERT_RESEARCH_PARAMETERS");
+        assert_eq!(
+            asert_target(input).unwrap_err().to_string(),
+            "ASERT_RESEARCH_PARAMETERS"
+        );
         input = sample(0, 10, 1, 2, 10, 7200);
         input.candidate_height = input.anchor_height;
         assert!(asert_target(input).is_err());
@@ -752,10 +792,19 @@ mod daa_research_tests {
         input.pow_limit = base();
         assert!(asert_target(input).is_err());
         input = sample(u64::MAX, 0, 1, u64::MAX, u64::MAX, 1);
-        assert_eq!(asert_target(input).unwrap_err().to_string(),
-                   "ASERT_RESEARCH_RANGE");
+        assert_eq!(
+            asert_target(input).unwrap_err().to_string(),
+            "ASERT_RESEARCH_RANGE"
+        );
         let old = retarget(base(), 0, 600, 16, 10, cap()).unwrap();
-        assert_eq!(old, Work::from_target(base()).mul_small(4).unwrap().target().unwrap());
+        assert_eq!(
+            old,
+            Work::from_target(base())
+                .mul_small(4)
+                .unwrap()
+                .target()
+                .unwrap()
+        );
     }
 
     #[test]
@@ -766,20 +815,43 @@ mod daa_research_tests {
             let recent: Vec<_> = timestamps.iter().rev().copied().take(11).collect();
             let mut median = recent.clone();
             median.sort_unstable();
-            let ts = if h % 16 == 15 { 2000 } else { median[median.len() / 2] + 1 };
+            let ts = if h % 16 == 15 {
+                2000
+            } else {
+                median[median.len() / 2] + 1
+            };
             check_time(ts, &recent, 2000, 120).unwrap();
             if h % 16 == 0 {
-                current = retarget(current, timestamps[(h-16) as usize],
-                                   timestamps[(h-1) as usize], 16, 10, cap()).unwrap();
+                current = retarget(
+                    current,
+                    timestamps[(h - 16) as usize],
+                    timestamps[(h - 1) as usize],
+                    16,
+                    10,
+                    cap(),
+                )
+                .unwrap();
             }
             timestamps.push(ts);
         }
-        assert_eq!(current,
-                   Work::from_target(base()).mul_small(1024).unwrap().target().unwrap());
+        assert_eq!(
+            current,
+            Work::from_target(base())
+                .mul_small(1024)
+                .unwrap()
+                .target()
+                .unwrap()
+        );
         let raw = asert_target(sample(0, timestamps[79], 1, 80, 10, 7200)).unwrap();
         let mtp = asert_target(sample(0, 16, 1, 80, 10, 7200)).unwrap();
-        assert_eq!(raw, target("0000000011fa7000000000000000000000000000000000000000000000000000"));
-        assert_eq!(mtp, target("000000000eda5000000000000000000000000000000000000000000000000000"));
+        assert_eq!(
+            raw,
+            target("0000000011fa7000000000000000000000000000000000000000000000000000")
+        );
+        assert_eq!(
+            mtp,
+            target("000000000eda5000000000000000000000000000000000000000000000000000")
+        );
         // Checks valid header times ONLY, no signed blocks, W1 proofs or mining claims.
     }
 }
@@ -811,7 +883,8 @@ mod daa_extreme_vectors {
             let anchor_parent_time = 1_000_000 + next() % 100_000;
             let deviation = (next() % 100_000) as i64 - 50_000;
             let mut parent_time = (anchor_parent_time as i64
-                + ((candidate_height - 1) * 10) as i64 + deviation) as u64;
+                + ((candidate_height - 1) * 10) as i64
+                + deviation) as u64;
             if i % 17 == 0 {
                 parent_time = u64::MAX;
             }
@@ -828,7 +901,8 @@ mod daa_extreme_vectors {
                 spacing: 10,
                 half_life,
                 pow_limit,
-            }).unwrap();
+            })
+            .unwrap();
             digest.update(value);
         }
         assert_eq!(
@@ -956,7 +1030,6 @@ pub mod daa_branch_research {
     }
 }
 
-
 /// Non-activated parent-derived ASERT anchor projection. This is not a
 /// VerifiedWork, validated-header, persistence or consensus authority. The
 /// caller must independently validate original parent and new W1 Packet before
@@ -1061,7 +1134,10 @@ mod anchor_projection_research {
     }
 
     fn median(times: &[u64]) -> Result<u64> {
-        ensure(!times.is_empty() && times.len() <= 11, "DAA_PROJECTION_WINDOW")?;
+        ensure(
+            !times.is_empty() && times.len() <= 11,
+            "DAA_PROJECTION_WINDOW",
+        )?;
         let mut sorted = times.to_vec();
         sorted.sort_unstable();
         Ok(sorted[sorted.len() / 2])
@@ -1102,8 +1178,7 @@ mod anchor_projection_research {
 
         fn check_local(&self, ctx: &Context) -> Result<()> {
             ensure(
-                self.context_id == ctx.id()?
-                    && self.commitment == self.computed_commitment()?,
+                self.context_id == ctx.id()? && self.commitment == self.computed_commitment()?,
                 "DAA_PROJECTION_INTEGRITY",
             )
         }
@@ -1232,8 +1307,14 @@ mod daa_anchor_projection_research_tests {
     #[test]
     fn long_shadow_matches_python_raw_and_mtp11_hashes_without_changing_node() {
         for (clock, expected_digest) in [
-            (Clock::Raw, "491ae11c0736a71af9c3fa0bc9ad26a297929f0ea8c303104e2b9df0125fb0e2"),
-            (Clock::Median11, "949f2322a9a1c4e98bbdd27abbe4b00dd0495cb4c12513db8542893815ea615a"),
+            (
+                Clock::Raw,
+                "491ae11c0736a71af9c3fa0bc9ad26a297929f0ea8c303104e2b9df0125fb0e2",
+            ),
+            (
+                Clock::Median11,
+                "949f2322a9a1c4e98bbdd27abbe4b00dd0495cb4c12513db8542893815ea615a",
+            ),
         ] {
             let ctx = fixture(clock);
             let mut parent = Projection::genesis(&ctx).unwrap();
@@ -1246,18 +1327,20 @@ mod daa_anchor_projection_research_tests {
                 material.extend(height.to_be_bytes());
                 material.extend(timestamp.to_be_bytes());
                 let block_id = sha(&material);
-                let current = parent.append(
-                    &ctx,
-                    Observation {
-                        block_id,
-                        parent_id: parent.block_id,
-                        network: ctx.network,
-                        parameters: ctx.parameters,
-                        height,
-                        timestamp,
-                        target: base(),
-                    },
-                ).unwrap();
+                let current = parent
+                    .append(
+                        &ctx,
+                        Observation {
+                            block_id,
+                            parent_id: parent.block_id,
+                            network: ctx.network,
+                            parameters: ctx.parameters,
+                            height,
+                            timestamp,
+                            target: base(),
+                        },
+                    )
+                    .unwrap();
                 witness.update(current.commitment);
                 assert!(current.times_parent_first.len() <= 11);
                 if height >= ctx.activation_height {
@@ -1278,12 +1361,20 @@ mod daa_anchor_projection_research_tests {
             raw.extend(common.block_id);
             raw.extend(height.to_be_bytes());
             let id = sha(&raw);
-            common = common.append(&ctx, Observation {
-                block_id: id, parent_id: common.block_id,
-                network: ctx.network, parameters: ctx.parameters,
-                height, timestamp: ctx.genesis_timestamp + 10 * height,
-                target: base(),
-            }).unwrap();
+            common = common
+                .append(
+                    &ctx,
+                    Observation {
+                        block_id: id,
+                        parent_id: common.block_id,
+                        network: ctx.network,
+                        parameters: ctx.parameters,
+                        height,
+                        timestamp: ctx.genesis_timestamp + 10 * height,
+                        target: base(),
+                    },
+                )
+                .unwrap();
         }
         let mut tips = Vec::new();
         for variant in [1u64, 7u64] {
@@ -1294,22 +1385,35 @@ mod daa_anchor_projection_research_tests {
                 raw.extend(height.to_be_bytes());
                 raw.extend(variant.to_be_bytes());
                 let id = sha(&raw);
-                parent = parent.append(&ctx, Observation {
-                    block_id: id, parent_id: parent.block_id,
-                    network: ctx.network, parameters: ctx.parameters,
-                    height, timestamp: ctx.genesis_timestamp + 10 * height
-                        + variant * (height - 14),
-                    target: base(),
-                }).unwrap();
+                parent = parent
+                    .append(
+                        &ctx,
+                        Observation {
+                            block_id: id,
+                            parent_id: parent.block_id,
+                            network: ctx.network,
+                            parameters: ctx.parameters,
+                            height,
+                            timestamp: ctx.genesis_timestamp
+                                + 10 * height
+                                + variant * (height - 14),
+                            target: base(),
+                        },
+                    )
+                    .unwrap();
             }
             tips.push(parent);
         }
         assert_ne!(tips[0].anchor, tips[1].anchor);
-        assert_ne!(tips[0].shadow_target(&ctx).unwrap(),
-                   tips[1].shadow_target(&ctx).unwrap());
+        assert_ne!(
+            tips[0].shadow_target(&ctx).unwrap(),
+            tips[1].shadow_target(&ctx).unwrap()
+        );
         // Examining another fork never mutates the exact original branch.
-        assert_eq!(tips[0].shadow_target(&ctx).unwrap(),
-                   tips[0].shadow_target(&ctx).unwrap());
+        assert_eq!(
+            tips[0].shadow_target(&ctx).unwrap(),
+            tips[0].shadow_target(&ctx).unwrap()
+        );
     }
 
     #[test]
@@ -1329,11 +1433,43 @@ mod daa_anchor_projection_research_tests {
         let mut corrupted = first.clone();
         corrupted.timestamp += 1;
         assert!(corrupted.shadow_target(&ctx).is_err());
-        assert!(corrupted.append(&ctx, Observation { height: 2, ..observation }).is_err());
-        assert!(genesis.append(&ctx, Observation { height: 2, ..observation }).is_err());
-        assert!(genesis.append(&ctx, Observation { network: [0; 32], ..observation }).is_err());
+        assert!(corrupted
+            .append(
+                &ctx,
+                Observation {
+                    height: 2,
+                    ..observation
+                }
+            )
+            .is_err());
+        assert!(genesis
+            .append(
+                &ctx,
+                Observation {
+                    height: 2,
+                    ..observation
+                }
+            )
+            .is_err());
+        assert!(genesis
+            .append(
+                &ctx,
+                Observation {
+                    network: [0; 32],
+                    ..observation
+                }
+            )
+            .is_err());
         let mut changed = ctx.clone();
         changed.rule_commitment = sha(b"another version");
-        assert!(first.append(&changed, Observation { height: 2, ..observation }).is_err());
+        assert!(first
+            .append(
+                &changed,
+                Observation {
+                    height: 2,
+                    ..observation
+                }
+            )
+            .is_err());
     }
 }
