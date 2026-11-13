@@ -738,5 +738,151 @@ class HistoryAdapterControls(unittest.TestCase):
                 check_from_zero_host_call(check_history_host_call(changed), exact)
 
 
+class PreparedFormatHostControls(unittest.TestCase):
+    """Mock compiler/formatter only; no systemd, Cargo or native process is launched."""
+
+    def test_original_mode_prepares_build_then_full_format_with_same_budget_and_source(self):
+        for terminal in ({'exit_code': 0, 'timed_out': False},
+                         {'exit_code': 1, 'timed_out': False},
+                         {'exit_code': -9, 'timed_out': True}):
+            with self.subTest(terminal=terminal), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                binary = root / 'not-an-executable'
+                binary.write_bytes(b'synthetic compiler artifact')
+                identity = {'commit': 'a' * 40, 'tree': 'b' * 40}
+                seen = []
+                def child(command, output, timeout):
+                    seen.append((command, timeout))
+                    output.mkdir()
+                    if output.name == 'prepare-build':
+                        stdout = (json.dumps({
+                            'reason': 'compiler-artifact', 'target': {'name': host.native.TARGET},
+                            'profile': {'test': True}, 'executable': str(binary)}) + '\n').encode()
+                        result = {'command': command, 'exit_code': 0, 'timed_out': False}
+                    else:
+                        self.assertEqual(output.name, 'prepare-format')
+                        stdout = b'synthetic complete formatter observation\n'
+                        result = {'command': command, **terminal}
+                    (output / 'stdout').write_bytes(stdout)
+                    (output / 'stderr').write_bytes(b'')
+                    result.update(stdout_sha256=host.native.digest(stdout),
+                                  stderr_sha256=host.native.digest(b''))
+                    (output / 'process.json').write_text(json.dumps(result) + '\n')
+                    return result
+                with patch.object(host.native, 'source_identity', return_value=identity) as source, \
+                        patch.object(host.native, 'run_child', side_effect=child), \
+                        patch.object(host.subprocess, 'check_output',
+                                     return_value='simulated compiler version\n'):
+                    prepared = host.prepare_native_build(root, prepare_format=True)
+                self.assertEqual(seen, [(host.native.native_build_command(), 900),
+                                        (host.native.native_format_command(), 60)])
+                self.assertEqual(source.call_count, 2)
+                self.assertEqual(prepared['source_before'], prepared['source_after'])
+                self.assertTrue(prepared['completed'])
+                self.assertFalse(prepared['native_tests_executed'])
+                self.assertFalse(prepared['service_resource_observation'])
+                self.assertEqual(prepared['format_preparation']['timeout_seconds'], 60)
+                for key, value in terminal.items():
+                    self.assertEqual(prepared['format_preparation']['process'][key], value)
+                path, digest = host.prepared_format_handoff(prepared, root)
+                self.assertEqual(digest, host.native.digest(Path(path).read_bytes()))
+
+    def test_only_original_mode_enables_format_preparation(self):
+        output = Path('/tmp/synthetic-output')
+        receipts = Path('/tmp/synthetic-receipts')
+        with patch.object(host, 'prepare_native_build', return_value={}) as build:
+            host.prepare_command(['python3', 'scripts/ci/run_from_zero_native.py',
+                                  '--out', str(output)], output, receipts)
+            build.assert_called_once_with(receipts, prepare_format=True)
+            build.reset_mock()
+            host.prepare_command(['python3', 'scripts/ci/run_w1_fresh_service_v1.py',
+                                  '--out', str(output)], output, receipts)
+            build.assert_called_once_with(receipts)
+        for module in (host.history, host.diagnostic, host.architecture):
+            with self.subTest(mode=module.SCRIPT), \
+                    patch.object(host, 'prepare_native_build') as build, \
+                    patch.object(module, 'validate_preparation', return_value={'existing': True}) as bind:
+                got = host.prepare_command(['python3', module.SCRIPT, '--out', str(output)],
+                                           output, receipts)
+                self.assertEqual(got, {'existing': True})
+                bind.assert_called_once_with(output)
+                build.assert_not_called()
+
+    def test_caller_environment_cannot_supply_private_format_attestation(self):
+        command = ['python3', 'scripts/ci/run_from_zero_native.py', '--out', '/tmp/out']
+        env = {'PATH': '/original/bin',
+               host.native.FORMAT_RECEIPT_PATH_ENV: '/tmp/forged/prepare-build.json',
+               host.native.FORMAT_RECEIPT_SHA_ENV: 'f' * 64}
+        args = ('trnm-from-zero-1-1-cost-55.service', Path('/tmp/receipt'),
+                command, 1001, 1001, env)
+        ordinary = host.service_command(*args)
+        self.assertFalse(any(host.native.FORMAT_RECEIPT_PATH_ENV in item for item in ordinary))
+        self.assertFalse(any(host.native.FORMAT_RECEIPT_SHA_ENV in item for item in ordinary))
+        bound = host.service_command(*args, format_handoff=('/tmp/real/prepare-build.json', 'a' * 64))
+        self.assertIn('--setenv=' + host.native.FORMAT_RECEIPT_PATH_ENV
+                      + '=/tmp/real/prepare-build.json', bound)
+        self.assertIn('--setenv=' + host.native.FORMAT_RECEIPT_SHA_ENV + '=' + 'a' * 64, bound)
+        self.assertFalse(any('/tmp/forged' in item or 'f' * 64 in item for item in bound))
+        self.assertEqual(bound[-4:], command)
+        self.assertFalse(any('CPUQuota=' in item or 'MemoryMax=' in item for item in bound))
+        self.assertNotIn(host.native.FORMAT_RECEIPT_PATH_ENV, host.ENVIRONMENT)
+        self.assertNotIn(host.native.FORMAT_RECEIPT_SHA_ENV, host.ENVIRONMENT)
+
+    def test_changed_controller_record_cannot_be_pinned_for_worker(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            prepared = {'completed': True, 'format_preparation': {'process': {'exit_code': 0}}}
+            path = root / 'prepare-build.json'
+            path.write_text(json.dumps(prepared))
+            self.assertEqual(host.prepared_format_handoff(prepared, root),
+                             (str(path), host.native.digest(path.read_bytes())))
+            changed = copy.deepcopy(prepared)
+            changed['format_preparation']['process']['exit_code'] = 1
+            path.write_text(json.dumps(changed))
+            with self.assertRaisesRegex(ValueError, 'FORMAT_CONTROLLER_RECORD_CHANGED'):
+                host.prepared_format_handoff(prepared, root)
+
+    def test_final_acceptance_requires_original_format_receipt_binding(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            output = root / 'native'
+            output.mkdir()
+            receipts = root / 'native-host'
+            receipts.mkdir()
+            source = {'commit': 'a' * 40, 'tree': 'b' * 40}
+            process = {'command': host.native.native_format_command(),
+                       'exit_code': 0, 'timed_out': False}
+            prepared = {'completed': True, 'source_before': source, 'source_after': source,
+                        'binary_sha256': 'c' * 64, 'format_preparation': {'process': process}}
+            preparation = receipts / 'prepare-build.json'
+            preparation.write_text(json.dumps(prepared) + '\n')
+            format_binding = {
+                'receipt_sha256': host.native.digest(preparation.read_bytes()),
+                'timeout_seconds': 60, 'scope': 'exact-source-preparation-outside-service'}
+            original = {
+                'schema': 'trnm-from-zero-native-execution-v3',
+                'source_before': source, 'source_after': source,
+                'binary_sha256_before': 'c' * 64, 'binary_sha256_after': 'c' * 64,
+                'passed': True, 'all_named_tests_passed': True, 'source_recompiled': True,
+                'runs': [{'name': name} for name in host.native.TESTS],
+                'format': process, 'format_preparation': format_binding}
+            manifest = output / 'manifest.json'
+            manifest.write_text(json.dumps(original))
+            self.assertEqual(host.bind_prepared_execution(prepared, output)['binary_sha256'], 'c' * 64)
+            changes = (
+                ('format_preparation', None),
+                ('format_preparation', dict(format_binding, receipt_sha256='d' * 64)),
+                ('format_preparation', dict(format_binding, scope='inside-service')),
+                ('format', dict(process, exit_code=1)),
+            )
+            for key, value in changes:
+                altered = copy.deepcopy(original)
+                altered[key] = value
+                manifest.write_text(json.dumps(altered))
+                with self.subTest(key=key, value=value), \
+                        self.assertRaisesRegex(ValueError, 'PREPARATION_AND_EXECUTION_FORMAT_MISMATCH'):
+                    host.bind_prepared_execution(prepared, output)
+
+
 if __name__ == '__main__':
     unittest.main()

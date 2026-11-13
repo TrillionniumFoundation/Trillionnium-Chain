@@ -95,20 +95,29 @@ def environment_arguments(environment: dict[str, str]) -> list[str]:
 
 
 def service_command(service: str, receipts: Path, command: list[str],
-                    uid: int, gid: int, environment: dict[str, str]) -> list[str]:
+                    uid: int, gid: int, environment: dict[str, str],
+                    *, format_handoff: tuple[str, str] | None = None) -> list[str]:
+    format_arguments = []
+    if format_handoff is not None:
+        require(command[1] == 'scripts/ci/run_from_zero_native.py', 'FORMAT_HANDOFF_ORIGINAL_RUNNER')
+        path, digest = format_handoff
+        require(Path(path).is_absolute() and re.fullmatch('[0-9a-f]{64}', digest) is not None,
+                'FORMAT_HANDOFF_IDENTITY')
+        format_arguments = ['--setenv=' + native.FORMAT_RECEIPT_PATH_ENV + '=' + path,
+                            '--setenv=' + native.FORMAT_RECEIPT_SHA_ENV + '=' + digest]
     return [
         'sudo', '-n', 'systemd-run', '--unit=' + service, '--wait', '--pipe', '--collect',
         '--service-type=exec', '--expand-environment=no', '--slice=' + UNIT,
         '--uid=' + str(uid), '--gid=' + str(gid), '--working-directory=' + str(ROOT),
         '--property=KillMode=control-group', '--property=TimeoutStopSec=20s',
         '--property=Delegate=no', '--property=NoNewPrivileges=yes',
-        '--property=CapabilityBoundingSet=', *environment_arguments(environment),
+        '--property=CapabilityBoundingSet=', *environment_arguments(environment), *format_arguments,
         sys.executable, str(Path(__file__).resolve()), '--inside', str(receipts), service,
         str(uid), str(gid), '--', *command,
     ]
 
 
-def prepare_native_build(receipts: Path) -> dict:
+def prepare_native_build(receipts: Path, *, prepare_format: bool = False) -> dict:
     """Bounded build-only preparation, never a service or test acceptance."""
     result = {'schema': 'trnm-ci-original-native-build-preparation-v1',
               'source_before': None, 'source_after': None, 'process': None,
@@ -133,6 +142,17 @@ def prepare_native_build(receipts: Path) -> dict:
         require(binary.is_file() and not binary.is_symlink(), 'REGULAR_PREPARED_BINARY')
         result['binary_path'] = str(binary)
         result['binary_sha256'] = native.digest(binary.read_bytes())
+        if prepare_format:
+            versions = {
+                'rustc': subprocess.check_output(['rustc', '-Vv'], text=True, timeout=30),
+                'cargo': subprocess.check_output(['cargo', '-V'], text=True, timeout=30).strip(),
+                'rustfmt': subprocess.check_output(['rustfmt', '--version'], text=True, timeout=30).strip()}
+            # Retain nonzero/timeout terminals too. The original runner still owns
+            # their failure order and must never turn them into successful status.
+            result['format_preparation'] = {
+                'timeout_seconds': 60, 'tool_versions': versions,
+                'process': native.run_child(native.native_format_command(),
+                                            receipts / 'prepare-format', 60)}
     except BaseException as error:
         # Retain incomplete preparation even for the controller's signal unwind.
         # run_child owns and reaps its process group before propagating a signal.
@@ -168,6 +188,13 @@ def bind_prepared_execution(prepared: dict, output: Path) -> dict:
             'PREPARATION_AND_EXECUTION_SOURCE_MISMATCH')
     require(prepared['binary_sha256'] == result['binary_sha256_before']
             == result['binary_sha256_after'], 'PREPARATION_AND_EXECUTION_BINARY_MISMATCH')
+    if prepared.get('format_preparation') is not None:
+        expected = prepared_format_handoff(prepared, output.with_name(output.name + '-host'))
+        require(result.get('format') == prepared['format_preparation']['process']
+                and result.get('format_preparation') == {
+                    'receipt_sha256': expected[1], 'timeout_seconds': 60,
+                    'scope': 'exact-source-preparation-outside-service'},
+                'PREPARATION_AND_EXECUTION_FORMAT_MISMATCH')
     require(result.get('passed') is True and result.get('all_named_tests_passed') is True
             and result.get('source_recompiled') is True
             and [row['name'] for row in result['runs']] == list(native.TESTS),
@@ -229,6 +256,16 @@ def bind_prepared_fresh_execution(prepared: dict, output: Path) -> dict:
             'runtime_limits_or_deadlines_changed': False}
 
 
+def prepared_format_handoff(prepared: dict, receipts: Path) -> tuple[str, str]:
+    """Pin the controller's own record; caller-supplied environment is not an attestation."""
+    path = receipts / 'prepare-build.json'
+    raw = native.read_format_file(path, 65536)
+    require(native.json_load(raw) == prepared and prepared.get('completed') is True
+            and type(prepared.get('format_preparation')) is dict,
+            'FORMAT_CONTROLLER_RECORD_CHANGED')
+    return str(path), native.digest(raw)
+
+
 def prepare_command(command: list[str], output: Path, receipts: Path) -> dict:
     if command[1] == architecture.SCRIPT:
         return architecture.validate_preparation(output)
@@ -236,6 +273,8 @@ def prepare_command(command: list[str], output: Path, receipts: Path) -> dict:
         return history.validate_preparation(output)
     if command[1] == diagnostic.SCRIPT:
         return diagnostic.validate_preparation(output)
+    if command[1] == 'scripts/ci/run_from_zero_native.py':
+        return prepare_native_build(receipts, prepare_format=True)
     return prepare_native_build(receipts)
 
 
@@ -387,10 +426,13 @@ def outer_owned(command: list[str]) -> int:
         if 'RUSTUP_HOME' not in environment:
             environment['RUSTUP_HOME'] = subprocess.check_output(
                 ['rustup', 'show', 'home'], text=True, timeout=30).strip()
+        format_handoff = (prepared_format_handoff(result['preparation'], receipts)
+                          if command[1] == 'scripts/ci/run_from_zero_native.py' else None)
         owned_service = True
         with (receipts / 'systemd-run.log').open('xb') as stream:
             result['systemd_run_exit'] = subprocess.run(
-                service_command(service, receipts, command, uid, gid, environment),
+                service_command(service, receipts, command, uid, gid, environment,
+                                format_handoff=format_handoff),
                 stdout=stream, stderr=subprocess.STDOUT).returncode
         child = json.loads((receipts / 'child-result.json').read_text())
         require(child['command_argv'] == command and not child['host_errors'],

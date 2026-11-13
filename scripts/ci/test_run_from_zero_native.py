@@ -487,13 +487,183 @@ class BinarySelectionTests(unittest.TestCase):
                 driver.validate_service_report(target)
 
 
+def prepared_format_fixture(directory, identity, *, exit_code=0, timed_out=False):
+    """Synthetic data only; this fixture never compiles or invokes an executable."""
+    receipt_dir = Path(directory) / 'prepared-host'
+    receipt_dir.mkdir()
+    logs = receipt_dir / 'prepare-format'
+    logs.mkdir()
+    process = {
+        'command': driver.native_format_command(), 'exit_code': exit_code,
+        'timed_out': timed_out, 'simulated_control': True,
+        'stdout_sha256': driver.digest(b'synthetic format stdout\n'),
+        'stderr_sha256': driver.digest(b'synthetic format stderr\n'),
+    }
+    (logs / 'stdout').write_bytes(b'synthetic format stdout\n')
+    (logs / 'stderr').write_bytes(b'synthetic format stderr\n')
+    (logs / 'process.json').write_text(json.dumps(process) + '\n')
+    prepared = {
+        'schema': 'trnm-ci-original-native-build-preparation-v1',
+        'source_before': copy.deepcopy(identity), 'source_after': copy.deepcopy(identity),
+        'completed': True, 'native_tests_executed': False,
+        'service_resource_observation': False, 'consensus_or_model_authority': False,
+        'format_preparation': {
+            'timeout_seconds': 60,
+            'tool_versions': {'rustc': 'simulated compiler version\n',
+                              'cargo': 'simulated compiler version',
+                              'rustfmt': 'simulated compiler version'},
+            'process': process,
+        },
+    }
+    path = receipt_dir / 'prepare-build.json'
+    path.write_text(json.dumps(prepared) + '\n')
+    return path, prepared, process
+
+
+class PreparedFormatReceiptTests(unittest.TestCase):
+    """Owned ordinary files and mocked version strings; never execute native CI."""
+
+    def exercise_receipt(self, edit=None, *, expected_error=None):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            identity = {'commit': 'a' * 40, 'tree': 'b' * 40}
+            path, prepared, process = prepared_format_fixture(root, identity)
+            expected = driver.digest(path.read_bytes())
+            if edit is not None:
+                replacement = edit(path, prepared, process)
+                if replacement is not None:
+                    expected = replacement
+            output = root / 'retained'
+            env = {driver.FORMAT_RECEIPT_PATH_ENV: str(path),
+                   driver.FORMAT_RECEIPT_SHA_ENV: expected}
+            with patch.dict(os.environ, env), \
+                    patch.object(driver.subprocess, 'check_output',
+                                 return_value='simulated compiler version\n'), \
+                    patch.object(driver, 'run_child') as child:
+                if expected_error is not None:
+                    with self.assertRaises(expected_error):
+                        driver.prepared_format_result(identity, 'simulated compiler version\n',
+                                                      'simulated compiler version', output)
+                    self.assertFalse(output.exists())
+                else:
+                    got, binding = driver.prepared_format_result(
+                        identity, 'simulated compiler version\n',
+                        'simulated compiler version', output)
+                    self.assertEqual(got, process)
+                    self.assertEqual(binding, {
+                        'receipt_sha256': expected, 'timeout_seconds': 60,
+                        'scope': 'exact-source-preparation-outside-service'})
+                    self.assertEqual((output / 'preparation.json').read_bytes(), path.read_bytes())
+                    for name in ('stdout', 'stderr', 'process.json'):
+                        self.assertEqual((output / name).read_bytes(),
+                                         (path.parent / 'prepare-format' / name).read_bytes())
+                child.assert_not_called()
+
+    @staticmethod
+    def repin(path, prepared):
+        path.write_text(json.dumps(prepared) + '\n')
+        return driver.digest(path.read_bytes())
+
+    def test_exact_source_process_and_original_log_bytes_are_retained(self):
+        self.exercise_receipt()
+
+    def test_absent_pair_keeps_original_gate_and_partial_pair_refuses(self):
+        with tempfile.TemporaryDirectory() as directory, patch.dict(os.environ, {}, clear=True), \
+                patch.object(driver.subprocess, 'check_output') as version:
+            output = Path(directory) / 'retained'
+            self.assertIsNone(driver.prepared_format_result({}, '', '', output))
+            for env in ({driver.FORMAT_RECEIPT_PATH_ENV: '/tmp/prepare-build.json'},
+                        {driver.FORMAT_RECEIPT_SHA_ENV: 'a' * 64},
+                        {driver.FORMAT_RECEIPT_PATH_ENV: '/tmp/prepare-build.json',
+                         driver.FORMAT_RECEIPT_SHA_ENV: 'not-a-sha256'}):
+                with self.subTest(env_keys=list(env)), patch.dict(os.environ, env, clear=True):
+                    with self.assertRaisesRegex(ValueError, 'FORMAT_HANDOFF_PAIR_REQUIRED'):
+                        driver.prepared_format_result({}, '', '', output)
+            version.assert_not_called()
+            self.assertFalse(output.exists())
+
+    def test_receipt_changed_after_controller_pin_is_refused(self):
+        def edit(path, prepared, process):
+            path.write_bytes(path.read_bytes() + b' ')
+        self.exercise_receipt(edit, expected_error=ValueError)
+
+    def test_exact_source_schema_and_scope_are_required_even_with_a_fresh_pin(self):
+        changes = (
+            ('schema', 'old-schema'), ('completed', False), ('completed', 1),
+            ('native_tests_executed', True), ('service_resource_observation', True),
+            ('consensus_or_model_authority', True),
+            ('source_before', {'commit': 'c' * 40}),
+            ('source_after', {'commit': 'c' * 40}), ('format_preparation', None),
+        )
+        for key, value in changes:
+            def edit(path, prepared, process):
+                prepared[key] = value
+                return self.repin(path, prepared)
+            with self.subTest(key=key, value=value):
+                self.exercise_receipt(edit, expected_error=ValueError)
+
+    def test_full_command_budget_tool_versions_and_terminal_types_are_exact(self):
+        mutations = (
+            lambda p: p['format_preparation'].update(timeout_seconds=61),
+            lambda p: p['format_preparation'].update(timeout_seconds=True),
+            lambda p: p['format_preparation'].update(tool_versions={}),
+            lambda p: p['format_preparation']['process']['command'].remove('--all'),
+            lambda p: p['format_preparation']['process'].update(exit_code=False),
+            lambda p: p['format_preparation']['process'].update(timed_out=0),
+        )
+        for index, mutate in enumerate(mutations):
+            def edit(path, prepared, process):
+                mutate(prepared)
+                return self.repin(path, prepared)
+            with self.subTest(index=index):
+                self.exercise_receipt(edit, expected_error=ValueError)
+
+    def test_missing_changed_or_foreign_process_and_logs_are_not_accepted(self):
+        for name, mode in (('process.json', 'change'), ('stdout', 'change'),
+                           ('stderr', 'change'), ('process.json', 'missing'),
+                           ('stdout', 'missing'), ('stderr', 'missing')):
+            def edit(path, prepared, process):
+                target = path.parent / 'prepare-format' / name
+                if mode == 'missing':
+                    target.unlink()
+                else:
+                    target.write_bytes(b'{}' if name == 'process.json' else b'changed')
+            with self.subTest(name=name, mode=mode):
+                self.exercise_receipt(edit, expected_error=(ValueError, OSError))
+
+    def test_regular_bounded_receipt_and_logs_refuse_symlink_hardlink_and_oversize(self):
+        for name, mode in (('prepare-build.json', 'symlink'),
+                           ('prepare-build.json', 'hardlink'),
+                           ('prepare-build.json', 'oversize'),
+                           ('prepare-format/stdout', 'symlink')):
+            def edit(path, prepared, process):
+                target = path.parent / name
+                if mode == 'oversize':
+                    target.write_bytes(b'x' * 65537)
+                    return driver.digest(target.read_bytes())
+                other = target.with_name(target.name + '.other')
+                if mode == 'symlink':
+                    target.rename(other)
+                    target.symlink_to(other)
+                else:
+                    os.link(target, other)
+            with self.subTest(name=name, mode=mode):
+                self.exercise_receipt(edit, expected_error=(ValueError, OSError))
+
+    def test_duplicate_json_cannot_become_a_controller_attestation(self):
+        def edit(path, prepared, process):
+            path.write_bytes(b'{"completed":true,"completed":false}')
+            return driver.digest(path.read_bytes())
+        self.exercise_receipt(edit, expected_error=ValueError)
+
+
 class ExecutionBoundaryTests(unittest.TestCase):
     def exercise(self, *, fail=None, zero=None, ignored=None, timeout=None,
                  format_exit=0, build_exit=0, source_drift=False, binary_drift=False,
                  missing_report=False, report_edit=None, log_drift=False, report_drift=False,
                  missing_sustained=False, sustained_edit=None, sustained_drift=False,
                  missing_confirmation=False, confirmation_edit=None, confirmation_drift=False,
-                 missing_format_module=False, missing_log=None):
+                 missing_format_module=False, missing_log=None, prepared_format=False):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / 'source'; root.mkdir()
             test_source = root / driver.SOURCE
@@ -514,6 +684,13 @@ class ExecutionBoundaryTests(unittest.TestCase):
                 after['tree'] = 'c'*40
             out = Path(directory) / 'observations'
             seen = []
+            format_environment = {}
+            if prepared_format:
+                path, _, _ = prepared_format_fixture(
+                    directory, identity, exit_code=format_exit,
+                    timed_out=timeout == 'format-check')
+                format_environment = {driver.FORMAT_RECEIPT_PATH_ENV: str(path),
+                                      driver.FORMAT_RECEIPT_SHA_ENV: driver.digest(path.read_bytes())}
             def child(command, folder, seconds):
                 folder.mkdir()
                 name = folder.name
@@ -577,7 +754,8 @@ class ExecutionBoundaryTests(unittest.TestCase):
                     path.write_bytes(path.read_bytes() + b' ')
                 return current
             try:
-                with patch.object(driver, 'ROOT', root), \
+                with patch.dict(os.environ, format_environment), \
+                     patch.object(driver, 'ROOT', root), \
                      patch.object(driver, 'source_identity', side_effect=read_identity), \
                      patch.object(driver, 'run_child', side_effect=child), \
                      patch.object(driver.subprocess, 'check_output', return_value='simulated compiler version\n'):
@@ -1071,6 +1249,46 @@ class ExecutionBoundaryTests(unittest.TestCase):
         self.sustained_refusal(lambda d: d['phases'][0]['honest_reads'][0].update(
             elapsed_wall_ns=0), 'SUSTAINED_CALL_TIME')
 
+
+
+    def test_prepared_format_retains_all_original_mocked_gates_without_second_formatter(self):
+        result, seen = self.exercise(prepared_format=True)
+        self.assertTrue(result['passed'])
+        self.assertEqual(seen, ['format-copy', 'build', *driver.TESTS])
+        self.assertEqual([r['name'] for r in result['runs']], list(driver.TESTS))
+        self.assertEqual(result['format_preparation']['scope'],
+                         'exact-source-preparation-outside-service')
+        self.assertTrue(result['format']['simulated_control'])
+        self.assertTrue(all(stage['status'] == 'passed'
+                            for stage in result['terminal']['acceptance_stages'].values()))
+
+    def test_prepared_nonzero_format_keeps_five_invocations_and_original_failure(self):
+        result, seen = self.exercise(prepared_format=True, format_exit=1)
+        self.assertEqual(seen, ['format-copy', 'build', *driver.TESTS])
+        self.assertFalse(result['passed'])
+        self.assertFalse(result['format_passed'])
+        self.assertTrue(result['all_named_tests_passed'])
+        self.assertIn('NATIVE_FORMAT_CHECK_FAILED', result['failures'])
+        self.assertEqual(result['format']['exit_code'], 1)
+
+    def test_prepared_timeout_keeps_original_failure_and_stops_before_inside_build(self):
+        result, seen = self.exercise(prepared_format=True, timeout='format-check')
+        self.assertEqual(seen, ['format-copy'])
+        self.assertFalse(result['passed'])
+        self.assertEqual(result['runs'], [])
+        self.assertIn('NATIVE_TIMEOUT_STOPS_CAMPAIGN', result['failures'])
+        self.assertIn('NATIVE_FORMAT_CHECK_FAILED', result['failures'])
+        self.assertEqual(result['terminal']['unexecuted_native_tests'], list(driver.TESTS))
+
+    def test_prepared_format_cannot_replace_missing_confirmation_acceptance(self):
+        result, seen = self.exercise(prepared_format=True, missing_confirmation=True)
+        self.assertEqual(seen, ['format-copy', 'build', *driver.TESTS])
+        self.assertTrue(result['format_passed'])
+        self.assertTrue(result['all_named_tests_passed'])
+        self.assertFalse(result['passed'])
+        self.assertFalse(result['terminal']['acceptance_passed'])
+        self.assertEqual(result['terminal']['acceptance_stages']['confirmation_report']['status'],
+                         'failed')
 
 class ConfirmationObservationTests(unittest.TestCase):
     def summarize(self, edit=lambda doc: None):

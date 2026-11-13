@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 import re
 import shutil
+import stat
 import struct
 import subprocess
 import sys
@@ -57,6 +58,78 @@ def source_identity() -> dict:
     return {'commit': head, 'tree': git('rev-parse', 'HEAD^{tree}'),
             'tracked_source_identity': tracked,
             'test_sha256': digest((ROOT / SOURCE).read_bytes())}
+
+
+FORMAT_RECEIPT_PATH_ENV = 'TRNM_NATIVE_FORMAT_RECEIPT'
+FORMAT_RECEIPT_SHA_ENV = 'TRNM_NATIVE_FORMAT_RECEIPT_SHA256'
+
+
+def native_format_command() -> list[str]:
+    """The unchanged complete workspace gate, with its original 60-second budget."""
+    return ['cargo', 'fmt', '--manifest-path', 'trillionnium/Cargo.toml',
+            '--all', '--', '--check']
+
+
+def read_format_file(path: Path, limit: int) -> bytes:
+    """Own one bounded regular-file read; a pathname change cannot change these bytes."""
+    with os.fdopen(os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK), 'rb') as stream:
+        info = os.fstat(stream.fileno())
+        require(stat.S_ISREG(info.st_mode) and info.st_nlink == 1, 'FORMAT_REGULAR_FILE_REQUIRED')
+        raw = stream.read(limit + 1)
+    require(len(raw) <= limit, 'FORMAT_RECEIPT_BOUND')
+    return raw
+
+
+def prepared_format_result(identity: dict, rustc: str, cargo: str, folder: Path):
+    """Bind original preparation bytes; never synthesize a successful format process."""
+    declared = os.environ.get(FORMAT_RECEIPT_PATH_ENV)
+    expected = os.environ.get(FORMAT_RECEIPT_SHA_ENV)
+    if declared is None and expected is None:
+        return None
+    require(type(declared) is str and type(expected) is str
+            and re.fullmatch('[0-9a-f]{64}', expected) is not None,
+            'FORMAT_HANDOFF_PAIR_REQUIRED')
+    path = Path(declared)
+    require(path.is_absolute() and path.name == 'prepare-build.json'
+            and not path.resolve().is_relative_to(ROOT), 'FORMAT_PREPARATION_PATH')
+    raw = read_format_file(path, 65536)
+    require(digest(raw) == expected, 'FORMAT_PREPARATION_BYTES_CHANGED')
+    prepared = json_load(raw)
+    require(type(prepared) is dict
+            and prepared.get('schema') == 'trnm-ci-original-native-build-preparation-v1'
+            and prepared.get('completed') is True
+            and prepared.get('native_tests_executed') is False
+            and prepared.get('service_resource_observation') is False
+            and prepared.get('consensus_or_model_authority') is False,
+            'FORMAT_PREPARATION_SCHEMA')
+    require(prepared.get('source_before') == identity == prepared.get('source_after'),
+            'FORMAT_PREPARATION_SOURCE_CHANGED')
+    captured = prepared.get('format_preparation')
+    require(type(captured) is dict and captured.get('timeout_seconds') == 60
+            and type(captured.get('timeout_seconds')) is int, 'FORMAT_PREPARATION_REQUIRED')
+    versions = {'rustc': rustc, 'cargo': cargo,
+                'rustfmt': subprocess.check_output(['rustfmt', '--version'],
+                                                   text=True, timeout=30).strip()}
+    require(captured.get('tool_versions') == versions, 'FORMAT_TOOLCHAIN_CHANGED')
+    process = captured.get('process')
+    require(type(process) is dict and process.get('command') == native_format_command()
+            and type(process.get('exit_code')) is int
+            and type(process.get('timed_out')) is bool, 'FORMAT_ORIGINAL_PROCESS_REQUIRED')
+    source = path.parent / 'prepare-format'
+    process_raw = read_format_file(source / 'process.json', 65536)
+    require(json_load(process_raw) == process, 'FORMAT_PROCESS_RECEIPT_CHANGED')
+    retained = {}
+    for name in ('stdout', 'stderr'):
+        content = read_format_file(source / name, REPORT_LIMIT)
+        require(digest(content) == process.get(name + '_sha256'), 'FORMAT_LOG_CHANGED')
+        retained[name] = content
+    folder.mkdir()
+    for name, content in {**retained, 'process.json': process_raw,
+                          'preparation.json': raw}.items():
+        with (folder / name).open('xb') as stream:
+            stream.write(content)
+    return process, {'receipt_sha256': expected, 'timeout_seconds': 60,
+                     'scope': 'exact-source-preparation-outside-service'}
 
 
 def native_build_command() -> list[str]:
@@ -1621,9 +1694,12 @@ def run(out: Path) -> dict:
             ['rustfmt', '--edition', '2021', str(format_source)], out / 'format-copy', 60)
         shutil.copyfile(format_source, out / 'formatted.rs')
         require(result['format_copy']['timed_out'] is False, 'NATIVE_TIMEOUT_STOPS_CAMPAIGN')
-        result['format'] = run_child(
-            ['cargo', 'fmt', '--manifest-path', 'trillionnium/Cargo.toml', '--all', '--', '--check'],
-            out / 'format-check', 60)
+        prepared_format = prepared_format_result(
+            identity, result['rustc'], result['cargo'], out / 'format-check')
+        if prepared_format is None:
+            result['format'] = run_child(native_format_command(), out / 'format-check', 60)
+        else:
+            result['format'], result['format_preparation'] = prepared_format
         result['format_passed'] = result['format']['exit_code'] == 0 and not result['format']['timed_out']
         require(result['format']['timed_out'] is False, 'NATIVE_TIMEOUT_STOPS_CAMPAIGN')
         result['build'] = run_child(native_build_command(), out / 'build', 900)
