@@ -286,6 +286,9 @@ PY
     python3 scripts/test_llm_runtime_parent_step.py
     python3 scripts/test_llm_runtime_rss_owner.py
     python3 scripts/test_llm_runtime_exit_observation.py
+    python3 scripts/test_llm_runtime_exit_subset_observation.py
+    python3 scripts/test_llm_runtime_exit_worker_observation.py
+    python3 scripts/test_llm_runtime_exit_mm_observation.py
     python3 scripts/test_llm_runtime_stop.py
     python3 scripts/test_llm_inherited_runtime.py
     python3 scripts/test_llm_inherited_operation.py
