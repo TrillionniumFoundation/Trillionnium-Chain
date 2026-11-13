@@ -899,3 +899,62 @@ fn public_growth_v1_future_ancestor_defers_fresh_and_duplicate_before_work() {
         assert!(!metrics.mutation_cpu_unavailable_after_shutdown);
     }
 }
+
+#[test]
+fn public_growth_v1_postcommit_future_ancestor_refusal_preserves_durable_packet() {
+    for already_stored in [false, true] {
+        let settings = settings("public-growth-current-activation-clock");
+        let directory = tempfile::tempdir().unwrap();
+        let mut node =
+            Node::open_with_permanent_account_growth_v2(directory.path(), settings.clone())
+                .unwrap();
+        let mut parent = settings.genesis();
+        // The normal prefix makes a later low timestamp valid under the
+        // original median-time rule, even after one future-dated ancestor.
+        for height in 1..=4 {
+            let packet = make(&node, parent, height, vec![]);
+            parent = node.admit_growth(&packet, 100_000).unwrap();
+            node.activate_observed(parent, 100_000).unwrap();
+        }
+        let before = node.active().unwrap();
+        let clock = crate::ingress::now().unwrap();
+        let future = clock + settings.limit("future_skew_seconds").unwrap() + 3_600;
+        let future_packet = node
+            .make_growth_consensus_maintenance(
+                parent,
+                vec![],
+                crate::development_public(3).unwrap(),
+                future,
+                4096,
+            )
+            .unwrap();
+        let future_id = node.admit_growth(&future_packet, future).unwrap();
+        let packet = make(&node, future_id, 6, vec![]);
+        let id = packet.id().unwrap();
+        if already_stored {
+            assert_eq!(node.admit_growth(&packet, clock).unwrap(), id);
+        }
+        // Admission checks the new header against the original current clock
+        // and MTP. It cannot stand in for the complete activation-time walk.
+        assert_eq!(
+            node.precheck_growth_admission_with_progress(&packet, clock, &|_| Ok(()))
+                .unwrap(),
+            already_stored.then_some(id)
+        );
+        // Exercise the original postcommit activation helper independently
+        // of the new pre-W1 public ancestry refusal. Local admission retains
+        // its historical-validity contract and has already durably completed.
+        if !already_stored {
+            assert_eq!(node.admit_growth(&packet, clock).unwrap(), id);
+        }
+        for _ in 0..2 {
+            let error = submit_result(&mut node, id).unwrap_err().to_string();
+            assert!(error.contains("TIME_DEFERRED"), "{error}");
+            assert_eq!(node.active().unwrap(), before);
+            assert_eq!(
+                node.growth_packet(id).unwrap().encode().unwrap(),
+                packet.encode().unwrap()
+            );
+        }
+    }
+}

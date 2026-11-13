@@ -307,6 +307,39 @@ mod unix {
         mod tests {
             use super::*;
             #[test]
+            fn proc_snapshot_retry_preserves_wait_errors_permissions_and_deadline() {
+                for error in [
+                    anyhow::Error::from(rustix::io::Errno::SRCH),
+                    anyhow::Error::from(std::io::Error::from_raw_os_error(
+                        rustix::io::Errno::ACCESS.raw_os_error(),
+                    )),
+                ] {
+                    let mut scans = 0;
+                    let mut error = Some(error);
+                    let result = retry_malformed_proc_numbers(
+                        Instant::now() + Duration::from_millis(150),
+                        || {
+                            scans += 1;
+                            Err(error.take().expect("non-proc failures cannot retry"))
+                        },
+                    );
+                    assert!(result.is_err());
+                    assert_eq!(scans, 1);
+                }
+
+                let mut scans = 0;
+                let result = retry_malformed_proc_numbers(Instant::now(), || {
+                    scans += 1;
+                    Err(
+                        std::io::Error::from_raw_os_error(rustix::io::Errno::SRCH.raw_os_error())
+                            .into(),
+                    )
+                });
+                assert!(result.is_err(), "expired proc errors must remain failures");
+                assert_eq!(scans, 1, "the original deadline must not be extended");
+            }
+
+            #[test]
             fn proc_identity_uses_last_comm_parenthesis_and_exact_starttime() {
                 let mut fields = vec!["Z", "17", "29"];
                 fields.extend(std::iter::repeat_n("0", 16));
