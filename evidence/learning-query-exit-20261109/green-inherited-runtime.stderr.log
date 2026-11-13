@@ -1,0 +1,11 @@
+test_authority_source_gpu_and_budget_changes_refuse (__main__.InheritedRuntimeTests.test_authority_source_gpu_and_budget_changes_refuse) ... ok
+test_checked_input_rejects_hash_rewrite_and_duplicate_json (__main__.InheritedRuntimeTests.test_checked_input_rejects_hash_rewrite_and_duplicate_json) ... ok
+test_exact_generation_and_explicit_bootstrap (__main__.InheritedRuntimeTests.test_exact_generation_and_explicit_bootstrap) ... ok
+test_inference_uses_parent_generation_and_original_request (__main__.InheritedRuntimeTests.test_inference_uses_parent_generation_and_original_request) ... ok
+test_parent_independent_pins_and_closed_descriptor (__main__.InheritedRuntimeTests.test_parent_independent_pins_and_closed_descriptor) ... ok
+test_training_input_scope_duplicate_and_label_binding (__main__.InheritedRuntimeTests.test_training_input_scope_duplicate_and_label_binding) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.050s
+
+OK

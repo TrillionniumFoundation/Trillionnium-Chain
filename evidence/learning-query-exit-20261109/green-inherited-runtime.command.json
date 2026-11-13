@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "scripts/test_llm_inherited_runtime.py",
+    "-v"
+  ],
+  "cwd": "/data/chain-learning-exit-70ae-20261109",
+  "exit_code": 0,
+  "expected_exit": 0,
+  "duration_ns": 214053971,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "fd3e7dc0a8bf7dbcc0aed1a16ff59d89eedee3fffefde85903063c535d2cea55"
+}

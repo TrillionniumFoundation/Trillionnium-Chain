@@ -456,6 +456,9 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             'scripts/test_llm_runtime_exit_observation.py',
             'scripts/test_llm_runtime_stop.py',
             'scripts/test_llm_inherited_runtime.py',
+            'scripts/test_llm_inherited_operation.py',
+            'scripts/test_llm_frozen_evaluation.py',
+            'scripts/test_run_learning_service_development.py',
             'scripts/test_llm_neural_read_worker.py',
             'scripts/test_llm_python_runtime_contract.py',
         )
@@ -473,6 +476,33 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             for label, changed in changes.items():
                 with self.subTest(path=path, change=label), self.assertRaises(ValueError):
                     check_independent_conformance(changed, self.lanes)
+
+    def test_learning_service_owner_controls_cannot_be_removed_or_swallowed(self):
+        # Keep the new owner's real native execution mandatory alongside the
+        # retained Task contracts, independently of the checker's constant.
+        command = ('    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml '
+                   '-p trnm-pon-node --example learning_service_round --example learning_service_recovery_probe --all-features '
+                   '-- --test-threads=1\n')
+        self.assertEqual(self.script.count(command), 1)
+        changes = {
+            'missing': self.script.replace(command, ''),
+            'duplicate': self.script.replace(command, command * 2),
+            'true stub': self.script.replace(command, '    true # ' + command.lstrip()),
+            'comment': self.script.replace(command, '    # ' + command.lstrip()),
+            'swallowed failure': self.script.replace(command, command.rstrip() + ' || true\n'),
+            'wrong lane': self.script.replace(command, '').replace(
+                '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command),
+            'other-lane duplicate': self.script.replace(
+                '  fuzz-smoke)\n', '  fuzz-smoke)\n' + command,
+            ),
+            'offline removed': self.script.replace(command, command.replace(' --offline', '')),
+            'lock removed': self.script.replace(command, command.replace(' --locked', '')),
+            'tests skipped': self.script.replace(command, command.replace('-- --test-threads=1', '-- --ignored')),
+        }
+        for label, changed in changes.items():
+            with self.subTest(change=label), self.assertRaisesRegex(
+                    ValueError, 'native learning service reconciliation'):
+                check_independent_conformance(changed, self.lanes)
 
     def test_proof_latency_controls_cannot_be_missing_duplicated_stubbed_or_moved(self):
         # Keep this inventory independent of the checker's command tuple.

@@ -1,0 +1,22 @@
+{
+  "source_parent": "c247d623704b1cce2307fa31b21cab045063e0f6",
+  "scope": "pre-commit candidate file bytes; exact committed-source validation is separate",
+  "files": {
+    "scripts/run_learning_service_development.py": {
+      "sha256": "e35617477708a1d6f248e2d61642b050405c68ed64061242ba795c96b5c181d1",
+      "git_blob": "b180e5248c5fb797b2554d74cc6f54c465efe9f9"
+    },
+    "scripts/test_run_learning_service_development.py": {
+      "sha256": "0bffe1a39a81964782edc173aaa7a37b73781b9c99bd6f3e41013896f68890ab",
+      "git_blob": "565585b2ba916e5c2e0b49400648ee3f6b84e757"
+    },
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": {
+      "sha256": "5bbb2ceb54405a628cd1546266342df1baf70475526b664f9407f130a2102fb6",
+      "git_blob": "95fb7116b32a63b172b3b0c6d92cd8bedf411ffd"
+    },
+    "config/pon/pq-cross-branch-corpus-v1.json": {
+      "sha256": "3b9f144b5ac00ce6bffb3bbab0dab937dc9eed2fd692746bb55ec2e82baeb584",
+      "git_blob": "ed2b94270b1a6089a72df64c8d906fbbf96ba964"
+    }
+  }
+}

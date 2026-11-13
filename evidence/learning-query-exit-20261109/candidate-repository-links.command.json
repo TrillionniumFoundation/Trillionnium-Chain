@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/check_repository.py"
+  ],
+  "cwd": "/data/chain-learning-exit-70ae-20261109",
+  "exit_code": 0,
+  "tool_timeout_seconds": 180,
+  "timed_out": false,
+  "duration_ns": 33199099601,
+  "stdout_sha256": "b4cbc153911599be5d43cbd1f5b4a9c7dea32083cbef4e6834a66f912d4c8a9f",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

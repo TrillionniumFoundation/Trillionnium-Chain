@@ -1,0 +1,414 @@
+{
+  "commit": "0f71bd817164feef370f75ee2ab881227693573d",
+  "tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+  "python_and_source_passed": true,
+  "strict_clippy_passed": true,
+  "source_after_passed": true,
+  "push_preflight_passed": true,
+  "distinct_python_tests": 84,
+  "source_negative_tests": 43,
+  "pq_source_negative_tests": 57,
+  "production_acceptance": false,
+  "native_rust_runtime_tests_rerun": false,
+  "results": {
+    "frozen-preflight": {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/data/chain-learning-exit-70ae-20261109",
+      "tested_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+      "tested_tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+      "exit_code": 0,
+      "valid": true,
+      "tool_timeout_seconds": 180,
+      "timed_out": false,
+      "duration_ns": 115670428,
+      "stdout_sha256": "c4c6495feaccb6a12bcd690ac1d691ee4403c81d94162c037f93d9590515d9c8",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_tests": null,
+      "observed_test_counts": [],
+      "skipped": false
+    },
+    "frozen-openssl-version": {
+      "argv": [
+        "/home/qian-qi/workspace/pon-demand-acceptance-20261107-root525798dad3c2/build-runtime/trnm-pq-provider-3.5.9.DYf2qEaX/install/bin/openssl",
+        "version",
+        "-a"
+      ],
+      "cwd": "/data/chain-learning-exit-70ae-20261109",
+      "tested_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+      "tested_tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+      "exit_code": 0,
+      "valid": true,
+      "tool_timeout_seconds": 180,
+      "timed_out": false,
+      "duration_ns": 4300704,
+      "stdout_sha256": "a705fa2d34f811ffe4783a72b48b5aeb7b3d03d8ea0acc6a53ac7f68bcc57d7b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_tests": null,
+      "observed_test_counts": [],
+      "skipped": false
+    },
+    "frozen-rustc-version": {
+      "argv": [
+        "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+        "-vV"
+      ],
+      "cwd": "/data/chain-learning-exit-70ae-20261109",
+      "tested_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+      "tested_tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+      "exit_code": 0,
+      "valid": true,
+      "tool_timeout_seconds": 180,
+      "timed_out": false,
+      "duration_ns": 16533202,
+      "stdout_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_tests": null,
+      "observed_test_counts": [],
+      "skipped": false
+    },
+    "frozen-driver-24": {
+      "argv": [
+        "python3",
+        "scripts/test_run_learning_service_development.py",
+        "-v"
+      ],
+      "cwd": "/data/chain-learning-exit-70ae-20261109",
+      "tested_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+      "tested_tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+      "exit_code": 0,
+      "valid": true,
+      "tool_timeout_seconds": 180,
+      "timed_out": false,
+      "duration_ns": 3624770941,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "4d4186f0c2058aead15d49a25d59d560ee68b4c1ccb43eed7f4b66ed34b23916",
+      "expected_tests": 24,
+      "observed_test_counts": [
+        24
+      ],
+      "skipped": false
+    },
+    "frozen-inherited-runtime-6": {
+      "argv": [
+        "python3",
+        "scripts/test_llm_inherited_runtime.py",
+        "-v"
+      ],
+      "cwd": "/data/chain-learning-exit-70ae-20261109",
+      "tested_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+      "tested_tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+      "exit_code": 0,
+      "valid": true,
+      "tool_timeout_seconds": 180,
+      "timed_out": false,
+      "duration_ns": 345672145,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "67b994ee9ca23694ff0ead66d99fecfc1e94b01e7eabc2e2f895e368ad6f2127",
+      "expected_tests": 6,
+      "observed_test_counts": [
+        6
+      ],
+      "skipped": false
+    },
+    "frozen-parent-material-11": {
+      "argv": [
+        "python3",
+        "scripts/test_llm_parent_material.py",
+        "-v"
+      ],
+      "cwd": "/data/chain-learning-exit-70ae-20261109",
+      "tested_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+      "tested_tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+      "exit_code": 0,
+      "valid": true,
+      "tool_timeout_seconds": 180,
+      "timed_out": false,
+      "duration_ns": 1518993208,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "d09299cf5588a68453294f451cae3714ef79b5a17157f7f00c528573459389bf",
+      "expected_tests": 11,
+      "observed_test_counts": [
+        11
+      ],
+      "skipped": false
+    },
+    "frozen-inherited-operation-17": {
+      "argv": [
+        "python3",
+        "scripts/test_llm_inherited_operation.py",
+        "-v"
+      ],
+      "cwd": "/data/chain-learning-exit-70ae-20261109",
+      "tested_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+      "tested_tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+      "exit_code": 0,
+      "valid": true,
+      "tool_timeout_seconds": 180,
+      "timed_out": false,
+      "duration_ns": 3225398309,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "4aa171f5fe0e16072f7c4e45eec71ddbe58d980801e4788c6b6b32aa7a2bc687",
+      "expected_tests": 17,
+      "observed_test_counts": [
+        17
+      ],
+      "skipped": false
+    },
+    "frozen-evaluation-26": {
+      "argv": [
+        "python3",
+        "scripts/test_llm_frozen_evaluation.py",
+        "-v"
+      ],
+      "cwd": "/data/chain-learning-exit-70ae-20261109",
+      "tested_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+      "tested_tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+      "exit_code": 0,
+      "valid": true,
+      "tool_timeout_seconds": 180,
+      "timed_out": false,
+      "duration_ns": 1519915421,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "5eb4234afcbe41a579f9f8dc47ff87ac933b7e834eda92cec6110b249ef2656a",
+      "expected_tests": 26,
+      "observed_test_counts": [
+        26
+      ],
+      "skipped": false
+    },
+    "frozen-source-negative-43": {
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_source_integrity.py"
+      ],
+      "cwd": "/data/chain-learning-exit-70ae-20261109",
+      "tested_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+      "tested_tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+      "exit_code": 0,
+      "valid": true,
+      "tool_timeout_seconds": 180,
+      "timed_out": false,
+      "duration_ns": 5027771150,
+      "stdout_sha256": "e28d8bf653d0d55e902425c60a79d0dac6618cfae5c8a1b0b12db377135c51d5",
+      "stderr_sha256": "5863e1eeb15b6b91c164095545504a893db3c63368c8b81e987ff6e9abf1f859",
+      "expected_tests": 43,
+      "observed_test_counts": [
+        43
+      ],
+      "skipped": false
+    },
+    "frozen-strict-clippy": {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "clippy",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "-j",
+        "2",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "/data/chain-learning-exit-70ae-20261109",
+      "tested_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+      "tested_tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+      "exit_code": 0,
+      "valid": true,
+      "tool_timeout_seconds": 3600,
+      "timed_out": false,
+      "duration_ns": 187324391901,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "7bf4cf56409d3237b41ab0a1f41027cc6b51c67e2eb52d5bec9a2265b87bf4d7",
+      "expected_tests": null,
+      "observed_test_counts": [],
+      "skipped": false
+    },
+    "frozen-pq-source-negative-57": {
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_research_integration.py",
+        "-v"
+      ],
+      "cwd": "/data/chain-learning-exit-70ae-20261109",
+      "tested_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+      "tested_tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+      "exit_code": 0,
+      "valid": true,
+      "tool_timeout_seconds": 600,
+      "timed_out": false,
+      "duration_ns": 218628689665,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "ce5126b18bf7ff30edcd2c8d17add3d5ba29f45bf11a187c5a5d2d8e73ce4d39",
+      "expected_tests": 57,
+      "observed_test_counts": [
+        57
+      ],
+      "skipped": false
+    },
+    "frozen-repository-links": {
+      "argv": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "cwd": "/data/chain-learning-exit-70ae-20261109",
+      "tested_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+      "tested_tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+      "exit_code": 0,
+      "valid": true,
+      "tool_timeout_seconds": 180,
+      "timed_out": false,
+      "duration_ns": 26092130088,
+      "stdout_sha256": "6329d28e1f2f68f540730e634aeff7cacc4bb7109e3397130a9fa39170c6c3cf",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_tests": null,
+      "observed_test_counts": [],
+      "skipped": false
+    },
+    "frozen-pq-source-pins": {
+      "argv": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "cwd": "/data/chain-learning-exit-70ae-20261109",
+      "tested_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+      "tested_tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+      "exit_code": 0,
+      "valid": true,
+      "tool_timeout_seconds": 180,
+      "timed_out": false,
+      "duration_ns": 817787452,
+      "stdout_sha256": "07349e5299844ae38dc243b7bff187175c1629116ac51540910c501fd5ad75b0",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_tests": null,
+      "observed_test_counts": [],
+      "skipped": false
+    },
+    "frozen-distributed-inventory": {
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "cwd": "/data/chain-learning-exit-70ae-20261109",
+      "tested_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+      "tested_tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+      "exit_code": 0,
+      "valid": true,
+      "tool_timeout_seconds": 180,
+      "timed_out": false,
+      "duration_ns": 166106148,
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_tests": null,
+      "observed_test_counts": [],
+      "skipped": false
+    },
+    "frozen-cargo-metadata": {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all-features",
+        "--format-version",
+        "1"
+      ],
+      "cwd": "/data/chain-learning-exit-70ae-20261109",
+      "tested_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+      "tested_tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+      "exit_code": 0,
+      "valid": true,
+      "tool_timeout_seconds": 180,
+      "timed_out": false,
+      "duration_ns": 267268981,
+      "stdout_sha256": "a18a5f2b337358586e7fc31f00547bc9081153737f24077e90de2812fe4235a9",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_tests": null,
+      "observed_test_counts": [],
+      "skipped": false
+    },
+    "frozen-workspace-format": {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "fmt",
+        "--all",
+        "--check",
+        "--manifest-path",
+        "trillionnium/Cargo.toml"
+      ],
+      "cwd": "/data/chain-learning-exit-70ae-20261109",
+      "tested_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+      "tested_tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+      "exit_code": 0,
+      "valid": true,
+      "tool_timeout_seconds": 180,
+      "timed_out": false,
+      "duration_ns": 21025223192,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_tests": null,
+      "observed_test_counts": [],
+      "skipped": false
+    },
+    "frozen-source-after": {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "0f71bd817164feef370f75ee2ab881227693573d",
+        "--output",
+        "/data/chain-learning-exit-70ae-20261109-evidence/frozen-source-after-report.json"
+      ],
+      "cwd": "/data/chain-learning-exit-70ae-20261109",
+      "tested_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+      "tested_tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+      "exit_code": 0,
+      "valid": true,
+      "tool_timeout_seconds": 180,
+      "timed_out": false,
+      "duration_ns": 5682023805,
+      "stdout_sha256": "61fe54e658d607054ca45d3f847117e0a9fd210c14beff6e7c3f7918ed27a39f",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_tests": null,
+      "observed_test_counts": [],
+      "skipped": false
+    },
+    "frozen-preflight-push": {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--push",
+        "origin",
+        "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git"
+      ],
+      "cwd": "/data/chain-learning-exit-70ae-20261109",
+      "tested_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+      "tested_tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+      "exit_code": 0,
+      "valid": true,
+      "tool_timeout_seconds": 180,
+      "timed_out": false,
+      "duration_ns": 266643852,
+      "stdout_sha256": "f414ebb3f617e7e2e1f631feef7a72e805b4fe4c263375750da711dd3aa72733",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_tests": null,
+      "observed_test_counts": [],
+      "skipped": false
+    }
+  }
+}

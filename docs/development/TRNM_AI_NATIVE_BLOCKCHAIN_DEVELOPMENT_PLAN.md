@@ -12018,6 +12018,37 @@ remaining obligations are recorded in the
 No historical failed run or original evidence is relabeled as a success.
 
 
+### 2026-11-08 real learning service execution and reconciliation
+
+Continue the same-iteration objective with executable adapters on the unified
+`7e044b65454f4c9ea505591727332acffb33e7e5` source. The
+[development execution contract](specs/pon/REAL_LEARNING_SERVICE_ITERATION_V1.md)
+binds a complete pretraining evaluation freeze to a durable once-only inherited
+SmolLM operation. Execute the existing four controls and the actual retained
+parent/candidate loaders under frozen incremental budgets. Incomplete or failed
+evaluation cannot become NoUpdate. Keep local numerical results separate from
+original-owner Selection and independent evaluation acceptance.
+
+Connect the same operation's actual files and measured CPU to the existing
+native TSC1/M12 development Task owner. Preserve full Unknown reservations,
+durable original side-effect IDs, current-branch payment readback and monotonic
+local revocation/history through reorganization and cold reopen. A compliant
+completed training service can earn the base fee without model improvement;
+improvement bonus and consensus credit remain distinct and zero in this entry.
+
+Retain exact failures when a historical parent has a different runtime contract.
+An explicit new development bootstrap does not establish that the original
+owner installed it. Real task authorization, independent evaluation/provider
+custody, protected original-owner installation/load, final next-task receipt,
+real funds and the complete nine-step production iteration remain open until
+observed together. Preserve source/file identities and all attempted outcomes;
+do not transfer historical pass counts or weaken the original performance gates.
+
+Retain the [dated execution record](../../evidence/learning-service-20261108/README.md)
+with source snapshots, original unsuccessful observations and raw model/native
+receipts. Its development findings do not close the remaining original-owner
+and independent-custody acceptance boundaries.
+
 ### 2026-11-08 unified Chain / Hepta qualification continuation
 
 Continue the user's P0 integration, consensus, authority and real Hepta loop,
@@ -14352,3 +14383,31 @@ controls provide the positive validation scope. Historical fault scenarios
 are not copied or executed for this repair. This narrow target-boundary change
 does not close the separately recorded Page JSON parsing-account gap or
 qualify the other source changes on that historical branch.
+
+### 2026-11-09 learning service query process completion
+
+Continue the real learning service driver from PR #820 source
+`c247d623704b1cce2307fa31b21cab045063e0f6`. A provider or native query can print
+successful JSON before its process later fails, including during cleanup. Require
+an observed integer zero exit before using `SUCCESS` or paid native observations
+as completed development effects. Apply the same boundary in the initial run and
+in read-only reconciliation; a completed comparison cannot hide an unconfirmed
+candidate query. Missing, boolean and textual exit codes are not confirmed exits.
+
+Preserve every phase's original exit, stdout and stderr. Keep provider UNKNOWN
+and FAILED observations, their retained reservations and original status codes;
+query never authorizes redispatch or changes the original intent. A subsequent
+successful original-owner query can confirm an earlier uncertain effect without
+replaying it. Independent numerical Candidate/NoUpdate findings remain distinct
+from service completion, original-owner selection, installation and payment.
+
+Keep the original budgets, deadlines, model and native-owner implementations,
+signed namespaces and stored schemas unchanged. Preserve actual subprocess
+boundary failures and run the complete driver, inherited runtime, parent material,
+operation and frozen-evaluation Python suites on the full continuation source.
+Repeat source-integrity negative controls and Markdown checks on the committed
+source. These controls do not rerun model quality, native Rust, WAN, independent
+custody, FinalUse or whole-chain qualification; their existing HOLD gates remain.
+The [preserved boundary observations](../../evidence/learning-query-exit-20261109/README.md)
+retain the original failures, candidate test logs and source identities.
+This continuation is separate from PR #821, which does not contain this driver.

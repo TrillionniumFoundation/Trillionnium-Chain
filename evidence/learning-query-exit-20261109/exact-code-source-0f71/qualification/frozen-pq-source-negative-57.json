@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/test_pq_research_integration.py",
+    "-v"
+  ],
+  "cwd": "/data/chain-learning-exit-70ae-20261109",
+  "tested_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+  "tested_tree": "4d567fb9a4ff9e3ae9e957e9e706443ac241dbbb",
+  "exit_code": 0,
+  "valid": true,
+  "tool_timeout_seconds": 600,
+  "timed_out": false,
+  "duration_ns": 218628689665,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "ce5126b18bf7ff30edcd2c8d17add3d5ba29f45bf11a187c5a5d2d8e73ce4d39",
+  "expected_tests": 57,
+  "observed_test_counts": [
+    57
+  ],
+  "skipped": false
+}

@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "/home/qq/hepta-smollm2-weight-research-20261103/ci-env/bin/python",
+    "/home/qq/chain-learning-exit-readback-70ae-20261109/source/scripts/run_learning_service_development.py",
+    "query",
+    "--output",
+    "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/development-iteration-v1",
+    "--native-bin",
+    "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/bin/learning_service_round-fc406bad",
+    "--native-bin-sha256",
+    "fc406badb161bd9847b9aa3b7f5863018baae62b172467e2ae3a44317a76808a"
+  ],
+  "cwd": "/home/qq/chain-learning-exit-readback-70ae-20261109/source",
+  "reader_commit": "0f71bd817164feef370f75ee2ab881227693573d",
+  "actual_exit_code": 2,
+  "timed_out": false,
+  "tool_timeout_seconds": 180,
+  "duration_ns": 2685345794,
+  "stdout_sha256": "53f43dcab709d5c7e2d49ac98d63ff488177f964ee91cf4f3a939637d01e0d71",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "no_automatic_retry": true,
+  "whole_repository_execution_claim": false
+}

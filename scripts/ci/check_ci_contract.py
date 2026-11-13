@@ -215,6 +215,7 @@ MODEL_EVOLUTION_ORACLES = ('    python3 formal/pon-nakamoto-v1/test_model_evolut
 DEMAND_UPGRADE_CONTROLS = ('    python3 formal/pon-nakamoto-v1/test_demand_evidence.py -v\n'
                          '    python3 formal/pon-nakamoto-v1/test_upgrade_policy.py -v\n')
 NATIVE_DEMAND_CONTRACTS = '    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test no_gain_fees --test funded_service_contract --test native_demand_evidence --test native_task_operation_v2 --test native_active_anchor --all-features -- --test-threads=1\n'
+LEARNING_SERVICE_BRIDGE = '    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example learning_service_round --example learning_service_recovery_probe --all-features -- --test-threads=1\n'
 COST_BOUNDARY_READERS = ('    python3 scripts/ci/test_pon_w1_budget_readers.py --raw-dir evidence/pon-upgrade-implementation-20261018/native-rounds/chain-p0-native-54\n'
                          '    python3 scripts/ci/test_pon_public_v3_phase_read.py\n'
                          '    python3 scripts/ci/test_pon_public_v3_policy_read.py\n'
@@ -241,6 +242,9 @@ LLM_RUNTIME_TESTS = (
     '    python3 scripts/test_llm_runtime_exit_observation.py\n'
     '    python3 scripts/test_llm_runtime_stop.py\n'
     '    python3 scripts/test_llm_inherited_runtime.py\n'
+    '    python3 scripts/test_llm_inherited_operation.py\n'
+    '    python3 scripts/test_llm_frozen_evaluation.py\n'
+    '    python3 scripts/test_run_learning_service_development.py\n'
     '    python3 scripts/test_llm_neural_read_worker.py\n'
     '    python3 scripts/test_llm_python_runtime_contract.py\n'
 )
@@ -506,12 +510,16 @@ PROTOCOL_CONTRACT_BLOCK = PQ_MIGRATION_CONFORMANCE_PREFIX + ROOT_RECOVERY_NATIVE
     python3 scripts/test_llm_runtime_exit_observation.py
     python3 scripts/test_llm_runtime_stop.py
     python3 scripts/test_llm_inherited_runtime.py
+    python3 scripts/test_llm_inherited_operation.py
+    python3 scripts/test_llm_frozen_evaluation.py
+    python3 scripts/test_run_learning_service_development.py
     python3 scripts/test_llm_neural_read_worker.py
     python3 scripts/test_llm_python_runtime_contract.py
     python3 formal/pon-nakamoto-v1/test_reward_budget_oracle.py
     python3 formal/pon-nakamoto-v1/test_demand_evidence.py -v
     python3 formal/pon-nakamoto-v1/test_upgrade_policy.py -v
     cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --test no_gain_fees --test funded_service_contract --test native_demand_evidence --test native_task_operation_v2 --test native_active_anchor --all-features -- --test-threads=1
+    cargo test --offline --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example learning_service_round --example learning_service_recovery_probe --all-features -- --test-threads=1
     python3 formal/pon-nakamoto-v1/test_model_attribution.py
     python3 formal/pon-nakamoto-v1/test_model_evolution_oracle.py -v
     python3 formal/pon-nakamoto-v1/test_model_task_windows_oracle.py -v
@@ -1491,6 +1499,9 @@ def check_independent_conformance(script: str, required: set[str]) -> None:
     require(DEMAND_UPGRADE_CONTROLS + NATIVE_DEMAND_CONTRACTS in lanes['protocol-contract']
             and script.count(NATIVE_DEMAND_CONTRACTS) == 1,
             'native demand and funded Task contract controls must execute exactly once after the reference controls')
+    require(NATIVE_DEMAND_CONTRACTS + LEARNING_SERVICE_BRIDGE in lanes['protocol-contract']
+            and code_lines(script).count(LEARNING_SERVICE_BRIDGE.strip()) == 1,
+            'native learning service reconciliation must execute exactly once after the retained Task controls')
     require(code_lines(lanes['protocol-contract']).count(GSC2_SYNTHETIC_ORACLE.strip()) == 1
             and code_lines(script).count(GSC2_SYNTHETIC_ORACLE.strip()) == 1,
             'GSC2 synthetic readback counterexamples must execute exactly once in protocol-contract with the current source root')

@@ -1,0 +1,11 @@
+{
+  "commit": "c247d623704b1cce2307fa31b21cab045063e0f6",
+  "tree": "098f1aaa991ac04c70177982929b3cc39d9f8009",
+  "tracked_entries": 23652,
+  "tracked_bytes": 2383742542,
+  "all_bytes_and_modes_match": true,
+  "tree_entries_sha256": "cb5c7dc397e22dd90536eb83ab195c9a42e855482b0240a95f7445c45403ec9d",
+  "duration_ns": 6019555076,
+  "complete_current_checkout": true,
+  "complete_git_history": false
+}

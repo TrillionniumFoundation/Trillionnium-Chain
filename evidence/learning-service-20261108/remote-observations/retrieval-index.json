@@ -1,0 +1,65 @@
+[
+  {
+    "relative": "logs/runtime-environment-v1.json",
+    "remote_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/logs/runtime-environment-v1.json",
+    "sha256": "32d8cdcb4ed51b76540d27edbe78c1009569525ab3f692b6fdadbf6e6cb47b00",
+    "size": 880,
+    "version": "66306:56885308:880:1794159031594866082:1794159037519098234"
+  },
+  {
+    "relative": "logs/source-transfer-v1.json",
+    "remote_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/logs/source-transfer-v1.json",
+    "sha256": "be5cefb3cafb16b0a59f6e4e2247d3fd7c48d6565e5bd876b31e1674534f7cc7",
+    "size": 513,
+    "version": "66306:56885405:513:1794159190022410754:1794159190022410754"
+  },
+  {
+    "relative": "logs/input-freeze-v1.json",
+    "remote_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/logs/input-freeze-v1.json",
+    "sha256": "3da400631f28af4a32a4d033c86dc94c86420bff08af7d26d4dc4524bf023431",
+    "size": 942,
+    "version": "66306:56885410:942:1794159190046660268:1794159190046660268"
+  },
+  {
+    "relative": "logs/bootstrap-started-v1.json",
+    "remote_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/logs/bootstrap-started-v1.json",
+    "sha256": "6c7a798511cf122767000f84099f50ac32b4ab7f50509908d0d4605a64ecbab2",
+    "size": 1497,
+    "version": "66306:56885425:1497:1794159247106998830:1794159247106998830"
+  },
+  {
+    "relative": "logs/bootstrap-exit-v1.json",
+    "remote_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/logs/bootstrap-exit-v1.json",
+    "sha256": "222c03ebec89b6f7f9bf7a9942946b9f6f086a7d4c06209046272b9af94c7391",
+    "size": 1125,
+    "version": "66306:56885440:1125:1794159252981793997:1794159252981793997"
+  },
+  {
+    "relative": "logs/bootstrap-driver-v1.py",
+    "remote_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/logs/bootstrap-driver-v1.py",
+    "sha256": "7c8bd3e225583a5fbe4d80295470b031f9754bd0b00f9cf462073e290184325b",
+    "size": 3379,
+    "version": "66306:56885424:3379:1794159247035394946:1794159247035394946"
+  },
+  {
+    "relative": "artifacts/bootstrap-v1/worker/parent-material.json",
+    "remote_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/bootstrap-v1/worker/parent-material.json",
+    "sha256": "3dc662136885ef85c77b16e6abf951169d94b29d274a3fc59021d98997eb5868",
+    "size": 431,
+    "version": "66306:56885436:431:1794159252201902283:1794159252201902283"
+  },
+  {
+    "relative": "artifacts/bootstrap-v1/execution-plan.json",
+    "remote_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/artifacts/bootstrap-v1/execution-plan.json",
+    "sha256": "1cc713a431dc658612b9f41fb29a91385e5bdcb6c25bca25a22513205ccc9b94",
+    "size": 9414,
+    "version": "66306:56885429:9414:1794159247322278283:1794159247322278283"
+  },
+  {
+    "relative": "source/runtime-source-manifest.json",
+    "remote_path": "/home/qq/chain-real-iteration-20261108-8b4f0eedf006/source/runtime-source-manifest.json",
+    "sha256": "2708306ae88f3ddec5bbe8d63c40375ef8826c50aa99d3b223ab448a60563cac",
+    "size": 21246,
+    "version": "66306:56885404:21246:0:1794159190019563502"
+  }
+]

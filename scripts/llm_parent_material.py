@@ -103,7 +103,25 @@ def verify_parent(contract_path, adapter_path, artifact_path, *, expected_contra
     for digest in (expected_contract, expected_adapter, expected_file_sha256):
         c.digest(digest)
     family = runtime.verify_family(runtime.read_json(runtime.FAMILY_PATH))
-    raw_contract = read_regular(contract_path, c.MAX_MANIFEST_BYTES)
+    return verify_parent_bytes(
+        read_regular(contract_path, c.MAX_MANIFEST_BYTES),
+        read_regular(adapter_path, c.MAX_MANIFEST_BYTES),
+        read_regular(artifact_path, family['artifact_max_bytes']),
+        expected_contract=expected_contract, expected_adapter=expected_adapter,
+        expected_file_sha256=expected_file_sha256)
+
+
+def verify_parent_bytes(raw_contract, raw_adapter, artifact, *, expected_contract,
+                        expected_adapter, expected_file_sha256):
+    """Verify the same captured bytes that a durable readback hashes and retains."""
+    c = runtime.contract_module()
+    for digest in (expected_contract, expected_adapter, expected_file_sha256):
+        c.digest(digest)
+    family = runtime.verify_family(runtime.read_json(runtime.FAMILY_PATH))
+    for raw, maximum in ((raw_contract, c.MAX_MANIFEST_BYTES),
+                         (raw_adapter, c.MAX_MANIFEST_BYTES),
+                         (artifact, family['artifact_max_bytes'])):
+        runtime.require(type(raw) is bytes and 0 < len(raw) <= maximum, 'PARENT_MATERIAL_FILE_LIMIT')
     contract = c.verify_target_contract(raw_contract, expected_contract,
         expected_backbone_root=family['material_pins']['fp32_backbone_index_root'],
         expected_tokenizer_root=family['material_pins']['tokenizer_files_root'])
@@ -118,8 +136,6 @@ def verify_parent(contract_path, adapter_path, artifact_path, *, expected_contra
         contract['numeric']['quantization'] == 'none' and contract['targets'] == targets and
         contract['ports']['batch_max'] == 1 and contract['ports']['input_tokens_max'] == 128 and
         contract['ports']['output_tokens_max'] == 16, 'PARENT_MATERIAL_FAMILY')
-    raw_adapter = read_regular(adapter_path, c.MAX_MANIFEST_BYTES)
-    artifact = read_regular(artifact_path, family['artifact_max_bytes'])
     runtime.require(hashlib.sha256(artifact).hexdigest() == expected_file_sha256,
                     'PARENT_MATERIAL_FILE_IDENTITY')
     material = factor_bytes(artifact, contract)

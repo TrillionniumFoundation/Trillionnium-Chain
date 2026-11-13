@@ -1,0 +1,13 @@
+   Compiling trnm-pon-node v0.1.0 (/workspace/scratch/8b4f0eedf006/chain-iteration/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized] target(s) in 2.70s
+     Running unittests examples/learning_service_recovery_probe.rs (/workspace/scratch/8b4f0eedf006/target-learning-service/debug/examples/learning_service_recovery_probe-7853e0a7a8bdf53c)
+
+running 5 tests
+test platform::tests::altered_original_packet_or_missing_owner_is_not_an_unpaid_success ... ok
+test platform::tests::wrong_original_identity_operation_or_shared_lock_stops_before_probe ... ok
+test platform::tests::durable_intent_before_admission_is_unknown_query_only_without_resumption ... ok
+test platform::tests::original_payment_reorg_revoke_restore_is_heavier_and_replay_never_redispatches ... ok
+test platform::tests::damaged_probe_receipts_never_become_a_successful_recorded_recovery ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.33s
+

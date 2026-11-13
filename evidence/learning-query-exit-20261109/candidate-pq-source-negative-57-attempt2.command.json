@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "python3",
+    "scripts/ci/test_pq_research_integration.py",
+    "-v"
+  ],
+  "cwd": "/data/chain-learning-exit-70ae-20261109",
+  "exit_code": 0,
+  "tool_timeout_seconds": 600,
+  "timed_out": false,
+  "duration_ns": 211299035379,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "b71d4ce65926b87a81adbb4475b7279095f23d895f5dabe679aa9584289b0765"
+}

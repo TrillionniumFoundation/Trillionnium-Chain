@@ -1,0 +1,6 @@
+{"bytes_read": 0, "bytes_written": 0, "cpu_ns": 181928052, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 301887488, "outcome": "success", "stage": "material-verification", "wall_ns": 181953060}
+{"bytes_read": 0, "bytes_written": 0, "cpu_ns": 1366433150, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 308555776, "outcome": "success", "stage": "runtime-import", "wall_ns": 1264343829}
+{"bytes_read": 0, "bytes_written": 0, "cpu_ns": 997300195, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 1421959168, "outcome": "success", "stage": "model-load", "wall_ns": 723609843}
+{"bytes_read": 0, "bytes_written": 0, "cpu_ns": 444820727, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 1421959168, "outcome": "success", "stage": "complete-base-contract", "wall_ns": 444890410}
+{"bytes_read": 1015808, "bytes_written": 0, "cpu_ns": 135385960, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 1421959168, "outcome": "success", "stage": "artifact-material-readback", "wall_ns": 171827100}
+{"bytes_read": 0, "bytes_written": 0, "cpu_ns": 12443933152, "error_type": null, "gpu_ns": 0, "memory_peak_bytes": 1421959168, "outcome": "success", "stage": "real-forward-greedy-decode", "wall_ns": 6262447491}
