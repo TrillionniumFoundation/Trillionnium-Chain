@@ -1,0 +1,86 @@
+{
+  "schema": "native-witness-final-first-execution-v1",
+  "started_utc": "2026-11-01T08:59:05.405565+00:00",
+  "ended_utc": "2026-11-01T08:59:36.633521+00:00",
+  "argv": [
+    "/workspace/scratch/be76671b3e90/target/debug/deps/trnm_pon_node-a11dedc82f17cb42",
+    "store::pq_rollback_witness::tests",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "cwd": "/workspace/scratch/be76671b3e90/chain-pq/trillionnium",
+  "returncode": 0,
+  "elapsed_seconds": 31.226918663000106,
+  "binary_sha256_before": "1583225945e532144f382f51839f2eee3a1ec80309b2082b0b62ce5dbb566eea",
+  "binary_sha256_after": "1583225945e532144f382f51839f2eee3a1ec80309b2082b0b62ce5dbb566eea",
+  "provider_environment": {
+    "OPENSSL_DIR": "/workspace/scratch/be76671b3e90/network-pq/provider-tmp/trnm-pq-provider-3.5.9.2gfizYNR/install",
+    "OPENSSL_STATIC": "1",
+    "TRNM_PQ_OPENSSL": "/workspace/scratch/be76671b3e90/network-pq/provider-tmp/trnm-pq-provider-3.5.9.2gfizYNR/install/bin/openssl",
+    "TRNM_PQ_OPENSSL_SHA256": "69e6f620e4c4d092d8a32e77f41d8d9346fc5f811a27eb8897e8f5fa36bf7afa",
+    "TRNM_PQ_OPENSSL_VERSION": "3.5.9",
+    "OPENSSL_CONF": "/dev/null",
+    "OPENSSL_MODULES": "/workspace/scratch/be76671b3e90/network-pq/provider-tmp/trnm-pq-provider-3.5.9.2gfizYNR/install/lib/ossl-modules"
+  },
+  "observed_source_sha256_before": {
+    "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs": "cac146da7655534d684249cc1c25e48fb868c5340b43f8f9902caa182d10f82f",
+    "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs": "0f7d19cbd06bcae072bb3c46510501801b1abd311aff7af648074b0402668a4d",
+    "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs": "f9a8b790eca34c6abbe4e6cf422f07f031154bc5b39e0f3228f43ba9402d7e4b",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs": "bafbd111646e8a82e96ab8d780d6a4adbc86454fb0cd4003a8b1c93fc4598a17",
+    "trillionnium/crates/trnm-pon-node/Cargo.toml": "70b3e902c1c57fffdd3b4e74563dd65643c0a48b4d313da60180f032ea211191",
+    "trillionnium/Cargo.lock": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69"
+  },
+  "observed_source_sha256_after": {
+    "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs": "cac146da7655534d684249cc1c25e48fb868c5340b43f8f9902caa182d10f82f",
+    "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs": "0f7d19cbd06bcae072bb3c46510501801b1abd311aff7af648074b0402668a4d",
+    "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs": "f9a8b790eca34c6abbe4e6cf422f07f031154bc5b39e0f3228f43ba9402d7e4b",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs": "bafbd111646e8a82e96ab8d780d6a4adbc86454fb0cd4003a8b1c93fc4598a17",
+    "trillionnium/crates/trnm-pon-node/Cargo.toml": "70b3e902c1c57fffdd3b4e74563dd65643c0a48b4d313da60180f032ea211191",
+    "trillionnium/Cargo.lock": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69"
+  },
+  "source_unchanged": true,
+  "test_summaries": [
+    "test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 858 filtered out; finished in 31.22s"
+  ],
+  "counts": {
+    "passed": 25,
+    "failed": 0,
+    "ignored": 0,
+    "measured": 0,
+    "filtered_out": 858
+  },
+  "announced_test_names": [
+    "store::pq_rollback_witness::tests::native_witness_actual_sql_commit_failure_recovers_retained_revocation",
+    "store::pq_rollback_witness::tests::native_witness_cannot_anchor_success_response_after_submit_effect_was_lost",
+    "store::pq_rollback_witness::tests::native_witness_complete_old_database_restore_cannot_refund_or_unrevoke",
+    "store::pq_rollback_witness::tests::native_witness_current_checkpoint_cannot_be_spliced_onto_old_tables",
+    "store::pq_rollback_witness::tests::native_witness_exhausted_ingress_refuses_without_external_work",
+    "store::pq_rollback_witness::tests::native_witness_existing_request_authorization_uses_same_locked_state",
+    "store::pq_rollback_witness::tests::native_witness_existing_request_refuses_consistent_old_checkpoint_after_query",
+    "store::pq_rollback_witness::tests::native_witness_finish_commit_failure_recovers_only_with_actual_submit_effect",
+    "store::pq_rollback_witness::tests::native_witness_finish_recovery_refuses_complete_snapshot_missing_submit_effect",
+    "store::pq_rollback_witness::tests::native_witness_invalid_submit_completes_refusal_and_next_sequence_succeeds",
+    "store::pq_rollback_witness::tests::native_witness_invalid_submit_finish_failure_has_exact_terminal_recovery",
+    "store::pq_rollback_witness::tests::native_witness_local_precas_cancellation_rolls_back_and_keeps_normal_service",
+    "store::pq_rollback_witness::tests::native_witness_lost_cas_reply_recovers_exact_charge_once",
+    "store::pq_rollback_witness::tests::native_witness_nonempty_npq6_transfer_completes_and_recovers_real_effect",
+    "store::pq_rollback_witness::tests::native_witness_normal_charge_revocation_and_reopen_preserve_state",
+    "store::pq_rollback_witness::tests::native_witness_one_step_snapshot_restore_replays_charge_without_refund",
+    "store::pq_rollback_witness::tests::native_witness_original_deadline_refuses_before_new_exchange_or_mutation",
+    "store::pq_rollback_witness::tests::native_witness_outage_blocks_open_and_mutation",
+    "store::pq_rollback_witness::tests::native_witness_randomized_same_operation_recovery_keeps_original_durable_wire",
+    "store::pq_rollback_witness::tests::native_witness_real_pnq2_begin_and_finish_commit_failure_recover_without_reuse",
+    "store::pq_rollback_witness::tests::native_witness_real_pnq2_request_cached_reply_and_restart_complete",
+    "store::pq_rollback_witness::tests::native_witness_replayed_response_and_malformed_reply_refuse_before_effects",
+    "store::pq_rollback_witness::tests::native_witness_saturated_unix_backlog_refuses_with_original_deadline",
+    "store::pq_rollback_witness::tests::native_witness_transaction_rechecks_prestate_after_fresh_reply_race",
+    "store::pq_rollback_witness::tests::native_witness_wrong_external_root_or_instance_is_not_a_fallback"
+  ],
+  "unique_announced_test_count": 25,
+  "expected_tests": 25,
+  "complete_expected_suite_passed": true,
+  "log": "/workspace/scratch/be76671b3e90/network-pq/witness-native-final-first.log",
+  "log_bytes": 3056,
+  "log_sha256": "cda16e0936842abc8217ed48764666fd176620af33c1dc9075299f69a06a952c",
+  "scope": "Local native witness controls on integrator-supplied exact binary; not independent deployment, WAN, original large-state/History budget acceptance or whole-chain quantum qualification."
+}

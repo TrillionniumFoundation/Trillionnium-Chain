@@ -1,0 +1,21 @@
+test_classical_fallback_refused (__main__.TestClaimGuard.test_classical_fallback_refused) ... ok
+test_corrupt_independent_qualification_refused (__main__.TestClaimGuard.test_corrupt_independent_qualification_refused) ... ok
+test_duplicate_json_keys_refused (__main__.TestClaimGuard.test_duplicate_json_keys_refused) ... ok
+test_hepta_final_use_claim_refused (__main__.TestClaimGuard.test_hepta_final_use_claim_refused) ... ok
+test_history_storage_and_rehearsal_owner_paths_cannot_disappear (__main__.TestClaimGuard.test_history_storage_and_rehearsal_owner_paths_cannot_disappear) ... ok
+test_hold_is_not_pq_success (__main__.TestClaimGuard.test_hold_is_not_pq_success) ... ok
+test_missing_authority_surface_inventory_refused (__main__.TestClaimGuard.test_missing_authority_surface_inventory_refused) ... ok
+test_missing_pq_hepta_verifier_refused (__main__.TestClaimGuard.test_missing_pq_hepta_verifier_refused) ... ok
+test_missing_proof_relation_refused (__main__.TestClaimGuard.test_missing_proof_relation_refused) ... ok
+test_missing_quantum_daa_model_refused (__main__.TestClaimGuard.test_missing_quantum_daa_model_refused) ... ok
+test_pq_128_guest_promotion_refused (__main__.TestClaimGuard.test_pq_128_guest_promotion_refused) ... ok
+test_production_activation_refused (__main__.TestClaimGuard.test_production_activation_refused) ... ok
+test_quantum_hardness_claim_refused (__main__.TestClaimGuard.test_quantum_hardness_claim_refused) ... ok
+test_rollback_claim_refused (__main__.TestClaimGuard.test_rollback_claim_refused) ... ok
+test_symlink_source_refused (__main__.TestClaimGuard.test_symlink_source_refused) ... ok
+test_unbounded_or_unaccepted_candidate_refused (__main__.TestClaimGuard.test_unbounded_or_unaccepted_candidate_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.097s
+
+OK

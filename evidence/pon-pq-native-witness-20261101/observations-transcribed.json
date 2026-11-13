@@ -1,0 +1,77 @@
+{
+  "schema": "interrupted-pq-candidate-observations-v1",
+  "provenance": "Fields in this file are transcribed from preserved conversation tool outputs after the executor reset. They are not presented as byte-identical copies of the missing original receipt files.",
+  "published_hepta": {
+    "pr": "https://github.com/TrillionniumFoundation/hepta-private-ci/pull/4552",
+    "commit": "7ff91a4368bc110c35da789b16916e046f79b42c",
+    "tree": "09483e0039f8f900a403e38f791ca62576f46f38",
+    "parent": "a575cf03e2bc871a2f48021859c03ace806421c8"
+  },
+  "lost_chain_candidate_inputs": [
+    "0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0",
+    "605af09da34ca72665f822200a2f3e75573e6052"
+  ],
+  "corrected_candidate_observation": {
+    "binary_sha256": "30564a0621de1df4e05e1585863c33d8e8584bac7b2bb68d0111e61c6acdd353",
+    "native_rust_cargo_manifest_sha256": "6fc8df1713bc8ff1fd930dd3254ef5d6564f629c60dbb4e27d7d60b643187201",
+    "manifest_entries": 1082,
+    "manifest_bytes_recovered": false,
+    "selected_native_unique_passed": 79,
+    "selected_native_failed": 0,
+    "binary_bytes_recovered": false,
+    "exact_runtime_source_recovered": false,
+    "strict_workspace_clippy_exit": 0,
+    "strict_clippy_seconds": 63.95542788505554
+  },
+  "format_only_build": {
+    "binary_sha256": "8d5783d677501064c36231909e10f05f0006f940c0dd8afb889fdef4d99b05a0",
+    "native_rust_cargo_manifest_sha256": "6bc8561bba199b026b1d9ce0a67b0eadec94ab15231c191b3e8e38b673e44e65",
+    "test_build_exit": 0,
+    "test_build_seconds": 574.5480682849884,
+    "strict_clippy_exit": 0,
+    "strict_clippy_seconds": 139.10041046142578,
+    "native_acceptance_executed_on_this_binary": false,
+    "superseded_reason": "Subsequent review found the Node libtest also embeds the evolving source corpus; all embedded inputs had to be sealed before final validation."
+  },
+  "last_sealed_build": {
+    "repository_input_files": 1132,
+    "repository_input_manifest_sha256": "5bed9a0615675043eb38a3609491478b2d02fd9908bffdd89f6d88c31286a938",
+    "source_corpus_sha256": "5d964b6d5a71d3b62cd4d91a2719af2558bcedd01aa391ee8c398cf7b9beacc9",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--all-features",
+      "--lib",
+      "--no-run"
+    ],
+    "exit_code": 101,
+    "elapsed_seconds": 272.1876337528229,
+    "full_stderr_recovered": false,
+    "native_acceptance_executed": false,
+    "compile_time_source_identity_env": {
+      "TRNM_DISTRIBUTED_SOURCE_COMMIT": null,
+      "TRNM_DISTRIBUTED_SOURCE_TREE": null
+    }
+  },
+  "observed_environment_failure": [
+    "Writing the source-publication payload raised OSError ENOSPC.",
+    "The next ordinary exec could not create its sandbox mount marker because the filesystem was full.",
+    "A subsequent accessible executor reported about 58 GiB free and the entire original task directory was absent.",
+    "The 45 staged source files were not published before this failure."
+  ],
+  "exact_candidate_code_delivery": "NOT_COMPLETED_SOURCE_UNRECOVERED",
+  "prior_staged_source_tree_recorded": "66ee38b856dc3cf0aedf3758b987a443f89a0527",
+  "prior_staged_source_tree_available": false,
+  "provider_observation": {
+    "version": "OpenSSL 3.5.9",
+    "source_archive_sha256": "603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a",
+    "cli_sha256": "69e6f620e4c4d092d8a32e77f41d8d9346fc5f811a27eb8897e8f5fa36bf7afa",
+    "libssl_a_sha256": "e15be5fe884475c5efdd00ad40173d9abe71a2127f476145bed6ef2d86dfd5c9",
+    "libcrypto_a_sha256": "349a276ef8537acec3a8bb4edbe650d049a3018542f81823c7129d96b83bd751",
+    "hermetic_build_claimed": false
+  }
+}

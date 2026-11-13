@@ -1,0 +1,632 @@
+{
+  "schema": "trnm-pq-interrupted-evidence-recovery-v1",
+  "status": "ARCHIVE_ONLY_NOT_NATIVE_IMPLEMENTATION_DELIVERY",
+  "baseline_of_this_documentation_branch": "0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0",
+  "runtime_sources_changed_by_this_branch": false,
+  "lost_native_candidate_source_available": false,
+  "old_candidate_results_apply_to_this_branch": false,
+  "recovered_compressed_logs": [
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/ci-contract-latest559-final.log.gz",
+      "git_blob_sha1": "3e18a0b4e6c3d8423e004193973a08d0108fe3f1",
+      "bytes": 56,
+      "sha256": "3dcb266ad6dc9e8a32ce8699ec208d373261c160c26a0fd43002a2fdd36084b8",
+      "uncompressed_bytes": 194,
+      "uncompressed_sha256": "4de47824fb6ee3083c9096b6029449741f7289bf74fb6de375fab18d9ea74777"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/corpus-negative-final.log.gz",
+      "git_blob_sha1": "2e928d49d3ee5dc4128130c809dcf4e55e3608e4",
+      "bytes": 56,
+      "sha256": "1ad63f9b3cc477c9fbd8663e2ff59c4043cf0a424c053a96af4998f6e6acb5cd",
+      "uncompressed_bytes": 134,
+      "uncompressed_sha256": "e8159c15e0c662c5d9793dcda4e315a14f05a1e8deb5cd5ddee5803a95f5ec27"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/native-check-first.log.gz",
+      "git_blob_sha1": "f3915d049452bf2254016a1442d0134f870e0ba4",
+      "bytes": 402,
+      "sha256": "653cc8001e1e2a102a13166b1aa4d3c26840ce2c8432232195cdff0437c33739",
+      "uncompressed_bytes": 1185,
+      "uncompressed_sha256": "06cf99b6f685c0e38b8b6639a9d3b14e8792cd91d30db7318c1aaf4014d8b9ce"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/native-corrected-canonical-pq6.log.gz",
+      "git_blob_sha1": "fde007ba3292e699886e922d65f851712835f84c",
+      "bytes": 513,
+      "sha256": "e8a5a7d84cf58623e6023ffd3495f8affcbfe48693bf062b94198935cc6a6a31",
+      "uncompressed_bytes": 1534,
+      "uncompressed_sha256": "cdef7d9f237dfa5852a245516dbb332d72e1ba262d8c3cc725cc380e49893382"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/native-corrected-classical-v2.log.gz",
+      "git_blob_sha1": "8c0d59afed743375fde99a07f247062e5b69a55b",
+      "bytes": 167,
+      "sha256": "84fff85d7d05d6ad35f08b34469c3d722e9b1eac7454b4d5633edcb00d83ef39",
+      "uncompressed_bytes": 216,
+      "uncompressed_sha256": "942a801ff11b31db4af1cf0261569e19363c207a68b10f653f8376e8794a3a89"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/native-corrected-clippy.log.gz",
+      "git_blob_sha1": "def746a28e44da5381d9e4d4dbb18204a537b56f",
+      "bytes": 165,
+      "sha256": "213252db4a5cd3b74a8c84d97e4ebc44ede3707d9234fb55923512bcb6c06f17",
+      "uncompressed_bytes": 184,
+      "uncompressed_sha256": "5924a4954a38daac0281c247222d1887c5206424789079ef3db68c22c476d23a"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/native-corrected-pnq2.log.gz",
+      "git_blob_sha1": "16d8369e1233aadbe900ffd36dc600e1832b688a",
+      "bytes": 578042,
+      "sha256": "b91cc58349fa2c4bea2b2f7c7b72c6c22f075ac8a2d104f773c45f92393183ee",
+      "uncompressed_bytes": 4198056,
+      "uncompressed_sha256": "ec4fc1e798ccba2ee374f4818c1a20508d676868c016451ffbcd584b8731b3c6"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/native-corrected-pq-history.log.gz",
+      "git_blob_sha1": "d66bc88e40ff4d197a53883fb18ee61652f328df",
+      "bytes": 495,
+      "sha256": "74852fde7897ca940a37fb9d358502db5285947afb7cd7e0c6a24ca6c98cdce1",
+      "uncompressed_bytes": 1105,
+      "uncompressed_sha256": "c26776847595b0e832628601def063838b729341acaf62697b7abb46f86b1754"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/native-corrected-pq-owner.log.gz",
+      "git_blob_sha1": "138036a1dde27809439d9f3357fc0856f0e75350",
+      "bytes": 282,
+      "sha256": "cde3956928d09364f157130ce8e542bc8ac29873ff34789547fa5118e09e6b5f",
+      "uncompressed_bytes": 549,
+      "uncompressed_sha256": "82495960e6e63e7ad95ef65de61faa7aea7160baa4080dbdb24c5562af539324"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/native-corrected-pq-startup.log.gz",
+      "git_blob_sha1": "8dc3abf88d65c00f1a2f46d571299e26e7f5320f",
+      "bytes": 767,
+      "sha256": "e30a94244fe784f7adcdfc80439e7903a8951f88fdef9dd551c3ba84211773df",
+      "uncompressed_bytes": 2136,
+      "uncompressed_sha256": "01d42b53cbeb0c0e57e96a457a85d1b4725a41bfda875f4ea0a97c4db380e571"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/native-corrected-test-build.log.gz",
+      "git_blob_sha1": "6f609f059db74474388610fc3d65e6b74e81b812",
+      "bytes": 223,
+      "sha256": "65c2359b4c340da6386cc73abbc505fbeb5ff276624dbe6a9d32eabade8a7e09",
+      "uncompressed_bytes": 302,
+      "uncompressed_sha256": "a6c1d6160d9a54cb8d237badb4120b2b117c999647966740a36d7aaed1dd2955"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/native-final-canonical-pq6.log.gz",
+      "git_blob_sha1": "f4800d8086d64ef3e02ac453451e3b4bcb64b49c",
+      "bytes": 513,
+      "sha256": "27d42e9cc848d673476fd8c0a0801c0b5c28e5c4f22a884e97c4dc257aa0a481",
+      "uncompressed_bytes": 1534,
+      "uncompressed_sha256": "7e94990812c2d0bbc887238f536441909cc9eede26e1246ec5a3e5ac060cbc7c"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/native-final-classical-v2-first.log.gz",
+      "git_blob_sha1": "bc40353d308a10433c4c50af17c2d6b5d4a7cf6f",
+      "bytes": 387,
+      "sha256": "d51f0ea8790c0f37f01471ff3eb8bea0298954887e11c14a034446dab1797e44",
+      "uncompressed_bytes": 709,
+      "uncompressed_sha256": "056e55d8c98c48bb3cca213714727acb4848b1e127bdede66fccb3e645316d02"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/native-final-clippy.log.gz",
+      "git_blob_sha1": "00266061787adb323bd4495e802586dcda38500c",
+      "bytes": 166,
+      "sha256": "1634d286a239ba0817da695b9af8876cc7dead6368ececed58e21662987e1fbd",
+      "uncompressed_bytes": 184,
+      "uncompressed_sha256": "0a144022edcb715f1b315fe506260c3ff74077130bc83f0dd03abe502a3ce783"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/native-final-pnq2.log.gz",
+      "git_blob_sha1": "a0e43ed804dfc08bd22c04fba77e1c6d2c5b6ea6",
+      "bytes": 577973,
+      "sha256": "5ff2275ac4a4a72b319ccdd8f54df875b5ec8ef20805f3a6b3ab36ed633e32c8",
+      "uncompressed_bytes": 4198059,
+      "uncompressed_sha256": "8463a5e44000eb98eabc57b1cb886bd19a6da8287d8317677fad151b7b334480"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/native-final-pq-history.log.gz",
+      "git_blob_sha1": "7d09cb39ac268e09a12eb75b7d2c5f61fbc0356e",
+      "bytes": 565,
+      "sha256": "5ca0b0d071ac32791a039d3b69cacc65ab5582995bcc37f760fd3be218ce2485",
+      "uncompressed_bytes": 1504,
+      "uncompressed_sha256": "beb860ed7aa0b62e9c98e1e9cda91dd8476bd2ba8e092ea814ba41bf4b2ee9e9"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/native-final-pq-owner.log.gz",
+      "git_blob_sha1": "db95260950df6f907f4d2d677f98f8c4d39ddd45",
+      "bytes": 281,
+      "sha256": "125a6b5b421025927596f4cc06a2492c6576c17d127d50303565b33b9dc9f7b8",
+      "uncompressed_bytes": 549,
+      "uncompressed_sha256": "2836f6c74d4a9a2dffa2fb58305d0c3bec40d84ad94b33ce00cff02cf6635469"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/native-final-pq-startup.log.gz",
+      "git_blob_sha1": "226787fa9eaaf4e9a2a798bf225c40b774cae162",
+      "bytes": 768,
+      "sha256": "298191daa0b5c4ff7bd862cafe5c72dde388be046caed577556739885bde1dcb",
+      "uncompressed_bytes": 2136,
+      "uncompressed_sha256": "5188161e7ae0ff1f1f2ce7ed62d562f5c398092e4e5398135631d08c0f8b414b"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/native-final-test-build.log.gz",
+      "git_blob_sha1": "ccfd868e4f0ce107c794291e8a4623e2838eb7b3",
+      "bytes": 434,
+      "sha256": "4960c26379e7f84006a9ac667b0dfde9018d0e1f7e9df1cb0344a3b98a5e7184",
+      "uncompressed_bytes": 1678,
+      "uncompressed_sha256": "50d1a9a4f8e0d64611f08b8caa5ef80a125b1310cdf47be4dd194d69876e92e6"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/native-format-first.log.gz",
+      "git_blob_sha1": "d4b9926df0b7defceb6caf0b474c4a190c5ca8f0",
+      "bytes": 20,
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_bytes": 0,
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/network-native-build.log.gz",
+      "git_blob_sha1": "2f6a9da9d661161043c7d2a223cd2b430728257f",
+      "bytes": 1001,
+      "sha256": "89cd98071bda2985ecb1db81d8974b111e3ccf6a823045c4fe15037cd0a2b85e",
+      "uncompressed_bytes": 3390,
+      "uncompressed_sha256": "3cf9102227c430b7a176034675a40953354f05f92c44936a94223727de821e43"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/network-native-first-tests.log.gz",
+      "git_blob_sha1": "99d8c75bb6d2d1505b43bcc5a4954faab37f7d66",
+      "bytes": 577834,
+      "sha256": "185e675fd339cdcf0f960deac0496560e3bcc9346f849d2a0460a98989367b70",
+      "uncompressed_bytes": 4197952,
+      "uncompressed_sha256": "ad6196be115c3f279787d2ac554a39653f8640cc9fe0562f0f3db19ad0225032"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/public-readiness-final.log.gz",
+      "git_blob_sha1": "a79088134dda43d85a76dc4e87a0f5cf93ca16e4",
+      "bytes": 58,
+      "sha256": "cb39696f8339f7c083c8cce7fdf706b7c9494751f55ec1deedd506a40e34db1b",
+      "uncompressed_bytes": 155,
+      "uncompressed_sha256": "fd0f291caac1264a18e336be0fe267493b2d2275fcb07f3c502d44130c386c77"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/repository-binary-restoration-round1.stderr.log.gz",
+      "git_blob_sha1": "ccddbf0f0fc12fa89f0cd59f7611a0a93540b697",
+      "bytes": 123,
+      "sha256": "da59d2ee026c31f6299a1b70d728b1060a7db5a6d2de5ef82a6fef1c233ac9ca",
+      "uncompressed_bytes": 109,
+      "uncompressed_sha256": "4fc52270ef8b574c8851b8236c4e817823f2f58c63739cc53c976c3f8c13bd66"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/repository-binary-restoration-round1.stdout.log.gz",
+      "git_blob_sha1": "d4b9926df0b7defceb6caf0b474c4a190c5ca8f0",
+      "bytes": 20,
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_bytes": 0,
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/repository-binary-restoration-round2.stderr.log.gz",
+      "git_blob_sha1": "4264784d7b83fc16d59f1dce2f37c5eb7d788f09",
+      "bytes": 84,
+      "sha256": "fb2effa5a91a73b948a44cdea88540451efaf946000589c4c83a1b420efc76de",
+      "uncompressed_bytes": 72,
+      "uncompressed_sha256": "2eaf28b7a210c6d05210e15c5db0379540891fb259dd8291597ed1a12713e46b"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/repository-binary-restoration-round2.stdout.log.gz",
+      "git_blob_sha1": "d4b9926df0b7defceb6caf0b474c4a190c5ca8f0",
+      "bytes": 20,
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_bytes": 0,
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/repository-binary-restoration-round3.stderr.log.gz",
+      "git_blob_sha1": "d4b9926df0b7defceb6caf0b474c4a190c5ca8f0",
+      "bytes": 20,
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_bytes": 0,
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/repository-binary-restoration-round3.stdout.log.gz",
+      "git_blob_sha1": "07d953944a8a4b4ecfcc2846a99f21bcd4c5a92f",
+      "bytes": 239,
+      "sha256": "c3fb2b5d6209a86d010ca3b5c612a208bf587541aed02697debeb895eb8ed788",
+      "uncompressed_bytes": 307,
+      "uncompressed_sha256": "0886e6bc00808d727da5c2a23f979d81cdac8940dca3b87496e43da2454f61d3"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/repository-boundary-first.log.gz",
+      "git_blob_sha1": "fd1d50199fa8a3dfbaf07931054775f927c32291",
+      "bytes": 96,
+      "sha256": "40612388dc8af08e8e57337a24277cd8739aceaecf3f3e52fe1a1623c5fac904",
+      "uncompressed_bytes": 84,
+      "uncompressed_sha256": "e9d6779920685ac8631f9cfe3fc344fa5a64886cd36ed304305284c108a90361"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/repository-historical-restore-round1.stderr.log.gz",
+      "git_blob_sha1": "b55d04c8451d082169e59f36c9693d72287f41d2",
+      "bytes": 116,
+      "sha256": "2c220bc684ed1e3c0b6b822e2bc62ab147d75e70cc1bd4780319670299c29806",
+      "uncompressed_bytes": 105,
+      "uncompressed_sha256": "533db1c893d5012be201a56cd887e9c7a022f8a04049706b8234c1723fb29379"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/repository-historical-restore-round1.stdout.log.gz",
+      "git_blob_sha1": "d4b9926df0b7defceb6caf0b474c4a190c5ca8f0",
+      "bytes": 20,
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_bytes": 0,
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/repository-historical-restore-round2.stderr.log.gz",
+      "git_blob_sha1": "3c708e79cc714e1f4b856ef8c74fc02813f0147b",
+      "bytes": 138,
+      "sha256": "ea8a9a6ddcf51e821f5cd1d29644fbbbdaba8d4ecc94b3b19a3ef8185fa239bf",
+      "uncompressed_bytes": 133,
+      "uncompressed_sha256": "4eaa99b50fb4e663908998adcb4cdce45686684b2893f55d1e762942702f1dec"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/repository-historical-restore-round2.stdout.log.gz",
+      "git_blob_sha1": "d4b9926df0b7defceb6caf0b474c4a190c5ca8f0",
+      "bytes": 20,
+      "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec",
+      "uncompressed_bytes": 0,
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/test_pq_authority_surface_scan-final.log.gz",
+      "git_blob_sha1": "e05b225e9d4cc05ed74e2601b9eebd236952dfbf",
+      "bytes": 55,
+      "sha256": "34a8b427de57443bd2481d95331731869362788009a151d7017a0d6755577747",
+      "uncompressed_bytes": 110,
+      "uncompressed_sha256": "73e11a6c4bac538eae66f4bb616dd0a401e3ec41b18114f7780d0c11475268c4"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/test_pq_chain_claim_guard-final.log.gz",
+      "git_blob_sha1": "568fa3565bb17b9380f9c47f95646031b065f999",
+      "bytes": 55,
+      "sha256": "482d71c770d7823c4ec55593c87737f9edf4e4c9657dbad6c65a0e98acdcb454",
+      "uncompressed_bytes": 120,
+      "uncompressed_sha256": "f436dd400bf2dbc3b6d06b27f038d1aff04a5ba19839dad552594d2793c0e982"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/test_pq_external_rollback_oracle-final.log.gz",
+      "git_blob_sha1": "9d48b0578bf457c0b472a217f055e36750f3e7dc",
+      "bytes": 55,
+      "sha256": "29e2387aa9fd0598bc2eee4c34548303b630e530fb38e058df7ef8ba8612e7ad",
+      "uncompressed_bytes": 111,
+      "uncompressed_sha256": "72f09eca554e87a45b7156c6109520cf15e8b6ec157dc5c033610649b49b8698"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/test_run_from_zero_native-corrected.log.gz",
+      "git_blob_sha1": "3a465ff0c76d07fe40afe2078a2668c5cb280933",
+      "bytes": 56,
+      "sha256": "09a8ab578e7c128663d4d9a46d5f1077683da557d782c40a7529a5afce0a24cf",
+      "uncompressed_bytes": 188,
+      "uncompressed_sha256": "7906a2c1f57b28bf298fa76819983956318adc6bfbef3c9df4c39de2f7fc9ebe"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/test_run_from_zero_native-final.log.gz",
+      "git_blob_sha1": "38529cdea7a6ae2e3940a7305dd0269751097d5f",
+      "bytes": 471,
+      "sha256": "dcbccb6a3773c14257f3f78e82cfc4eae04b0d25af53a6a03cc73198392fd5b5",
+      "uncompressed_bytes": 1241,
+      "uncompressed_sha256": "ffe00c7181510eb3d983a64757fa510119627a4a0207b87b792e712538553f9f"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/witness-integrated-check-first.log.gz",
+      "git_blob_sha1": "fa1fb83a0e2dbaaf35cb4fc404a57e7cab384827",
+      "bytes": 1359,
+      "sha256": "f16cfcc33cba7641b86cfad82c208afe0a0cff3f2a1b174645783f2cd97e0049",
+      "uncompressed_bytes": 4309,
+      "uncompressed_sha256": "f814897ae1b7e62d73bf7ef6822543ca5683bcd77845235c21b784a069aeab78"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/witness-integrated-check-second.log.gz",
+      "git_blob_sha1": "86545e211390f0e2117f40dc12481512cc89f12d",
+      "bytes": 979,
+      "sha256": "9e282172f02a33c61d123f670a67da2387caa21478fae3ab131966b968362eff",
+      "uncompressed_bytes": 6829,
+      "uncompressed_sha256": "72230b369b185317c93b238d4a67456772bf6c7f81833603fb40e0d4b02e71d1"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/witness-integrated-check-third.log.gz",
+      "git_blob_sha1": "c77228d561b7afb58d9d48e0135ec1df94e9512a",
+      "bytes": 925,
+      "sha256": "dfe1194440cb865d488c8adfbd19e3c7462fec2413379bc8482dabeb7862ccb3",
+      "uncompressed_bytes": 4565,
+      "uncompressed_sha256": "154b270e9f5ff2df7b0341837e0c2b818d1af3f2045bf9ef76c4354a0fad1f54"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/witness-integrated-clippy-first.log.gz",
+      "git_blob_sha1": "6ae6be7aebb5af82035cc78b97b8f09d8d9f9cff",
+      "bytes": 501,
+      "sha256": "39b82de1658ba913b50654abf2a385667fbb1dbc6a17f5cc6b7b13cc70756220",
+      "uncompressed_bytes": 3175,
+      "uncompressed_sha256": "b580196ab20823740dc8d37446a0df9afc73d65e1f070b3566d9e4244fccc240"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/witness-native-corrected-final.log.gz",
+      "git_blob_sha1": "a8743f7b8d2d2678e4c9435f1036ab003a070f8d",
+      "bytes": 785,
+      "sha256": "f4eba253ada1ed5327fae8aa677ff5560ad361b93a4605ca7ce2ed71f70bfc92",
+      "uncompressed_bytes": 3056,
+      "uncompressed_sha256": "57c26b4be3dfa5ca10d11b3e60cdad6245e930d84c2fc061906fe7e33bde4e65"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/witness-native-final-first.log.gz",
+      "git_blob_sha1": "b13a819b762673cba2c4cb87247b4620ef103e83",
+      "bytes": 784,
+      "sha256": "86e43bac68e75eafe9bae56df0305a0c080cec908ceddda63481367b25ab2004",
+      "uncompressed_bytes": 3056,
+      "uncompressed_sha256": "cda16e0936842abc8217ed48764666fd176620af33c1dc9075299f69a06a952c"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/build/witness-source-reader-tests-first.log.gz",
+      "git_blob_sha1": "cde4e793adc57ba28728e5c56894ad18ea5327da",
+      "bytes": 56,
+      "sha256": "7eb68ea2d0c395cffc5fea6bf213c2091f1e9298e94c6e5b22beb11989469ead",
+      "uncompressed_bytes": 120,
+      "uncompressed_sha256": "91af81caaf1072743f4bccea56b5b5fdbe4d637e0ab3e26153c6563bbf43eb22"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/provider/build-and-smoke.log.gz",
+      "git_blob_sha1": "62d02cc97dc0787dc944f291f17e625e7e78cf4c",
+      "bytes": 36831,
+      "sha256": "81afa9c796c46c129811f8e9f2c918fab054796e943d33bf37f7d6aff70d7950",
+      "uncompressed_bytes": 1313792,
+      "uncompressed_sha256": "c300a049342baf2cfc35853087888eea0602771fae22222f1fb876e0e8cb80c6"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/quantum/quantum-daa-tests.log.gz",
+      "git_blob_sha1": "f0bee13770b70f8490f0ef610e3f4ab525c3b004",
+      "bytes": 741,
+      "sha256": "0cac46b6c3f3c5d68a977b212c0e96be8b959ee8d349a2596c1e3757e8b0c118",
+      "uncompressed_bytes": 3138,
+      "uncompressed_sha256": "dd8b6bbb92c34dca8f3459d4e270ecfc04c8316cac4a831f7d9cbf84e2f006a1"
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/quantum/quantum-scenarios-tests.log.gz",
+      "git_blob_sha1": "cc84d295f30f091cd4e7e4fa081c11ec2cc8715e",
+      "bytes": 316,
+      "sha256": "c4a2e8569a849a98b2bbf64769d9e88e07301b741a3e678cb884d98bfe686ba9",
+      "uncompressed_bytes": 1096,
+      "uncompressed_sha256": "d7599c0cf33555c56c6c159350d0af454e7ed09252ba7d2c957d05b039a9a2a7"
+    }
+  ],
+  "exact_recovered_documents": [
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/archive/BUILD_INPUT_READONLY_REVIEW_20261101.archived.md.txt",
+      "sha256": "1257e5807cce4fa0903678e9de63917d4fcae5187063242281b66fcd9c402b16",
+      "bytes": 6231
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/archive/ROLLBACK_INDEPENDENT_REVIEW-first.archived.md.txt",
+      "sha256": "a1d7a21074bfe16ddf00448c7783ff302988db384b72c14113fe79e4af320f40",
+      "bytes": 10522
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/archive/ROLLBACK_INDEPENDENT_REVIEW.archived.md.txt",
+      "sha256": "3f501bbba224a4e32ab0a05452f874614ea52bd97af161137d0c74322b64e10a",
+      "bytes": 12721
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/archive/WHOLE_CHAIN_PQ_ACCEPTANCE_TARGET_20261101.archived.md.txt",
+      "sha256": "fe2396088be9174d74d62c659ca65e1f62918c563271065d98f7befce8ab2c3e",
+      "bytes": 13951
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/archive/recovery-manifest.json",
+      "sha256": "a41a87a571b52241401dadfe46268a23e809690bafb248b7157c444dfa0955ce",
+      "bytes": 8963
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/archive/trnm-pon-node-Cargo.archived.toml.txt",
+      "sha256": "70b3e902c1c57fffdd3b4e74563dd65643c0a48b4d313da60180f032ea211191",
+      "bytes": 1568
+    },
+    {
+      "path": "evidence/pon-pq-native-witness-20261101/archive/witness-native-final-first.json",
+      "sha256": "c7dbdba46e04e061e9570c96b4a4d6617f5fc540c548b1d357d208dcc755ab3e",
+      "bytes": 6531
+    }
+  ],
+  "earlier_corrected_candidate_selected_native": [
+    {
+      "label": "pnq2",
+      "passed": 18,
+      "failed": 0,
+      "ignored": 0,
+      "log": "build/native-corrected-pnq2.log.gz",
+      "test_names": [
+        "ingress::pq_network::tests::actual_large_signed_invalid_requests_exhaust_durable_ledger_budget_without_restart_credit",
+        "ingress::pq_network::tests::expired_pending_operation_retires_without_refreshing_sequence_or_authorization",
+        "ingress::pq_network::tests::expired_prepared_request_refuses_before_client_tcp",
+        "ingress::pq_network::tests::interrupted_owner_revocation_and_retained_ledger_corruption_fail_closed",
+        "ingress::pq_network::tests::invalid_pq_client_sequence_refuses_before_ml_dsa_signing",
+        "ingress::pq_network::tests::live_admission_boundary::elapsed_pq_deadline_preserves_sequence_and_invalid_signature_debt",
+        "ingress::pq_network::tests::live_admission_boundary::pq_verifier_owner_wait_stops_at_original_deadline_without_new_intent",
+        "ingress::pq_network::tests::live_admission_boundary::queued_pq_signed_expiry_does_not_create_intent_and_next_request_recovers",
+        "ingress::pq_network::tests::pins_context_canonical_wire_sequence_and_classical_downgrade_refuse",
+        "ingress::pq_network::tests::pnq2_untransmittable_request_and_response_refuse_before_signing",
+        "ingress::pq_network::tests::post_intent_cancellation::actual_pq_deadline_after_intent_preserves_owner_nonce_and_other_peer_service",
+        "ingress::pq_network::tests::post_intent_cancellation::expiry::actual_signed_expiry_after_intent_cancels_without_renewing_live_authority",
+        "ingress::pq_network::tests::post_intent_cancellation::local_control_origin::actual_durable_intent_cleanup_requires_local_origin_for_each_pq_control_code",
+        "ingress::pq_network::tests::post_intent_cancellation::local_control_origin::actual_mldsa_remote_control_text_and_forgery_never_authorize_local_cancellation",
+        "ingress::pq_network::tests::real_signed_overlong_pq_request_refuses_before_verification_without_budget_bypass",
+        "ingress::pq_network::tests::real_tcp_node_submit_lost_ack_signature_randomness_and_cold_reopen",
+        "ingress::pq_network::tests::revocation_survives_actual_branch_reorg_and_cold_reopen",
+        "ingress::pq_network::tests::signed_pq_client_refuses_nonloopback_destination_before_network_io"
+      ],
+      "summary": "test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 865 filtered out; finished in 21.93s"
+    },
+    {
+      "label": "canonical-pq6",
+      "passed": 12,
+      "failed": 0,
+      "ignored": 0,
+      "log": "build/native-corrected-canonical-pq6.log.gz",
+      "test_names": [
+        "ingress::pq_network::canonical_tests::classic_authenticated_session_is_rejected_for_pq_only_settings",
+        "ingress::pq_network::canonical_tests::classical_profile_keeps_legacy_protected_head_behavior",
+        "ingress::pq_network::canonical_tests::declared_oversize_is_rejected_before_body_allocation_and_survives_reopen",
+        "ingress::pq_network::canonical_tests::failed_real_signatures_exhaust_durable_budget_without_charging_claimed_accounts",
+        "ingress::pq_network::canonical_tests::pq6_packet_executes_through_actual_pnq2_socket_and_reopens",
+        "ingress::pq_network::canonical_tests::pq6_payment_observer_replays_actual_settlement_and_refuses_reorg_and_wrong_bindings",
+        "ingress::pq_network::canonical_tests::pq_owner_rejects_classical_outbox_and_history_even_with_classical_accounts",
+        "ingress::pq_network::canonical_tests::pq_profile_rejects_classical_v2_client_before_connecting",
+        "ingress::pq_network::canonical_tests::pq_profile_rejects_classical_v3_client_before_connecting_or_work",
+        "ingress::pq_network::canonical_tests::pq_profile_rejects_legacy_callers_without_network_or_replay_effects",
+        "ingress::pq_network::canonical_tests::pq_profile_rejects_plain_history_before_network_and_preserves_owner",
+        "ingress::pq_network::canonical_tests::pq_profile_rejects_valid_classical_and_anonymous_admission_challenges"
+      ],
+      "summary": "test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 871 filtered out; finished in 4.43s"
+    },
+    {
+      "label": "pq-history",
+      "passed": 5,
+      "failed": 0,
+      "ignored": 0,
+      "log": "build/native-corrected-pq-history.log.gz",
+      "test_names": [
+        "ingress::public_v3::pq_identity::tests::pq_history_failure_budget_and_listener_reconstruction_share_the_original_epoch",
+        "ingress::public_v3::pq_identity::tests::pq_history_native_application_account_packet_uses_the_same_paid_history_owner",
+        "ingress::public_v3::pq_identity::tests::pq_history_original_listener_reads_real_owner_and_classical_clients_cannot_downgrade",
+        "ingress::public_v3::pq_identity::tests::pq_history_real_three_party_messages_are_strict_and_old_wire_is_refused",
+        "ingress::public_v3::pq_identity::tests::pq_only_account_profile_rejects_classical_public_v3_client_before_connection"
+      ],
+      "summary": "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 878 filtered out; finished in 1.52s"
+    },
+    {
+      "label": "pq-owner",
+      "passed": 4,
+      "failed": 0,
+      "ignored": 0,
+      "log": "build/native-corrected-pq-owner.log.gz",
+      "test_names": [
+        "operator_pq_auth::tests::pq_continuous_real_budget_allocation_replay_and_cold_journal_keep_authority",
+        "operator_pq_auth::tests::pq_continuous_recovery_signature_cannot_forge_a_closed_process",
+        "operator_pq_auth::tests::pq_continuous_two_roles_have_no_classical_or_other_domain_fallback",
+        "operator_pq_auth::tests::pq_continuous_view_pins_every_nested_authority_and_keeps_original_permit_fences"
+      ],
+      "summary": "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 879 filtered out; finished in 2.14s"
+    },
+    {
+      "label": "pq-startup",
+      "passed": 14,
+      "failed": 0,
+      "ignored": 0,
+      "log": "build/native-corrected-pq-startup.log.gz",
+      "test_names": [
+        "operator_pq_startup::tests::pq_continuous_atomic_renewal_reconciles_actual_task_v5_owner_and_strict_lease_edge",
+        "operator_pq_startup::tests::pq_continuous_direct_receiver_exact_signature_cannot_expand_delegated_nonce_window",
+        "operator_pq_startup::tests::pq_continuous_history_cancel_after_durable_start_settles_original_interval",
+        "operator_pq_startup::tests::pq_continuous_history_exact_pair_shares_one_durable_scope_and_cold_reopens",
+        "operator_pq_startup::tests::pq_continuous_history_postcommit_cancel_preserves_packet_and_recovery_hold",
+        "operator_pq_startup::tests::pq_continuous_history_signed_invalid_work_settles_and_cannot_replay_claim",
+        "operator_pq_startup::tests::pq_continuous_history_unfinished_scope_keeps_unknown_debt_on_cold_open",
+        "operator_pq_startup::tests::pq_continuous_history_unselected_pages_and_shared_poller_cannot_spend_claims",
+        "operator_pq_startup::tests::pq_continuous_original_search_owner_produces_registered_work_and_cannot_replay_allocation",
+        "operator_pq_startup::tests::pq_continuous_real_bootstrap_receiver_and_cold_reopen_keep_state_fees_work_and_local_revocation",
+        "operator_pq_startup::tests::pq_continuous_real_controller_nonempty_search_receiver_restart_and_wire_limits",
+        "operator_pq_startup::tests::pq_continuous_revoked_actual_task_blocks_cold_restart_without_replaying_bootstrap",
+        "operator_pq_startup::tests::pq_startup_invalid_work_spends_original_journal_and_refuses_automatic_retry",
+        "operator_pq_startup::tests::pq_startup_strict_genesis_wire_shape_and_signature_boundaries_refuse_mutations"
+      ],
+      "summary": "test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 869 filtered out; finished in 73.57s"
+    },
+    {
+      "label": "classical-v2",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "log": "build/native-corrected-classical-v2.log.gz",
+      "test_names": [
+        "ingress::public_v2::tests::pq_only_account_profile_refuses_classical_public_v2_before_tcp"
+      ],
+      "summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 882 filtered out; finished in 0.01s"
+    },
+    {
+      "label": "witness",
+      "passed": 25,
+      "failed": 0,
+      "ignored": 0,
+      "log": "build/witness-native-corrected-final.log.gz",
+      "test_names": [
+        "store::pq_rollback_witness::tests::native_witness_actual_sql_commit_failure_recovers_retained_revocation",
+        "store::pq_rollback_witness::tests::native_witness_cannot_anchor_success_response_after_submit_effect_was_lost",
+        "store::pq_rollback_witness::tests::native_witness_complete_old_database_restore_cannot_refund_or_unrevoke",
+        "store::pq_rollback_witness::tests::native_witness_current_checkpoint_cannot_be_spliced_onto_old_tables",
+        "store::pq_rollback_witness::tests::native_witness_exhausted_ingress_refuses_without_external_work",
+        "store::pq_rollback_witness::tests::native_witness_existing_request_authorization_uses_same_locked_state",
+        "store::pq_rollback_witness::tests::native_witness_existing_request_refuses_consistent_old_checkpoint_after_query",
+        "store::pq_rollback_witness::tests::native_witness_finish_commit_failure_recovers_only_with_actual_submit_effect",
+        "store::pq_rollback_witness::tests::native_witness_finish_recovery_refuses_complete_snapshot_missing_submit_effect",
+        "store::pq_rollback_witness::tests::native_witness_invalid_submit_completes_refusal_and_next_sequence_succeeds",
+        "store::pq_rollback_witness::tests::native_witness_invalid_submit_finish_failure_has_exact_terminal_recovery",
+        "store::pq_rollback_witness::tests::native_witness_local_precas_cancellation_rolls_back_and_keeps_normal_service",
+        "store::pq_rollback_witness::tests::native_witness_lost_cas_reply_recovers_exact_charge_once",
+        "store::pq_rollback_witness::tests::native_witness_nonempty_npq6_transfer_completes_and_recovers_real_effect",
+        "store::pq_rollback_witness::tests::native_witness_normal_charge_revocation_and_reopen_preserve_state",
+        "store::pq_rollback_witness::tests::native_witness_one_step_snapshot_restore_replays_charge_without_refund",
+        "store::pq_rollback_witness::tests::native_witness_original_deadline_refuses_before_new_exchange_or_mutation",
+        "store::pq_rollback_witness::tests::native_witness_outage_blocks_open_and_mutation",
+        "store::pq_rollback_witness::tests::native_witness_randomized_same_operation_recovery_keeps_original_durable_wire",
+        "store::pq_rollback_witness::tests::native_witness_real_pnq2_begin_and_finish_commit_failure_recover_without_reuse",
+        "store::pq_rollback_witness::tests::native_witness_real_pnq2_request_cached_reply_and_restart_complete",
+        "store::pq_rollback_witness::tests::native_witness_replayed_response_and_malformed_reply_refuse_before_effects",
+        "store::pq_rollback_witness::tests::native_witness_saturated_unix_backlog_refuses_with_original_deadline",
+        "store::pq_rollback_witness::tests::native_witness_transaction_rechecks_prestate_after_fresh_reply_race",
+        "store::pq_rollback_witness::tests::native_witness_wrong_external_root_or_instance_is_not_a_fallback"
+      ],
+      "summary": "test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 858 filtered out; finished in 31.15s"
+    }
+  ],
+  "test_counting_note": "79 distinct controls belong only to the earlier unpublished candidate with the recorded binary identity. Earlier and repeated runs are not added. The complete tested implementation and binary are unavailable; these observations are not acceptance of this branch or a recoverable native delivery.",
+  "transcribed_observations": "observations-transcribed.json",
+  "unexecuted_original_gates": [
+    {
+      "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+      "status": "NOT_RUN_IN_THIS_TASK",
+      "required_input": "Both backends, 2100 explicit 4080-byte custom-genesis cells, original signed transfers and complete readback",
+      "original_limits": "10-second gate; 2-second CPU burst; 250ms/s CPU refill; 100ms start reserve; two workers"
+    },
+    {
+      "selector": "store::native_authenticated_tests::native_inactive_page_parents_use_checked_material_without_early_activation",
+      "status": "NOT_RUN_IN_THIS_TASK",
+      "required_input": "256-transfer seed, seven one-packet pages, depth-six confirmation, full State parity and cold reopen",
+      "original_limits": "Original 30-second page allowance and original History CPU owner"
+    }
+  ],
+  "full_pressure_campaign": {
+    "qualified": false,
+    "observed_prior_memory_bytes": 8589934592,
+    "required_memory_bytes": 17179869184,
+    "fixed_host_requirements_relaxed": false
+  },
+  "qualification": {
+    "whole_chain_pq": false,
+    "native_witness_delivered": false,
+    "whole_database_rollback_protected": false,
+    "production_network": false,
+    "wan_qualified": false,
+    "old_assets_migrated": false,
+    "complete_hepta_composition": false,
+    "independent_acceptance": false,
+    "production_activation": false
+  },
+  "recovery_limitations": [
+    "The full c003 rollback patch and final RW-10 implementation are missing.",
+    "The two original PNQ2 source patches could not be recovered byte-for-byte.",
+    "Four archived apply_patch inputs are partial historical edit instructions, not a complete or standalone patch.",
+    "Recovered historical prose retains its old wording and paths; it is stored as text and must not be read as a current delivery claim.",
+    "The last build full stderr and full source manifests could not be recovered."
+  ],
+  "partial_historical_edit_inputs_manifest": "archive/rollback-edit-inputs/manifest.json",
+  "current_documentation_branch_source_checks": "documentation-validation/source-checks.json"
+}
