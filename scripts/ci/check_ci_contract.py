@@ -1814,6 +1814,38 @@ def check_w1_reuse_v3(block: str) -> None:
             'four exact W1 V3 head/merge native lanes with retained failure artifacts')
 
 
+MANUAL_RESEARCH_WORKFLOWS = {
+    'pon-native-campaign-qualification.yml': 'PoN original native campaign',
+    'pon-fixed-host-root-f0.yml': 'PoN fixed Host ROOT F0 diagnostic',
+}
+
+
+def check_manual_research_workflows(root: Path) -> None:
+    """Keep these two historical experiments behind their explicit manual event.
+
+    This is a narrow static trigger contract, not experiment execution or
+    qualification. The original jobs, source guards and failure readers remain.
+    """
+    for name, title in MANUAL_RESEARCH_WORKFLOWS.items():
+        source = root / '.github/workflows' / name
+        require(source.is_file() and not source.is_symlink(),
+                'manual research workflow must be a regular file: ' + name)
+        text = source.read_text()
+        prefix = ('name: ' + title + '\n'
+                  'on:\n'
+                  '  workflow_dispatch:\n'
+                  'permissions:\n')
+        require(text.startswith(prefix),
+                'manual research workflow requires its sole explicit dispatch event: ' + name)
+        # A second event mapping after jobs, quoted/aliased root key, or another
+        # YAML document must not override the already checked event block.
+        top_level = [line for line in text.splitlines()
+                     if line and not line[0].isspace() and not line.startswith('#')]
+        require(top_level == ['name: ' + title, 'on:', 'permissions:',
+                              'concurrency:', 'jobs:'],
+                'manual research workflow has noncanonical top-level structure: ' + name)
+
+
 def check_inline_source_pins(root: Path) -> int:
     """Check existing literal blob guards before CI spends a native build.
 
@@ -2183,6 +2215,7 @@ def validate(root: Path = ROOT) -> dict:
         source = root / 'formal/pon-nakamoto-v1' / name
         require(source.is_file() and not source.is_symlink(),
                 'required useful Cell test source is missing: ' + name)
+    check_manual_research_workflows(root)
     inline_source_pins = check_inline_source_pins(root)
     pq_release_authority_controls = check_pq_release_authority_controls(root)
     pq_system_controls = check_pq_system_required_controls(root)

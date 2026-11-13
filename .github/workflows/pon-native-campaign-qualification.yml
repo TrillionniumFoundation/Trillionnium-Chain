@@ -1,25 +1,5 @@
 name: PoN original native campaign
 on:
-  pull_request:
-    paths:
-      - trillionnium/**
-      - config/**
-      - .cargo/**
-      - rust-toolchain.toml
-      - formal/pon-nakamoto-v1/bounded_process*.py
-      - scripts/run_pon_w1_native_campaign.py
-      - scripts/pon_public_v3_phase_read.py
-      - scripts/pon_public_v3_policy_read.py
-      - scripts/ci/test_pon_public_v3_policy_read.py
-      - scripts/ci/test_pon_public_v3_phase_read.py
-      - scripts/ci/inspect_native_campaign_failure.py
-      - scripts/ci/test_inspect_native_campaign_failure.py
-      - scripts/project-preflight.sh
-      - scripts/ci/verify_ci_source.py
-      - scripts/ci/run_native_phase_host.py
-      - scripts/ci/test_native_phase_host.py
-      - scripts/ci/public_host_ci_observation.py
-      - .github/workflows/pon-native-campaign-qualification.yml
   workflow_dispatch:
 permissions:
   contents: read
