@@ -140,6 +140,14 @@ class API:
                     chunks.append(chunk)
                 raw = b"".join(chunks)
         except urllib.error.HTTPError as error:
+            # HTTPError owns a response too. Close it before diagnostics can
+            # fail, without reading its body or leaking its repr at collection.
+            try:
+                error.close()
+            except Exception:
+                # Cleanup text is untrusted; the original HTTP failure below
+                # still refuses the export, even when response close fails.
+                pass
             self.record_request_failure(path, relative, started, timeout, error)
             raise ExportError(f"GitHub GET {path}: HTTP {error.code}; no fallback") from None
         except (urllib.error.URLError, TimeoutError, OSError, http.client.HTTPException) as error:

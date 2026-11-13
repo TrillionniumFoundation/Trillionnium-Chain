@@ -351,6 +351,51 @@ class ExportTests(unittest.TestCase):
         self.assertIsNone(row["errno"])
         self.assertIsNone(result["target_pr_gate_verdict"])
 
+    def test_http_error_response_closes_before_diagnostic_write_failure(self):
+        response = Response(b"untrusted HTTP response body")
+        failure = urllib.error.HTTPError(API_BASE + "/pulls/323", 403, TOKEN, {}, response)
+        server = Server()
+
+        def fail_request(request, timeout):
+            raise failure
+
+        server.open = fail_request
+        with patch.object(export.urllib.request, "build_opener", return_value=server), \
+                patch.object(export, "time", Clock()):
+            api = export.API(REPO, TOKEN, self.root, 5)
+            with patch.object(api, "save_json", side_effect=OSError("offline-disk-failure")):
+                with self.assertRaisesRegex(OSError, "offline-disk-failure"):
+                    api.get("/pulls/323", "pr.json")
+        self.assertTrue(response.closed)
+
+    def test_http_error_cleanup_failure_keeps_safe_failure_and_diagnostics(self):
+        sentinel = "https://example.invalid/error?sig=offline-close-sentinel-92607"
+        for close_error in (OSError, http.client.HTTPException, ValueError):
+            with self.subTest(close_error=close_error.__name__):
+                class CloseFailure(Response):
+                    def close(self):
+                        super().close()
+                        raise close_error(sentinel)
+
+                response = CloseFailure(sentinel.encode())
+                failure = urllib.error.HTTPError(API_BASE + "/pulls/323", 403,
+                                                 sentinel, {}, response)
+                server = Server()
+
+                def fail_request(request, timeout):
+                    raise failure
+
+                server.open = fail_request
+                code, result, out = self.run_export(server, forbidden_text=(sentinel,))
+                self.assertEqual(code, 1)
+                self.assertTrue(response.closed)
+                self.assertIn("HTTP 403", result["error"])
+                self.assertFalse(result["target_pr_gate_authenticated"])
+                self.assertIsNone(result["target_pr_gate_verdict"])
+                row = json.loads(next((out / "request-failures").glob("*.json")).read_text())
+                self.assertEqual(row["category"], "http-error")
+                self.assertEqual(row["http_status"], 403)
+
     def test_changed_snapshot_after_export_cannot_claim_completion(self):
         server = Server()
         server.rows_at_poll = lambda poll: server.rows if poll <= 2 else [
