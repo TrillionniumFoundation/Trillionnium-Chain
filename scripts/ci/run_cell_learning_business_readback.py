@@ -25,7 +25,7 @@ TESTS = (
     ("economics-controls", "scripts/test_cell_learning_business_economics.py", 29, ()),
     ("business-controls", "scripts/test_cell_learning_business_join.py", 24, ()),
     ("trainer-no-update-controls", "scripts/test_cell_learning_training_no_update_join.py", 17, ()),
-    ("ci-contract-controls", "scripts/ci/test_ci_contract.py", 10,
+    ("ci-contract-controls", "scripts/ci/test_ci_contract.py", 19,
      ("MergedQualificationLaneTests",)),
 )
 SOURCE_FILES = (
