@@ -1,0 +1,171 @@
+# Q4 renewal lost-ACK and reorg reconciliation — bounded research v1
+
+**Authority:** subordinate development experiment under `TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`, not a replacement plan. Only `formal/pon-nakamoto-v1/q4_renewal_outbox_research.py` uses its `q4_outbox_*_v1` SQLite namespace. **Not a native M05/M07 owner, signed lease verifier, network dispatcher, `FinalUse` token, consensus revision, miner, new Q4 codec, automated authority, or deployed recovery.**
+
+## Problem isolated
+
+A source and requester can pre-sign the exact Q4 tag22 transaction while the old lease is still eligible, but delayed inclusion, a lost HTTP/TCP acknowledgement, fork reorganization and restart cannot prove whether a real external submission already occurred. The dangerous naive behavior is to treat `Unknown` as `NotDispatched`, reset nonce/fee/time budgets, re-sign, or automatically use Maintenance when a particular selected lease is revoked. Any replacement signed transaction must be a **new independently authorized operation**, not a recovery mutation.
+
+The research outbox receives an externally supplied **full 1,187-byte PNX1/tag22 transaction** as opaque bytes. It verifies the length, the exact PoN `H("tx-id", [raw])` content identity and only caller-declared context/window/sequence *syntax*. The synthetic regression bytes are intentionally not signed. It does **not** verify Ed25519, current lease, actual source renewal, rights, material availability, on-chain inclusion, source withdrawal or the client's signature over its purported receipt. Only existing owners may perform those operations.
+
+## Finite journal state and transitions
+
+`RenewalIntent` commits an independently supplied 32-byte operation ID, network/parameters/genesis, observed parent, current and proposed lease digests, active generation, source/requester sequences, signed window and full raw transaction. In one fresh journal, an operation ID and an exact transaction ID each have **at most one** immutable intent. The implementation rejects trying to relabel a packet under a new operation and trying to substitute different signed bytes under the same operation. A hash-based row ID cannot create new authorizations.
+
+After durable `prepare`, the application must persist `DISPATCH_UNKNOWN` **before** any separately owned I/O submission. It is a conservative sticky record: the external send might not happen, might succeed, or might return a lost acknowledgement. `dispatch_unknown` is not a send command or permission. Once persisted, the same operation cannot acquire another dispatch fence even after `Included`, `Confirmed`, `Reorged`, `Expired`, `Unavailable` or cold reopen. Recovery is read-only observation of the **original transaction ID** until an authorized owner establishes a separate new operation. This trades automatic retries for fail-closed anti-duplication; it is not a liveness solution by itself.
+
+`ChainObservation` records a caller-supplied active-generation, tip, height, membership class and exact upstream receipt digest. The class label is **untrusted local research metadata**: `OBSERVED_CONFIRMED` does not mean an independently validated client confirmation, and `OBSERVED_REORGED` cannot rewind an already attempted physical submission. Generation is monotonic per operation. The original client must verify packet bytes, inclusion in a fully validated active chain and an installed depth+work policy; reconnect must re-read actual generation/confirmation instead of trusting this journal's event labels.
+
+Every event is finite, append-only, context-bound, sequence-numbered and predecessor-hash-linked. `BEGIN IMMEDIATE`, `synchronous=FULL`, create-only identities, single-dispatch unique index, bounded max intents/events, post-COMMIT `UnknownEffect`, and an O(record count) cold-open audit detect local inconsistency and preserve uncertain outcomes. A hash chain in a local SQLite file **does not** protect against privileged database rewrites or assert physical power-loss durability. Filesystem pathname checks are not race-safe against hostile local processes. No storage budget external to the finite row count is claimed.
+
+## Executed qualification and open native boundary
+
+Run from `formal/pon-nakamoto-v1`:
+
+```sh
+python3 -m unittest -v test_q4_renewal_outbox_research.py
+```
+
+The tests explicitly exercise lost ACK, durable pre-/post-COMMIT cuts, delayed receipt, confirmation then reorg, expiry, cold reopen, duplicate operation/packet, different SQLite connections, monotonic generations, wrong context/length/type, forensic tampering and event/intent quotas. They use local synthetic public byte strings. No actual requester/source signature, `Node::admit`, W1 proof, P2P listener, real network partition or independent operator executes.
+
+**Production integration remains blocked:** M05/M07/kernel.operations must consume *actual signed Q4 tag22 transactions and current source/withdrawal facts* under the one original durable owner; persist a submission pre-effect fence with externally installed authority; submit through the real bounded transport and reconcile `Unknown` via independent client history and surviving/reorganized chain; preserve local effect history across deep reorganizations. Run real 32-slot retention, renewal at the last legal height, two independent signers, lost ACK, disk crash and material loss with the original native W1 Maintenance path. This research file cannot be used as an authority adapter or a new second ledger.
+
+## Canonical observation audit hardening (research continuation)
+
+The local journal now independently validates the complete fixed 113-byte
+`ChainObservation` grammar when an `OBSERVED_*` event is appended **and**
+when all historical events are replayed on cold open. It refuses zero generation,
+zero observed tip, zero evidence/receipt digest, an absent included-block digest
+for Included/Confirmed, a nonzero included-block digest for
+Reorged/Unavailable/Expired, mismatched kind tags, truncated or mutable byte
+buffers, and unknown event kinds. The original event hash and generation-order
+checks remain required. An internal call to `_event` cannot bypass this validation.
+
+Two negative suites cover malformed internal append and cold SQLite observations
+whose checksum was deliberately recomputed to match their corrupted fields.
+The internal append now also validates the referenced intent ID inside the same
+SQLite immediate transaction, so an internal caller cannot journal an orphan
+DISPATCH_UNKNOWN or OBSERVED event. Both orphan cases have negative tests.
+Recomputing a local row digest is **not** forging an authenticated chain receipt;
+the experiment proves a canonical decoder invariant, not tamper resistance
+against an administrator who can rewrite both the SQLite bytes and hash chain.
+
+These changes were published on the existing draft research branch as
+`9c848875dfdf5756af8292b3f13e808269260c38` and
+`774fc4bb08a4162be24a56e759a9718d11b961c8`; orphan-identity
+guards are added in `d9e4a722c643acf543bf1676ffaf7e3b5816fdd3` and
+`11a8feb8fc611882fa93087d8372f7ddd54833e5`. The exact-branch Python
+outbox tests still need execution in an environment possessing this full source
+checkout; the local separately reconstructed observation-codec probe passed.
+Real Q4 signatures, original-owner journals, independent PoN client proofs,
+WAN lost-ACK handling, uninterrupted mining and production admission remain
+strictly unqualified. No old Q4, Maintenance, W1 or DAA consensus rule changed.
+
+## One-snapshot audit under concurrent journal writers (2026-10-26)
+
+The research outbox originally queried intents and events in separate SQLite
+read statements without holding a shared read transaction. Another authorized
+local writer could commit between the two queries, creating a moving audit
+view. The read-only `audit()` path now opens a single explicit SQLite read
+transaction, checks the namespace metadata and both tables in that snapshot,
+and rolls back its read transaction on success or failure. Nested calls inside
+a caller-held write transaction refuse instead of committing or rolling back
+the caller's intent. A regression forces a second real SQLite connection to
+attempt to commit during the pinned read view, retains its Busy refusal, then
+checks that the writer can proceed after the audit ends.
+
+This is a concurrency/consistent-read repair in a synthetic SQLite research
+owner. The signed Q4 owner, real kernel.operations outbox, native PoN
+confirmation, authority to redispatch, physical power loss and independent
+operators remain separate blockers. No original Q4 signed bytes, W1, genesis
+Maintenance, DAA target, Node source or production flag is changed.
+
+## Single-snapshot diagnostic status (2026-10-26)
+
+The read-only `status()` path now opens one explicit SQLite read transaction for its
+intent row and ordered dispatch/observation rows, rolling the read transaction back
+on both success and error. This prevents a concurrent writer from committing an
+event between those reads and producing a hybrid diagnostic status. Reentrant reads
+inside a pending original-owner transaction fail closed as `STATUS_REENTRANT`
+without rolling back or publishing that owner's pending effect.
+
+An empty status snapshot **is not** `NotDispatched` authority: after the read
+transaction ends, another owner can publish `DISPATCH_UNKNOWN`. The existing
+single-dispatch unique index and original operation identity remain the only
+local journal protections. The result must never be used to sign, resubmit,
+refresh a nonce/budget, infer original Hepta authority or activate consensus.
+Two negative tests force an independent SQLite writer to attempt dispatch during
+the second read and verify the original writer can proceed only after the
+snapshot releases. No real native W1, physical crash, WAN or owner admission
+was executed by this research change.
+
+## Audited diagnostic status under corrupt local history (2026-10-26)
+
+The research-only `status()` now performs the existing bounded complete
+intent/event/namespace integrity audit inside its **same SQLite read transaction**
+before returning any diagnostic about dispatch history. An altered intent wire or
+a corrupted event can no longer make an unaudited status look legitimate while
+`audit()`/cold reopen would refuse the same state. A failed status releases its
+read lock and grants no fresh attempt, nonce, payment, source signature, chain
+confirmation or `NotDispatched` authority. Two additional negative controls
+mutate a second connection's durable intent and dispatch event, observe fail-closed
+status, and check recovery without dispatch duplication. This retains the
+existing `q4_outbox_*_v1` schema and never modifies Q4 signed bytes, W1,
+Maintenance or installed DAA.
+
+This is a local integrity improvement, not tamper evidence against a privileged
+attacker who can rewrite all SQLite bytes and checksum history, and not an
+ordinary Hepta/native operator or independent client/WAN acceptance result.
+
+## Reject malformed predecessor before appending an observation (2026-10-26)
+
+The research journal's `_event` write transaction now revalidates the prior
+`OBSERVED_*` event's complete 113-byte grammar before comparing generations
+and appending a successor. In the old local logic, a malformed or zero-length
+prior observation could be interpreted as generation zero and allow a fresh
+append to an already-damaged journal. The added negative control edits a prior
+SQLite observation, proves that no new event is persisted, repairs the same
+original bytes and resumes without any renewed dispatch fence. This is a
+bounded fail-closed local predecessor check, not a full history audit on every
+write, an authenticated client observation or a durable physical reorg oracle.
+
+## Fail-closed append after damage anywhere in the durable history (2026-10-26)
+
+The read-only `audit()` and `status()` already checked a complete SQLite snapshot,
+but `prepare` and `_event` previously checked only their local intent or most
+recent observation before writing. A corrupt *earlier* durable event could remain
+undetected while an unrelated intent or a later observation was committed.
+
+Both mutation paths now call the existing `_audit_snapshot()` **after
+`BEGIN IMMEDIATE` and before any durable mutation**. Thus the original
+context, every intent, prior event digest/ordinal, full observation grammar
+and generation history are checked inside the same writer-owned snapshot.
+A failed scan rolls back its writer transaction and grants no new dispatch,
+source signature, fresh nonce, payment or external-operation authority.
+Two new tests corrupt a nonterminal earlier event and an intent through a
+separate SQLite connection, require zero extra durable rows, restore the exact
+original bytes and verify ordinary append/reopen audit can resume.
+
+This trades finite local append cost for conservatism: each mutation performs
+O(intents + events) verified row work and the sequence has quadratic total
+worst-case CPU over a filled research journal. It is NOT a scalable public
+M05/M15 submission owner, a physical anti-tamper mechanism or a production
+Hepta lost-ACK path. A later native owner should use a separately reviewed
+authenticated bounded high-water/frontier with periodic full cold audit.
+No schema or Q4, W1, Maintenance, legacy DAA or activation rule changes.
+
+### Original error precedence retained
+
+The event-path full prefix audit executes **after** original local checks
+(`UNKNOWN_INTENT`, `EVENT_BUDGET`, duplicate dispatch and the complete
+immediate-predecessor observation grammar/generation) but **before INSERT**,
+all in the same original `BEGIN IMMEDIATE` transaction. This preserves the
+inherited `OBSERVATION_WIRE` counterexample for a malformed last observation
+rather than substituting `EVENT_DIGEST`, while still detecting corrupt
+nonterminal earlier history before any new write. Existing positive, fault
+injection and two newly added damaged-prefix tests remain the named selectors;
+their current GitHub-source Rust/Python execution is not claimed here.
+
+### Strict-schema and durable-path boundary
+
+The bounded Q4 research outbox now rejects special SQLite in-memory/URI targets and checks full canonical table DDL on every writer/audit/status snapshot. Same-name tables with weakened uniqueness/nullability constraints cannot support a lost-ACK dispatch fence, even if original row bytes and digest-chain values look unchanged. This does not grant signed renewal or an external NotDispatched certificate.

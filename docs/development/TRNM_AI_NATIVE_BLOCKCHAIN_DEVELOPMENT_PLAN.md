@@ -1,3 +1,15 @@
+**DAA and renewal research consolidation, 2026-11-13 UTC — HOLD:**
+
+Retain the formal fork-local DAA, anchor projection, local shadow journal and
+Q4 renewal outbox research from `7621af958bf0e2ed9f0ae0f1761f0723536dbaee`.
+Preserve the selected SQLite transaction/loader ownership, worker runtime,
+current network/PQ guards and current CI contracts. The isolated native anchor
+projection remains test-only; the renewal forecast reports insufficient budget
+before a future signed window opens. Neither changes the installed target rule.
+Raw observations with colliding paths retain current bytes; their alternate
+original bytes remain in the original commit. Every historical result keeps its
+original scope, and final source validation remains pending.
+
 **Snapshot and per-call configuration ownership, 2026-11-13 UTC — HOLD:**
 
 Retain `042e3d4a22a444c028074ddd21561a6153205370`: the formal tail query owns an

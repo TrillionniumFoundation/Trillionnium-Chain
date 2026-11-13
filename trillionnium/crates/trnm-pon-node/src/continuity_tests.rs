@@ -1249,3 +1249,52 @@ fn long_native_all_32_retained_slots_reopen_only_after_retention_boundary() {
     assert_eq!(reopened.read_active().unwrap(), tip);
     assert!(reopened.confirmation(watched, included, 100_000).unwrap().confirmed);
 }
+
+#[test]
+fn maintenance_confirms_signed_business_after_only_lease_revoked_and_cold_reopen() {
+    // An explicit genesis Maintenance path, not a failed-lease fallback.
+    // This is a native logical-time test, NOT a public-network/W1-cost qualification.
+    let dir = tempfile::tempdir().unwrap();
+    let settings = settings();
+    let bootstrap = settings.bootstrap_lifecycle_task().unwrap();
+    let revoked_task = bootstrap.signed.manifest.matrix_task;
+    let mut node = Node::open(dir.path(), settings.clone(), 1).unwrap();
+    let revoke = DemandRevocationV2 {
+        network: settings.network(),
+        parameters: settings.parameters(),
+        slot: 0,
+        demand_id: bootstrap.lease.demand_id,
+        requester: bootstrap.lease.requester,
+        expected_revision: bootstrap.lease.revision,
+    };
+    let revoke_tx = signed(&settings, 1, 1, 20, revoke.encode().unwrap());
+    mine(&mut node, 1, vec![revoke_tx]);
+    let mut transfer_payload = development_public(2).unwrap().to_vec();
+    transfer_payload.extend(1u64.to_le_bytes());
+    let business_tx = signed(&settings, 1, 2, 1, transfer_payload);
+    let tx_id = hash(b"tx-id", &[&business_tx]);
+    let included = mine(&mut node, 2, vec![business_tx]);
+    for height in 3..=5 {
+        mine(&mut node, height, vec![]);
+    }
+    let expected = node.read_active().unwrap();
+    drop(node);
+    let mut node = Node::open(dir.path(), settings.clone(), 2).unwrap();
+    assert_eq!(node.read_active().unwrap(), expected);
+    for height in 6..=9 {
+        mine(&mut node, height, vec![]);
+    }
+    let observed = node.confirmation(tx_id, included, 100_000).unwrap();
+    assert!(observed.confirmed);
+    assert!(!observed.reorged);
+    assert!(!observed.finalized);
+    assert!(!observed.execution_authority);
+    assert_eq!(observed.included_height, 2);
+    assert!(node
+        .lifecycle_task_lease(node.active().unwrap().0, revoked_task, 10)
+        .is_err());
+    assert_eq!(
+        node.read_active().unwrap().2[continuity_v1::MAINTENANCE_KEY]["useful_output_credit"],
+        0
+    );
+}
