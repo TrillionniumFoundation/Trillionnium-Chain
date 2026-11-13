@@ -282,17 +282,34 @@ impl CellVersionContentV2 {
         content_pin: CellContentDigestV2,
         session: &mut CellContentReadSessionV2,
     ) -> CellResultV1<VerifiedCellVersionContentV2<'a>> {
-        check_deadline(session.deadline())?;
+        self.verify_cached_controlled(store, expected, content_pin, session, &mut || Ok(()))
+    }
+
+    /// Keep the original execution owner's checkpoint around each manifest,
+    /// chunk read and bounded hashing step. Refusal retains the complete-scan
+    /// reservation and returns no verified-content observation. The owner
+    /// retains responsibility for cancellation state across separate calls.
+    pub fn verify_cached_controlled<'a>(
+        &'a self,
+        store: &CellStoreV1,
+        expected: &CellVersionLoaderContextV1<'_>,
+        content_pin: CellContentDigestV2,
+        session: &mut CellContentReadSessionV2,
+        checkpoint: &mut impl FnMut() -> CellResultV1<()>,
+    ) -> CellResultV1<VerifiedCellVersionContentV2<'a>> {
+        content_checkpoint(session.deadline(), checkpoint)?;
         self.validate()?;
         self.version.verify_for_loader(expected)?;
         require(
             content_pin != [0; 64] && self.commitment() == content_pin,
             "content owner commitment",
         )?;
+        content_checkpoint(session.deadline(), checkpoint)?;
         session.reserve(&self.version)?;
-        let actual = scan(&self.version, store, session.deadline())?;
+        content_checkpoint(session.deadline(), checkpoint)?;
+        let actual = scan_controlled(&self.version, store, session.deadline(), checkpoint)?;
         require(actual == self.contents, "content actual byte commitments")?;
-        check_deadline(session.deadline())?;
+        content_checkpoint(session.deadline(), checkpoint)?;
         Ok(VerifiedCellVersionContentV2 {
             content: self,
             usage: session.usage(),
@@ -479,12 +496,22 @@ fn scan(
     store: &CellStoreV1,
     deadline: Instant,
 ) -> CellResultV1<Vec<CellFileContentV2>> {
+    scan_controlled(version, store, deadline, &mut || Ok(()))
+}
+
+fn scan_controlled(
+    version: &CellVersionManifestV1,
+    store: &CellStoreV1,
+    deadline: Instant,
+    checkpoint: &mut impl FnMut() -> CellResultV1<()>,
+) -> CellResultV1<Vec<CellFileContentV2>> {
     let mut contents = Vec::with_capacity(version.manifests().len());
     for declared in version.manifests() {
-        check_deadline(deadline)?;
+        content_checkpoint(deadline, checkpoint)?;
         let actual = store
             .manifest_with_deadline(declared.id(), Some(deadline))?
             .ok_or(CellErrorV1::Unavailable)?;
+        content_checkpoint(deadline, checkpoint)?;
         require(actual == *declared, "content actual manifest")?;
         let mut whole = Sha512::new();
         whole.update(b"TRNM/Cell/PayloadContent/v2\0");
@@ -492,10 +519,11 @@ fn scan(
         let mut legacy = Sha256::new();
         let mut chunks_sha512 = Vec::with_capacity(declared.chunks().len());
         for chunk in declared.chunks() {
-            check_deadline(deadline)?;
+            content_checkpoint(deadline, checkpoint)?;
             let bytes = store
                 .chunk_with_deadline(chunk.sha256, Some(deadline))?
                 .ok_or(CellErrorV1::Unavailable)?;
+            content_checkpoint(deadline, checkpoint)?;
             require(
                 bytes.len() == chunk.size as usize,
                 "content actual chunk length",
@@ -503,7 +531,7 @@ fn scan(
             chunks_sha512.push(chunk_digest(&bytes));
             whole.update(&bytes);
             legacy.update(&bytes);
-            check_deadline(deadline)?;
+            content_checkpoint(deadline, checkpoint)?;
         }
         require(
             <[u8; 32]>::from(legacy.finalize()) == declared.payload_sha256(),
@@ -515,8 +543,17 @@ fn scan(
             chunks_sha512,
         });
     }
-    check_deadline(deadline)?;
+    content_checkpoint(deadline, checkpoint)?;
     Ok(contents)
+}
+
+fn content_checkpoint(
+    deadline: Instant,
+    checkpoint: &mut impl FnMut() -> CellResultV1<()>,
+) -> CellResultV1<()> {
+    check_deadline(deadline)?;
+    checkpoint()?;
+    check_deadline(deadline)
 }
 
 fn check_deadline(deadline: Instant) -> CellResultV1<()> {

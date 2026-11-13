@@ -89,3 +89,36 @@ Provider storage capacity sums one 4096-byte-aligned extent per shard obligation
 Staging cache logical occupancy includes the exact encoded shard manifests as well as wire payloads. Both are summed from the committed plan within the original clock, checked against the unchanged 512 MiB bound, and reported separately from transport input usage.
 
 The staging logical total also reserves both 32-byte CAS row keys per slot under Cache V4 accounting. The payload transfer reservations do not include or refund this separately recorded metadata storage.
+
+## Original owner control during consumer restoration
+
+`restore_cell_paged_version_to_cache_controlled_v2` adds a cooperative owner
+checkpoint to the existing consumer restoration entry. It uses the same
+request, complete-version pins, plan/catalog, original absolute deadline and
+whole-attempt reservation. TC/CR wire formats and signed domains are unchanged.
+The compatibility entry delegates to the same implementation with no additional
+owner callback; it cannot reopen a reservation already stopped by the controlled
+entry.
+
+Checkpoints surround provider callbacks, complete plan/page reads, bounded
+RS verification/reconstruction/re-encoding, strong content checks, CAS writes
+and actual reads, per-chunk complete content scanning and the final plan check.
+The original deadline is checked before and after the owner callback. A
+checkpoint refusal or observed expiry permanently stops this in-memory restore
+reservation, including attempts made through the compatibility entry. Replacing
+the callback with a permissive callback cannot resume it.
+
+On any early read/codec/storage error, a final control observation also runs.
+The original operation error is retained, while a simultaneous cancellation
+still latches the stopped state. Ordinary data/read errors whose owner remains
+admissible keep the original bounded retry semantics. Admitted costs and valid
+cache entries are never refunded or erased by cancellation. An error after a
+successful cache write is not reported as a completed restoration.
+
+The lower-level `repair_chunk_controlled`, `repair_chunk_to_cache_controlled`
+and `verify_cached_controlled` carry that owner callback into the actual work;
+their standalone callers remain responsible for cancellation state across
+separate calls. No callback creates an authority, paid custody record, resource
+reservation, durable recovery identity or FinalUse permission. Checks are
+cooperative boundaries, not preemption inside a codec, filesystem operation or
+provider callback. A resumed process still requires its original durable owner.

@@ -348,7 +348,7 @@ jobs:
         run: |
           set -euo pipefail
           status=0
-          for example in cell_bep52_cost_v1 cell_rs46_cost_v1 cell_signed_sealed_pipeline_v1; do
+          for example in cell_bep52_cost_v1 cell_rs46_cost_v1 cell_signed_sealed_pipeline_v1 cell_bep52_iterative_discovery; do
             command_status=0
             timeout --signal=TERM --kill-after=10s 600 cargo +1.95.0 run --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --example "$example" > "$OUT/$example.json" 2> "$OUT/$example.log" || command_status=$?
             printf '%s\n' "$command_status" > "$OUT/$example.exit"
