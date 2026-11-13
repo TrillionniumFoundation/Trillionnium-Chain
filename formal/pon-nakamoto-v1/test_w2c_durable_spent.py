@@ -88,6 +88,22 @@ class DurablePaidSpendTests(unittest.TestCase):
         self.assertEqual(reopened.consume(grant, self.proposal, self.caller, nonce, 130),
                          'REPLAY')
 
+    def test_original_grant_obeys_raised_local_owner_policy(self):
+        owner = self.owner(create=True)
+        self.addCleanup(owner.close)
+        grant, nonce = self.ticket(owner)
+        owner.raise_minimum_bits(9)
+        self.assertEqual(owner.consume(grant, self.proposal, self.caller, nonce, 120),
+                         'PRICE_POLICY')
+        self.assertEqual(owner.pending_paid(), 0)
+        current = owner.offer(self.proposal, self.caller, 9, 121)
+        current_nonce, result = solve(current, 65536)
+        self.assertIsNotNone(current_nonce)
+        self.assertEqual(result['status'], 'TARGET_HIT_UNVERIFIED')
+        self.assertEqual(owner.consume(current, self.proposal, self.caller,
+                                       current_nonce, 130), 'READY_RESOURCE_ONLY')
+        self.assertEqual(owner.pending_paid(), 1)
+
     def test_paid_spend_survives_abrupt_process_exit_after_commit(self):
         first = self.owner(create=True)
         grant, nonce = self.ticket(first)

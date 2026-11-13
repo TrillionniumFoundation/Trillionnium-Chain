@@ -85,6 +85,23 @@ production readiness.
 
 ## Irreducible operational qualifications
 
+### Consolidation policy boundary (2026-11-13)
+
+The `config` row in this exact research schema persists the schema identifier,
+credential fingerprint and clock watermark. It does **not** persist capacity,
+lifetime or the inherited minimum-cost setting. All participants therefore
+require the same trusted operator configuration. Raising `minimum_bits` affects
+that instance only; reopening does not restore the raised floor. This owner
+must not be described as a substitute for the separate `DurableSpendGate`
+schema, which persists its policy, or as a shared policy migration facility.
+
+Consolidation adds the inherited local `PRICE_POLICY` check to this class's
+`consume` override, before a spend transaction can begin. An originally issued
+authentic grant follows the owner's subsequently raised local floor, and a
+new grant at that floor can still spend normally. The schema and signed grant
+bytes stay unchanged. The exact local control and its source receipt are
+recorded under `evidence/branch-consolidation-20261113/w2/`.
+
 SQLite serializes only participants using the **same** original storage
 file and its OS-level lock. It cannot prevent a fully compromised
 administrator from copying the directory, database snapshot and

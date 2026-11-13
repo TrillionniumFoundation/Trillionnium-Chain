@@ -111,5 +111,51 @@ class ReceiverScopedCostTests(unittest.TestCase):
         self.assertEqual(self.issuer.consume(grant,self.proposal,-1,120),'GRANT_ENCODING')
 
 
+    def test_owner_policy_and_epoch_quota_share_one_original_issuer(self):
+        owner = R.ReceiverAdmission(
+            bytes([1])*32, bytes([3])*32, bytes([5])*32,
+            bits=12, epoch_issue_limit=1, entropy=lambda n: bytes([7])*n)
+        with self.assertRaisesRegex(ValueError, 'BITS_POLICY'):
+            owner.offer(self.proposal, 8, 100)
+        self.assertEqual(owner.issued_total, 0)
+        grant = owner.offer(self.proposal, 12, 100)
+        self.assertEqual(grant.bits, 12)
+        self.assertEqual(owner.issued_total, 1)
+        owner.clock(2200)
+        self.assertIsNone(owner.offer(self.proposal, 12, 2201))
+
+    def test_original_authenticated_grant_cannot_override_raised_owner_policy(self):
+        grant, nonce = self.minted()
+        self.issuer.bits = 12  # A trusted local policy change, not a new grant.
+        self.assertEqual(self.issuer.consume(grant, self.proposal, nonce, 120),
+                         'BITS_POLICY')
+        self.assertFalse(self.issuer.issued[grant.token][1])
+
+    def test_epoch_issuance_not_refunded_by_expiry_spend_or_identity_rotation(self):
+        serial = iter((bytes([1])*32, bytes([2])*32, bytes([3])*32))
+        owner = R.ReceiverAdmission(
+            bytes([1])*32, bytes([9])*32, bytes([4])*32,
+            capacity=1, epoch_issue_limit=2, entropy=lambda n: next(serial))
+        first=owner.offer(self.proposal,8,100)
+        self.assertIsNotNone(first)
+        nonce,_=R.solve(first,8192)
+        self.assertEqual(owner.consume(first,self.proposal,nonce,120),'READY_RESOURCE_ONLY')
+        self.assertIsNone(owner.offer(H('rotated-identity'),8,121))
+        second=owner.offer(H('another-payload'),8,2101)
+        self.assertIsNotNone(second)
+        self.assertEqual(owner.issued_total,2)
+        owner.clock(5000)
+        self.assertIsNone(owner.offer(H('fresh-identity'),8,5001))
+        self.assertEqual(owner.issued_total,2)
+        self.assertEqual(owner.issued,{})
+        # Only an independent process epoch could receive another budget;
+        # no caller key/body/expiry or redeemed token can reset this instance.
+
+    def test_epoch_limit_has_strict_bounded_constructor(self):
+        for bad in (0,65537,-1,1.0,True):
+            with self.assertRaises(ValueError):
+                R.ReceiverAdmission(bytes(32),bytes(32),bytes(32),epoch_issue_limit=bad)
+
+
 if __name__=='__main__':
     unittest.main(verbosity=2)
