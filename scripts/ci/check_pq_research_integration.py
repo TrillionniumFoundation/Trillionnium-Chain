@@ -34,6 +34,7 @@ PQ_SOURCE_DIRS = (
     "trillionnium/crates/trnm-crypto-primitives/examples",
     "trillionnium/crates/trnm-data-availability/src",
     "trillionnium/crates/trnm-data-availability/tests",
+    "trillionnium/crates/trnm-data-availability/examples",
     "trillionnium/crates/trnm-mvcc-fee/src",
     "trillionnium/crates/trnm-mvcc-fee/tests",
     "trillionnium/crates/trnm-pon-node/src",
@@ -1205,10 +1206,10 @@ CELL_REVIEWED_PAGED_REQUIRED_PATHS = frozenset((
 NATIVE_REQUIRED_PATHS |= CELL_REVIEWED_PAGED_REQUIRED_PATHS
 
 def is_pq_source(parts: tuple[str, ...]) -> bool:
-    """Recognize pq.rs, cell_pq and operator_pq_auth as well as older prefixes."""
+    """Recognize versioned pq3 modules, pq.rs, cell_pq and older prefixes."""
     return any(
         part.startswith(("pq_", "pqg_", "pql"))
-        or re.search(r"(?:^|_)pq(?:_|$)", Path(part).stem)
+        or re.search(r"(?:^|_)pq(?:[0-9]+)?(?:_|$)", Path(part).stem)
         for part in parts
     )
 
