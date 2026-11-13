@@ -1,0 +1,25 @@
+{
+  "schema": "chain-pr909-original-bytes-container-v2",
+  "source_index_git_blob": "5075184f6a4ef9db4ac9f47547b16f00b76ae2b1",
+  "original": {
+    "path": "qualification/chain-pr909-final-ci-20261112/tool-errors/log-130557620566_response.json",
+    "role": "serialized_original_tool_return_not_http_wire",
+    "bytes": 1018,
+    "sha256": "fc46c3c64681c3e58bfae0469d0c41658f87db48ac81985833caf926b2e9d74e",
+    "git_blob": "d986a7279b73d99aa1d7705d12fb4eb0d132b2a7"
+  },
+  "logical_log": null,
+  "segment": {
+    "index": 0,
+    "count": 1,
+    "byte_start_in_original": 0,
+    "byte_end_exclusive_in_original": 1018,
+    "byte_start_in_whole_log": null,
+    "byte_end_exclusive_in_whole_log": null,
+    "bytes": 1018,
+    "sha256": "fc46c3c64681c3e58bfae0469d0c41658f87db48ac81985833caf926b2e9d74e",
+    "git_blob": "d986a7279b73d99aa1d7705d12fb4eb0d132b2a7"
+  },
+  "encoding": "base64",
+  "base64": "ewogICJzdGF0dXMiOiAiZnVsZmlsbGVkIiwKICAidmFsdWUiOiB7CiAgICAiY29udGVudCI6IFsKICAgICAgewogICAgICAgICJ0eXBlIjogInRleHQiLAogICAgICAgICJ0ZXh0IjogIkdpdEh1YiBBUEkgZXJyb3IgNDA0OiDvu788P3htbCB2ZXJzaW9uPVwiMS4wXCIgZW5jb2Rpbmc9XCJ1dGYtOFwiPz48RXJyb3I+PENvZGU+QmxvYk5vdEZvdW5kPC9Db2RlPjxNZXNzYWdlPlRoZSBzcGVjaWZpZWQgYmxvYiBkb2VzIG5vdCBleGlzdC5cblJlcXVlc3RJZDo1ZTE1NTZkYy1kMDFlLTAwZDMtN2I2Yi03MjQ0YjYwMDAwMDBcblRpbWU6MjAyNi0xMS0xMlQwNjowMTozMy44NTA5NzkzWjwvTWVzc2FnZT48L0Vycm9yPiIKICAgICAgfQogICAgXSwKICAgICJzdHJ1Y3R1cmVkQ29udGVudCI6IHsKICAgICAgImVycm9yIjogIkdpdEh1YiBBUEkgZXJyb3IgNDA0OiDvu788P3htbCB2ZXJzaW9uPVwiMS4wXCIgZW5jb2Rpbmc9XCJ1dGYtOFwiPz48RXJyb3I+PENvZGU+QmxvYk5vdEZvdW5kPC9Db2RlPjxNZXNzYWdlPlRoZSBzcGVjaWZpZWQgYmxvYiBkb2VzIG5vdCBleGlzdC5cblJlcXVlc3RJZDo1ZTE1NTZkYy1kMDFlLTAwZDMtN2I2Yi03MjQ0YjYwMDAwMDBcblRpbWU6MjAyNi0xMS0xMlQwNjowMTozMy44NTA5NzkzWjwvTWVzc2FnZT48L0Vycm9yPiIsCiAgICAgICJlcnJvcl9jb2RlIjogIk5PVF9GT1VORCIsCiAgICAgICJlcnJvcl9kYXRhIjogewogICAgICAgICJlcnJvcl9zdHIiOiAiR2l0SHViIEFQSSBlcnJvciA0MDQ6IO+7vzw/eG1sIHZlcnNpb249XCIxLjBcIiBlbmNvZGluZz1cInV0Zi04XCI/PjxFcnJvcj48Q29kZT5CbG9iTm90Rm91bmQ8L0NvZGU+PE1lc3NhZ2U+VGhlIHNwZWNpZmllZCBibG9iIGRvZXMgbm90IGV4aXN0LlxuUmVxdWVzdElkOjVlMTU1NmRjLWQwMWUtMDBkMy03YjZiLTcyNDRiNjAwMDAwMFxuVGltZToyMDI2LTExLTEyVDA2OjAxOjMzLjg1MDk3OTNaPC9NZXNzYWdlPjwvRXJyb3I+IgogICAgICB9CiAgICB9LAogICAgImlzRXJyb3IiOiB0cnVlCiAgfQp9Cg=="
+}
