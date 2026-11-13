@@ -1,0 +1,15 @@
+test_all_input_bytes_tampered_original_pin_reject (test_pq_native_import.NativePQImportTests.test_all_input_bytes_tampered_original_pin_reject) ... ok
+test_context_source_genesis_identity_and_production_signer_flags (test_pq_native_import.NativePQImportTests.test_context_source_genesis_identity_and_production_signer_flags) ... ok
+test_disallowed_uppercase_pin_and_invalid_length (test_pq_native_import.NativePQImportTests.test_disallowed_uppercase_pin_and_invalid_length) ... ok
+test_duplicated_pq_key_and_issued_overflow_reject (test_pq_native_import.NativePQImportTests.test_duplicated_pq_key_and_issued_overflow_reject) ... ok
+test_exact_byte_parity_and_read_only_scope (test_pq_native_import.NativePQImportTests.test_exact_byte_parity_and_read_only_scope) ... ok
+test_maximum_account_and_liability_bounds_parity (test_pq_native_import.NativePQImportTests.test_maximum_account_and_liability_bounds_parity) ... ok
+test_pqi1_is_distinct_from_pql1_and_pqs1 (test_pq_native_import.NativePQImportTests.test_pqi1_is_distinct_from_pql1_and_pqs1) ... ok
+test_reanchored_structural_invalid_inputs_still_reject (test_pq_native_import.NativePQImportTests.test_reanchored_structural_invalid_inputs_still_reject) ... ok
+test_symlink_directory_and_trailing_noncanonical_refuse (test_pq_native_import.NativePQImportTests.test_symlink_directory_and_trailing_noncanonical_refuse) ... ok
+test_zero_liability_snapshot_parity (test_pq_native_import.NativePQImportTests.test_zero_liability_snapshot_parity) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 21.991s
+
+OK
