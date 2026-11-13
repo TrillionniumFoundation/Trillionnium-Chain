@@ -5,7 +5,7 @@ use std::{
     path::{Path, PathBuf},
     sync::{
         atomic::{AtomicBool, AtomicU64, Ordering},
-        Arc,
+        mpsc, Arc,
     },
     thread::{self, JoinHandle},
 };
@@ -141,6 +141,16 @@ struct Rendezvous {
 }
 impl Rendezvous {
     fn start(path: &Path, providers: &[SocketAddr]) -> Self {
+        Self::start_after_setup(path, providers, || {})
+    }
+    fn start_after_setup(
+        path: &Path,
+        providers: &[SocketAddr],
+        before_initialize: impl FnOnce() + Send + 'static,
+    ) -> Self {
+        // Only setup waits on this original finite allowance. Drop/join stays
+        // synchronous; readiness cannot bound later serving-thread scheduling.
+        let setup_deadline = Instant::now() + limits().overall_timeout;
         let listener = TcpListener::bind("127.0.0.1:0").unwrap();
         let address = listener.local_addr().unwrap();
         let addresses = policy(providers);
@@ -148,8 +158,10 @@ impl Rendezvous {
         let owned = directory.clone();
         let shutdown = Arc::new(AtomicBool::new(false));
         let stop = shutdown.clone();
+        let (ready, accepting) = mpsc::sync_channel(1);
         let handle = thread::spawn(move || {
-            serve_cell_rendezvous(
+            before_initialize();
+            super::transport::serve_cell_rendezvous_with_ready(
                 &listener,
                 &owned,
                 &addresses,
@@ -159,14 +171,24 @@ impl Rendezvous {
                     lifetime: Duration::from_secs(30),
                     max_connections: 64,
                 },
+                ready,
             )
         });
-        Self {
+        let rendezvous = Self {
             address,
             directory,
             shutdown,
             handle: Some(handle),
-        }
+        };
+        // Reuse the current server's first actual accept-loop signal. This
+        // consumes no TCP probe, request, signature or retained record.
+        let result =
+            accepting.recv_timeout(setup_deadline.saturating_duration_since(Instant::now()));
+        assert!(
+            result.is_ok(),
+            "rendezvous accept loop must be ready before use"
+        );
+        rendezvous
     }
     fn stop(mut self) -> CellRendezvousReportV1 {
         self.shutdown.store(true, Ordering::Relaxed);
@@ -181,6 +203,63 @@ impl Drop for Rendezvous {
         }
     }
 }
+#[test]
+fn rendezvous_fixture_waits_for_initialization_before_starting_request_budget() {
+    let temp = tempfile::tempdir().unwrap();
+    let path = temp.path().join("delayed-rendezvous");
+    let endpoint = "127.0.0.1:31234".parse().unwrap();
+    let setup_deadline = deadline();
+    let (entered, initializing) = mpsc::sync_channel(1);
+    let (release, released) = mpsc::sync_channel(1);
+    let (returned, returning) = mpsc::sync_channel(1);
+    let owner = thread::spawn(move || {
+        let server = Rendezvous::start_after_setup(&path, &[endpoint], move || {
+            entered.send(()).unwrap();
+            released
+                .recv_timeout(setup_deadline.saturating_duration_since(Instant::now()))
+                .unwrap();
+        });
+        returned.send(server).unwrap();
+    });
+    initializing
+        .recv_timeout(setup_deadline.saturating_duration_since(Instant::now()))
+        .unwrap();
+    // Hold real initialization for one complete original request allowance.
+    // The constructor must not expose an unready endpoint during this interval.
+    let early = returning.recv_timeout(limits().request_timeout);
+    let waited = matches!(early, Err(mpsc::RecvTimeoutError::Timeout));
+    release.send(()).unwrap();
+    let bootstrap = match early {
+        Ok(server) => server,
+        Err(mpsc::RecvTimeoutError::Timeout) => returning
+            .recv_timeout(setup_deadline.saturating_duration_since(Instant::now()))
+            .unwrap(),
+        Err(error) => panic!("rendezvous constructor failed: {error}"),
+    };
+    owner.join().unwrap();
+    assert!(
+        waited,
+        "fixture exposed its endpoint before real initialization"
+    );
+    let addresses = policy(&[endpoint, bootstrap.address]);
+    let value = record(
+        request([11; 32]),
+        endpoint,
+        1,
+        1,
+        wall_now().unwrap().as_secs(),
+    );
+    let published =
+        announce_cell_provider(&value, bootstrap.address, &addresses, limits(), deadline())
+            .unwrap();
+    assert_eq!(published.connection_attempts, 1);
+    assert_eq!(published.received_response_bytes, 41);
+    assert_eq!(bootstrap.directory.usage().unwrap().retained_identities, 1);
+    let served = bootstrap.stop();
+    assert_eq!(served.connections, 1);
+    assert_eq!(served.rejected_requests, 0);
+}
+
 fn fixture(path: &Path) -> (CellStoreV1, CellManifestV1, Vec<u8>, PathBuf) {
     let input = path.join("input");
     let bytes: Vec<_> = (0_u32..4097)

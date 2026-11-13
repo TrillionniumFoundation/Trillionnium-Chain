@@ -315,6 +315,7 @@ fn page(
         )?;
         return Ok((None, after, true));
     }
+    ensure(after != target, "PEER_PAGE_COMPLETE")?;
     let raw = &parsed.packets[0];
     ensure(
         raw.len() <= 2 * MAX_PACKET_BYTES
@@ -1146,6 +1147,37 @@ mod tests {
             hex::encode(hash(b"native-peer-poll-error-v1", &[error.as_bytes()]))
         );
     }
+    #[test]
+    fn fixed_tip_empty_completion_precedes_nonempty_decode() {
+        let settings = Settings::development(Some(1)).unwrap();
+        let tip = settings.genesis();
+        let terminal = page_value(&settings, tip, tip, None);
+        let (packet, next, complete) = page(&settings, terminal.clone(), tip, tip).unwrap();
+        assert!(packet.is_none());
+        assert_eq!(next, tip);
+        assert!(complete);
+
+        let mut nonempty = terminal.clone();
+        nonempty["packets"] = serde_json::json!(["zz"]);
+        assert_eq!(
+            page(&settings, nonempty, tip, tip).unwrap_err().to_string(),
+            "PEER_PAGE_COMPLETE"
+        );
+
+        let mut later = tip;
+        later[0] ^= 1;
+        let mut before_target = terminal;
+        before_target["tip"] = hex::encode(later).into();
+        before_target["complete"] = false.into();
+        before_target["packets"] = serde_json::json!(["zz"]);
+        assert_eq!(
+            page(&settings, before_target, later, tip)
+                .unwrap_err()
+                .to_string(),
+            "PEER_PAGE_PACKET_LIMIT"
+        );
+    }
+
     #[test]
     fn malformed_pages_fail_before_packet_allocation_and_do_not_claim_progress() {
         let settings = Settings::development(Some(1)).unwrap();
