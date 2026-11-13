@@ -57,3 +57,4 @@ evidence/pon-client-confirmation-v1/**/*.log -text -whitespace
 /evidence/pon-problem-one-20261108/metering/fixed_packet_identity_probe.py -text -whitespace
 /evidence/pon-problem-one-20261108/metering/metering-final.diff -text -whitespace
 /evidence/pon-problem-one-20261108/validation/native/pon-work-retained.stdout -text -whitespace
+evidence/branch-consolidation-20261113/formal/validation/*.log -text -whitespace

@@ -1,0 +1,67 @@
+[
+  {
+    "path": "validation/selected-formal-final-v1.json",
+    "bytes": 827,
+    "sha256": "7522f638c8f39127fa73727e2e58bbb0c91bd9ea7bfa68fa64e1517298547dc2"
+  },
+  {
+    "path": "validation/selected-formal-final-v1.log",
+    "bytes": 36778,
+    "sha256": "f71542a118b6e7dc558b773f4a5d95e3eadfda59e6b3cafad7cd202ece635617"
+  },
+  {
+    "path": "validation/recovery-fmt.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "validation/stateful-snapshot.log",
+    "bytes": 1125,
+    "sha256": "51e1dc95841133638f9c661006603c6e530170067d6f9d0911430e366a210490"
+  },
+  {
+    "path": "validation/daa-shadow-journal.log",
+    "bytes": 4821,
+    "sha256": "874b592dd7e0c40b343137727296f94c5363023c6b2c8410da794b640a65ad8d"
+  },
+  {
+    "path": "validation/daa-shadow-journal-after-import.log",
+    "bytes": 4159,
+    "sha256": "988fc87d5e82922bf07f3cca0455eae64789f9e18218ffc8853e5a98d1706540"
+  },
+  {
+    "path": "validation/daa-shadow-journal-read-bounds.log",
+    "bytes": 4339,
+    "sha256": "33fdbfcd73403348beb0c8f61c3f87716a555b2b1ad1df12b140028b02f361ee"
+  },
+  {
+    "path": "validation/q4-generation-coherence-original-snapshot.log",
+    "bytes": 6855,
+    "sha256": "613e7562afac372814a5e0996435e6c1de136d07e722c2167989a42ed29e9cfe"
+  },
+  {
+    "path": "validation/q4-generation-coherence-after-ordering.log",
+    "bytes": 7802,
+    "sha256": "3b7bde1e8226a9710791458d4dc0e22febf3b42c3f0b2acc0047d7ed728f88d6"
+  },
+  {
+    "path": "validation/daa-confirmation-risk.log",
+    "bytes": 761,
+    "sha256": "b385345d74a6061a35e1b243f92eaed28064f70862658f3038810fe3db0abf79"
+  },
+  {
+    "path": "validation/daa-composed-unit-suite.log",
+    "bytes": 28646,
+    "sha256": "e0fc9fdc875b86fd460915655597cfeba7cfcd7d42c1fd3901c89cfef6edf20c"
+  },
+  {
+    "path": "validation/daa-go-error-parity-real-go.log",
+    "bytes": 279,
+    "sha256": "f3fba73486e3ac81fc2ac41f298bb1645a83b200e67f760047a96c216d67feaf"
+  },
+  {
+    "path": "validation/daa-cpp-differential-boost.log",
+    "bytes": 921,
+    "sha256": "7a16948be190708e12f1d3d632fc3a4e7f60dc78d6ad588474400050c869c94a"
+  }
+]

@@ -3,7 +3,7 @@
   "selected_base": "11a2cba1953f4aaee97e8ed169fcfd9a1517da23",
   "selected_code_checkpoint": "ae2cba1d5ae22ad55fd44e557313f19961f4697c",
   "code_status": "COMMITTED_SELECTED_CONTROLS_PASS",
-  "audit_files_status": "SAVED_UNCOMMITTED_PER_ROOT_RESOURCE_STANDDOWN",
+  "audit_files_status": "COMMITTED_IN_D433BCEF_AND_INTEGRATED_IN_19EE086",
   "scope": {
     "original_tips": 24,
     "root_assigned_tips": 20,
@@ -617,6 +617,6 @@
     "stopped_ledger_session": 75461,
     "exit_code": 130,
     "tests_completed_before_stop": true
-  }
+  },
+  "retained_receipt_seal": "seal-result.json"
 }
-

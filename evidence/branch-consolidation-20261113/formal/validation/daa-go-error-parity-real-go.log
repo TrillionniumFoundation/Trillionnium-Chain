@@ -1,0 +1,6 @@
+test_actual_go_rejects_bad_parameters_separately_from_i128_range (test_daa_go_error_parity.DaaGoErrorParity.test_actual_go_rejects_bad_parameters_separately_from_i128_range) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 15.577s
+
+OK

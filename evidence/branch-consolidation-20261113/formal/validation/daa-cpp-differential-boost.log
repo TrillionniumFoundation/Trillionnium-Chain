@@ -1,0 +1,11 @@
+test_2048_adversarial_full_width_valid_and_rejection_cases (test_daa_cpp_differential.CppDaaOracleTests.test_2048_adversarial_full_width_valid_and_rejection_cases) ... ok
+test_distinct_seed_reproducibility (test_daa_cpp_differential.CppDaaOracleTests.test_distinct_seed_reproducibility) ... ok
+test_independent_512_source_bound_digest (test_daa_cpp_differential.CppDaaOracleTests.test_independent_512_source_bound_digest) ... ok
+test_malformed_and_noncanonical_hex_refuse (test_daa_cpp_differential.CppDaaOracleTests.test_malformed_and_noncanonical_hex_refuse) ... ok
+test_no_second_system_or_authority (test_daa_cpp_differential.CppDaaOracleTests.test_no_second_system_or_authority) ... ok
+test_overflow_and_very_short_half_life (test_daa_cpp_differential.CppDaaOracleTests.test_overflow_and_very_short_half_life) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 24.653s
+
+OK

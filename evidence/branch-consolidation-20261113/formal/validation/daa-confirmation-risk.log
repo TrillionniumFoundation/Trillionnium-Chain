@@ -1,0 +1,10 @@
+test_bad_work_and_bad_ancestry_fail_closed (test_daa_confirmation_risk.RiskControls.test_bad_work_and_bad_ancestry_fail_closed) ... ok
+test_constant_target_meets_both_installed_predicates (test_daa_confirmation_risk.RiskControls.test_constant_target_meets_both_installed_predicates) ... ok
+test_shared_prefix_is_not_orphaned (test_daa_confirmation_risk.RiskControls.test_shared_prefix_is_not_orphaned) ... ok
+test_six_blocks_not_six_units_of_inclusion_work (test_daa_confirmation_risk.RiskControls.test_six_blocks_not_six_units_of_inclusion_work) ... ok
+test_zero_reorg_when_same_tip (test_daa_confirmation_risk.RiskControls.test_zero_reorg_when_same_tip) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.001s
+
+OK

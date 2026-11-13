@@ -1,6 +1,6 @@
 # W2 formal and admission research consolidation
 
-Status: **committed code has selected-control PASS; audit files are uncommitted;
+Status: **selected code and audit evidence are committed; selected controls passed;
 research remains HOLD_NO_GO**. No remote
 branch/ref, production policy or network service was changed in this lane.
 
@@ -123,6 +123,14 @@ Historical vulnerability/falsification/cost workflows were not executed.
 
 ## Integration responsibilities
 
+Recovery update: audit files and original raw logs were committed as
+`d433bcef03812a632565a670ce0f387a5585a69b` and merged in
+`19ee086de4b35848bbe5f3db59685f181448e0d8`. The read-only evidence seal
+passed (24 tips, 95 source variants, 33 document variants, 35 Python methods,
+two Go functions and ten full-byte cases). This verifies the retained receipts;
+it does not rerun the original tests. Original-head retention remains a separate
+final integration check. The following describes the earlier resource standdown.
+
 The host exhausted thread resources while starting the final mechanical
 ledger calculation (`Resource temporarily unavailable`, OS error 11).
 All selected tests had completed earlier. At the root's request, the pending
@@ -132,8 +140,8 @@ saved here, with exact selected commit/path locators. Final original-head
 ancestry coverage and optional selected-blob materialization are explicitly
 pending; they are not fabricated as completed calculations.
 
-These audit files and the added/updated explanatory documents are currently
-uncommitted. Stage them only in the serialized final integration step. The
+At that standdown, these audit files and explanatory documents were
+uncommitted; the recovery update above records their subsequent commit. The
 three `.log` files are ignored by repository defaults and require an explicit
 force-add after their receipt hashes are checked. The optional standalone
 `seal_local_evidence.py` performs that read-only integrity/roster check without

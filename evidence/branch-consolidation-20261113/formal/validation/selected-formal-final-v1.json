@@ -1,0 +1,23 @@
+{
+  "source_head": "eac8241de3e03fa03d2a7f1cebbf31a9a8c84dfb",
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "-v",
+    "test_evaluation_bundle",
+    "test_settlement_inputs",
+    "test_work_utility",
+    "test_w1_structured_cost.W1SourceIdentityTests",
+    "test_quantum_adversarial_search.RationalAngleControls",
+    "test_quantum_adversarial_search.FiniteDomainControls",
+    "test_quantum_oracle_resources",
+    "test_quantum_resource_clock",
+    "test_quantum_network_sim"
+  ],
+  "cwd": "/workspace/scratch/415d5ba2202d/Trillionnium-Chain/formal/pon-nakamoto-v1",
+  "exit_code": 0,
+  "seconds": 66.839,
+  "log": "/workspace/scratch/415d5ba2202d/root-formal-audit/selected-formal-final-v1.log",
+  "scope": "Pure model/validation controls; no live-chain activity or historical forged-ticket driver executed."
+}

@@ -1,0 +1,12 @@
+test_accepted_mutable_action_sequence_is_detached (test_stateful_tail_snapshot.SnapshotTests.test_accepted_mutable_action_sequence_is_detached) ... ok
+test_accepted_mutable_outcome_sequence_is_detached (test_stateful_tail_snapshot.SnapshotTests.test_accepted_mutable_outcome_sequence_is_detached) ... ok
+test_caller_record_aliases_are_detached (test_stateful_tail_snapshot.SnapshotTests.test_caller_record_aliases_are_detached) ... ok
+test_historical_static_report_is_unchanged (test_stateful_tail_snapshot.SnapshotTests.test_historical_static_report_is_unchanged) ... ok
+test_invalid_captured_law_is_still_refused (test_stateful_tail_snapshot.SnapshotTests.test_invalid_captured_law_is_still_refused) ... ok
+test_original_state_set_is_captured (test_stateful_tail_snapshot.SnapshotTests.test_original_state_set_is_captured) ... ok
+test_top_level_replacement_keeps_cached_and_uncached_queries_consistent (test_stateful_tail_snapshot.SnapshotTests.test_top_level_replacement_keeps_cached_and_uncached_queries_consistent) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 1.198s
+
+OK
