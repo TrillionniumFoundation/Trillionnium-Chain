@@ -1,0 +1,218 @@
+{
+  "schema": "git-bundle-code-only-custody/v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "branch": "recovery/git-bundle-source-20261103",
+  "recovery_prefix": "library-recovery/git-bundle-source-20261103",
+  "recovery_base_commit": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+  "recovery_base_tree": "4da766ac44bf30d5a330f1fb70a78beb6f3bb382",
+  "source_files": [
+    {
+      "git_blob_sha1": "37f9749821d71f0f5a854cd8bd8a554bd2092a53",
+      "sha256": "d4bb259875718c1b6e50ce5c29aa13bc7b3e6aa54d3454ad1249c72775af4de2",
+      "bytes": 22441,
+      "recovery_path": "library-recovery/git-bundle-source-20261103/objects/37f9749821d71f0f5a854cd8bd8a554bd2092a53/formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1-staged-prover.rs",
+      "original_paths": [
+        "formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1-staged-prover.rs"
+      ],
+      "original_locations": [
+        {
+          "commit": "aea6edd72670d12edb817ef5e6d32ff60cd18cc7",
+          "path": "formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1-staged-prover.rs",
+          "mode": "100644"
+        }
+      ],
+      "bundle_origins": [
+        {
+          "bundle_sha256": "206271f536ae63b57161eda4ce43ad297860e1c05e3ae3a400c7b8358a420b12",
+          "archive": "e563cb90e4d209a313c15d64cde7fa32428fa73575fb5ff2d866cdd8bcc7ef6d.tar.gz",
+          "archive_member": "evidence/pon-w1-source-closure-20261028/w1-hardened-source-dd4fb0a65.bundle"
+        },
+        {
+          "bundle_sha256": "7cbbb40239d23e692e42d51dba3e2b6cfee9e094aa11a876b9eed6b0efed6f7b",
+          "archive": "e563cb90e4d209a313c15d64cde7fa32428fa73575fb5ff2d866cdd8bcc7ef6d.tar.gz",
+          "archive_member": "evidence/pon-w1-source-closure-20261028/w1-staged-source-64be7c4ad.bundle"
+        }
+      ],
+      "scope": "Exact historical source bytes; separate variants are not overlaid."
+    },
+    {
+      "git_blob_sha1": "62891adbf32546fea68325c3f9c848f6184f3265",
+      "sha256": "9b5b16f590a394130074dc2263a7938d137bb09e1703052890682b3162d6456b",
+      "bytes": 14935,
+      "recovery_path": "library-recovery/git-bundle-source-20261103/objects/62891adbf32546fea68325c3f9c848f6184f3265/formal/pon-nakamoto-v1/w1_batch/host/src/staged.rs",
+      "original_paths": [
+        "formal/pon-nakamoto-v1/w1_batch/host/src/staged.rs"
+      ],
+      "original_locations": [
+        {
+          "commit": "d4c41e72762e30ca9fe17b143b96e4bc5b18236e",
+          "path": "formal/pon-nakamoto-v1/w1_batch/host/src/staged.rs",
+          "mode": "100644"
+        }
+      ],
+      "bundle_origins": [
+        {
+          "bundle_sha256": "a8061eb7b0486cc057796954d56596833352718d28e0b62a39a8150e77d20bcd",
+          "archive": "W1_Recovery_Failures_R10_20261028.zip",
+          "archive_member": "recovery/typed-source.bundle"
+        },
+        {
+          "bundle_sha256": "a8061eb7b0486cc057796954d56596833352718d28e0b62a39a8150e77d20bcd",
+          "archive": "W1_Typed_Recovery_P1_R10_20261028.zip",
+          "archive_member": "recovery/typed-source.bundle"
+        }
+      ],
+      "scope": "Exact historical source bytes; separate variants are not overlaid."
+    },
+    {
+      "git_blob_sha1": "75ed1852632a43e460840e50d9d7c539c79a6615",
+      "sha256": "442521269d2062654a63e28bbddadeac5fc04562143a7f5f4701132bee9f05b5",
+      "bytes": 13329,
+      "recovery_path": "library-recovery/git-bundle-source-20261103/objects/75ed1852632a43e460840e50d9d7c539c79a6615/scripts/ci/run_from_zero_host.py",
+      "original_paths": [
+        "scripts/ci/run_from_zero_host.py"
+      ],
+      "original_locations": [
+        {
+          "commit": "dd4fb0a65a734bdccac23a061dc0d6c72b69188f",
+          "path": "scripts/ci/run_from_zero_host.py",
+          "mode": "100644"
+        },
+        {
+          "commit": "64be7c4ad51d432e7736ad135476262e23e968f5",
+          "path": "scripts/ci/run_from_zero_host.py",
+          "mode": "100644"
+        },
+        {
+          "commit": "16fcadcee30a9f749adaaab04ce5e856a4721d0d",
+          "path": "scripts/ci/run_from_zero_host.py",
+          "mode": "100644"
+        },
+        {
+          "commit": "aea6edd72670d12edb817ef5e6d32ff60cd18cc7",
+          "path": "scripts/ci/run_from_zero_host.py",
+          "mode": "100644"
+        },
+        {
+          "commit": "c584028b1622fb9b5f5ee0581d097f3e527909c8",
+          "path": "scripts/ci/run_from_zero_host.py",
+          "mode": "100644"
+        }
+      ],
+      "bundle_origins": [
+        {
+          "bundle_sha256": "206271f536ae63b57161eda4ce43ad297860e1c05e3ae3a400c7b8358a420b12",
+          "archive": "e563cb90e4d209a313c15d64cde7fa32428fa73575fb5ff2d866cdd8bcc7ef6d.tar.gz",
+          "archive_member": "evidence/pon-w1-source-closure-20261028/w1-hardened-source-dd4fb0a65.bundle"
+        },
+        {
+          "bundle_sha256": "7cbbb40239d23e692e42d51dba3e2b6cfee9e094aa11a876b9eed6b0efed6f7b",
+          "archive": "e563cb90e4d209a313c15d64cde7fa32428fa73575fb5ff2d866cdd8bcc7ef6d.tar.gz",
+          "archive_member": "evidence/pon-w1-source-closure-20261028/w1-staged-source-64be7c4ad.bundle"
+        }
+      ],
+      "scope": "Exact historical source bytes; separate variants are not overlaid."
+    },
+    {
+      "git_blob_sha1": "901d216ac0f08f31c6817110019b03269998ea7d",
+      "sha256": "0262c385563778e0fd42246ed7264f3be345f49df788ccdd5e1cfb18dc48f1de",
+      "bytes": 11726,
+      "recovery_path": "library-recovery/git-bundle-source-20261103/objects/901d216ac0f08f31c6817110019b03269998ea7d/scripts/ci/test_from_zero_host_ci.py",
+      "original_paths": [
+        "scripts/ci/test_from_zero_host_ci.py"
+      ],
+      "original_locations": [
+        {
+          "commit": "dd4fb0a65a734bdccac23a061dc0d6c72b69188f",
+          "path": "scripts/ci/test_from_zero_host_ci.py",
+          "mode": "100644"
+        },
+        {
+          "commit": "64be7c4ad51d432e7736ad135476262e23e968f5",
+          "path": "scripts/ci/test_from_zero_host_ci.py",
+          "mode": "100644"
+        },
+        {
+          "commit": "16fcadcee30a9f749adaaab04ce5e856a4721d0d",
+          "path": "scripts/ci/test_from_zero_host_ci.py",
+          "mode": "100644"
+        },
+        {
+          "commit": "aea6edd72670d12edb817ef5e6d32ff60cd18cc7",
+          "path": "scripts/ci/test_from_zero_host_ci.py",
+          "mode": "100644"
+        },
+        {
+          "commit": "c584028b1622fb9b5f5ee0581d097f3e527909c8",
+          "path": "scripts/ci/test_from_zero_host_ci.py",
+          "mode": "100644"
+        }
+      ],
+      "bundle_origins": [
+        {
+          "bundle_sha256": "206271f536ae63b57161eda4ce43ad297860e1c05e3ae3a400c7b8358a420b12",
+          "archive": "e563cb90e4d209a313c15d64cde7fa32428fa73575fb5ff2d866cdd8bcc7ef6d.tar.gz",
+          "archive_member": "evidence/pon-w1-source-closure-20261028/w1-hardened-source-dd4fb0a65.bundle"
+        },
+        {
+          "bundle_sha256": "7cbbb40239d23e692e42d51dba3e2b6cfee9e094aa11a876b9eed6b0efed6f7b",
+          "archive": "e563cb90e4d209a313c15d64cde7fa32428fa73575fb5ff2d866cdd8bcc7ef6d.tar.gz",
+          "archive_member": "evidence/pon-w1-source-closure-20261028/w1-staged-source-64be7c4ad.bundle"
+        }
+      ],
+      "scope": "Exact historical source bytes; separate variants are not overlaid."
+    },
+    {
+      "git_blob_sha1": "94cb42b1d0473c030247d621a7bcbb17004b046e",
+      "sha256": "eff3b97fe9cecb1af013d676fa9d4caa0d3d0177998f837cdc3e91828f12fec0",
+      "bytes": 30425,
+      "recovery_path": "library-recovery/git-bundle-source-20261103/objects/94cb42b1d0473c030247d621a7bcbb17004b046e/formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1-staged-prover.rs",
+      "original_paths": [
+        "formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1-staged-prover.rs"
+      ],
+      "original_locations": [
+        {
+          "commit": "16fcadcee30a9f749adaaab04ce5e856a4721d0d",
+          "path": "formal/pon-nakamoto-v1/w1_zkvm/host/src/bin/w1-staged-prover.rs",
+          "mode": "100644"
+        }
+      ],
+      "bundle_origins": [
+        {
+          "bundle_sha256": "206271f536ae63b57161eda4ce43ad297860e1c05e3ae3a400c7b8358a420b12",
+          "archive": "e563cb90e4d209a313c15d64cde7fa32428fa73575fb5ff2d866cdd8bcc7ef6d.tar.gz",
+          "archive_member": "evidence/pon-w1-source-closure-20261028/w1-hardened-source-dd4fb0a65.bundle"
+        },
+        {
+          "bundle_sha256": "7cbbb40239d23e692e42d51dba3e2b6cfee9e094aa11a876b9eed6b0efed6f7b",
+          "archive": "e563cb90e4d209a313c15d64cde7fa32428fa73575fb5ff2d866cdd8bcc7ef6d.tar.gz",
+          "archive_member": "evidence/pon-w1-source-closure-20261028/w1-staged-source-64be7c4ad.bundle"
+        }
+      ],
+      "scope": "Exact historical source bytes; separate variants are not overlaid."
+    }
+  ],
+  "source_file_count": 5,
+  "source_bytes": 92856,
+  "verification": {
+    "bundle_pack_count": 14,
+    "independently_verified_recovered_objects": 836,
+    "remaining_unresolved_delta_objects": 0,
+    "methods": [
+      "Git bundle header and original SHA256 comparison",
+      "Git pack checksum and bounded delta reconstruction",
+      "Independent git index-pack --fix-thin and git verify-pack",
+      "Independent git cat-file byte comparison",
+      "Git blob SHA1 and file SHA256 comparison"
+    ],
+    "literal_credential_screen": "No matching private-key, GitHub token, cloud access key, signed URL, bearer token, or literal credential assignment in included source."
+  },
+  "scope": "Source custody only. No production merge, original missing commit restoration, build success, test success, or runtime acceptance is asserted.",
+  "excluded_material": [
+    "Model bundles",
+    "Raw runtime logs and observations",
+    "Result reports and receipt binaries",
+    "Mixed-content original Git bundle bytes"
+  ],
+  "comparison": "These exact source hashes were absent from the aggregate 17,052-source archive index and from inspected live remote trees and reachable historical commits."
+}
