@@ -67,11 +67,16 @@ class W2CResearchTests(unittest.TestCase):
         digest=S.proposal_digest(self.header,self.proof)
         self.assertNotEqual(digest,S.proposal_digest(changed_h,self.proof))
         self.assertNotEqual(digest,S.proposal_digest(self.header,changed_p))
+        self.assertNotEqual(S.security_ticket(digest,0),
+                            S.security_ticket(digest,1))
         candidate,cost=S.search(self.header,self.proof,28,1)
         self.assertEqual(cost['attempted_hashes'],1)
         self.assertEqual(cost['status'],'FOUND' if candidate else 'EXHAUSTED')
         for bits in (0,7,29):
             with self.assertRaises(ValueError):
                 S.search(self.header,self.proof,bits,1)
+        for cap in (0,S.MAX_ATTEMPTS+1):
+            with self.assertRaises(ValueError):
+                S.search(self.header,self.proof,8,cap)
 if __name__ == '__main__':
     unittest.main(verbosity=2)

@@ -5,6 +5,16 @@ This is an implementation continuation under the existing development plan.
 Production activation, PoN/PNW1, target/chainwork, signed domains and persistent
 schema are unchanged. It provides no public readiness or independent acceptance.
 
+## Historical scope and current implementation
+
+The sections below record the initial shared-History continuation. Current
+bounded ordinary shared-owner M06 uses the private prepare/execute/commit path
+in store/detached_admission.rs: preparation and final SQL publication retain
+the original writer, while eligible bounded execution releases it. The private
+large-parent fallback keeps the held schedule. The current History test source
+defines five process cuts, including M06; declarations and old run records do
+not qualify the current source or close the resource and availability gates.
+
 ## Implemented boundary
 
 `ingress/history_import.rs` is the single paid History importer used by the
