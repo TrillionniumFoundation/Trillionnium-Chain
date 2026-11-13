@@ -1,0 +1,9 @@
+{
+  "at": "2026-11-10T06:24:16.717364+00:00",
+  "command": [
+    "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/checked-test-profile-s3/binaries/checked-test-main-07b711687a223e670280e72c1397e628ef05e97183b60cb9decd66120631226e.elf",
+    "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/source-inputs.native-v2.attempt02.json",
+    "83e4ab28cd84813c1a489c4c53222764b6437edf0eaad8924776c0777ff61835"
+  ],
+  "pid": 2762028
+}

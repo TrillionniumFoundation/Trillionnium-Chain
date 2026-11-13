@@ -1,0 +1,34 @@
+{
+  "preflight_returncode": 0,
+  "applied": true,
+  "files": [
+    {
+      "path": "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs",
+      "sha256": "196108f38554d72a345ebe7df180ea8fc2bbd33600bf74780456e051403d6a2e"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "sha256": "02a2f9f558ca0f215a9b6c2953ca8e714ebedad49f9d99b3a95d7f76c3fa2608"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_next_use_v2.rs",
+      "sha256": "034ea2f11300f91c5e0044f0106b099240ba7985025522bd42fe7ec7503478b9"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/funding.rs",
+      "sha256": "0c12826a903cd5aaa6301f40f8a02f9f4baae84149aa0e109ae3ea78115c59ed"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/mod.rs",
+      "sha256": "52d50d41e1c9f88029dd53926ff900711280a5b867022910d681cb16c3511351"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/recovery.rs",
+      "sha256": "38c1bd91c31fc0404fef9525e1bc1754e3e91b5f84e365c884cecb70341cca9a"
+    },
+    {
+      "path": "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/tests.rs",
+      "sha256": "d7d19e6f59bce04e7c753ce202c70cbd2c25971fc2a6c1657ba5eb855e29d935"
+    }
+  ]
+}

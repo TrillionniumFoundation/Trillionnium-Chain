@@ -1,0 +1,155 @@
+#!/usr/bin/env python3
+"""Audit only closed JSON reports; never run model/build or open original databases."""
+import hashlib,json,os,subprocess,sys,time
+from pathlib import Path
+PKG=Path(__file__).resolve().parent
+REPO=Path('/home/qq/work/chain-cell-native-shard-674c72-20261110')
+BASE=Path(str(REPO)+'-validation');CONTROL=Path(str(REPO)+'-control')
+RUN=BASE/'real-native-23120317a3cc-attempt-02';WRAP=Path(str(RUN)+'-wrapper')
+HEAD='b6f39277b39e0b41e552ec4d32c5f8d354c8255b';TREE='6a0f38318b3cfb021240cda7f3d266c28aa76e78'
+def sha(p):
+ h=hashlib.sha256()
+ with p.open('rb') as f:
+  for b in iter(lambda:f.read(1048576),b''):h.update(b)
+ return h.hexdigest()
+def write(p,data):
+ with p.open('xb') as f:f.write(data);f.flush();os.fsync(f.fileno())
+def save(p,v):write(p,(json.dumps(v,sort_keys=True,indent=2)+'\n').encode())
+expected=sys.argv[1];launch=json.loads((PKG/'launch.json').read_text())
+assert sha(Path(__file__))==expected==launch['script_sha256']
+assert launch['argv']==['/usr/bin/python3',str(Path(__file__)),expected]
+start=time.monotonic();(PKG/'raw').mkdir();(PKG/'source').mkdir()
+inputs={'native-result.json':RUN/'native-result.json','native-initial.json':RUN/'native-shards/native-initial.json','native-final.json':RUN/'native-shards/native-final.json','storage-wire-cache-config.json':RUN/'native-shards/storage-wire-cache-config.json','repair-wire-cache-config.json':RUN/'native-shards/repair-wire-cache-config.json','next-use-observations.json':RUN/'next-use-observations.json','next-use-result.json':RUN/'next-use-result.json','worker-supervisor.json':RUN/'worker/supervisor.json','worker-ready.json':RUN/'worker/ready.json','worker-cost-events.jsonl':RUN/'worker/cost-events.jsonl','wrapper-observation.json':WRAP/'observation.json','wrapper-start.json':WRAP/'start.json','wrapper-native-started.json':WRAP/'native-started.json','model-config.json':CONTROL/'model-config-attempt02-s3.json','source-spec.json':BASE/'source-inputs.native-v2.attempt02.json','checked-artifact.json':BASE/'checked-test-profile-s3/accepted-artifact.json','checked-build-start.json':BASE/'checked-test-profile-s3/start.json'}
+original={}
+for key,p in inputs.items():
+ assert p.is_file() and not p.is_symlink() and p.stat().st_size<2097152
+ data=p.read_bytes();digest=hashlib.sha256(data).hexdigest();write(PKG/'raw'/key,data)
+ original[key]={'path':str(p),'sha256':digest,'bytes':len(data),'copy':'raw/'+key}
+ assert sha(p)==digest and sha(PKG/'raw'/key)==digest
+save(PKG/'raw-inputs-before.json',original)
+def read(key):return json.loads((PKG/'raw'/key).read_text())
+n=read('native-result.json');i=read('native-initial.json');f=read('native-final.json')
+o=read('wrapper-observation.json');cfg=read('model-config.json');spec=read('source-spec.json')
+build=read('checked-artifact.json');obs=read('next-use-observations.json');worker=read('worker-ready.json')
+supervisor=read('worker-supervisor.json');c=n['native_shard_cycle'];r=f['recovery'];restore=f['restore']
+assert o['passed'] is True and o['native_started'] is True and n['passed'] is True
+assert o['native_process']['exit_code']==0 and o['native_error'] is None
+assert o['start_identity']==o['end_identity']=={'head':HEAD,'tree':TREE,'status':''}
+assert cfg['head']==HEAD and cfg['tree']==TREE and build['source']==o['start_identity']
+assert original['native-result.json']['sha256']==o['native_result_sha256']
+assert original['model-config.json']['sha256']==o['config_sha256']
+assert original['source-spec.json']['sha256']==o['source_sha256']==n['source_input_sha256']
+assert build['frozen_binary']['sha256']==cfg['binary_sha256']=='07b711687a223e670280e72c1397e628ef05e97183b60cb9decd66120631226e'
+assert build['artifact']['profile']==cfg['native_program_profile']
+assert build['artifact']['profile']['test'] is False
+assert build['artifact']['profile']['debug_assertions'] is True and build['artifact']['profile']['overflow_checks'] is True
+assert c['recovery']==r and c['restore']==restore
+N=c['chunks'];P=n['input']['payload_bytes'];W=i['codec']['input_bytes_committed']//2
+assert (N,n['input']['manifest_count'],c['pages'])==(95,30,3)
+assert n['handoff']['model_bytes']+n['handoff']['environment_bytes']==P
+assert (c['initial_native_slots'],r['storage_children'],r['repair_children'],r['detected_damage'])==(570,570,190,190)
+assert (c['m12_parent_claims'],c['v3_children'],c['logical_work_items'],c['storage_parent_groups'],c['repair_parent_groups'])==(79,760,791,36,12)
+wire=[]
+for report,rows,payload,filename in [(i,570,W,'storage-wire-cache-config.json'),(f,190,W//3,'repair-wire-cache-config.json')]:
+ a=report['wire_cache_admission'];u=report['wire_cache_actual']
+ assert a==read(filename)
+ assert (u['manifest_rows'],u['chunk_rows'])==(rows,rows)
+ assert all(u[key]==a['expected_'+key] for key in ['manifest_rows','chunk_rows','logical_bytes'])
+ assert (a['max_manifest_rows'],a['max_chunk_rows'],a['max_logical_bytes'])==(768,2048,536870912)
+ assert a['input_and_consumer_max_manifest_rows']==128 and a['original_128_temporary_wire_gate_passed'] is False
+ assert a['full_payload_profile_not_unconditionally_supported'] is True
+ overhead=u['logical_bytes']-payload;keys=32*(u['manifest_rows']+u['chunk_rows'])
+ assert overhead>keys and (overhead-keys)==rows*272
+ wire.append({'admission':a,'actual':u,'encoded_shard_wire_bytes':payload,'metadata_and_keys_bytes':overhead,'key_bytes':keys,'manifest_wire_bytes_inferred_from_total':overhead-keys})
+assert i['verification']==i['codec'] and i['codec']['attempts_committed']==2*N
+assert i['codec']['reconstruction_bytes_committed']==2*(W+P)
+u=r['usage']
+assert u['plan_attempts_committed']==1 and u['provider_reads_committed']==20*N
+assert u['input_bytes_committed']==6*W+W//3 and u['reconstruction_bytes_committed']==3*(W+P)
+assert u['repair_bytes_committed']==W//3 and u['repairs_committed']==2*N
+assert r['codec']['attempts_committed']==3*N and r['codec']['input_bytes_committed']==8*W//3
+assert r['codec']['reconstruction_bytes_committed']==3*(W+P)
+assert restore['actual_provider_payload_wire_bytes']==2*W//3 and restore['restored_original_chunks']==N
+assert restore['codec']['cache_bytes_committed']==2*P and restore['complete_content_readback'] is True
+assert restore['complete_content_reserved_bytes']==P and restore['complete_content_reserved_chunks']==N
+assert restore['original_provider_slots']==[0,1,2,3] and restore['source_catalog_payload_used'] is False
+assert r['cpu']['observed_ns']<=r['cpu']['ceiling_ns']==u['cpu_ns_committed']
+assert r['cpu']['metadata_funding_preflight_included'] is False
+child=r['child_cpu'];assert len(child)==190
+assert all(x['original_attempt'] is True and 0<x['observed_ns']<=x['ceiling_ns']==5000000000 for x in child)
+limits=cfg['original_native_limits']
+assert limits=={'rss_bytes':8589934592,'seconds':300,'snapshot_bytes':536870912,'threads':4}
+assert o['native_seconds']==300 and o['native_process']['elapsed_seconds']<300
+assert not o['native_process']['watchdog_kill'] and not o['native_process']['watchdog_term']
+assert o['memory_start']['memory.max']==o['memory_end']['memory.max']=='8589934592'
+assert o['memory_start']['cpu.max']==o['memory_end']['cpu.max']=='400000 100000'
+peak=int(o['memory_end']['memory.peak']);assert peak<=limits['rss_bytes']
+events=dict(line.split() for line in o['memory_end']['memory.events'].splitlines())
+assert int(events['oom'])==int(events['oom_kill'])==0
+sup=n['actual_next_use']['supervisor']
+for key in ('exit_code','observed_wall_ns','child_cpu_ns','sampled_peak_rss_bytes','waited_child_peak_rss_bytes'):
+ if key in supervisor:assert supervisor[key]==sup[key]
+assert sup['outcome']=='success' and sup['exit_code']==0 and sup['waited_child_reaped'] is True
+assert sup['observed_wall_ns']<=sup['budget']['wall_seconds']*1000000000 and sup['budget']['rss_bytes']==8589934592
+assert sup['sampled_peak_rss_bytes']<=8589934592 and sup['waited_child_peak_rss_bytes']<=8589934592
+assert len(sup['rss_observation_gaps'])==1
+gap=sup['rss_observation_gaps'][0]['reconciliation']
+assert gap['mode']=='kernel-exit-cleanup' and gap['terminal_reap']=='terminal' and gap['pidfd_ready_after_wait'] is True
+assert len(obs)==n['actual_next_use']['observations']==2 and n['actual_next_use']['failures']==[]
+assert len({x['request_id'] for x in obs})==len({x['input_sha256'] for x in obs})==2
+assert all(x['input_tokens']==51 and x['execution_ns']>0 for x in obs)
+assert all(x['content']==n['actual_next_use']['content'] and x['descriptor']==n['actual_next_use']['descriptor'] for x in obs)
+assert all(all(value is False for value in x['authority'].values()) for x in obs)
+stages=[json.loads(line) for line in (PKG/'raw/worker-cost-events.jsonl').read_text().splitlines()]
+expected_stages=['sealed-base-capture','sealed-parent-verification','runtime-import','sealed-tokenizer-load','sealed-base-load','actual-backbone-tokenizer-verification','actual-sealed-parent-load']
+assert [x['stage'] for x in stages]==expected_stages
+assert all(x['outcome']=='success' and x['error_type'] is None and x['cpu_ns']>0 and x['wall_ns']>0 for x in stages)
+cold=n['cold_restore']
+assert cold['source_catalog_arena_overwritten_bytes']==536870912
+assert cold['destroyed_provider_arena_bytes']==[70414336,70414336]
+assert cold['source_catalog_payload_repaired'] is False and cold['root_member_payload_current_readback_after_catalog_overwrite'] is False
+assert cold['parent_settlement_on_hold'] is True and cold['future_retention_positive'] is False
+assert n['hepta_final_use'] is n['production_activation'] is n['installation_authorized'] is False
+assert c['independent_failure_domains'] is c['independent_real_money_funding'] is c['service_fee_paid'] is c['customer_demand_qualified'] is False
+assert r['future_retention_qualified'] is r['group_settlement_qualified'] is r['positive_verdict_issued'] is r['native_task_payment_submitted'] is False
+assert n['bep52']['loopback_only'] is True and n['bep52']['transport_plan_includes_cts1'] is False
+assert n['snapshot']['compatibility_from_hashes_alone'] is False
+source_paths=['trillionnium/Cargo.toml','trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/mod.rs','trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/recovery.rs','trillionnium/crates/trnm-pon-node/src/store/storage_service.rs','trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/recovery.rs','trillionnium/crates/trnm-data-availability/src/cell/erasure/custody.rs','scripts/llm_cell_sealed_worker_v1.py','scripts/llm_runtime_pilot.py']
+sources={}
+for relative in source_paths:
+ data=subprocess.check_output(['git','show',HEAD+':'+relative],cwd=REPO)
+ target=PKG/'source'/(relative+'.txt');target.parent.mkdir(parents=True,exist_ok=True);write(target,data)
+ sources[relative]={'head':HEAD,'git_blob':subprocess.check_output(['git','rev-parse',HEAD+':'+relative],cwd=REPO,text=True).strip(),'sha256':hashlib.sha256(data).hexdigest(),'copy':str(target.relative_to(PKG))}
+assert sources['scripts/llm_cell_sealed_worker_v1.py']['sha256']==worker['worker_sha256']==n['handoff']['worker_sha256']
+assert sources['scripts/llm_runtime_pilot.py']['sha256']==worker['environment_pins']['scripts/llm_runtime_pilot.py']
+save(PKG/'source-references.json',sources)
+cpu_fields=['observed_ns','ceiling_ns','metadata_funding_preflight_included']
+child_summary={'count':len(child),'all_fresh':True,'sum_observed_ns':sum(x['observed_ns'] for x in child),'min_observed_ns':min(x['observed_ns'] for x in child),'max_observed_ns':max(x['observed_ns'] for x in child),'each_ceiling_ns':5000000000}
+stage_rows=[dict(x,cpu_seconds=x['cpu_ns']/1e9,wall_seconds=x['wall_ns']/1e9) for x in stages]
+summary={
+'schema':'trnm.independent-physical-review.v1','result':'PASS-HOLD','operation':spec['operation'],
+'scope':'Consistency audit of closed small raw reports and pinned S3 source; no original database/arena/payload open, no build or model execution.',
+'runtime_source':o['start_identity'],
+'current_checkout_context':{'head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip(),'tracked_status':subprocess.check_output(['git','status','--porcelain','--untracked-files=no'],cwd=REPO,text=True).strip(),'used_as_runtime_identity':False},
+'input':n['input'],'handoff':n['handoff'],
+'counts':{'original_chunks':N,'pages':3,'storage_children':570,'repair_children':190,'restored_original_chunks':95,'v3_children_total':760,'m12_parent_claims':79,'logical_items_total':791,'note':'95 denotes original payload chunks, not additional V3 children.'},
+'wire_cache':{'storage':wire[0],'repair':wire[1],'scope':'Logical usage includes encoded shard wire, manifest wire, and 32-byte keys for both row classes. Manifest-wire bytes here are inferred from the reported total minus encoded payload and keys; original caches were not reopened.'},
+'codecs':{'storage_verification':i['verification'],'storage_codec':i['codec'],'recovery_plan_usage':r['usage'],'recovery_codec':r['codec'],'restore':restore,'scope':'Committed reservations and verified codec inputs/work, not physical disk/network throughput. Restore cache bytes reserve potential CAS write plus actual readback (2*payload), excluding DB/WAL/SHM/keys; not two physical writes.'},
+'recovery_cpu':{'global':{k:r['cpu'][k] for k in cpu_fields},'global_scope':'Existing RepairCpuOwner synchronous owner interval, excludes metadata/funding preflight; not whole-pipeline CPU or wall time.','children':child_summary,'child_scope':r['child_cpu_scope']+'; preceding CGJ3 begin and later CGJ3 completion are outside child interval; provider internal journal work during repair remains inside.','not_separately_measured':['BEP52 phase CPU','native funding CPU','initial storage CPU','consumer restore CPU']},
+'whole_process':{'native_process':o['native_process'],'wrapper_elapsed_seconds':o['wrapper_elapsed_seconds'],'native_report_process':n['process'],'scope':'Native-process wait4 user/system and elapsed versus wrapper elapsed are distinct enclosing scopes; nested scopes must not be summed.'},
+'resources':{'original_limits':limits,'cgroup_memory_peak_bytes':peak,'cgroup_memory_peak_GiB':peak/2**30,'cgroup_memory_scope':'Whole-job charged memory footprint, not process RSS.','cgroup_cpu_max':o['memory_end']['cpu.max'],'cgroup_cpu_scope':'Four CPU bandwidth quota; does not establish a global four-thread maximum.','worker_threads_scope':'Four is the unchanged configured grant/boundary, not a measured upper bound for every process/thread.','memory_events':events,'whole_job_io_stat_available':False if 'io.stat_unavailable' in o['memory_end'] else True,'io_stat_unavailable':o['memory_end'].get('io.stat_unavailable'),'supervisor_budget':sup['budget'],'sampled_peak_rss_bytes':sup['sampled_peak_rss_bytes'],'waited_child_peak_rss_bytes':sup['waited_child_peak_rss_bytes'],'memory_scope':sup['memory_scope'],'sample_interval_ms':sup['sample_interval_ms'],'rss_gap_count':1,'rss_gap_reconciliation':gap,'gap_scope':'One exit observation gap was reconciled under the existing held-pidfd exit-cleanup profile; unknown RSS was not measured as zero and no gap-free claim is made.'},
+'worker':{'supervisor_wall_ns':sup['observed_wall_ns'],'child_cpu_ns':sup['child_cpu_ns'],'child_cpu_scope':sup['cpu_scope'],'observer_cpu_ns':sup['observer_cpu_ns'],'forwards':obs,'request_interval_scope':'execution_ns is monotonic wall from before prompt tokenization/tensor preparation through inference/action scoring/logits hashing, not isolated forward-kernel time.','stage_costs':stage_rows,'stage_cost_scope':'CPU is process_time_ns delta; wall is monotonic_ns delta; memory is process-lifetime ru_maxrss high-water, not independent per-stage peak. bytes_read/written are worker /proc/self/io read_bytes/write_bytes deltas, not logical transport volume.'},
+'network':{k:n['bep52'][k] for k in ['loopback_only','single_operator','independent_failure_domains','consumer_usage','publisher_usage','total_usage','transport_plan_includes_cts1']},
+'cold_restore':cold,
+'holds':{'authority':n['actual_next_use']['authority'],'cycle':{k:c[k] for k in ['independent_failure_domains','independent_real_money_funding','service_fee_paid','customer_demand_qualified','production_activation','hepta_final_use']},'recovery':{k:r[k] for k in ['future_retention_qualified','group_settlement_qualified','positive_verdict_issued','native_task_payment_submitted']},'source_catalog_payload_repaired':False,'root_member_payload_current_readback_after_catalog_overwrite':False,'original_128_temporary_wire_gate_passed':False,'interpreter_and_native_dependencies':n['actual_next_use']['interpreter_and_native_dependencies']},
+'build_provenance_note':{'checked_runner_own_prelaunch_hash':'NOT_RECORDED','start_controller_sha256_binds':'imported native controller prefix, not checked runner self','separate_bound_records':'raw compiler artifact/argv and frozen ELF, plus actual model config and wrapper pins; no retrospective pre-run record fabricated'},
+'performance_comparison_with_c3_debug_270s':False,'disk_throughput_published':False,'cross_scope_cpu_or_rss_sum_published':False}
+assert sha(Path(__file__))==expected,'auditor changed during run'
+after={key:{'path':str(p),'sha256':sha(p),'bytes':p.stat().st_size,'copy':'raw/'+key} for key,p in inputs.items()}
+assert after==original,'original raw reports changed during read-only audit'
+save(PKG/'raw-inputs-after.json',after)
+save(PKG/'summary.json',summary)
+checks=['closed successful raw model','S3 raw source/config/build binding','native-result raw SHA','wire-cache full exact accounting','128 input/768 wire distinct grants','570 storage/190 repair/95 chunk readback','initial two-pass codec equations','recovery three-pass and plan reservation equations','consumer write-plus-readback reservation','global and nested child CPU scopes','unchanged 300s/8GiB/four-CPU boundary','one reconciled RSS gap preserved','two real request intervals and seven worker stages','all HOLD/TCA3 false fields preserved','pinned S3 source semantics','all original raw SHA unchanged']
+save(PKG/'assertions.json',{'checks':[{'name':x,'passed':True} for x in checks]})
+result={'passed':True,'qualification':'PASS-HOLD','script_sha256':expected,'launch_sha256':sha(PKG/'launch.json'),'summary_sha256':sha(PKG/'summary.json'),'raw_originals_unchanged':True,'raw_files':len(inputs),'source_files':len(sources),'assertion_groups':len(checks),'audit_elapsed_seconds':time.monotonic()-start,'model_executed':False,'build_executed':False,'original_databases_opened':False}
+save(PKG/'result.json',result);print(json.dumps(result,sort_keys=True),flush=True)

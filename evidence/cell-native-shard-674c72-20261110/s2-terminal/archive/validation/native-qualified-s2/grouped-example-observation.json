@@ -1,0 +1,27 @@
+{
+  "command": [
+    "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--jobs",
+    "2",
+    "-p",
+    "trnm-pon-node",
+    "--features",
+    "pq-native-openssl",
+    "--example",
+    "cell_native_shard_research_next_use_v2",
+    "--",
+    "--test-threads=1"
+  ],
+  "elapsed_seconds": 113.0271783049684,
+  "exit_code": 0,
+  "full_scope_observed": true,
+  "name": "grouped-example",
+  "stderr_sha256": "2f73364f4a1de902c7cf379adb3302d3b7bf33343c19e974bbd32c5441a14572",
+  "stdout_sha256": "3412b658777dccc27499aca6fb2c17ed842a043d5ad8cc78ca89727e31ebb014",
+  "test_summaries": [
+    "ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 15.82s"
+  ]
+}

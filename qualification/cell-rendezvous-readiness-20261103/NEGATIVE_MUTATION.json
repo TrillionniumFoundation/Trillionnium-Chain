@@ -1,0 +1,7 @@
+{
+  "purpose": "causal control: disable only the startup wait, keep real worker and TCP",
+  "candidate_sha256": "39a4feba4d8f5255e62c9141a0b150b87600517067ee308095de456655fb91eb",
+  "mutant_sha256": "a3957f72ec655e7ac5008954b8b526578a2a28184c694286d81019591df5fa13",
+  "removed": "        let result =\n            initialized.recv_timeout(setup_deadline.saturating_duration_since(Instant::now()));\n        eprintln!(\n            \"cell_discovery phase=rendezvous_ready elapsed_ns={} outcome={result:?}\",\n            started.elapsed().as_nanos()\n        );\n        assert!(\n            matches!(result, Ok(Ok(()))),\n            \"rendezvous initialization must finish before use\"\n        );\n",
+  "replacement": "        drop(initialized); // Negative control: remove the real startup wait.\n"
+}

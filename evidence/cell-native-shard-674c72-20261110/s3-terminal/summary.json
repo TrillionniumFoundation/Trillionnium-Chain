@@ -1,0 +1,34 @@
+{
+  "all_original_manifests_unchanged": true,
+  "append_policy": "Keep this packet immutable. Collect root-confirmed later campaigns in separate sibling packets.",
+  "campaign_and_controller_scope": {
+    "artifact_rules": "Preserve complete original manifest and log bytes; source/runners/Cargo/YAML/logs/original Markdown get .txt, using only an outer original-to-archive map.",
+    "binary_scope": "The actual debug executable is BUILT ONLY. No real-model execution has occurred in this batch; its file hash cannot be used as a model PASS.",
+    "controllers": "Both original current controllers are now frozen and must independently match original runner SHA fields. Unlike S2's reconstructed source controller, S3 source has both before/start and observation runner hashes.",
+    "history": "The S2 source failure and prior synthetic LIMIT/cache failures remain in earlier immutable packets. This S3 pass does not relabel those observations.",
+    "native_s3": "Closed succeeded0 with complete durable output. Selected original library 60 + grouped example 7 + original DA example 5 pass, with strict Clippy, formatting and actual debug binary build. Task-owned native TMPDIR is reused from S2; this is a distinct S3 source-bound run, not a cold-performance benchmark.",
+    "source_s3": "Closed succeeded0 with complete durable output. Original source-integrity controls pass 43/43 using task-owned ext4 TMPDIR without changing tests; repository/link validation passes 26 packages / 6224 links."
+  },
+  "candidate_source_written": false,
+  "controller_identity_verification": "controller-and-summary-identity.json",
+  "copied_files": 51,
+  "copied_original_bytes": 940262,
+  "copy_only": true,
+  "created_at_utc": "2026-11-10T06:15:01.982634+00:00",
+  "future_checked_profile_campaign_collected": false,
+  "generated_inventory_is_summary_not_original_manifest": true,
+  "native_tests_executed_by_collector": false,
+  "original_manifest_count": 0,
+  "path_mapping": "original-to-archive.json",
+  "real_model_campaign_collected": false,
+  "repository_evidence_written": false,
+  "result": "COPIED_AND_READBACK_VERIFIED",
+  "schema": "trnm.s3-terminal-staging.v1",
+  "selected_control_files": 3,
+  "selected_validation_top_items": 2,
+  "source_candidate_context": {
+    "commit": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "tree": "6a0f38318b3cfb021240cda7f3d266c28aa76e78"
+  },
+  "source_native_s3_terminal_campaigns_collected": true
+}

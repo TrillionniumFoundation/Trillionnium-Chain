@@ -1,0 +1,719 @@
+//! Real Node/M12 parent groups and durable V3 children over the original paged
+//! fixture. These controls neither pay for future custody nor grant FinalUse.
+use super::*;
+use crate::{
+    native_cell_shard_parent_group_subject_v3, NativeCellGroupedShardPlanReadbackV3,
+    NativeCellGroupedShardRecoveryBudgetV3, NativeCellGroupedShardRecoveryReadbackV3,
+    NativeCellGroupedShardRepairRequestV3, NativeCellGroupedShardStorageRequestV3,
+    NativeCellShardGroupChildV3, NativeCellShardGroupJournalConfigV3,
+    NativeCellShardGroupJournalV3, NativeCellShardGroupKindV3, NativeCellShardParentGroupV3,
+};
+
+type GroupDebitRows = Vec<Vec<(Vec<u8>, u8, u64, u64)>>;
+const CHILD_CPU: u64 = 5_000_000_000;
+
+fn group_id(label: &[u8], index: usize) -> Hash {
+    hash(
+        b"test-native-shard-parent-group-v3\0",
+        &[label, &(index as u64).to_be_bytes()],
+    )
+}
+fn aggregate(
+    children: &[NativeCellShardGroupChildV3],
+    kind: NativeCellShardGroupKindV3,
+) -> NativeBudgetResourcesV1 {
+    let mut values = [0_u64; 4];
+    for child in children {
+        let actual = match (&child.claim.resource_reservation, kind) {
+            (
+                NativeBudgetResourcesV1::Storage {
+                    retained_bytes,
+                    retained_byte_blocks,
+                },
+                NativeCellShardGroupKindV3::Storage,
+            ) => [*retained_bytes, *retained_byte_blocks, 0, 0],
+            (
+                NativeBudgetResourcesV1::Repair {
+                    cpu_ns,
+                    download_bytes,
+                    upload_bytes,
+                    attempts,
+                },
+                NativeCellShardGroupKindV3::Repair,
+            ) => [*cpu_ns, *download_bytes, *upload_bytes, *attempts],
+            _ => panic!("fixture resource lane"),
+        };
+        for (total, value) in values.iter_mut().zip(actual) {
+            *total += value;
+        }
+    }
+    match kind {
+        NativeCellShardGroupKindV3::Storage => NativeBudgetResourcesV1::Storage {
+            retained_bytes: values[0],
+            retained_byte_blocks: values[1],
+        },
+        NativeCellShardGroupKindV3::Repair => NativeBudgetResourcesV1::Repair {
+            cpu_ns: values[0],
+            download_bytes: values[1],
+            upload_bytes: values[2],
+            attempts: values[3],
+        },
+    }
+}
+fn make_group(
+    inner: &PagedFixture,
+    slot: usize,
+    kind: NativeCellShardGroupKindV3,
+    source: NativeFundingSourceV1,
+) -> NativeCellShardParentGroupV3 {
+    let label = match kind {
+        NativeCellShardGroupKindV3::Storage => b"storage".as_slice(),
+        NativeCellShardGroupKindV3::Repair => b"repair".as_slice(),
+    };
+    let budget = group_id(&[label, b"-budget"].concat(), slot);
+    let children: Vec<_> = (0..3)
+        .map(|chunk| {
+            let old = &inner.request.slots[chunk * 6 + slot];
+            let contract = old.contract.clone();
+            let mut claim = old.claim.clone();
+            claim.budget = budget;
+            let repair_operation = if kind == NativeCellShardGroupKindV3::Repair {
+                let operation = group_id(b"repair-operation", chunk * 6 + slot);
+                claim.claim = group_id(b"repair-child-claim", chunk * 6 + slot);
+                claim.subject = native_cell_shard_repair_subject_v1(
+                    &inner.providers[slot],
+                    &contract,
+                    operation,
+                    claim.claim,
+                );
+                claim.resource_reservation = NativeBudgetResourcesV1::Repair {
+                    cpu_ns: CHILD_CPU,
+                    download_bytes: contract.manifest().size(),
+                    upload_bytes: contract.manifest().size(),
+                    attempts: 1,
+                };
+                Some(operation)
+            } else {
+                None
+            };
+            NativeCellShardGroupChildV3 {
+                contract,
+                claim,
+                repair_operation,
+            }
+        })
+        .collect();
+    let resources = aggregate(&children, kind);
+    let mut group = NativeCellShardParentGroupV3 {
+        slot: slot as u8,
+        first_chunk: 0,
+        operation: group_id(&[label, b"-operation"].concat(), slot),
+        policy: NativeBudgetPolicyV1 {
+            budget,
+            source,
+            monetary_cap: 300,
+            deadline: 40,
+            resource_cap: resources.clone(),
+            max_inflight: 1,
+        },
+        claim: NativeBudgetClaimV1 {
+            claim: group_id(&[label, b"-parent-claim"].concat(), slot),
+            budget,
+            subject: [0; 32],
+            beneficiary: public(slot as u64 + 1),
+            monetary_reservation: 300,
+            resource_reservation: resources,
+        },
+        children,
+    };
+    group.claim.subject =
+        native_cell_shard_parent_group_subject_v3(inner.file.commitment(), kind, &group).unwrap();
+    group
+}
+
+struct GroupedFixture {
+    inner: PagedFixture,
+    journal: NativeCellShardGroupJournalV3,
+    context: NativeCellShardGroupJournalConfigV3,
+    storage: NativeCellGroupedShardStorageRequestV3,
+    repair: NativeCellGroupedShardRepairRequestV3,
+    cache_name: String,
+}
+impl GroupedFixture {
+    fn new() -> Self {
+        let mut inner = PagedFixture::new();
+        let mut groups = Vec::new();
+        for slot in 0..6 {
+            let source = fund_provider(&mut inner.node, public(slot as u64 + 1), 300, 48);
+            groups.push(make_group(
+                &inner,
+                slot,
+                NativeCellShardGroupKindV3::Storage,
+                source,
+            ));
+        }
+        let storage = NativeCellGroupedShardStorageRequestV3 { groups };
+        let mut groups = Vec::new();
+        for slot in [4, 5] {
+            let source = fund_provider(&mut inner.node, public(slot as u64 + 1), 300, 49);
+            groups.push(make_group(
+                &inner,
+                slot,
+                NativeCellShardGroupKindV3::Repair,
+                source,
+            ));
+        }
+        let repair = NativeCellGroupedShardRepairRequestV3 {
+            storage: storage.clone(),
+            repair_slots: vec![4, 5],
+            groups,
+        };
+        let context = NativeCellShardGroupJournalConfigV3 {
+            network: inner.node.settings().network(),
+            parameters: inner.node.settings().parameters(),
+            genesis: inner.node.settings().genesis(),
+            plan: inner.file.commitment(),
+            owner_generation: provider_configs()[0].owner_generation,
+        };
+        let journal = NativeCellShardGroupJournalV3::create(
+            &inner.directory.path().join("group-child-v3.sqlite"),
+            context.clone(),
+        )
+        .unwrap();
+        assert_eq!(inner.node.active().unwrap().1, 30);
+        Self {
+            inner,
+            journal,
+            context,
+            storage,
+            repair,
+            cache_name: "delivery.sqlite".into(),
+        }
+    }
+    fn verification(&self, calls: u32) -> NativeCellRetainedShardVerificationBudgetV1 {
+        NativeCellRetainedShardVerificationBudgetV1::new(
+            Instant::now() + Duration::from_secs(30),
+            6 * calls,
+            2 * u64::from(calls) * self.inner.input_bytes,
+            2 * u64::from(calls) * self.inner.reconstruction_bytes,
+        )
+    }
+    fn retain(
+        &mut self,
+        request: NativeCellGroupedShardStorageRequestV3,
+        verification: &mut NativeCellRetainedShardVerificationBudgetV1,
+    ) -> Result<NativeCellGroupedShardPlanReadbackV3> {
+        self.inner.node.retain_native_cell_grouped_shard_plan_v3(
+            &mut self.inner.budgets,
+            NativeCellPagedRetainedShardPlanTargetsV2 {
+                catalog: &mut self.inner.catalog,
+                plan_file: &self.inner.file,
+                providers: &mut self.inner.providers,
+                cache: &self.inner.cache,
+            },
+            request,
+            &mut self.journal,
+            verification,
+        )
+    }
+    fn recovery_budget(&self, calls: u32) -> NativeCellGroupedShardRecoveryBudgetV3 {
+        let bytes: u64 = self
+            .repair
+            .groups
+            .iter()
+            .flat_map(|g| &g.children)
+            .map(|c| c.contract.manifest().size())
+            .sum();
+        let count = u64::from(calls);
+        NativeCellGroupedShardRecoveryBudgetV3::new(NativeCellShardRecoveryLimitsV1 {
+            deadline: Instant::now() + Duration::from_secs(30),
+            maximum_plan_attempts: calls,
+            maximum_provider_reads: count * (3 * 18 + 6),
+            maximum_input_bytes: count * (6 * self.inner.input_bytes + bytes),
+            maximum_reconstruction_bytes: count * 3 * self.inner.reconstruction_bytes,
+            maximum_repairs: count * 6,
+            maximum_repair_bytes: count * bytes,
+            maximum_cpu_ns: count * CHILD_CPU,
+            cpu_ns_per_attempt: CHILD_CPU,
+        })
+        .unwrap()
+    }
+    fn recover(
+        &mut self,
+        request: NativeCellGroupedShardRepairRequestV3,
+        budget: &mut NativeCellGroupedShardRecoveryBudgetV3,
+    ) -> Result<NativeCellGroupedShardRecoveryReadbackV3> {
+        self.inner
+            .node
+            .recover_native_cell_grouped_shard_plan_v3(
+                &mut self.inner.budgets,
+                NativeCellPagedRetainedShardPlanTargetsV2 {
+                    catalog: &mut self.inner.catalog,
+                    plan_file: &self.inner.file,
+                    providers: &mut self.inner.providers,
+                    cache: &self.inner.cache,
+                },
+                request,
+                &mut self.journal,
+                budget,
+            )
+            .map_err(|failure| {
+                format!(
+                    "{failure}; usage={:?}; codec={:?}",
+                    failure.usage, failure.codec_usage
+                )
+                .into()
+            })
+    }
+    fn physical(&self) -> GroupDebitRows {
+        (0..6)
+            .map(|slot| {
+                physical_debits(&self.inner.directory.path().join(format!("provider-{slot}")))
+            })
+            .collect()
+    }
+    fn reopen(mut self, ordinal: u32) -> Self {
+        let wall = Instant::now() + Duration::from_secs(30);
+        let anchor = self.inner.catalog.anchor(wall).unwrap();
+        let plan = self.inner.file.commitment();
+        let budget_config = config(&self.inner.node);
+        drop(self.journal);
+        drop(self.inner.providers);
+        drop(self.inner.file);
+        drop(self.inner.catalog);
+        drop(self.inner.budgets);
+        drop(self.inner.node);
+        drop(self.inner.cache);
+        let cache_path = self.inner.directory.path().join(&self.cache_name);
+        fs::remove_file(&cache_path).unwrap();
+        for extension in ["sqlite-wal", "sqlite-shm"] {
+            let path = cache_path.with_extension(extension);
+            if path.exists() {
+                fs::remove_file(path).unwrap();
+            }
+        }
+        self.inner.node = open_node(
+            &self.inner.directory.path().join("node"),
+            StateBackend::PermanentAccountGrowthV2,
+        );
+        self.inner.budgets = NativeBudgetStoreV1::open(
+            &self.inner.directory.path().join("budgets.sqlite"),
+            budget_config,
+        )
+        .unwrap();
+        self.inner.catalog = CellVersionRetentionStoreV3::open(
+            &self.inner.directory.path().join("catalog"),
+            version_config(),
+            anchor,
+        )
+        .unwrap();
+        self.inner.file = CellPagedRetainedShardPlanFileV2::open(
+            &self.inner.directory.path().join("paged-plan"),
+            plan,
+            wall,
+        )
+        .unwrap();
+        self.inner.providers = provider_configs()
+            .into_iter()
+            .enumerate()
+            .map(|(slot, config)| {
+                CellRs46ShardProviderV1::open(
+                    &self.inner.directory.path().join(format!("provider-{slot}")),
+                    config,
+                )
+                .unwrap()
+            })
+            .collect::<Vec<_>>()
+            .try_into()
+            .ok()
+            .unwrap();
+        self.journal = NativeCellShardGroupJournalV3::open(
+            &self.inner.directory.path().join("group-child-v3.sqlite"),
+            self.context.clone(),
+        )
+        .unwrap();
+        self.cache_name = format!("grouped-empty-{ordinal}.sqlite");
+        self.inner.cache = CellStoreV1::open(
+            &self.inner.directory.path().join(&self.cache_name),
+            cache_config(),
+        )
+        .unwrap();
+        assert_eq!(self.inner.cache.cache_usage().unwrap().chunk_rows, 0);
+        self
+    }
+    fn destroy_payload(&self, relative: &str) {
+        let mut file = fs::OpenOptions::new()
+            .write(true)
+            .open(self.inner.directory.path().join(relative))
+            .unwrap();
+        let bytes = file.metadata().unwrap().len() as usize;
+        file.seek(SeekFrom::Start(0)).unwrap();
+        file.write_all(&vec![0; bytes]).unwrap();
+        file.sync_all().unwrap();
+    }
+    fn install_parent(&mut self, group: &NativeCellShardParentGroupV3) {
+        self.inner
+            .budgets
+            .open_budget(&mut self.inner.node, group.policy.clone())
+            .unwrap();
+        self.inner
+            .budgets
+            .reserve(&mut self.inner.node, group.claim.clone())
+            .unwrap();
+        let owner = group.children[0].contract.owner();
+        assert_eq!(
+            self.inner
+                .budgets
+                .begin_effect_in_window(
+                    &mut self.inner.node,
+                    group.claim.claim,
+                    group.operation,
+                    group.claim.subject,
+                    owner.retain_from_height,
+                    owner.retain_until_height
+                )
+                .unwrap(),
+            NativeBudgetReplayV1::New
+        );
+    }
+}
+
+#[test]
+fn native_grouped_storage_keeps_six_parents_eighteen_children_and_cold_done_readback() {
+    let mut fixture = GroupedFixture::new();
+    let mut verification = fixture.verification(2);
+    let first = fixture
+        .retain(fixture.storage.clone(), &mut verification)
+        .unwrap();
+    assert_eq!(first.plan, fixture.inner.file.commitment());
+    assert_eq!((first.parents.len(), first.children), (6, 18));
+    assert!(first
+        .parents
+        .iter()
+        .all(|parent| parent.replay == NativeBudgetReplayV1::Done));
+    assert_eq!(first.verification_usage.attempts_committed, 6);
+    assert_eq!(first.codec_usage.attempts_committed, 6);
+    assert_eq!(
+        first.verification_usage.input_bytes_committed,
+        2 * fixture.inner.input_bytes
+    );
+    let history = fixture.journal.report(deadline()).unwrap();
+    assert_eq!(history["groups"], 6);
+    assert_eq!(history["children"], 18);
+    assert_eq!(history["done"], 18);
+    assert_eq!(history["unstarted"], 0);
+    let charged = fixture.inner.budgets.report().unwrap();
+    // Four original root/member claims plus six indivisible M12 parent claims.
+    assert_eq!(charged["claim_count"], 10);
+    let rows = fixture.physical();
+    assert!(rows.iter().all(|provider| provider.len() == 3
+        && provider
+            .iter()
+            .all(|row| row.1 == 1 && row.2 > 0 && row.3 == 0)));
+    fixture = fixture.reopen(1);
+    let repeated = fixture
+        .retain(fixture.storage.clone(), &mut verification)
+        .unwrap();
+    assert_eq!(repeated.plan, first.plan);
+    assert_eq!((repeated.parents.len(), repeated.children), (6, 18));
+    assert!(repeated
+        .parents
+        .iter()
+        .all(|parent| parent.replay == NativeBudgetReplayV1::Done));
+    assert_eq!(repeated.verification_usage.attempts_committed, 12);
+    assert_eq!(repeated.codec_usage.attempts_committed, 12);
+    assert_eq!(fixture.physical(), rows);
+    assert_eq!(fixture.inner.budgets.report().unwrap(), charged);
+    assert_eq!(fixture.journal.report(deadline()).unwrap(), history);
+}
+
+#[test]
+fn native_grouped_cold_repair_uses_four_original_shards_and_preserves_done_debits() {
+    let mut fixture = GroupedFixture::new();
+    let mut verification = fixture.verification(1);
+    fixture
+        .retain(fixture.storage.clone(), &mut verification)
+        .unwrap();
+    let before = fixture.physical();
+    fixture = fixture.reopen(1);
+    // Remove every publisher/custodian payload source, preserving only the
+    // pinned metadata and the four original provider slots for each chunk.
+    fixture.destroy_payload("catalog/objects/payload.arena");
+    fixture.destroy_payload("provider-4/payload.arena");
+    fixture.destroy_payload("provider-5/payload.arena");
+    fixture = fixture.reopen(2);
+    let mut budget = fixture.recovery_budget(2);
+    let first = fixture
+        .recover(fixture.repair.clone(), &mut budget)
+        .unwrap();
+    assert_eq!(first.plan, fixture.inner.file.commitment());
+    assert_eq!(
+        (first.storage_parents.len(), first.repair_parents.len()),
+        (6, 2)
+    );
+    assert_eq!((first.storage_children, first.repair_children), (18, 6));
+    assert_eq!(first.detected_damage.len(), 6);
+    assert_eq!(first.usage.plan_attempts_committed, 1);
+    assert_eq!(first.usage.provider_reads_committed, 60);
+    assert_eq!(first.usage.repairs_committed, 6);
+    assert_eq!(first.codec_usage.attempts_committed, 9);
+    assert!(first
+        .storage_parents
+        .iter()
+        .chain(&first.repair_parents)
+        .all(|parent| parent.replay == NativeBudgetReplayV1::Done));
+    assert_eq!(first.child_cpu.len(), 6);
+    assert!(first.child_cpu.iter().all(|cpu| cpu.original_attempt
+        && cpu.observed_ns > 0
+        && cpu.observed_ns <= cpu.ceiling_ns
+        && cpu.ceiling_ns <= CHILD_CPU));
+    assert!(first.cpu.observed_ns > 0 && first.cpu.observed_ns <= first.cpu.ceiling_ns);
+    let after = fixture.physical();
+    for (slot, (old, rows)) in before.iter().zip(&after).enumerate() {
+        assert_eq!(old.len(), rows.len());
+        for (old, row) in old.iter().zip(rows) {
+            assert_eq!((&old.0, old.1, old.2), (&row.0, row.1, row.2));
+        }
+        let expected: u64 = fixture
+            .repair
+            .groups
+            .iter()
+            .filter(|group| usize::from(group.slot) == slot)
+            .flat_map(|group| &group.children)
+            .map(|child| child.contract.manifest().size())
+            .sum();
+        assert_eq!(rows.iter().map(|row| row.3).sum::<u64>(), expected);
+    }
+    let history = fixture.journal.report(deadline()).unwrap();
+    assert_eq!(history["groups"], 8);
+    assert_eq!(history["children"], 24);
+    assert_eq!(history["done"], 24);
+    let charged = fixture.inner.budgets.report().unwrap();
+    assert_eq!(charged["claim_count"], 12);
+    fixture = fixture.reopen(3);
+    let repeated = fixture
+        .recover(fixture.repair.clone(), &mut budget)
+        .unwrap();
+    assert!(repeated.detected_damage.is_empty());
+    assert_eq!(repeated.usage.plan_attempts_committed, 2);
+    assert_eq!(repeated.usage.repairs_committed, 6);
+    assert_eq!(repeated.codec_usage.attempts_committed, 15);
+    assert!(repeated.child_cpu.iter().all(|cpu| !cpu.original_attempt));
+    assert_eq!(fixture.physical(), after);
+    assert_eq!(fixture.inner.budgets.report().unwrap(), charged);
+    assert_eq!(fixture.journal.report(deadline()).unwrap(), history);
+}
+
+#[test]
+fn native_grouped_late_alias_foreign_child_and_short_caps_preflight_before_effects() {
+    let mut fixture = GroupedFixture::new();
+    let before = fixture.inner.budgets.report().unwrap();
+    let rows = fixture.physical();
+    let history = fixture.journal.report(deadline()).unwrap();
+    let mut alias = fixture.storage.clone();
+    alias.groups[5].policy.source = alias.groups[0].policy.source;
+    let mut foreign = fixture.storage.clone();
+    foreign.groups[5].children[2] = foreign.groups[5].children[1].clone();
+    let resources = aggregate(
+        &foreign.groups[5].children,
+        NativeCellShardGroupKindV3::Storage,
+    );
+    foreign.groups[5].policy.resource_cap = resources.clone();
+    foreign.groups[5].claim.resource_reservation = resources;
+    let mut short = fixture.storage.clone();
+    let NativeBudgetResourcesV1::Storage { retained_bytes, .. } =
+        &mut short.groups[5].policy.resource_cap
+    else {
+        unreachable!()
+    };
+    *retained_bytes -= 1;
+    let mut unfunded = fixture.storage.clone();
+    unfunded.groups[5].policy.source = NativeFundingSourceV1::Task([249; 32]);
+    for mut refused in [alias, foreign, short, unfunded] {
+        refused.groups[5].claim.subject = native_cell_shard_parent_group_subject_v3(
+            fixture.inner.file.commitment(),
+            NativeCellShardGroupKindV3::Storage,
+            &refused.groups[5],
+        )
+        .unwrap();
+        let mut verification = fixture.verification(1);
+        assert!(fixture.retain(refused, &mut verification).is_err());
+        assert_eq!(verification.usage().attempts_committed, 0);
+        assert_eq!(verification.codec_usage().attempts_committed, 0);
+        assert_eq!(fixture.inner.budgets.report().unwrap(), before);
+        assert_eq!(fixture.physical(), rows);
+        assert_eq!(fixture.journal.report(deadline()).unwrap(), history);
+    }
+}
+
+#[test]
+fn native_grouped_pending_parent_cannot_recreate_missing_child_history() {
+    let mut fixture = GroupedFixture::new();
+    let group = fixture.storage.groups[0].clone();
+    fixture.install_parent(&group);
+    let before = fixture.inner.budgets.report().unwrap();
+    let rows = fixture.physical();
+    let history = fixture.journal.report(deadline()).unwrap();
+    let mut verification = fixture.verification(1);
+    let error = fixture
+        .retain(fixture.storage.clone(), &mut verification)
+        .unwrap_err();
+    assert!(error.to_string().contains("MISSING_GROUP"), "{error}");
+    assert_eq!(verification.usage().attempts_committed, 0);
+    assert_eq!(fixture.inner.budgets.report().unwrap(), before);
+    assert_eq!(fixture.physical(), rows);
+    assert_eq!(fixture.journal.report(deadline()).unwrap(), history);
+}
+
+#[test]
+fn native_grouped_pending_and_unstarted_children_never_redispatch_initial_copy() {
+    let mut fixture = GroupedFixture::new();
+    let plan = fixture.inner.file.commitment();
+    // A stopped caller persisted the full roster before every original parent
+    // intent, then copied one child before it could persist that child's Done.
+    for group in &fixture.storage.groups {
+        fixture
+            .journal
+            .test_register_group_v3(plan, NativeCellShardGroupKindV3::Storage, group, deadline())
+            .unwrap();
+    }
+    for group in fixture.storage.groups.clone() {
+        fixture.install_parent(&group);
+    }
+    let height = fixture.inner.node.active().unwrap().1;
+    for page_index in 0..fixture.inner.file.plan().page_count() {
+        let page = fixture
+            .inner
+            .file
+            .read_page(page_index, deadline())
+            .unwrap();
+        for local in 0..page.chunks().len() {
+            fixture
+                .inner
+                .file
+                .stage_chunk_from_catalog(
+                    page_index,
+                    local,
+                    &mut fixture.inner.catalog,
+                    &fixture.inner.cache,
+                    height,
+                    deadline(),
+                )
+                .unwrap();
+        }
+    }
+    let group = &fixture.storage.groups[0];
+    fixture
+        .journal
+        .test_begin_child_v3(group.operation, 0, deadline())
+        .unwrap();
+    let first = &group.children[0].contract;
+    fixture.inner.providers[0]
+        .publish(first, first.operation(), &fixture.inner.cache, deadline())
+        .unwrap();
+    let before = fixture.inner.budgets.report().unwrap();
+    let rows = fixture.physical();
+    let history = fixture.journal.report(deadline()).unwrap();
+    assert_eq!(history["pending"], 1);
+    assert_eq!(history["unstarted"], 17);
+    assert_eq!(rows.iter().flatten().filter(|row| row.1 == 1).count(), 1);
+    // Keep all valid staged inputs: refusal must follow the durable history,
+    // even when redispatching an Unstarted child could otherwise copy bytes.
+    drop(fixture.journal);
+    fixture.journal = NativeCellShardGroupJournalV3::open(
+        &fixture.inner.directory.path().join("group-child-v3.sqlite"),
+        fixture.context.clone(),
+    )
+    .unwrap();
+    let configuration = config(&fixture.inner.node);
+    drop(fixture.inner.budgets);
+    fixture.inner.budgets = NativeBudgetStoreV1::open(
+        &fixture.inner.directory.path().join("budgets.sqlite"),
+        configuration,
+    )
+    .unwrap();
+    let mut verification = fixture.verification(1);
+    let error = fixture
+        .retain(fixture.storage.clone(), &mut verification)
+        .unwrap_err();
+    assert!(
+        error.to_string().contains("UNSTARTED_WITHOUT_FRESH_GRANT"),
+        "{error}"
+    );
+    assert_eq!(verification.usage().attempts_committed, 0);
+    assert_eq!(fixture.inner.budgets.report().unwrap(), before);
+    assert_eq!(fixture.physical(), rows);
+    assert_eq!(fixture.journal.report(deadline()).unwrap(), history);
+}
+
+#[test]
+fn native_grouped_repair_requires_distinct_complete_parent_authority_before_effects() {
+    let mut fixture = GroupedFixture::new();
+    let mut verification = fixture.verification(1);
+    fixture
+        .retain(fixture.storage.clone(), &mut verification)
+        .unwrap();
+    fixture.destroy_payload("provider-4/payload.arena");
+    fixture.destroy_payload("provider-5/payload.arena");
+    let before = fixture.inner.budgets.report().unwrap();
+    let rows = fixture.physical();
+    let history = fixture.journal.report(deadline()).unwrap();
+    let mut alias = fixture.repair.clone();
+    alias.groups[1].policy.source = alias.storage.groups[5].policy.source;
+    let mut unfunded = fixture.repair.clone();
+    unfunded.groups[1].policy.source = NativeFundingSourceV1::Task([250; 32]);
+    for mut refused in [alias, unfunded] {
+        refused.groups[1].claim.subject = native_cell_shard_parent_group_subject_v3(
+            fixture.inner.file.commitment(),
+            NativeCellShardGroupKindV3::Repair,
+            &refused.groups[1],
+        )
+        .unwrap();
+        let mut budget = fixture.recovery_budget(1);
+        assert!(fixture.recover(refused, &mut budget).is_err());
+        assert_eq!(budget.usage().plan_attempts_committed, 0);
+        assert_eq!(budget.codec_usage().attempts_committed, 0);
+        assert_eq!(fixture.inner.budgets.report().unwrap(), before);
+        assert_eq!(fixture.physical(), rows);
+        assert_eq!(fixture.journal.report(deadline()).unwrap(), history);
+    }
+}
+
+#[test]
+fn native_grouped_done_reconcile_survives_unrelated_native_block_and_child_reopen() {
+    let mut fixture = GroupedFixture::new();
+    let mut verification = fixture.verification(2);
+    fixture
+        .retain(fixture.storage.clone(), &mut verification)
+        .unwrap();
+    let before = fixture.inner.budgets.report().unwrap();
+    let rows = fixture.physical();
+    let history = fixture.journal.report(deadline()).unwrap();
+    let anchor = fixture
+        .inner
+        .node
+        .native_funding_observation(fixture.storage.groups[0].policy.source)
+        .unwrap()
+        .anchor;
+    mine(&mut fixture.inner.node, anchor.block, Vec::new());
+    let current = fixture
+        .inner
+        .node
+        .native_funding_observation(fixture.storage.groups[0].policy.source)
+        .unwrap()
+        .anchor;
+    assert_ne!(current.block, anchor.block);
+    assert_eq!(current.height, anchor.height + 1);
+    fixture = fixture.reopen(1);
+    let repeated = fixture
+        .retain(fixture.storage.clone(), &mut verification)
+        .unwrap();
+    assert_eq!(repeated.observed_at.block, current.block);
+    assert!(repeated
+        .parents
+        .iter()
+        .all(|parent| parent.replay == NativeBudgetReplayV1::Done));
+    assert_eq!(fixture.physical(), rows);
+    assert_eq!(fixture.inner.budgets.report().unwrap(), before);
+    assert_eq!(fixture.journal.report(deadline()).unwrap(), history);
+}

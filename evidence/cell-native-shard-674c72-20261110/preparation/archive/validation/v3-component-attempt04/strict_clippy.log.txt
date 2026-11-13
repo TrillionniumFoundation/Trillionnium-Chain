@@ -1,0 +1,2 @@
+    Checking trnm-pon-node v0.1.0 (/home/qq/work/chain-cell-native-shard-674c72-20261110/trillionnium/crates/trnm-pon-node)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 21.36s

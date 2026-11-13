@@ -1,0 +1,19 @@
+{
+  "cgroup": {
+    "cpu.max": "400000 100000",
+    "cpu.stat": "usage_usec 106139\nuser_usec 44137\nsystem_usec 62002\nnice_usec 0\ncore_sched.force_idle_usec 0\nnr_periods 1\nnr_throttled 0\nthrottled_usec 0\nnr_bursts 0\nburst_usec 0",
+    "io.stat_unavailable": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1c41f5911-cf39-127.service/io.stat'",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+    "memory.max": "8589934592",
+    "memory.peak": "31494144"
+  },
+  "identity": {
+    "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "status": "",
+    "tree": "6a0f38318b3cfb021240cda7f3d266c28aa76e78"
+  },
+  "model_started": false,
+  "passed": true,
+  "schema": "trnm.model-resource-preflight.v2",
+  "wrapper_sha256": "120c70fb52909072eacf84251a44ff6c62f777479685db2cacf8cc1846a9e139"
+}

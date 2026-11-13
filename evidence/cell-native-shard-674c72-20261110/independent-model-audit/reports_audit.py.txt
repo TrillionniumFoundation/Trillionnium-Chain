@@ -1,0 +1,124 @@
+"""Strict report cross-checks; none of these observations qualify payment or FinalUse."""
+import hashlib
+import json
+from funding_audit import need
+
+AUTH = dict(installation_authorized=False, selection_authorized=False, independent_accepted=False,
+            prospective_accepted=False, public_reward_eligible=False, hepta_final_use=False)
+
+
+def audit_transport(e, n):
+    p, bt, pins = e.json("bep52/owner-plan.json"), n["bep52"], n["operation_pins"]
+    need(p["operation"] == bt["operation"] == pins["operation"] and p["tcv1"] == bt["tcv1"] == pins["tcv1"]
+         and p["plan"] == bt["plan"] == pins["bep52_plan"], "BT fixed identity")
+    need(len(p["members"]) == len(bt["members"]) == n["input"]["manifest_count"] == 30, "30 BT members")
+    need([r["index"] for r in bt["members"]] == list(range(30)), "BT canonical order")
+    need(sum(r["storage_chunks"] for r in p["members"]) == p["storage_chunks"] == 95, "95 source chunk bindings")
+    need(sum(r["payload_bytes"] for r in p["members"]) == p["payload_bytes"] == n["input"]["payload_bytes"], "BT bytes")
+    for wanted, actual in zip(p["members"], bt["members"]):
+        need(all(wanted[k] == actual[k] for k in ("index", "manifest", "payload_bytes")), "BT member identity")
+        e.raw("bep52/" + wanted["mapping_file"])
+        need(all(peer == bt["peer"] for peer in actual["supplying_peers"]), "selected loopback source")
+    need(bt["complete_readback"] is True and bt["empty_initial_cache"] is True and
+         bt["consumer_usage"]["connection_attempts"] > 0 and bt["consumer_usage"]["readback_completed"] == 1 and
+         bt["consumer_error"] is None and bt["publisher_error"] is None, "complete actual TCP readback")
+    need(bt["loopback_only"] is True and bt["single_operator"] is True and bt["independent_failure_domains"] is False,
+         "BT research scope")
+    return dict(members=30, chunks=95, loopback_only=True)
+
+
+def audit_native(e, n, initial, final):
+    cycle, r, restore = n["native_shard_cycle"], final["recovery"], final["restore"]
+    need(cycle["recovery"] == r and cycle["restore"] == restore and r["plan"] == initial["plan"] and
+         r["pages"] == initial["pages"] == 3, "single current native plan/report")
+    need((cycle["v3_children"], cycle["logical_work_items"], cycle["initial_native_slots"],
+          cycle["storage_parent_groups"], cycle["repair_parent_groups"], cycle["m12_parent_claims_expected"]) ==
+         (760, 791, 570, 36, 12, 79), "top-level actual native counts")
+    need(cycle["complete"] is True and cycle["chunks"] == 95 and cycle["pages"] == 3, "95 chunks/3 pages")
+    need(initial["members"] == 30 and initial["children"] == 570 and initial["m12_storage_parents"] == 36, "initial roster")
+    need((r["storage_parents"], r["repair_parents"], r["storage_children"], r["repair_children"],
+          r["detected_damage"], r["repaired_slots"]) == (36, 12, 570, 190, 190, 190), "repair roster")
+    receipts = r["storage_parent_receipts"] + r["repair_parent_receipts"]
+    need(len(receipts) == len({x["operation"] for x in receipts}) == len({x["claim"] for x in receipts}) == 48
+         and all(x["replay"] == "Done" and len(bytes.fromhex(x["receipt"])) == 32 and x["receipt"] != "00"*32
+                 for x in receipts), "48 unique actual parent Done receipts")
+    h = final["child_journal"]
+    need((h["groups"], h["children"], h["done"], h["pending"], h["unstarted"]) == (48, 760, 760, 0, 0), "760 child Done")
+    need(len(r["child_cpu"]) == len({x["operation"] for x in r["child_cpu"]}) == 190 and
+         all(x["original_attempt"] is True and 0 < x["observed_ns"] <= x["ceiling_ns"] for x in r["child_cpu"]),
+         "190 original repair CPU receipts")
+    need(restore["restored_original_chunks"] == 95 and restore["original_provider_slots"] == [0, 1, 2, 3] and
+         restore["complete_content_readback"] is True and restore["source_catalog_payload_used"] is False, "four original slots")
+    need(restore["same_tcv1"] == n["operation_pins"]["tcv1"] and restore["same_tcv2"] == n["operation_pins"]["tcv2"], "restore IDs")
+    c = n["cold_restore"]
+    need(c["source_catalog_payload_repaired"] is False and
+         c["root_member_payload_current_readback_after_catalog_overwrite"] is False, "TCA3 deliberately unrepaired")
+    need(all(c[k] is True for k in ("source_cache_absent", "bep52_cache_absent",
+         "grouped_child_journal_cold_reopened", "source_catalog_not_used_for_reconstruction")), "cold path")
+    need(c["source_catalog_arena_overwritten_bytes"] > 0 and len(c["destroyed_provider_arena_bytes"]) == 2 and
+         all(v > 0 for v in c["destroyed_provider_arena_bytes"]), "destruction byte counts")
+    need(c["four_original_shard_slots"] == [0, 1, 2, 3], "cold original slot identity")
+    for slot, size in zip((4, 5), c["destroyed_provider_arena_bytes"]):
+        path = e.root / ("native-shards/provider-" + str(slot) + "/payload.arena")
+        need(not path.is_symlink() and path.is_file() and path.stat().st_size == size, "provider arena byte length")
+    for name in ("publisher.sqlite", "bep52-received.sqlite", "consumer.sqlite", "native-shards/delivery.sqlite"):
+        need(all(not (e.root / (name+s)).exists() for s in ("", "-wal", "-shm")), "cache remains: " + name)
+    for stage, report in (("storage", initial), ("repair", final)):
+        g, a = cycle["wire_cache_metadata_grant"][stage], report["wire_cache_actual"]
+        need(g["max_manifest_rows"] == 768 and g["input_and_consumer_max_manifest_rows"] == 128 and
+             g["max_logical_bytes"] == 512*1024**2 and g["new_temporary_wire_metadata_grant"] is True and
+             g["original_128_temporary_wire_gate_passed"] is False, "explicit V3 wire grant")
+        need(all(a[k] == g["expected_"+k] for k in ("manifest_rows", "chunk_rows", "logical_bytes")), "actual exact wire usage")
+    return dict(plan=initial["plan"], groups=48, storage_groups=36, repair_groups=12, children=760,
+                storage_children=570, repair_children=190, parent_receipt_records=receipts,
+                parent_receipts={x["operation"]: x["receipt"] for x in receipts})
+
+
+def audit_forwards(e, n, identity):
+    ready, result, rows = e.json("worker/ready.json"), e.json("next-use-result.json"), e.json("next-use-observations.json")
+    pins, spec, execution, d = [identity[k] for k in ("pins", "spec", "execution", "descriptor")]
+    need(result == n["actual_next_use"] and result["observations"] == 2 and result["connector_complete"] is True and
+         result["failures"] == [] and result["supervisor"]["outcome"] == "success" and
+         result["supervisor"]["waited_child_reaped"] is True, "original wait4")
+    need(result["descriptor"] == ready["descriptor"] == pins["chb1"] and result["content"] == ready["content"] == pins["tcv2"]
+         and ready["version"] == pins["tcv1"] and ready["worker_sha256"] == d["runtime"], "actual worker identity")
+    need(ready["actual_loaded_parent"] == spec["parent"]["adapter"] and ready["file_sha256"] == spec["parent"]["file_sha256"]
+         and ready["contract"] == spec["parent"]["contract"], "actual selected parent")
+    need(len(rows) == len(execution["requests"]) == len({x["request_id"] for x in rows}) == 2, "two requests")
+    for req, row in zip(execution["requests"], rows):
+        raw = json.dumps(dict(schema="hepta-smollm-inference-input-v1", **req), sort_keys=True,
+                         separators=(",", ":"), ensure_ascii=True, allow_nan=False).encode()
+        need(row["request_id"] == req["request_id"] and row["input_sha256"] == hashlib.sha256(raw).hexdigest(), "request bytes")
+        need(row["descriptor"] == pins["chb1"] and row["content"] == pins["tcv2"] and
+             row["artifact"] == ready["actual_loaded_parent"] and row["file_sha256"] == ready["file_sha256"] and
+             row["contract"] == ready["contract"], "forward identities")
+        need(row["action_ids"] == ["no", "yes"] and len(row["scores_q32"]) == 2 and
+             all(type(v) is int and -(1 << 63) <= v < 1 << 63 for v in row["scores_q32"]) and
+             len(bytes.fromhex(row["logits_sha256"])) == 32 and row["execution_ns"] > 0 and
+             0 < row["observed_rss_bytes"] <= 8*1024**3 and row["authority"] == AUTH, "actual bounded forward")
+    need(result["authority"] == ready["authority"] == AUTH, "worker authority false")
+    p = n["process"]
+    need(p["exit_code"] == 0 and p["termination_requested"] is False and p["original_seconds"] == 300 and
+         0 < p["elapsed_ms"] < 300000, "original wall deadline")
+    need(n["actual_model_run"] == "observed_two_forwards" and n["typed_snapshot_admitted"] is True and
+         n["composition_worker_executed"] is True, "CTS1 and actual composition worker")
+    need(all(n["sealed_cache_independence"][k] is True for k in
+         ("publisher_cache_absent", "bep52_cache_absent", "consumer_cache_absent", "original_source_materials_preserved")),
+         "sealed cache independence")
+    return dict(forwards=2, elapsed_ms=p["elapsed_ms"], rss=[x["observed_rss_bytes"] for x in rows])
+
+
+def audit_holds(n, final):
+    for section, keys in (
+        (n, ("hepta_final_use", "installation_authorized", "independent_operators", "production_activation")),
+        (n["native_shard_cycle"], ("independent_real_money_funding", "service_fee_paid", "independent_failure_domains",
+                                  "customer_demand_qualified", "hepta_final_use", "production_activation")),
+        (final["recovery"], ("future_retention_qualified", "group_settlement_qualified", "positive_verdict_issued",
+                             "native_task_payment_submitted")),
+        (final["m12"], ("authorizes_native_payment", "current_branch_payment_finality",
+                        "physical_capacity_verified_by_this_adapter", "production_activation"))):
+        need(all(section[k] is False for k in keys), "qualifications must remain HOLD")
+    c = n["cold_restore"]
+    need(c["parent_settlement_on_hold"] is True and c["future_retention_positive"] is False and
+         c["native_task_payment"] is False and c["cancellation_used"] is False, "no future positive/payment/cancel")
+    return dict(all_holds=True, current_catalog_payload_integrity=False)

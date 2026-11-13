@@ -1727,6 +1727,59 @@ The [capacity contract](specs/pon/CELL_STORAGE_CAPACITY_V2.md) retains the real-
 native paged reconstruction, independent domains/WAN, paid retention lifecycle,
 ordinary Hepta FinalUse and production qualification as **HOLD**.
 
+## Native grouped-shard continuation — observed local research / HOLD
+
+Status: **same-operation real-model research PASS; qualification HOLD**.
+Tested S3: b6f39277b39e0b41e552ec4d32c5f8d354c8255b;
+tree 6a0f38318b3cfb021240cda7f3d266c28aa76e78. Later docs do not relabel tested code.
+[Original evidence and scope](../../evidence/cell-native-shard-674c72-20261110/README.md)
+and the [research contract](specs/pon/CELL_NATIVE_SHARD_RESEARCH_V2.md) retain raw failures and receipts.
+
+Operation 23120317a3cc20853fbcf0de37924311788e251d59395afc1816b4f6b2b7bbdc
+transferred all 30 model/environment members through actual loopback BT.
+Base weights were 269,060,552 bytes / 65 original storage chunks; the complete
+closure was 280,269,602 bytes / 95 canonical chunk bindings across three pages.
+TCV1/TCV2/CTS1/CHB1, worker, parent, OP and both original requests stayed bound.
+
+Actual funding remained 79 reserved development Tasks / 79,100 units at one
+height/generation-5 anchor. Original M12 parents were 31 direct root/member,
+36 storage groups and 12 repair groups. Separate V3 children were 570 storage
+and 190 repair: 760 Done in 48 groups, with 1,568 events independently replayed.
+791 logical items are not 791 M12 claims. No cancellation or payment freed capacity.
+
+After closing owners and deleting old caches, the run zeroed the 512-MiB TCA3
+arena and original providers 4/5 arenas of 70,414,336 bytes each. Native repair
+restored 190 original shard targets; original slots 0–3 reconstructed all 95 chunks.
+Complete content/CTS1 admission and two original sealed-worker forwards passed.
+TCA3 itself remains all zero: source_catalog_payload_repaired=false and
+root_member_payload_current_readback_after_catalog_overwrite=false. Live funds
+and historical root/member Done do not establish current complete TCA3 custody.
+
+Native elapsed was 235,959 ms; external process 236.083946 s; whole wrapper
+239.801018 s. Original 300 s / 512 MiB / 8 GiB / CPU-bandwidth 4 and worker-grant 4
+bounds stayed fixed. Cgroup peak was 4,202,799,104 bytes with no OOM; it is not RSS
+or proof of peak OS thread count. One worker exit sampling gap was reconciled.
+The independent post-terminal audit passed 12/12; it opened only a copied small CGJ3.
+
+The explicit wire metadata profile is 768 manifests / 2,048 chunks / 512 MiB;
+input/consumer remain 128 manifests. Exact actual union charges matched; the
+old 128-wire-manifest gate did not pass. Original LIMIT, alias-fixture, quota
+and byte-accounting failures, S2 /tmp inode/workflow failures and e6 preflight
+refusal (native_started=false) remain preserved; unavailable optional I/O is disclosed.
+S3 local gates passed 43 unchanged source negatives, 18 authority/HOLD, 60 native
+(44 retained + 16 new), 7 native-example and 5 DA-example controls, Clippy/fmt,
+26 packages and 6,224 links. The 181-package lockfile kept existing getrandom;
+only its existing example dev edge was added. These local gates do not establish global CI.
+
+Existing --profile test built an ordinary main: profile.test=false, opt3, debug
+assertions/overflow checks on; no profile/RUSTFLAGS change. Dev f84a was build-only.
+Do not compare optimized timing with C3 debug 270 s. Checked-build wrapper's own
+prelaunch SHA is NOT_RECORDED (post-run 9a29…); start 969e… pins its imported controller.
+Actual model wrapper/config/frozen ELF had before/after pins. Host runtime was not all sealed.
+
+Real payment, continuous custody, independent operators/domains, WAN, FinalUse,
+efficacy/utility/inherited gains, full host-runtime sealing and production remain HOLD.
+
 **Complete model capacity continuation — HOLD:**
 
 The [explicit V2 capacity profiles](specs/pon/CELL_STORAGE_CAPACITY_V2.md)
@@ -14557,3 +14610,180 @@ Status: **HOLD; draft only; native full suite failed**. Native checkpoint `8d8c0
 C1 `11c9562252d3cf56b423c7756569be0c669d9606` keeps its initial node green failure (3 passed / 1 failed) and initial offline dependency failure. The corrected node counterfactual changes only the old node owner plus its test declaration over C1 dependencies: red 0 passed / 4 failed, C2 green 4 passed / 0 failed. Settlement red remains 2 passed / 6 failed and C2 green 8 passed / 0 failed; C2 settlement completed 77 library plus 2 documentation tests and crypto completed 196 library tests. Exact commands, environments and all original streams are in the [native evidence](../../evidence/pon-followthrough-20261110-685a/README.md). The separately collected exact-BASE two-test control observed large-parent 1/0 (both backends) and inactive-page 0/1 with `PUBLIC_MUTATION_CPU_BUDGET`. Its different build/environment and refill observations do not establish a single cause for the C2 failures or replace the failed full suite.
 
 The child integrates the exact CI roster/artifact/QROM-current registrations, preserves the historical QROM lane, rebinds selected source surveys to C2, retains every previous corpus dependency and adds the new implementation inputs. Its actual source/corpus/ledger/CI/repository/Markdown/format checks are separate controller receipts on the eventual child commit; this entry does not assert those checks or hosted CI passed. All false/null qualification fields, existing historical evidence and open work-cost/service/consensus/model-benefit obligations remain unchanged. No activation is authorized by this observation.
+
+### 2026-11-08 Cell storage continuation: reclaimable discovery and complete task bytes
+
+**Historical #818 branch record.** The convergence decision above remains
+authoritative: #823 owns current discovery, while #818 contributes complete
+version residency. Its incompatible parallel V3 codec/database and example are
+kept in original Git history and evidence, not registered as current components.
+The measurements below apply only to their named historical source.
+
+Continue the exact six-capability candidate #807 at
+`0dc13a92cc49e9a751a2b6cf7cc96524f1244a2a` on a separate stacked branch.
+The unified #812 candidate and other concurrent source heads are not silently
+treated as this branch's ancestors or as evidence for its changed bytes.
+
+The [PQ-v3 discovery contract](specs/pon/CELL_PROVIDER_DISCOVERY_PQ_V3.md)
+adds a fresh CDP3 / SQLite-v3 namespace. Provider signatures bind fixed
+300-second lease epochs. Expiry/withdrawal releases active quota while bounded
+current-epoch tombstones preserve sequence high water; a monotonic atomic
+epoch transition retires the whole old signed scope. A previous long-lived
+signature cannot revive after a newer short-lived record expires. The 512-row
+and 16-MiB main-database bounds remain explicit. A full current epoch can still
+refuse; this is bounded recovery of capacity, not open-network Sybil fairness.
+
+Native ML-DSA-65 bootstrap responses bind the exact query, OS-random nonce,
+configured endpoint/key/generation, result and expiry. Bootstrap keys are
+pinned independently of provider keys. Unsigned, replayed or mixed-query
+responses cannot manufacture discovery candidates or successful announcements.
+The existing multi-source scheduling, original connection/byte/deadline
+reservation and verification budget continue to apply, including unsuccessful
+requests. Cross-epoch sequence comparisons use the epoch as part of identity.
+The earlier v1/v2 profiles keep their documented limits and are not migrated.
+
+The [complete-version loader contract](specs/pon/CELL_COMPLETE_VERSION_V1.md)
+now also has native `admit_local_version` / `CellResidentVersionV1` composition.
+The actual immutable model and environment closures must both be resident and
+match the complete TCV1 before one task's aggregate RAM/reference admission.
+Both current component pins are rechecked before either byte view is delivered;
+original deadline and latched cancellation remain attached to the same task.
+A complete disk cache or model-only residency cannot substitute for this join.
+
+TCX1 already requires a complete base and complete target manifest with one
+bounded reconstruction step. No update assumes a fine-tune preserves chunks.
+Long-term retained version sets still need funded leases and capacity; declared
+replica/domain IDs are not evidence of independent operators. Real paid renewal,
+repair dispatch, independently administered WAN recovery, measured device use
+and the same-iteration Hepta next-task/FinalUse loop remain acceptance gates.
+Source-bound native results are recorded separately from those operational
+qualifications; all six end-to-end capability gates remain **HOLD_NO_GO**.
+
+The [storage-v3 source and observation record](../../evidence/cell-storage-network-v3-20261108/README.md)
+retains initial source `9170779008ec8abdd1fd27b8ff16f2c2462fdb47` and reviewed source
+`266d9be8e7f6a2ecb556a129b1be69e6ec9553a2` separately. The reviewed source passed 19 command gates,
+507 native tests and 12 compile-fail doctests, including all 45 new native
+controls. Real rendezvous regressions first failed against the unchanged
+initial transport, then passed after current-authority filtering and active
+provider prioritization. The finite example checked 40,960 actual cold bytes
+and an authenticated same-epoch withdrawal refusal. Initial DiskFull/ENOSPC,
+Clippy SIGKILL and earlier implementation failures remain in the raw record.
+These shared-host component results do not close independent administration,
+funded retention/repair, WAN or actual Hepta FinalUse qualification.
+
+### 2026-11-10 Cell discovery and controlled consumer restoration continuation
+
+Continue the exact #879 delivery
+`30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6` in one isolated successor.
+The original release-profile recovery measurement belongs to runtime
+`8dee97636e2b6932fb7a22b1b54f2cab09ae8406`; #861's grouped funding/repair
+operation remains a separate source and experiment. Neither supplies runtime
+acceptance for this successor. The existing integration stack is retained;
+main, deployed services and provider data are not activated by this work.
+
+1. Add an opt-in bounded iterative BEP5 client beside the existing one-hop
+   client. Follow admitted nodes by XOR distance under the original shared
+   UDP/TCP session. Apply immutable endpoint policies before every dial and to
+   returned peer hints; retain all failed-query costs. No response may expand
+   an explicit address/port allowlist. The public policy excludes special-use
+   IPv4 blocks. This is a finite read-only client, not a resident DHT owner.
+2. Carry the existing execution owner's checkpoint through paged restoration,
+   actual RS work, cache publication and complete TCV2 byte scanning. Preserve
+   all original context, current plan, deadline, readback and quota checks.
+   Cancellation or deadline refusal locks the in-memory reservation, including
+   later compatibility-entry calls; ordinary data failures keep bounded retry
+   semantics. Simultaneous callback error and cancellation must retain the
+   original error while still locking the reservation. Costs and valid partial
+   cache writes remain observable.
+3. Execute a finite synthetic example with real two-hop UDP discovery for each
+   of a model/environment pair, explicit owner peer selection, real TCP BEP52
+   transfer and complete independently pinned TCV2 readback. Use one receiver
+   session, four DHT queries, two TCP connections and a six-attempt ceiling;
+   reconcile actual server/client application bytes and join all threads.
+   Add it to the existing source/architecture CI example lane with failure
+   propagation, preserving the original examples and full native suite.
+4. Freeze one source tree, retain development failures, then run the complete
+   DA suite, exact new controls through that suite, the actual example, strict
+   workspace/all-target/all-feature Clippy, formatting, locked dependency
+   graphs, original source-integrity controls and repository/link checks.
+   Bind each observation to the frozen source and actual toolchain. A source
+   inspector, all-targets build or another branch's result is not native
+   execution. Existing #879 hosted failures remain distinct until their own
+   same-source gates pass.
+
+The first source inspection of this successor exposed inherited registration
+drift in #879: twelve recorded blob pins still describe files before the
+complete-release/paged-recovery increment, and the embedded source inventory
+omits 29 already tracked source paths. Review the exact old-pin/current-blob
+differences and restore registration to the actual immutable #879 bytes;
+do not revert implementation or relabel its earlier tests. Add the three new
+discovery/example paths and the controlled restoration paths to the current
+register. Retain the original refusal and require fresh full DA and native
+storage-owner execution on the complete successor.
+
+The next product bridge must use the original Hepta release/adoption owners.
+The Q24 typed asset loader is not a generic SmolLM/LLM ABI. The research worker's
+two sealed forwards explicitly grant no FinalUse; a TMR1 content pin alone does
+not select a compatible runtime. Ordinary integration still needs one fixed
+Chain/Hepta/model/environment candidate and ResolveRelease -> existing
+admission/current/withdrawal/resource/installation owner -> actual loaded
+readback -> authorized distinct task -> terminal recovery evidence.
+
+Open acceptance obligations remain: resident public discovery and public-client
+interoperability; independently administered and observed fault domains;
+continuous paid custody with renewal, repair, replacement and exit; encrypted,
+authorized private-weight export; elapsed custody campaigns and measured WAN
+latency/failure distributions; and ordinary Hepta FinalUse/cold recovery. Six
+declared provider names and local successful downloads do not close them. No
+consensus, funding, model-quality, production or whole-chain PQ qualification
+is granted by these component changes.
+
+## 2026-11-04 — Frozen 44d owner, retained readiness, and generated fuzz ASM lock
+
+The #699 successor preserves the entire frozen owner `a10c39025cdc03d3265b031d6547b11e0350da2c` tree. Its production source is exactly `44d3def32f515b98fc41f074fe1b88e97f046191`; a10 only corrects the original branch-encoding module count and its corpus pin. The ordered parents are the previous #699 head `c806dd9ab640e87ca3fc507a8aeada53c2053990` and a10. The existing rendezvous readiness test overlay remains `6a9660b4cd43fcb480a6f6859b01f60eff766312`. No owner ref, main ref, production deadline, resource limit, or ignored diagnostic is changed.
+
+The independent fuzz workspace still had the old lock after the owner enabled SHA-2 ASM on Linux x86_64/aarch64. The actual pinned `nightly-2026-10-01` command `cargo fetch --locked --manifest-path tests/fuzz/Cargo.toml` failed with exit 101 on the old bytes. In source `2c5349cb785d83e007b06c7af4ab1262277ad870`, original run 41779987720 / job 126409090815 then ran ordinary Cargo generation, the identical locked command (exit 0), and offline locked metadata (exit 0). The actual generated lock is Git blob `3ec34f1a2e3ebc54399b1ee8e2cef140186d7d08`, 33,605 bytes, SHA256 `8a76c46560cea2f973f1a40cbbaf32f12e542f3b6c963a1061fb01dce045de4d`. The 146-to-147 package transition contains only sha2-asm 0.6.4 and the sha2 dependency edge; all other 145 package records are unchanged. Eight graph controls passed. This experiment compiled no package tests and ran no sanitizer fuzz mutations.
+
+Original 44d branch-encoding run 41778472916 produced six successful native-store tests and two ignored diagnostics on both x86_64 job 126404257659 and aarch64 job 126404257700, then failed its stale 5/1 grep. The owner a10 6/2 correction is adopted. The composition additionally requires exactly one successful line for the new collision/replacement test, while preserving the entire original module command, four-cell matrix, 25-minute deadline, and two ignored diagnostics. The corresponding workflow and generated fuzz lock corpus pins are updated to their exact new bytes; all 384 corpus pins and 20 original inline workflow pins were checked against the composed tree.
+
+The new independent `chain-published-fuzz-lock.yml` job first runs the original locked fetch on the exact published head with a fresh Cargo home, requires unchanged lock bytes, and checks offline metadata. It does not regenerate a lock or replace the original complete quality/fuzz gate. This published-source result is pending at commit time.
+
+The DA ACK/deadline independent review is bound to the two exact 44d source files and finds no confirmed blocker in its narrow static scope. The composing agent also read the exact eight-way arithmetic cache, PQ cold-recovery, ASM selection, and new test inventory. The separate eight-way cache peer review is pending; the earlier identity-lift review is not reused for it. All owner evidence and original failures remain in history. No local preflight or native execution was possible in the composing environment; actual hosted preflight and original native gates remain required.
+
+The previous c806 original artifacts were independently read back in run 41777955458 / job 126402598642 and durably checkpointed at `8b30c42f783a0d2c1d7148989ecd314a6a8ea532`. They retain 3/27 planned campaign confirmations, 0/18 pressure confirmations, and 0/6 original four-second root passes. Eight c806 CPU job statuses are successful, but they do not qualify this successor or the protocol/DA/performance gates. Nested Host costs and SQL observation samples are not added together or represented as a full business-cost proof.
+
+Exact source readbacks, the actual generator log, original branch-count failure logs, peer review, commands, hashes, and composition boundaries are in `qualification/frozen-44d-lock-composition-20261104/`. The new source remains **DRAFT / SHADOW_ONLY / DENY_ALL / HOLD_NO_GO** until its own original head and prospective-merge gates meet every original requirement.
+
+## 2026-11-13 — Cell source selection across the 46-tip branch cohort
+
+The [Cell consolidation ledger](../../evidence/branch-consolidation-20261113/cell/README.md)
+records all 46 assigned independent tips and 113 distinct source variants,
+with exact original, starting and selected blobs. Nine original tips are
+retained directly in the Cell merge DAG; root integration must preserve the
+other original heads before retirement. Git mode/type/blob comparison confirms
+1,625 entries in the imported historical evidence trees remain unchanged.
+
+Compatible additions are bounded iterative BEP5 lookup, controlled restoration,
+RS(6,4) domain-loss controls, initialization readiness, historical retirement
+readback, bounded endpoint-keyed soft peer ordering within the original release
+budget, independent local assembly/XOR research and a read-only TPQ1 C oracle.
+The selected authenticated epoch-v3, complete-version, sealed-loader and retained
+key-pool owners remain. The parallel #818 pq3 profile and older PCP2 profiles
+remain archived because their wire/schema/authority contracts are not compatible
+with the selected owner; no fallback or silent migration is introduced.
+The old segmented runtime-root/action-catalog owner is archived without claiming
+its distinct capability is implemented by the selected complete-release path.
+
+Exact code checkpoint `eedc32adadde4992787073f93340ea4cc531cbe7` passed package
+formatting, strict all-target/all-feature Clippy, and all 46 selected controls
+against its 943-test native catalog (zero failed or ignored; 897 filtered).
+The earlier TPQ1 C conformance check passed 10 cases on `d087b37c1d301289ca96162b4501742f93132c5b`.
+Original intermediate failures, historical results and their source identities
+are retained separately. These local results do not qualify the final composed
+source or replace its repository gates.
+
+Node successor-bound retirement from `e6c622a16c6770073435f49cf02a6808b56312b0`
+remains the Node lane's explicit dependency. Final composition still needs
+source corpus/register/inventory rebinding and exact-source checks. Public
+discovery, independently administered custody, ordinary FinalUse, production
+and whole-chain PQ acceptance remain HOLD.

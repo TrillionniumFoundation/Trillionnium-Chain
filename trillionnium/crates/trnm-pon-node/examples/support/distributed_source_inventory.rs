@@ -1261,6 +1261,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-data-availability/examples/cell_bep52_iterative_discovery.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/examples/cell_bep52_iterative_discovery.rs"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-data-availability/examples/cell_delta_workload_observer.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -1510,6 +1517,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/lookup.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/lookup.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/lookup/tests.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/lookup/tests.rs"
         )),
     ),
     (
@@ -2609,6 +2630,20 @@ pub const FILES: &[(&str, &[u8])] = &[
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../../../trillionnium/crates/trnm-data-availability/src/cell/version_retention/tests/shard_plan_paged.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/src/cell_swarm.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell_swarm.rs"
+        )),
+    ),
+    (
+        "trillionnium/crates/trnm-data-availability/src/cell_swarm_xor_repair.rs",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-data-availability/src/cell_swarm_xor_repair.rs"
         )),
     ),
     (

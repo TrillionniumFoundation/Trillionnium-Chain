@@ -1,0 +1,100 @@
+"""Independent stdlib cross-check of signed funding observations and final M12 report."""
+import hashlib
+
+
+def need(ok, message):
+    if not ok:
+        raise ValueError(message)
+
+
+def phash(tag, *parts):
+    data = b"TRNM-PON1\0" + len(tag).to_bytes(2, "little") + tag
+    for part in parts:
+        data += len(part).to_bytes(4, "little") + part
+    return hashlib.sha256(data).digest()
+
+
+def audit_funding(records, live, initial, final):
+    need(all(r["schema"] == "trnm.cell-native-shard-group-funding-receipt.v3" for r in records), "funding schema")
+    begin, complete = records[0], records[-1]
+    need(begin["event"] == "begin" and complete["event"] == "complete", "complete funding log")
+    need(begin["expected_tasks"] == complete["observed_tasks"] == 79, "79 funding tasks")
+    need(begin["expected_monetary_total"] == complete["observed_monetary_total"] == 79100, "funding total")
+    for key in ("independent_real_money_funding", "cancellations_submitted", "native_task_payments_submitted"):
+        need(begin[key] is False, "funding HOLD: " + key)
+    signed = [r for r in records if r["event"] == "signed_transaction"]
+    blocks = [r for r in records if r["event"] == "block_admitted"]
+    observed = [r for r in records if r["event"] == "native_funding_readback"]
+    need(len(records) == 165 and len(signed) == len(observed) == 79 and len(blocks) == 5, "complete event counts")
+    need([r["index"] for r in signed] == [r["index"] for r in observed] == list(range(79)), "complete source order")
+    need([(r["first_index"], r["end_index_exclusive"]) for r in blocks] ==
+         [(0, 16), (16, 32), (32, 48), (48, 64), (64, 79)], "16-transaction block batches")
+    need(all(blocks[i]["parent"] == blocks[i-1]["block"] and blocks[i]["height"] == blocks[i-1]["height"] + 1
+             for i in range(1, 5)), "funding block chain")
+    anchor = observed[0]["anchor"]
+    need(all(r["anchor"] == anchor for r in observed), "initial same anchor")
+    need(anchor["block"] == blocks[-1]["block"] and anchor["height"] == blocks[-1]["height"], "tip readback")
+    sources = {}
+    for signed_row, readback in zip(signed, observed):
+        raw = bytes.fromhex(signed_row["signed_wire_hex"])
+        need(hashlib.sha256(raw).hexdigest() == signed_row["signed_wire_sha256"], "wire SHA")
+        need(raw[:4] == b"PNX1" and len(raw) == 239 and raw[92] == 2 and raw[93:95] == b"\x50\0", "tag2 wire")
+        network, owner = raw[4:36], raw[36:68]
+        nonce = int.from_bytes(raw[68:76], "little")
+        expiry = int.from_bytes(raw[76:84], "little")
+        fee = int.from_bytes(raw[84:92], "little")
+        task, provider = raw[95:127], raw[127:159]
+        amount = int.from_bytes(raw[159:167], "little")
+        until = int.from_bytes(raw[167:175], "little")
+        source = "task:" + task.hex()
+        need(source == signed_row["source"] and source not in sources, "unique wire Task source")
+        need(signed_row["sender"] == owner.hex() and signed_row["provider"] == provider.hex() and
+             signed_row["nonce"] == nonce and signed_row["amount"] == amount, "wire signed fields")
+        need(network.hex() == anchor["network"] and nonce > 0 and expiry == signed_row["transaction_expiry_height"] == 1000
+             and fee == 1000000 and until == signed_row["native_deadline_height"] == 200 + signed_row["index"] // 16,
+             "original wire limits")
+        need(task == phash(b"task-instance-v3", network, bytes.fromhex(anchor["parameters"]), owner,
+                           nonce.to_bytes(8, "little"), provider, amount.to_bytes(8, "little"),
+                           until.to_bytes(8, "little")), "independent Task source derivation")
+        row = readback["row"]
+        need(readback["source"] == readback["observed_source"] == source and readback["matches_expected"] is True,
+             "initial actual source")
+        need(row["status"] == "reserved" and row["output"] is None and row["owner"] == owner.hex() and
+             row["provider"] == provider.hex() and row["remaining"] == amount and row["deadline"] == until,
+             "initial actual reserved row differs from signed funding")
+        sources[source] = dict(source=source, owner=owner.hex(), provider=provider.hex(),
+                               amount=amount, deadline=until, nonce=nonce)
+    need(len({s["nonce"] for s in sources.values()}) == 79 and sum(s["amount"] for s in sources.values()) == 79100,
+         "nonce uniqueness and conservation")
+    need(live["all_match"] is True and live["cancellations_submitted"] is False and live["payments_submitted"] is False,
+         "final funding scope")
+    rows = live["sources"]
+    need([r["index"] for r in rows] == list(range(79)) and len({r["source"] for r in rows}) == 79 and
+         {r["source"] for r in rows} == set(sources), "final exact 79 sources")
+    final_anchor = rows[0]["anchor"]
+    need(all(r["anchor"] == final_anchor for r in rows), "final common anchor")
+    for observed_row in rows:
+        wanted = sources[observed_row["source"]]
+        row = observed_row["row"]
+        need(observed_row["matches_expected"] is True and row["status"] == "reserved" and row["output"] is None,
+             "current reserved row")
+        need(row["owner"] == wanted["owner"] and row["provider"] == wanted["provider"] == observed_row["expected_provider"]
+             and row["remaining"] == wanted["amount"] == observed_row["expected_amount"] and
+             row["deadline"] == wanted["deadline"] > final_anchor["height"], "current original live funds")
+    need(all(final_anchor[k] == anchor[k] for k in ("network", "parameters", "genesis")) and
+         final_anchor["height"] >= anchor["height"], "native owner context")
+    m12 = final["m12"]
+    budgets = m12["budgets"]
+    need(m12["source_count"] == m12["claim_count"] == len(budgets) == 79, "actual M12 79")
+    need(len({b["budget"] for b in budgets}) == 79 and {b["source"] for b in budgets} == set(sources), "M12 source bijection")
+    for b in budgets:
+        need(b["cap"] == b["committed_units"] == sources[b["source"]]["amount"] and
+             b["unallocated_units"] == b["pending_effects"] == 0 and b["closed"] is False, "full hold; historical Done")
+        need(b["historically_observed_native_gross_debit"] == b["historically_observed_beneficiary_credit"] == 0, "no payment")
+        need(len(b["resource_charge"]) == len(b["resource_cap"]) == 4 and
+             all(0 <= c <= limit for c, limit in zip(b["resource_charge"], b["resource_cap"])), "resource caps")
+    need(initial["m12"]["source_count"] == initial["m12"]["claim_count"] == 67, "initial 31direct+36storage parents")
+    return dict(funding_by_source=sources, final_anchor=final_anchor, total_reserved=79100,
+                actual_m12_claim_count=79, signature_validation="original native admission; audit verifies wire hash/fields/Task IDs",
+                current_catalog_payload_integrity_inferred_from_funding=False)
+

@@ -29,12 +29,12 @@ mod file;
 mod paged;
 pub use file::CellRetainedShardPlanFileV1;
 pub use paged::{
-    restore_cell_paged_version_to_cache_v2, CellPagedRetainedShardPlanFileV2,
-    CellPagedRetainedShardPlanRequestV2, CellPagedRetainedShardPlanV2,
-    CellPagedShardRestoreBudgetV2, CellPagedShardRestoreLimitsV2, CellPagedShardRestoreReadbackV2,
-    CellPagedShardRestoreRequestV2, CellPagedShardRestoreUsageV2, CellRetainedShardPagePinV2,
-    CellRetainedShardPageV2, MAX_CELL_PAGED_RETAINED_CHUNKS_V2, MAX_CELL_RETAINED_SHARD_PAGES_V2,
-    MAX_CELL_RETAINED_SHARD_ROOT_BYTES_V2,
+    restore_cell_paged_version_to_cache_controlled_v2, restore_cell_paged_version_to_cache_v2,
+    CellPagedRetainedShardPlanFileV2, CellPagedRetainedShardPlanRequestV2,
+    CellPagedRetainedShardPlanV2, CellPagedShardRestoreBudgetV2, CellPagedShardRestoreLimitsV2,
+    CellPagedShardRestoreReadbackV2, CellPagedShardRestoreRequestV2, CellPagedShardRestoreUsageV2,
+    CellRetainedShardPagePinV2, CellRetainedShardPageV2, MAX_CELL_PAGED_RETAINED_CHUNKS_V2,
+    MAX_CELL_RETAINED_SHARD_PAGES_V2, MAX_CELL_RETAINED_SHARD_ROOT_BYTES_V2,
 };
 
 // Initial published CRP1 profile: complete model/environment unions remain

@@ -1,0 +1,340 @@
+{
+  "schema": "trnm.independent-physical-review-package.v1",
+  "status": "CLOSED",
+  "qualification": "PASS-HOLD",
+  "runtime_source": {
+    "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "tree": "6a0f38318b3cfb021240cda7f3d266c28aa76e78",
+    "basis": "Closed raw model start/end identities; current docs status is separate context."
+  },
+  "reviewed_model_job_id": "1a1c420eb26-cf39-12d",
+  "auditor": {
+    "script": "audit.py",
+    "script_sha256": "a790136fdad01c63d8f5f56d2fe0287093a11ffaaeb5562e09ad9b2c3dd3d53c",
+    "prelaunch_manifest": "launch.json",
+    "prelaunch_sha256": "b125250e1d3624cad95085135d649db1a16ae000a5120585df96dbdb2bf97d0b",
+    "expected_sha_bound_in_job_argv": true,
+    "job_id": "1a1c43c43a9-cf39-1ba",
+    "state": "succeeded",
+    "exit_code": 0,
+    "output_complete": true,
+    "output_durable": true,
+    "log_truncated": false,
+    "assertion_groups": 16
+  },
+  "scope": {
+    "model_run_reexecuted": false,
+    "build_executed": false,
+    "original_databases_opened": false,
+    "original_raw_files_unchanged": true,
+    "original_raw_files": 17,
+    "pinned_source_copies": 8,
+    "no_disk_throughput_claim": true,
+    "no_cross_scope_cpu_rss_sum": true,
+    "no_c3_debug_performance_comparison": true
+  },
+  "summary": {
+    "path": "summary.json",
+    "sha256": "85330031fe216cac833dda4192fdfc43cf8e6ca14206246a34fc6ae1740c12e1",
+    "includes": "Wire cache admission/actual including metadata; original chunk/storage/repair/codec equations; global/child CPU scope; worker seven stages and two request intervals; cgroup versus RSS; four-CPU/grant boundary; one reconciled RSS gap; both unrepaired TCA3 false fields and all HOLD."
+  },
+  "exact_membership": {
+    "file_count_excluding_this_manifest": 34,
+    "total_bytes_excluding_this_manifest": 640769,
+    "this_manifest_excluded_from_own_file_map": true,
+    "extra_files_permitted": false
+  },
+  "files": {
+    "assertions.json": {
+      "bytes": 1408,
+      "sha256": "31b362284a5205bb00e82b288636e446470185046dcb7ff63cb9101ea3316df2"
+    },
+    "audit.py": {
+      "bytes": 18550,
+      "sha256": "a790136fdad01c63d8f5f56d2fe0287093a11ffaaeb5562e09ad9b2c3dd3d53c"
+    },
+    "job-record.json": {
+      "bytes": 2005,
+      "sha256": "ab83ad10db3b910f53e4bf5e14fe232c21eaab5307368038944d553ebf21c83b"
+    },
+    "launch.json": {
+      "bytes": 1041,
+      "sha256": "b125250e1d3624cad95085135d649db1a16ae000a5120585df96dbdb2bf97d0b"
+    },
+    "raw-inputs-after.json": {
+      "bytes": 5342,
+      "sha256": "8858198eb813df9430c5e28fe49136af01f836fee3f3866e77186ca2680f0303"
+    },
+    "raw-inputs-before.json": {
+      "bytes": 5342,
+      "sha256": "8858198eb813df9430c5e28fe49136af01f836fee3f3866e77186ca2680f0303"
+    },
+    "raw/checked-artifact.json": {
+      "bytes": 18082,
+      "sha256": "f34056fa5ab8fd8e5360975350d615d140ba5b9fc26e9afcd47ac3c297dc7f3e"
+    },
+    "raw/checked-build-start.json": {
+      "bytes": 1245,
+      "sha256": "292be91695df3bccaa3501dc315a9426cacc408fcab5e2454fb9135517cc98f9"
+    },
+    "raw/model-config.json": {
+      "bytes": 2912,
+      "sha256": "111d10f2e6eea734ed016ae6ccdd3624b0394d6ef21357584e7b989b08fe832d"
+    },
+    "raw/native-final.json": {
+      "bytes": 112139,
+      "sha256": "cf4060d5ae34c9d0b6b887f9d4266941671b1d95ab2e72594e2de2ae36d0e163"
+    },
+    "raw/native-initial.json": {
+      "bytes": 47526,
+      "sha256": "d580ab0990713b21e40b0ea9df9cf9626e91d8fb8a60e93c63b6fd32b34528ad"
+    },
+    "raw/native-result.json": {
+      "bytes": 85113,
+      "sha256": "83960ffeade28b32c3365e6486a646cd92f6d7dec78a19703f084c4c8036da13"
+    },
+    "raw/next-use-observations.json": {
+      "bytes": 2354,
+      "sha256": "bf695b6729d12f6d36920529a3c8cf0501add0e84a1ea4aab2699221348843ff"
+    },
+    "raw/next-use-result.json": {
+      "bytes": 3534,
+      "sha256": "07cccce717a13face716b4a8c02dd78b97bcb5ff15d2fd345c7f8c31eed5b643"
+    },
+    "raw/repair-wire-cache-config.json": {
+      "bytes": 527,
+      "sha256": "75d1806048d924bea61b2c292509cefc9f1d0899c9ce652bd828f794f171b787"
+    },
+    "raw/source-spec.json": {
+      "bytes": 10295,
+      "sha256": "83e4ab28cd84813c1a489c4c53222764b6437edf0eaad8924776c0777ff61835"
+    },
+    "raw/storage-wire-cache-config.json": {
+      "bytes": 527,
+      "sha256": "992e47f1a9a8d6ef27c5a18f32ba2d4c0c57a33ebbf01638ee3be110add3edee"
+    },
+    "raw/worker-cost-events.jsonl": {
+      "bytes": 1428,
+      "sha256": "956787a02994cae6e716624499d96bbdf28833124a13e8e1f20697f731f101d4"
+    },
+    "raw/worker-ready.json": {
+      "bytes": 4247,
+      "sha256": "cf947d04aefc06a192b288e16d86b6992535fbdfe84151c643f883f08034036c"
+    },
+    "raw/worker-supervisor.json": {
+      "bytes": 2834,
+      "sha256": "5a5bc5f26236265472fa210d57ee3f4ff44b11f364036102fc8f632d28968a59"
+    },
+    "raw/wrapper-native-started.json": {
+      "bytes": 459,
+      "sha256": "71b6e804b43ac4b311f71afc607c3a5975df1fbe94201b3115c32cb753cf6162"
+    },
+    "raw/wrapper-observation.json": {
+      "bytes": 3485,
+      "sha256": "9a5825d35c9ffbe8f928d733fe90d787237c8da12c17556c491fb66380cdee83"
+    },
+    "raw/wrapper-start.json": {
+      "bytes": 1363,
+      "sha256": "1584091aed9f0fc44de363d554b75f9a6de138dc6d2cdeac884f16cf1cc97070"
+    },
+    "result.json": {
+      "bytes": 557,
+      "sha256": "9138b9f208fbbf3a7190ae5ca3cedfed96577fcaea37872b22d9407fd87c22c5"
+    },
+    "source-references.json": {
+      "bytes": 2849,
+      "sha256": "7607fe28a7f4b3a915fd06fdc9972ca9a4d28a85d2126a9ae49458fe478fff89"
+    },
+    "source/scripts/llm_cell_sealed_worker_v1.py.txt": {
+      "bytes": 45100,
+      "sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b"
+    },
+    "source/scripts/llm_runtime_pilot.py.txt": {
+      "bytes": 125239,
+      "sha256": "d2854289ae810115bccd3b7714c3d40b03cc6ec216747d6fca653aeac9299bd7"
+    },
+    "source/trillionnium/Cargo.toml.txt": {
+      "bytes": 2204,
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    "source/trillionnium/crates/trnm-data-availability/src/cell/erasure/custody.rs.txt": {
+      "bytes": 19368,
+      "sha256": "d61ce12d4d4a99e559c20ba465079ad3e57f888bf944acddcf1fcaf4d1101e7e"
+    },
+    "source/trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/mod.rs.txt": {
+      "bytes": 28303,
+      "sha256": "6f6fb3397d6be92d851aa4ad631ea7ddba70247f80f5e6d1bf56311bf78e77b6"
+    },
+    "source/trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/recovery.rs.txt": {
+      "bytes": 16707,
+      "sha256": "517e27e7d514d0469deab4004bcb76b224938712e09208cee58e211d2cdafdb4"
+    },
+    "source/trillionnium/crates/trnm-pon-node/src/store/storage_service.rs.txt": {
+      "bytes": 18462,
+      "sha256": "66a0006a069aa50ed5e63eb13d329c6588ea1b460ce869969234a3d313a94f14"
+    },
+    "source/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/recovery.rs.txt": {
+      "bytes": 29324,
+      "sha256": "937aea71f75fcedc5bded4cdd5b60d84cfef89ab8a755c5d5e13da8e372d92ed"
+    },
+    "summary.json": {
+      "bytes": 20898,
+      "sha256": "85330031fe216cac833dda4192fdfc43cf8e6ca14206246a34fc6ae1740c12e1"
+    }
+  },
+  "original_raw": {
+    "checked-artifact.json": {
+      "bytes": 18082,
+      "copy": "raw/checked-artifact.json",
+      "path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/checked-test-profile-s3/accepted-artifact.json",
+      "sha256": "f34056fa5ab8fd8e5360975350d615d140ba5b9fc26e9afcd47ac3c297dc7f3e"
+    },
+    "checked-build-start.json": {
+      "bytes": 1245,
+      "copy": "raw/checked-build-start.json",
+      "path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/checked-test-profile-s3/start.json",
+      "sha256": "292be91695df3bccaa3501dc315a9426cacc408fcab5e2454fb9135517cc98f9"
+    },
+    "model-config.json": {
+      "bytes": 2912,
+      "copy": "raw/model-config.json",
+      "path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-control/model-config-attempt02-s3.json",
+      "sha256": "111d10f2e6eea734ed016ae6ccdd3624b0394d6ef21357584e7b989b08fe832d"
+    },
+    "native-final.json": {
+      "bytes": 112139,
+      "copy": "raw/native-final.json",
+      "path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/native-final.json",
+      "sha256": "cf4060d5ae34c9d0b6b887f9d4266941671b1d95ab2e72594e2de2ae36d0e163"
+    },
+    "native-initial.json": {
+      "bytes": 47526,
+      "copy": "raw/native-initial.json",
+      "path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/native-initial.json",
+      "sha256": "d580ab0990713b21e40b0ea9df9cf9626e91d8fb8a60e93c63b6fd32b34528ad"
+    },
+    "native-result.json": {
+      "bytes": 85113,
+      "copy": "raw/native-result.json",
+      "path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-result.json",
+      "sha256": "83960ffeade28b32c3365e6486a646cd92f6d7dec78a19703f084c4c8036da13"
+    },
+    "next-use-observations.json": {
+      "bytes": 2354,
+      "copy": "raw/next-use-observations.json",
+      "path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/next-use-observations.json",
+      "sha256": "bf695b6729d12f6d36920529a3c8cf0501add0e84a1ea4aab2699221348843ff"
+    },
+    "next-use-result.json": {
+      "bytes": 3534,
+      "copy": "raw/next-use-result.json",
+      "path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/next-use-result.json",
+      "sha256": "07cccce717a13face716b4a8c02dd78b97bcb5ff15d2fd345c7f8c31eed5b643"
+    },
+    "repair-wire-cache-config.json": {
+      "bytes": 527,
+      "copy": "raw/repair-wire-cache-config.json",
+      "path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/repair-wire-cache-config.json",
+      "sha256": "75d1806048d924bea61b2c292509cefc9f1d0899c9ce652bd828f794f171b787"
+    },
+    "source-spec.json": {
+      "bytes": 10295,
+      "copy": "raw/source-spec.json",
+      "path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/source-inputs.native-v2.attempt02.json",
+      "sha256": "83e4ab28cd84813c1a489c4c53222764b6437edf0eaad8924776c0777ff61835"
+    },
+    "storage-wire-cache-config.json": {
+      "bytes": 527,
+      "copy": "raw/storage-wire-cache-config.json",
+      "path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/native-shards/storage-wire-cache-config.json",
+      "sha256": "992e47f1a9a8d6ef27c5a18f32ba2d4c0c57a33ebbf01638ee3be110add3edee"
+    },
+    "worker-cost-events.jsonl": {
+      "bytes": 1428,
+      "copy": "raw/worker-cost-events.jsonl",
+      "path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/worker/cost-events.jsonl",
+      "sha256": "956787a02994cae6e716624499d96bbdf28833124a13e8e1f20697f731f101d4"
+    },
+    "worker-ready.json": {
+      "bytes": 4247,
+      "copy": "raw/worker-ready.json",
+      "path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/worker/ready.json",
+      "sha256": "cf947d04aefc06a192b288e16d86b6992535fbdfe84151c643f883f08034036c"
+    },
+    "worker-supervisor.json": {
+      "bytes": 2834,
+      "copy": "raw/worker-supervisor.json",
+      "path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02/worker/supervisor.json",
+      "sha256": "5a5bc5f26236265472fa210d57ee3f4ff44b11f364036102fc8f632d28968a59"
+    },
+    "wrapper-native-started.json": {
+      "bytes": 459,
+      "copy": "raw/wrapper-native-started.json",
+      "path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02-wrapper/native-started.json",
+      "sha256": "71b6e804b43ac4b311f71afc607c3a5975df1fbe94201b3115c32cb753cf6162"
+    },
+    "wrapper-observation.json": {
+      "bytes": 3485,
+      "copy": "raw/wrapper-observation.json",
+      "path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02-wrapper/observation.json",
+      "sha256": "9a5825d35c9ffbe8f928d733fe90d787237c8da12c17556c491fb66380cdee83"
+    },
+    "wrapper-start.json": {
+      "bytes": 1363,
+      "copy": "raw/wrapper-start.json",
+      "path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02-wrapper/start.json",
+      "sha256": "1584091aed9f0fc44de363d554b75f9a6de138dc6d2cdeac884f16cf1cc97070"
+    }
+  },
+  "pinned_source": {
+    "scripts/llm_cell_sealed_worker_v1.py": {
+      "copy": "source/scripts/llm_cell_sealed_worker_v1.py.txt",
+      "git_blob": "015d6cc4af9146cfd62967463614f27dc6945ee5",
+      "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+      "sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b"
+    },
+    "scripts/llm_runtime_pilot.py": {
+      "copy": "source/scripts/llm_runtime_pilot.py.txt",
+      "git_blob": "61ff601bb77f286fa9486f75c7a7dbaec0bcca14",
+      "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+      "sha256": "d2854289ae810115bccd3b7714c3d40b03cc6ec216747d6fca653aeac9299bd7"
+    },
+    "trillionnium/Cargo.toml": {
+      "copy": "source/trillionnium/Cargo.toml.txt",
+      "git_blob": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+      "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+      "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+    },
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure/custody.rs": {
+      "copy": "source/trillionnium/crates/trnm-data-availability/src/cell/erasure/custody.rs.txt",
+      "git_blob": "3822253784d9c4b6bec5d9b587deabc4c67d247a",
+      "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+      "sha256": "d61ce12d4d4a99e559c20ba465079ad3e57f888bf944acddcf1fcaf4d1101e7e"
+    },
+    "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/mod.rs": {
+      "copy": "source/trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/mod.rs.txt",
+      "git_blob": "c326a6bc26c857607518e0c90e499b4662e30485",
+      "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+      "sha256": "6f6fb3397d6be92d851aa4ad631ea7ddba70247f80f5e6d1bf56311bf78e77b6"
+    },
+    "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/recovery.rs": {
+      "copy": "source/trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/recovery.rs.txt",
+      "git_blob": "6b28e3d3f318ea36e3f29ee44240db5dbc678366",
+      "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+      "sha256": "517e27e7d514d0469deab4004bcb76b224938712e09208cee58e211d2cdafdb4"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs": {
+      "copy": "source/trillionnium/crates/trnm-pon-node/src/store/storage_service.rs.txt",
+      "git_blob": "245432ec69f4ec839ed16b84c6aef75529e20193",
+      "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+      "sha256": "66a0006a069aa50ed5e63eb13d329c6588ea1b460ce869969234a3d313a94f14"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/recovery.rs": {
+      "copy": "source/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/recovery.rs.txt",
+      "git_blob": "0d22812fc1ac9cb2d77e151c48c18351a791524c",
+      "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+      "sha256": "937aea71f75fcedc5bded4cdd5b60d84cfef89ab8a755c5d5e13da8e372d92ed"
+    }
+  },
+  "provenance_gap_preserved": "Checked-build wrapper own prelaunch self hash was NOT_RECORDED; original start.controller_sha256 binds imported native-controller prefix. No retrospective pre-run record fabricated."
+}

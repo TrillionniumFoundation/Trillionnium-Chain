@@ -709,7 +709,8 @@ fn fetch_manifest_via(
         None => {
             let mut received = None;
             let mut last_io = None;
-            for peer in peers {
+            for index in transport.responses.peer_order(peers, 0, 0)? {
+                let peer = &peers[index];
                 transport.check_cancelled()?;
                 if transport.responses.is_quarantined(*peer)? {
                     continue;
@@ -754,6 +755,7 @@ fn fetch_manifest_via(
                         break;
                     }
                     Err(error) => {
+                        transport.responses.note_peer_failure(*peer)?;
                         rejected += 1;
                         if let CellErrorV1::Io(error) = error {
                             last_io = Some(error);
@@ -804,10 +806,7 @@ fn download_chunk_via(
 ) -> CellResultV1<(Vec<u8>, SocketAddr, usize)> {
     let mut last_io = None;
     let mut rejected = 0;
-    let mut indices: Vec<_> = (0..peers.len())
-        .map(|offset| (order + offset) % peers.len())
-        .collect();
-    indices.sort_by_key(|index| preferred & (1_u8 << *index) == 0);
+    let indices = transport.responses.peer_order(peers, order, preferred)?;
     for index in indices {
         transport.check_cancelled()?;
         let peer = peers[index];
@@ -838,6 +837,7 @@ fn download_chunk_via(
             Err(CellErrorV1::Io(error)) => last_io = Some(error),
             Err(_) => (),
         }
+        transport.responses.note_peer_failure(peer)?;
         rejected += 1;
     }
     Err(unavailable_with_transport_cause(transport, last_io))
@@ -1027,6 +1027,10 @@ struct ResponseBytes {
     // instead of allowing each member/retry to forget the same corrupt peer.
     // Existing callers admit at most eight distinct payload peers.
     quarantined: BTreeSet<SocketAddr>,
+    // Soft ordering only: an absent/transiently failed peer remains a fallback
+    // for every object. The original session owns this bounded history, keyed
+    // by actual endpoint rather than a caller-dependent peer-list position.
+    peer_failures: BTreeMap<SocketAddr, u64>,
 }
 
 impl ResponseBudget {
@@ -1038,6 +1042,7 @@ impl ResponseBudget {
                 reserved: 0,
                 received: 0,
                 quarantined: BTreeSet::new(),
+                peer_failures: BTreeMap::new(),
             }),
             returned: Condvar::new(),
             cancelled: AtomicBool::new(false),
@@ -1069,6 +1074,48 @@ impl ResponseBudget {
         if self.received()? == self.maximum {
             return Err(io::Error::other("CELL_RESPONSE_BYTE_BUDGET_EXHAUSTED"));
         }
+        Ok(())
+    }
+
+    fn peer_order(
+        &self,
+        peers: &[SocketAddr],
+        start: usize,
+        preferred: u8,
+    ) -> CellResultV1<Vec<usize>> {
+        require(peers.len() <= 8, "configured peer count")?;
+        // Snapshot before sorting so concurrent workers cannot change the
+        // comparator. Explicit current availability hints remain first; equal
+        // scores preserve the caller's original cyclic order.
+        let failures = self
+            .state
+            .lock()
+            .map_err(|_| CellErrorV1::Invalid("cell peer state poisoned"))?
+            .peer_failures
+            .clone();
+        let mut indices: Vec<_> = (0..peers.len())
+            .map(|offset| (start + offset) % peers.len())
+            .collect();
+        indices.sort_by_key(|index| {
+            (
+                preferred & (1_u8 << *index) == 0,
+                failures.get(&peers[*index]).copied().unwrap_or(0),
+            )
+        });
+        Ok(indices)
+    }
+
+    fn note_peer_failure(&self, peer: SocketAddr) -> CellResultV1<()> {
+        let mut state = self
+            .state
+            .lock()
+            .map_err(|_| CellErrorV1::Invalid("cell peer state poisoned"))?;
+        require(
+            state.peer_failures.contains_key(&peer) || state.peer_failures.len() < 8,
+            "cell peer failure history bound",
+        )?;
+        let count = state.peer_failures.entry(peer).or_default();
+        *count = count.saturating_add(1);
         Ok(())
     }
 

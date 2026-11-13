@@ -1,0 +1,315 @@
+use super::*;
+use trnm_pon_node::{
+    NativeCellPagedShardRecoveryBudgetV2, NativeCellShardRecoveryLimitsV1,
+    NativeCellShardRecoveryRequestV1,
+};
+
+fn usage_json(usage: trnm_pon_node::NativeCellShardRecoveryUsageV1) -> Value {
+    json!({
+        "plan_attempts_committed": usage.plan_attempts_committed,
+        "provider_reads_committed": usage.provider_reads_committed,
+        "input_bytes_committed": usage.input_bytes_committed,
+        "reconstruction_bytes_committed": usage.reconstruction_bytes_committed,
+        "repairs_committed": usage.repairs_committed,
+        "repair_bytes_committed": usage.repair_bytes_committed,
+        "cpu_ns_committed": usage.cpu_ns_committed,
+    })
+}
+fn cpu_allowance(deadline: Instant) -> Result<u64> {
+    before(deadline)?;
+    let remaining = u64::try_from(
+        deadline
+            .saturating_duration_since(Instant::now())
+            .as_nanos(),
+    )?;
+    check(remaining > 0, "remaining original CPU/wall allowance")?;
+    Ok(remaining)
+}
+
+pub(super) fn repair_requests(
+    operation: Hash,
+    storage: &NativeCellRetainedShardPlanRequestV1,
+    providers: &[CellRs46ShardProviderV1; 6],
+    sources: &[NativeFundingSourceV1],
+    deadline: Instant,
+) -> Result<Vec<Option<NativeCellShardRepairRequestV1>>> {
+    check(
+        sources.len() * 3 == storage.slots.len(),
+        "two complete repair-source rosters",
+    )?;
+    let cpu_ns = cpu_allowance(deadline)?;
+    let mut repairs = vec![None; storage.slots.len()];
+    let mut source_index = 0;
+    for (index, entry) in storage.slots.iter().enumerate() {
+        if index % 6 < 4 {
+            continue;
+        }
+        let contract = &entry.contract;
+        let repair_operation = identity(operation, b"repair-operation", index);
+        let repair_claim = identity(operation, b"repair-claim", index);
+        let subject = native_cell_shard_repair_subject_v1(
+            &providers[index % 6],
+            contract,
+            repair_operation,
+            repair_claim,
+        );
+        let resources = NativeBudgetResourcesV1::Repair {
+            cpu_ns,
+            download_bytes: contract.manifest().size(),
+            upload_bytes: contract.manifest().size(),
+            attempts: 1,
+        };
+        let beneficiary = contract.placement().placements[index % 6].repair_owner;
+        let (policy, claim) = funding::policy_claim(
+            operation,
+            b"repair-budget",
+            index,
+            sources[source_index],
+            (repair_claim, subject, beneficiary),
+            resources,
+        );
+        repairs[index] = Some(NativeCellShardRepairRequestV1 {
+            policy,
+            claim,
+            binding: contract.binding().clone(),
+            operation: contract.operation(),
+            repair_operation,
+        });
+        source_index += 1;
+    }
+    check(
+        source_index == sources.len(),
+        "complete two-provider repair roster",
+    )?;
+    Ok(repairs)
+}
+
+pub(super) struct NativeRecovery<'a> {
+    pub node: &'a mut Node,
+    pub budgets: &'a mut NativeBudgetStoreV1,
+    pub catalog: &'a mut CellVersionRetentionStoreV3,
+    pub file: &'a CellPagedRetainedShardPlanFileV2,
+    pub providers: &'a mut [CellRs46ShardProviderV1; 6],
+    pub cache: &'a CellStoreV1,
+    pub storage: NativeCellRetainedShardPlanRequestV1,
+    pub repairs: Vec<Option<NativeCellShardRepairRequestV1>>,
+    pub payload: u64,
+    pub wire_bytes: u64,
+    pub deadline: Instant,
+    pub output: &'a Path,
+}
+
+pub(super) fn repair_native(inputs: NativeRecovery<'_>) -> Result<Value> {
+    let NativeRecovery {
+        node,
+        budgets,
+        catalog,
+        file,
+        providers,
+        cache,
+        storage,
+        repairs,
+        payload,
+        wire_bytes,
+        deadline,
+        output,
+    } = inputs;
+    let repair_bytes: u64 = repairs
+        .iter()
+        .enumerate()
+        .filter(|(_, r)| r.is_some())
+        .map(|(index, _)| storage.slots[index].contract.manifest().size())
+        .sum();
+    let count = repairs.iter().filter(|r| r.is_some()).count();
+    let cpu_ns = cpu_allowance(deadline)?;
+    let mut budget = NativeCellPagedShardRecoveryBudgetV2::new(NativeCellShardRecoveryLimitsV1 {
+        deadline,
+        maximum_plan_attempts: 1,
+        maximum_provider_reads: 3 * storage.slots.len() as u64 + count as u64,
+        maximum_input_bytes: 6 * wire_bytes + repair_bytes,
+        maximum_reconstruction_bytes: 3 * (wire_bytes + payload),
+        maximum_repairs: count as u64,
+        maximum_repair_bytes: repair_bytes,
+        maximum_cpu_ns: cpu_ns,
+        cpu_ns_per_attempt: cpu_ns,
+    })?;
+    let result = node.recover_native_cell_paged_shard_plan(
+        budgets,
+        NativeCellPagedRetainedShardPlanTargetsV2 {
+            catalog,
+            plan_file: file,
+            providers,
+            cache,
+        },
+        NativeCellShardRecoveryRequestV1 { storage, repairs },
+        &mut budget,
+    );
+    let result = match result {
+        Ok(result) => result,
+        Err(failure) => {
+            save(
+                &output.join("native-recovery-failure.json"),
+                &json!({
+                    "passed": false, "error": failure.to_string(),
+                    "usage": usage_json(failure.usage), "codec": codec_json(failure.codec_usage),
+                    "detected_damage": failure.detected_damage.len(),
+                    "completed_actions": failure.completed_actions.len(),
+                    "cpu": failure.cpu.map(|c| json!({"observed_ns": c.observed_ns,
+                        "ceiling_ns": c.ceiling_ns})),
+                }),
+            )?;
+            return Err(failure);
+        }
+    };
+    check(
+        result.detected_damage.len() == count
+            && result.actions.len() == count
+            && result
+                .actions
+                .iter()
+                .all(|a| a.native.replay == NativeBudgetReplayV1::New)
+            && result
+                .slots
+                .iter()
+                .all(|s| s.native.replay == NativeBudgetReplayV1::Done),
+        "every destroyed original target repaired and all initial intents Done",
+    )?;
+    Ok(json!({
+        "plan": hex::encode(result.plan), "catalog_anchor": hex::encode(result.catalog.encode()),
+        "pages": result.pages.len(), "slots": result.slots.len(),
+        "detected_damage": result.detected_damage.len(), "repaired_slots": count,
+        "original_storage_intents_done": true,
+        "usage": usage_json(result.usage), "codec": codec_json(result.codec_usage),
+        "cpu": {"observed_ns": result.cpu.observed_ns, "ceiling_ns": result.cpu.ceiling_ns,
+            "metadata_funding_preflight_included": false},
+        "repairs": result.actions.iter().map(|a| json!({
+            "operation": hex::encode(a.operation), "repair_operation": hex::encode(a.repair_operation),
+            "effect": hex::encode(a.native.effect), "target_receipt": hex::encode(a.native.target_receipt),
+            "replay": format!("{:?}", a.native.replay),
+        })).collect::<Vec<_>>(),
+    }))
+}
+
+pub(super) struct ConsumerRestore<'a> {
+    pub file: &'a CellPagedRetainedShardPlanFileV2,
+    pub providers: &'a mut [CellRs46ShardProviderV1; 6],
+    pub consumer: &'a CellStoreV1,
+    pub version: &'a CellVersionManifestV1,
+    pub content: &'a CellVersionContentV2,
+    pub model: &'a CellLoaderContextV1,
+    pub environment: &'a CellLoaderContextV1,
+    pub payload: u64,
+    pub wire_bytes: u64,
+    pub deadline: Instant,
+}
+
+/// Every original chunk comes from exactly four current original provider
+/// readbacks, then strong content verification and actual CAS readback.
+pub(super) fn restore_consumer(inputs: ConsumerRestore<'_>) -> Result<Value> {
+    let ConsumerRestore {
+        file,
+        providers,
+        consumer,
+        version,
+        content,
+        model,
+        environment,
+        payload,
+        wire_bytes,
+        deadline,
+    } = inputs;
+    check(
+        consumer.cache_usage()?.chunk_rows == 0,
+        "actually empty cold consumer",
+    )?;
+    let expected = CellVersionLoaderContextV1 {
+        commitment: version.commitment(),
+        model,
+        environment,
+    };
+    let strong = content.pin_for_owner(&expected, content.commitment())?;
+    for manifest in version.manifests() {
+        before(deadline)?;
+        consumer.put_manifest(manifest.id(), &manifest.encode())?;
+    }
+    let chunks = file.plan().chunk_count();
+    let mut budget = CellRs46RepairBudgetV1::new_with_cache(
+        deadline,
+        chunks as u32,
+        wire_bytes,
+        wire_bytes + payload,
+        2 * payload,
+    );
+    let mut restored = 0;
+    let mut provider_bytes = 0_u64;
+    for page_index in 0..file.plan().page_count() {
+        let page = file.read_page(page_index, deadline)?;
+        for chunk in page.chunks() {
+            let mut wires = Vec::with_capacity(4);
+            for (slot, provider) in providers.iter_mut().enumerate().take(4) {
+                before(deadline)?;
+                let stored = provider.read(
+                    chunk.binding(),
+                    chunk.slots()[slot].operation(),
+                    deadline,
+                    &mut || {
+                        if Instant::now() < deadline {
+                            Ok(())
+                        } else {
+                            Err(CellErrorV1::Invalid("original consumer restore deadline"))
+                        }
+                    },
+                )?;
+                wires.push(stored.shard().encode());
+            }
+            provider_bytes += wires.iter().map(|w| w.len() as u64).sum::<u64>();
+            let inputs: Vec<_> = wires
+                .iter()
+                .enumerate()
+                .map(|(slot, wire)| CellRs46ShardInputV1 {
+                    index: slot as u8,
+                    wire,
+                })
+                .collect();
+            let original = &chunk.slots()[0];
+            let repaired = original.codeword().repair_chunk_to_cache(
+                chunk.binding(),
+                original.codeword().id(),
+                &inputs,
+                CellRs46CacheTargetV1 {
+                    store: consumer,
+                    content: &strong,
+                },
+                &mut budget,
+            )?;
+            check(
+                repaired.cache_readback_observed() && repaired.verified_slots() == [0, 1, 2, 3],
+                "actual four-provider original chunk and strong cache readback",
+            )?;
+            restored += 1;
+        }
+    }
+    check(
+        restored == chunks,
+        "complete cold chunk coverage across every page",
+    )?;
+    let mut readback = CellContentReadSessionV2::new(
+        CellReleaseLimitsV1 {
+            max_payload_bytes: CAPTURE_BOUND,
+            max_chunks: 2_048,
+            deadline,
+        },
+        1,
+    )?;
+    content.verify_cached(consumer, &expected, content.commitment(), &mut readback)?;
+    before(deadline)?;
+    Ok(json!({
+        "restored_original_chunks": restored, "original_provider_slots": [0, 1, 2, 3],
+        "actual_provider_payload_wire_bytes": provider_bytes,
+        "codec": codec_json(budget.usage()), "complete_content_readback": true,
+        "complete_content_reserved_bytes": readback.usage().reserved_payload_bytes,
+        "complete_content_reserved_chunks": readback.usage().reserved_chunks,
+        "source_catalog_payload_used": false,
+        "same_tcv1": hex::encode(version.commitment()), "same_tcv2": hex::encode(content.commitment()),
+    }))
+}

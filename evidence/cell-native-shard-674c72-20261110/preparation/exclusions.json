@@ -1,0 +1,71 @@
+{
+  "deferred_control": [
+    "run_model.py",
+    "run_native_checks.py",
+    "run_source_checks.py"
+  ],
+  "deferred_followup": [
+    "source-qualified-s2",
+    "native-qualified-s2",
+    "s2-tmp-inode-observation.json",
+    "real-model campaign after root confirmation"
+  ],
+  "deferred_validation": [
+    "native-qualified-s2",
+    "source-qualified-s2",
+    "tmp"
+  ],
+  "schema": "trnm.closed-preparation-exclusions.v1",
+  "selected_subtree_exclusions": [
+    {
+      "kind": "directory",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/native-example-attempt01/tmp",
+      "reason": "temporary/runtime payload or symlink; contents not read"
+    },
+    {
+      "kind": "directory",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/native-example-attempt02/tmp",
+      "reason": "temporary/runtime payload or symlink; contents not read"
+    },
+    {
+      "kind": "directory",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/v3-component-attempt01/tmp",
+      "reason": "temporary/runtime payload or symlink; contents not read"
+    },
+    {
+      "kind": "directory",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/v3-component-attempt02/tmp",
+      "reason": "temporary/runtime payload or symlink; contents not read"
+    },
+    {
+      "kind": "directory",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/v3-component-attempt03/tmp",
+      "reason": "temporary/runtime payload or symlink; contents not read"
+    },
+    {
+      "kind": "directory",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/v3-component-attempt04/tmp",
+      "reason": "temporary/runtime payload or symlink; contents not read"
+    },
+    {
+      "kind": "directory",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/v3-core-attempt01/tmp",
+      "reason": "temporary/runtime payload or symlink; contents not read"
+    },
+    {
+      "kind": "directory",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/v3-core-attempt02/tmp",
+      "reason": "temporary/runtime payload or symlink; contents not read"
+    },
+    {
+      "kind": "directory",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/v3-diagnostics-attempt01/tmp",
+      "reason": "temporary/runtime payload or symlink; contents not read"
+    }
+  ],
+  "source_files_outside_explicit_selection_not_traversed": true,
+  "unexecuted_prepared_controls": [
+    "run-native-example-attempt03.py",
+    "run-v3-precheck-attempt01.py"
+  ]
+}

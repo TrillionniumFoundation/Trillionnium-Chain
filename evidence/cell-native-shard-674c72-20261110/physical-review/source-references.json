@@ -1,0 +1,50 @@
+{
+  "scripts/llm_cell_sealed_worker_v1.py": {
+    "copy": "source/scripts/llm_cell_sealed_worker_v1.py.txt",
+    "git_blob": "015d6cc4af9146cfd62967463614f27dc6945ee5",
+    "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b"
+  },
+  "scripts/llm_runtime_pilot.py": {
+    "copy": "source/scripts/llm_runtime_pilot.py.txt",
+    "git_blob": "61ff601bb77f286fa9486f75c7a7dbaec0bcca14",
+    "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "sha256": "d2854289ae810115bccd3b7714c3d40b03cc6ec216747d6fca653aeac9299bd7"
+  },
+  "trillionnium/Cargo.toml": {
+    "copy": "source/trillionnium/Cargo.toml.txt",
+    "git_blob": "44df8f8d5eec880d10da42c12a903c03658cfc65",
+    "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+  },
+  "trillionnium/crates/trnm-data-availability/src/cell/erasure/custody.rs": {
+    "copy": "source/trillionnium/crates/trnm-data-availability/src/cell/erasure/custody.rs.txt",
+    "git_blob": "3822253784d9c4b6bec5d9b587deabc4c67d247a",
+    "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "sha256": "d61ce12d4d4a99e559c20ba465079ad3e57f888bf944acddcf1fcaf4d1101e7e"
+  },
+  "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/mod.rs": {
+    "copy": "source/trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/mod.rs.txt",
+    "git_blob": "c326a6bc26c857607518e0c90e499b4662e30485",
+    "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "sha256": "6f6fb3397d6be92d851aa4ad631ea7ddba70247f80f5e6d1bf56311bf78e77b6"
+  },
+  "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/recovery.rs": {
+    "copy": "source/trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/recovery.rs.txt",
+    "git_blob": "6b28e3d3f318ea36e3f29ee44240db5dbc678366",
+    "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "sha256": "517e27e7d514d0469deab4004bcb76b224938712e09208cee58e211d2cdafdb4"
+  },
+  "trillionnium/crates/trnm-pon-node/src/store/storage_service.rs": {
+    "copy": "source/trillionnium/crates/trnm-pon-node/src/store/storage_service.rs.txt",
+    "git_blob": "245432ec69f4ec839ed16b84c6aef75529e20193",
+    "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "sha256": "66a0006a069aa50ed5e63eb13d329c6588ea1b460ce869969234a3d313a94f14"
+  },
+  "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/recovery.rs": {
+    "copy": "source/trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3/recovery.rs.txt",
+    "git_blob": "0d22812fc1ac9cb2d77e151c48c18351a791524c",
+    "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "sha256": "937aea71f75fcedc5bded4cdd5b60d84cfef89ab8a755c5d5e13da8e372d92ed"
+  }
+}

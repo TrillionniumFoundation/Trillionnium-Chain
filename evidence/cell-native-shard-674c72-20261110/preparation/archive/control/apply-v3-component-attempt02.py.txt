@@ -1,0 +1,23 @@
+import pathlib,hashlib,json,subprocess,os
+root=pathlib.Path('/home/qq/work/chain-cell-native-shard-674c72-20261110');out=pathlib.Path(str(root)+'-validation/v3-component-attempt02');out.mkdir(exist_ok=False)
+p=root/'trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/mod.rs'
+with (out/'preflight.log').open('w') as log:r=subprocess.run(['bash','scripts/project-preflight.sh'],cwd=root,stdout=log,stderr=subprocess.STDOUT)
+if r.returncode:raise RuntimeError('preflight failed')
+if hashlib.sha256(p.read_bytes()).hexdigest()!='bbafd9f715dde61a310b63d166530c1b4de79b382e38cebc2dfc4d52a9fe9cdd':raise RuntimeError('lease mismatch')
+s=p.read_text();old='        &storage,\n        &sources,'
+if s.count(old)!=1:raise RuntimeError('literal patch cardinality')
+p.write_text(s.replace(old,'        storage.clone(),\n        &sources,'))
+tc=pathlib.Path('/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu')
+with (out/'fmt.log').open('w') as log:r=subprocess.run([str(tc/'bin/rustfmt'),'--edition','2021',str(p)],cwd=root,stdout=log,stderr=subprocess.STDOUT)
+if r.returncode:raise RuntimeError('fmt failed')
+tmp=out/'tmp';tmp.mkdir();env=os.environ.copy();ssl='/home/qq/work/chain-cell-discovery-provider-f2568-20261108/runner/trnm-pq-provider-3.5.9.ReYCJ9gV/install'
+env.update(RUSTC=str(tc/'bin/rustc'),RUSTDOC=str(tc/'bin/rustdoc'),CARGO_HOME='/home/qq/.cargo',LD_LIBRARY_PATH=str(tc/'lib'),CARGO_BUILD_JOBS='2',CARGO_INCREMENTAL='0',CARGO_TARGET_DIR=str(root)+'-target',TMPDIR=str(tmp),OPENSSL_DIR=ssl,TRNM_PQ_OPENSSL=ssl+'/bin/openssl')
+base=[str(tc/'bin/cargo')];common=['--locked','--offline','--jobs','2','-p','trnm-pon-node','--features','pq-native-openssl']
+steps=[('example_check',['check',*common,'--example','cell_native_shard_research_next_use_v2']),('node_grouped',['test',*common,'--lib','native_grouped','--','--nocapture','--test-threads=1']),('journal',['test',*common,'--lib','group_child_journal','--','--nocapture','--test-threads=1']),('example_tests',['test',*common,'--example','cell_native_shard_research_next_use_v2','--','--nocapture','--test-threads=1'])]
+results=[]
+for label,args in steps:
+ command=base+args
+ with (out/(label+'.log')).open('w') as log:r=subprocess.run(command,cwd=root/'trillionnium',env=env,stdout=log,stderr=subprocess.STDOUT)
+ results.append({'stage':label,'returncode':r.returncode,'command':command});(out/'results.json').write_text(json.dumps(results,indent=2))
+ print(json.dumps(results[-1]),flush=True);print(''.join((out/(label+'.log')).read_text().splitlines(True)[-100:]),flush=True)
+ if r.returncode:break

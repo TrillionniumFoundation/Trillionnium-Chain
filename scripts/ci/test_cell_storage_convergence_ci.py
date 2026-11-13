@@ -14,6 +14,7 @@ WORKFLOW = ROOT / ".github/workflows/pon-next-architecture-security.yml"
 PYTHON_STEP = "Run all next-architecture Python controls and retained exact fixture"
 NODE_STEP = "Run complete storage-owner module and exact new funding controls"
 DA_STEP = "Run the complete default-feature P2P crate"
+EXAMPLE_STEP = "Retain release Cell component observations"
 SOURCE_BEFORE_STEP = "Verify exact source and ordered prospective merge"
 SOURCE_AFTER_STEP = "Reverify the complete measured source after all attempts"
 OUTCOMES_STEP = "Retain stage outcomes and artifact digests"
@@ -63,6 +64,17 @@ NODE_RUN_BODY = """\
 DA_RUN_BODY = """\
           set -euo pipefail
           bash "$OUT/run-command.sh" p2p-complete cargo +1.95.0 test --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability -- --test-threads=1
+"""
+EXAMPLE_RUN_BODY = """\
+          set -euo pipefail
+          status=0
+          for example in cell_bep52_cost_v1 cell_rs46_cost_v1 cell_signed_sealed_pipeline_v1 cell_bep52_iterative_discovery; do
+            command_status=0
+            timeout --signal=TERM --kill-after=10s 600 cargo +1.95.0 run --locked --release --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --example "$example" > "$OUT/$example.json" 2> "$OUT/$example.log" || command_status=$?
+            printf '%s\\n' "$command_status" > "$OUT/$example.exit"
+            if test "$command_status" != 0; then status=1; fi
+          done
+          exit "$status"
 """
 NODE_REQUIRED_NAMES = [
     "store::storage_service::tests::version::native_version_reorg_keeps_custody_but_cannot_grant_new_funding_or_foreign_retirement",
@@ -252,6 +264,14 @@ def validate(text: str) -> None:
     for name in COMPONENT_REQUIRED_NAMES:
         exact_line(components, "            " + name)
 
+    # A successful all-targets build cannot replace actual UDP/TCP/content use.
+    examples = step(text, EXAMPLE_STEP)
+    require(examples.split("        run: |\n", 1)[0]
+            == "        id: examples\n" + NATIVE_GUARD + "\n        shell: bash\n",
+            "Cell example source guard or execution header changed")
+    require(run_body(examples) == EXAMPLE_RUN_BODY,
+            "Cell examples must execute their complete original body and retain failures")
+
     for name, label in ((SOURCE_BEFORE_STEP, "source-before"), (SOURCE_AFTER_STEP, "source-after")):
         block = step(text, name)
         exact_line(block, '          args=(--kind "$SOURCE_KIND" --expected-head "$EXPECTED_HEAD")')
@@ -361,6 +381,22 @@ class CellStorageConvergenceCiControls(unittest.TestCase):
 
     def test_current_source_preserves_complete_runtime_and_failure_seams(self) -> None:
         validate(self.text)
+
+    def test_cell_examples_require_real_execution_and_preserve_failures(self) -> None:
+        original = step(self.text, EXAMPLE_STEP)
+        for old, new in (
+            (" cell_bep52_iterative_discovery;", ";"),
+            ("cargo +1.95.0 run ", "cargo +1.95.0 build "),
+            ("|| command_status=$?", "|| true"),
+            ('exit "$status"', "exit 0"),
+            ("${{ always() &&", "${{ false &&"),
+            ("cell_bep52_iterative_discovery; do\n", "cell_bep52_iterative_discovery; do\n            continue\n"),
+            ('if test "$command_status" != 0; then status=1; fi\n',
+             'if test "$command_status" != 0; then status=1; fi\n            status=0 # erase failure\n'),
+        ):
+            changed = original.replace(old, new, 1)
+            with self.subTest(old=old):
+                self.rejected(self.text.replace(original.rstrip("\n"), changed.rstrip("\n"), 1))
 
     def test_new_commands_cannot_be_omitted_moved_duplicated_or_stubbed(self) -> None:
         blocks = (step(self.text, PYTHON_STEP), step(self.text, NODE_STEP))

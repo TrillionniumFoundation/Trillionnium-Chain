@@ -1,0 +1,24 @@
+{
+  "deferred_control": [
+    "run_model.py"
+  ],
+  "deferred_followup": [
+    "actual 231 model operation separately authorized",
+    "live native SQLite/cache/arena/model weights"
+  ],
+  "deferred_validation": [
+    "tmp",
+    "real-native-231-operation",
+    "model-prepare-s3-attempt02-input-pin-audit.json"
+  ],
+  "schema": "trnm.checked-build-e6-preflight-exclusions.v1",
+  "selected_subtree_exclusions": [
+    {
+      "kind": "directory",
+      "original_path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/checked-test-profile-s3/binaries",
+      "reason": "temporary/runtime payload or symlink; contents not read"
+    }
+  ],
+  "source_files_outside_explicit_selection_not_traversed": true,
+  "unexecuted_prepared_controls": []
+}

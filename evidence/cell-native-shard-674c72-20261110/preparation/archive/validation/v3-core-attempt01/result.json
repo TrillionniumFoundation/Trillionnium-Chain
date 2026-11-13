@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/home/qq/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+    "check",
+    "--locked",
+    "--offline",
+    "--jobs",
+    "2",
+    "-p",
+    "trnm-pon-node",
+    "--features",
+    "pq-native-openssl",
+    "--lib"
+  ],
+  "returncode": 101,
+  "check_sha256": "564866b5550c9b1f44c6cf2641bf7c2b3307bd2d2c8991d7fd139cea718db314"
+}

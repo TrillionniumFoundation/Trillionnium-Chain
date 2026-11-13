@@ -1,0 +1,20 @@
+{
+  "schema": "trnm.independent-physical-review-launch.v1",
+  "state": "PREPARED_BEFORE_EXECUTION",
+  "prepared_at": "2026-11-10T06:52:12.144Z",
+  "script": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/audit.py",
+  "script_sha256": "a790136fdad01c63d8f5f56d2fe0287093a11ffaaeb5562e09ad9b2c3dd3d53c",
+  "script_bytes": 18550,
+  "script_version": "66306:95163393:18550:1794293460352660703:1794293460356660552",
+  "argv": [
+    "/usr/bin/python3",
+    "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/independent-physical-review-231/audit.py",
+    "a790136fdad01c63d8f5f56d2fe0287093a11ffaaeb5562e09ad9b2c3dd3d53c"
+  ],
+  "reviewed_model_job": "1a1c420eb26-cf39-12d",
+  "runtime_source_head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+  "allowed_operations": "Read closed small reports and pinned Git source; write this new review package only.",
+  "model_execution_authorized": false,
+  "build_execution_authorized": false,
+  "original_database_open_authorized": false
+}

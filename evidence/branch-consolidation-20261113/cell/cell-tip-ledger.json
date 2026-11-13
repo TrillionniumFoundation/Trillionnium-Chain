@@ -1,0 +1,3744 @@
+{
+  "schema": "trnm-cell-branch-review-v1",
+  "status": "HOLD_for_final_composed_source_qualification",
+  "starting_candidate": "b683714cdd5ba241c16c335a81aebc12c1581902",
+  "code_checkpoint": "eedc32adadde4992787073f93340ea4cc531cbe7",
+  "code_checkpoint_tree": "ea9504a313f547d3322298c05e78345c606b27a2",
+  "scope": "46 assigned Cell-related independent tips; controlled local validation only",
+  "tip_count": 46,
+  "source_variants_reviewed": 113,
+  "historical_head_ancestors_here": 9,
+  "groups": {
+    "bounded_lookup_restore": {
+      "disposition": "integrated",
+      "reason": "Bounded iterative BEP5 lookup retains explicit endpoint admission, query/transaction and accumulated-peer limits. Controlled paged restoration preserves original cancellation/deadline owners across attempts; current complete/grouped-shard and payload-observation owners stay selected.",
+      "current_source_mapping": [
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/lookup.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/version_content.rs",
+          "present": true
+        }
+      ],
+      "applied_commits": [
+        "78b5015f053113f61876acff3e01786e7d647fc5"
+      ]
+    },
+    "native_shard": {
+      "disposition": "current_implementation_and_original_evidence_retained",
+      "reason": "Current Copy/Paged/Native routing, complete-release selection and source guards exceed the older example. Keep current runtime/dependencies; retain original shard evidence unchanged and its stale-source negative revision tuple. Historical failed/HOLD observations do not become current qualification.",
+      "current_source_mapping": [
+        {
+          "path": "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs",
+          "present": true
+        },
+        {
+          "path": "scripts/ci/test_pq_authority_effect_register.py",
+          "present": true
+        },
+        {
+          "path": "evidence/cell-native-shard-674c72-20261110",
+          "present": true
+        }
+      ],
+      "applied_commits": [
+        "11996165dd7465bfee4d282ba1af495a6b1c287c"
+      ]
+    },
+    "rs46_domains": {
+      "disposition": "integrated",
+      "reason": "Six unique RS(6,4) shards, two per domain, cannot survive loss of any two of three domains. Twelve replicas can satisfy that layout only if each surviving domain contains four distinct indices. No independent-custody claim follows.",
+      "current_source_mapping": [
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/placement/tests.rs",
+          "present": true
+        },
+        {
+          "path": "docs/development/specs/pon/CELL_STORAGE_CAPACITY_V2.md",
+          "present": true
+        }
+      ],
+      "applied_commits": [
+        "bc13e008b752bf4bfe606c248d93a9eb9ebc3fae"
+      ]
+    },
+    "parallel_pq3": {
+      "disposition": "alternate_protocol_archived_compatible_controls_retained",
+      "reason": "The sole plan selected #823 authenticated epoch-v3. #818 reuses CDP3/CDQ3/CDS3 and database identity/version but changes wire layouts, signed domains and authority schemas. Preserve its DAG/evidence, not an active ambiguous fallback. Current namespace-refusal tests, residency and complete-version behavior stay selected. Keep generic versioned-PQ source detection and example-directory coverage.",
+      "current_source_mapping": [
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/epoch.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth_tests.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/residency/version.rs",
+          "present": true
+        },
+        {
+          "path": "scripts/ci/check_pq_research_integration.py",
+          "present": true
+        }
+      ],
+      "applied_commits": [
+        "d8ea8f63d4dcd0ef36009795aa25a57717e06c2a",
+        "70a4c6b1fb620b116ed0b68a8e945a94ba0d4e7d"
+      ]
+    },
+    "seven_gates_current": {
+      "disposition": "stronger_current_source_retained",
+      "reason": "Keep independent root/profile pins, distinct HEPLCP03 trainer NoUpdate tag/report schema, post-owner deadline checks, CCH1 content-v4 and complete retained key-pool pin equality. Current residency uses complete-release selection and sealed loading; older direct/subset paths would weaken these owners.",
+      "current_source_mapping": [
+        {
+          "path": "scripts/cell_adoption_readback.py",
+          "present": true
+        },
+        {
+          "path": "scripts/cell_learning_iteration_join.py",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/custody.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/pq/version.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/residency.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/version.rs",
+          "present": true
+        }
+      ],
+      "applied_commits": []
+    },
+    "readiness_current": {
+      "disposition": "stronger_current_source_and_original_ancestry_retained",
+      "reason": "Current sequence fixtures retain setup receipts, accept-loop readiness and alignment within one selected wall-clock second for short TTLs. Current transport retains failure observations and multi-source rotation. Do not restore older weaker fixture timing or stale corpus hashes.",
+      "current_source_mapping": [
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
+          "present": true
+        }
+      ],
+      "applied_commits": [
+        "47b5094ad0c8d67790de53f7a1943a3c4fd49e24"
+      ]
+    },
+    "retirement_readback": {
+      "disposition": "compatible_cell_readback_ported_node_effect_separate",
+      "reason": "Port read-only object_contract and retired_object_readback/retired_readback. Retired facts survive physical extent reuse without authorizing live payload use. Preserve current payload, repair and deadline owners. Node must separately integrate same-budget/journal completed-successor validation; already-retired readback cannot adopt a newly offered successor.",
+      "current_source_mapping": [
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/archive.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/retention/tests.rs",
+          "present": true
+        }
+      ],
+      "applied_commits": [
+        "322f66f41ad84c1ce20b3c30c417573e03f262ce"
+      ]
+    },
+    "pq_pins_dependencies": {
+      "disposition": "stronger_current_source_retained",
+      "reason": "Current retained key-pool verification requires the complete pin set under current complete-version authority. Keep exact selected dependencies, including rusqlite 0.41.1, instead of older ed25519/rusqlite/rustix declarations. Final shared corpus hashes remain a root/CI reconciliation.",
+      "current_source_mapping": [
+        {
+          "path": "trillionnium/crates/trnm-data-availability/Cargo.toml",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/pq.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/Cargo.lock",
+          "present": true
+        }
+      ],
+      "applied_commits": []
+    },
+    "network_session": {
+      "disposition": "missing_soft_peer_order_ported_current_owners_retained",
+      "reason": "Keep current cancellation, actual response-byte accounting, bad-content/frame quarantine, availability preference, persistent profiles and one release-session budget. Port missing soft failure ordering into ResponseBudget with endpoint-keyed bounded counters, a comparator snapshot and stable cyclic ties. All non-quarantined peers remain fallback; no budget or lease renews. Keep current post-publication committed-output reconciliation and original-deadline refusal.",
+      "current_source_mapping": [
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/network.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/network/availability.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/release.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/release_tests.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
+          "present": true
+        }
+      ],
+      "applied_commits": [
+        "df2cfb403d15f8d2865ffa246a06875e50b7e8d3"
+      ]
+    },
+    "rendezvous_ready": {
+      "disposition": "compatible_initialization_handshake_integrated",
+      "reason": "Retain fixture initialization handshake before request budget begins and its delayed-initialization control. Preserve original qualification records. Keep current source pins/fuzz lock; the old workflow restricted to one historical branch and obsolete frozen lock hashes stays archived.",
+      "current_source_mapping": [
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs",
+          "present": true
+        },
+        {
+          "path": "qualification/cell-rendezvous-readiness-20261103",
+          "present": true
+        }
+      ],
+      "applied_commits": [
+        "6f7335e04a5a8678cc64cbeeb1e328acf1e0128e",
+        "822b57df8c2586e1e42e4cae3be5f5b60fe0ab4f"
+      ]
+    },
+    "diagnostic_readiness": {
+      "disposition": "handshake_ported_current_bounded_diagnostics_retained",
+      "reason": "The shared rendezvous handshake is retained from e62eb3a4. Current sequence fixtures have bounded setup/accept-loop phase diagnostics and preserved failures; the older opt-in environment-only diagnostic path is not restored.",
+      "current_source_mapping": [
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
+          "present": true
+        }
+      ],
+      "applied_commits": [
+        "6f7335e04a5a8678cc64cbeeb1e328acf1e0128e",
+        "822b57df8c2586e1e42e4cae3be5f5b60fe0ab4f"
+      ]
+    },
+    "native_convergence": {
+      "disposition": "soft_peer_order_ported_stronger_current_storage_retained",
+      "reason": "Port the missing soft ordering. Current WAL setup disables close-checkpoint behavior before SQL; directory lock/transaction waits retain original budgets; complete-cache batching, controlled repair/retirement, full arena audits and additional sidecar controls remain. Preserve exact current SQLite/rusqlite and newer explicit CLI profiles without changing defaults.",
+      "current_source_mapping": [
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/cache_wal.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/directory.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/network.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs",
+          "present": true
+        }
+      ],
+      "applied_commits": [
+        "df2cfb403d15f8d2865ffa246a06875e50b7e8d3"
+      ]
+    },
+    "pq_clock_controls": {
+      "disposition": "stronger_current_source_retained",
+      "reason": "Current PQ tests sample request time after opening/signing under the durable clock owner and retain broader controls; do not restore the older timestamp arrangement.",
+      "current_source_mapping": [
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/tests.rs",
+          "present": true
+        }
+      ],
+      "applied_commits": []
+    },
+    "swarm_local_research": {
+      "disposition": "independent_local_research_integrated_with_corrections",
+      "reason": "Retain distinct v0 owner-pinned local byte assembly and independently pinned XOR plans: 64 MiB, at most 1024 chunks, 1 MiB/chunk, group width 2..16, one absent chunk per stripe. No network custody or FinalUse authority. Port a4ec19ec compile correction and Rust 1.95 strict-lint/format fixes; preserve original unsuccessful state in history.",
+      "current_source_mapping": [
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell_swarm.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell_swarm_xor_repair.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/lib.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/README.md",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+          "present": true
+        }
+      ],
+      "applied_commits": [
+        "3b41e963040ce80c0dbec23010a97f700375e39e",
+        "91c65e770fc25f9201061fca5a3786e16ae45afe"
+      ]
+    },
+    "legacy_pcp2": {
+      "disposition": "alternate_protocol_archived_compatible_peer_order_ported",
+      "reason": "Do not activate inline pq_reply_v2, pq_v2.rs or raw-key-bearing PCP2 as alternate authority. Selected CDP2/authenticated epoch-v3 independently pins SPKI roster, generation/revocation, nonce, source authority and epoch high-water. Paired wall/monotonic receipts and monotonic_expiry keep original leases through verification/signing/I/O; live wall checks re-evaluate validity. No translation/fallback. Port compatible soft ordering separately. Keep post-publication durability/deadline reconciliation, not older late-success semantics.",
+      "current_source_mapping": [
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/epoch.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/auth.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/directory.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/network.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+          "present": true
+        }
+      ],
+      "applied_commits": [
+        "df2cfb403d15f8d2865ffa246a06875e50b7e8d3"
+      ]
+    },
+    "sequence_fixture_current": {
+      "disposition": "stronger_current_cell_fixture_retained",
+      "reason": "The residual Cell source is the shared older sequence fixture. Current setup receipt, readiness handoff, bounded acceptance phases and selected single-wall-second TTL alignment retain and strengthen its invariant. Business/runtime changes are outside this Cell review.",
+      "current_source_mapping": [
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs",
+          "present": true
+        }
+      ],
+      "applied_commits": []
+    },
+    "alternate_runtime_owner": {
+      "disposition": "retired_alternate_owner_archived_no_equivalence_claim",
+      "reason": "Old runtime_root introduces a second filesystem reservation/lock owner, staged mutable runtime roots and a different hash domain. Its segment retirement deletes chunks without the selected remaining-reference rule. Keep current complete CPV4/CCH1/CHB1/sealed loading and discard_manifest_until reference preservation. Do not restore old ordinary action-catalog/configuration producers. Archived larger segmented-runtime capability is explicitly NOT claimed interchangeable or implemented by current owners; future adoption needs a separate owner/namespace design.",
+      "current_source_mapping": [
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/version.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/version_content.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/residency/sealed_loader.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+          "present": true
+        },
+        {
+          "path": "scripts/llm_cell_release.py",
+          "present": true
+        },
+        {
+          "path": "scripts/llm_runtime_release.py",
+          "present": true
+        }
+      ],
+      "applied_commits": []
+    },
+    "tpq1_c_oracle": {
+      "disposition": "independent_read_only_conformance_oracle_integrated",
+      "reason": "Retain C11/OpenSSL TPQ1 oracle and original evidence. Statement/signature/wire lengths, strict ML-DSA-65 SPKI, six purpose domains, SHA-384 payload binding, nonzero generation/sequence and inclusive expiry match current trnm-protocol. It is not linked as a production verifier and has no state or ownership effect.",
+      "current_source_mapping": [
+        {
+          "path": "formal/pon-nakamoto-v1/pq_tpq1_crypto_verify.c",
+          "present": true
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/pq_tpq1_crypto_verify.h",
+          "present": true
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/test_pq_tpq1_crypto_verify.py",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-protocol/src/pq_frame.rs",
+          "present": true
+        }
+      ],
+      "applied_commits": [
+        "d087b37c1d301289ca96162b4501742f93132c5b"
+      ]
+    },
+    "custody_schema_ack": {
+      "disposition": "original_ancestry_and_stronger_operation_budget_retained",
+      "reason": "Sixteen of nineteen original delta paths already equal the starting candidate. Keep OperationBudget through crypto/sockets/readback, cancel-before-worker-join and literal SQLite reserved-prefix GLOB. Original schema/TEMP/ACK-fence controls remain, and documentation preserves the original absolute-deadline failure.",
+      "current_source_mapping": [
+        {
+          "path": "formal/pon-nakamoto-v1/pq_cell_custody.py",
+          "present": true
+        },
+        {
+          "path": "formal/pon-nakamoto-v1/pq_cell_swarm.py",
+          "present": true
+        },
+        {
+          "path": "docs/security/PQ_CELL_SWARM_LOOPBACK_RESEARCH_V1.md",
+          "present": true
+        }
+      ],
+      "applied_commits": [
+        "89d116f085cc2b0108ffaea01dad2ec7fd6a6b69"
+      ]
+    },
+    "regular_store_current": {
+      "disposition": "stronger_current_source_retained",
+      "reason": "Normal-open regular-file gate is already selected. Current sidecar checks preserve OsString bytes, use symlink_metadata and retain inspection errors. Do not restore lossy display/exists checks or remove dangling-symlink/non-UTF8/inspection-error controls.",
+      "current_source_mapping": [
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/store.rs",
+          "present": true
+        },
+        {
+          "path": "trillionnium/crates/trnm-data-availability/src/tests.rs",
+          "present": true
+        }
+      ],
+      "applied_commits": []
+    },
+    "dependency_current": {
+      "disposition": "newer_exact_dependency_graph_retained",
+      "reason": "Keep exact rusqlite 0.41.1, bundled/fallible_uint and current backend qualification. Superseded dependency-only 0.40.2 branch must not downgrade Cargo.lock.",
+      "current_source_mapping": [
+        {
+          "path": "trillionnium/crates/trnm-data-availability/Cargo.toml",
+          "present": true
+        },
+        {
+          "path": "trillionnium/Cargo.lock",
+          "present": true
+        }
+      ],
+      "applied_commits": []
+    }
+  },
+  "tips": [
+    {
+      "name": "fix/chain-cell-storage-validation-349a",
+      "sha": "21c218cf552c6a10d1abca5d79844a02baab7123",
+      "commit_date": "2026-11-11T01:58:37Z",
+      "subject": "fix(cell): simplify public endpoint exclusion predicate",
+      "unique_commits": 2,
+      "merge_base": "30ce6e99c5d0d86e6563a49786e8b1e41b44c6c6",
+      "residual_counts": {
+        "checks_or_configuration": 3,
+        "evidence_or_documentation": 3,
+        "implementation_or_tooling": 14
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "bounded_lookup_restore",
+      "disposition": "integrated",
+      "reviewed_source_variant_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": true,
+      "original_head_retention": "retained_in_cell_DAG",
+      "tip_specific_note": null,
+      "original_core_path_count": 17,
+      "non_cell_or_shared_core_path_count": 4,
+      "non_cell_or_shared_core_paths_sha256": "f591b4686427f667f625857467b4bab32d34479d9b50a0bd4e8cbc1e3a220e85"
+    },
+    {
+      "name": "fix/chain-cell-native-shard-674c72-20261110",
+      "sha": "a67d83a05d6ff4c2fdc4a5fd5c23fc38d38b563d",
+      "commit_date": "2026-11-10T15:09:42+08:00",
+      "subject": "docs(evidence): record funded native model cold recovery",
+      "unique_commits": 5,
+      "merge_base": "06233be630f8eff6cea59cd5111e5941135a4aa5",
+      "residual_counts": {
+        "checks_or_configuration": 4,
+        "evidence_or_documentation": 1541,
+        "implementation_or_tooling": 7
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "native_shard",
+      "disposition": "current_implementation_and_original_evidence_retained",
+      "reviewed_source_variant_ids": [
+        13
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": true,
+      "original_head_retention": "retained_in_cell_DAG",
+      "tip_specific_note": null,
+      "original_core_path_count": 11,
+      "non_cell_or_shared_core_path_count": 10,
+      "non_cell_or_shared_core_paths_sha256": "80e099e60ec71ec31e1d91dd1a5f80783125a9798895763c3a726d679a3fe6f9"
+    },
+    {
+      "name": "research/cell-three-domain-rs46-evidence-20261110",
+      "sha": "a7f08aab5183e914230b56324760cb43609e436d",
+      "commit_date": "2026-11-10T02:35:38-05:00",
+      "subject": "docs(cell): refuse impossible two-domain recovery on six unique shards",
+      "unique_commits": 2,
+      "merge_base": "da4eb34b0dee551a9e3acb4e7d8941a80f3d3e7c",
+      "residual_counts": {
+        "evidence_or_documentation": 1,
+        "implementation_or_tooling": 1
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "rs46_domains",
+      "disposition": "integrated",
+      "reviewed_source_variant_ids": [
+        14
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": true,
+      "original_head_retention": "retained_in_cell_DAG",
+      "tip_specific_note": null,
+      "original_core_path_count": 1,
+      "non_cell_or_shared_core_path_count": 0,
+      "non_cell_or_shared_core_paths_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "name": "fix/chain-cell-storage-network-v3-20261108",
+      "sha": "43e10d4dded2404f2b6ae8851a68173d9d792be6",
+      "commit_date": "2026-11-08T18:04:10Z",
+      "subject": "docs(cell): retain storage v3 validation and failed controls",
+      "unique_commits": 3,
+      "merge_base": "0dc13a92cc49e9a751a2b6cf7cc96524f1244a2a",
+      "residual_counts": {
+        "checks_or_configuration": 3,
+        "evidence_or_documentation": 15,
+        "implementation_or_tooling": 14
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "parallel_pq3",
+      "disposition": "alternate_protocol_archived_compatible_controls_retained",
+      "reviewed_source_variant_ids": [
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": true,
+      "original_head_retention": "retained_in_cell_DAG",
+      "tip_specific_note": null,
+      "original_core_path_count": 17,
+      "non_cell_or_shared_core_path_count": 4,
+      "non_cell_or_shared_core_paths_sha256": "56ad5e0682c9428b68f001e222af77a996672f2adb3abd24de4e93b9dc82b8a8"
+    },
+    {
+      "name": "fix/chain-seven-gates-followup-20261108-3a20",
+      "sha": "a9c2ef6971eb3783d4259d6594c2904ea274501f",
+      "commit_date": "2026-11-08T14:32:53-05:00",
+      "subject": "docs: bind QROM source convergence to seven-gate evidence",
+      "unique_commits": 24,
+      "merge_base": "7e044b65454f4c9ea505591727332acffb33e7e5",
+      "residual_counts": {
+        "checks_or_configuration": 17,
+        "evidence_or_documentation": 755,
+        "implementation_or_tooling": 18
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "seven_gates_current",
+      "disposition": "stronger_current_source_retained",
+      "reviewed_source_variant_ids": [
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 35,
+      "non_cell_or_shared_core_path_count": 23,
+      "non_cell_or_shared_core_paths_sha256": "d177e8240be9ed106d1b445f7243309bb618170d30cb72a9c32fbc3cea552617"
+    },
+    {
+      "name": "fix/chain-pq-cell-readiness-rustfmt-source-pin-20261107",
+      "sha": "1e1cc50a0367fd29f48d00db20f35134900c656e",
+      "commit_date": "2026-11-07T05:09:55-05:00",
+      "subject": "ci(pq): pin rustfmt-normalized readiness fixture blob",
+      "unique_commits": 7,
+      "merge_base": "e70f13448aad715286fb8eb56fc802b09db643a3",
+      "residual_counts": {
+        "checks_or_configuration": 1,
+        "implementation_or_tooling": 2
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "readiness_current",
+      "disposition": "stronger_current_source_and_original_ancestry_retained",
+      "reviewed_source_variant_ids": [
+        40,
+        41
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": true,
+      "original_head_retention": "retained_in_cell_DAG",
+      "tip_specific_note": null,
+      "original_core_path_count": 3,
+      "non_cell_or_shared_core_path_count": 1,
+      "non_cell_or_shared_core_paths_sha256": "e957f3d28443925d11efaab97552b7ee2b7626ab4b3561b45975a5c1f4b919ce"
+    },
+    {
+      "name": "fix/chain-crossrepo-evidence-e0c10",
+      "sha": "e6c622a16c6770073435f49cf02a6808b56312b0",
+      "commit_date": "2026-11-06T22:59:53-05:00",
+      "subject": "Preserve cross-repository checkpoint and complete failure denominators",
+      "unique_commits": 34,
+      "merge_base": "a3e9002cd12ef90d62f8b252cad570e72dab6fa3",
+      "residual_counts": {
+        "checks_or_configuration": 34,
+        "evidence_or_documentation": 330,
+        "implementation_or_tooling": 66
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "retirement_readback",
+      "disposition": "compatible_cell_readback_ported_node_effect_separate",
+      "reviewed_source_variant_ids": [
+        42,
+        43,
+        44,
+        45
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": "Node dependencies: storage_service.rs/check_retirement_successor and retire_native_cell_work; storage_service/release.rs/retire_native_release_object; successor_owner_tests.rs and release_tests.rs.",
+      "original_core_path_count": 103,
+      "non_cell_or_shared_core_path_count": 99,
+      "non_cell_or_shared_core_paths_sha256": "60c497fa067f59be2075fab26261db6c1569f4c6a88bfcb9189f5679fad56ae9"
+    },
+    {
+      "name": "fix/chain-throughput-six-axis-20261106-bf693",
+      "sha": "d2c503987c8c7f604714a8842c257793306ecb16",
+      "commit_date": "2026-11-06T22:06:35+08:00",
+      "subject": "test: own the scoped FIFO worker completion sender",
+      "unique_commits": 11,
+      "merge_base": "513e92dfc27044ef3e0c9d62e7ae504fa5bea38f",
+      "residual_counts": {
+        "checks_or_configuration": 19,
+        "evidence_or_documentation": 139,
+        "implementation_or_tooling": 52
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "pq_pins_dependencies",
+      "disposition": "stronger_current_source_retained",
+      "reviewed_source_variant_ids": [
+        42,
+        44
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 71,
+      "non_cell_or_shared_core_path_count": 69,
+      "non_cell_or_shared_core_paths_sha256": "6aecd1ffdd49a99bd1e58ca6014c42092b46a3c24673f6968233b2c99406931a"
+    },
+    {
+      "name": "fix/chain-cross-repo-gates-20261106-5edd",
+      "sha": "4be50aa40ed537b8a06475984a8da4141e44cf77",
+      "commit_date": "2026-11-06T09:06:59-05:00",
+      "subject": "ci: bind cross-repository pins and preserve failed campaign denominators",
+      "unique_commits": 7,
+      "merge_base": "56897f125df27994efa1dda935f2c62eceb36de9",
+      "residual_counts": {
+        "checks_or_configuration": 16,
+        "evidence_or_documentation": 136,
+        "implementation_or_tooling": 32
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "pq_pins_dependencies",
+      "disposition": "stronger_current_source_retained",
+      "reviewed_source_variant_ids": [
+        42,
+        44
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 48,
+      "non_cell_or_shared_core_path_count": 46,
+      "non_cell_or_shared_core_paths_sha256": "d26a7b7ba9c1905b00783ae8d148b3b33d161d1a78163077aac7d5022ae9de0e"
+    },
+    {
+      "name": "fix/chain-evaluation-phase-observer-20261104",
+      "sha": "86054a6b6d329ac7c6d89d708bb036e1a98e2d77",
+      "commit_date": "2026-11-04T02:30:42-05:00",
+      "subject": "fix(ci): distinguish local evaluation phases from network delivery",
+      "unique_commits": 101,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "implementation_or_tooling": 314,
+        "checks_or_configuration": 130,
+        "evidence_or_documentation": 1467
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "network_session",
+      "disposition": "missing_soft_peer_order_ported_current_owners_retained",
+      "reviewed_source_variant_ids": [
+        46,
+        47,
+        48,
+        49,
+        50,
+        51
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 447,
+      "non_cell_or_shared_core_path_count": 441,
+      "non_cell_or_shared_core_paths_sha256": "c9dbfb2b96ad5a443ce2220cf29041b361000825203c76ffc8f29711addc7635"
+    },
+    {
+      "name": "fix/chain-recent-store-pin-20261104-gpt6",
+      "sha": "c09e681b043cad8141a659ca40a9b19a2eca9d5e",
+      "commit_date": "2026-11-04T02:02:29-05:00",
+      "subject": "fix(ci): preserve both SHA-2 cases in retained PQ5 aggregate",
+      "unique_commits": 103,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "implementation_or_tooling": 315,
+        "checks_or_configuration": 131,
+        "evidence_or_documentation": 1472
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "network_session",
+      "disposition": "missing_soft_peer_order_ported_current_owners_retained",
+      "reviewed_source_variant_ids": [
+        46,
+        47,
+        48,
+        49,
+        50,
+        51
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 449,
+      "non_cell_or_shared_core_path_count": 443,
+      "non_cell_or_shared_core_paths_sha256": "e0e0b50ac9c15a7a0cfc51ce89250a2a4c9f4fe0f295623b718a9ff87333cb35"
+    },
+    {
+      "name": "fix/chain-cell-rendezvous-readiness-20261103-gpt6",
+      "sha": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "commit_date": "2026-11-04T00:55:37-05:00",
+      "subject": "Compose frozen native owner with readiness and Cargo-generated fuzz ASM lock",
+      "unique_commits": 12,
+      "merge_base": "a10c39025cdc03d3265b031d6547b11e0350da2c",
+      "residual_counts": {
+        "checks_or_configuration": 3,
+        "evidence_or_documentation": 25,
+        "implementation_or_tooling": 52
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "rendezvous_ready",
+      "disposition": "compatible_initialization_handshake_integrated",
+      "reviewed_source_variant_ids": [
+        52
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": true,
+      "original_head_retention": "retained_in_cell_DAG",
+      "tip_specific_note": null,
+      "original_core_path_count": 5,
+      "non_cell_or_shared_core_path_count": 4,
+      "non_cell_or_shared_core_paths_sha256": "86c9cbc04496ebdc9f8b68ffc1fea5368afa0a2f1d495d303f298deefadb2e92"
+    },
+    {
+      "name": "fix/chain-hex-decode-20261104",
+      "sha": "9bd3d43edf6e0f22183d71f52210ec4e0b32dd2e",
+      "commit_date": "2026-11-04T00:29:47-05:00",
+      "subject": "perf(ingress): avoid duplicate packet hex classification",
+      "unique_commits": 99,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "implementation_or_tooling": 314,
+        "checks_or_configuration": 127,
+        "evidence_or_documentation": 1467
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "network_session",
+      "disposition": "missing_soft_peer_order_ported_current_owners_retained",
+      "reviewed_source_variant_ids": [
+        46,
+        47,
+        48,
+        49,
+        50,
+        51
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 444,
+      "non_cell_or_shared_core_path_count": 438,
+      "non_cell_or_shared_core_paths_sha256": "8de86efb2c2a28333fea3cc03ff694e1904bfb97d5abe1254580996b57c26715"
+    },
+    {
+      "name": "diagnostic/chain-da-sequence-1bac-20261104-gpt6",
+      "sha": "c8c095bb2eee9272dcc77421f055897e6806da12",
+      "commit_date": "2026-11-03T23:58:05-05:00",
+      "subject": "fix(test): recognize the exact inherited retention child transcript",
+      "unique_commits": 11,
+      "merge_base": "056303b5193809597d4b5ec1f075dfc5109fe888",
+      "residual_counts": {
+        "checks_or_configuration": 2,
+        "evidence_or_documentation": 20,
+        "implementation_or_tooling": 47
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "diagnostic_readiness",
+      "disposition": "handshake_ported_current_bounded_diagnostics_retained",
+      "reviewed_source_variant_ids": [
+        52,
+        53,
+        54
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 5,
+      "non_cell_or_shared_core_path_count": 2,
+      "non_cell_or_shared_core_paths_sha256": "524e90f6754163267504b84d53d5a0c14b978332de0b3315312ec6e2d74812e2"
+    },
+    {
+      "name": "fix/chain-rejection-cost-v2-20261104",
+      "sha": "433948bd39792ba578f9de3c3d4793ac58411780",
+      "commit_date": "2026-11-03T21:01:52-05:00",
+      "subject": "fix(research): version four-kernel rejection costs with balanced v2 observations",
+      "unique_commits": 98,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "implementation_or_tooling": 241,
+        "checks_or_configuration": 129,
+        "evidence_or_documentation": 1466
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "network_session",
+      "disposition": "missing_soft_peer_order_ported_current_owners_retained",
+      "reviewed_source_variant_ids": [
+        46,
+        47,
+        48,
+        49,
+        50,
+        51
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 371,
+      "non_cell_or_shared_core_path_count": 365,
+      "non_cell_or_shared_core_paths_sha256": "3af3ae7d3af86c834f833431ad8691bbcd3f57997c596c81972fa9e492adcc62"
+    },
+    {
+      "name": "fix/chain-w1-native-control-inputs-20261103-gpt6",
+      "sha": "a43951695bb808b3952d1e9ee99d8f9b603a4fc1",
+      "commit_date": "2026-11-03T16:53:14-05:00",
+      "subject": "fix(ci): bind W1 native counts and verified Host source receipt",
+      "unique_commits": 6,
+      "merge_base": "12171edc890df1611bf68503038bfad3d66a5a88",
+      "residual_counts": {
+        "checks_or_configuration": 1,
+        "evidence_or_documentation": 17,
+        "implementation_or_tooling": 39
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "rendezvous_ready",
+      "disposition": "compatible_initialization_handshake_integrated",
+      "reviewed_source_variant_ids": [
+        52
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": "Cell fixture blob equals e62eb3a4; initialization handshake retained, W1 changes remain other-lane scope.",
+      "original_core_path_count": 2,
+      "non_cell_or_shared_core_path_count": 1,
+      "non_cell_or_shared_core_paths_sha256": "710227c52e454fd87a19ae4849a09c51b413548fbfcd5d87d2e202b276ae82db"
+    },
+    {
+      "name": "fix/chain-native-convergence-20261029",
+      "sha": "002cd506c81e1dfac4a656bfcd03b5b233dbc923",
+      "commit_date": "2026-10-31T10:47:44+08:00",
+      "subject": "fix(ci): require complete current PoN authenticated test rosters",
+      "unique_commits": 83,
+      "merge_base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "residual_counts": {
+        "implementation_or_tooling": 438,
+        "checks_or_configuration": 163,
+        "evidence_or_documentation": 2834
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "native_convergence",
+      "disposition": "soft_peer_order_ported_stronger_current_storage_retained",
+      "reviewed_source_variant_ids": [
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 607,
+      "non_cell_or_shared_core_path_count": 584,
+      "non_cell_or_shared_core_paths_sha256": "29592367f2760cd0fd80f4f90f2f9dbb484dc41ef6e7dca5ab2dc3e9fa4d9c31"
+    },
+    {
+      "name": "fix/chain-pq-rust-gates-exec-request-clock-20261031",
+      "sha": "8db16f8f5d03ca8c192556a815fd2a74704edd3c",
+      "commit_date": "2026-10-31T05:04:26-04:00",
+      "subject": "test(pq): initialize durable directory clock before event timestamps",
+      "unique_commits": 2,
+      "merge_base": "b2adad47ac451a1f0003487d72b0a375fc6e86cc",
+      "residual_counts": {
+        "implementation_or_tooling": 2
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "pq_clock_controls",
+      "disposition": "stronger_current_source_retained",
+      "reviewed_source_variant_ids": [
+        72
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 2,
+      "non_cell_or_shared_core_path_count": 1,
+      "non_cell_or_shared_core_paths_sha256": "0d48b97d0224e2d181201bf4167b62530d5957d4f01e8be40771279ed9e40539"
+    },
+    {
+      "name": "fix/chain-w1-receiver-layout-bound-20261031",
+      "sha": "21cac401bcb53fcb375717166800c011bfb14d12",
+      "commit_date": "2026-10-31T02:42:53-04:00",
+      "subject": "fix(w1): bind rejection evidence to receipt layout and actual mutation offsets",
+      "unique_commits": 86,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "implementation_or_tooling": 240,
+        "checks_or_configuration": 126,
+        "evidence_or_documentation": 1479
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "network_session",
+      "disposition": "missing_soft_peer_order_ported_current_owners_retained",
+      "reviewed_source_variant_ids": [
+        46,
+        47,
+        48,
+        49,
+        50,
+        51
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 367,
+      "non_cell_or_shared_core_path_count": 361,
+      "non_cell_or_shared_core_paths_sha256": "883cac10697479d29ff61d131e7131ac949e76128754ad0e066136ffbdb6bf1d"
+    },
+    {
+      "name": "fix/pq-relay-replay-before-payload-digest-20261030",
+      "sha": "9baae3670011cc719249ed46fe33b0b50e75a31a",
+      "commit_date": "2026-10-30T23:42:24-04:00",
+      "subject": "ci(pq): exercise exact-head replay-first SHA256 Rust regression",
+      "unique_commits": 148,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "implementation_or_tooling": 242,
+        "checks_or_configuration": 127,
+        "evidence_or_documentation": 1464
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "network_session",
+      "disposition": "missing_soft_peer_order_ported_current_owners_retained",
+      "reviewed_source_variant_ids": [
+        46,
+        47,
+        48,
+        49,
+        50,
+        51
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 370,
+      "non_cell_or_shared_core_path_count": 364,
+      "non_cell_or_shared_core_paths_sha256": "273b4a79e376143e3e0d6d5589bcbc7c268bed7cd5b5d2494b70ee25f1036371"
+    },
+    {
+      "name": "fix/pq-hepta-context-postverify-20261030",
+      "sha": "95939e1380f21dcf3209acaee70e29fcf0141d6c",
+      "commit_date": "2026-10-30T22:59:18-04:00",
+      "subject": "fix(pq): preflight trusted Hepta context and recheck time after ML-DSA",
+      "unique_commits": 90,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "implementation_or_tooling": 243,
+        "checks_or_configuration": 127,
+        "evidence_or_documentation": 1463
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "network_session",
+      "disposition": "missing_soft_peer_order_ported_current_owners_retained",
+      "reviewed_source_variant_ids": [
+        46,
+        47,
+        48,
+        49,
+        50,
+        51
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 371,
+      "non_cell_or_shared_core_path_count": 365,
+      "non_cell_or_shared_core_paths_sha256": "5cbc4e9bb70e75a6a850930dbecea8bf43c76921e598ba3a122a1f7740effd39"
+    },
+    {
+      "name": "audit/pq-claim-json-exponent-boundary-20261030",
+      "sha": "9fcd3fefdc2f4fd277fa8d9176846b34c6d0c342",
+      "commit_date": "2026-10-30T22:53:59-04:00",
+      "subject": "test(pq): exercise claim gate on extreme and finite JSON numeric inputs",
+      "unique_commits": 130,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "implementation_or_tooling": 241,
+        "checks_or_configuration": 127,
+        "evidence_or_documentation": 1464
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "network_session",
+      "disposition": "missing_soft_peer_order_ported_current_owners_retained",
+      "reviewed_source_variant_ids": [
+        46,
+        47,
+        48,
+        49,
+        50,
+        51
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 369,
+      "non_cell_or_shared_core_path_count": 363,
+      "non_cell_or_shared_core_paths_sha256": "1153ddcabd31537157f88e424c847c01adac9c3ffc60db173a7d5998a6954afb"
+    },
+    {
+      "name": "fix/pq-recovery-postverify-trusted-clock-20261030",
+      "sha": "722eadfaaa4f489fd0058e3dbc7f1e3cf72465c1",
+      "commit_date": "2026-10-30T22:47:37-04:00",
+      "subject": "test(pq): refuse independently signed mixed-expiry recovery quorum",
+      "unique_commits": 112,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "implementation_or_tooling": 245,
+        "checks_or_configuration": 128,
+        "evidence_or_documentation": 1464
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "network_session",
+      "disposition": "missing_soft_peer_order_ported_current_owners_retained",
+      "reviewed_source_variant_ids": [
+        46,
+        47,
+        48,
+        49,
+        50,
+        51
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 374,
+      "non_cell_or_shared_core_path_count": 368,
+      "non_cell_or_shared_core_paths_sha256": "33f4ecd2a7c55bfcc8778a538b037f0beea6be58b929990113f9c0e18ae287b8"
+    },
+    {
+      "name": "audit/cell-swarm-605-on-p0-ci-610-rustfmt-20261030",
+      "sha": "a4ec19ec8c167bad2499ab2eee724405dd318832",
+      "commit_date": "2026-10-30T22:25:50-04:00",
+      "subject": "fix(cell-swarm): hash actual chunk slices rather than enumerate tuples",
+      "unique_commits": 9,
+      "merge_base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "residual_counts": {
+        "checks_or_configuration": 6,
+        "evidence_or_documentation": 2,
+        "implementation_or_tooling": 3
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "swarm_local_research",
+      "disposition": "independent_local_research_integrated_with_corrections",
+      "reviewed_source_variant_ids": [
+        73,
+        74,
+        75,
+        76
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": "Cell compile correction ported; unrelated CI changes/full-tip retention belong to root/CI.",
+      "original_core_path_count": 11,
+      "non_cell_or_shared_core_path_count": 7,
+      "non_cell_or_shared_core_paths_sha256": "e311232819f9784a61e64a5c78c4d2f90f6cc4ace150747319839e99537d48d9"
+    },
+    {
+      "name": "audit/cell-swarm-owner-pinned-xor-repair-20261030",
+      "sha": "5dc4c933d298e955a16eb4a1b7ab9688a7a6862c",
+      "commit_date": "2026-10-30T21:56:50-04:00",
+      "subject": "docs(cell-swarm): delimit independently pinned XOR repair and failure modes",
+      "unique_commits": 11,
+      "merge_base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+      "residual_counts": {
+        "evidence_or_documentation": 1,
+        "implementation_or_tooling": 3
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "swarm_local_research",
+      "disposition": "independent_local_research_integrated_with_corrections",
+      "reviewed_source_variant_ids": [
+        73,
+        77,
+        78,
+        79
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": true,
+      "original_head_retention": "retained_in_cell_DAG",
+      "tip_specific_note": null,
+      "original_core_path_count": 4,
+      "non_cell_or_shared_core_path_count": 0,
+      "non_cell_or_shared_core_paths_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "name": "fix/pq-pcp2-postverify-lease-freshness-20261030",
+      "sha": "8141887759527ccb9d033a88aa89fa59310101ec",
+      "commit_date": "2026-10-30T21:18:35-04:00",
+      "subject": "style(pq): apply exact Rustfmt job diff for both negative controls",
+      "unique_commits": 136,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "implementation_or_tooling": 251,
+        "checks_or_configuration": 132,
+        "evidence_or_documentation": 1465
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "legacy_pcp2",
+      "disposition": "alternate_protocol_archived_compatible_peer_order_ported",
+      "reviewed_source_variant_ids": [
+        46,
+        47,
+        49,
+        50,
+        51,
+        80,
+        81,
+        82,
+        83,
+        84
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": "Checked post-verification fresh wall time and original monotonic lease in current epoch.rs/auth.rs.",
+      "original_core_path_count": 384,
+      "non_cell_or_shared_core_path_count": 374,
+      "non_cell_or_shared_core_paths_sha256": "68fa0ea44cade731108d989679925fedb0c3637b3f57ea4966c250a96893fcc3"
+    },
+    {
+      "name": "test/pq-claim-isolation-with-duplicates-582-20261030",
+      "sha": "225b70cd94f5720fa046a0e8446cf9448466e70e",
+      "commit_date": "2026-10-30T16:21:38-04:00",
+      "subject": "test(pq): preserve isolated claim refusals alongside duplicate JSON controls [skip ci]",
+      "unique_commits": 99,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "implementation_or_tooling": 240,
+        "checks_or_configuration": 127,
+        "evidence_or_documentation": 1463
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "network_session",
+      "disposition": "missing_soft_peer_order_ported_current_owners_retained",
+      "reviewed_source_variant_ids": [
+        46,
+        47,
+        48,
+        49,
+        50,
+        51
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 368,
+      "non_cell_or_shared_core_path_count": 362,
+      "non_cell_or_shared_core_paths_sha256": "1bbdbb42a20b47e0559e870ce684d9e03d94a96474f1360219280bc0bbe14f87"
+    },
+    {
+      "name": "fix/pcp2-consolidated-expiry-581-20261030",
+      "sha": "aa527e571fc9e24bb08cb92a058bad07bf708108",
+      "commit_date": "2026-10-30T14:47:13-04:00",
+      "subject": "fix(pq): consolidate reviewed expiry caps with roster and publication guards [skip ci]",
+      "unique_commits": 131,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "implementation_or_tooling": 251,
+        "checks_or_configuration": 132,
+        "evidence_or_documentation": 1465
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "legacy_pcp2",
+      "disposition": "alternate_protocol_archived_compatible_peer_order_ported",
+      "reviewed_source_variant_ids": [
+        46,
+        47,
+        49,
+        50,
+        51,
+        80,
+        83,
+        84,
+        85,
+        86
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": "Checked original expiry anchoring and old post-publication late-success policy; current reconciliation retained.",
+      "original_core_path_count": 384,
+      "non_cell_or_shared_core_path_count": 374,
+      "non_cell_or_shared_core_paths_sha256": "68fa0ea44cade731108d989679925fedb0c3637b3f57ea4966c250a96893fcc3"
+    },
+    {
+      "name": "test/pq-claim-cli-isolation-578-20261030",
+      "sha": "ec8b909352582158ba52018ac2202a85e92790a6",
+      "commit_date": "2026-10-30T14:22:20-04:00",
+      "subject": "test(pq): isolate claim-gate CLI refusals from unrelated proof failures [skip ci]",
+      "unique_commits": 97,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "implementation_or_tooling": 240,
+        "checks_or_configuration": 127,
+        "evidence_or_documentation": 1463
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "network_session",
+      "disposition": "missing_soft_peer_order_ported_current_owners_retained",
+      "reviewed_source_variant_ids": [
+        46,
+        47,
+        48,
+        49,
+        50,
+        51
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 368,
+      "non_cell_or_shared_core_path_count": 362,
+      "non_cell_or_shared_core_paths_sha256": "1bbdbb42a20b47e0559e870ce684d9e03d94a96474f1360219280bc0bbe14f87"
+    },
+    {
+      "name": "fix/pcp2-combined-fetch-server-expiry-20261030",
+      "sha": "28192fc4c9c78bf93d05d1aa3bbd2488ec5a1b1a",
+      "commit_date": "2026-10-30T13:28:01-04:00",
+      "subject": "fix(pq): compose reviewed server lease with shared fetch expiry [skip ci]",
+      "unique_commits": 120,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "implementation_or_tooling": 249,
+        "checks_or_configuration": 132,
+        "evidence_or_documentation": 1465
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "legacy_pcp2",
+      "disposition": "alternate_protocol_archived_compatible_peer_order_ported",
+      "reviewed_source_variant_ids": [
+        46,
+        47,
+        49,
+        50,
+        51,
+        80,
+        86,
+        87
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": "Fetch/server expiry anchors map to current sealed monotonic receipt; no clock-rollback renewal.",
+      "original_core_path_count": 382,
+      "non_cell_or_shared_core_path_count": 374,
+      "non_cell_or_shared_core_paths_sha256": "68fa0ea44cade731108d989679925fedb0c3637b3f57ea4966c250a96893fcc3"
+    },
+    {
+      "name": "fix/pcp2-server-expiry-latch-574-20261030",
+      "sha": "e9f9228ed92c01977e4c94d1d142d3606701c14c",
+      "commit_date": "2026-10-30T12:26:12-04:00",
+      "subject": "fix(pq): cap read-only PCP2 serving at anchored signed expiry [skip ci]",
+      "unique_commits": 115,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "implementation_or_tooling": 249,
+        "checks_or_configuration": 132,
+        "evidence_or_documentation": 1465
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "legacy_pcp2",
+      "disposition": "alternate_protocol_archived_compatible_peer_order_ported",
+      "reviewed_source_variant_ids": [
+        46,
+        47,
+        49,
+        50,
+        51,
+        80,
+        86,
+        88
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": "Server expiry latch maps to current monotonic receipt and live wall checks.",
+      "original_core_path_count": 382,
+      "non_cell_or_shared_core_path_count": 374,
+      "non_cell_or_shared_core_paths_sha256": "68fa0ea44cade731108d989679925fedb0c3637b3f57ea4966c250a96893fcc3"
+    },
+    {
+      "name": "fix/pcp2-fetch-expiry-anchor-571-20261030",
+      "sha": "fdc2c3643d214ac17ed6415d0a185336e4142407",
+      "commit_date": "2026-10-30T12:18:11-04:00",
+      "subject": "fix(pq): anchor PCP2 fetch expiry before verification [skip ci]",
+      "unique_commits": 111,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "implementation_or_tooling": 250,
+        "checks_or_configuration": 129,
+        "evidence_or_documentation": 1465
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "legacy_pcp2",
+      "disposition": "alternate_protocol_archived_compatible_peer_order_ported",
+      "reviewed_source_variant_ids": [
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        89,
+        90,
+        91
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": "Old pq_v2.rs is a distinct codec/authority, not a current migration format.",
+      "original_core_path_count": 380,
+      "non_cell_or_shared_core_path_count": 371,
+      "non_cell_or_shared_core_paths_sha256": "4efec2bc12e470e82ae7f40a71ba34165df53b419b5e4ebe7d14277b7060b248"
+    },
+    {
+      "name": "fix/pq-cell-provider-reply-pcp2-20261030",
+      "sha": "b23e465cae259948201f7a216c2c23cf7332cdb8",
+      "commit_date": "2026-10-30T12:01:34-04:00",
+      "subject": "style(pq): apply original Rust 1.95 formatter after strict Clippy comparison fix",
+      "unique_commits": 105,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "implementation_or_tooling": 249,
+        "checks_or_configuration": 129,
+        "evidence_or_documentation": 1465
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "legacy_pcp2",
+      "disposition": "alternate_protocol_archived_compatible_peer_order_ported",
+      "reviewed_source_variant_ids": [
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        80,
+        92
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 379,
+      "non_cell_or_shared_core_path_count": 371,
+      "non_cell_or_shared_core_paths_sha256": "5f261e9771957f6d9af60bbc1e1bd26380ee40aad459beacf0c6dc02bf1b6e2c"
+    },
+    {
+      "name": "fix/pq-m09-offpolicy-preflight-20261030",
+      "sha": "e71c4131842d6af16929cab40d1c9938a00163c1",
+      "commit_date": "2026-10-30T11:35:11-04:00",
+      "subject": "fix(pq): satisfy original rustfmt and inherit exact parent locked test dep",
+      "unique_commits": 103,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "implementation_or_tooling": 250,
+        "checks_or_configuration": 129,
+        "evidence_or_documentation": 1465
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "legacy_pcp2",
+      "disposition": "alternate_protocol_archived_compatible_peer_order_ported",
+      "reviewed_source_variant_ids": [
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        89,
+        93,
+        94
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": "Current endpoint/roster shape preflight occurs before signature verification and I/O; raw-key profile archived.",
+      "original_core_path_count": 380,
+      "non_cell_or_shared_core_path_count": 371,
+      "non_cell_or_shared_core_paths_sha256": "676fa5d84d35564887f0e17274a3197c31fb0e01da43ffbf8dd214ac161725b3"
+    },
+    {
+      "name": "fix/pq-claim-exact-bools-560-20261030",
+      "sha": "5beee6b17be2ead2a3862ec2a870b5c55f810806",
+      "commit_date": "2026-10-30T11:15:19-04:00",
+      "subject": "fix(security): reject missing or non-boolean PQ production flags [skip ci]",
+      "unique_commits": 88,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "implementation_or_tooling": 240,
+        "checks_or_configuration": 126,
+        "evidence_or_documentation": 1463
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "network_session",
+      "disposition": "missing_soft_peer_order_ported_current_owners_retained",
+      "reviewed_source_variant_ids": [
+        46,
+        47,
+        48,
+        49,
+        50,
+        51
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 367,
+      "non_cell_or_shared_core_path_count": 361,
+      "non_cell_or_shared_core_paths_sha256": "7c50ec724235effa9ec8a038d4a767c0cb5a0e8290770155c39c8d2acca7a8fc"
+    },
+    {
+      "name": "fix/pq-cell-provider-pinned-v2-20261030",
+      "sha": "a6e231cce07aec408e957b0875b094bfd1d21b84",
+      "commit_date": "2026-10-30T10:41:10-04:00",
+      "subject": "style(pq): apply exact rustfmt diff from failed native x64/ARM64 job",
+      "unique_commits": 99,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "implementation_or_tooling": 247,
+        "checks_or_configuration": 129,
+        "evidence_or_documentation": 1464
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "legacy_pcp2",
+      "disposition": "alternate_protocol_archived_compatible_peer_order_ported",
+      "reviewed_source_variant_ids": [
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        95,
+        96
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": "Old public-key-bearing record layout is not a migration format for selected CDP2/epoch-v3.",
+      "original_core_path_count": 377,
+      "non_cell_or_shared_core_path_count": 369,
+      "non_cell_or_shared_core_paths_sha256": "937179753268fc09fc05d55faa312d4100da2e910e9dbc02b30f96d19843b494"
+    },
+    {
+      "name": "fix/chain-pon-verification-cost-20261028",
+      "sha": "ead1000360d24247f3c6159d50b2c8663ff4af4f",
+      "commit_date": "2026-10-29T22:22:48-04:00",
+      "subject": "feat(chain): add explicit native-I/O reservation V2 and strict replay",
+      "unique_commits": 30,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "checks_or_configuration": 60,
+        "evidence_or_documentation": 428,
+        "implementation_or_tooling": 199
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "sequence_fixture_current",
+      "disposition": "stronger_current_cell_fixture_retained",
+      "reviewed_source_variant_ids": [
+        46
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 267,
+      "non_cell_or_shared_core_path_count": 266,
+      "non_cell_or_shared_core_paths_sha256": "a8daa3694521f762312d14a7d5d9cc672fbb290050bb0ff52997e32baca8e41b"
+    },
+    {
+      "name": "docs/chain-audit-remediation-20261022",
+      "sha": "b68c9523a1abc699883154849d657db764feffbe",
+      "commit_date": "2026-10-29T20:24:18-04:00",
+      "subject": "perf(protocol): reuse fixed empty-left account hash prefixes",
+      "unique_commits": 5,
+      "merge_base": "c96022b897c1235fdbdbfcfa32764403511c6aab",
+      "residual_counts": {
+        "checks_or_configuration": 2,
+        "evidence_or_documentation": 11,
+        "implementation_or_tooling": 227
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "alternate_runtime_owner",
+      "disposition": "retired_alternate_owner_archived_no_equivalence_claim",
+      "reviewed_source_variant_ids": [
+        97,
+        98,
+        99,
+        100,
+        106,
+        107,
+        108,
+        109
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 13,
+      "non_cell_or_shared_core_path_count": 5,
+      "non_cell_or_shared_core_paths_sha256": "0bc819178795f6808d279b839ede377a36bfeb030047c35ea2176fe5f4690404"
+    },
+    {
+      "name": "fix/chain-cleanup-snapshot-stop-order-20261029",
+      "sha": "b2a57e0f98fad412b71c982c10d94795ca7850a4",
+      "commit_date": "2026-10-29T19:16:54+08:00",
+      "subject": "test(pon): cover cleanup-stop ordering and preserved rejection gates",
+      "unique_commits": 22,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "checks_or_configuration": 48,
+        "evidence_or_documentation": 385,
+        "implementation_or_tooling": 47
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "sequence_fixture_current",
+      "disposition": "stronger_current_cell_fixture_retained",
+      "reviewed_source_variant_ids": [
+        46
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 95,
+      "non_cell_or_shared_core_path_count": 94,
+      "non_cell_or_shared_core_paths_sha256": "000eddac05f42558500f1836b231500e07a5e34b6aa80a65c115444917d65945"
+    },
+    {
+      "name": "research/chain-w1-receipt-loopback-20261029",
+      "sha": "d08ff108d90324f103a0eff39b213a156d4d0cfc",
+      "commit_date": "2026-10-29T07:32:19-04:00",
+      "subject": "Add bounded real-receipt W1 loopback research harness",
+      "unique_commits": 21,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "checks_or_configuration": 50,
+        "evidence_or_documentation": 398,
+        "implementation_or_tooling": 47
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "sequence_fixture_current",
+      "disposition": "stronger_current_cell_fixture_retained",
+      "reviewed_source_variant_ids": [
+        46
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 97,
+      "non_cell_or_shared_core_path_count": 96,
+      "non_cell_or_shared_core_paths_sha256": "3661d9b456e5a9f5a383614ef7326e108a11798616c553bcdacf4a1ffc3df14a"
+    },
+    {
+      "name": "research/chain-w1-full-cost-profile-20261029",
+      "sha": "007b80cc99ba52fe7afcd6d0e0dea52628f5a026",
+      "commit_date": "2026-10-29T06:55:31-04:00",
+      "subject": "research: add explicit four-hour full W1 cost observation profile",
+      "unique_commits": 21,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "checks_or_configuration": 49,
+        "evidence_or_documentation": 392,
+        "implementation_or_tooling": 48
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "sequence_fixture_current",
+      "disposition": "stronger_current_cell_fixture_retained",
+      "reviewed_source_variant_ids": [
+        46
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 97,
+      "non_cell_or_shared_core_path_count": 96,
+      "non_cell_or_shared_core_paths_sha256": "09ae3045f9ee9efd3c4f52acd36f8464c789c6da03cb83bb05446f66e1697c40"
+    },
+    {
+      "name": "research/chain-w1-preflight-boundaries-20261029",
+      "sha": "31a8f1775f6940c303004fd97407ef13dc14d29b",
+      "commit_date": "2026-10-29T06:35:32-04:00",
+      "subject": "test: measure full W1 receipt preflight boundaries",
+      "unique_commits": 21,
+      "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+      "residual_counts": {
+        "checks_or_configuration": 50,
+        "evidence_or_documentation": 393,
+        "implementation_or_tooling": 47
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "sequence_fixture_current",
+      "disposition": "stronger_current_cell_fixture_retained",
+      "reviewed_source_variant_ids": [
+        46
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 97,
+      "non_cell_or_shared_core_path_count": 96,
+      "non_cell_or_shared_core_paths_sha256": "4a2516c4a7a22a129421126fc1c4778d70ee93837c62f27ca3497dc3a2a1804a"
+    },
+    {
+      "name": "research/pq-pql9-native-tpq1-crypto-20261027",
+      "sha": "e67d26f5ab91f526206fe11ae56a46e210ed6c34",
+      "commit_date": "2026-10-27T03:24:49-04:00",
+      "subject": "research(pql9): genuine C11 OpenSSL ML-DSA-65 TPQ1 signature oracle",
+      "unique_commits": 1,
+      "merge_base": "8d29130ecf5124d21449f0f1d549aacc27de99ad",
+      "residual_counts": {
+        "evidence_or_documentation": 5,
+        "implementation_or_tooling": 3
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "tpq1_c_oracle",
+      "disposition": "independent_read_only_conformance_oracle_integrated",
+      "reviewed_source_variant_ids": [
+        110,
+        111,
+        112
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": true,
+      "original_head_retention": "retained_in_cell_DAG",
+      "tip_specific_note": null,
+      "original_core_path_count": 3,
+      "non_cell_or_shared_core_path_count": 0,
+      "non_cell_or_shared_core_paths_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "name": "research/pq-cell-temp-schema-ack-fence-20261027",
+      "sha": "c014bbbd604dad68f0a5d87a8f35a5d4fe5ce181",
+      "commit_date": "2026-10-27T01:41:35-04:00",
+      "subject": "fix(research/pq-cell): reject TEMP schema shadowing and fence post-commit receipts",
+      "unique_commits": 13,
+      "merge_base": "5396fb177fef3b15aa325573f06b45a26bddc738",
+      "residual_counts": {
+        "evidence_or_documentation": 1,
+        "implementation_or_tooling": 2
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "custody_schema_ack",
+      "disposition": "original_ancestry_and_stronger_operation_budget_retained",
+      "reviewed_source_variant_ids": [
+        101,
+        102
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": true,
+      "original_head_retention": "retained_in_cell_DAG",
+      "tip_specific_note": null,
+      "original_core_path_count": 2,
+      "non_cell_or_shared_core_path_count": 0,
+      "non_cell_or_shared_core_paths_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "name": "fix/chain-ci-hardening-20261015",
+      "sha": "871ade83cd0bf43adbbefc397a88b187bf7bbd5d",
+      "commit_date": "2026-10-17T12:39:30-04:00",
+      "subject": "security: sync trillionnium/crates/trnm-service-settlement/src/tests.rs",
+      "unique_commits": 113,
+      "merge_base": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+      "residual_counts": {
+        "checks_or_configuration": 6,
+        "implementation_or_tooling": 43,
+        "evidence_or_documentation": 1
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "regular_store_current",
+      "disposition": "stronger_current_source_retained",
+      "reviewed_source_variant_ids": [
+        103,
+        104
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 50,
+      "non_cell_or_shared_core_path_count": 48,
+      "non_cell_or_shared_core_paths_sha256": "5f85b1d4a9bc02c0e54e4d53ad2672384fff35426189f0f8e85e09f0c6e9b7b0"
+    },
+    {
+      "name": "dependabot/cargo/trillionnium/rusqlite-0.40.2",
+      "sha": "5862e4427e918f10f50c10844e411f0ed3f70d66",
+      "commit_date": "2026-09-29T06:59:34Z",
+      "subject": "build(deps): bump rusqlite from 0.32.1 to 0.40.2 in /trillionnium",
+      "unique_commits": 1,
+      "merge_base": "6cdbf9551aae1754e489773bac29bc0598e20a9b",
+      "residual_counts": {
+        "implementation_or_tooling": 6
+      },
+      "scope": "Cell and directly related boundaries; whole-tip qualification not asserted",
+      "cell_semantic_review_complete": true,
+      "whole_tip_qualified": false,
+      "review_group": "dependency_current",
+      "disposition": "newer_exact_dependency_graph_retained",
+      "reviewed_source_variant_ids": [
+        105
+      ],
+      "original_head_is_ancestor_of_cell_checkpoint": false,
+      "original_head_retention": "root_must_retain_original_DAG_or_durable_ref",
+      "tip_specific_note": null,
+      "original_core_path_count": 6,
+      "non_cell_or_shared_core_path_count": 5,
+      "non_cell_or_shared_core_paths_sha256": "876f898b0beff787134f46333227961986384128ebf9b5e59286022967e69111"
+    }
+  ],
+  "source_variants": [
+    {
+      "id": 0,
+      "path": "trillionnium/crates/trnm-data-availability/examples/cell_bep52_iterative_discovery.rs",
+      "historical_blob": "d03b9552bcbac85619b2e3fe36ea6bc5ef5bb170",
+      "starting_candidate_blob": null,
+      "selected_blob": "35f607344254565291ab5d0d21853eb75d51edf6",
+      "reviewed_tip_shas": [
+        "21c218cf552c6a10d1abca5d79844a02baab7123"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "bounded_lookup_restore"
+      ]
+    },
+    {
+      "id": 1,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell.rs",
+      "historical_blob": "df7fa8bfb26d48662438d096836dcc5e8faab943",
+      "starting_candidate_blob": "55cd859ca445af11ed47ddd5dfeefe45f614f9b6",
+      "selected_blob": "0c97bdf01c871775e50c8fc026dfb67fe2c786d4",
+      "reviewed_tip_shas": [
+        "21c218cf552c6a10d1abca5d79844a02baab7123"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "bounded_lookup_restore"
+      ]
+    },
+    {
+      "id": 2,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer.rs",
+      "historical_blob": "5895ac1f316b267913386240384e22104e427471",
+      "starting_candidate_blob": "d00fdc1b53ad65c49703ead852f04c8ec96263a1",
+      "selected_blob": "5895ac1f316b267913386240384e22104e427471",
+      "reviewed_tip_shas": [
+        "21c218cf552c6a10d1abca5d79844a02baab7123"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "bounded_lookup_restore"
+      ]
+    },
+    {
+      "id": 3,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht.rs",
+      "historical_blob": "6b926441d02710db4fdebf50798e0ad4e3eb4e33",
+      "starting_candidate_blob": "fa8b3250b3eacbb850fdca32bdd21a3ff0a91351",
+      "selected_blob": "6b926441d02710db4fdebf50798e0ad4e3eb4e33",
+      "reviewed_tip_shas": [
+        "21c218cf552c6a10d1abca5d79844a02baab7123"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "bounded_lookup_restore"
+      ]
+    },
+    {
+      "id": 4,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/lookup.rs",
+      "historical_blob": "609d070e46963ffefa5ba6b651bc2291ac367597",
+      "starting_candidate_blob": null,
+      "selected_blob": "609d070e46963ffefa5ba6b651bc2291ac367597",
+      "reviewed_tip_shas": [
+        "21c218cf552c6a10d1abca5d79844a02baab7123"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "bounded_lookup_restore"
+      ]
+    },
+    {
+      "id": 5,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/dht/lookup/tests.rs",
+      "historical_blob": "aafaacf25ecf492367da77b5c30be2d0712fe335",
+      "starting_candidate_blob": null,
+      "selected_blob": "aafaacf25ecf492367da77b5c30be2d0712fe335",
+      "reviewed_tip_shas": [
+        "21c218cf552c6a10d1abca5d79844a02baab7123"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "bounded_lookup_restore"
+      ]
+    },
+    {
+      "id": 6,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure.rs",
+      "historical_blob": "485299680721315f6c8f24f2030e75622ae03b5c",
+      "starting_candidate_blob": "5c05604ebe8165943ff57d8101dd9b7c9d16588c",
+      "selected_blob": "2bf06e4de4de5941daed09ad3b19684d09f0f8c1",
+      "reviewed_tip_shas": [
+        "21c218cf552c6a10d1abca5d79844a02baab7123"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "bounded_lookup_restore"
+      ]
+    },
+    {
+      "id": 7,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/custody.rs",
+      "historical_blob": "1df8b2768cd43748915cc7e4f723662a9218e91e",
+      "starting_candidate_blob": "7e10610eff7e4f717c313057ecda7ca43ce97232",
+      "selected_blob": "b0956f104bfeb8938023963ebd1b2448d57f775f",
+      "reviewed_tip_shas": [
+        "21c218cf552c6a10d1abca5d79844a02baab7123"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "bounded_lookup_restore"
+      ]
+    },
+    {
+      "id": 8,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan.rs",
+      "historical_blob": "c9b4ea8971a9c59bb7500bdcbc61aafd7246a004",
+      "starting_candidate_blob": "7b04c2996fc5b785358a6acf21aea7a2405047e7",
+      "selected_blob": "264c144a9eebab9f9790d8f97d5042c4ee0c3991",
+      "reviewed_tip_shas": [
+        "21c218cf552c6a10d1abca5d79844a02baab7123"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "bounded_lookup_restore"
+      ]
+    },
+    {
+      "id": 9,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged.rs",
+      "historical_blob": "312f6ec14cf46e455607d9004128e6ee919825b2",
+      "starting_candidate_blob": "75a75116cf99a5a66e32332ef26e094958954a7f",
+      "selected_blob": "a217c555c8f9cd235d4d1dacfd36f6e45cabe47f",
+      "reviewed_tip_shas": [
+        "21c218cf552c6a10d1abca5d79844a02baab7123"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "bounded_lookup_restore"
+      ]
+    },
+    {
+      "id": 10,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore.rs",
+      "historical_blob": "49588d7274a0e278c1bb85acb4547ae10ca6ce5f",
+      "starting_candidate_blob": "db2663e6d07f0e5593fc99a76ae220666f7c8222",
+      "selected_blob": "49588d7274a0e278c1bb85acb4547ae10ca6ce5f",
+      "reviewed_tip_shas": [
+        "21c218cf552c6a10d1abca5d79844a02baab7123"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "bounded_lookup_restore"
+      ]
+    },
+    {
+      "id": 11,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore/tests.rs",
+      "historical_blob": "7ffa5f3e963de6d87d20722f0462b83ed303633c",
+      "starting_candidate_blob": "cf65b26a240e1597e1c236e82d31fc8bac93579a",
+      "selected_blob": "7ffa5f3e963de6d87d20722f0462b83ed303633c",
+      "reviewed_tip_shas": [
+        "21c218cf552c6a10d1abca5d79844a02baab7123"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "bounded_lookup_restore"
+      ]
+    },
+    {
+      "id": 12,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/version_content.rs",
+      "historical_blob": "880cae5f3ee7c9bcc1e8444d4193cd884acddf93",
+      "starting_candidate_blob": "75c92455df5e9b9fac6973aacef35662c6be8f0e",
+      "selected_blob": "880cae5f3ee7c9bcc1e8444d4193cd884acddf93",
+      "reviewed_tip_shas": [
+        "21c218cf552c6a10d1abca5d79844a02baab7123"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "bounded_lookup_restore"
+      ]
+    },
+    {
+      "id": 13,
+      "path": "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs",
+      "historical_blob": "9fba5a55bb39fac587b6173320def030a0088811",
+      "starting_candidate_blob": "f72dcbc0cebb0135c55f0a71ef39ef921a8d22ff",
+      "selected_blob": "f72dcbc0cebb0135c55f0a71ef39ef921a8d22ff",
+      "reviewed_tip_shas": [
+        "a67d83a05d6ff4c2fdc4a5fd5c23fc38d38b563d"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "native_shard"
+      ]
+    },
+    {
+      "id": 14,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/placement/tests.rs",
+      "historical_blob": "27720cddc02a0955b97bc0ebf1a75ec690a73396",
+      "starting_candidate_blob": "8851d6968f8b0bd6f4ff2792645958e98bb55b70",
+      "selected_blob": "27720cddc02a0955b97bc0ebf1a75ec690a73396",
+      "reviewed_tip_shas": [
+        "a7f08aab5183e914230b56324760cb43609e436d"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "rs46_domains"
+      ]
+    },
+    {
+      "id": 15,
+      "path": "trillionnium/crates/trnm-data-availability/examples/cell_discovery_pq_v3.rs",
+      "historical_blob": "16b5abfc8ee4002981d470f0770badb9e0b05e33",
+      "starting_candidate_blob": null,
+      "selected_blob": null,
+      "reviewed_tip_shas": [
+        "43e10d4dded2404f2b6ae8851a68173d9d792be6"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "parallel_pq3"
+      ]
+    },
+    {
+      "id": 16,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell.rs",
+      "historical_blob": "a8b855d6765264a4d335c8b6cd1c81c2fd76a3c4",
+      "starting_candidate_blob": "55cd859ca445af11ed47ddd5dfeefe45f614f9b6",
+      "selected_blob": "0c97bdf01c871775e50c8fc026dfb67fe2c786d4",
+      "reviewed_tip_shas": [
+        "43e10d4dded2404f2b6ae8851a68173d9d792be6"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "parallel_pq3"
+      ]
+    },
+    {
+      "id": 17,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+      "historical_blob": "794364b76514cc512841ce9230279a942847321c",
+      "starting_candidate_blob": "9eec18fafb17092d087a8705bcd806fc7587ca01",
+      "selected_blob": "9eec18fafb17092d087a8705bcd806fc7587ca01",
+      "reviewed_tip_shas": [
+        "43e10d4dded2404f2b6ae8851a68173d9d792be6"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "parallel_pq3"
+      ]
+    },
+    {
+      "id": 18,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3.rs",
+      "historical_blob": "9ceab7474e2c941918e461f29576df03ae1b7d84",
+      "starting_candidate_blob": null,
+      "selected_blob": null,
+      "reviewed_tip_shas": [
+        "43e10d4dded2404f2b6ae8851a68173d9d792be6"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "parallel_pq3"
+      ]
+    },
+    {
+      "id": 19,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/auth.rs",
+      "historical_blob": "ee2332a2218af8b4d2a97665337a4785b6a70b2b",
+      "starting_candidate_blob": null,
+      "selected_blob": null,
+      "reviewed_tip_shas": [
+        "43e10d4dded2404f2b6ae8851a68173d9d792be6"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "parallel_pq3"
+      ]
+    },
+    {
+      "id": 20,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/directory.rs",
+      "historical_blob": "7bd138d392dfcd6cc4be56b15ff3f6c0561f6aa8",
+      "starting_candidate_blob": null,
+      "selected_blob": null,
+      "reviewed_tip_shas": [
+        "43e10d4dded2404f2b6ae8851a68173d9d792be6"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "parallel_pq3"
+      ]
+    },
+    {
+      "id": 21,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/directory_tests.rs",
+      "historical_blob": "62ff51bcb5fe70d998b53cf1cb7ef8a7d24aac4d",
+      "starting_candidate_blob": null,
+      "selected_blob": null,
+      "reviewed_tip_shas": [
+        "43e10d4dded2404f2b6ae8851a68173d9d792be6"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "parallel_pq3"
+      ]
+    },
+    {
+      "id": 22,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/multisource_tests.rs",
+      "historical_blob": "cca665fc67e36535683e592b36e952fbf3a6cd08",
+      "starting_candidate_blob": null,
+      "selected_blob": null,
+      "reviewed_tip_shas": [
+        "43e10d4dded2404f2b6ae8851a68173d9d792be6"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "parallel_pq3"
+      ]
+    },
+    {
+      "id": 23,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/server_tests.rs",
+      "historical_blob": "867547932c2a7c0e9b606b3ce34e9dd976948c82",
+      "starting_candidate_blob": null,
+      "selected_blob": null,
+      "reviewed_tip_shas": [
+        "43e10d4dded2404f2b6ae8851a68173d9d792be6"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "parallel_pq3"
+      ]
+    },
+    {
+      "id": 24,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/transport.rs",
+      "historical_blob": "2537c15709ed532d78f903e15e19fa2eb7bae2f2",
+      "starting_candidate_blob": null,
+      "selected_blob": null,
+      "reviewed_tip_shas": [
+        "43e10d4dded2404f2b6ae8851a68173d9d792be6"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "parallel_pq3"
+      ]
+    },
+    {
+      "id": 25,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/transport_tests.rs",
+      "historical_blob": "e8f7417ed684a19775103012d1d251bd8db7e7f6",
+      "starting_candidate_blob": null,
+      "selected_blob": null,
+      "reviewed_tip_shas": [
+        "43e10d4dded2404f2b6ae8851a68173d9d792be6"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "parallel_pq3"
+      ]
+    },
+    {
+      "id": 26,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/residency.rs",
+      "historical_blob": "b5c3def2ad43953f89b6af9a3b78e42ce9e0dea9",
+      "starting_candidate_blob": "2644d2af2f62d17989bbdcf1283c4a09035d407c",
+      "selected_blob": "2644d2af2f62d17989bbdcf1283c4a09035d407c",
+      "reviewed_tip_shas": [
+        "43e10d4dded2404f2b6ae8851a68173d9d792be6"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "parallel_pq3"
+      ]
+    },
+    {
+      "id": 27,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/residency/version.rs",
+      "historical_blob": "ae2f26742b27680f219e70cd6d10ccda4a7319b9",
+      "starting_candidate_blob": "54b8141dafe1c59c737497f13c339c406f593c37",
+      "selected_blob": "54b8141dafe1c59c737497f13c339c406f593c37",
+      "reviewed_tip_shas": [
+        "43e10d4dded2404f2b6ae8851a68173d9d792be6"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "parallel_pq3"
+      ]
+    },
+    {
+      "id": 28,
+      "path": "scripts/cell_adoption_readback.py",
+      "historical_blob": "47c94dfbf1ea9752439a09b29f750f27a1e4e3b8",
+      "starting_candidate_blob": "73d0b637bd4877a14588b9bc6f7575712cd1611d",
+      "selected_blob": "73d0b637bd4877a14588b9bc6f7575712cd1611d",
+      "reviewed_tip_shas": [
+        "a9c2ef6971eb3783d4259d6594c2904ea274501f"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "seven_gates_current"
+      ]
+    },
+    {
+      "id": 29,
+      "path": "scripts/cell_learning_iteration_join.py",
+      "historical_blob": "58fe5b64c02758b646f16e8e4c0c47f67aee7e15",
+      "starting_candidate_blob": "17a89ecc7d99d6a703854e5944c55db0ca86bfd5",
+      "selected_blob": "17a89ecc7d99d6a703854e5944c55db0ca86bfd5",
+      "reviewed_tip_shas": [
+        "a9c2ef6971eb3783d4259d6594c2904ea274501f"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "seven_gates_current"
+      ]
+    },
+    {
+      "id": 30,
+      "path": "scripts/test_cell_learning_iteration_join.py",
+      "historical_blob": "da3b2e58901d00ff0ba33d22e1589eda904cc78e",
+      "starting_candidate_blob": "1e2ea3f221b304c8a296f666059e4718dda9d053",
+      "selected_blob": "1e2ea3f221b304c8a296f666059e4718dda9d053",
+      "reviewed_tip_shas": [
+        "a9c2ef6971eb3783d4259d6594c2904ea274501f"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "seven_gates_current"
+      ]
+    },
+    {
+      "id": 31,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell.rs",
+      "historical_blob": "1790dacaccf4fa5aa134d8723ae1f1098b4ae359",
+      "starting_candidate_blob": "55cd859ca445af11ed47ddd5dfeefe45f614f9b6",
+      "selected_blob": "0c97bdf01c871775e50c8fc026dfb67fe2c786d4",
+      "reviewed_tip_shas": [
+        "a9c2ef6971eb3783d4259d6594c2904ea274501f"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "seven_gates_current"
+      ]
+    },
+    {
+      "id": 32,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/custody.rs",
+      "historical_blob": "9aad9e4b1a83afa0c157b217b3328e0faf355674",
+      "starting_candidate_blob": "cbfbb4c3d3e8d987c0b424f51928ea0f6b1a338a",
+      "selected_blob": "cbfbb4c3d3e8d987c0b424f51928ea0f6b1a338a",
+      "reviewed_tip_shas": [
+        "a9c2ef6971eb3783d4259d6594c2904ea274501f"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "seven_gates_current"
+      ]
+    },
+    {
+      "id": 33,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/custody_tests.rs",
+      "historical_blob": "8b55b1341e87765ff5466281a7418a1863b9e2bb",
+      "starting_candidate_blob": "fb615369cf2b73c0206bf85b38a756ae2b746192",
+      "selected_blob": "fb615369cf2b73c0206bf85b38a756ae2b746192",
+      "reviewed_tip_shas": [
+        "a9c2ef6971eb3783d4259d6594c2904ea274501f"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "seven_gates_current"
+      ]
+    },
+    {
+      "id": 34,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
+      "historical_blob": "3e6b5d04f340abdcd2ae22934f1e855e34b5e4fa",
+      "starting_candidate_blob": "a93843aa8e37bae81391ee21e5a22876ae66f578",
+      "selected_blob": "a93843aa8e37bae81391ee21e5a22876ae66f578",
+      "reviewed_tip_shas": [
+        "a9c2ef6971eb3783d4259d6594c2904ea274501f"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "seven_gates_current"
+      ]
+    },
+    {
+      "id": 35,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/pq.rs",
+      "historical_blob": "de0b8b1a413168b1eda57cf9e9d09cad246f6660",
+      "starting_candidate_blob": "9739dbb7882da42af42bae5d103d73637feb3ad9",
+      "selected_blob": "9739dbb7882da42af42bae5d103d73637feb3ad9",
+      "reviewed_tip_shas": [
+        "a9c2ef6971eb3783d4259d6594c2904ea274501f"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "seven_gates_current"
+      ]
+    },
+    {
+      "id": 36,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/pq/version.rs",
+      "historical_blob": "4be2552de9f49dc09e01108c933f6e529fa4ae59",
+      "starting_candidate_blob": "50964c9136545facef759249704a7f24fa5ebf71",
+      "selected_blob": "50964c9136545facef759249704a7f24fa5ebf71",
+      "reviewed_tip_shas": [
+        "a9c2ef6971eb3783d4259d6594c2904ea274501f"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "seven_gates_current"
+      ]
+    },
+    {
+      "id": 37,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/pq/version/tests.rs",
+      "historical_blob": "0b3df0d69ab0e28ea2846eac9dd2e1fc381a145c",
+      "starting_candidate_blob": "c8e567eba63ee313122921a48582a837b3208adf",
+      "selected_blob": "c8e567eba63ee313122921a48582a837b3208adf",
+      "reviewed_tip_shas": [
+        "a9c2ef6971eb3783d4259d6594c2904ea274501f"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "seven_gates_current"
+      ]
+    },
+    {
+      "id": 38,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/residency.rs",
+      "historical_blob": "2f5bac61686703b58f0bd670c7f0f054b213e634",
+      "starting_candidate_blob": "2644d2af2f62d17989bbdcf1283c4a09035d407c",
+      "selected_blob": "2644d2af2f62d17989bbdcf1283c4a09035d407c",
+      "reviewed_tip_shas": [
+        "a9c2ef6971eb3783d4259d6594c2904ea274501f"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "seven_gates_current"
+      ]
+    },
+    {
+      "id": 39,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/version.rs",
+      "historical_blob": "0016a70794665acfc1227e23e57ccc9e5628b0a8",
+      "starting_candidate_blob": "8b94fc41f6e30f5afadb8ce7665dbd0f96f8b87a",
+      "selected_blob": "8b94fc41f6e30f5afadb8ce7665dbd0f96f8b87a",
+      "reviewed_tip_shas": [
+        "a9c2ef6971eb3783d4259d6594c2904ea274501f"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "seven_gates_current"
+      ]
+    },
+    {
+      "id": 40,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs",
+      "historical_blob": "144c03b4ed1be3e3ad863e87ba37d787aea4a673",
+      "starting_candidate_blob": "2762c9b9fc81d69d0f6b9213b6d89c930fd96752",
+      "selected_blob": "2762c9b9fc81d69d0f6b9213b6d89c930fd96752",
+      "reviewed_tip_shas": [
+        "1e1cc50a0367fd29f48d00db20f35134900c656e"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "readiness_current"
+      ]
+    },
+    {
+      "id": 41,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
+      "historical_blob": "530b91e9b2962bc0ee1950b05c3cc6df0f191d06",
+      "starting_candidate_blob": "a93843aa8e37bae81391ee21e5a22876ae66f578",
+      "selected_blob": "a93843aa8e37bae81391ee21e5a22876ae66f578",
+      "reviewed_tip_shas": [
+        "1e1cc50a0367fd29f48d00db20f35134900c656e"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "readiness_current"
+      ]
+    },
+    {
+      "id": 42,
+      "path": "trillionnium/crates/trnm-data-availability/Cargo.toml",
+      "historical_blob": "41a78bc09f03d7c5f2416ef98ce9f6675c89f17a",
+      "starting_candidate_blob": "c8587cf09dc20b7b5b463bbbcade44957d707415",
+      "selected_blob": "c8587cf09dc20b7b5b463bbbcade44957d707415",
+      "reviewed_tip_shas": [
+        "e6c622a16c6770073435f49cf02a6808b56312b0",
+        "d2c503987c8c7f604714a8842c257793306ecb16",
+        "4be50aa40ed537b8a06475984a8da4141e44cf77"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "pq_pins_dependencies",
+        "retirement_readback"
+      ]
+    },
+    {
+      "id": 43,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/archive.rs",
+      "historical_blob": "64bc789f33737d2ab14f476bc473b2aad3a477ef",
+      "starting_candidate_blob": "7749eafe3e8ec128090f44b609ec1789b521d65d",
+      "selected_blob": "64bc789f33737d2ab14f476bc473b2aad3a477ef",
+      "reviewed_tip_shas": [
+        "e6c622a16c6770073435f49cf02a6808b56312b0"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "retirement_readback"
+      ]
+    },
+    {
+      "id": 44,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/pq.rs",
+      "historical_blob": "21686bd003356ea434efa0ff254f65df54ba042d",
+      "starting_candidate_blob": "9739dbb7882da42af42bae5d103d73637feb3ad9",
+      "selected_blob": "9739dbb7882da42af42bae5d103d73637feb3ad9",
+      "reviewed_tip_shas": [
+        "e6c622a16c6770073435f49cf02a6808b56312b0",
+        "d2c503987c8c7f604714a8842c257793306ecb16",
+        "4be50aa40ed537b8a06475984a8da4141e44cf77"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "pq_pins_dependencies",
+        "retirement_readback"
+      ]
+    },
+    {
+      "id": 45,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+      "historical_blob": "292f3599b01b5cff4eafe8abce9f16923057ff6a",
+      "starting_candidate_blob": "61149cc8b2f5765b61614371cadfd1d96c7865a8",
+      "selected_blob": "d9350929dbebd5063f029f6a20a1fb35dc8ac14c",
+      "reviewed_tip_shas": [
+        "e6c622a16c6770073435f49cf02a6808b56312b0"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "retirement_readback"
+      ]
+    },
+    {
+      "id": 46,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs",
+      "historical_blob": "446768e43df75335c4e4446aff3b6f20be0b4460",
+      "starting_candidate_blob": "2762c9b9fc81d69d0f6b9213b6d89c930fd96752",
+      "selected_blob": "2762c9b9fc81d69d0f6b9213b6d89c930fd96752",
+      "reviewed_tip_shas": [
+        "86054a6b6d329ac7c6d89d708bb036e1a98e2d77",
+        "c09e681b043cad8141a659ca40a9b19a2eca9d5e",
+        "9bd3d43edf6e0f22183d71f52210ec4e0b32dd2e",
+        "433948bd39792ba578f9de3c3d4793ac58411780",
+        "002cd506c81e1dfac4a656bfcd03b5b233dbc923",
+        "21cac401bcb53fcb375717166800c011bfb14d12",
+        "9baae3670011cc719249ed46fe33b0b50e75a31a",
+        "95939e1380f21dcf3209acaee70e29fcf0141d6c",
+        "9fcd3fefdc2f4fd277fa8d9176846b34c6d0c342",
+        "722eadfaaa4f489fd0058e3dbc7f1e3cf72465c1",
+        "8141887759527ccb9d033a88aa89fa59310101ec",
+        "225b70cd94f5720fa046a0e8446cf9448466e70e",
+        "aa527e571fc9e24bb08cb92a058bad07bf708108",
+        "ec8b909352582158ba52018ac2202a85e92790a6",
+        "28192fc4c9c78bf93d05d1aa3bbd2488ec5a1b1a",
+        "e9f9228ed92c01977e4c94d1d142d3606701c14c",
+        "fdc2c3643d214ac17ed6415d0a185336e4142407",
+        "b23e465cae259948201f7a216c2c23cf7332cdb8",
+        "e71c4131842d6af16929cab40d1c9938a00163c1",
+        "5beee6b17be2ead2a3862ec2a870b5c55f810806",
+        "a6e231cce07aec408e957b0875b094bfd1d21b84",
+        "ead1000360d24247f3c6159d50b2c8663ff4af4f",
+        "b2a57e0f98fad412b71c982c10d94795ca7850a4",
+        "d08ff108d90324f103a0eff39b213a156d4d0cfc",
+        "007b80cc99ba52fe7afcd6d0e0dea52628f5a026",
+        "31a8f1775f6940c303004fd97407ef13dc14d29b"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "legacy_pcp2",
+        "native_convergence",
+        "network_session",
+        "sequence_fixture_current"
+      ]
+    },
+    {
+      "id": 47,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs",
+      "historical_blob": "586ea9dad4f426f02ba0a22b16ee0c375d726c87",
+      "starting_candidate_blob": "182584931200836f452c80b8c44e166193715db5",
+      "selected_blob": "d8b5d55f6250886f1790728835d22764e331ee0a",
+      "reviewed_tip_shas": [
+        "86054a6b6d329ac7c6d89d708bb036e1a98e2d77",
+        "c09e681b043cad8141a659ca40a9b19a2eca9d5e",
+        "9bd3d43edf6e0f22183d71f52210ec4e0b32dd2e",
+        "433948bd39792ba578f9de3c3d4793ac58411780",
+        "002cd506c81e1dfac4a656bfcd03b5b233dbc923",
+        "21cac401bcb53fcb375717166800c011bfb14d12",
+        "9baae3670011cc719249ed46fe33b0b50e75a31a",
+        "95939e1380f21dcf3209acaee70e29fcf0141d6c",
+        "9fcd3fefdc2f4fd277fa8d9176846b34c6d0c342",
+        "722eadfaaa4f489fd0058e3dbc7f1e3cf72465c1",
+        "8141887759527ccb9d033a88aa89fa59310101ec",
+        "225b70cd94f5720fa046a0e8446cf9448466e70e",
+        "aa527e571fc9e24bb08cb92a058bad07bf708108",
+        "ec8b909352582158ba52018ac2202a85e92790a6",
+        "28192fc4c9c78bf93d05d1aa3bbd2488ec5a1b1a",
+        "e9f9228ed92c01977e4c94d1d142d3606701c14c",
+        "fdc2c3643d214ac17ed6415d0a185336e4142407",
+        "b23e465cae259948201f7a216c2c23cf7332cdb8",
+        "e71c4131842d6af16929cab40d1c9938a00163c1",
+        "5beee6b17be2ead2a3862ec2a870b5c55f810806",
+        "a6e231cce07aec408e957b0875b094bfd1d21b84"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "legacy_pcp2",
+        "native_convergence",
+        "network_session"
+      ]
+    },
+    {
+      "id": 48,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
+      "historical_blob": "9bcfa4fc99b4d83eab63680f52703a871d5e13a4",
+      "starting_candidate_blob": "a93843aa8e37bae81391ee21e5a22876ae66f578",
+      "selected_blob": "a93843aa8e37bae81391ee21e5a22876ae66f578",
+      "reviewed_tip_shas": [
+        "86054a6b6d329ac7c6d89d708bb036e1a98e2d77",
+        "c09e681b043cad8141a659ca40a9b19a2eca9d5e",
+        "9bd3d43edf6e0f22183d71f52210ec4e0b32dd2e",
+        "433948bd39792ba578f9de3c3d4793ac58411780",
+        "002cd506c81e1dfac4a656bfcd03b5b233dbc923",
+        "21cac401bcb53fcb375717166800c011bfb14d12",
+        "9baae3670011cc719249ed46fe33b0b50e75a31a",
+        "95939e1380f21dcf3209acaee70e29fcf0141d6c",
+        "9fcd3fefdc2f4fd277fa8d9176846b34c6d0c342",
+        "722eadfaaa4f489fd0058e3dbc7f1e3cf72465c1",
+        "225b70cd94f5720fa046a0e8446cf9448466e70e",
+        "ec8b909352582158ba52018ac2202a85e92790a6",
+        "fdc2c3643d214ac17ed6415d0a185336e4142407",
+        "b23e465cae259948201f7a216c2c23cf7332cdb8",
+        "e71c4131842d6af16929cab40d1c9938a00163c1",
+        "5beee6b17be2ead2a3862ec2a870b5c55f810806",
+        "a6e231cce07aec408e957b0875b094bfd1d21b84"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "legacy_pcp2",
+        "native_convergence",
+        "network_session"
+      ]
+    },
+    {
+      "id": 49,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/network.rs",
+      "historical_blob": "0711018db99d81b366392ff10c95f1fbd6e94a84",
+      "starting_candidate_blob": "40192e48750ab07e6efa649c93d20cddfccaf867",
+      "selected_blob": "cb2a4748e7307a99de9213672a33e521bb4273c6",
+      "reviewed_tip_shas": [
+        "86054a6b6d329ac7c6d89d708bb036e1a98e2d77",
+        "c09e681b043cad8141a659ca40a9b19a2eca9d5e",
+        "9bd3d43edf6e0f22183d71f52210ec4e0b32dd2e",
+        "433948bd39792ba578f9de3c3d4793ac58411780",
+        "002cd506c81e1dfac4a656bfcd03b5b233dbc923",
+        "21cac401bcb53fcb375717166800c011bfb14d12",
+        "9baae3670011cc719249ed46fe33b0b50e75a31a",
+        "95939e1380f21dcf3209acaee70e29fcf0141d6c",
+        "9fcd3fefdc2f4fd277fa8d9176846b34c6d0c342",
+        "722eadfaaa4f489fd0058e3dbc7f1e3cf72465c1",
+        "8141887759527ccb9d033a88aa89fa59310101ec",
+        "225b70cd94f5720fa046a0e8446cf9448466e70e",
+        "aa527e571fc9e24bb08cb92a058bad07bf708108",
+        "ec8b909352582158ba52018ac2202a85e92790a6",
+        "28192fc4c9c78bf93d05d1aa3bbd2488ec5a1b1a",
+        "e9f9228ed92c01977e4c94d1d142d3606701c14c",
+        "fdc2c3643d214ac17ed6415d0a185336e4142407",
+        "b23e465cae259948201f7a216c2c23cf7332cdb8",
+        "e71c4131842d6af16929cab40d1c9938a00163c1",
+        "5beee6b17be2ead2a3862ec2a870b5c55f810806",
+        "a6e231cce07aec408e957b0875b094bfd1d21b84"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "legacy_pcp2",
+        "native_convergence",
+        "network_session"
+      ]
+    },
+    {
+      "id": 50,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/release.rs",
+      "historical_blob": "0686428cc04cc30cc4b7da6e02912cdd8aae586d",
+      "starting_candidate_blob": "068e23a84737d726574d0fc079d851ad5870b510",
+      "selected_blob": "068e23a84737d726574d0fc079d851ad5870b510",
+      "reviewed_tip_shas": [
+        "86054a6b6d329ac7c6d89d708bb036e1a98e2d77",
+        "c09e681b043cad8141a659ca40a9b19a2eca9d5e",
+        "9bd3d43edf6e0f22183d71f52210ec4e0b32dd2e",
+        "433948bd39792ba578f9de3c3d4793ac58411780",
+        "002cd506c81e1dfac4a656bfcd03b5b233dbc923",
+        "21cac401bcb53fcb375717166800c011bfb14d12",
+        "9baae3670011cc719249ed46fe33b0b50e75a31a",
+        "95939e1380f21dcf3209acaee70e29fcf0141d6c",
+        "9fcd3fefdc2f4fd277fa8d9176846b34c6d0c342",
+        "722eadfaaa4f489fd0058e3dbc7f1e3cf72465c1",
+        "8141887759527ccb9d033a88aa89fa59310101ec",
+        "225b70cd94f5720fa046a0e8446cf9448466e70e",
+        "aa527e571fc9e24bb08cb92a058bad07bf708108",
+        "ec8b909352582158ba52018ac2202a85e92790a6",
+        "28192fc4c9c78bf93d05d1aa3bbd2488ec5a1b1a",
+        "e9f9228ed92c01977e4c94d1d142d3606701c14c",
+        "fdc2c3643d214ac17ed6415d0a185336e4142407",
+        "b23e465cae259948201f7a216c2c23cf7332cdb8",
+        "e71c4131842d6af16929cab40d1c9938a00163c1",
+        "5beee6b17be2ead2a3862ec2a870b5c55f810806",
+        "a6e231cce07aec408e957b0875b094bfd1d21b84"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "legacy_pcp2",
+        "native_convergence",
+        "network_session"
+      ]
+    },
+    {
+      "id": 51,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/release_tests.rs",
+      "historical_blob": "cd959f243e8d6ba42df7546f4358d4b3497fdcce",
+      "starting_candidate_blob": "a9017017f5fbc8fd40de9ac00cad4385a8078ef3",
+      "selected_blob": "3b65843f7c11455244dab8f6c6bedb65f872dda4",
+      "reviewed_tip_shas": [
+        "86054a6b6d329ac7c6d89d708bb036e1a98e2d77",
+        "c09e681b043cad8141a659ca40a9b19a2eca9d5e",
+        "9bd3d43edf6e0f22183d71f52210ec4e0b32dd2e",
+        "433948bd39792ba578f9de3c3d4793ac58411780",
+        "002cd506c81e1dfac4a656bfcd03b5b233dbc923",
+        "21cac401bcb53fcb375717166800c011bfb14d12",
+        "9baae3670011cc719249ed46fe33b0b50e75a31a",
+        "95939e1380f21dcf3209acaee70e29fcf0141d6c",
+        "9fcd3fefdc2f4fd277fa8d9176846b34c6d0c342",
+        "722eadfaaa4f489fd0058e3dbc7f1e3cf72465c1",
+        "8141887759527ccb9d033a88aa89fa59310101ec",
+        "225b70cd94f5720fa046a0e8446cf9448466e70e",
+        "aa527e571fc9e24bb08cb92a058bad07bf708108",
+        "ec8b909352582158ba52018ac2202a85e92790a6",
+        "28192fc4c9c78bf93d05d1aa3bbd2488ec5a1b1a",
+        "e9f9228ed92c01977e4c94d1d142d3606701c14c",
+        "fdc2c3643d214ac17ed6415d0a185336e4142407",
+        "b23e465cae259948201f7a216c2c23cf7332cdb8",
+        "e71c4131842d6af16929cab40d1c9938a00163c1",
+        "5beee6b17be2ead2a3862ec2a870b5c55f810806",
+        "a6e231cce07aec408e957b0875b094bfd1d21b84"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "legacy_pcp2",
+        "native_convergence",
+        "network_session"
+      ]
+    },
+    {
+      "id": 52,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs",
+      "historical_blob": "6a9660b4cd43fcb480a6f6859b01f60eff766312",
+      "starting_candidate_blob": "182584931200836f452c80b8c44e166193715db5",
+      "selected_blob": "d8b5d55f6250886f1790728835d22764e331ee0a",
+      "reviewed_tip_shas": [
+        "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+        "c8c095bb2eee9272dcc77421f055897e6806da12",
+        "a43951695bb808b3952d1e9ee99d8f9b603a4fc1"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "diagnostic_readiness",
+        "rendezvous_ready"
+      ]
+    },
+    {
+      "id": 53,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/sequence_tests.rs",
+      "historical_blob": "e044eb665630bc61eb1e542d13630d1b3282fc19",
+      "starting_candidate_blob": "2762c9b9fc81d69d0f6b9213b6d89c930fd96752",
+      "selected_blob": "2762c9b9fc81d69d0f6b9213b6d89c930fd96752",
+      "reviewed_tip_shas": [
+        "c8c095bb2eee9272dcc77421f055897e6806da12"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "diagnostic_readiness"
+      ]
+    },
+    {
+      "id": 54,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
+      "historical_blob": "0dc3fe0372cd71e50cd15953193797e33dcd17ec",
+      "starting_candidate_blob": "a93843aa8e37bae81391ee21e5a22876ae66f578",
+      "selected_blob": "a93843aa8e37bae81391ee21e5a22876ae66f578",
+      "reviewed_tip_shas": [
+        "c8c095bb2eee9272dcc77421f055897e6806da12"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "diagnostic_readiness"
+      ]
+    },
+    {
+      "id": 55,
+      "path": "trillionnium/crates/trnm-data-availability/Cargo.toml",
+      "historical_blob": "f44f2a31d960dfa1361eb2b434375e7dbeb20d6f",
+      "starting_candidate_blob": "c8587cf09dc20b7b5b463bbbcade44957d707415",
+      "selected_blob": "c8587cf09dc20b7b5b463bbbcade44957d707415",
+      "reviewed_tip_shas": [
+        "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "native_convergence"
+      ]
+    },
+    {
+      "id": 56,
+      "path": "trillionnium/crates/trnm-data-availability/README.md",
+      "historical_blob": "cbef6f01be9c2ba15bd79a646b44084ab0865c88",
+      "starting_candidate_blob": "b573972e76a9436840d473e3020e5d41a8117fbb",
+      "selected_blob": "49524535b96973f576172a62e59c8747ed122b16",
+      "reviewed_tip_shas": [
+        "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "native_convergence"
+      ]
+    },
+    {
+      "id": 57,
+      "path": "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell-discovery.rs",
+      "historical_blob": "6acee2f3721394a4ea6c2686962ee4befffd15cb",
+      "starting_candidate_blob": "26ed70383f5f767f9b5caca889f7a22e4b1836f2",
+      "selected_blob": "26ed70383f5f767f9b5caca889f7a22e4b1836f2",
+      "reviewed_tip_shas": [
+        "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "native_convergence"
+      ]
+    },
+    {
+      "id": 58,
+      "path": "trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs",
+      "historical_blob": "05ed36d638596c5df0f51b9a5db4c35990f7605e",
+      "starting_candidate_blob": "c0926385d14c823929c9549999dd4b8c8e15d66d",
+      "selected_blob": "c0926385d14c823929c9549999dd4b8c8e15d66d",
+      "reviewed_tip_shas": [
+        "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "native_convergence"
+      ]
+    },
+    {
+      "id": 59,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell.rs",
+      "historical_blob": "a872c1131bbf95d46ae93e9243e4153e470bf3ae",
+      "starting_candidate_blob": "55cd859ca445af11ed47ddd5dfeefe45f614f9b6",
+      "selected_blob": "0c97bdf01c871775e50c8fc026dfb67fe2c786d4",
+      "reviewed_tip_shas": [
+        "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "native_convergence"
+      ]
+    },
+    {
+      "id": 60,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/cache_wal.rs",
+      "historical_blob": "34ca7df55c5f2a03946b588ec2d2414b76c157b6",
+      "starting_candidate_blob": "cbb9403bb3cf7d364a0bc02e219c7cc5399445c6",
+      "selected_blob": "cbb9403bb3cf7d364a0bc02e219c7cc5399445c6",
+      "reviewed_tip_shas": [
+        "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "native_convergence"
+      ]
+    },
+    {
+      "id": 61,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/cache_wal_tests.rs",
+      "historical_blob": "ff4b84dde70ff0d91748ff1197c65d57829633a8",
+      "starting_candidate_blob": "531dc9ce0f696dd941172a7c38051702f37344f1",
+      "selected_blob": "531dc9ce0f696dd941172a7c38051702f37344f1",
+      "reviewed_tip_shas": [
+        "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "native_convergence"
+      ]
+    },
+    {
+      "id": 62,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+      "historical_blob": "e8cb34de4b230fd08d7dfe1f68cc64e4a92bd4d9",
+      "starting_candidate_blob": "9eec18fafb17092d087a8705bcd806fc7587ca01",
+      "selected_blob": "9eec18fafb17092d087a8705bcd806fc7587ca01",
+      "reviewed_tip_shas": [
+        "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "native_convergence"
+      ]
+    },
+    {
+      "id": 63,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/directory.rs",
+      "historical_blob": "df4f9e965782fdc4e3ecf5f8eea95c07b8ba6681",
+      "starting_candidate_blob": "ff03160e76637f33128a5002f22f97d1192bfa20",
+      "selected_blob": "ff03160e76637f33128a5002f22f97d1192bfa20",
+      "reviewed_tip_shas": [
+        "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "native_convergence"
+      ]
+    },
+    {
+      "id": 64,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/equivocation_history_tests.rs",
+      "historical_blob": "7679bb32af7f992efd1d7a117a5afa713d622c6f",
+      "starting_candidate_blob": "e45c8fa317c9d710886f9ceaeed07dd4009d181d",
+      "selected_blob": "e45c8fa317c9d710886f9ceaeed07dd4009d181d",
+      "reviewed_tip_shas": [
+        "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "native_convergence"
+      ]
+    },
+    {
+      "id": 65,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/manifest.rs",
+      "historical_blob": "20803bbdf0418856e25baf34f0def1abe7803d99",
+      "starting_candidate_blob": "ccbd170297584e9ee7e86edacb2ddd9547985088",
+      "selected_blob": "ccbd170297584e9ee7e86edacb2ddd9547985088",
+      "reviewed_tip_shas": [
+        "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "native_convergence"
+      ]
+    },
+    {
+      "id": 66,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/network/serving.rs",
+      "historical_blob": "735c1c1d7c3f16de77acf8b5f9e3f79da769574e",
+      "starting_candidate_blob": "ee37a45ca055dcbacdc3dffda3c8e95b7aa3d0c9",
+      "selected_blob": "ee37a45ca055dcbacdc3dffda3c8e95b7aa3d0c9",
+      "reviewed_tip_shas": [
+        "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "native_convergence"
+      ]
+    },
+    {
+      "id": 67,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/network/serving/tests.rs",
+      "historical_blob": "13701f9da760ed5117e689ff4fb5a22abe941c9a",
+      "starting_candidate_blob": "208d6d6030dd0a2314ebae43cb98d2c56da49fb2",
+      "selected_blob": "208d6d6030dd0a2314ebae43cb98d2c56da49fb2",
+      "reviewed_tip_shas": [
+        "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "native_convergence"
+      ]
+    },
+    {
+      "id": 68,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+      "historical_blob": "9d09c34a4eef077f8bdf08ad640972abb334324b",
+      "starting_candidate_blob": "61149cc8b2f5765b61614371cadfd1d96c7865a8",
+      "selected_blob": "d9350929dbebd5063f029f6a20a1fb35dc8ac14c",
+      "reviewed_tip_shas": [
+        "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "native_convergence"
+      ]
+    },
+    {
+      "id": 69,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/retention/tests.rs",
+      "historical_blob": "80a5081ed87c3c16a5d32b3a4c676c646a722e89",
+      "starting_candidate_blob": "7ee70f247ae392279a0c26347dc6d5659b5ab109",
+      "selected_blob": "08ae8748e528374beb539c50747a497e949dec00",
+      "reviewed_tip_shas": [
+        "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "native_convergence"
+      ]
+    },
+    {
+      "id": 70,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+      "historical_blob": "7c83e46c81640f078607e94939331ff320dc601a",
+      "starting_candidate_blob": "066bd942ef123d879679b7ba6fd684ddad046642",
+      "selected_blob": "066bd942ef123d879679b7ba6fd684ddad046642",
+      "reviewed_tip_shas": [
+        "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "native_convergence"
+      ]
+    },
+    {
+      "id": 71,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/tests.rs",
+      "historical_blob": "e99d8260c0dc198e27c81e255f5cda9a76d1e8f1",
+      "starting_candidate_blob": "dcfa6d3fe38b9141590590dfc307b544d284ee6f",
+      "selected_blob": "dcfa6d3fe38b9141590590dfc307b544d284ee6f",
+      "reviewed_tip_shas": [
+        "002cd506c81e1dfac4a656bfcd03b5b233dbc923"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "native_convergence"
+      ]
+    },
+    {
+      "id": 72,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/tests.rs",
+      "historical_blob": "061c5cd7df4999e7b6dfa14eb3aca6994ec91421",
+      "starting_candidate_blob": "2cb6a357b19e7400c0b698f39887c7739ba4ae1e",
+      "selected_blob": "2cb6a357b19e7400c0b698f39887c7739ba4ae1e",
+      "reviewed_tip_shas": [
+        "8db16f8f5d03ca8c192556a815fd2a74704edd3c"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "pq_clock_controls"
+      ]
+    },
+    {
+      "id": 73,
+      "path": "trillionnium/crates/trnm-data-availability/README.md",
+      "historical_blob": "1130b5eb1c0127c47602bda0a1262a4e0b17a5ac",
+      "starting_candidate_blob": "b573972e76a9436840d473e3020e5d41a8117fbb",
+      "selected_blob": "49524535b96973f576172a62e59c8747ed122b16",
+      "reviewed_tip_shas": [
+        "a4ec19ec8c167bad2499ab2eee724405dd318832",
+        "5dc4c933d298e955a16eb4a1b7ab9688a7a6862c"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "swarm_local_research"
+      ]
+    },
+    {
+      "id": 74,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell_swarm.rs",
+      "historical_blob": "aa9523035ba0c587ce1aabe606c9c87b9fcfa56f",
+      "starting_candidate_blob": null,
+      "selected_blob": "d21236a0dc8429c2c238375e0526e0aacf0ebb02",
+      "reviewed_tip_shas": [
+        "a4ec19ec8c167bad2499ab2eee724405dd318832"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "swarm_local_research"
+      ]
+    },
+    {
+      "id": 75,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell_swarm_xor_repair.rs",
+      "historical_blob": "3e86cc3f7857265b6745b6e1a88efad0f45cbe06",
+      "starting_candidate_blob": null,
+      "selected_blob": "e01336a99207737532688c237e17d750eb6f010c",
+      "reviewed_tip_shas": [
+        "a4ec19ec8c167bad2499ab2eee724405dd318832"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "swarm_local_research"
+      ]
+    },
+    {
+      "id": 76,
+      "path": "trillionnium/crates/trnm-data-availability/src/lib.rs",
+      "historical_blob": "975a1c732583d49e9b43a20422363d7750c4e98e",
+      "starting_candidate_blob": "52fa7a98bc83d61caa085caca08ecc4e07b4d224",
+      "selected_blob": "07e2e570f6e45c9640d92bf6483c4d1661e512c4",
+      "reviewed_tip_shas": [
+        "a4ec19ec8c167bad2499ab2eee724405dd318832"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "swarm_local_research"
+      ]
+    },
+    {
+      "id": 77,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell_swarm.rs",
+      "historical_blob": "1bc7f3b8b5caa5e8bf52785f10912c3b4e4ce835",
+      "starting_candidate_blob": null,
+      "selected_blob": "d21236a0dc8429c2c238375e0526e0aacf0ebb02",
+      "reviewed_tip_shas": [
+        "5dc4c933d298e955a16eb4a1b7ab9688a7a6862c"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "swarm_local_research"
+      ]
+    },
+    {
+      "id": 78,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell_swarm_xor_repair.rs",
+      "historical_blob": "8b784e7b888b4cf13835d9c06facc52c025c3c4f",
+      "starting_candidate_blob": null,
+      "selected_blob": "e01336a99207737532688c237e17d750eb6f010c",
+      "reviewed_tip_shas": [
+        "5dc4c933d298e955a16eb4a1b7ab9688a7a6862c"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "swarm_local_research"
+      ]
+    },
+    {
+      "id": 79,
+      "path": "trillionnium/crates/trnm-data-availability/src/lib.rs",
+      "historical_blob": "de67c1b9d417473cc6170136373669c8f8e84ed1",
+      "starting_candidate_blob": "52fa7a98bc83d61caa085caca08ecc4e07b4d224",
+      "selected_blob": "07e2e570f6e45c9640d92bf6483c4d1661e512c4",
+      "reviewed_tip_shas": [
+        "5dc4c933d298e955a16eb4a1b7ab9688a7a6862c"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "swarm_local_research"
+      ]
+    },
+    {
+      "id": 80,
+      "path": "trillionnium/crates/trnm-data-availability/Cargo.toml",
+      "historical_blob": "a072974c46ef6aa73249bf19c2c9f6526f32d66e",
+      "starting_candidate_blob": "c8587cf09dc20b7b5b463bbbcade44957d707415",
+      "selected_blob": "c8587cf09dc20b7b5b463bbbcade44957d707415",
+      "reviewed_tip_shas": [
+        "8141887759527ccb9d033a88aa89fa59310101ec",
+        "aa527e571fc9e24bb08cb92a058bad07bf708108",
+        "28192fc4c9c78bf93d05d1aa3bbd2488ec5a1b1a",
+        "e9f9228ed92c01977e4c94d1d142d3606701c14c",
+        "b23e465cae259948201f7a216c2c23cf7332cdb8"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "legacy_pcp2"
+      ]
+    },
+    {
+      "id": 81,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+      "historical_blob": "809f467dca835842cfb03481baedb5e54701b4f9",
+      "starting_candidate_blob": "9eec18fafb17092d087a8705bcd806fc7587ca01",
+      "selected_blob": "9eec18fafb17092d087a8705bcd806fc7587ca01",
+      "reviewed_tip_shas": [
+        "8141887759527ccb9d033a88aa89fa59310101ec"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "legacy_pcp2"
+      ]
+    },
+    {
+      "id": 82,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
+      "historical_blob": "3e6279479ce1cadb2b77dce3af074b1dbe56012b",
+      "starting_candidate_blob": "a93843aa8e37bae81391ee21e5a22876ae66f578",
+      "selected_blob": "a93843aa8e37bae81391ee21e5a22876ae66f578",
+      "reviewed_tip_shas": [
+        "8141887759527ccb9d033a88aa89fa59310101ec"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "legacy_pcp2"
+      ]
+    },
+    {
+      "id": 83,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+      "historical_blob": "e112f950ecf32cde25432dde86f0adbf8a5de1c8",
+      "starting_candidate_blob": "066bd942ef123d879679b7ba6fd684ddad046642",
+      "selected_blob": "066bd942ef123d879679b7ba6fd684ddad046642",
+      "reviewed_tip_shas": [
+        "8141887759527ccb9d033a88aa89fa59310101ec",
+        "aa527e571fc9e24bb08cb92a058bad07bf708108"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "legacy_pcp2"
+      ]
+    },
+    {
+      "id": 84,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/tests.rs",
+      "historical_blob": "bca8d03cd7445d09e7e474498dcd902be1c64c19",
+      "starting_candidate_blob": "dcfa6d3fe38b9141590590dfc307b544d284ee6f",
+      "selected_blob": "dcfa6d3fe38b9141590590dfc307b544d284ee6f",
+      "reviewed_tip_shas": [
+        "8141887759527ccb9d033a88aa89fa59310101ec",
+        "aa527e571fc9e24bb08cb92a058bad07bf708108"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "legacy_pcp2"
+      ]
+    },
+    {
+      "id": 85,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+      "historical_blob": "966a9f24a1e199e8ee3141a8d48704d27b2dc486",
+      "starting_candidate_blob": "9eec18fafb17092d087a8705bcd806fc7587ca01",
+      "selected_blob": "9eec18fafb17092d087a8705bcd806fc7587ca01",
+      "reviewed_tip_shas": [
+        "aa527e571fc9e24bb08cb92a058bad07bf708108"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "legacy_pcp2"
+      ]
+    },
+    {
+      "id": 86,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
+      "historical_blob": "66d2bb32030e470a19f23794e79eca859da87a8c",
+      "starting_candidate_blob": "a93843aa8e37bae81391ee21e5a22876ae66f578",
+      "selected_blob": "a93843aa8e37bae81391ee21e5a22876ae66f578",
+      "reviewed_tip_shas": [
+        "aa527e571fc9e24bb08cb92a058bad07bf708108",
+        "28192fc4c9c78bf93d05d1aa3bbd2488ec5a1b1a",
+        "e9f9228ed92c01977e4c94d1d142d3606701c14c"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "legacy_pcp2"
+      ]
+    },
+    {
+      "id": 87,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+      "historical_blob": "ef9f7bba8a10d8a2599149778dcfa1af7c013535",
+      "starting_candidate_blob": "9eec18fafb17092d087a8705bcd806fc7587ca01",
+      "selected_blob": "9eec18fafb17092d087a8705bcd806fc7587ca01",
+      "reviewed_tip_shas": [
+        "28192fc4c9c78bf93d05d1aa3bbd2488ec5a1b1a"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "legacy_pcp2"
+      ]
+    },
+    {
+      "id": 88,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+      "historical_blob": "6d1f8e3e2dd7ac717aed126c97e19b82d3b33a72",
+      "starting_candidate_blob": "9eec18fafb17092d087a8705bcd806fc7587ca01",
+      "selected_blob": "9eec18fafb17092d087a8705bcd806fc7587ca01",
+      "reviewed_tip_shas": [
+        "e9f9228ed92c01977e4c94d1d142d3606701c14c"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "legacy_pcp2"
+      ]
+    },
+    {
+      "id": 89,
+      "path": "trillionnium/crates/trnm-data-availability/Cargo.toml",
+      "historical_blob": "9e03d0d38149dc24af13e2adfb95e28035fb10f5",
+      "starting_candidate_blob": "c8587cf09dc20b7b5b463bbbcade44957d707415",
+      "selected_blob": "c8587cf09dc20b7b5b463bbbcade44957d707415",
+      "reviewed_tip_shas": [
+        "fdc2c3643d214ac17ed6415d0a185336e4142407",
+        "e71c4131842d6af16929cab40d1c9938a00163c1"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "legacy_pcp2"
+      ]
+    },
+    {
+      "id": 90,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+      "historical_blob": "f65c2eaf521d09635e04a98cde0afab110ad6c45",
+      "starting_candidate_blob": "9eec18fafb17092d087a8705bcd806fc7587ca01",
+      "selected_blob": "9eec18fafb17092d087a8705bcd806fc7587ca01",
+      "reviewed_tip_shas": [
+        "fdc2c3643d214ac17ed6415d0a185336e4142407"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "legacy_pcp2"
+      ]
+    },
+    {
+      "id": 91,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq_v2.rs",
+      "historical_blob": "a1ae1486e98ae51368a97e202a6e590c4b3203ec",
+      "starting_candidate_blob": null,
+      "selected_blob": null,
+      "reviewed_tip_shas": [
+        "fdc2c3643d214ac17ed6415d0a185336e4142407"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "legacy_pcp2"
+      ]
+    },
+    {
+      "id": 92,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+      "historical_blob": "5fc2020b55c5f8337cd5158f0e1dcd5fa30e87ff",
+      "starting_candidate_blob": "9eec18fafb17092d087a8705bcd806fc7587ca01",
+      "selected_blob": "9eec18fafb17092d087a8705bcd806fc7587ca01",
+      "reviewed_tip_shas": [
+        "b23e465cae259948201f7a216c2c23cf7332cdb8"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "legacy_pcp2"
+      ]
+    },
+    {
+      "id": 93,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+      "historical_blob": "61862b2cc9b1dbf70a1c95403faf47e8fefa3951",
+      "starting_candidate_blob": "9eec18fafb17092d087a8705bcd806fc7587ca01",
+      "selected_blob": "9eec18fafb17092d087a8705bcd806fc7587ca01",
+      "reviewed_tip_shas": [
+        "e71c4131842d6af16929cab40d1c9938a00163c1"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "legacy_pcp2"
+      ]
+    },
+    {
+      "id": 94,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq_v2.rs",
+      "historical_blob": "7789699a48499a2ab2c45d707d4745e408ea61fa",
+      "starting_candidate_blob": null,
+      "selected_blob": null,
+      "reviewed_tip_shas": [
+        "e71c4131842d6af16929cab40d1c9938a00163c1"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "legacy_pcp2"
+      ]
+    },
+    {
+      "id": 95,
+      "path": "trillionnium/crates/trnm-data-availability/Cargo.toml",
+      "historical_blob": "8fc0f3f6fe996526b811912cdb5bac8e7168c9ca",
+      "starting_candidate_blob": "c8587cf09dc20b7b5b463bbbcade44957d707415",
+      "selected_blob": "c8587cf09dc20b7b5b463bbbcade44957d707415",
+      "reviewed_tip_shas": [
+        "a6e231cce07aec408e957b0875b094bfd1d21b84"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "legacy_pcp2"
+      ]
+    },
+    {
+      "id": 96,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+      "historical_blob": "5cfb0f6182aa71783252ab82ff08556dbb76d017",
+      "starting_candidate_blob": "9eec18fafb17092d087a8705bcd806fc7587ca01",
+      "selected_blob": "9eec18fafb17092d087a8705bcd806fc7587ca01",
+      "reviewed_tip_shas": [
+        "a6e231cce07aec408e957b0875b094bfd1d21b84"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "legacy_pcp2"
+      ]
+    },
+    {
+      "id": 97,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell.rs",
+      "historical_blob": "38ba031652859da2780c7655083d2f2ebff58c42",
+      "starting_candidate_blob": "55cd859ca445af11ed47ddd5dfeefe45f614f9b6",
+      "selected_blob": "0c97bdf01c871775e50c8fc026dfb67fe2c786d4",
+      "reviewed_tip_shas": [
+        "b68c9523a1abc699883154849d657db764feffbe"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "alternate_runtime_owner"
+      ]
+    },
+    {
+      "id": 98,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/runtime_root.rs",
+      "historical_blob": "9f06a73d1a2a2cea738ee418d148cbab318abad5",
+      "starting_candidate_blob": null,
+      "selected_blob": null,
+      "reviewed_tip_shas": [
+        "b68c9523a1abc699883154849d657db764feffbe"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "alternate_runtime_owner"
+      ]
+    },
+    {
+      "id": 99,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/runtime_root_tests.rs",
+      "historical_blob": "9702e98b9b8017f2c1126eabe2c6f565279eafa5",
+      "starting_candidate_blob": null,
+      "selected_blob": null,
+      "reviewed_tip_shas": [
+        "b68c9523a1abc699883154849d657db764feffbe"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "alternate_runtime_owner"
+      ]
+    },
+    {
+      "id": 100,
+      "path": "trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+      "historical_blob": "21770e78b06eaccd019fd8137bf45a5b1d0a58d3",
+      "starting_candidate_blob": "066bd942ef123d879679b7ba6fd684ddad046642",
+      "selected_blob": "066bd942ef123d879679b7ba6fd684ddad046642",
+      "reviewed_tip_shas": [
+        "b68c9523a1abc699883154849d657db764feffbe"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "alternate_runtime_owner"
+      ]
+    },
+    {
+      "id": 101,
+      "path": "formal/pon-nakamoto-v1/pq_cell_custody.py",
+      "historical_blob": "4ad9b288711e068e8445d00b787aa4cd9f0986fa",
+      "starting_candidate_blob": "9fe9757d48ee2dad997a20170765e941a275856c",
+      "selected_blob": "9fe9757d48ee2dad997a20170765e941a275856c",
+      "reviewed_tip_shas": [
+        "c014bbbd604dad68f0a5d87a8f35a5d4fe5ce181"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "custody_schema_ack"
+      ]
+    },
+    {
+      "id": 102,
+      "path": "formal/pon-nakamoto-v1/pq_cell_swarm.py",
+      "historical_blob": "9bca3efd6ff82b6e96baa2df3d2f05a3ecff8984",
+      "starting_candidate_blob": "05c1ec97d4fe0663551155e8fc65df35a0b5b12a",
+      "selected_blob": "05c1ec97d4fe0663551155e8fc65df35a0b5b12a",
+      "reviewed_tip_shas": [
+        "c014bbbd604dad68f0a5d87a8f35a5d4fe5ce181"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "custody_schema_ack"
+      ]
+    },
+    {
+      "id": 103,
+      "path": "trillionnium/crates/trnm-data-availability/src/store.rs",
+      "historical_blob": "7f44013f884e7ea7064f973631f32950b7540158",
+      "starting_candidate_blob": "157175df455adeae6df8eb06adc54a83533f6e7f",
+      "selected_blob": "157175df455adeae6df8eb06adc54a83533f6e7f",
+      "reviewed_tip_shas": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "regular_store_current"
+      ]
+    },
+    {
+      "id": 104,
+      "path": "trillionnium/crates/trnm-data-availability/src/tests.rs",
+      "historical_blob": "7964d81d5e6ee37c76e0f0d6040340f281d9e686",
+      "starting_candidate_blob": "112b68a9c55cdfa7c5e693480cdf1fe983b97e5b",
+      "selected_blob": "112b68a9c55cdfa7c5e693480cdf1fe983b97e5b",
+      "reviewed_tip_shas": [
+        "871ade83cd0bf43adbbefc397a88b187bf7bbd5d"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "regular_store_current"
+      ]
+    },
+    {
+      "id": 105,
+      "path": "trillionnium/crates/trnm-data-availability/Cargo.toml",
+      "historical_blob": "6f57e7e46b4c27cf8351e5dff7c93e76b7d76288",
+      "starting_candidate_blob": "c8587cf09dc20b7b5b463bbbcade44957d707415",
+      "selected_blob": "c8587cf09dc20b7b5b463bbbcade44957d707415",
+      "reviewed_tip_shas": [
+        "5862e4427e918f10f50c10844e411f0ed3f70d66"
+      ],
+      "whitespace_only": false,
+      "review_groups": [
+        "dependency_current"
+      ]
+    },
+    {
+      "id": 106,
+      "path": "scripts/llm_cell_release.py",
+      "historical_blob": "feed0d88de7f2bf5a078f36e3bcfcd6ecdc75217",
+      "starting_candidate_blob": "bf1fa79be98000ccbeb9a4c3aa512cd02df7e0cd",
+      "selected_blob": "bf1fa79be98000ccbeb9a4c3aa512cd02df7e0cd",
+      "reviewed_tip_shas": [
+        "b68c9523a1abc699883154849d657db764feffbe"
+      ],
+      "review_groups": [
+        "alternate_runtime_owner"
+      ],
+      "additional_boundary_review": true
+    },
+    {
+      "id": 107,
+      "path": "scripts/llm_ordinary_action_catalog.py",
+      "historical_blob": "c56b15b7a613310eb5b54b6a0309b90a80edb0bd",
+      "starting_candidate_blob": null,
+      "selected_blob": null,
+      "reviewed_tip_shas": [
+        "b68c9523a1abc699883154849d657db764feffbe"
+      ],
+      "review_groups": [
+        "alternate_runtime_owner"
+      ],
+      "additional_boundary_review": true
+    },
+    {
+      "id": 108,
+      "path": "scripts/test_llm_cell_release.py",
+      "historical_blob": "b9429385b92961f7cee40a3c44e1dd2d737c0836",
+      "starting_candidate_blob": "f7c80c1af1293b1d423923a6ab1a4661adb1b657",
+      "selected_blob": "f7c80c1af1293b1d423923a6ab1a4661adb1b657",
+      "reviewed_tip_shas": [
+        "b68c9523a1abc699883154849d657db764feffbe"
+      ],
+      "review_groups": [
+        "alternate_runtime_owner"
+      ],
+      "additional_boundary_review": true
+    },
+    {
+      "id": 109,
+      "path": "scripts/test_llm_ordinary_action_catalog.py",
+      "historical_blob": "769da1f86ac897ac5cdea336ca50dc5c51aa390b",
+      "starting_candidate_blob": null,
+      "selected_blob": null,
+      "reviewed_tip_shas": [
+        "b68c9523a1abc699883154849d657db764feffbe"
+      ],
+      "review_groups": [
+        "alternate_runtime_owner"
+      ],
+      "additional_boundary_review": true
+    },
+    {
+      "id": 110,
+      "path": "formal/pon-nakamoto-v1/pq_tpq1_crypto_verify.c",
+      "historical_blob": "8dc5d553c9a658892e8bf92864026ce851936761",
+      "starting_candidate_blob": null,
+      "selected_blob": "8dc5d553c9a658892e8bf92864026ce851936761",
+      "reviewed_tip_shas": [
+        "e67d26f5ab91f526206fe11ae56a46e210ed6c34"
+      ],
+      "review_groups": [
+        "tpq1_c_oracle"
+      ],
+      "additional_boundary_review": true
+    },
+    {
+      "id": 111,
+      "path": "formal/pon-nakamoto-v1/pq_tpq1_crypto_verify.h",
+      "historical_blob": "e17165e9ea6fe9b367c551f6a8f6d456961827de",
+      "starting_candidate_blob": null,
+      "selected_blob": "e17165e9ea6fe9b367c551f6a8f6d456961827de",
+      "reviewed_tip_shas": [
+        "e67d26f5ab91f526206fe11ae56a46e210ed6c34"
+      ],
+      "review_groups": [
+        "tpq1_c_oracle"
+      ],
+      "additional_boundary_review": true
+    },
+    {
+      "id": 112,
+      "path": "formal/pon-nakamoto-v1/test_pq_tpq1_crypto_verify.py",
+      "historical_blob": "d997540f9937b778decf9868a1dc04dea354f233",
+      "starting_candidate_blob": null,
+      "selected_blob": "d997540f9937b778decf9868a1dc04dea354f233",
+      "reviewed_tip_shas": [
+        "e67d26f5ab91f526206fe11ae56a46e210ed6c34"
+      ],
+      "review_groups": [
+        "tpq1_c_oracle"
+      ],
+      "additional_boundary_review": true
+    }
+  ],
+  "original_evidence_checks": [
+    {
+      "original_commit": "a67d83a05d6ff4c2fdc4a5fd5c23fc38d38b563d",
+      "directory": "evidence/cell-native-shard-674c72-20261110",
+      "original_entries": 1536,
+      "changed_or_missing_original_entries": [],
+      "comparison": "exact_git_mode_type_blob_identity",
+      "status": "unchanged"
+    },
+    {
+      "original_commit": "43e10d4dded2404f2b6ae8851a68173d9d792be6",
+      "directory": "evidence/cell-storage-network-v3-20261108",
+      "original_entries": 11,
+      "changed_or_missing_original_entries": [],
+      "comparison": "exact_git_mode_type_blob_identity",
+      "status": "unchanged"
+    },
+    {
+      "original_commit": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "directory": "qualification/cell-rendezvous-readiness-20261103",
+      "original_entries": 43,
+      "changed_or_missing_original_entries": [],
+      "comparison": "exact_git_mode_type_blob_identity",
+      "status": "unchanged"
+    },
+    {
+      "original_commit": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "directory": "qualification/architecture-fixed-host-20261103",
+      "original_entries": 19,
+      "changed_or_missing_original_entries": [],
+      "comparison": "exact_git_mode_type_blob_identity",
+      "status": "unchanged"
+    },
+    {
+      "original_commit": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "directory": "qualification/frozen-44d-lock-composition-20261104",
+      "original_entries": 8,
+      "changed_or_missing_original_entries": [],
+      "comparison": "exact_git_mode_type_blob_identity",
+      "status": "unchanged"
+    },
+    {
+      "original_commit": "e62eb3a4f35cf9fc5bf7f3092f86d441d0c4cd29",
+      "directory": "qualification/frozen-codec-control-count-20261104",
+      "original_entries": 4,
+      "changed_or_missing_original_entries": [],
+      "comparison": "exact_git_mode_type_blob_identity",
+      "status": "unchanged"
+    },
+    {
+      "original_commit": "e67d26f5ab91f526206fe11ae56a46e210ed6c34",
+      "directory": "evidence/pon-pq-pql9-native-v1",
+      "original_entries": 4,
+      "changed_or_missing_original_entries": [],
+      "comparison": "exact_git_mode_type_blob_identity",
+      "status": "unchanged"
+    }
+  ],
+  "owner_transfers": [
+    {
+      "sha": "e42f85ed5b1d0b4c9ebcfd8d5bd3247becb74959",
+      "owner": "Node/root",
+      "reason": "TLS endpoint/buffering/diagnostics, excluded from this 46-tip Cell roster"
+    }
+  ],
+  "final_reconciliation_required": [
+    "Preserve every original head through the root integration DAG or durable refs before retiring branches.",
+    "Rebind source-revision/hash corpora, authority-effect register and distributed source inventory on final composed source. Do not relabel historical receipts.",
+    "Complete Node successor-bound retirement from e6c622a16c6770073435f49cf02a6808b56312b0.",
+    "Do not reactivate pq3, pq_reply_v2/pq_v2, runtime_root or historical branch-specific CI through textual clean merges.",
+    "Run exact-source repository gates after all lanes merge; local receipts qualify only their recorded commit and command scope."
+  ],
+  "production_activation": false,
+  "whole_chain_pq_qualified": false,
+  "final_use_or_independent_custody_qualified": false,
+  "assigned_tip_snapshot": {
+    "path": "assigned-tip-snapshot.json",
+    "sha256": "88f35c2c0df54410de5e5af1170fec5600b6885c40cf192a799b683d365c2ba3",
+    "scope": "original full core-path inventory; non-Cell paths not qualified by this Cell lane"
+  }
+}

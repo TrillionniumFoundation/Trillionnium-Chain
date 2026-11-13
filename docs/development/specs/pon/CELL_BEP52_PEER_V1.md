@@ -3,6 +3,8 @@
 Status: bounded native network component for the existing PN5 candidate. This
 adds an explicit TCP transfer path to [the offline BEP52 binding](CELL_BEP52_BINDING_V1.md).
 An explicit one-hop, read-only UDP DHT query can return bounded candidate hints.
+An additional opt-in iterative client can follow admitted node hints within the
+same original session; its exact scope is defined below.
 Production, public discovery, independent custody, WAN SLA and ordinary Hepta
 execution remain `HOLD_NO_GO`.
 
@@ -217,8 +219,54 @@ public BitTorrent implementation, public DHT availability, Sybil/eclipse
 resistance, independent operator placement, funded renewal, a 72-hour custody
 campaign, WAN p95/p99 or PQ transport security.
 
+## Opt-in bounded iterative DHT lookup
+
+`lookup_cell_bep52_dht_peers` preserves the original one-hop entry point and
+wire parser. It accepts 1–8 explicit bootstrap endpoints, 1–8 caller-generated
+fresh nonzero transaction IDs, an immutable endpoint policy and the same
+non-cloneable `CellBep52PeerSessionV1`. The transaction-ID count is a per-call
+query ceiling, not an additional connection allowance. Callers can reserve
+room for subsequent TCP acquisition by supplying fewer transaction IDs.
+
+The client queries admitted bootstraps first, then orders advertised nodes by
+the BEP5 XOR distance to the truncated infohash. It deduplicates advertised node IDs and
+endpoints and checks that a queried advertisement returns its advertised node
+ID. The check correlates unauthenticated messages; it establishes no operator
+identity or Sybil resistance. Each hop discloses the truncated lookup target to
+another endpoint in the owner-approved scope. All queries retain `ro=1` under
+[BEP43](https://www.bittorrent.org/beps/bep_0043.html).
+
+| Boundary | Iterative-client behavior |
+| --- | --- |
+| Public policy | Literal IPv4 unicast only; conservatively reject the IANA special-purpose blocks, multicast and reserved addresses, including the narrow service exceptions inside those blocks |
+| Explicit policy | Exactly 1–64 caller-approved IPv4 address/port pairs; a response cannot extend this allowlist |
+| IPv6 | Outside this wire profile; no DNS resolution, mapped-IPv6 conversion or mixed compact IPv6 peers |
+| Targets and results | Apply the same endpoint policy to bootstrap queries, learned node queries and returned peer hints |
+| State | At most eight bootstrap plus 64 advertised node candidates and 32 returned peers; no persisted routing table |
+| Cost | UDP queries and TCP attempts share the existing total ceiling of eight, original deadline and byte/message limits |
+| Failure | Malformed, oversized, unavailable or miscorrelated replies retain actual costs; further work uses only the remaining reservation |
+| Stop | Report frontier exhaustion, peer limit, query limit or remaining-session-budget exhaustion; cancellation and expiry propagate errors |
+| Authority | Return hints only; no automatic TCP dial, announcement, serving loop, export authorization or FinalUse |
+
+The public-address policy is a fixed conservative scope based on the
+[IANA IPv4 special-purpose registry](https://www.iana.org/assignments/iana-ipv4-special-registry/),
+not proof of routability or ownership. Subnet-directed broadcast and public
+addresses routed into sensitive local services still require the enclosing
+network's egress policy. A successful response does not establish complete DHT
+coverage, availability or trustworthy content. Independently pinned full
+BEP52/TCV2 identities remain necessary at download and loader admission.
+
+`cell_bep52_iterative_discovery` is a finite native component example. It uses
+real local UDP queries across two hops per object, requires an explicit owner
+choice before TCP dialing, transfers a synthetic model/environment pair through
+the existing BEP52 path and checks the complete independently pinned TCV2 bytes.
+Both objects share one receiver session. Its original limit is six combined
+attempts: four DHT queries and two TCP connections. It joins all finite server
+threads and reconciles application-byte counts. The example is not a model
+forward, ordinary Hepta task, independent operator or WAN measurement.
+
 The next network qualification needs independently operated peers, third-party
 client captures, the original resource/service contracts, failures in the
 denominator and current owner/export admission. Public discovery remains an
-explicit open gate: the one-hop UDP query does not establish a routing network,
+explicit open gate: the one-hop and bounded iterative clients do not establish a routing network,
 independent operators or resistance to DHT eclipse/Sybil attacks.

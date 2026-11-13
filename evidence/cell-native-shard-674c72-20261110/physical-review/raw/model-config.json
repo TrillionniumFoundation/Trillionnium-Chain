@@ -1,0 +1,58 @@
+{
+  "audit": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/source-inputs.native-v2.attempt02.verification.json",
+  "audit_sha256": "7f350dda2f50b54272871734da5a10097d87ae81af614a7f799c8d9259cae8f4",
+  "binary": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/checked-test-profile-s3/binaries/checked-test-main-07b711687a223e670280e72c1397e628ef05e97183b60cb9decd66120631226e.elf",
+  "binary_sha256": "07b711687a223e670280e72c1397e628ef05e97183b60cb9decd66120631226e",
+  "cargo_profile_name": "test",
+  "gate_artifacts": [
+    {
+      "path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/source-qualified-s3/observation.json",
+      "sha256": "91b0e6ee640bc8eca733afb104d2eb6538822fa1c0a934255c6f08ea4f73b67e"
+    },
+    {
+      "path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/native-qualified-s3/observation.json",
+      "sha256": "2690516533c4619cc653d9811470dccc14d56a84c9e25b13cebd96eea5c11699"
+    },
+    {
+      "path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/checked-test-profile-s3/accepted-artifact.json",
+      "sha256": "f34056fa5ab8fd8e5360975350d615d140ba5b9fc26e9afcd47ac3c297dc7f3e"
+    },
+    {
+      "path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/checked-test-profile-s3/cargo-build.stdout",
+      "sha256": "43bd655a7e446812d8a462ae2bddf2bdb172d74060aa1e5661a5fdbedc47d9f7"
+    },
+    {
+      "path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/checked-test-profile-s3/cargo-build.stderr",
+      "sha256": "3b311c50f67dff7ce20bb1bd74c0b7e51126df203f93a95e1a67a9750a602528"
+    },
+    {
+      "path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/model-prepare-s3-attempt02-input-pin-audit.json",
+      "sha256": "42b857589e12b7113cbd91250b32b904b907b0f6df14a10b3bb94283ed84aa24"
+    },
+    {
+      "path": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/model-cgroup-resource-probe-v2.json",
+      "sha256": "f57e42949ae7d838ba0ef201af9390a37f02ad481531d947e1d5d0db50e2fd5e"
+    }
+  ],
+  "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+  "native_program_profile": {
+    "debug_assertions": true,
+    "debuginfo": 2,
+    "opt_level": "3",
+    "overflow_checks": true,
+    "test": false
+  },
+  "normal_main_compile_mode": true,
+  "original_native_limits": {
+    "rss_bytes": 8589934592,
+    "seconds": 300,
+    "snapshot_bytes": 536870912,
+    "threads": 4
+  },
+  "schema": "trnm.native-model-run-config.v2",
+  "source": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/source-inputs.native-v2.attempt02.json",
+  "source_sha256": "83e4ab28cd84813c1a489c4c53222764b6437edf0eaad8924776c0777ff61835",
+  "supervisor_cleanup_seconds": 600,
+  "tree": "6a0f38318b3cfb021240cda7f3d266c28aa76e78",
+  "wrapper_sha256": "120c70fb52909072eacf84251a44ff6c62f777479685db2cacf8cc1846a9e139"
+}

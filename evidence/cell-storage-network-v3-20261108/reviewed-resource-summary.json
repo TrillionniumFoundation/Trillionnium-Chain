@@ -1,0 +1,12 @@
+{
+  "minimum_available_bytes": {
+    "/tmp": 1236246528,
+    "/tmp/cell-storage-v3-487d55-target": 1236246528,
+    "/workspace/scratch/487d55b3efb1/chain-storage": 1645531136,
+    "/workspace/scratch/487d55b3efb1/runtime-tmp": 1645531136
+  },
+  "minimum_available_memory_kib": 2308500,
+  "samples": 178,
+  "sampling_interval_seconds": 2,
+  "scope": "observed shared execution namespace; not a peak guarantee or independent Host acceptance"
+}

@@ -1,0 +1,10 @@
+{
+  "errors": [],
+  "native_tests_executed": false,
+  "original_manifests_preserved": 8,
+  "payload_bytes": 5620986,
+  "runtime_or_production_qualification": false,
+  "schema": "trnm.closed-preparation-copy-verification.v1",
+  "source_modified": false,
+  "verified_files": 604
+}

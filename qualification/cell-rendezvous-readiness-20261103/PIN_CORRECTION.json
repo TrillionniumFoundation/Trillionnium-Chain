@@ -1,0 +1,202 @@
+{
+  "schema": "chain-source-pin-correction-v1",
+  "parent_commit": "801bc063d64eff483cbd52804debfa6638cf96dd",
+  "parent_tree": "6cba3a401b558ca671b03351bc78aa6502390412",
+  "negative": {
+    "source": "801bc063d64eff483cbd52804debfa6638cf96dd",
+    "command": [
+      "python3",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "HOLD_NO_GO: changed source: .github/workflows/trnm-required-baseline.yml\n",
+    "pins": 376,
+    "mismatches": [
+      {
+        "path": ".github/workflows/trnm-required-baseline.yml",
+        "old_blob": "beff089827ed0c138edb8b653026a9be7cc1f4a6",
+        "actual_blob": "a479a7872a28816a83158964f14a7aba799a136a",
+        "sha256": "23f3c0993ccf950cf6bab6d04fec0d9a82c80f190545cdff8fdd9554aa2ca560"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import_deadline_tests.rs",
+        "old_blob": "96dc58e1a69c0a4f44327bd019b6ef78eef597d1",
+        "actual_blob": "73e5d3d02611833848409254fc1b37452542e463",
+        "sha256": "d9565603de428d2b8f771cf1c35bb9cd1b33ac01abf78db6f094d034a2b22d2f"
+      }
+    ],
+    "restored_unmodified_sparse_inputs": [
+      {
+        "path": "evidence/pon-pq-account-native-20261028/README.md",
+        "bytes": 6743,
+        "blob": "2885a560883ff59e67411e8bec5813d2f132587a"
+      },
+      {
+        "path": "evidence/pon-pq-cell-deadline-native-v1/README.md",
+        "bytes": 1833,
+        "blob": "76b74547693d7ee09845776b440c24cd960417a8"
+      },
+      {
+        "path": "evidence/pon-pq-cell-deadline-native-v1/baseline-real-tcp.log",
+        "bytes": 1963,
+        "blob": "f8c5894587a4a239d7b83b36d8062682c4e4bb90"
+      },
+      {
+        "path": "evidence/pon-pq-cell-deadline-native-v1/fixed-python.log",
+        "bytes": 7409,
+        "blob": "b7223a755a4b6b588451e7da94393daaa4a6be4c"
+      },
+      {
+        "path": "evidence/pon-pq-cell-deadline-native-v1/local-qualification.json",
+        "bytes": 6618,
+        "blob": "7da5272cb6423fa6da8a65d02a77f511cba77632"
+      },
+      {
+        "path": "evidence/pon-pq-cell-deadline-native-v1/native-clippy.log",
+        "bytes": 72,
+        "blob": "8ab4f9d11c6ea18011ce29d32c20dbf2b8460341"
+      },
+      {
+        "path": "evidence/pon-pq-cell-deadline-native-v1/native-format.log",
+        "bytes": 0,
+        "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+      },
+      {
+        "path": "evidence/pon-pq-cell-deadline-native-v1/native-rust.log",
+        "bytes": 2110,
+        "blob": "703250081e72cbb28635d4d76e2eccf26b763e85"
+      },
+      {
+        "path": "evidence/pon-pq-pql10-pem-source-v1/combined-test.log",
+        "bytes": 1839,
+        "blob": "1d8cd4234d1ae143434d024c8629aaf81014c62a"
+      },
+      {
+        "path": "evidence/pon-pq-pql10-pem-source-v1/local-qualification.json",
+        "bytes": 2348,
+        "blob": "596aa94783e6b029c73a05696fb8bdfc32b25c74"
+      },
+      {
+        "path": "evidence/pon-pq-pql10-pem-source-v1/normal-test.log",
+        "bytes": 1018,
+        "blob": "4768863acadbe03d793e615763cf2fe006a3332a"
+      },
+      {
+        "path": "evidence/pon-pq-pql10-pem-source-v1/sanitizer-test.log",
+        "bytes": 1018,
+        "blob": "2ada9806d35604801ab9a01d289d8a60867a0cac"
+      },
+      {
+        "path": "evidence/pon-pq-pql11b-source-guard-v1/local-qualification.json",
+        "bytes": 1507,
+        "blob": "afaf66bc3269ae2d09230e67253462252d5da4dc"
+      },
+      {
+        "path": "evidence/pon-pq-spki-v1/README.md",
+        "bytes": 1247,
+        "blob": "5d9e67e90cf335e5b0f8350577bed539e6fb1ad7"
+      },
+      {
+        "path": "evidence/pon-pq-tpq1-native-v1/README.md",
+        "bytes": 2239,
+        "blob": "29384ad0a2cfbfd987334d12de93a0a912837512"
+      },
+      {
+        "path": "evidence/pon-pq-tpq1-native-v1/native-sanitizer-test.log",
+        "bytes": 918,
+        "blob": "f7092477840b5139380251e6ec396c98b60a2143"
+      },
+      {
+        "path": "evidence/pon-pq-tpq1-native-v1/native-test.log",
+        "bytes": 918,
+        "blob": "08a3ee020dc978572c56c81b0ea1f834a6ebf4f7"
+      }
+    ]
+  },
+  "positive": {
+    "exit": 0,
+    "stdout": "{\"canonical_default_provider_contract_checked\": true, \"canonical_pnq2_contract_checked\": true, \"continuous_npq6_combination_accepted\": false, \"cryptographic_acceptance\": false, \"exact_source_blobs\": 376, \"legacy_qtx1_optional_adapter_contract_checked\": true, \"native_transfer_account_contract_checked\": true, \"native_transport_contract_checked\": true, \"node_activated\": false, \"production_confidentiality_accepted\": false, \"schema\": \"trnm-pq-cross-branch-check-v1\", \"status\": \"HOLD_NO_GO\", \"upstream_heads\": 6, \"whole_native_authorization_migrated\": false}\n",
+    "stderr": "",
+    "manifest_sha256": "a3a03a6002ae40508cc41eb4426c353b79da424b134cc8124bdd1c09f9134cb1",
+    "changed_pins": [
+      {
+        "path": ".github/workflows/trnm-required-baseline.yml",
+        "old_blob": "beff089827ed0c138edb8b653026a9be7cc1f4a6",
+        "actual_blob": "a479a7872a28816a83158964f14a7aba799a136a",
+        "sha256": "23f3c0993ccf950cf6bab6d04fec0d9a82c80f190545cdff8fdd9554aa2ca560"
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import_deadline_tests.rs",
+        "old_blob": "96dc58e1a69c0a4f44327bd019b6ef78eef597d1",
+        "actual_blob": "73e5d3d02611833848409254fc1b37452542e463",
+        "sha256": "d9565603de428d2b8f771cf1c35bb9cd1b33ac01abf78db6f094d034a2b22d2f"
+      }
+    ],
+    "all_other_fields_equal": true
+  },
+  "controls": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "exit": 0,
+      "start_unix_ns": 1793736301397317095,
+      "end_unix_ns": 1793736301489073691,
+      "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-cell-rendezvous-readiness-20261103-gpt6\", \"remote_policy_mutated\": false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "exit": 0,
+      "start_unix_ns": 1793736301489303398,
+      "end_unix_ns": 1793736301669231403,
+      "stdout": "{\"canonical_default_provider_contract_checked\": true, \"canonical_pnq2_contract_checked\": true, \"continuous_npq6_combination_accepted\": false, \"cryptographic_acceptance\": false, \"exact_source_blobs\": 376, \"legacy_qtx1_optional_adapter_contract_checked\": true, \"native_transfer_account_contract_checked\": true, \"native_transport_contract_checked\": true, \"node_activated\": false, \"production_confidentiality_accepted\": false, \"schema\": \"trnm-pq-cross-branch-check-v1\", \"status\": \"HOLD_NO_GO\", \"upstream_heads\": 6, \"whole_native_authorization_migrated\": false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_pq_research_integration.py",
+        "-v"
+      ],
+      "exit": 0,
+      "start_unix_ns": 1793736301669415391,
+      "end_unix_ns": 1793736316589852525,
+      "stdout": "",
+      "stderr": "test_account_owner_or_report_cannot_be_omitted (test_pq_research_integration.CorpusGateTests.test_account_owner_or_report_cannot_be_omitted) ... ok\ntest_account_profile_cannot_claim_complete_authority_or_miner_roster (test_pq_research_integration.CorpusGateTests.test_account_profile_cannot_claim_complete_authority_or_miner_roster) ... ok\ntest_all_global_acceptance_flags_stay_false (test_pq_research_integration.CorpusGateTests.test_all_global_acceptance_flags_stay_false) ... ok\ntest_canonical_provider_malformed_tables_and_feature_shapes_fail_closed (test_pq_research_integration.CorpusGateTests.test_canonical_provider_malformed_tables_and_feature_shapes_fail_closed) ... ok\ntest_canonical_provider_manifest_change_is_refused_even_if_repinned (test_pq_research_integration.CorpusGateTests.test_canonical_provider_manifest_change_is_refused_even_if_repinned) ... ok\ntest_canonical_slice_forbids_fallback_refund_and_unaccepted_combinations (test_pq_research_integration.CorpusGateTests.test_canonical_slice_forbids_fallback_refund_and_unaccepted_combinations) ... ok\ntest_changed_signature_or_source_refuses (test_pq_research_integration.CorpusGateTests.test_changed_signature_or_source_refuses) ... ok\ntest_convergence_owner_source_changes_cannot_reuse_prior_pins (test_pq_research_integration.CorpusGateTests.test_convergence_owner_source_changes_cannot_reuse_prior_pins) ... ok\ntest_default_chain_activation_refuses (test_pq_research_integration.CorpusGateTests.test_default_chain_activation_refuses) ... ok\ntest_duplicate_json_field_refuses (test_pq_research_integration.CorpusGateTests.test_duplicate_json_field_refuses) ... ok\ntest_duplicate_required_pin_refuses_but_base_fixture_is_unique (test_pq_research_integration.CorpusGateTests.test_duplicate_required_pin_refuses_but_base_fixture_is_unique) ... ok\ntest_malformed_pq_gate_refuses (test_pq_research_integration.CorpusGateTests.test_malformed_pq_gate_refuses) ... ok\ntest_missing_source_pin_refuses (test_pq_research_integration.CorpusGateTests.test_missing_source_pin_refuses) ... ok\ntest_missing_source_refuses (test_pq_research_integration.CorpusGateTests.test_missing_source_refuses) ... ok\ntest_native_evidence_must_exist_but_never_grants_acceptance (test_pq_research_integration.CorpusGateTests.test_native_evidence_must_exist_but_never_grants_acceptance) ... ok\ntest_native_evidence_traversal_or_symlink_refuses (test_pq_research_integration.CorpusGateTests.test_native_evidence_traversal_or_symlink_refuses) ... ok\ntest_native_owner_guards_and_cli_cannot_be_dropped_from_required_pins (test_pq_research_integration.CorpusGateTests.test_native_owner_guards_and_cli_cannot_be_dropped_from_required_pins) ... ok\ntest_native_profile_is_mandatory_and_never_claims_whole_authorization (test_pq_research_integration.CorpusGateTests.test_native_profile_is_mandatory_and_never_claims_whole_authorization) ... ok\ntest_native_wire_numeric_claims_refuse_bool_or_wrong_version (test_pq_research_integration.CorpusGateTests.test_native_wire_numeric_claims_refuse_bool_or_wrong_version) ... ok\ntest_nested_symlink_directory_refuses_even_without_named_pq_file (test_pq_research_integration.CorpusGateTests.test_nested_symlink_directory_refuses_even_without_named_pq_file) ... ok\ntest_new_canonical_sources_and_negative_vectors_keep_exact_blob_identity (test_pq_research_integration.CorpusGateTests.test_new_canonical_sources_and_negative_vectors_keep_exact_blob_identity) ... ok\ntest_new_unpinned_pq_implementations_fail_closed (test_pq_research_integration.CorpusGateTests.test_new_unpinned_pq_implementations_fail_closed) ... ok\ntest_non_pq_named_owner_dependencies_cannot_be_dropped_and_repinned (test_pq_research_integration.CorpusGateTests.test_non_pq_named_owner_dependencies_cannot_be_dropped_and_repinned) ... ok\ntest_pinned_nested_source_is_checked_by_byte_identity (test_pq_research_integration.CorpusGateTests.test_pinned_nested_source_is_checked_by_byte_identity) ... ok\ntest_pinned_pq_named_module_keeps_original_byte_identity (test_pq_research_integration.CorpusGateTests.test_pinned_pq_named_module_keeps_original_byte_identity) ... ok\ntest_pnq1_cannot_replace_or_coexist_as_active_candidate (test_pq_research_integration.CorpusGateTests.test_pnq1_cannot_replace_or_coexist_as_active_candidate) ... ok\ntest_pq_source_directory_symlink_is_not_trusted (test_pq_research_integration.CorpusGateTests.test_pq_source_directory_symlink_is_not_trusted) ... ok\ntest_pqg_native_dual_signature_source_must_have_exact_blob_pin (test_pq_research_integration.CorpusGateTests.test_pqg_native_dual_signature_source_must_have_exact_blob_pin) ... ok\ntest_source_symlink_refuses (test_pq_research_integration.CorpusGateTests.test_source_symlink_refuses) ... ok\ntest_traversal_budget_refuses_before_unbounded_tree_scan (test_pq_research_integration.CorpusGateTests.test_traversal_budget_refuses_before_unbounded_tree_scan) ... ok\ntest_traversal_pin_refuses (test_pq_research_integration.CorpusGateTests.test_traversal_pin_refuses) ... ok\ntest_unpinned_pq_named_nested_module_rejects_renamed_native_file (test_pq_research_integration.CorpusGateTests.test_unpinned_pq_named_nested_module_rejects_renamed_native_file) ... ok\ntest_unreviewed_overlay_refuses (test_pq_research_integration.CorpusGateTests.test_unreviewed_overlay_refuses) ... ok\ntest_valid_offline_fixture_is_still_hold (test_pq_research_integration.CorpusGateTests.test_valid_offline_fixture_is_still_hold) ... ok\n\n----------------------------------------------------------------------\nRan 34 tests in 14.833s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/ci",
+        "-p",
+        "test_pq_chain_claim_guard.py",
+        "-v"
+      ],
+      "exit": 0,
+      "start_unix_ns": 1793736316590030844,
+      "end_unix_ns": 1793736316812389624,
+      "stdout": "",
+      "stderr": "test_classical_fallback_refused (test_pq_chain_claim_guard.TestClaimGuard.test_classical_fallback_refused) ... ok\ntest_corrupt_independent_qualification_refused (test_pq_chain_claim_guard.TestClaimGuard.test_corrupt_independent_qualification_refused) ... ok\ntest_duplicate_json_keys_refused (test_pq_chain_claim_guard.TestClaimGuard.test_duplicate_json_keys_refused) ... ok\ntest_hepta_final_use_claim_refused (test_pq_chain_claim_guard.TestClaimGuard.test_hepta_final_use_claim_refused) ... ok\ntest_history_storage_and_rehearsal_owner_paths_cannot_disappear (test_pq_chain_claim_guard.TestClaimGuard.test_history_storage_and_rehearsal_owner_paths_cannot_disappear) ... ok\ntest_hold_is_not_pq_success (test_pq_chain_claim_guard.TestClaimGuard.test_hold_is_not_pq_success) ... ok\ntest_missing_authority_surface_inventory_refused (test_pq_chain_claim_guard.TestClaimGuard.test_missing_authority_surface_inventory_refused) ... ok\ntest_missing_external_rollback_oracle_refused (test_pq_chain_claim_guard.TestClaimGuard.test_missing_external_rollback_oracle_refused) ... ok\ntest_missing_or_non_directory_checkout_root_refused (test_pq_chain_claim_guard.TestClaimGuard.test_missing_or_non_directory_checkout_root_refused) ... ok\ntest_missing_pq_hepta_verifier_refused (test_pq_chain_claim_guard.TestClaimGuard.test_missing_pq_hepta_verifier_refused) ... ok\ntest_missing_proof_relation_refused (test_pq_chain_claim_guard.TestClaimGuard.test_missing_proof_relation_refused) ... ok\ntest_missing_quantum_daa_model_refused (test_pq_chain_claim_guard.TestClaimGuard.test_missing_quantum_daa_model_refused) ... ok\ntest_native_witness_and_live_admission_sources_cannot_disappear (test_pq_chain_claim_guard.TestClaimGuard.test_native_witness_and_live_admission_sources_cannot_disappear) ... ok\ntest_nonfinite_and_nonstandard_json_numbers_refused (test_pq_chain_claim_guard.TestClaimGuard.test_nonfinite_and_nonstandard_json_numbers_refused) ... ok\ntest_pq_128_guest_promotion_refused (test_pq_chain_claim_guard.TestClaimGuard.test_pq_128_guest_promotion_refused) ... ok\ntest_production_activation_refused (test_pq_chain_claim_guard.TestClaimGuard.test_production_activation_refused) ... ok\ntest_quantum_hardness_claim_refused (test_pq_chain_claim_guard.TestClaimGuard.test_quantum_hardness_claim_refused) ... ok\ntest_rollback_claim_refused (test_pq_chain_claim_guard.TestClaimGuard.test_rollback_claim_refused) ... ok\ntest_symlink_source_refused (test_pq_chain_claim_guard.TestClaimGuard.test_symlink_source_refused) ... ok\ntest_symlinked_checkout_ancestor_refused (test_pq_chain_claim_guard.TestClaimGuard.test_symlinked_checkout_ancestor_refused) ... ok\ntest_symlinked_checkout_root_refused (test_pq_chain_claim_guard.TestClaimGuard.test_symlinked_checkout_root_refused) ... ok\ntest_unbounded_or_unaccepted_candidate_refused (test_pq_chain_claim_guard.TestClaimGuard.test_unbounded_or_unaccepted_candidate_refused) ... ok\n\n----------------------------------------------------------------------\nRan 22 tests in 0.160s\n\nOK\n"
+    }
+  ],
+  "all_other_manifest_fields_and_374_pins_identical": true,
+  "all_rust_cargo_and_workflow_inputs_identical_to_parent": true,
+  "native_results_scope": "The parent evidence records 174 full DA tests, strict DA Clippy, exact graph and original fixture negative control. No Rust/Cargo/workflow input changes in this correction; no new native execution is claimed. Parent source-integrity unit controls did not replace this actual corpus check, which was missing from the earlier publication validation.",
+  "qualification": "DRAFT / HOLD_NO_GO / DENY_ALL; original fixed Host and 4s/16 hostile/30s service gates remain separate."
+}

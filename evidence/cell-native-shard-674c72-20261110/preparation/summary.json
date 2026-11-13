@@ -1,0 +1,30 @@
+{
+  "all_original_manifests_unchanged": true,
+  "append_policy": "Keep this packet immutable. Collect root-confirmed later campaigns in separate sibling packets.",
+  "candidate_source_written": false,
+  "copied_files": 604,
+  "copied_original_bytes": 5620986,
+  "copy_only": true,
+  "created_at_utc": "2026-11-10T06:01:38.599294+00:00",
+  "final_source_native_model_campaigns_collected": false,
+  "generated_inventory_is_summary_not_original_manifest": true,
+  "native_tests_executed": false,
+  "original_manifest_count": 8,
+  "path_mapping": "original-to-archive.json",
+  "repository_evidence_written": false,
+  "result": "COPIED_AND_READBACK_VERIFIED",
+  "schema": "trnm.closed-preparation-staging.v1",
+  "selected_control_files": 32,
+  "selected_validation_top_items": 19,
+  "source_candidate_context": {
+    "commit": "f41d6e0ac2b40e49c1dff96110f6ed68445eaef7",
+    "tree": "0e75a266b6582f3acb48cd3d41dcef7309e63dc7"
+  },
+  "synthetic_failure_scope": {
+    "limit_failure": "Synthetic harness native pending-Task admission refusal (6 of 7 tests passed), not a real-model operation.",
+    "original_manifests": "Preserve all original bytes, including the seven-file precursor source/reconstruction and diagnostics' 23-source precommit delta. No later source substitutes for failed source.",
+    "source_owner_report": "version_contract_audit independently confirmed the preparation paths terminal and reported no true-model launch by that agent.",
+    "unexecuted_controls": "Excluded until independently confirmed; prepared controller text alone is never execution evidence.",
+    "wirecache_failure": "Synthetic example harness 128-record wire-manifest cache refusal (6 of 7 tests passed), not a real-model operation."
+  }
+}

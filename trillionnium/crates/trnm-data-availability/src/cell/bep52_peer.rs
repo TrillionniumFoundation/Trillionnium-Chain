@@ -1,7 +1,8 @@
 //! Explicit, bounded TCP transport for the pinned Cell BEP52 profile.
 //!
 //! TCP endpoints are caller-approved inputs. Discovery hints are never dialled
-//! automatically; no listener, advertisement or background job is opened.
+//! as TCP peers automatically; an opt-in bounded DHT client can follow admitted
+//! UDP node hints. No listener, advertisement or background job is opened.
 //! The transport is plaintext and provides neither peer identity nor FinalUse.
 
 use std::{
@@ -26,8 +27,9 @@ mod bencode;
 mod dht;
 mod release;
 pub use dht::{
-    query_cell_bep52_dht_peers, CellBep52DhtHintsV1, CellBep52DhtNodeHintV1,
-    MAX_CELL_BEP52_DHT_RESPONSE_BYTES_V1,
+    lookup_cell_bep52_dht_peers, query_cell_bep52_dht_peers, CellBep52DhtEndpointPolicyV1,
+    CellBep52DhtHintsV1, CellBep52DhtLookupReportV1, CellBep52DhtLookupStopV1,
+    CellBep52DhtNodeHintV1, MAX_CELL_BEP52_DHT_RESPONSE_BYTES_V1,
 };
 pub use release::{
     CellBep52ReleaseLimitsV2, CellBep52ReleasePlanV2, CellBep52ReleaseReadUsageV2,

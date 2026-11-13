@@ -1,0 +1,548 @@
+{
+  "build_provenance_note": {
+    "checked_runner_own_prelaunch_hash": "NOT_RECORDED",
+    "separate_bound_records": "raw compiler artifact/argv and frozen ELF, plus actual model config and wrapper pins; no retrospective pre-run record fabricated",
+    "start_controller_sha256_binds": "imported native controller prefix, not checked runner self"
+  },
+  "codecs": {
+    "recovery_codec": {
+      "attempts_committed": 285,
+      "cache_bytes_committed": 0,
+      "input_bytes_committed": 1121201664,
+      "reconstruction_bytes_committed": 2102160678
+    },
+    "recovery_plan_usage": {
+      "cpu_ns_committed": 185006505128,
+      "input_bytes_committed": 2662853952,
+      "plan_attempts_committed": 1,
+      "provider_reads_committed": 1900,
+      "reconstruction_bytes_committed": 2102160678,
+      "repair_bytes_committed": 140150208,
+      "repairs_committed": 190
+    },
+    "restore": {
+      "actual_provider_payload_wire_bytes": 280300416,
+      "codec": {
+        "attempts_committed": 95,
+        "cache_bytes_committed": 560539204,
+        "input_bytes_committed": 280300416,
+        "reconstruction_bytes_committed": 700720226
+      },
+      "complete_content_readback": true,
+      "complete_content_reserved_bytes": 280269602,
+      "complete_content_reserved_chunks": 95,
+      "original_provider_slots": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "restored_original_chunks": 95,
+      "same_tcv1": "76e318b243995ff788bdfc4ef317395a525eeb1c3d751b549c0791a4da4e51deb4366338fcd0330b816252c9bcf5195b4de3247408afdad3386d94bf34e879dd",
+      "same_tcv2": "1ae64d141b4fcb979c18c846d0795237400eff1ad76abfd8d972c8a35196efee16448d1652e920ddb1fc3d58c32c4a52fb089195d7f51f1f72647f37814c43bb",
+      "source_catalog_payload_used": false
+    },
+    "scope": "Committed reservations and verified codec inputs/work, not physical disk/network throughput. Restore cache bytes reserve potential CAS write plus actual readback (2*payload), excluding DB/WAL/SHM/keys; not two physical writes.",
+    "storage_codec": {
+      "attempts_committed": 190,
+      "cache_bytes_committed": 0,
+      "input_bytes_committed": 840901248,
+      "reconstruction_bytes_committed": 1401440452
+    },
+    "storage_verification": {
+      "attempts_committed": 190,
+      "cache_bytes_committed": 0,
+      "input_bytes_committed": 840901248,
+      "reconstruction_bytes_committed": 1401440452
+    }
+  },
+  "cold_restore": {
+    "actual_target_readback": true,
+    "anchored_reopen": true,
+    "bep52_cache_absent": true,
+    "cancellation_used": false,
+    "consumer_chunks": 95,
+    "destroyed_provider_arena_bytes": [
+      70414336,
+      70414336
+    ],
+    "four_original_shard_slots": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "future_retention_positive": false,
+    "grouped_child_journal_cold_reopened": true,
+    "m12_funding_admitted": true,
+    "native_development_ledger": true,
+    "native_erasure_shard_recovery": true,
+    "native_ledger_height_enforced": true,
+    "native_task_payment": false,
+    "parent_settlement_on_hold": true,
+    "retained_from_bep52_received_cache": true,
+    "retention_heights_are_research_terms": true,
+    "root_member_payload_current_readback_after_catalog_overwrite": false,
+    "source_cache_absent": true,
+    "source_catalog_arena_overwritten_bytes": 536870912,
+    "source_catalog_not_used_for_reconstruction": true,
+    "source_catalog_payload_repaired": false
+  },
+  "counts": {
+    "logical_items_total": 791,
+    "m12_parent_claims": 79,
+    "note": "95 denotes original payload chunks, not additional V3 children.",
+    "original_chunks": 95,
+    "pages": 3,
+    "repair_children": 190,
+    "restored_original_chunks": 95,
+    "storage_children": 570,
+    "v3_children_total": 760
+  },
+  "cross_scope_cpu_or_rss_sum_published": false,
+  "current_checkout_context": {
+    "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "tracked_status": "M docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md\n M docs/development/specs/pon/CELL_NATIVE_SHARD_RESEARCH_V2.md",
+    "used_as_runtime_identity": false
+  },
+  "disk_throughput_published": false,
+  "handoff": {
+    "descriptor": "23daa985f5c646840c6f7f7bbd88017d59f6445a8b3b88232f87589d81d9e5a3e5cb639b2a196b3961d4a2700651d05ad036c4b0aabd436b14259936047965a8",
+    "environment_bytes": 8079612,
+    "kernel_descriptors": 30,
+    "model_bytes": 272189990,
+    "signer_key_id": "91ebd0cb23f863ead8aea21eb998434213ce0e830b1a9960ca4424503b454346",
+    "single_operator_research_key": true,
+    "worker_sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b"
+  },
+  "holds": {
+    "authority": {
+      "hepta_final_use": false,
+      "independent_accepted": false,
+      "installation_authorized": false,
+      "prospective_accepted": false,
+      "public_reward_eligible": false,
+      "selection_authorized": false
+    },
+    "cycle": {
+      "customer_demand_qualified": false,
+      "hepta_final_use": false,
+      "independent_failure_domains": false,
+      "independent_real_money_funding": false,
+      "production_activation": false,
+      "service_fee_paid": false
+    },
+    "interpreter_and_native_dependencies": "original independently pinned host snapshot; not sealed transport",
+    "original_128_temporary_wire_gate_passed": false,
+    "recovery": {
+      "future_retention_qualified": false,
+      "group_settlement_qualified": false,
+      "native_task_payment_submitted": false,
+      "positive_verdict_issued": false
+    },
+    "root_member_payload_current_readback_after_catalog_overwrite": false,
+    "source_catalog_payload_repaired": false
+  },
+  "input": {
+    "independent_input_pins": true,
+    "manifest_count": 30,
+    "payload_bytes": 280269602,
+    "tcv1": "76e318b243995ff788bdfc4ef317395a525eeb1c3d751b549c0791a4da4e51deb4366338fcd0330b816252c9bcf5195b4de3247408afdad3386d94bf34e879dd",
+    "tcv2": "1ae64d141b4fcb979c18c846d0795237400eff1ad76abfd8d972c8a35196efee16448d1652e920ddb1fc3d58c32c4a52fb089195d7f51f1f72647f37814c43bb"
+  },
+  "network": {
+    "consumer_usage": {
+      "completed_fetches": 30,
+      "connection_attempts": 30,
+      "dht_query_attempts": 0,
+      "readback_attempts": 1,
+      "readback_completed": 1,
+      "readback_reserved_bytes": 280269602,
+      "readback_reserved_chunks": 95,
+      "received_bytes": 280502174,
+      "received_messages": 17244,
+      "refused_connections": 0,
+      "refused_dht_queries": 0,
+      "sent_bytes": 295278,
+      "sent_messages": 17244
+    },
+    "independent_failure_domains": false,
+    "loopback_only": true,
+    "publisher_usage": {
+      "completed_fetches": 0,
+      "connection_attempts": 30,
+      "dht_query_attempts": 0,
+      "readback_attempts": 0,
+      "readback_completed": 0,
+      "readback_reserved_bytes": 0,
+      "readback_reserved_chunks": 0,
+      "received_bytes": 295278,
+      "received_messages": 17274,
+      "refused_connections": 0,
+      "refused_dht_queries": 0,
+      "sent_bytes": 280502174,
+      "sent_messages": 17244
+    },
+    "single_operator": true,
+    "total_usage": {
+      "completed_fetches": 30,
+      "connection_attempts": 60,
+      "dht_query_attempts": 0,
+      "readback_attempts": 1,
+      "readback_completed": 1,
+      "readback_reserved_bytes": 280269602,
+      "readback_reserved_chunks": 95,
+      "received_bytes": 280797452,
+      "received_messages": 34518,
+      "refused_connections": 0,
+      "refused_dht_queries": 0,
+      "sent_bytes": 280797452,
+      "sent_messages": 34488
+    },
+    "transport_plan_includes_cts1": false
+  },
+  "operation": "23120317a3cc20853fbcf0de37924311788e251d59395afc1816b4f6b2b7bbdc",
+  "performance_comparison_with_c3_debug_270s": false,
+  "recovery_cpu": {
+    "child_scope": "existing CSP1 repair/reconcile interval; cache publication precedes this scope; preceding CGJ3 begin and later CGJ3 completion are outside child interval; provider internal journal work during repair remains inside.",
+    "children": {
+      "all_fresh": true,
+      "count": 190,
+      "each_ceiling_ns": 5000000000,
+      "max_observed_ns": 11438709,
+      "min_observed_ns": 3528763,
+      "sum_observed_ns": 1632926397
+    },
+    "global": {
+      "ceiling_ns": 185006505128,
+      "metadata_funding_preflight_included": false,
+      "observed_ns": 82341106960
+    },
+    "global_scope": "Existing RepairCpuOwner synchronous owner interval, excludes metadata/funding preflight; not whole-pipeline CPU or wall time.",
+    "not_separately_measured": [
+      "BEP52 phase CPU",
+      "native funding CPU",
+      "initial storage CPU",
+      "consumer restore CPU"
+    ]
+  },
+  "resources": {
+    "cgroup_cpu_max": "400000 100000",
+    "cgroup_cpu_scope": "Four CPU bandwidth quota; does not establish a global four-thread maximum.",
+    "cgroup_memory_peak_GiB": 3.9141616821289062,
+    "cgroup_memory_peak_bytes": 4202799104,
+    "cgroup_memory_scope": "Whole-job charged memory footprint, not process RSS.",
+    "gap_scope": "One exit observation gap was reconciled under the existing held-pidfd exit-cleanup profile; unknown RSS was not measured as zero and no gap-free claim is made.",
+    "io_stat_unavailable": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1c420eb26-cf39-12d.service/io.stat'",
+    "memory_events": {
+      "high": "0",
+      "low": "0",
+      "max": "0",
+      "oom": "0",
+      "oom_group_kill": "0",
+      "oom_kill": "0",
+      "sock_throttled": "0"
+    },
+    "memory_scope": "sampled_peak_rss_bytes is direct-child 50ms RSS; waited_child_peak_rss_bytes is exact owned-child Linux wait4 ru_maxrss in KiB times 1024, a maximum single-process high-water with inherited waited-descendant accounting; neither is simultaneous process-tree RSS",
+    "original_limits": {
+      "rss_bytes": 8589934592,
+      "seconds": 300,
+      "snapshot_bytes": 536870912,
+      "threads": 4
+    },
+    "rss_gap_count": 1,
+    "rss_gap_reconciliation": {
+      "absolute_wall_deadline_ns": 1317917529536259,
+      "elapsed_ns": 32524070,
+      "exit_cleanup_proof": {
+        "kernel_release": "7.0.0-38-generic",
+        "observed_at_monotonic_ns": 1317854268439140,
+        "owned_pid": 2773701,
+        "pidfd_nspid": [
+          2773701
+        ],
+        "pidfd_visible_pid": 2773701,
+        "rss_sample_produced": false,
+        "schema": "linux-owned-thread-group-exit-cleanup-v1",
+        "threads": [
+          {
+            "flags": 4227084,
+            "start_time_ticks": 131784652,
+            "state": "Z",
+            "tid": 2773701
+          },
+          {
+            "flags": 4195404,
+            "start_time_ticks": 131785322,
+            "state": "R",
+            "tid": 2773993
+          }
+        ]
+      },
+      "initial_reap": "live",
+      "mode": "kernel-exit-cleanup",
+      "pidfd_ready_after_wait": true,
+      "terminal_reap": "terminal",
+      "wait_deadline_ns": 1317917529536259,
+      "wait_polls": 1
+    },
+    "sample_interval_ms": 50,
+    "sampled_peak_rss_bytes": 1411952640,
+    "supervisor_budget": {
+      "rss_bytes": 8589934592,
+      "wall_seconds": 71
+    },
+    "waited_child_peak_rss_bytes": 1466822656,
+    "whole_job_io_stat_available": false,
+    "worker_threads_scope": "Four is the unchanged configured grant/boundary, not a measured upper bound for every process/thread."
+  },
+  "result": "PASS-HOLD",
+  "runtime_source": {
+    "head": "b6f39277b39e0b41e552ec4d32c5f8d354c8255b",
+    "status": "",
+    "tree": "6a0f38318b3cfb021240cda7f3d266c28aa76e78"
+  },
+  "schema": "trnm.independent-physical-review.v1",
+  "scope": "Consistency audit of closed small raw reports and pinned S3 source; no original database/arena/payload open, no build or model execution.",
+  "whole_process": {
+    "native_process": {
+      "elapsed_seconds": 236.08394552301615,
+      "exit_code": 0,
+      "system_seconds": 10.21055,
+      "user_seconds": 215.32221,
+      "wait4_ru_maxrss_kib": 1432444,
+      "watchdog_kill": false,
+      "watchdog_term": false
+    },
+    "native_report_process": {
+      "elapsed_ms": 235959,
+      "exit_code": 0,
+      "original_seconds": 300,
+      "sealed_bundles_held_until_supervisor_exit": true,
+      "termination_error": null,
+      "termination_requested": false
+    },
+    "scope": "Native-process wait4 user/system and elapsed versus wrapper elapsed are distinct enclosing scopes; nested scopes must not be summed.",
+    "wrapper_elapsed_seconds": 239.8010175221134
+  },
+  "wire_cache": {
+    "repair": {
+      "actual": {
+        "chunk_rows": 190,
+        "logical_bytes": 140214048,
+        "manifest_rows": 190
+      },
+      "admission": {
+        "expected_chunk_rows": 190,
+        "expected_logical_bytes": 140214048,
+        "expected_manifest_rows": 190,
+        "full_payload_profile_not_unconditionally_supported": true,
+        "input_and_consumer_max_manifest_rows": 128,
+        "max_chunk_rows": 2048,
+        "max_database_bytes": 1073741824,
+        "max_logical_bytes": 536870912,
+        "max_manifest_rows": 768,
+        "new_temporary_wire_metadata_grant": true,
+        "original_128_temporary_wire_gate_passed": false,
+        "original_absolute_deadline": true,
+        "profile": "native-grouped-temporary-wire-cache-v3"
+      },
+      "encoded_shard_wire_bytes": 140150208,
+      "key_bytes": 12160,
+      "manifest_wire_bytes_inferred_from_total": 51680,
+      "metadata_and_keys_bytes": 63840
+    },
+    "scope": "Logical usage includes encoded shard wire, manifest wire, and 32-byte keys for both row classes. Manifest-wire bytes here are inferred from the reported total minus encoded payload and keys; original caches were not reopened.",
+    "storage": {
+      "actual": {
+        "chunk_rows": 570,
+        "logical_bytes": 420642144,
+        "manifest_rows": 570
+      },
+      "admission": {
+        "expected_chunk_rows": 570,
+        "expected_logical_bytes": 420642144,
+        "expected_manifest_rows": 570,
+        "full_payload_profile_not_unconditionally_supported": true,
+        "input_and_consumer_max_manifest_rows": 128,
+        "max_chunk_rows": 2048,
+        "max_database_bytes": 1073741824,
+        "max_logical_bytes": 536870912,
+        "max_manifest_rows": 768,
+        "new_temporary_wire_metadata_grant": true,
+        "original_128_temporary_wire_gate_passed": false,
+        "original_absolute_deadline": true,
+        "profile": "native-grouped-temporary-wire-cache-v3"
+      },
+      "encoded_shard_wire_bytes": 420450624,
+      "key_bytes": 36480,
+      "manifest_wire_bytes_inferred_from_total": 155040,
+      "metadata_and_keys_bytes": 191520
+    }
+  },
+  "worker": {
+    "child_cpu_ns": 9186778000,
+    "child_cpu_scope": "Exact owned-child Linux wait4 user-plus-system CPU; includes inherited waited-descendant accounting",
+    "forwards": [
+      {
+        "action_ids": [
+          "no",
+          "yes"
+        ],
+        "artifact": "3b3128293a86570a47a72c7bf081f898de1682ed1118c5a440ad7478c0f22e42",
+        "authority": {
+          "hepta_final_use": false,
+          "independent_accepted": false,
+          "installation_authorized": false,
+          "prospective_accepted": false,
+          "public_reward_eligible": false,
+          "selection_authorized": false
+        },
+        "content": "1ae64d141b4fcb979c18c846d0795237400eff1ad76abfd8d972c8a35196efee16448d1652e920ddb1fc3d58c32c4a52fb089195d7f51f1f72647f37814c43bb",
+        "contract": "c9b06f9a029a3257801844f89acb59b5f59f6a39087335af323f274e9152992f",
+        "descriptor": "23daa985f5c646840c6f7f7bbd88017d59f6445a8b3b88232f87589d81d9e5a3e5cb639b2a196b3961d4a2700651d05ad036c4b0aabd436b14259936047965a8",
+        "execution_ns": 67028690,
+        "file_sha256": "1c5af7b5a7144a619dfac83b14bd83ae77f1e2227b18a6a9c5dcb214889a0cba",
+        "input_sha256": "fa02475d145785b5a890da77ae33906453ac1f4268e181137b5d875d1e9974ed",
+        "input_tokens": 51,
+        "logits_sha256": "29730e6c15d3147b0641d772b6d7d6121f61ed17b81bf0926163a05a9c7afa14",
+        "observed_rss_bytes": 1466822656,
+        "profile": "hepta-smollm-single-token-action-score-v1",
+        "request_id": "chain-capacity-dc0357-v2-fad809b14a2e-1",
+        "schema": "trnm.cell-sealed-research-next-use.v1",
+        "scores_q32": [
+          116005421056,
+          124107309056
+        ]
+      },
+      {
+        "action_ids": [
+          "no",
+          "yes"
+        ],
+        "artifact": "3b3128293a86570a47a72c7bf081f898de1682ed1118c5a440ad7478c0f22e42",
+        "authority": {
+          "hepta_final_use": false,
+          "independent_accepted": false,
+          "installation_authorized": false,
+          "prospective_accepted": false,
+          "public_reward_eligible": false,
+          "selection_authorized": false
+        },
+        "content": "1ae64d141b4fcb979c18c846d0795237400eff1ad76abfd8d972c8a35196efee16448d1652e920ddb1fc3d58c32c4a52fb089195d7f51f1f72647f37814c43bb",
+        "contract": "c9b06f9a029a3257801844f89acb59b5f59f6a39087335af323f274e9152992f",
+        "descriptor": "23daa985f5c646840c6f7f7bbd88017d59f6445a8b3b88232f87589d81d9e5a3e5cb639b2a196b3961d4a2700651d05ad036c4b0aabd436b14259936047965a8",
+        "execution_ns": 62223541,
+        "file_sha256": "1c5af7b5a7144a619dfac83b14bd83ae77f1e2227b18a6a9c5dcb214889a0cba",
+        "input_sha256": "f500cab06315f2e2f345b54e40656524a8e3a52543d07f1b509504179bf02515",
+        "input_tokens": 51,
+        "logits_sha256": "90d35f1c7ee4cb95c9bce20969b19818fefe5ac0268dde664cc4fd9c72b0de42",
+        "observed_rss_bytes": 1466822656,
+        "profile": "hepta-smollm-single-token-action-score-v1",
+        "request_id": "chain-capacity-dc0357-v2-fad809b14a2e-2",
+        "schema": "trnm.cell-sealed-research-next-use.v1",
+        "scores_q32": [
+          115107659776,
+          122971414528
+        ]
+      }
+    ],
+    "observer_cpu_ns": 51499679,
+    "request_interval_scope": "execution_ns is monotonic wall from before prompt tokenization/tensor preparation through inference/action scoring/logits hashing, not isolated forward-kernel time.",
+    "stage_cost_scope": "CPU is process_time_ns delta; wall is monotonic_ns delta; memory is process-lifetime ru_maxrss high-water, not independent per-stage peak. bytes_read/written are worker /proc/self/io read_bytes/write_bytes deltas, not logical transport volume.",
+    "stage_costs": [
+      {
+        "bytes_read": 0,
+        "bytes_written": 0,
+        "cpu_ns": 598360039,
+        "cpu_seconds": 0.598360039,
+        "error_type": null,
+        "gpu_ns": 0,
+        "memory_peak_bytes": 603144192,
+        "outcome": "success",
+        "stage": "sealed-base-capture",
+        "wall_ns": 598462629,
+        "wall_seconds": 0.598462629
+      },
+      {
+        "bytes_read": 0,
+        "bytes_written": 0,
+        "cpu_ns": 40669267,
+        "cpu_seconds": 0.040669267,
+        "error_type": null,
+        "gpu_ns": 0,
+        "memory_peak_bytes": 603144192,
+        "outcome": "success",
+        "stage": "sealed-parent-verification",
+        "wall_ns": 40681859,
+        "wall_seconds": 0.040681859
+      },
+      {
+        "bytes_read": 0,
+        "bytes_written": 8192,
+        "cpu_ns": 4278071504,
+        "cpu_seconds": 4.278071504,
+        "error_type": null,
+        "gpu_ns": 0,
+        "memory_peak_bytes": 629022720,
+        "outcome": "success",
+        "stage": "runtime-import",
+        "wall_ns": 3632759895,
+        "wall_seconds": 3.632759895
+      },
+      {
+        "bytes_read": 0,
+        "bytes_written": 0,
+        "cpu_ns": 92366780,
+        "cpu_seconds": 0.09236678,
+        "error_type": null,
+        "gpu_ns": 0,
+        "memory_peak_bytes": 673681408,
+        "outcome": "success",
+        "stage": "sealed-tokenizer-load",
+        "wall_ns": 92414765,
+        "wall_seconds": 0.092414765
+      },
+      {
+        "bytes_read": 0,
+        "bytes_written": 0,
+        "cpu_ns": 739776442,
+        "cpu_seconds": 0.739776442,
+        "error_type": null,
+        "gpu_ns": 0,
+        "memory_peak_bytes": 1466822656,
+        "outcome": "success",
+        "stage": "sealed-base-load",
+        "wall_ns": 297021749,
+        "wall_seconds": 0.297021749
+      },
+      {
+        "bytes_read": 0,
+        "bytes_written": 0,
+        "cpu_ns": 302399782,
+        "cpu_seconds": 0.302399782,
+        "error_type": null,
+        "gpu_ns": 0,
+        "memory_peak_bytes": 1466822656,
+        "outcome": "success",
+        "stage": "actual-backbone-tokenizer-verification",
+        "wall_ns": 302740985,
+        "wall_seconds": 0.302740985
+      },
+      {
+        "bytes_read": 0,
+        "bytes_written": 0,
+        "cpu_ns": 35993244,
+        "cpu_seconds": 0.035993244,
+        "error_type": null,
+        "gpu_ns": 0,
+        "memory_peak_bytes": 1466822656,
+        "outcome": "success",
+        "stage": "actual-sealed-parent-load",
+        "wall_ns": 35995356,
+        "wall_seconds": 0.035995356
+      }
+    ],
+    "supervisor_wall_ns": 7771567447
+  }
+}

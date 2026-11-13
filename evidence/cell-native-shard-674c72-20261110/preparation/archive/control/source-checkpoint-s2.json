@@ -1,0 +1,9 @@
+{
+  "authority_pins_unchanged": true,
+  "changed_path": "trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2/mod.rs",
+  "checkpoint": "S2",
+  "clean": true,
+  "head": "f41d6e0ac2b40e49c1dff96110f6ed68445eaef7",
+  "parent": "368db622152e51bf1efbbfedf6f6a87a80ae094b",
+  "tree": "0e75a266b6582f3acb48cd3d41dcef7309e63dc7"
+}

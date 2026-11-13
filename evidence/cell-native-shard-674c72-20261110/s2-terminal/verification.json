@@ -1,0 +1,10 @@
+{
+  "errors": [],
+  "native_tests_executed": false,
+  "original_manifests_preserved": 1,
+  "payload_bytes": 1061650,
+  "runtime_or_production_qualification": false,
+  "schema": "trnm.s2-terminal-copy-verification.v1",
+  "source_modified": false,
+  "verified_files": 63
+}

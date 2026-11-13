@@ -2056,3 +2056,41 @@ fn reservation_preflight_composes_live_capacity_without_changing_original_rows()
     store.reserve(second).unwrap();
     assert_eq!(count(&store), 2);
 }
+
+#[test]
+fn retired_readback_preserves_original_operation_after_slot_reuse() {
+    let dir = tempfile::tempdir().unwrap();
+    let (cache, manifest, _) = material(dir.path(), 5000);
+    let mut store =
+        CellRetentionStoreV1::create(&dir.path().join("retained"), config(1, 8192)).unwrap();
+    let first = contract(1, &manifest);
+    store.reserve(first.clone()).unwrap();
+    store
+        .acknowledge(first.operation, &cache, deadline())
+        .unwrap();
+    assert_eq!(
+        store.retired_readback(first.operation, deadline()).unwrap(),
+        None
+    );
+    let retired = store.retire(first.operation, 10, None, deadline()).unwrap();
+    let successor = contract(2, &manifest);
+    store.reserve(successor.clone()).unwrap();
+    store
+        .acknowledge(successor.operation, &cache, deadline())
+        .unwrap();
+    let prior = row_checksum(&store.required_row(first.operation).unwrap());
+    assert_eq!(
+        store.retired_readback(first.operation, deadline()).unwrap(),
+        Some(retired)
+    );
+    assert_eq!(
+        row_checksum(&store.required_row(first.operation).unwrap()),
+        prior
+    );
+    assert!(store.verify(first.operation, deadline()).is_err());
+    assert!(store.verify(successor.operation, deadline()).is_ok());
+    assert!(store
+        .retired_readback(first.operation, Instant::now())
+        .is_err());
+    assert!(store.retired_readback([99; 32], deadline()).is_err());
+}

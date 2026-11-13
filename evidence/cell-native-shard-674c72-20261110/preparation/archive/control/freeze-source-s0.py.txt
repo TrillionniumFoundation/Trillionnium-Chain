@@ -1,0 +1,28 @@
+from pathlib import Path
+import hashlib,json,subprocess,sys
+r=Path('/home/qq/work/chain-cell-native-shard-674c72-20261110')
+base='06233be630f8eff6cea59cd5111e5941135a4aa5'
+def run(args): return subprocess.run(args,cwd=r,check=True)
+def out(args): return subprocess.check_output(args,cwd=r,text=True).strip()
+assert sys.argv[1:]==['--freeze']
+assert out(['git','rev-parse','HEAD'])==base
+assert out(['git','branch','--show-current'])=='fix/chain-cell-native-shard-674c72-20261110'
+exact=['config/pon/pq-authority-effects-v1.json','docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md','docs/development/specs/pon/CELL_NATIVE_SHARD_RESEARCH_V2.md','docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md','docs/security/PQ_AUTHORITY_STORAGE_SOURCE_LOCK_REVIEW_20261109.md','scripts/ci/pq_authority_effect_register.py','scripts/ci/test_pq_authority_effect_register.py','trillionnium/Cargo.lock','trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/mod.rs','trillionnium/crates/trnm-pon-node/Cargo.toml','trillionnium/crates/trnm-pon-node/src/lib.rs','trillionnium/crates/trnm-pon-node/src/store.rs','trillionnium/crates/trnm-pon-node/src/store/storage_service.rs','trillionnium/crates/trnm-pon-node/src/store/storage_service/shard.rs','trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan.rs','trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_plan_tests.rs','trillionnium/crates/trnm-pon-node/src/store/storage_service/version_grouped_shard_v3_tests.rs','trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_next_use_v2.rs']
+prefix=['evidence/pq-authority-storage-source-review-20261109','trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/grouped_v3','trillionnium/crates/trnm-pon-node/examples/cell_native_shard_research_v2']
+changed=out(['git','diff','--name-only']).splitlines()+out(['git','ls-files','--others','--exclude-standard']).splitlines()
+assert changed and all(p in exact or any(p.startswith(a+'/') for a in prefix) for p in changed),changed
+for p in changed:
+ q=r/p
+ assert q.is_file() and not q.is_symlink() and q.stat().st_size<4194304,p
+assert out(['git','diff','--cached','--name-only'])==''
+run(['bash','scripts/project-preflight.sh'])
+run(['git','diff','--check'])
+run(['git','add','--',*exact,*prefix])
+run(['git','-c','core.pager=cat','diff','--cached','--stat'])
+run(['git','-c','user.name=ProfHepta','-c','user.email=102159240+ProfHepta@users.noreply.github.com','commit','-s','-m','feat(storage): add grouped native shard research recovery'])
+head=out(['git','rev-parse','HEAD'])
+assert out(['git','rev-parse','HEAD^'])==base
+assert out(['git','status','--porcelain','--untracked-files=all'])==''
+record={'checkpoint':'S0','head':head,'tree':out(['git','rev-parse','HEAD^{tree}']),'parent':base,'clean':True,'authority_store_source_review_required':True,'runtime_qualification':False,'files':{p:hashlib.sha256((r/p).read_bytes()).hexdigest() for p in changed}}
+with Path(str(r)+'-control/source-checkpoint-s0.json').open('x') as f: json.dump(record,f,indent=2,sort_keys=True);f.write('\n')
+print(json.dumps({k:v for k,v in record.items() if k!='files'},sort_keys=True))

@@ -1,0 +1,9 @@
+{
+  "native_s2_runner_sha256": "82607f3f8502513674931e0307d960bfe34bee23736a21fce7d953e70550fa2f",
+  "native_archive_independently_matches_start_record": true,
+  "source_s2_reconstructed_from_single_recorded_tmpdir_patch": true,
+  "source_reconstructed_bytes": 2764,
+  "source_reconstructed_sha256": "c5983b81e83583fbd2ac0c4099151709ce4b610b5a914d59cbe2436b8d670fa9",
+  "source_before_run_hash_was_not_recorded": true,
+  "native_future_tmpdir_reuses_same_task_owned_parent_only": true
+}

@@ -1,0 +1,166 @@
+{
+  "composition": {
+    "schema": "chain-readiness-owner-merge-v1",
+    "parents": [
+      "368b39cdf37868b7e16d9b04e8451177386433cc",
+      "8a74a9e42a9efbc52d83e861f64f03efd40f1406"
+    ],
+    "common_ancestor": "9f04640877078204d367f753eba684d94e705a74",
+    "resolution": "Only shared development-plan append conflict; preserve the full first-parent plan as a prefix and append the full owner addition relative to the common ancestor.",
+    "plan_prefix_preserved": true,
+    "owner_plan_append_bytes": 1077,
+    "owner_exact_files": [
+      {
+        "path": "docs/security/PQ_SYSTEM_CONTINUATION_20261101.md",
+        "bytes": 13897,
+        "sha256": "68576eeeb2b260451a18c5dbfc46c9577f00954377f9a8da195f6c9060a9169a",
+        "owner_exact": true
+      },
+      {
+        "path": "docs/security/WHOLE_CHAIN_PQ_CLAIM_GUARD_20261031.md",
+        "bytes": 6970,
+        "sha256": "1c4d880c5615a9f58546e16b95f54c88ccbaa26fa0ce613cc8df6d7a8890a563",
+        "owner_exact": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/ingress/history_import_deadline_tests.rs",
+        "bytes": 7756,
+        "sha256": "d9565603de428d2b8f771cf1c35bb9cd1b33ac01abf78db6f094d034a2b22d2f",
+        "owner_exact": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs",
+        "bytes": 29000,
+        "sha256": "0a041f77dc97343b02f0c1e7cabee2ec6e20b7f3f5f1ffd8cc49ce9647e4a4a3",
+        "owner_exact": true
+      },
+      {
+        "path": "trillionnium/crates/trnm-pon-node/tests/architecture_delivery_compare.rs",
+        "bytes": 32292,
+        "sha256": "27f9f5c9ec1689dd2a943ba2fe4625a8829f3aa7611474769f41cb3528cf7201",
+        "owner_exact": true
+      }
+    ],
+    "corpus_matches_owner_except_existing_fixed_host_workflow_pin": true,
+    "scope": "No new production change beyond the two retained parents. Existing native receipts remain source-scoped; owner History/PQ regression tests and architecture diagnostics require actual current-composition qualification."
+  },
+  "controls": {
+    "source_index_tree": "b5df6ca0e8af4997ccaa2b839bf5c83cbbe11217",
+    "restored_unmodified_sparse_pins": [
+      "evidence/pon-pq-account-native-20261028/README.md",
+      "evidence/pon-pq-cell-deadline-native-v1/README.md",
+      "evidence/pon-pq-cell-deadline-native-v1/baseline-real-tcp.log",
+      "evidence/pon-pq-cell-deadline-native-v1/fixed-python.log",
+      "evidence/pon-pq-cell-deadline-native-v1/local-qualification.json",
+      "evidence/pon-pq-cell-deadline-native-v1/native-clippy.log",
+      "evidence/pon-pq-cell-deadline-native-v1/native-format.log",
+      "evidence/pon-pq-cell-deadline-native-v1/native-rust.log",
+      "evidence/pon-pq-pql10-pem-source-v1/combined-test.log",
+      "evidence/pon-pq-pql10-pem-source-v1/local-qualification.json",
+      "evidence/pon-pq-pql10-pem-source-v1/normal-test.log",
+      "evidence/pon-pq-pql10-pem-source-v1/sanitizer-test.log",
+      "evidence/pon-pq-pql11b-source-guard-v1/local-qualification.json",
+      "evidence/pon-pq-spki-v1/README.md",
+      "evidence/pon-pq-tpq1-native-v1/README.md",
+      "evidence/pon-pq-tpq1-native-v1/native-sanitizer-test.log",
+      "evidence/pon-pq-tpq1-native-v1/native-test.log"
+    ],
+    "commands": [
+      {
+        "argv": [
+          "bash",
+          "scripts/project-preflight.sh"
+        ],
+        "start_unix_ns": 1793736876242903712,
+        "end_unix_ns": 1793736876330002901,
+        "exit": 0,
+        "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-cell-rendezvous-readiness-20261103-gpt6\", \"remote_policy_mutated\": false}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "python3",
+          "scripts/ci/check_pq_research_integration.py"
+        ],
+        "start_unix_ns": 1793736876330071274,
+        "end_unix_ns": 1793736876525195687,
+        "exit": 0,
+        "stdout": "{\"canonical_default_provider_contract_checked\": true, \"canonical_pnq2_contract_checked\": true, \"continuous_npq6_combination_accepted\": false, \"cryptographic_acceptance\": false, \"exact_source_blobs\": 376, \"legacy_qtx1_optional_adapter_contract_checked\": true, \"native_transfer_account_contract_checked\": true, \"native_transport_contract_checked\": true, \"node_activated\": false, \"production_confidentiality_accepted\": false, \"schema\": \"trnm-pq-cross-branch-check-v1\", \"status\": \"HOLD_NO_GO\", \"upstream_heads\": 6, \"whole_native_authorization_migrated\": false}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "python3",
+          "scripts/ci/check_ci_contract.py"
+        ],
+        "start_unix_ns": 1793736876525241506,
+        "end_unix_ns": 1793736876635631669,
+        "exit": 0,
+        "stdout": "{\"artifact_comparison_jobs\": 1, \"head_jobs\": 5, \"inline_source_pins\": 20, \"merge_lanes\": 5, \"native_cost_architectures\": 2, \"tests_executed\": false, \"w1_actual_reuse_v3_cells\": 4}\n",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "python3",
+          "scripts/ci/test_architecture_delivery_host.py",
+          "-v"
+        ],
+        "start_unix_ns": 1793736876635689225,
+        "end_unix_ns": 1793736878083180583,
+        "exit": 0,
+        "stdout": "",
+        "stderr": "test_host_dispatch_adds_only_exact_mode_and_preserves_original_limits (__main__.ArchitectureControls.test_host_dispatch_adds_only_exact_mode_and_preserves_original_limits) ... ok\ntest_other_targets_retain_actual_arguments_environment_and_cwd (__main__.ArchitectureControls.test_other_targets_retain_actual_arguments_environment_and_cwd) ... ok\ntest_report_requires_every_sample_and_original_confirmation_contract (__main__.ArchitectureControls.test_report_requires_every_sample_and_original_confirmation_contract) ... ok\ntest_target_match_is_exact_and_filtered_or_local_invocation_refuses (__main__.ArchitectureControls.test_target_match_is_exact_and_filtered_or_local_invocation_refuses) ... ok\ntest_transcript_rejects_zero_skipped_filtered_duplicate_and_wrong_test (__main__.ArchitectureControls.test_transcript_rejects_zero_skipped_filtered_duplicate_and_wrong_test) ... ok\ntest_actual_child_then_parent_readback_retains_distinct_environment_contexts (__main__.BoundHarmlessProcess.test_actual_child_then_parent_readback_retains_distinct_environment_contexts) ... ok\ntest_current_binary_source_or_runtime_mutation_and_reuse_refuse (__main__.BoundHarmlessProcess.test_current_binary_source_or_runtime_mutation_and_reuse_refuse) ... ok\ntest_missing_controller_or_late_host_failure_cannot_pass (__main__.BoundHarmlessProcess.test_missing_controller_or_late_host_failure_cannot_pass) ... ok\ntest_source_drift_cannot_borrow_completed_result (__main__.BoundHarmlessProcess.test_source_drift_cannot_borrow_completed_result) ... ok\n\n----------------------------------------------------------------------\nRan 9 tests in 1.279s\n\nOK\n"
+      },
+      {
+        "argv": [
+          "python3",
+          "scripts/ci/test_rust_baseline_shards.py",
+          "-v"
+        ],
+        "start_unix_ns": 1793736878083224910,
+        "end_unix_ns": 1793736878890826189,
+        "exit": 0,
+        "stdout": "",
+        "stderr": "test_actual_nonzero_child_retains_failure_and_cannot_fan_in (__main__.RustShardTests.test_actual_nonzero_child_retains_failure_and_cannot_fan_in) ... ok\ntest_actual_two_parent_merge_identity_and_receipts_cannot_be_relabelled (__main__.RustShardTests.test_actual_two_parent_merge_identity_and_receipts_cannot_be_relabelled) ... ok\ntest_fixed_fd_bounded_read_rejects_growth_symlink_and_special_file (__main__.RustShardTests.test_fixed_fd_bounded_read_rejects_growth_symlink_and_special_file) ... ok\ntest_full_local_lane_and_hosted_command_union_are_exact (__main__.RustShardTests.test_full_local_lane_and_hosted_command_union_are_exact) ... ok\ntest_missing_extra_alias_duplicate_json_and_changed_script_refuse (__main__.RustShardTests.test_missing_extra_alias_duplicate_json_and_changed_script_refuse) ... ok\ntest_partial_wrong_source_attempt_false_zero_and_unexpected_fields_refuse (__main__.RustShardTests.test_partial_wrong_source_attempt_false_zero_and_unexpected_fields_refuse) ... ok\ntest_real_child_source_mutation_keeps_zero_process_code_but_fails_owner (__main__.RustShardTests.test_real_child_source_mutation_keeps_zero_process_code_but_fails_owner) ... ok\ntest_two_complete_current_source_receipts_are_required (__main__.RustShardTests.test_two_complete_current_source_receipts_are_required) ... ok\ntest_zero_child_without_current_host_execution_stays_failed (__main__.RustShardTests.test_zero_child_without_current_host_execution_stays_failed) ... ok\n\n----------------------------------------------------------------------\nRan 9 tests in 0.716s\n\nOK\n"
+      },
+      {
+        "argv": [
+          "python3",
+          "scripts/ci/test_ci_source_integrity.py",
+          "-v"
+        ],
+        "start_unix_ns": 1793736878890858668,
+        "end_unix_ns": 1793736881659985517,
+        "exit": 0,
+        "stdout": "{\"receipt\": \"/tmp/trnm-ci-raw-source-ygmjh1k7/.git/receipt\", \"result\": \"FAIL\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-z1y6crn4/.git/receipt\", \"result\": \"FAIL\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-1fsit_jv/.git/receipt\", \"result\": \"FAIL\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-6y29jkvu/.git/receipt\", \"result\": \"FAIL\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-6vhctaw7/.git/receipt-PASS\", \"result\": \"PASS\"}\n{\"receipt\": \"/tmp/trnm-ci-raw-source-6vhctaw7/.git/receipt-FAIL\", \"result\": \"FAIL\"}\n",
+        "stderr": "test_actual_bytes_are_checked_even_if_status_reports_clean (__main__.TrackedSourceTests.test_actual_bytes_are_checked_even_if_status_reports_clean) ... ok\ntest_assume_unchanged_cannot_hide_modified_source (__main__.TrackedSourceTests.test_assume_unchanged_cannot_hide_modified_source) ... ok\ntest_executable_mode_checked_even_when_git_ignores_filemode (__main__.TrackedSourceTests.test_executable_mode_checked_even_when_git_ignores_filemode) ... ok\ntest_graft_file_is_rejected (__main__.TrackedSourceTests.test_graft_file_is_rejected) ... ok\ntest_hidden_index_flag_is_rejected_even_without_changes (__main__.TrackedSourceTests.test_hidden_index_flag_is_rejected_even_without_changes) ... ok\ntest_intermediate_directory_symlink_rejected (__main__.TrackedSourceTests.test_intermediate_directory_symlink_rejected) ... ok\ntest_new_native_c_bytes_are_verified_without_an_extension_allowlist (__main__.TrackedSourceTests.test_new_native_c_bytes_are_verified_without_an_extension_allowlist) ... ok\ntest_nonregular_file_rejected_without_waiting_for_fifo (__main__.TrackedSourceTests.test_nonregular_file_rejected_without_waiting_for_fifo) ... ok\ntest_receipt_reuses_raw_source_guard (__main__.TrackedSourceTests.test_receipt_reuses_raw_source_guard) ... ok\ntest_regular_file_symlink_substitution_rejected (__main__.TrackedSourceTests.test_regular_file_symlink_substitution_rejected) ... ok\ntest_replacement_commit_cannot_relabel_different_source (__main__.TrackedSourceTests.test_replacement_commit_cannot_relabel_different_source) ... ok\ntest_same_size_stat_cached_change_is_rejected (__main__.TrackedSourceTests.test_same_size_stat_cached_change_is_rejected) ... ok\ntest_skip_worktree_cannot_hide_modified_source (__main__.TrackedSourceTests.test_skip_worktree_cannot_hide_modified_source) ... ok\ntest_source_fence_checked_retains_actual_failed_observation (__main__.TrackedSourceTests.test_source_fence_checked_retains_actual_failed_observation) ... ok\ntest_source_fence_clean_child_keeps_actual_success_and_bytes (__main__.TrackedSourceTests.test_source_fence_clean_child_keeps_actual_success_and_bytes) ... ok\ntest_source_fence_clean_commit_switch_during_command_is_rejected (__main__.TrackedSourceTests.test_source_fence_clean_commit_switch_during_command_is_rejected) ... ok\ntest_source_fence_clean_wrong_head_cannot_start_child (__main__.TrackedSourceTests.test_source_fence_clean_wrong_head_cannot_start_child) ... ok\ntest_source_fence_dirty_before_command_cannot_start_child (__main__.TrackedSourceTests.test_source_fence_dirty_before_command_cannot_start_child) ... ok\ntest_source_fence_dirty_source_preserves_primary_failure (__main__.TrackedSourceTests.test_source_fence_dirty_source_preserves_primary_failure) ... ok\ntest_source_fence_existing_fuzz_and_supply_callers_pin_every_command (__main__.TrackedSourceTests.test_source_fence_existing_fuzz_and_supply_callers_pin_every_command) ... ok\ntest_source_fence_finish_clean_other_commit_cannot_borrow_pass (__main__.TrackedSourceTests.test_source_fence_finish_clean_other_commit_cannot_borrow_pass) ... ok\ntest_source_fence_finish_dirty_source_cannot_write_pass (__main__.TrackedSourceTests.test_source_fence_finish_dirty_source_cannot_write_pass) ... ok\ntest_source_fence_finish_requires_initial_pin (__main__.TrackedSourceTests.test_source_fence_finish_requires_initial_pin) ... ok\ntest_source_fence_finish_valid_source_never_upgrades_existing_failure (__main__.TrackedSourceTests.test_source_fence_finish_valid_source_never_upgrades_existing_failure) ... ok\ntest_source_fence_index_hidden_child_mutation_still_refuses (__main__.TrackedSourceTests.test_source_fence_index_hidden_child_mutation_still_refuses) ... ok\ntest_source_fence_keeps_nonzero_primary_error_and_drift (__main__.TrackedSourceTests.test_source_fence_keeps_nonzero_primary_error_and_drift) ... ok\ntest_source_fence_pin_is_clean_and_does_not_follow_later_changes (__main__.TrackedSourceTests.test_source_fence_pin_is_clean_and_does_not_follow_later_changes) ... ok\ntest_source_fence_timeout_and_source_failure_preserve_both (__main__.TrackedSourceTests.test_source_fence_timeout_and_source_failure_preserve_both) ... ok\ntest_source_fence_zero_exit_with_real_dirty_source_is_not_success (__main__.TrackedSourceTests.test_source_fence_zero_exit_with_real_dirty_source_is_not_success) ... ok\ntest_staged_change_is_rejected (__main__.TrackedSourceTests.test_staged_change_is_rejected) ... ok\ntest_subdirectory_is_not_a_complete_source_root (__main__.TrackedSourceTests.test_subdirectory_is_not_a_complete_source_root) ... ok\ntest_tracked_symlink_target_change_rejected (__main__.TrackedSourceTests.test_tracked_symlink_target_change_rejected) ... ok\ntest_untracked_configuration_cannot_hide_new_source (__main__.TrackedSourceTests.test_untracked_configuration_cannot_hide_new_source) ... ok\ntest_valid_raw_files_modes_and_symlink (__main__.TrackedSourceTests.test_valid_raw_files_modes_and_symlink) ... ok\n\n----------------------------------------------------------------------\nRan 34 tests in 2.679s\n\nOK\n"
+      },
+      {
+        "argv": [
+          "python3",
+          "scripts/ci/test_project_boundary.py",
+          "-v"
+        ],
+        "start_unix_ns": 1793736881660033069,
+        "end_unix_ns": 1793736885443842800,
+        "exit": 0,
+        "stdout": "",
+        "stderr": "test_activation_and_preservation_policy_are_not_relaxed (__main__.ProjectBoundaryTests.test_activation_and_preservation_policy_are_not_relaxed) ... ok\ntest_canonical_push_target_does_not_rescue_foreign_origin (__main__.ProjectBoundaryTests.test_canonical_push_target_does_not_rescue_foreign_origin) ... ok\ntest_checker_does_not_modify_refs_config_or_tracked_files (__main__.ProjectBoundaryTests.test_checker_does_not_modify_refs_config_or_tracked_files) ... ok\ntest_checkout_https_without_suffix_audits_detached_head (__main__.ProjectBoundaryTests.test_checkout_https_without_suffix_audits_detached_head) ... ok\ntest_detached_source_is_audit_only (__main__.ProjectBoundaryTests.test_detached_source_is_audit_only) ... ok\ntest_exact_repository_spellings_allow_audit_and_dev (__main__.ProjectBoundaryTests.test_exact_repository_spellings_allow_audit_and_dev) ... ok\ntest_foreign_or_decorated_origins_are_not_normalized (__main__.ProjectBoundaryTests.test_foreign_or_decorated_origins_are_not_normalized) ... ok\ntest_missing_updates_deletion_and_unchecked_sha_reject (__main__.ProjectBoundaryTests.test_missing_updates_deletion_and_unchecked_sha_reject) ... ok\ntest_new_branch_must_be_the_checked_out_continuation (__main__.ProjectBoundaryTests.test_new_branch_must_be_the_checked_out_continuation) ... ok\ntest_non_fast_forward_update_is_rejected (__main__.ProjectBoundaryTests.test_non_fast_forward_update_is_rejected) ... ok\ntest_protected_branch_cannot_become_a_development_branch (__main__.ProjectBoundaryTests.test_protected_branch_cannot_become_a_development_branch) ... ok\ntest_protected_remote_branch_and_mixed_updates_reject (__main__.ProjectBoundaryTests.test_protected_remote_branch_and_mixed_updates_reject) ... ok\ntest_push_hook_accepts_only_canonical_repository_spellings (__main__.ProjectBoundaryTests.test_push_hook_accepts_only_canonical_repository_spellings) ... ok\ntest_push_remote_name_and_destination_still_reject (__main__.ProjectBoundaryTests.test_push_remote_name_and_destination_still_reject) ... ok\ntest_source_inventory_and_external_path_dependency_still_reject (__main__.ProjectBoundaryTests.test_source_inventory_and_external_path_dependency_still_reject) ... ok\ntest_staged_and_push_modes_read_their_own_source (__main__.ProjectBoundaryTests.test_staged_and_push_modes_read_their_own_source) ... ok\n\n----------------------------------------------------------------------\nRan 16 tests in 3.722s\n\nOK\n"
+      }
+    ]
+  },
+  "unchanged_input_scopes_from_368b39": [
+    "trillionnium/Cargo.toml",
+    "trillionnium/Cargo.lock",
+    "trillionnium/crates/trnm-data-availability",
+    "trillionnium/crates/trnm-crypto-primitives",
+    "trillionnium/crates/trnm-protocol",
+    ".github/workflows/trnm-required-baseline.yml",
+    "scripts/ci/native_test_runner.py",
+    "scripts/ci/run_architecture_delivery_native.py",
+    "scripts/ci/rust_baseline_shards.py"
+  ],
+  "native_validation": "No new native execution in this merge. The exact original hosted runtime and quality lanes are required for the combined source, including all three History completion tests and the PQ local/remote CAS refusal control. The previous 174-test DA receipt remains a source-scoped receipt, not a substitute for these tests.",
+  "local_resource_observation": "Another owner was building a 2.2 GiB RSS Node test binary while shared cgroup memory was near its original 8 GiB limit and disk had 3.9 GiB free. No second large local build was started and no existing process or limit was changed.",
+  "qualification": "DRAFT / HOLD_NO_GO / DENY_ALL"
+}

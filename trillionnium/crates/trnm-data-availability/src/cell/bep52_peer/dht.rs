@@ -1,9 +1,16 @@
-//! One-hop, caller-directed BEP5 get_peers with BEP43 read-only signalling.
-//! Returns unauthenticated hints only. It neither follows nodes nor announces.
+//! Caller-directed BEP5 get_peers with BEP43 read-only signalling.
+//! The original one-hop API remains; the opt-in lookup follows policy-admitted
+//! nodes within that same session. Both return hints only and never announce.
 
 use std::net::{Ipv4Addr, SocketAddrV4, UdpSocket};
 
 use super::*;
+
+mod lookup;
+pub use lookup::{
+    lookup_cell_bep52_dht_peers, CellBep52DhtEndpointPolicyV1, CellBep52DhtLookupReportV1,
+    CellBep52DhtLookupStopV1,
+};
 
 pub const MAX_CELL_BEP52_DHT_RESPONSE_BYTES_V1: usize = 1_200;
 // A full IPv4 UDP payload fits, even when it violates the admitted 1200-byte

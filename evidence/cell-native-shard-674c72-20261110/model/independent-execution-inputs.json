@@ -1,0 +1,50 @@
+{
+  "schema": "trnm.cell-sealed-research-execution.v1",
+  "operation": "23120317a3cc20853fbcf0de37924311788e251d59395afc1816b4f6b2b7bbdc",
+  "descriptor": "23daa985f5c646840c6f7f7bbd88017d59f6445a8b3b88232f87589d81d9e5a3e5cb639b2a196b3961d4a2700651d05ad036c4b0aabd436b14259936047965a8",
+  "environment_pins": {
+    "config/pon/devnet-v1.json": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+    "config/pon/ledger-v1.json": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+    "config/pon/model-family-smollm2-135m-v1.json": "0837bbfb31f3f2b9a8731545c9f742aee1ebd32daed392a936a3ec9719537e52",
+    "config/pon/model-family-v1.json": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+    "config/pon/work-profile-v1.json": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+    "formal/pon-nakamoto-v1/contract_wire.py": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+    "formal/pon-nakamoto-v1/llm_adapter_contract.py": "e46311a08584ad7becfc56cd0b699d9bc6921adcfe39319e50aa14faa984ced5",
+    "runtime/material-plan.json": "01ec1a644f37b9fc7a4c6616f589768df97f8eed7a289b5de86afadaa7ce6165",
+    "runtime/runtime-snapshot.json": "e87a3658675836c130ba2a97a805bc6d86cc435135e72f4b6e40747e9271b9eb",
+    "scripts/cell_sealed_bootstrap_v1.py": "0f1f10fdae8a60725ff489bac367b31454eda9223a71d358488bed3603ea7962",
+    "scripts/llm_base_material.py": "10d4c21419dd297dcdee6bd128c7cc1fdc1d343e1a62017da61bc1787fde113b",
+    "scripts/llm_cell_sealed_worker_v1.py": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b",
+    "scripts/llm_inherited_runtime.py": "069ad93e4adde21761a3e5343a181128b36fe7697e881d2d41c5a6fbc06f155b",
+    "scripts/llm_neural_read_worker.py": "242cc3ce99b3187a2ee1de25dba77b6f0f699d5427b6e4198e6c77684b4963e9",
+    "scripts/llm_parent_material.py": "c39877c2219c1417eee912f43b1af703b62b704d768ec6f76ccce9ece96fd98a",
+    "scripts/llm_python_runtime_contract.py": "b947b8eaee6dcf4f2f932c22df7e4d989f27171702314e59b03f391ceebe7bbc",
+    "scripts/llm_runtime_exit_observation.py": "c1aa0ab8889e2cbe2efd8cc80ae4f9bbb52b464aebc756a51cc5bd872c3dd086",
+    "scripts/llm_runtime_pilot.py": "d2854289ae810115bccd3b7714c3d40b03cc6ec216747d6fca653aeac9299bd7",
+    "scripts/llm_runtime_rss_diagnostics.py": "d15f4ddc914475ecc8ab473a16f8916b7dd805d8b39d741e49a9d2f63d8fe320"
+  },
+  "max_snapshot_bytes": 536870912,
+  "runtime_rss_bytes": 8589934592,
+  "python": "/home/qq/hepta-smollm2-weight-research-20261103/python/cpython-3.12.16-linux-x86_64-gnu/bin/python3.12",
+  "python_sha256": "23bc148d2b48964b621c5561ff2b81c1d9c7b717967a7491efbf12f4304882b5",
+  "output": "/home/qq/work/chain-cell-native-shard-674c72-20261110-validation/real-native-23120317a3cc-attempt-02",
+  "threads": 4,
+  "material_profile": "smollm2-public-v2-material-runtime-bridge-v1",
+  "parent": {
+    "generation": 1,
+    "operation_id": "public-v2-material-derivation-no-execution",
+    "contract": "c9b06f9a029a3257801844f89acb59b5f59f6a39087335af323f274e9152992f",
+    "adapter": "3b3128293a86570a47a72c7bf081f898de1682ed1118c5a440ad7478c0f22e42",
+    "file_sha256": "1c5af7b5a7144a619dfac83b14bd83ae77f1e2227b18a6a9c5dcb214889a0cba"
+  },
+  "requests": [
+    {
+      "request_id": "chain-capacity-dc0357-v2-fad809b14a2e-1",
+      "prompt": "Answer with only yes or no. Is 8517 greater than 8516?"
+    },
+    {
+      "request_id": "chain-capacity-dc0357-v2-fad809b14a2e-2",
+      "prompt": "Answer with only yes or no. Is 8517 greater than 8518?"
+    }
+  ]
+}

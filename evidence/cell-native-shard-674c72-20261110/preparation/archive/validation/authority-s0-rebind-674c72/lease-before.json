@@ -1,0 +1,8 @@
+{
+  "config/pon/pq-authority-effects-v1.json": "568c5f776a60659f2e1c1bda9d79d1488c569177a51cd2c022addfd6c6f1a56c",
+  "scripts/ci/pq_authority_effect_register.py": "770a5d3c72012af50fc3b5ab4ad278ba9ae629640845c0cb2f76d92341a7ec64",
+  "scripts/ci/test_pq_authority_effect_register.py": "a966bcddbba0692f60fbf3b02670ea9659842b5b4dab816d635048084877cc07",
+  "docs/security/PQ_AUTHORITY_EFFECT_REGISTER_V1.md": "8f96def8a0cb3589b51a49dfe95b52b16d615ca2ab8ebce513b25f3388166bd2",
+  "docs/security/PQ_AUTHORITY_STORAGE_SOURCE_LOCK_REVIEW_20261109.md": "ab5a9a398b02a8ed5ffdc4d84ec16ddb6d2b7d7050c7d75cc093ba8db6786f3e",
+  "evidence/pq-authority-storage-source-review-20261109/review.json": "e62c9e4158ea830c3fab056ec25b04449e1c03725d805c7016b5eaaf6259ba57"
+}

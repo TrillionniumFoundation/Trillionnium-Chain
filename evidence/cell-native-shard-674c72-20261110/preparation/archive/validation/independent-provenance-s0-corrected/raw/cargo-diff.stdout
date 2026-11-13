@@ -1,0 +1,26 @@
+diff --git a/trillionnium/Cargo.lock b/trillionnium/Cargo.lock
+index 8f5e97705..3523a037e 100644
+--- a/trillionnium/Cargo.lock
++++ b/trillionnium/Cargo.lock
+@@ -1260,6 +1260,7 @@ name = "trnm-pon-node"
+ version = "0.1.0"
+ dependencies = [
+  "fs2",
++ "getrandom 0.2.17",
+  "hex",
+  "libc",
+  "nix",
+diff --git a/trillionnium/crates/trnm-pon-node/Cargo.toml b/trillionnium/crates/trnm-pon-node/Cargo.toml
+index b9c4f4155..a013f88b0 100644
+--- a/trillionnium/crates/trnm-pon-node/Cargo.toml
++++ b/trillionnium/crates/trnm-pon-node/Cargo.toml
+@@ -41,6 +41,9 @@ zeroize = "=1.9.1"
+ tempfile = "3"
+ 
+ [dev-dependencies]
++# The explicit native research example reuses the original sealed research owner.
++# This package is already pinned in the existing DA dependency graph.
++getrandom = "=0.2.17"
+ # Test-only safe executed-SQL observation. Production features stay unchanged;
+ # this uses the existing pinned rusqlite package and adds no lockfile package.
+ rusqlite = { version = "=0.39.0", features = ["trace"] }
