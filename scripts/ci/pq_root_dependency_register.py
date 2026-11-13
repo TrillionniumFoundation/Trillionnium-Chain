@@ -23,10 +23,10 @@ from pq_source_reader import SourceReadError, read_regular
 SCHEMA = "trnm-pq-root-dependency-register-v3"
 RESULT_SCHEMA = "trnm-pq-root-dependency-register-result-v3"
 DEFAULT_MANIFEST = "config/pon/pq-root-dependency-register-v3.json"
-REVIEW_BASE = '225ab38e1e5f7e0852a28372bd8dd769eec1084b'
+REVIEW_BASE = 'b683714cdd5ba241c16c335a81aebc12c1581902'
 MAX_BYTES = 1024 * 1024
 # Frozen after review of all declared files. No runtime regeneration is allowed.
-REVIEWED_SOURCE_SNAPSHOT_SHA256 = '844d27717babb9b3a286cd28915a06b0cd1152ffcf151ffdf6c30a01708bd9fe'
+REVIEWED_SOURCE_SNAPSHOT_SHA256 = '731549321b29739c499f99920eb15259f6df371d36590c3c3aba36898c5c8571'
 
 PY = "formal/pon-nakamoto-v1/"
 POLICY = PY + "pq_root_recovery_policy_v1.py"

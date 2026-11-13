@@ -31,6 +31,10 @@
         "successor-possession": {
           "required": 3,
           "roster_size": 3
+        },
+        "witness-response": {
+          "required": 2,
+          "roster_size": 3
         }
       },
       "roles": [
@@ -38,7 +42,8 @@
         "successor-possession",
         "anchor-writer",
         "anchor-response",
-        "effect-provider"
+        "effect-provider",
+        "witness-response"
       ],
       "scope": "all-keys-all-epochs-including-retired-authority",
       "threshold_to_forgery_reduction": "uninstantiated"
@@ -129,16 +134,16 @@
   },
   "input_manifests": {
     "legacy": {
-      "declared_revision": "12e510b211110d93d9ead07e02c07a1eecc28ae9",
+      "declared_revision": "2bb56596e637908c44b5a2ef5984c9c37c7d3cc8",
       "path": "config/pon/pq128-lifetime-budget-v1.json",
       "revision_semantics": "declared-event-source-revision",
-      "sha256": "87108ad195c79d17eebbc0f34e320f7141763b507487cc82a3f62d5945fb9b23"
+      "sha256": "3ed0e9d451ff885fb27a4a6f7449ca9050eb44707d801a3a40d675fcf5ceaed4"
     },
     "root": {
-      "declared_revision": "57e6c17ae2fa8a9cc547e271f34d90ef09115f04",
+      "declared_revision": "b683714cdd5ba241c16c335a81aebc12c1581902",
       "path": "config/pon/pq-root-dependency-register-v3.json",
       "revision_semantics": "review-base-context-not-all-source-revision",
-      "sha256": "eedc1db827d97aab0be4c43e58713a2e2f2a3d0331e045a509f0941557834028"
+      "sha256": "a94b3e01c8a78a796496182dc268fe23b6fe844e27edec7553876c735ce37cc8"
     }
   },
   "primitive_scope_bridge": {
@@ -351,7 +356,7 @@
       }
     }
   },
-  "review_base_revision": "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0",
+  "review_base_revision": "b683714cdd5ba241c16c335a81aebc12c1581902",
   "root_event_relation": {
     "common_failure_obligations": [
       "same-complete-statement-purpose-and-current-roster",

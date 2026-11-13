@@ -23,7 +23,7 @@ SCHEMA = "trnm-pq128-lifetime-composition-v2"
 RESULT_SCHEMA = "trnm-pq128-lifetime-composition-result-v2"
 ARITHMETIC_SCHEMA = "trnm-pq128-root-composition-arithmetic-v2"
 DEFAULT_MANIFEST = "config/pon/pq128-lifetime-composition-v2.json"
-REVIEW_BASE = "44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0"
+REVIEW_BASE = "b683714cdd5ba241c16c335a81aebc12c1581902"
 EXPERIMENT_ID = "trnm-proposed-joint-lifetime-experiment-v2"
 COMMON_GAME = "uninstantiated-common-root-game-v2"
 MAX_BYTES = legacy.MAX_BYTES
@@ -31,13 +31,13 @@ MAX_BYTES = legacy.MAX_BYTES
 INPUTS = {
     "legacy": {
         "path": legacy.DEFAULT_MANIFEST,
-        "sha256": "87108ad195c79d17eebbc0f34e320f7141763b507487cc82a3f62d5945fb9b23",
-        "declared_revision": "12e510b211110d93d9ead07e02c07a1eecc28ae9",
+        "sha256": "3ed0e9d451ff885fb27a4a6f7449ca9050eb44707d801a3a40d675fcf5ceaed4",
+        "declared_revision": "2bb56596e637908c44b5a2ef5984c9c37c7d3cc8",
         "revision_semantics": "declared-event-source-revision",
     },
     "root": {
         "path": root_register.DEFAULT_MANIFEST,
-        "sha256": "eedc1db827d97aab0be4c43e58713a2e2f2a3d0331e045a509f0941557834028",
+        "sha256": "a94b3e01c8a78a796496182dc268fe23b6fe844e27edec7553876c735ce37cc8",
         "declared_revision": root_register.REVIEW_BASE,
         "revision_semantics": "review-base-context-not-all-source-revision",
     },
@@ -472,8 +472,15 @@ def inspect(root, manifest_path=DEFAULT_MANIFEST):
                 and all(value is None for value in root_result["domain_failure_bounds"].values()),
                 "new component bounds require explicit experiment and coverage review")
         files = merge_source_maps(old_result["source_files_sha256"], root_result["source_files_sha256"])
-        require(len(old_result["source_files_sha256"]) == 15
-                and len(root_result["source_files_sha256"]) == 37 and len(files) == 51,
+        shared_paths = sorted(set(old_result["source_files_sha256"])
+                              & set(root_result["source_files_sha256"]))
+        source_counts = {
+            "legacy": len(old_result["source_files_sha256"]),
+            "root": len(root_result["source_files_sha256"]),
+            "shared": len(shared_paths), "union": len(files),
+        }
+        require(source_counts == {"legacy": 21, "root": 45, "shared": 1, "union": 65}
+                and shared_paths == ["trillionnium/crates/trnm-release-bundle/src/pq_release.rs"],
                 "declared source union changed; review the mapping")
         scopes = bridge_primitives(children["legacy"], children["root"])
         allocated = legacy.probability(old_result["allocated_sum"], "allocated sum")
@@ -485,10 +492,9 @@ def inspect(root, manifest_path=DEFAULT_MANIFEST):
             "root_declared_source_snapshot_sha256": root_result["declared_source_snapshot_sha256"],
             "declared_source_union_consistent": True,
             "source_binding_scope": "declared-path-union-only",
-            "source_counts": {"legacy": 15, "root": 37, "shared": 1, "union": 51},
+            "source_counts": source_counts,
             "source_files_sha256": files,
-            "shared_source_paths": sorted(set(old_result["source_files_sha256"])
-                                           & set(root_result["source_files_sha256"])),
+            "shared_source_paths": shared_paths,
             "primitive_scope_union": scopes, "shared_primitive_scope_count": len(scopes),
             "unknown_lifetime_query_budgets": sorted(scopes),
             "unknown_role_lifetime_populations": list(root_register.ROLES),

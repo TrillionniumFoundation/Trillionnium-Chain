@@ -29,6 +29,26 @@ NATIVE_CRYPTO = "trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs"
 NATIVE_OWNER = "trillionnium/crates/trnm-pon-node/src/root_recovery_v3.rs"
 
 
+PREVIOUS_REVIEW_BASE = "225ab38e1e5f7e0852a28372bd8dd769eec1084b"
+PREVIOUS_SOURCE_SNAPSHOT_SHA256 = (
+    "844d27717babb9b3a286cd28915a06b0cd1152ffcf151ffdf6c30a01708bd9fe"
+)
+PREVIOUS_SOURCE_PINS = {
+    "trillionnium/Cargo.lock":
+        "53c4eab0fb3d2951894348de2b765e0a573e49acb5dbfe1fe805719ec868a136",
+    "trillionnium/crates/trnm-crypto-primitives/Cargo.toml":
+        "caff7ff137c94e26a378a2a95ae029a21b1ee30a79d08a05b8c9e3b1f1810ab8",
+    "trillionnium/crates/trnm-crypto-primitives/src/lib.rs":
+        "74f11c99984a0c199f6b1a882206dc887440a3c69668dd3833054eb0e98fd32c",
+    "trillionnium/crates/trnm-pon-node/Cargo.toml":
+        "70b357c460db5a2428e8a1a30ecf71865ebbb3200323b4537aeb90ff601d9ec9",
+    "trillionnium/crates/trnm-pon-node/src/lib.rs":
+        "0b7e076069645bdf502ff4521ea7c1d77b75a64e5137df3527b0cd6e7167c461",
+    "trillionnium/crates/trnm-protocol/src/lib.rs":
+        "b965065ca4915d57e61af480ef6cfb8f775465c8ad0e4dec0b2895e110946b86",
+}
+
+
 def manifest():
     return json.loads((ROOT / MANIFEST).read_text(encoding="utf-8"))
 
@@ -520,6 +540,30 @@ class ReviewedSourceTests(ContractCase):
         self.data["source_files_sha256"][relative] = hashlib.sha256(path.read_bytes()).hexdigest()
         self.write()
         self.inspect_refuses("frozen reviewed snapshot")
+
+    def test_previous_review_identity_is_preserved_as_a_refused_input(self):
+        previous = deepcopy(self.data)
+        previous["review_base_revision"] = PREVIOUS_REVIEW_BASE
+        previous["source_files_sha256"].update(PREVIOUS_SOURCE_PINS)
+        canonical = json.dumps({
+            "review_base_revision": previous["review_base_revision"],
+            "source_files_sha256": previous["source_files_sha256"],
+        }, sort_keys=True, separators=(",", ":")).encode()
+        self.assertEqual(hashlib.sha256(canonical).hexdigest(),
+                         PREVIOUS_SOURCE_SNAPSHOT_SHA256)
+        self.data = previous
+        self.write()
+        self.inspect_refuses("review_base_revision")
+
+    def test_each_superseded_source_pin_is_refused_under_the_current_review(self):
+        current = deepcopy(self.data)
+        for path, digest in PREVIOUS_SOURCE_PINS.items():
+            with self.subTest(path=path):
+                self.assertNotEqual(current["source_files_sha256"][path], digest)
+                self.data = deepcopy(current)
+                self.data["source_files_sha256"][path] = digest
+                self.write()
+                self.inspect_refuses("frozen reviewed snapshot")
 
     def test_omitted_extra_or_rebound_source_paths_refuse(self):
         original = deepcopy(self.data)
