@@ -1,0 +1,31 @@
+{
+  "schema": "trnm-pq-durable-outbound-required-tests-v1",
+  "scope": "explicit-loopback-outbound-and-sealed-reply-only",
+  "expected_meaningful_controls": 9,
+  "tests": [
+    "ingress::pq_network::outbound::tests::real_node_lost_ack_cold_reopen_replays_exact_signed_request_and_receipt",
+    "ingress::pq_network::outbound::tests::real_tls_unknown_parent_is_committed_terminal_then_explicit_new_sequences_work",
+    "ingress::pq_network::outbound::tests::admission_resource_refusal_has_no_terminal_seal_and_cannot_advance_client_sequence",
+    "ingress::pq_network::outbound::tests::sealed_reply_rejects_other_policy_peer_and_randomized_wire_even_for_same_operation",
+    "ingress::pq_network::outbound::tests::cancellation_is_durable_and_late_received_terminal_is_retained_without_timely_success",
+    "ingress::pq_network::outbound::tests::expired_pending_stays_unknown_while_expired_terminal_cold_audit_is_historical_only",
+    "ingress::pq_network::outbound::tests::original_boot_deadline_attempt_limit_and_boot_change_cannot_be_renewed_by_reopen",
+    "ingress::pq_network::outbound::tests::failed_durable_attempt_latches_before_socket_and_reopen_recovers_actual_state",
+    "ingress::pq_network::outbound::tests::create_open_context_single_writer_schema_and_storage_identity_are_fail_closed"
+  ],
+  "expected_compile_fail_controls": 1,
+  "compile_fail_controls": [
+    {
+      "selector": "ingress::pq_network::outbound::DurablePqOutbound::record_verified_reply",
+      "expected_diagnostic": "E0308",
+      "expected_type": "&VerifiedPqReply",
+      "found_type": "&PqResponse",
+      "scope": "sealed-reply-type-boundary-only"
+    }
+  ],
+  "complete_pq_parent_recovery": false,
+  "public_wan_accepted": false,
+  "independent_custody_accepted": false,
+  "whole_chain_quantum_security_qualified": false,
+  "original_business_budgets_changed": false
+}

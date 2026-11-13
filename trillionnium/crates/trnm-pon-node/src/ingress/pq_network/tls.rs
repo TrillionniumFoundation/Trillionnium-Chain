@@ -63,6 +63,25 @@ impl PqTlsClient {
         let response = self.inner.finish_response(&wire, prepared, end)?;
         Ok(PqResponseEvidence { response, wire })
     }
+    pub fn send_verified(
+        &self,
+        address: SocketAddr,
+        prepared: &PreparedPqRequest,
+        budget: Duration,
+    ) -> Result<VerifiedPqReply> {
+        self.inner.policy.tls_pins()?;
+        self.inner.check_send(address, prepared, budget)?;
+        self.send_verified_until(address, prepared, Instant::now() + budget)
+    }
+    pub(super) fn send_verified_until(
+        &self,
+        address: SocketAddr,
+        prepared: &PreparedPqRequest,
+        deadline: Instant,
+    ) -> Result<VerifiedPqReply> {
+        let evidence = self.send_with_evidence_until(address, prepared, deadline)?;
+        self.inner.seal_verified_reply(evidence, prepared, deadline)
+    }
     /// Use the original absolute deadline for the real TLS exchange.
     /// Validation, handshake and receipt verification cannot renew it.
     pub fn send_with_evidence_until(

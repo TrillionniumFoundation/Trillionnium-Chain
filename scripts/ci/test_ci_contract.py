@@ -500,8 +500,14 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
             'scripts/ci/test_w1_lifecycle_cost_v4.py',
             'scripts/ci/test_pon_public_v3_policy_read.py',
             'scripts/ci/test_llm_cell_handoff_deadline.py',
+            'scripts/ci/test_fixed_host_service_readback_v1.py',
+            'scripts/ci/test_llm_cell_installed_host.py RecoveryHandoffTests -v',
+            'scripts/test_llm_runtime_trial_ledger.py',
             'scripts/test_llm_runtime_rss_owner.py',
             'scripts/test_llm_runtime_exit_observation.py',
+            'scripts/test_llm_runtime_exit_subset_observation.py',
+            'scripts/test_llm_runtime_exit_worker_observation.py',
+            'scripts/test_llm_runtime_exit_mm_observation.py',
             'scripts/test_llm_runtime_stop.py',
             'scripts/test_llm_inherited_runtime.py',
             'scripts/test_llm_inherited_operation.py',
@@ -577,6 +583,9 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
         parent = '    python3 scripts/test_llm_parent_material.py\n'
         for path in ('scripts/test_llm_runtime_rss_owner.py',
                      'scripts/test_llm_runtime_exit_observation.py',
+                     'scripts/test_llm_runtime_exit_subset_observation.py',
+                     'scripts/test_llm_runtime_exit_worker_observation.py',
+                     'scripts/test_llm_runtime_exit_mm_observation.py',
                      'scripts/test_llm_runtime_stop.py',
                      'scripts/test_llm_inherited_runtime.py',
                      'scripts/test_llm_neural_read_worker.py',
@@ -590,6 +599,9 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
         parent_step = '    python3 scripts/test_llm_runtime_parent_step.py\n'
         for path in ('scripts/test_llm_runtime_rss_owner.py',
                      'scripts/test_llm_runtime_exit_observation.py',
+                     'scripts/test_llm_runtime_exit_subset_observation.py',
+                     'scripts/test_llm_runtime_exit_worker_observation.py',
+                     'scripts/test_llm_runtime_exit_mm_observation.py',
                      'scripts/test_llm_runtime_stop.py',
                      'scripts/test_llm_inherited_runtime.py',
                      'scripts/test_llm_neural_read_worker.py',
@@ -831,6 +843,7 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
 
     def test_useful_cell_relation_controls_cannot_be_removed_skipped_duplicated_or_moved(self):
         for name in ('test_useful_cell_numeric_v1.py', 'test_useful_cell_relation_v1.py',
+                     'test_useful_cell_attempt_journal_v1.py', 'test_grouped_delivery_cost_v1.py',
                      'test_useful_cell_execution_v2.py', 'test_useful_cell_relation_v2.py',
                      'test_useful_cell_relation_v2_adversarial.py', 'test_useful_cell_source_guard_v2.py',
                      'test_useful_cell_multimodal_execution_v3.py',
@@ -1536,6 +1549,7 @@ class CiContractTests(unittest.TestCase):
     def test_missing_useful_cell_sources_fail_contract_and_actual_ci_command(self):
         script = (self.root / 'scripts/ci/ci_job.sh').read_text()
         for name in ('test_useful_cell_numeric_v1.py', 'test_useful_cell_relation_v1.py',
+                     'test_useful_cell_attempt_journal_v1.py', 'test_grouped_delivery_cost_v1.py',
                      'test_useful_cell_execution_v2.py', 'test_useful_cell_relation_v2.py',
                      'test_useful_cell_relation_v2_adversarial.py', 'test_useful_cell_source_guard_v2.py',
                      'test_useful_cell_multimodal_execution_v3.py',
@@ -3469,6 +3483,118 @@ elif mode == 'ignored':
                 result, calls, _ = self.run_supplemental_shell(label)
                 self.assertNotEqual(result.returncode, 0)
                 self.assertEqual(calls, [])
+
+
+class PqDurableOutboundControlTests(unittest.TestCase):
+    """Synthetic transcript controls do not claim a native observation."""
+
+    def setUp(self):
+        from check_ci_contract import (check_pq_durable_outbound_controls,
+                                       PQ_DURABLE_OUTBOUND_MANIFEST,
+                                       PQ_DURABLE_OUTBOUND_STEPS)
+        self.check = check_pq_durable_outbound_controls
+        self.manifest_path = PQ_DURABLE_OUTBOUND_MANIFEST
+        self.steps = PQ_DURABLE_OUTBOUND_STEPS
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        for relative in (PQ_RELEASE_WORKFLOW, self.manifest_path):
+            target = self.root / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(ROOT / relative, target)
+        self.workflow = (self.root / PQ_RELEASE_WORKFLOW).read_text()
+        self.manifest = json.loads((self.root / self.manifest_path).read_text())
+
+    def test_nine_native_and_one_type_control_are_additive_and_not_observations(self):
+        self.assertEqual(self.check(self.root), {
+            'native_controls': 9, 'sealed_type_controls': 1,
+            'complete_pq_parent_recovery': False, 'tests_executed': False})
+        self.assertIn(PQ_SYSTEM_REQUIRED_STEP + PQ_SYSTEM_SUPPLEMENTAL_STEP
+                      + PQ_CHECKPOINT_OWNERSHIP_STEP + self.steps, self.workflow)
+
+    def test_manifest_cannot_shrink_rename_reorder_or_promote_scope(self):
+        mutations = (
+            lambda v: v['tests'].pop(),
+            lambda v: v['tests'].reverse(),
+            lambda v: v['tests'].__setitem__(0, v['tests'][1]),
+            lambda v: v['tests'].__setitem__(0, v['tests'][0] + '_renamed'),
+            lambda v: v.__setitem__('expected_meaningful_controls', 8),
+            lambda v: v.__setitem__('expected_compile_fail_controls', True),
+            lambda v: v['compile_fail_controls'][0].__setitem__('expected_diagnostic', 'E0432'),
+            lambda v: v['compile_fail_controls'][0].__setitem__('found_type', '&VerifiedPqReply'),
+            lambda v: v.__setitem__('complete_pq_parent_recovery', True),
+            lambda v: v.__setitem__('whole_chain_quantum_security_qualified', True),
+            lambda v: v.__setitem__('original_business_budgets_changed', 0),
+            lambda v: v.__setitem__('public_wan_accepted', True),
+            lambda v: v.__setitem__('independent_custody_accepted', True),
+        )
+        for i, mutate in enumerate(mutations):
+            value = json.loads(json.dumps(self.manifest))
+            mutate(value)
+            (self.root / self.manifest_path).write_text(json.dumps(value))
+            with self.subTest(case=i), self.assertRaisesRegex(ValueError, 'PQ outbound'):
+                self.check(self.root)
+
+    def test_actual_registry_execution_type_readback_and_failures_cannot_be_bypassed(self):
+        mutations = (
+            '', self.steps * 2,
+            self.steps.replace("!cancelled() && steps.pq_build.outcome == 'success'", 'false'),
+            self.steps.replace(' -- --exact ', ' -- '),
+            self.steps.replace('failed=1', 'failed=0'),
+            self.steps.replace('python3 scripts/ci/check_required_native_test.py', 'true'),
+            self.steps.replace('set(name for name in names if name.startswith(prefix)) == set(tests)', 'True'),
+            self.steps.replace('outbound-sealed-api-readback python3', 'outbound-sealed-api-readback true'),
+        )
+        for i, changed in enumerate(mutations):
+            text = self.workflow.replace(self.steps, changed)
+            self.assertNotEqual(text, self.workflow)
+            (self.root / PQ_RELEASE_WORKFLOW).write_text(text)
+            with self.subTest(case=i), self.assertRaisesRegex(ValueError, 'PQ outbound'):
+                self.check(self.root)
+
+    def test_trigger_removal_and_wrong_job_are_refused(self):
+        changes = (
+            self.workflow.replace('      - ' + self.manifest_path + '\n', ''),
+            self.workflow.replace(self.steps, '').replace('  cpq1-parameters:\n',
+                                                         '  cpq1-parameters:\n' + self.steps),
+        )
+        for text in changes:
+            (self.root / PQ_RELEASE_WORKFLOW).write_text(text)
+            with self.assertRaisesRegex(ValueError, 'PQ outbound'):
+                self.check(self.root)
+
+    def reader(self):
+        body = textwrap.dedent(self.steps.split('      - name: Require the sealed outbound reply type boundary\n', 1)[1].split('        run: |\n', 1)[1])
+        source = body.split("readback='", 1)[1].split("\n'", 1)[0]
+        parsed = ast.parse(source)
+        nodes = [node for node in parsed.body if isinstance(node, (ast.Import, ast.ImportFrom, ast.FunctionDef))
+                 or isinstance(node, ast.Assign) and isinstance(node.targets[0], ast.Name)
+                 and node.targets[0].id == 'EXPECTED']
+        namespace = {}
+        exec(compile(ast.Module(body=nodes, type_ignores=[]), '<actual-workflow-reader>', 'exec'), namespace)
+        return namespace['validate']
+
+    def test_actual_type_reader_requires_named_e0308_and_nonzero_complete_execution(self):
+        read = self.reader()
+        selector = 'ingress::pq_network::outbound::DurablePqOutbound::record_verified_reply'
+        log = ('running 1 test\n'
+               'test src/ingress/pq_network/outbound.rs - ' + selector + ' (line 400) - compile fail ... ok\n'
+               'error[E0308]: mismatched types\n'
+               'expected reference `&VerifiedPqReply`\n'
+               'found reference `&PqResponse`\n'
+               'test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 20 filtered out; finished in 0.01s\n')
+        result = read(log)
+        self.assertEqual(result['executed_tests'], 1)
+        self.assertFalse(result['counted_in_library_controls'])
+        self.assertFalse(result['complete_pq_parent_recovery'])
+        changes = ('', log + log, log.replace('running 1 test', 'running 0 tests'),
+                   log.replace('1 passed', '0 passed'), log.replace('0 ignored', '1 ignored'),
+                   log.replace(selector, 'different_control'), log.replace('E0308', 'E0432'),
+                   log.replace('&PqResponse', '&WrongType'), log.replace('&VerifiedPqReply', '&WrongType'),
+                   log + 'error[E0432]: unresolved import\n', log.replace(' ... ok', ' ... FAILED'))
+        for i, changed in enumerate(changes):
+            with self.subTest(case=i), self.assertRaises(ValueError):
+                read(changed)
 
 
 if __name__ == '__main__':

@@ -12,6 +12,7 @@ import os
 from pathlib import Path
 import resource
 import shutil
+import statistics
 import sys
 import time
 import uuid
@@ -129,6 +130,95 @@ def validate_v2_report(row, identity, kind, iterations):
             and all(type(value) is int and 0 < value < 1 << 63 for value in samples), "invalid actual replay samples")
     return {"schema": schema, "iterations": iterations, "profile_id": row["profile_id"],
             "samples_ns": samples}
+
+
+
+def observed_cost_comparison(result):
+    """Summarize already checked v2 observations; never verify a seal or admit work.
+
+    Fixed-receipt replays measure verification cost, not independent proof trials.
+    This derived report retains incomplete delivery/resource accounting and cannot
+    promote an inexpensive sample into a minimum-node or full-Cell benefit claim.
+    """
+    require(result.get("statement_version") == 2 and result.get("complete_proof_claim") is True
+            and result.get("end_to_end_observation_complete") is True,
+            "cost comparison needs a completed v2 observation")
+    require(type(result.get("independent_full_proof_trials_observed")) is int
+            and result["independent_full_proof_trials_observed"] == 1,
+            "fixed receipt samples are one full proof trial")
+    identity, benchmarks = result["identity"], result["benchmarks"]
+    require(tuple(checked_image_id(identity.get("image_id"))) == V2_IMAGE_ID,
+            "cost comparison image differs from v2 verifier")
+    summaries = {}
+    for kind, iterations in (("native", 1000), ("transparent", 100), ("fresh", 1)):
+        row = benchmarks[kind]
+        schema = "TRNM-W1-V2-NATIVE1" if kind == "native" else "TRNM-W1-V2-FULL-VERIFY1"
+        require(row.get("schema") == schema and row.get("profile_id") == V2_PROFILE_ID
+                and type(row.get("iterations")) is int and row["iterations"] == iterations,
+                "cost comparison replay profile/count differs")
+        samples = row.get("samples_ns")
+        require(type(samples) is list and len(samples) == iterations and all(
+            type(value) is int and 0 < value < 1 << 63 for value in samples),
+            "cost comparison requires real positive integer sample durations")
+        summaries[kind] = dict(iterations=iterations, median_ns=statistics.median(samples),
+                               minimum_ns=min(samples), maximum_ns=max(samples))
+    local = result["local_observations"]
+    serialization = local["serialization"]
+    require(serialization.get("schema") == "TRNM-W1-LOCAL-PAYLOAD1"
+            and serialization.get("statement_version") == 2,
+            "cost comparison local serialization profile differs")
+    for field in ("input_sha256", "header_sha256", "external_artifacts_sha256"):
+        require(serialization.get(field) == identity[field], "cost comparison artifact binding differs")
+    payloads = serialization["payloads"]
+    require(payloads["transparent"].get("body_sha256") == identity["receipt_sha256"]
+            and payloads["transparent"].get("body_bytes") == identity["receipt_bytes"],
+            "cost comparison receipt binding differs")
+    transfers = {}
+    for kind in ("native", "transparent"):
+        payload, transfer = payloads[kind], local[kind]
+        for key in ("body_bytes", "payload_bytes", "envelope_encode_ns", "durable_local_file_write_ns"):
+            require(type(payload.get(key)) is int and 0 < payload[key] < 1 << 63,
+                    "invalid local payload cost")
+        require(payload["payload_bytes"] >= payload["body_bytes"], "payload smaller than its body")
+        receiver = transfer.get("receiver")
+        require(transfer.get("schema") == "TRNM-W1-LOCAL-TCP-TRANSFER1"
+                and transfer.get("byte_roundtrip_complete") is True and type(receiver) is dict
+                and receiver.get("error") is None
+                and transfer.get("payload_bytes") == receiver.get("received_bytes") == payload["payload_bytes"]
+                and transfer.get("payload_sha256") == receiver.get("received_sha256") == payload["payload_sha256"],
+                "cost comparison has incomplete or substituted local transfer")
+        seconds, rate = transfer.get("send_receive_and_durable_write_seconds"), transfer.get("offered_bytes_per_second")
+        require(type(seconds) in (int, float) and math.isfinite(seconds) and seconds > 0
+                and type(rate) is int and rate > 0, "invalid local transfer cost")
+        transfers[kind] = dict(body_bytes=payload["body_bytes"], payload_bytes=payload["payload_bytes"],
+            envelope_encode_ns=payload["envelope_encode_ns"],
+            durable_local_file_write_ns=payload["durable_local_file_write_ns"],
+            send_receive_and_durable_write_seconds=seconds, offered_bytes_per_second=rate)
+    require(transfers["native"]["offered_bytes_per_second"] == transfers["transparent"]["offered_bytes_per_second"],
+            "different local transport offered rates are not comparable")
+    ratio = summaries["transparent"]["median_ns"] / summaries["native"]["median_ns"]
+    return dict(schema="TRNM-W1-OBSERVED-COST-COMPARISON1", profile_id=V2_PROFILE_ID,
+        work_id=identity["work_id"], receipt_sha256=identity["receipt_sha256"],
+        scope="derived same-host v2 observations; no seal verification or independent machine qualification",
+        complete_relation="W1-v2", complete_cell_relation_proven=False,
+        independent_full_proof_trials_observed=1, reused_receipt_replays=100,
+        verification=summaries, transparent_over_native_median_verify_ratio=ratio,
+        local_delivery=transfers,
+        transparent_over_native_payload_bytes_ratio=transfers["transparent"]["payload_bytes"] / transfers["native"]["payload_bytes"],
+        transparent_over_native_loopback_seconds_ratio=transfers["transparent"]["send_receive_and_durable_write_seconds"] / transfers["native"]["send_receive_and_durable_write_seconds"],
+        fresh_proof_pipeline_seconds=result.get("fresh_proof_pipeline_seconds"),
+        fresh_local_delivery_seconds_from_start=result.get("local_transparent_delivery_observed_seconds_from_start"),
+        generation_and_fresh_verification_scope=result.get("fresh_proof_pipeline_scope"),
+        observed_new_stage_wait4_user_cpu_seconds=result.get("observed_new_stage_wait4_user_cpu_seconds"),
+        observed_new_stage_wait4_system_cpu_seconds=result.get("observed_new_stage_wait4_system_cpu_seconds"),
+        all_new_stage_wait4_usage_available=result.get("all_new_stage_wait4_usage_available"),
+        cpu_accounting_scope=result.get("wait4_cpu_sum_scope"),
+        aggregate_process_tree_peak_rss_bytes=result.get("aggregate_process_tree_peak_rss_bytes"),
+        comparison="slower-than-native-on-observed-verification" if ratio >= 1 else "faster-on-observed-verification-only",
+        unmeasured_costs=["build/setup", "aggregate process-tree peak memory", "failures across independent proof trials",
+                          "production queueing", "WAN propagation", "Node admission", "independent confirmation"],
+        minimum_node_configuration_measured=False, full_delivery_cost_complete=False,
+        benefit_gate_passed=None, production_qualification=False, consensus_admission=False)
 
 
 def saved_identity(checkpoint, expected_artifacts, version, manifest):
@@ -580,6 +670,15 @@ def main(argv=None):
                     "prover_p99_established": False, "prover_resource_completeness_established": False,
                     "benefit_gate_passed": None, "production_qualification": False, "consensus_admission": False,
                 }
+                result["observed_cost_comparison"] = None
+                if experiment_complete and args.statement_version == 2:
+                    try:
+                        result["observed_cost_comparison"] = observed_cost_comparison(result)
+                    except (ValueError, TypeError, KeyError) as failure:
+                        experiment_complete = False
+                        error = f"cost comparison failed: {type(failure).__name__}: {failure}"
+                        result["end_to_end_observation_complete"] = False
+                        result["error"] = error
                 result["deadline_exhausted_at_snapshot"] = time.monotonic() >= deadline
                 if experiment_complete and result["deadline_exhausted_at_snapshot"]:
                     experiment_complete = False

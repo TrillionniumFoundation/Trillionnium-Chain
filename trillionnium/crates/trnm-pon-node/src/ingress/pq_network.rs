@@ -41,6 +41,7 @@ pub(crate) use trnm_protocol::pq_legacy_profile::{
     MAX_RECORDS, MAX_WIRE,
 };
 
+pub mod outbound;
 mod tls_profile;
 pub use tls_profile::{PqTlsPins, TLS_HANDSHAKE_LIMIT, TLS_PROFILE, TLS_TRANSPORT_MODE};
 #[cfg(feature = "pq-native-openssl")]
@@ -527,6 +528,42 @@ pub struct PqResponse {
     pub value: Value,
 }
 
+/// A live, signature-checked reply from the explicitly pinned native owner.
+/// Its private fields and absent deserializer prevent caller-written response
+/// JSON from retiring a durable outbound operation. This is transport evidence,
+/// not block finality, successful execution or an account authorization.
+#[derive(Debug)]
+pub struct VerifiedPqReply {
+    policy: Hash,
+    peer: Hash,
+    sequence: u64,
+    operation: Hash,
+    request_wire_digest: Hash,
+    wire: Vec<u8>,
+    response: PqResponse,
+}
+impl VerifiedPqReply {
+    pub fn response(&self) -> &PqResponse {
+        &self.response
+    }
+    pub fn wire(&self) -> &[u8] {
+        &self.wire
+    }
+    pub fn operation_id(&self) -> Hash {
+        self.operation
+    }
+    pub fn sequence(&self) -> u64 {
+        self.sequence
+    }
+    pub fn into_response(self) -> PqResponse {
+        self.response
+    }
+}
+
+fn outbound_request_digest(wire: &[u8]) -> Hash {
+    hash(b"TRNM/PQNetwork/outbound-exact-request/v1\0", &[wire])
+}
+
 pub struct PreparedPqRequest {
     verified: VerifiedRequest,
 }
@@ -708,6 +745,46 @@ impl PqClient {
         let wire = super::read_frame_deadline(&mut stream, end)?;
         let response = self.finish_response(&wire, prepared, end)?;
         Ok(PqResponseEvidence { response, wire })
+    }
+    /// Return a sealed terminal bound to the exact randomized request wire.
+    /// The existing transport and parent-recovery evidence APIs stay unchanged.
+    pub fn send_verified(
+        &self,
+        address: SocketAddr,
+        prepared: &PreparedPqRequest,
+        budget: Duration,
+    ) -> Result<VerifiedPqReply> {
+        self.policy.require_plaintext()?;
+        self.check_send(address, prepared, budget)?;
+        self.send_verified_until(address, prepared, Instant::now() + budget)
+    }
+    fn send_verified_until(
+        &self,
+        address: SocketAddr,
+        prepared: &PreparedPqRequest,
+        deadline: Instant,
+    ) -> Result<VerifiedPqReply> {
+        let evidence = self.send_with_evidence_until(address, prepared, deadline)?;
+        self.seal_verified_reply(evidence, prepared, deadline)
+    }
+    fn seal_verified_reply(
+        &self,
+        evidence: PqResponseEvidence,
+        prepared: &PreparedPqRequest,
+        deadline: Instant,
+    ) -> Result<VerifiedPqReply> {
+        let reply = VerifiedPqReply {
+            policy: self.policy.id(),
+            peer: prepared.verified.peer,
+            sequence: prepared.verified.sequence,
+            operation: prepared.verified.operation,
+            request_wire_digest: outbound_request_digest(prepared.wire()),
+            wire: evidence.wire,
+            response: evidence.response,
+        };
+        // Hashing and retaining the bounded wire must fit the same epoch.
+        check_live_request(deadline, Some(prepared.expires_at()))?;
+        Ok(reply)
     }
     /// Preserve the caller's absolute epoch through validation, connect,
     /// framing and final signature verification. The original ten-second

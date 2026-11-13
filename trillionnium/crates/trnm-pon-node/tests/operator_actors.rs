@@ -575,9 +575,31 @@ fn weak_actor_key_and_cross_context_approval_refused() {
     let (s, _, m, i, _) = fixture();
     let mut weak = [0u8; 32];
     weak[0] = 1;
+    // This exact parser error is reached only after canonical encoding and
+    // point decoding succeed, before the actor wrapper's policy checks.
+    assert_eq!(
+        trnm_crypto_primitives::verifying_key_from_hex(&hex::encode(weak))
+            .unwrap_err()
+            .to_string(),
+        "public_key_hex is a weak Ed25519 key"
+    );
     assert_eq!(
         deployment_actors::operator_key(&hex::encode(weak)).unwrap_err(),
-        "ACTOR_WEAK_KEY"
+        "ACTOR_KEY"
+    );
+    // A negative-zero encoding is a different refusal at the canonical parser
+    // boundary; it must not be relabelled as a decoded weak-key policy result.
+    let mut noncanonical = weak;
+    noncanonical[31] = 0x80;
+    assert_eq!(
+        trnm_crypto_primitives::verifying_key_from_hex(&hex::encode(noncanonical))
+            .unwrap_err()
+            .to_string(),
+        "public key is not canonical"
+    );
+    assert_eq!(
+        deployment_actors::operator_key(&hex::encode(noncanonical)).unwrap_err(),
+        "ACTOR_KEY"
     );
     let t = actors::prepare(&s, &m, &i).unwrap();
     let mut c = s;
