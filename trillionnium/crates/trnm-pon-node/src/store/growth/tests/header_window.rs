@@ -504,12 +504,11 @@ fn native_growth_v2_observed_clock_preserves_each_original_resource_stop_and_rea
     assert!(!node.db.is_autocommit());
     read.rollback().unwrap();
     assert_eq!(rows(&node.db), original);
-    assert_eq!(
-        node.check_observed_history([0xff; 32], 100_000)
-            .unwrap_err()
-            .to_string(),
-        "UNKNOWN_PARENT"
-    );
+    let unknown = node
+        .check_observed_history([0xff; 32], 100_000)
+        .unwrap_err();
+    assert_eq!(unknown.to_string(), "UNKNOWN_PARENT");
+    assert!(!unknown.requires_owner_stop());
 }
 
 #[test]
@@ -577,16 +576,41 @@ fn native_growth_v2_observed_clock_checks_current_header_links_and_restores_exac
     let packets = retained_clock_branch(&mut node);
     let tip = packets.last().unwrap().id().unwrap();
     let original = rows(&node.db);
-    for sql in [
+    for (case, sql) in [
         "UPDATE blocks SET parent=zeroblob(32) WHERE id=?",
         "UPDATE blocks SET height=height+1 WHERE id=?",
         "UPDATE blocks SET state_root=zeroblob(32) WHERE id=?",
         "UPDATE blocks SET packet=zeroblob(length(packet)) WHERE id=?",
-    ] {
+    ]
+    .into_iter()
+    .enumerate()
+    {
         let transaction = node.db.unchecked_transaction().unwrap();
         transaction.execute(sql, [tip.as_slice()]).unwrap();
         let error = node.check_observed_history(tip, 100_000).unwrap_err();
         assert!(error.requires_owner_stop(), "{error}");
+        if case == 2 {
+            use crate::account_archive_execution::{
+                state_witness::StateWitnessError, CheckedExecutionError,
+            };
+            use std::error::Error as _;
+            // The complete stored commitment is bound before the header walk.
+            // Its failure is local even though identical caller text is not.
+            assert_eq!(error.kind(), crate::ErrorKind::LocalStructure);
+            assert_eq!(
+                error
+                    .source()
+                    .and_then(|source| source.downcast_ref::<CheckedExecutionError>()),
+                Some(&CheckedExecutionError::StateWitness(
+                    StateWitnessError::Commitment
+                ))
+            );
+            assert_eq!(
+                error.to_string(),
+                "GROWTH_EXECUTION:StateWitness(Commitment)"
+            );
+            assert!(!Error::remote(error.to_string()).requires_owner_stop());
+        }
         assert!(!node.db.is_autocommit());
         transaction.rollback().unwrap();
         node.check_observed_history(tip, 100_000).unwrap();

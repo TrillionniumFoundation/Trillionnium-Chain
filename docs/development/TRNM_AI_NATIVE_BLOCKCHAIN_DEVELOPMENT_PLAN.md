@@ -14255,3 +14255,15 @@ handoff and proves that scheduling markers do not carry into the next packet.
 These changes do not relabel the failed observations on `9fcf1233b`, execute a
 depletion campaign, or close pre-token service starvation. Current profile
 bytes and budgets remain r19; production qualification remains HOLD_NO_GO.
+
+### 2026-11-13 preserve the local origin of stored Growth commitment failures
+
+The restored caller-owned read scope exposed a retained-state classification
+gap: a stored header-root/working-commitment mismatch reached the original
+complete-state binder before the header walk, but lost its local origin in a
+generic execution diagnostic. Keep that validation order and exact diagnostic;
+the pure local binding boundary now retains its typed cause and local-integrity
+classification. Unknown caller locators and resource callbacks keep their
+original nonfatal/control provenance. Header-link corruption, rollback and
+exact row restoration remain required by the original regression; it also
+checks that a remote copy of the diagnostic cannot stop a healthy owner.

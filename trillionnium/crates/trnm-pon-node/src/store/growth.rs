@@ -340,8 +340,12 @@ impl Node {
             header_root: block.root,
             stored,
         };
+        // This binds only the already located local record and its stored
+        // working commitment. Preserve that integrity origin and typed cause;
+        // an unknown caller locator was refused by record() above, and no
+        // caller resource callback or new packet relation is wrapped here.
         let verified = native_growth::bind(&self.settings, &source, &source.stored.working)
-            .map_err(execution_error)?;
+            .map_err(|error| Error::local_replay_source("GROWTH_EXECUTION", error))?;
         let checkpoint = native_store::query_growth_checkpoint(
             &self.db,
             context(&self.settings),
