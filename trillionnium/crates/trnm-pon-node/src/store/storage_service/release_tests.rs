@@ -795,3 +795,118 @@ fn native_release_repair_scope_deadline_and_exact_old_reconciliation_remain_dist
     );
     assert_eq!(budgets.report().unwrap(), charged);
 }
+
+#[test]
+fn native_release_member_gc_requires_successor_native_effect() {
+    for backend in [
+        StateBackend::Legacy,
+        StateBackend::AuthenticatedV1,
+        StateBackend::PermanentAccountGrowthV2,
+    ] {
+        let directory = tempfile::tempdir().unwrap();
+        let mut node = open_node(&directory.path().join("node"), backend);
+        let path = directory.path().join("archive");
+        let next_path = directory.path().join("successor-archive");
+        let mut retained = CellReleaseRetentionStoreV2::create(&path, archive_config()).unwrap();
+        let mut next_config = archive_config();
+        next_config.retention.store_id = [191; 32];
+        let mut next = CellReleaseRetentionStoreV2::create(&next_path, next_config).unwrap();
+        let (cache, mut original) = release_material(directory.path());
+        let mut next_contract = original.clone();
+        next_contract.operation = [171; 32];
+        next_contract.funding_operation = [172; 32];
+        next_contract.retain_until_height = 24;
+        next_contract.repair_deadline_height = 23;
+        for (index, (old, new)) in original
+            .objects
+            .iter_mut()
+            .zip(&mut next_contract.objects)
+            .enumerate()
+        {
+            new.operation = [131 + index as u8; 32];
+            new.funding_operation = [141 + index as u8; 32];
+            new.retain_until_height = 30;
+            old.successor = Some((next.store_id(), new.operation));
+        }
+        let original_request = funded_release(&mut node, &retained, original.clone());
+        let mut next_request = funded_release(&mut node, &next, next_contract.clone());
+        next_request.policy.budget = [173; 32];
+        next_request.claim.budget = next_request.policy.budget;
+        for (index, member) in next_request.members.iter_mut().enumerate() {
+            member.policy.budget = [151 + index as u8; 32];
+            member.claim.budget = member.policy.budget;
+        }
+        let mut budgets =
+            NativeBudgetStoreV1::open(&directory.path().join("budgets.sqlite"), config(&node))
+                .unwrap();
+        node.retain_native_cell_release(
+            &mut budgets,
+            &mut retained,
+            &cache,
+            original_request,
+            deadline(),
+        )
+        .unwrap();
+        next.reserve_release(next_contract.clone(), deadline())
+            .unwrap();
+        next.acknowledge_release(next_contract.operation, &cache, deadline())
+            .unwrap();
+        while node
+            .native_funding_observation(next_request.policy.source)
+            .unwrap()
+            .anchor
+            .height
+            < 16
+        {
+            let parent = node.active().unwrap().0;
+            mine(&mut node, parent, vec![]);
+        }
+        node.retire_native_cell_release(&budgets, &mut retained, original.operation, deadline())
+            .unwrap();
+        let object = original.objects[0].operation;
+        let rows = physical_rows(&path);
+        let charged = budgets.report().unwrap();
+        let error = node
+            .retire_native_cell_release_member(
+                &budgets,
+                &mut retained,
+                original.operation,
+                object,
+                Some(&mut next),
+                deadline(),
+            )
+            .unwrap_err();
+        assert!(
+            error.to_string().contains("BUDGET_CLAIM_UNKNOWN"),
+            "{error}"
+        );
+        assert_eq!(physical_rows(&path), rows);
+        assert_eq!(budgets.report().unwrap(), charged);
+        node.retain_native_cell_release(&mut budgets, &mut next, &cache, next_request, deadline())
+            .unwrap();
+        let charged = budgets.report().unwrap();
+        let retired = node
+            .retire_native_cell_release_member(
+                &budgets,
+                &mut retained,
+                original.operation,
+                object,
+                Some(&mut next),
+                deadline(),
+            )
+            .unwrap();
+        assert!(retired.retired);
+        let replay = node
+            .retire_native_cell_release_member(
+                &budgets,
+                &mut retained,
+                original.operation,
+                object,
+                None,
+                deadline(),
+            )
+            .unwrap();
+        assert_eq!(replay, retired);
+        assert_eq!(budgets.report().unwrap(), charged);
+    }
+}
