@@ -1,0 +1,4 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.94s
+     Running unittests src/lib.rs (/workspace/scratch/297a393433ba/native-target/debug/deps/trnm_research_protocol-fcf2324d89c590f8)
+     Running tests/hepta_handoff_pq.rs (/workspace/scratch/297a393433ba/native-target/debug/deps/hepta_handoff_pq-9c389d0b866238e8)
+     Running tests/protocol_v1.rs (/workspace/scratch/297a393433ba/native-target/debug/deps/protocol_v1-d111df90dd5f720b)

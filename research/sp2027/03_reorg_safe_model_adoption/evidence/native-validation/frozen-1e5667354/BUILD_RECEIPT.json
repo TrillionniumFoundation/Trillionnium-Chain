@@ -1,0 +1,193 @@
+{
+  "adapter": {
+    "actual_native_api": [
+      "SignedHeptaAdmissionV1::sign",
+      "SignedHeptaAdmissionV1::from_canonical_bytes",
+      "SignedHeptaAdmissionV1::verify_for_context"
+    ],
+    "binary_bytes": 27220520,
+    "binary_path": "/workspace/scratch/297a393433ba/native-target/debug/examples/sp27_03_authorization_adapter",
+    "binary_sha256": "0d01d50cdfca9883b5830ad10804c4b116dc109b3a3fe9c24c38c5a6018dbd20",
+    "current_authority_origin": "caller-supplied controlled snapshot",
+    "path": "trillionnium/crates/trnm-research-protocol/examples/sp27_03_authorization_adapter.rs",
+    "signature_profile": "Ed25519 V1 with public controlled fixture keys",
+    "source_sha256": "67e35ac1089421d020dc823914ee5e2c410c4bbea0b69d306fd52340ff54a7dc"
+  },
+  "affected_package_strict_clippy_passed": true,
+  "arbitrary_external_effect_guarantee": false,
+  "batch_step_results": {
+    "schema": "sp27-03.native-validation-batch.v1",
+    "source_binding": "parent original record_pq_native_command before/after receipt",
+    "steps": [
+      {
+        "argv": [
+          "cargo",
+          "test",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-research-protocol",
+          "--lib",
+          "--tests",
+          "--all-features"
+        ],
+        "elapsed_ns": 10264044247,
+        "ended_utc": "2026-11-12T00:00:48.508692+00:00",
+        "exit_code": 0,
+        "label": "retained-tests",
+        "started_utc": "2026-11-12T00:00:38.244659+00:00",
+        "stderr_file": "retained-tests.stderr",
+        "stderr_sha256": "dea9380810e688394d6c453cfbeb42ec6ef2ad96824d70b7782c23602954acc2",
+        "stdout_file": "retained-tests.stdout",
+        "stdout_sha256": "68e626eb89e8d169ca6c1ce49497d287a68663a82effafced6809734c39a59de"
+      },
+      {
+        "argv": [
+          "cargo",
+          "clippy",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-research-protocol",
+          "--all-targets",
+          "--all-features",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "elapsed_ns": 244438250425,
+        "ended_utc": "2026-11-12T00:04:52.947993+00:00",
+        "exit_code": 0,
+        "label": "strict-clippy",
+        "started_utc": "2026-11-12T00:00:48.510192+00:00",
+        "stderr_file": "strict-clippy.stderr",
+        "stderr_sha256": "caa4519a81ba7eb29854a38c087bc832420d097dc145b7e25d103107ae1186c5",
+        "stdout_file": "strict-clippy.stdout",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  },
+  "cargo_lock_sha256": "759c42c62d7b9a72d93c533039b5bf47f3508efabf1f1ee63f5eee59b9b9e55f",
+  "created_utc": "2026-11-12T00:06:35.278076+00:00",
+  "development_compile_log_retained_separately": "../build-initial.stderr; not relabelled as this committed-source build",
+  "exact_source_build_fresh_target_claim": false,
+  "exact_source_build_reused_existing_target": true,
+  "execution_source": {
+    "branch": "test/chain-sp27-03-recovery-effects-20261111-297a",
+    "commit": "1e5667354f6fa17170202416b9d24562e6c72496",
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "tracked_bytes": 2553900018,
+    "tracked_entries": 27889,
+    "tree": "584b16d72f0e1030c51d9beb931d9bc4bc4ba746"
+  },
+  "full_workspace_clippy_executed": false,
+  "full_workspace_native_tests_executed": false,
+  "gates": [
+    {
+      "before_after_exact_source_match": true,
+      "exit_code": 0,
+      "label": "locked-build",
+      "log_file": "locked-build.log",
+      "log_sha256": "531da1fda39e3bb2d3e4003cb3b19ce52b0eb65e0187cf21077d00d739cc3756",
+      "receipt_file": "locked-build.json",
+      "receipt_sha256": "2ef34de46930aabcef5e27a33731fd0b7da194d7bb394f189ffc3a28eb339419",
+      "status": "command_succeeded"
+    },
+    {
+      "before_after_exact_source_match": true,
+      "exit_code": 0,
+      "label": "locked-graph",
+      "log_file": "locked-graph.log",
+      "log_sha256": "ad397ba97a28f298e88f212a48405e0eddd1c97898db64556a470a99f5b475f4",
+      "receipt_file": "locked-graph.json",
+      "receipt_sha256": "1d7fb5ae8bcc7ab4deb71fcbad77dd31db900f9ef936434556d84fde6785e70a",
+      "status": "command_succeeded"
+    },
+    {
+      "before_after_exact_source_match": true,
+      "exit_code": 0,
+      "label": "workspace-format",
+      "log_file": "workspace-format.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "receipt_file": "workspace-format.json",
+      "receipt_sha256": "8009eb4f7e68f2d1f76a51ab9b25c8121fa0106d42fed94e4ffd6317012cfda6",
+      "status": "command_succeeded"
+    },
+    {
+      "before_after_exact_source_match": true,
+      "exit_code": 0,
+      "label": "source-integrity-negatives",
+      "log_file": "source-integrity-negatives.log",
+      "log_sha256": "fa0ff5a49cc8c2f4dbfce6937e10d3d35c67aa99df01f751cbc968688cdf28b1",
+      "receipt_file": "source-integrity-negatives.json",
+      "receipt_sha256": "2d7e54012a7ebcb18cde8b6e100400f683679a3e77cdb5b57eb5f59dd2c7b9f0",
+      "status": "command_succeeded"
+    },
+    {
+      "before_after_exact_source_match": true,
+      "exit_code": 0,
+      "label": "retained-and-clippy",
+      "log_file": "retained-and-clippy.log",
+      "log_sha256": "6dc22374df136d292a595cc3b33850b44a1f625987468bcdda0f4a6709cdb903",
+      "receipt_file": "retained-and-clippy.json",
+      "receipt_sha256": "b4fc6b065d5c85bb02f9d26749476d698833548de7d389fc5e321c809c0fc692",
+      "status": "command_succeeded"
+    }
+  ],
+  "grants_execution_authority": false,
+  "host": {
+    "machine": "x86_64",
+    "node": "05afa1b52275",
+    "release": "6.18.57",
+    "system": "Linux"
+  },
+  "markdown_links_validation_included_in_this_receipt": false,
+  "native_node_end_to_end_executed": false,
+  "raw_artifacts_sha256": {
+    "cargo-version.txt": "c6cd47fb28b137d9450165b5b0796de3dfdac887c91ea225c53506f3fc5f6add",
+    "locked-build.json": "2ef34de46930aabcef5e27a33731fd0b7da194d7bb394f189ffc3a28eb339419",
+    "locked-build.log": "531da1fda39e3bb2d3e4003cb3b19ce52b0eb65e0187cf21077d00d739cc3756",
+    "locked-graph.json": "1d7fb5ae8bcc7ab4deb71fcbad77dd31db900f9ef936434556d84fde6785e70a",
+    "locked-graph.log": "ad397ba97a28f298e88f212a48405e0eddd1c97898db64556a470a99f5b475f4",
+    "retained-and-clippy-step-results.json": "9d313d98ee110a4322de7b6ac7e866ccc49588f094933bf9e82bd92e0aa5aa4b",
+    "retained-and-clippy.json": "b4fc6b065d5c85bb02f9d26749476d698833548de7d389fc5e321c809c0fc692",
+    "retained-and-clippy.log": "6dc22374df136d292a595cc3b33850b44a1f625987468bcdda0f4a6709cdb903",
+    "retained-tests.stderr": "dea9380810e688394d6c453cfbeb42ec6ef2ad96824d70b7782c23602954acc2",
+    "retained-tests.stdout": "68e626eb89e8d169ca6c1ce49497d287a68663a82effafced6809734c39a59de",
+    "rustc-version.txt": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+    "source-integrity-negatives.json": "2d7e54012a7ebcb18cde8b6e100400f683679a3e77cdb5b57eb5f59dd2c7b9f0",
+    "source-integrity-negatives.log": "fa0ff5a49cc8c2f4dbfce6937e10d3d35c67aa99df01f751cbc968688cdf28b1",
+    "source-sha256.txt": "ef71912eedd8c8cd8d2f65893f9059a27d31f8f0c984d5391acde4cb64770da6",
+    "strict-clippy.stderr": "caa4519a81ba7eb29854a38c087bc832420d097dc145b7e25d103107ae1186c5",
+    "strict-clippy.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "workspace-format.json": "8009eb4f7e68f2d1f76a51ab9b25c8121fa0106d42fed94e4ffd6317012cfda6",
+    "workspace-format.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "retained_native_tests": {
+    "failed": 0,
+    "ignored": 1,
+    "ignored_reason": "print_golden_fixture_for_regeneration is a retained fixture regeneration helper",
+    "passed": 35
+  },
+  "schema": "sp27-03.native-adapter-build.v1",
+  "source_integrity_negative_controls": {
+    "failed": 0,
+    "tests": 43
+  },
+  "toolchain": {
+    "cargo_binary_sha256": "841072d1d92f9e841d9ba5b0814182a0adf064acf4527cd120967b7bc49dcb66",
+    "cargo_home": "/workspace/scratch/297a393433ba/native-cargo",
+    "cargo_version_text": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)\nrelease: 1.95.0\ncommit-hash: f2d3ce0bd7f24a49f8f72d9000448f8838c4e850\ncommit-date: 2026-03-21\nhost: x86_64-unknown-linux-gnu\nlibgit2: 1.9.2 (sys:0.20.4 vendored)\nlibcurl: 8.15.0-DEV (sys:0.4.83+curl-8.15.0 vendored ssl:OpenSSL/3.5.4)\nssl: OpenSSL 3.5.4 30 Sep 2025\nos: Debian 13.0.0 [64-bit]\n",
+    "network_mode": "offline",
+    "rustc_binary_sha256": "bff349e72704ff70bc08a234a3847338e797065bbedde5e556808bc87b7bf7c6",
+    "rustc_version_text": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.95.0\nLLVM version: 22.1.2\n",
+    "target_directory": "/workspace/scratch/297a393433ba/native-target"
+  },
+  "validation_scope": "affected trnm-research-protocol crate plus workspace formatting and original source-integrity controls",
+  "whole_chain_pq_qualified": false,
+  "workspace_format_check_passed": true
+}

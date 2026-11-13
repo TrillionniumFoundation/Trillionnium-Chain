@@ -1,0 +1,13 @@
+{
+  "schema": "sp27-03.consumer-contract-control-run.v1",
+  "source_commit": "303f3358e8b36f4c6e9453ea5cf3c40e822154e9",
+  "argv": [
+    "python3",
+    "-B",
+    "research/sp2027/03_reorg_safe_model_adoption/joint/test_contract.py"
+  ],
+  "exit_code": 0,
+  "started_unix_ns": 1794441531378022265,
+  "ended_unix_ns": 1794441535425283728,
+  "native_adapter": "/workspace/scratch/297a393433ba/native-target/debug/examples/sp27_03_authorization_adapter"
+}

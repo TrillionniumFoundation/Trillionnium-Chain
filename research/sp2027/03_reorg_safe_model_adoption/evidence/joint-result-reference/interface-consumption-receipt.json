@@ -1,0 +1,243 @@
+{
+  "consumed_at": {
+    "monotonic_ns": 4263290852451,
+    "pid": 58,
+    "utc": "2026-11-12T00:00:51.184508+00:00"
+  },
+  "freeze_basis": "exact delivered 05 schema and handoff bytes",
+  "handoff_sha256": "03bb46885541ca3c369394afcc06552ad89179fbaac869fb72d4ac156d798ac2",
+  "live_producer_ack_observed": false,
+  "mapping_profile": {
+    "authorization_provenance": "original commit owner/incarnation and native verification receipt",
+    "canonicalization": "Python JSON sort_keys, ensure_ascii, compact separators; no floats",
+    "digest_encoding": "SHA256(ASCII namespace + NUL + canonical JSON UTF-8)",
+    "effect_digest": "committed sink record in sp27-03.effect.v1; distinct from intent, logits and content",
+    "native_admission_generation": "05 descriptor.model_generation; always 1 in these inputs",
+    "native_parent_artifact": "null for this generation-1 research admission; CHB1.parent stays in descriptor binding",
+    "operation_key": [
+      "scope",
+      "logical_operation_id"
+    ],
+    "operation_key_excludes": [
+      "owner",
+      "authorization_incarnation",
+      "content_generation"
+    ],
+    "owner_admission": "research snapshot binding, NOT production Hepta WithdrawalBoundArtifactAdmissionV3",
+    "payload": "new canonical consumer intent record, NOT model weights",
+    "schema": "sp27-03.digest-mapping.v1",
+    "security_upgrade_claim": false,
+    "source_content": "native TCV2 SHA512, full 64 bytes retained as typed lowercase hex",
+    "source_descriptor": "native CHB1 SHA512, not an effect or intent digest",
+    "source_selector": [
+      "handoff_sha256",
+      "native_operation",
+      "CHB1",
+      "request_label"
+    ],
+    "source_version": "native TCV1 SHA512, not the authorization incarnation"
+  },
+  "new_model_forwards": 0,
+  "new_native_end_to_end_executions": 0,
+  "new_native_recovery_executions": 0,
+  "receipts": [
+    {
+      "current_authorization": false,
+      "descriptor": {
+        "base": "c320c094769446c21d7e4a33795d7f9310b5e4c8ca5a6fecca40207b1f735b7c",
+        "content": "1ae64d141b4fcb979c18c846d0795237400eff1ad76abfd8d972c8a35196efee16448d1652e920ddb1fc3d58c32c4a52fb089195d7f51f1f72647f37814c43bb",
+        "descriptor": "344e974478542a550f80ecced6a63142d940657470dc6c01f2c7f98282f4e7a132c70b598012cfd1c3f12a77ca3ccf0152ed91cb7bfe8e9febe1961c0038261a",
+        "environment_closure": "737ee5745fe4fdb81c8758d92a9302385f275344853b045e2d7947d982ad4c01",
+        "environment_generation": 1,
+        "family": "smollm2-135m-cpu-dev-v1",
+        "layout": "c9b06f9a029a3257801844f89acb59b5f59f6a39087335af323f274e9152992f",
+        "model_closure": "2e11446e0f478bcc53f726682773a08b99da02253367491517367a706ceae1e0",
+        "model_generation": 1,
+        "operation": "28b5ca8e7693d3d7595e08065c3ee9d2e6d8ede27eeaaae15f3c9e30c686c18e",
+        "owner_generation": 1,
+        "parent": "1c5af7b5a7144a619dfac83b14bd83ae77f1e2227b18a6a9c5dcb214889a0cba",
+        "runtime": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b",
+        "runtime_snapshot_path": "runtime/runtime-snapshot.json",
+        "runtime_snapshot_sha256": "e87a3658675836c130ba2a97a805bc6d86cc435135e72f4b6e40747e9271b9eb",
+        "tokenizer": "a1883207efeacecee399f4dc699d2b547eb2d6ddb7500522933ed76c1521fb93",
+        "version": "76e318b243995ff788bdfc4ef317395a525eeb1c3d751b549c0791a4da4e51deb4366338fcd0330b816252c9bcf5195b4de3247408afdad3386d94bf34e879dd",
+        "worker_path": "scripts/llm_cell_sealed_worker_v1.py"
+      },
+      "handoff_sha256": "03bb46885541ca3c369394afcc06552ad89179fbaac869fb72d4ac156d798ac2",
+      "new_model_execution": false,
+      "new_native_recovery_execution": false,
+      "observation_trust": "archived trusted native/worker metadata; no remote attestation",
+      "observed_content": {
+        "hex": "1ae64d141b4fcb979c18c846d0795237400eff1ad76abfd8d972c8a35196efee16448d1652e920ddb1fc3d58c32c4a52fb089195d7f51f1f72647f37814c43bb",
+        "namespace": "chain.native.tcv2.sha512"
+      },
+      "observed_descriptor": {
+        "hex": "344e974478542a550f80ecced6a63142d940657470dc6c01f2c7f98282f4e7a132c70b598012cfd1c3f12a77ca3ccf0152ed91cb7bfe8e9febe1961c0038261a",
+        "namespace": "chain.native.chb1.sha512"
+      },
+      "observed_version": {
+        "hex": "76e318b243995ff788bdfc4ef317395a525eeb1c3d751b549c0791a4da4e51deb4366338fcd0330b816252c9bcf5195b4de3247408afdad3386d94bf34e879dd",
+        "namespace": "chain.native.tcv1.sha512"
+      },
+      "original_limitations": [
+        "The release executable, excluded payload files, full logits and host runtime files are not rehashed by this offline reader.",
+        "TCV2/TCV1/CTS1/CHB1 commitments are recomputed from archived metadata; actual reconstructed payload and loaded model use rely on the trusted pinned native and worker observations.",
+        "Python and third-party/native dependencies use the original independently pinned local snapshot; they are not transported in the sealed model/environment payload.",
+        "Per-request absolute start/end timestamps and the original native monotonic start are absent; durations are not synthesized into timestamps.",
+        "A successful forward is not a quality, adoption-authorization, safety or ongoing-custody proof.",
+        "The pair is sequential on one shared host with six local directories, no independent operators, no WAN and no cleared OS page cache; failed and successful arms perform different amounts of work.",
+        "The worker lifetime RSS high-water and wait4 maxima are not simultaneous process-tree memory, and the retained RSS observation gap is not replaced by zero.",
+        "This schema is an audited execution-metadata observation, not recovery_use_handoff.v1, a signature, or an authorization/effect receipt.",
+        "Trusted worker cache/object labels and recorded forward results are not evidence against a malicious consumer process."
+      ],
+      "original_non_claims": {
+        "adoption_permission": false,
+        "continuous_custody": false,
+        "current_authorization": false,
+        "external_effect_permission": false,
+        "freshness": false,
+        "independent_custody": false,
+        "malicious_consumer_resistance": false,
+        "model_quality": false,
+        "paid_lifecycle": false,
+        "production_final_use": false,
+        "remote_attestation": false,
+        "wan_availability": false
+      },
+      "original_operation_end": null,
+      "original_operation_start": null,
+      "payload_bytes_rehashed": false,
+      "request": {
+        "content_tcv2": "1ae64d141b4fcb979c18c846d0795237400eff1ad76abfd8d972c8a35196efee16448d1652e920ddb1fc3d58c32c4a52fb089195d7f51f1f72647f37814c43bb",
+        "current_authorization": false,
+        "descriptor_sha512": "344e974478542a550f80ecced6a63142d940657470dc6c01f2c7f98282f4e7a132c70b598012cfd1c3f12a77ca3ccf0152ed91cb7bfe8e9febe1961c0038261a",
+        "execution_ns": 82474571,
+        "input_sha256": "fa02475d145785b5a890da77ae33906453ac1f4268e181137b5d875d1e9974ed",
+        "input_tokens": 51,
+        "loaded_artifact": "3b3128293a86570a47a72c7bf081f898de1682ed1118c5a440ad7478c0f22e42",
+        "logits_rehashed_by_auditor": false,
+        "logits_sha256": "29730e6c15d3147b0641d772b6d7d6121f61ed17b81bf0926163a05a9c7afa14",
+        "observed_worker_lifetime_rss_bytes": 1472700416,
+        "operation": "28b5ca8e7693d3d7595e08065c3ee9d2e6d8ede27eeaaae15f3c9e30c686c18e",
+        "request_end_monotonic_ns": null,
+        "request_id": "chain-capacity-dc0357-v2-fad809b14a2e-1",
+        "request_start_monotonic_ns": null,
+        "scores_q32": [
+          116005421056,
+          124107309056
+        ],
+        "version_and_operation_binding_basis": "parsed CHB1, joined through the response descriptor digest",
+        "version_tcv1": "76e318b243995ff788bdfc4ef317395a525eeb1c3d751b549c0791a4da4e51deb4366338fcd0330b816252c9bcf5195b4de3247408afdad3386d94bf34e879dd",
+        "worker_sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b"
+      },
+      "schema": "sp27-03.handoff-consumption.v1",
+      "selector": {
+        "descriptor_chb1": "344e974478542a550f80ecced6a63142d940657470dc6c01f2c7f98282f4e7a132c70b598012cfd1c3f12a77ca3ccf0152ed91cb7bfe8e9febe1961c0038261a",
+        "native_operation": "28b5ca8e7693d3d7595e08065c3ee9d2e6d8ede27eeaaae15f3c9e30c686c18e",
+        "request_label": "chain-capacity-dc0357-v2-fad809b14a2e-1"
+      },
+      "source_commit": "f2a4394e84df05ba9307688e2e804282ca3b5ebb",
+      "source_schema": "sp27-05.actual-recovery-observation.v1"
+    },
+    {
+      "current_authorization": false,
+      "descriptor": {
+        "base": "c320c094769446c21d7e4a33795d7f9310b5e4c8ca5a6fecca40207b1f735b7c",
+        "content": "1ae64d141b4fcb979c18c846d0795237400eff1ad76abfd8d972c8a35196efee16448d1652e920ddb1fc3d58c32c4a52fb089195d7f51f1f72647f37814c43bb",
+        "descriptor": "344e974478542a550f80ecced6a63142d940657470dc6c01f2c7f98282f4e7a132c70b598012cfd1c3f12a77ca3ccf0152ed91cb7bfe8e9febe1961c0038261a",
+        "environment_closure": "737ee5745fe4fdb81c8758d92a9302385f275344853b045e2d7947d982ad4c01",
+        "environment_generation": 1,
+        "family": "smollm2-135m-cpu-dev-v1",
+        "layout": "c9b06f9a029a3257801844f89acb59b5f59f6a39087335af323f274e9152992f",
+        "model_closure": "2e11446e0f478bcc53f726682773a08b99da02253367491517367a706ceae1e0",
+        "model_generation": 1,
+        "operation": "28b5ca8e7693d3d7595e08065c3ee9d2e6d8ede27eeaaae15f3c9e30c686c18e",
+        "owner_generation": 1,
+        "parent": "1c5af7b5a7144a619dfac83b14bd83ae77f1e2227b18a6a9c5dcb214889a0cba",
+        "runtime": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b",
+        "runtime_snapshot_path": "runtime/runtime-snapshot.json",
+        "runtime_snapshot_sha256": "e87a3658675836c130ba2a97a805bc6d86cc435135e72f4b6e40747e9271b9eb",
+        "tokenizer": "a1883207efeacecee399f4dc699d2b547eb2d6ddb7500522933ed76c1521fb93",
+        "version": "76e318b243995ff788bdfc4ef317395a525eeb1c3d751b549c0791a4da4e51deb4366338fcd0330b816252c9bcf5195b4de3247408afdad3386d94bf34e879dd",
+        "worker_path": "scripts/llm_cell_sealed_worker_v1.py"
+      },
+      "handoff_sha256": "03bb46885541ca3c369394afcc06552ad89179fbaac869fb72d4ac156d798ac2",
+      "new_model_execution": false,
+      "new_native_recovery_execution": false,
+      "observation_trust": "archived trusted native/worker metadata; no remote attestation",
+      "observed_content": {
+        "hex": "1ae64d141b4fcb979c18c846d0795237400eff1ad76abfd8d972c8a35196efee16448d1652e920ddb1fc3d58c32c4a52fb089195d7f51f1f72647f37814c43bb",
+        "namespace": "chain.native.tcv2.sha512"
+      },
+      "observed_descriptor": {
+        "hex": "344e974478542a550f80ecced6a63142d940657470dc6c01f2c7f98282f4e7a132c70b598012cfd1c3f12a77ca3ccf0152ed91cb7bfe8e9febe1961c0038261a",
+        "namespace": "chain.native.chb1.sha512"
+      },
+      "observed_version": {
+        "hex": "76e318b243995ff788bdfc4ef317395a525eeb1c3d751b549c0791a4da4e51deb4366338fcd0330b816252c9bcf5195b4de3247408afdad3386d94bf34e879dd",
+        "namespace": "chain.native.tcv1.sha512"
+      },
+      "original_limitations": [
+        "The release executable, excluded payload files, full logits and host runtime files are not rehashed by this offline reader.",
+        "TCV2/TCV1/CTS1/CHB1 commitments are recomputed from archived metadata; actual reconstructed payload and loaded model use rely on the trusted pinned native and worker observations.",
+        "Python and third-party/native dependencies use the original independently pinned local snapshot; they are not transported in the sealed model/environment payload.",
+        "Per-request absolute start/end timestamps and the original native monotonic start are absent; durations are not synthesized into timestamps.",
+        "A successful forward is not a quality, adoption-authorization, safety or ongoing-custody proof.",
+        "The pair is sequential on one shared host with six local directories, no independent operators, no WAN and no cleared OS page cache; failed and successful arms perform different amounts of work.",
+        "The worker lifetime RSS high-water and wait4 maxima are not simultaneous process-tree memory, and the retained RSS observation gap is not replaced by zero.",
+        "This schema is an audited execution-metadata observation, not recovery_use_handoff.v1, a signature, or an authorization/effect receipt.",
+        "Trusted worker cache/object labels and recorded forward results are not evidence against a malicious consumer process."
+      ],
+      "original_non_claims": {
+        "adoption_permission": false,
+        "continuous_custody": false,
+        "current_authorization": false,
+        "external_effect_permission": false,
+        "freshness": false,
+        "independent_custody": false,
+        "malicious_consumer_resistance": false,
+        "model_quality": false,
+        "paid_lifecycle": false,
+        "production_final_use": false,
+        "remote_attestation": false,
+        "wan_availability": false
+      },
+      "original_operation_end": null,
+      "original_operation_start": null,
+      "payload_bytes_rehashed": false,
+      "request": {
+        "content_tcv2": "1ae64d141b4fcb979c18c846d0795237400eff1ad76abfd8d972c8a35196efee16448d1652e920ddb1fc3d58c32c4a52fb089195d7f51f1f72647f37814c43bb",
+        "current_authorization": false,
+        "descriptor_sha512": "344e974478542a550f80ecced6a63142d940657470dc6c01f2c7f98282f4e7a132c70b598012cfd1c3f12a77ca3ccf0152ed91cb7bfe8e9febe1961c0038261a",
+        "execution_ns": 77914463,
+        "input_sha256": "f500cab06315f2e2f345b54e40656524a8e3a52543d07f1b509504179bf02515",
+        "input_tokens": 51,
+        "loaded_artifact": "3b3128293a86570a47a72c7bf081f898de1682ed1118c5a440ad7478c0f22e42",
+        "logits_rehashed_by_auditor": false,
+        "logits_sha256": "90d35f1c7ee4cb95c9bce20969b19818fefe5ac0268dde664cc4fd9c72b0de42",
+        "observed_worker_lifetime_rss_bytes": 1472700416,
+        "operation": "28b5ca8e7693d3d7595e08065c3ee9d2e6d8ede27eeaaae15f3c9e30c686c18e",
+        "request_end_monotonic_ns": null,
+        "request_id": "chain-capacity-dc0357-v2-fad809b14a2e-2",
+        "request_start_monotonic_ns": null,
+        "scores_q32": [
+          115107659776,
+          122971414528
+        ],
+        "version_and_operation_binding_basis": "parsed CHB1, joined through the response descriptor digest",
+        "version_tcv1": "76e318b243995ff788bdfc4ef317395a525eeb1c3d751b549c0791a4da4e51deb4366338fcd0330b816252c9bcf5195b4de3247408afdad3386d94bf34e879dd",
+        "worker_sha256": "e93bfc47f8055786f2088fc65f61c1f0d2482a0b8b4e5b8b9e30e8707fbb8c1b"
+      },
+      "schema": "sp27-03.handoff-consumption.v1",
+      "selector": {
+        "descriptor_chb1": "344e974478542a550f80ecced6a63142d940657470dc6c01f2c7f98282f4e7a132c70b598012cfd1c3f12a77ca3ccf0152ed91cb7bfe8e9febe1961c0038261a",
+        "native_operation": "28b5ca8e7693d3d7595e08065c3ee9d2e6d8ede27eeaaae15f3c9e30c686c18e",
+        "request_label": "chain-capacity-dc0357-v2-fad809b14a2e-2"
+      },
+      "source_commit": "f2a4394e84df05ba9307688e2e804282ca3b5ebb",
+      "source_schema": "sp27-05.actual-recovery-observation.v1"
+    }
+  ],
+  "request_observations_consumed": 2,
+  "schema": "sp27-03.interface-consumption-receipt.v1"
+}
