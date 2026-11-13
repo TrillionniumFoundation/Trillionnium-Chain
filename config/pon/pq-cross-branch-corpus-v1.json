@@ -1730,7 +1730,7 @@
     "scripts/ci/test_authenticated_suite_count.py": "668b7d0d852e7abfb7390b6ba8f7e1ce87e206ae",
     "scripts/ci/test_capture_chain_hepta_identity.py": "495fd5bd284eeba28b216332c966e229cff4aea8",
     "scripts/ci/test_cell_discovery_v3_ci.py": "46c57b2961333e6000fdde3061d5b9ba3dfdb045",
-    "scripts/ci/test_cell_storage_convergence_ci.py": "df6d98f7e7cb3ea7c994266e6ab91061b41fc61e",
+    "scripts/ci/test_cell_storage_convergence_ci.py": "6869f5aae1d66cfa8dca861c2ce63ce45f7734ab",
     "scripts/ci/test_chain_hepta_command_binding.py": "2297f6afe201f503eb9e0de8dcb7fa1a4f840cfd",
     "scripts/ci/test_chain_hepta_qualification.py": "a52c8e3f8b81525290867355f2f0a00a089bf5e9",
     "scripts/ci/test_ci_contract.py": "df843d8c027914262cfa42a237250789513aa9e7",
