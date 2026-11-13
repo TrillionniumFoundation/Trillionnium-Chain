@@ -18,7 +18,7 @@ EXAMPLES = ROOT / 'trillionnium/crates/trnm-pon-node/examples'
 MATERIAL_SOURCE = ROOT / 'trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs'
 COUNTS = {'factorial-kernel-tests': (14, 0), 'factorial-example-tests': (11, 0),
           'header-binding-tests': (1, 0), 'history-w1-tests': (5, 0),
-          'history-import-tests': (36, 1), 'cpu-completion-tests': (11, 0)}
+          'history-import-tests': (38, 1), 'cpu-completion-tests': (11, 0)}
 HISTORY = [
     'deadline_controls::final_resource_completion_preserves_error_priority_and_original_deadline',
     'deadline_controls::final_resource_expiry_keeps_committed_history_and_settled_cpu',
@@ -82,6 +82,19 @@ class NativeGateTests(unittest.TestCase):
             roster = ROSTERS[profile]
             ignored = len(roster['ignored'])
             self.assertEqual(COUNTS[suite], (len(roster['names']) - ignored, ignored))
+        # Independently reviewed Linux registration: 39 cases, one original child.
+        history = ROSTERS['history-import']
+        self.assertEqual(len(history['names']), 39)
+        self.assertEqual(history['ignored'], [
+            'ingress::history_import::tests::history_kill_cut_child'])
+        for name in (
+                'ingress::history_import::tests::detached_budget_controls::shared_detached_history_before_native_completion_keeps_sticky_budget_refusal',
+                'ingress::history_import::tests::detached_budget_controls::shared_detached_history_continues_from_real_deficit_without_new_credit',
+                'ingress::history_import::tests::detached_budget_controls::shared_detached_history_refill_cannot_renew_original_deadline',
+                'ingress::history_import::tests::detached_budget_controls::shared_detached_history_refill_keeps_original_resource_cancellation',
+                'ingress::history_import::tests::shared_history_native_completion_handoff_settles_before_next_packet',
+        ):
+            self.assertEqual(history['names'].count(name), 1)
 
     def test_previous_incomplete_positive_fixture_is_refused(self):
         for suite, old_passes, ignored in [('factorial-example-tests', 6, 0),

@@ -18,11 +18,14 @@ class RosterTests(unittest.TestCase):
             self.assertEqual(check(text.replace(f"test {first} ... ok", f'test {first} ... {{"diagnostic":true}}\nok'), p)["named"], len(ROSTERS[p]["names"]))
     def test_missing_duplicate_and_substitution_refuse_even_with_success_summary(self):
         for p in ROSTERS:
-            text = fixture(p); first = text.splitlines()[0] + "\n"
-            for altered in (text.replace(first, "", 1), first+text,
-                            text.replace(ROSTERS[p]["names"][0], "substituted_test", 1)):
-                with self.subTest(profile=p), self.assertRaises(ValueError):
-                    check(altered, p)
+            text = fixture(p)
+            for name in ROSTERS[p]["names"]:
+                outcome = "ignored" if name in ROSTERS[p]["ignored"] else "ok"
+                line = f"test {name} ... {outcome}\n"
+                for altered in (text.replace(line, "", 1), line + text,
+                                text.replace(name, "substituted_test", 1)):
+                    with self.subTest(profile=p, name=name), self.assertRaises(ValueError):
+                        check(altered, p)
     def test_unknown_name_and_ignore_conversion_refuse(self):
         for p in ROSTERS:
             text = fixture(p)

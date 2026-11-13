@@ -452,7 +452,7 @@ jobs:
           # its parent control selects real SIGKILL cuts. It is not a skipped gate.
           expected = {"factorial-kernel-tests": (14, 0), "factorial-example-tests": (len(example_expected), 0),
               "header-binding-tests": (1, 0), "history-w1-tests": (5, 0),
-              "history-import-tests": (36, 1), "cpu-completion-tests": (11, 0)}
+              "history-import-tests": (38, 1), "cpu-completion-tests": (11, 0)}
           for name, counts in expected.items():
               text = (root / (name + ".log")).read_text()
               rows = re.findall(r'^test result: (\S+)\. ([0-9]+) passed; ([0-9]+) failed; ([0-9]+) ignored;', text, re.M)

@@ -295,9 +295,26 @@ class W1SemanticsAuditTests(unittest.TestCase):
         # Compare JSON values; the audit's in-memory structures include tuples.
         self.assertEqual(historical, json.loads(encoded))
         workflow = (ROOT / '.github/workflows/pon-w1-qrom-closure.yml').read_text()
-        command = 'cmp ' + current_path + ' "$W1_CLOSURE_OUT/semantics.json"'
-        self.assertEqual(workflow.count(command), 1)
-        self.assertNotIn('cmp ' + historical_path, workflow)
+        # The two explicitly different source jobs have different consumers.
+        # Keep the historical byte comparison in its fixed checkout; the current
+        # job must call the independently pinned correspondence reader.
+        self.assertEqual(workflow.count('  closure-historical:\n'), 1)
+        self.assertEqual(workflow.count('  closure:\n'), 1)
+        historical_job, current_job = workflow.split(
+            '  closure-historical:\n', 1)[1].split('  closure:\n', 1)
+        fixed_source = '1a14f7d4826363daefac9ec10131c66d7e70ece7'
+        self.assertIn('EXPECTED_SOURCE: ' + fixed_source, historical_job)
+        self.assertIn('EXPECTED_HEAD: ' + fixed_source, historical_job)
+        historical_command = 'cmp ' + historical_path + ' "$W1_CLOSURE_OUT/semantics.json"'
+        self.assertEqual(historical_job.count('          ' + historical_command + '\n'), 1)
+        current_command = (
+            'python3 scripts/ci/w1_qrom_closure_current_controls.py check-semantics '
+            '--output "$W1_CLOSURE_OUT/semantics.json" '
+            '> "$W1_CLOSURE_OUT/semantics-correspondence.json"')
+        self.assertEqual(current_job.count('          ' + current_command + '\n'), 1)
+        self.assertNotIn(historical_command, current_job)
+        self.assertNotIn('cmp ' + current_path, current_job)
+        self.assertNotIn(current_command, historical_job)
 
 
 if __name__ == '__main__':
