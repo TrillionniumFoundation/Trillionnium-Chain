@@ -1,0 +1,27 @@
+{"command": ["git", "add", "--", ".github/workflows/pon-pq-system-continuation.yml", "formal/pon-nakamoto-v1/test_reference.py", "scripts/ci/check_ci_contract.py", "scripts/ci/check_pq_research_integration.py", "scripts/ci/test_ci_contract.py", "scripts/ci/test_six_workpackage_native_rosters.py", "config/pon/pq-durable-outbound-required-tests-v1.json", "docs/security/PQ_DURABLE_OUTBOUND_V1.md", "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs", "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs", "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls.rs", "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/tests.rs", "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/outbound.rs", "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/outbound/tests.rs", "trillionnium/crates/trnm-pon-node/src/store.rs", "trillionnium/crates/trnm-pon-node/tests/operator_actors.rs"], "exit_code": 0}
+{"command": ["git", "diff", "--cached", "--check"], "exit_code": 0}
+{"command": ["git", "diff", "--cached", "--stat"], "exit_code": 0}
+ .github/workflows/pon-pq-system-continuation.yml   |  88 ++
+ .../pon/pq-durable-outbound-required-tests-v1.json |  31 +
+ docs/security/PQ_DURABLE_OUTBOUND_V1.md            | 289 +++++++
+ formal/pon-nakamoto-v1/test_reference.py           |   6 +-
+ scripts/ci/check_ci_contract.py                    | 149 ++++
+ scripts/ci/check_pq_research_integration.py        |   4 +
+ scripts/ci/test_ci_contract.py                     | 112 +++
+ scripts/ci/test_six_workpackage_native_rosters.py  |  48 ++
+ .../support/distributed_source_inventory.rs        | 175 ++++
+ .../crates/trnm-pon-node/src/ingress/pq_network.rs |  82 ++
+ .../src/ingress/pq_network/outbound.rs             | 735 ++++++++++++++++
+ .../src/ingress/pq_network/outbound/tests.rs       | 931 +++++++++++++++++++++
+ .../trnm-pon-node/src/ingress/pq_network/tls.rs    |  19 +
+ .../src/ingress/pq_network/tls/tests.rs            |   5 +-
+ trillionnium/crates/trnm-pon-node/src/store.rs     |   2 +-
+ .../crates/trnm-pon-node/tests/operator_actors.rs  |  24 +-
+ 16 files changed, 2693 insertions(+), 7 deletions(-)
+{"command": ["git", "commit", "-m", "Preserve durable PQ outbound ownership and exact refusal controls"], "exit_code": 0}
+[fix/chain-consolidation-ci-20261113 819da11543] Preserve durable PQ outbound ownership and exact refusal controls
+ 16 files changed, 2693 insertions(+), 7 deletions(-)
+ create mode 100644 config/pon/pq-durable-outbound-required-tests-v1.json
+ create mode 100644 docs/security/PQ_DURABLE_OUTBOUND_V1.md
+ create mode 100644 trillionnium/crates/trnm-pon-node/src/ingress/pq_network/outbound.rs
+ create mode 100644 trillionnium/crates/trnm-pon-node/src/ingress/pq_network/outbound/tests.rs

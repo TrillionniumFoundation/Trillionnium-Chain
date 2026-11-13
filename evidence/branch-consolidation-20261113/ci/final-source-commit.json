@@ -1,0 +1,29 @@
+{
+  "source_commit": "819da115436b497a0598815c350c1fa4c4f268c7",
+  "paths": [
+    ".github/workflows/pon-pq-system-continuation.yml",
+    "formal/pon-nakamoto-v1/test_reference.py",
+    "scripts/ci/check_ci_contract.py",
+    "scripts/ci/check_pq_research_integration.py",
+    "scripts/ci/test_ci_contract.py",
+    "scripts/ci/test_six_workpackage_native_rosters.py",
+    "config/pon/pq-durable-outbound-required-tests-v1.json",
+    "docs/security/PQ_DURABLE_OUTBOUND_V1.md",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/outbound.rs",
+    "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/outbound/tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "trillionnium/crates/trnm-pon-node/tests/operator_actors.rs"
+  ],
+  "preflight_exit": 0,
+  "ci_contract_tests_passed": 16,
+  "native_roster_tests_passed": 3,
+  "rustfmt_exit": 0,
+  "diff_check_exit": 0,
+  "native_rebuild_performed": false,
+  "previous_outbound_native_passed": 9,
+  "final_composed_source_gate_passed": false
+}

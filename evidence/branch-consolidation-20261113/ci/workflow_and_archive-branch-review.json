@@ -1,0 +1,1409 @@
+[
+  {
+    "name": "archive/chain-pon-v2-summarizer-20261105-gpt6",
+    "sha": "55033605dc738908304ae7ac7a6493452c37c4b5",
+    "commit_date": "2026-11-05T17:59:54-05:00",
+    "subject": "archive(pon): preserve exact v2 shared-material statistics source",
+    "unique_commits": 7,
+    "merge_base": "9ecdbebc897d35f07b998d084b015db8474be84b",
+    "core_paths": [
+      ".github/workflows/pon-fixed-host-root-f0.yml",
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "formal/pon-nakamoto-v1/experiments/fixed_host_service_readback_v1.py",
+      "formal/pon-nakamoto-v1/experiments/grouped_delivery_cost_v1.py",
+      "formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py",
+      "formal/pon-nakamoto-v1/experiments/w1_full_staged_run.py",
+      "formal/pon-nakamoto-v1/test_grouped_delivery_cost_v1.py",
+      "formal/pon-nakamoto-v1/test_useful_cell_attempt_journal_v1.py",
+      "formal/pon-nakamoto-v1/test_useful_cell_relation_v1.py",
+      "formal/pon-nakamoto-v1/useful_cell_attempt_journal_v1.py",
+      "formal/pon-nakamoto-v1/useful_cell_relation_v1.py",
+      "scripts/ci/check_ci_contract.py",
+      "scripts/ci/ci_job.sh",
+      "scripts/ci/test_ci_contract.py",
+      "scripts/ci/test_fixed_host_service_readback_v1.py",
+      "scripts/ci/test_llm_cell_installed_host.py",
+      "scripts/ci/test_w1_staged_observer.py",
+      "scripts/llm_cell_host_handoff.py",
+      "scripts/llm_runtime_pilot.py",
+      "scripts/llm_runtime_trial_ledger.py",
+      "scripts/test_llm_runtime_trial_ledger.py",
+      "trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/history_import_tests.rs"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 8,
+      "evidence_or_documentation": 163,
+      "implementation_or_tooling": 15
+    }
+  },
+  {
+    "name": "archive/library-chain-pql3-pcs1-source-20261104",
+    "sha": "c592cccdfb5c0c4004fcae25aadeaab1b11d4b1c",
+    "commit_date": "2026-11-04T10:20:27-05:00",
+    "subject": "test(recovery): record independent PQL3 21-case sandbox replay (HOLD)",
+    "unique_commits": 2,
+    "merge_base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "core_paths": [
+      "library-recovery/chain-pql3-pcs1-source-20261104/REPRODUCIBILITY.md",
+      "library-recovery/chain-pql3-pcs1-source-20261104/VALIDATION.md",
+      "library-recovery/chain-pql3-pcs1-source-20261104/pq-cell-swarm-tests-final.py",
+      "library-recovery/chain-pql3-pcs1-source-20261104/pq_pql2_fork_recovery.py",
+      "library-recovery/chain-pql3-pcs1-source-20261104/pql3-documentation-transfer.md",
+      "library-recovery/chain-pql3-pcs1-source-20261104/test_pq_pql2_fork_recovery.py"
+    ],
+    "residual_counts": {
+      "evidence_or_documentation": 3,
+      "implementation_or_tooling": 3
+    }
+  },
+  {
+    "name": "diagnostic/chain-fuzz-asm-lock-20261104-gpt6",
+    "sha": "2c5349cb785d83e007b06c7af4ab1262277ad870",
+    "commit_date": "2026-11-04T00:33:27-05:00",
+    "subject": "Diagnose the frozen fuzz ASM lock with original Cargo",
+    "unique_commits": 1,
+    "merge_base": "44d3def32f515b98fc41f074fe1b88e97f046191",
+    "core_paths": [
+      ".github/workflows/chain-fuzz-asm-lock.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1,
+      "evidence_or_documentation": 2,
+      "implementation_or_tooling": 2
+    }
+  },
+  {
+    "name": "archive/host-source-custody-20261103-desktop-v2",
+    "sha": "1ac0628e1bed5ecf097498d3e9c21cc8eb436b9f",
+    "commit_date": "2026-11-03T20:35:50-05:00",
+    "subject": "Archive verified desktop source custody (2026-11-03 capture)",
+    "unique_commits": 1,
+    "merge_base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "core_paths": [
+      "library-recovery/host-source-custody-20261103/README.md",
+      "library-recovery/host-source-custody-20261103/SOURCE_MANIFEST.json",
+      "library-recovery/host-source-custody-20261103/contexts/worktrees/trnm-pq-admission-20261103-witness/.github/workflows/pon-pq-system-continuation.yml",
+      "library-recovery/host-source-custody-20261103/contexts/worktrees/trnm-pq-admission-20261103-witness/config/pon/pq-system-required-tests-v1.json",
+      "library-recovery/host-source-custody-20261103/contexts/worktrees/trnm-pq-admission-20261103-witness/trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
+      "library-recovery/host-source-custody-20261103/contexts/worktrees/trnm-pq-admission-20261103-witness/trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs",
+      "library-recovery/host-source-custody-20261103/contexts/worktrees/trnm-pq-frozen-verifier-20261103/formal/pon-nakamoto-v1/w1_hardened_verifier/README.md",
+      "library-recovery/host-source-custody-20261103/contexts/worktrees/trnm-pq-frozen-verifier-20261103/formal/pon-nakamoto-v1/w1_hardened_verifier/src/main.rs"
+    ],
+    "residual_counts": {
+      "evidence_or_documentation": 2,
+      "implementation_or_tooling": 6
+    }
+  },
+  {
+    "name": "archive/chain-initial-root-cloud-evidence-20261104",
+    "sha": "3f0f21db859df0ead267ed52b1a4f9611e4773fc",
+    "commit_date": "2026-11-03T20:30:54-05:00",
+    "subject": "Preserve four original initial-root cloud artifacts and 304 verified native results [skip ci]",
+    "unique_commits": 7,
+    "merge_base": "1c7e8ab7cd6a321cad4e6c7f7e8a197d7b3be14c",
+    "core_paths": [
+      ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+      ".github/workflows/pon-pq-system-continuation.yml",
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "config/pon/pq-system-required-tests-v1.json",
+      "formal/pon-nakamoto-v1/w1_hardened_verifier/README.md",
+      "formal/pon-nakamoto-v1/w1_hardened_verifier/src/main.rs",
+      "scripts/ci/check_pq_research_integration.py",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/full_root_arithmetic_tests.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_projection.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/canonical_json.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/operation_root_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/initial_root_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/initial_root_tests/reference.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs",
+      "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+      "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 5,
+      "evidence_or_documentation": 119,
+      "implementation_or_tooling": 22
+    }
+  },
+  {
+    "name": "archive/chain-initial-root-borrow-ecb54-20261103",
+    "sha": "38fda50fa39f338fdbf30afc4ed2f003e41cd183",
+    "commit_date": "2026-11-03T18:46:01-05:00",
+    "subject": "archive(chain): preserve initial-root borrow-fix source and failed fixture state [skip ci]",
+    "unique_commits": 6,
+    "merge_base": "1c7e8ab7cd6a321cad4e6c7f7e8a197d7b3be14c",
+    "core_paths": [
+      ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+      ".github/workflows/pon-pq-system-continuation.yml",
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "config/pon/pq-system-required-tests-v1.json",
+      "formal/pon-nakamoto-v1/w1_hardened_verifier/README.md",
+      "formal/pon-nakamoto-v1/w1_hardened_verifier/src/main.rs",
+      "scripts/ci/check_pq_research_integration.py",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/full_root_arithmetic_tests.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_projection.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/canonical_json.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/operation_root_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/initial_root_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/initial_root_tests/reference.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs",
+      "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+      "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 5,
+      "evidence_or_documentation": 29,
+      "implementation_or_tooling": 22
+    }
+  },
+  {
+    "name": "archive/chain-state-json-failed-d55daefd-20261103",
+    "sha": "28fb63124e535227563da9f23873b4cc56783c11",
+    "commit_date": "2026-11-03T16:09:07-05:00",
+    "subject": "archive: preserve unsuccessful State JSON encoder candidate [skip ci]",
+    "unique_commits": 5,
+    "merge_base": "1c7e8ab7cd6a321cad4e6c7f7e8a197d7b3be14c",
+    "core_paths": [
+      ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+      ".github/workflows/pon-pq-system-continuation.yml",
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "config/pon/pq-system-required-tests-v1.json",
+      "formal/pon-nakamoto-v1/w1_hardened_verifier/README.md",
+      "formal/pon-nakamoto-v1/w1_hardened_verifier/src/main.rs",
+      "scripts/ci/check_pq_research_integration.py",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/full_root_arithmetic_tests.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_projection.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/canonical_json.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/operation_root_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs",
+      "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+      "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 5,
+      "evidence_or_documentation": 29,
+      "implementation_or_tooling": 20
+    }
+  },
+  {
+    "name": "chore/chain-library-small-source-20261103-gpt6",
+    "sha": "98447abce355a50810bd3b658ce53c659ceb3411",
+    "commit_date": "2026-11-03T15:19:03-05:00",
+    "subject": "archive: preserve 2 original source context objects without execution",
+    "unique_commits": 9,
+    "merge_base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "core_paths": [
+      "library-recovery/documentation-source-preservation-20261103/README.md",
+      "library-recovery/documentation-source-preservation-20261103/SOURCE_MANIFEST.json",
+      "library-recovery/documentation-source-preservation-20261103/objects/a7657c92170bc466c8cd146b8e8cdc9175470085.md",
+      "library-recovery/documentation-source-preservation-20261103/objects/f0fe7902c8509816b4e1816cdcf34cf13cbf84d6.md",
+      "library-recovery/documentation-source-preservation-20261103/verify_projection.py",
+      "library-recovery/embedded-generated-source-20261103/README.md",
+      "library-recovery/embedded-generated-source-20261103/SOURCE_MANIFEST.json",
+      "library-recovery/embedded-generated-source-20261103/objects/409210412a632778611378d8e2de2560899d48fe.sh",
+      "library-recovery/embedded-generated-source-20261103/objects/7e5f58e0b294c10f259698aefc196b80d25d2b47.sh",
+      "library-recovery/embedded-generated-source-20261103/verify_projection.py",
+      "library-recovery/followup-source-20261103/README.md",
+      "library-recovery/followup-source-20261103/SOURCE_MANIFEST.json",
+      "library-recovery/followup-source-20261103/objects/066e1b9457132eb1d50c9430ac848217ae7a6e15.py",
+      "library-recovery/followup-source-20261103/objects/0d198d53bbecfb5ff9b89a156d7cfcb89cef3179.py",
+      "library-recovery/followup-source-20261103/objects/17378ce1c33c42bca36a92096369b0727a71f8c9.py",
+      "library-recovery/followup-source-20261103/objects/504d62722755e91dc20e38a9421fc3cb1080a35e.py",
+      "library-recovery/followup-source-20261103/objects/601c7acae5ae2fcebb8e27f40cedab8f8d750c26.py",
+      "library-recovery/followup-source-20261103/objects/667ebaf8df644577027d0ac79dedd7ebc6bb3921.py",
+      "library-recovery/followup-source-20261103/objects/984db99fcecec52162cce31b71aa94e0dfc6b45f.py",
+      "library-recovery/followup-source-20261103/objects/e528f61c2998545fd417fc6ce1458c10ab3f00db.patch",
+      "library-recovery/followup-source-20261103/verify_projection.py",
+      "library-recovery/retained-build-source-20261103/README.md",
+      "library-recovery/retained-build-source-20261103/SOURCE_MANIFEST.json",
+      "library-recovery/retained-build-source-20261103/notices/08c660f5be514958a1179ccadf63a1f488807aa1.txt",
+      "library-recovery/retained-build-source-20261103/notices/1b5ec8b78e237b5c3b3d812a7c0a6589d0f7161d.txt",
+      "library-recovery/retained-build-source-20261103/notices/31aa79387f27e730e33d871925e152e35e428031.txt",
+      "library-recovery/retained-build-source-20261103/objects/08f232bbdb9bba7b7ae5b458043bac920eb9aca7.rs",
+      "library-recovery/retained-build-source-20261103/objects/49832285e899cc042616b4c5e47597559fab91f8.py",
+      "library-recovery/retained-build-source-20261103/objects/c892eefa6d15577af6379e39872420b9829903b7.rs",
+      "library-recovery/retained-build-source-20261103/objects/ed2927ea1a64f641a0f4589e95e215a15c14e053.rs",
+      "library-recovery/retained-build-source-20261103/verify_projection.py",
+      "library-recovery/retained-source-20261103/README.md",
+      "library-recovery/retained-source-20261103/SOURCE_MANIFEST.json",
+      "library-recovery/retained-source-20261103/objects/025435545bf243c46db1dd01de43e6389264223c.py",
+      "library-recovery/retained-source-20261103/objects/38c13fc96267c99473ab6e10121d793ada8cb43e.patch",
+      "library-recovery/retained-source-20261103/objects/6571f9ee8978b76eae5df32170fb623606b44071.patch",
+      "library-recovery/retained-source-20261103/objects/778648825b1917c8cf742b4adbec3d1ea7d671da.py",
+      "library-recovery/retained-source-20261103/objects/94f2746e5937403ea16dc89f666192d3e34c1df1.py",
+      "library-recovery/retained-source-20261103/objects/a91a1af2dfd9489994bd9d93a8eeb04bd46e8084.py",
+      "library-recovery/retained-source-20261103/objects/d103a58afed6f467f7b7ac3662d143a8406c27fe.patch",
+      "library-recovery/retained-source-20261103/objects/ea1cef46fc68d18bdf2a6d81e1bf2bada9ea2e91.rs",
+      "library-recovery/retained-source-20261103/verify_projection.py",
+      "library-recovery/small-source-20261103/README.md",
+      "library-recovery/small-source-20261103/SOURCE_MANIFEST.json",
+      "library-recovery/small-source-20261103/objects/13bec805ac70651210f09307f6adc9293c71c96f.py",
+      "library-recovery/small-source-20261103/objects/1ae177c28746886673fc5820dce83affd9620733.py",
+      "library-recovery/small-source-20261103/objects/1c1b6a5497f45b59c678bd46e7e80a4c4a54cc4c.py",
+      "library-recovery/small-source-20261103/objects/2f3ea5893deb7826dd021a71db0a420a5e4f203d.patch",
+      "library-recovery/small-source-20261103/objects/37404b30965e9d6aa1bc702ec39046a7dd29b822.py",
+      "library-recovery/small-source-20261103/objects/4ca132033c0862fad6e20490817dffb880045680.py",
+      "library-recovery/small-source-20261103/objects/5f90b43458de740fa5715077dd5da2f0748814d5.py",
+      "library-recovery/small-source-20261103/objects/835a92dab1150a9a06b34b98f5dc73c03bc22d87.py",
+      "library-recovery/small-source-20261103/objects/96e26370592d7b916a581d464a60f5a4a9569daa.py",
+      "library-recovery/small-source-20261103/objects/9bca779e989b157b9c04a1aff063f31b9548320b.py",
+      "library-recovery/small-source-20261103/objects/a2db17ed83a055ec995446c0f5dc25baab6eaa89.go",
+      "library-recovery/small-source-20261103/objects/b582a1c79c277f4b1f96c50195c90103a0061260.py",
+      "library-recovery/small-source-20261103/objects/bd91b2a7752ba8f9fa7b5d9524143b6e859b07ec.patch",
+      "library-recovery/small-source-20261103/objects/bfe5a082a1247734061412689b09520ce1e1aaf1.py",
+      "library-recovery/small-source-20261103/objects/c046ccef18a4e75b168ce2f9b3c5ae1bb73c094c.py",
+      "library-recovery/small-source-20261103/objects/cd4243a710de98003784f0e70a3e5fd2a1333609.py",
+      "library-recovery/small-source-20261103/objects/d5df54ffd858646f8ccedf2062172cdbb6e98cb0.patch",
+      "library-recovery/small-source-20261103/verify_projection.py",
+      "library-recovery/source-companion-documents-20261103/README.md",
+      "library-recovery/source-companion-documents-20261103/SOURCE_MANIFEST.json",
+      "library-recovery/source-companion-documents-20261103/objects/10cde117941f79544f71db9f59cbe18d7f553e34.md",
+      "library-recovery/source-companion-documents-20261103/objects/252b38b41b4c709e049e3d9fe02164786df0e7b3.md",
+      "library-recovery/source-companion-documents-20261103/objects/3494edde6b31e57d629d453bc65d398e6b0abbb2.md",
+      "library-recovery/source-companion-documents-20261103/objects/35acb73fa2ab8a1a264b4b2c2fffc01942d5c84f.md",
+      "library-recovery/source-companion-documents-20261103/objects/c092e7844ef66445dff0d98b46a76e5dd35646c8.md",
+      "library-recovery/source-companion-documents-20261103/objects/e3a02dcfaa0396a09b10bc9416d74ddddd6f8e86.md",
+      "library-recovery/source-companion-documents-20261103/verify_projection.py",
+      "library-recovery/source-context-20261103/README.md",
+      "library-recovery/source-context-20261103/SOURCE_MANIFEST.json",
+      "library-recovery/source-context-20261103/objects/1ff5b5869c3ddcc2f48376d926ba32bdb5596a0f.md",
+      "library-recovery/source-context-20261103/objects/54ecc667c9c6b7fc9d1c405531639e3b435f2f25.md",
+      "library-recovery/source-context-20261103/verify_projection.py",
+      "library-recovery/source-reference-followup-20261103/README.md",
+      "library-recovery/source-reference-followup-20261103/SOURCE_MANIFEST.json",
+      "library-recovery/source-reference-followup-20261103/objects/dc1d4419d861f38addf3fe767ed56b573d9d477a.md",
+      "library-recovery/source-reference-followup-20261103/verify_projection.py"
+    ],
+    "residual_counts": {
+      "evidence_or_documentation": 23,
+      "implementation_or_tooling": 57
+    }
+  },
+  {
+    "name": "archive/library-bundle-source-20261103-gpt6",
+    "sha": "d48c8070f1dfe406a7405fd875909b68db0e6b9a",
+    "commit_date": "2026-11-03T08:42:48-05:00",
+    "subject": "archive: retain recovered model release source objects",
+    "unique_commits": 1,
+    "merge_base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "core_paths": [
+      "library-recovery/bundle-source-20261103/aa944900b355/SOURCE_MANIFEST.json",
+      "library-recovery/bundle-source-20261103/aa944900b355/formal/pon-nakamoto-v1/model_release_root.py",
+      "library-recovery/bundle-source-20261103/aa944900b355/formal/pon-nakamoto-v1/test_model_release_root.py",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/src/bin/cell_closure/mod.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/src/bin/cell_model/mod.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/src/bin/trnm-cell.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/src/cell.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/src/cell/archive.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/src/cell/archive_tests.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/src/cell/delta.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/src/cell/delta_network_tests.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/src/cell/delta_tests.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/src/cell/discovery.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/src/cell/discovery/diversity_tests.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/tests.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq/transport.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/src/cell/discovery/selection.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/src/cell/discovery/transport.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/src/cell/model_root.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/src/cell/model_root_tests.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/src/cell/network.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/src/cell/network/availability.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/src/cell/network/availability/tests.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/src/cell/network/serving.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/src/cell/release.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/src/cell/retention.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/src/cell/store.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-data-availability/tests/cell_closure_cli.rs",
+      "library-recovery/bundle-source-20261103/aa944900b355/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+    ],
+    "residual_counts": {
+      "implementation_or_tooling": 29
+    }
+  },
+  {
+    "name": "evidence/chain-completed-w1-and-ticket-costs-20261028",
+    "sha": "d3b9abedeb05909173305bf773714ca380950600",
+    "commit_date": "2026-10-27T23:41:14-04:00",
+    "subject": "evidence: record complete immutable remote-byte readback",
+    "unique_commits": 11,
+    "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+    "core_paths": [
+      ".github/workflows/pon-complete-w1-proof-research.yml",
+      ".github/workflows/pon-w1-succinct-research.yml",
+      "scripts/ci/check_public_readiness_evidence.py",
+      "scripts/ci/test_public_readiness_evidence.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/CONTINUATION.md",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/CONTINUATION_V2.md",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/LOOPBACK_COST.md",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/README.md",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/_loopback_tcp.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/analyze_costs.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-source-review.json",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/check_observations.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/continuation_validate.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/guest/Cargo.toml",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/Cargo.toml",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/bin/check_frozen_receipts.rs",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/guest_negative.rs",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/main.rs",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/process_cpu.rs",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/receipt_bounds.rs",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/receipt_bounds_tests.rs",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/segment_assemble.rs",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/segment_export.rs",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host/src/segments.rs",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/measure_loopback.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/measure_step.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/no-extra-grinding-review.json",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/observations.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/proc_group_sampler.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/proof_resources.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/prove_segments.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/receipt_reuse.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment-continuation-v2.json",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment-continuation.json",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment_continue.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment_continue_source.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment_continue_v2.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment_frozen_v2.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/segment_witness.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/soundness_report.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_frozen_native.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_frozen_witness.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_measure_loopback.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_measure_step.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_observations.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_proc_group_sampler.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_receipt_reuse.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_segment_continue.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/test_segment_scheduler.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/Cargo.lock",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/Cargo.toml",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/README.md",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/policy.json",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/runner.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/src/bounds.rs",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/src/main.rs",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/test_native.py",
+      "trillionnium/crates/trnm-crypto-primitives/guests/w1-succinct/test_runner.py",
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 4,
+      "evidence_or_documentation": 1096,
+      "implementation_or_tooling": 52
+    }
+  },
+  {
+    "name": "evidence/pon-root-supplement-c61e211-20261022",
+    "sha": "c61e2112de67f9295258246b42d3c3ebf652d445",
+    "commit_date": "2026-10-22T14:12:00-04:00",
+    "subject": "test(pon): freeze separate valid-work ROOT supplemental cohort",
+    "unique_commits": 3,
+    "merge_base": "17ab8684862b643d8b570cde734858f8a30827ad",
+    "core_paths": [
+      "scripts/ci/test_run_pon_root_supplement.py",
+      "scripts/run_pon_root_supplement.py",
+      "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs"
+    ],
+    "residual_counts": {
+      "evidence_or_documentation": 2,
+      "checks_or_configuration": 1,
+      "implementation_or_tooling": 2
+    }
+  },
+  {
+    "name": "maintenance/actions-storage-reclaim-20261022",
+    "sha": "17ff05b5a2dc93c901dcd76906e9831341d02781",
+    "commit_date": "2026-10-22T04:09:11-04:00",
+    "subject": "chore(actions): safely reclaim stale disposable Actions storage",
+    "unique_commits": 1,
+    "merge_base": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+    "core_paths": [
+      ".github/workflows/maintenance-storage-reclaim.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "ops/github-storage-audit-20261022",
+    "sha": "64771d99de08d917631a8c3e1bc8c8a62e4db9da",
+    "commit_date": "2026-10-22T03:37:55-04:00",
+    "subject": "chore(ops): read-only inventory of Actions cache and artifacts",
+    "unique_commits": 1,
+    "merge_base": "9fedf7ecbbe07177069c030592b4e03dcffebb81",
+    "core_paths": [
+      ".github/workflows/github-storage-audit-20261022.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "ci/pon-chain316-main-target-merge-20261015",
+    "sha": "086a5b67d07278c95972ce9b4587d3eab6125a52",
+    "commit_date": "2026-10-15T16:56:38-07:00",
+    "subject": "ci: frozen Chain #316 deterministic main-target merge snapshot (not production)",
+    "unique_commits": 2,
+    "merge_base": "2551251a9cfba564a01d7edd9ed9fbc369e09079",
+    "core_paths": [
+      "trillionnium/crates/trnm-worker-agent/src/main.rs",
+      "trillionnium/crates/trnm-worker-agent/src/workflow.rs"
+    ],
+    "residual_counts": {
+      "evidence_or_documentation": 1,
+      "implementation_or_tooling": 2
+    }
+  },
+  {
+    "name": "ci/pon-source-bundle-20261011",
+    "sha": "32f8355f904a5e70ababaf74e70386a6d9f033ac",
+    "commit_date": "2026-10-12T18:46:45+08:00",
+    "subject": "ci: export the frozen PR303 source for exact five-track execution",
+    "unique_commits": 4,
+    "merge_base": "7837d7d65acb80a67f900f7b0bad050420e0d722",
+    "core_paths": [
+      ".github/workflows/pon-source-bundle-export.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "ci/pon-five-track-source-repair-20261012-r2",
+    "sha": "b9b981ffc3aafb210f43395a9fe576f1fb691693",
+    "commit_date": "2026-10-12T15:25:50+08:00",
+    "subject": "ci: stage exact-source observer fixture repair without changing runtime gates",
+    "unique_commits": 1,
+    "merge_base": "88c77a35d0841aa4ea53b474714d1030156184f5",
+    "core_paths": [
+      ".github/workflows/pon-five-track-source-repair-r2.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "ci/pon-native-workbench-20261012-r1",
+    "sha": "f4a60bb6bc0cb8eff1de14a0f3fe49a742120b87",
+    "commit_date": "2026-10-12T11:24:05+08:00",
+    "subject": "ci: isolate exact PoN native toolchain export for current-source qualification",
+    "unique_commits": 1,
+    "merge_base": "64e25442fb4f7fb4151ebbea9f8293b702c3d06e",
+    "core_paths": [
+      ".github/workflows/pon-native-workbench-export.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "ci/pon-baseline-source-repair-20261012",
+    "sha": "6a09d7ac50f317f5ade592fbc57a5a7c03396ebd",
+    "commit_date": "2026-10-12T08:41:50+08:00",
+    "subject": "ci(M17): execute exact reviewed baseline repair without changing acceptance gates",
+    "unique_commits": 1,
+    "merge_base": "1b63ead7184df854ff6fb2047f33b8e876963aca",
+    "core_paths": [
+      ".github/workflows/pon-baseline-source-repair.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "tools/pon-exact-bundles-20261011",
+    "sha": "89d38b5937b3c9822a2cc7037042294f39a76df7",
+    "commit_date": "2026-10-12T01:39:41+08:00",
+    "subject": "chore: refresh existing read-only source export to current five-track pair",
+    "unique_commits": 2,
+    "merge_base": "563e461656feed66a0b9ddcf99b22f2f1d39d627",
+    "core_paths": [
+      ".github/workflows/pon-authoring-bundle-export.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "chore/chain-work-collector-stage-20261011",
+    "sha": "8ed17cf06bec65a098b1f5d6befd82e79cc38929",
+    "commit_date": "2026-10-11T22:54:06+08:00",
+    "subject": "ci: transport exact bounded work-collector continuation without changing product workflows",
+    "unique_commits": 1,
+    "merge_base": "ce7a96769218ffec142b4fa70c2eb83eda10918f",
+    "core_paths": [
+      ".github/workflows/pon-work-collector-source-stage.yml",
+      "scripts/ci/work-collector-source.patch.gz"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1,
+      "evidence_or_documentation": 1
+    }
+  },
+  {
+    "name": "tooling/pon-fixed-native-source-stage-20261011",
+    "sha": "60a0cb3826d5622bebb26d98f83a4904484bc82a",
+    "commit_date": "2026-10-11T20:50:00+08:00",
+    "subject": "ci: retain fixed final Chain source and exact current Hepta pairing input",
+    "unique_commits": 3,
+    "merge_base": "25d806087a74778262edddee5fcb48ef651e9265",
+    "core_paths": [
+      ".ci/pon-fixed-native-reads.patch.gz",
+      ".github/workflows/pon-fixed-native-source-stage.yml",
+      ".github/workflows/pon-paired-source-readback.yml"
+    ],
+    "residual_counts": {
+      "evidence_or_documentation": 1,
+      "checks_or_configuration": 2
+    }
+  },
+  {
+    "name": "ci/pon-five-track-native-export-20261011",
+    "sha": "bccf7063f33d35d5be48640f68f6bbbf3a22c243",
+    "commit_date": "2026-10-11T20:07:44+08:00",
+    "subject": "ci: export exact PoN source and public locked native build inputs",
+    "unique_commits": 1,
+    "merge_base": "25d806087a74778262edddee5fcb48ef651e9265",
+    "core_paths": [
+      ".github/workflows/pon-native-offline-export.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "tooling/pon-canonical-kernel-stage-20261011",
+    "sha": "753f683db8e1f5f0a11926f5c7f9459e99589156",
+    "commit_date": "2026-10-11T18:24:31+08:00",
+    "subject": "ci: stage the exact shared account-branch kernel for native delivery",
+    "unique_commits": 1,
+    "merge_base": "7837d7d65acb80a67f900f7b0bad050420e0d722",
+    "core_paths": [
+      ".github/workflows/pon-shared-kernel-source-stage.yml",
+      "scripts/ci/pon-shared-kernel-source.patch"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 2
+    }
+  },
+  {
+    "name": "tooling/pon-cpu-conservation-publication-20261011",
+    "sha": "9e471e2369d99623e0320412a237454ed90ecd1b",
+    "commit_date": "2026-10-11T08:56:41+08:00",
+    "subject": "tooling: publish only the exact locally frozen CPU conservation source objects",
+    "unique_commits": 1,
+    "merge_base": "5c25ed9eadbb10e8193d062ee92c14ef8a9db1b5",
+    "core_paths": [
+      ".github/workflows/pon-cpu-conservation-publication.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "tooling/pon-offline-native-kit-20261011",
+    "sha": "5600b8ddd70a5d1394b9a024d26f5cd1a43f5748",
+    "commit_date": "2026-10-11T07:37:23+08:00",
+    "subject": "fix(tooling): split exact offline archive below connector transfer limit",
+    "unique_commits": 3,
+    "merge_base": "fecfcf93a51ad987262fa1752c344933ca786611",
+    "core_paths": [
+      ".github/workflows/pon-offline-native-kit.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "dev/pon-five-axis-source-export-20261011",
+    "sha": "291be2c8fef2ffacd5cd3550f9381d0332250775",
+    "commit_date": "2026-10-11T03:17:48+08:00",
+    "subject": "build: use separate macOS source transport without cancelling Linux qualification",
+    "unique_commits": 2,
+    "merge_base": "fecfcf93a51ad987262fa1752c344933ca786611",
+    "core_paths": [
+      ".github/workflows/chain-readonly-build-export.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "tools/pon-audit-source-transport-20261011",
+    "sha": "887a6f7e1ad66dafba67aec4f7a478b12fc00849",
+    "commit_date": "2026-10-11T02:40:04+08:00",
+    "subject": "chore: export committed exact-source bundles for offline verification",
+    "unique_commits": 1,
+    "merge_base": "563e461656feed66a0b9ddcf99b22f2f1d39d627",
+    "core_paths": [
+      ".github/workflows/pon-audit-source-transport.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "tools/pon-source-export-20261011",
+    "sha": "67c057b48e1ef72bf2b42b6189c1f86b26fa6843",
+    "commit_date": "2026-10-11T02:25:12+08:00",
+    "subject": "chore: export exact committed sources for offline native authoring",
+    "unique_commits": 1,
+    "merge_base": "d4e2b1b0df12e3d87ce88eae58ce6b488f750920",
+    "core_paths": [
+      ".github/workflows/pon-authoring-source-export.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "work/pon-batched-confirmation-source-20261011",
+    "sha": "f2b98437f9a3f37d587a2708bf1908a332faaf14",
+    "commit_date": "2026-10-11T00:58:26+08:00",
+    "subject": "ci: bind source materialization to exact locally tested plaintext patch",
+    "unique_commits": 2,
+    "merge_base": "657512e850e128c605830c4bb961706cb74d03b3",
+    "core_paths": [
+      ".github/workflows/pon-batched-confirmation-source.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "work/pon-cpu-conservation-runtime-20261011",
+    "sha": "634fd8efb8ecc39a386383baef882d6c48d08d80",
+    "commit_date": "2026-10-11T00:49:22Z",
+    "subject": "fix(pon): conserve consumed request reservations in the original CPU owner",
+    "unique_commits": 1,
+    "merge_base": "5c25ed9eadbb10e8193d062ee92c14ef8a9db1b5",
+    "core_paths": [
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_tests.rs"
+    ],
+    "residual_counts": {
+      "evidence_or_documentation": 1,
+      "implementation_or_tooling": 3
+    }
+  },
+  {
+    "name": "ci/pon-local-toolchain-export-20261011",
+    "sha": "9cd31d3a088bb73d5ebbe6737a440d2e64bff5b9",
+    "commit_date": "2026-10-11T00:35:32+08:00",
+    "subject": "ci: export pinned native tools for source-bound offline maintenance",
+    "unique_commits": 1,
+    "merge_base": "657512e850e128c605830c4bb961706cb74d03b3",
+    "core_paths": [
+      ".github/workflows/pon-local-toolchain-export.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "ci/pon-pressure-window-source-20261010",
+    "sha": "e4fbaee63d0d01edf8c7aefedff45083f1ee473f",
+    "commit_date": "2026-10-11T00:06:46+08:00",
+    "subject": "ci: execute readable hash-checked pressure patch and publish before native qualification",
+    "unique_commits": 6,
+    "merge_base": "228b156dc14ea938300b9503092e1ddd55014e4a",
+    "core_paths": [
+      ".github/pressure_stage_0.py",
+      ".github/pressure_stage_1.py",
+      ".github/pressure_stage_2.py",
+      ".github/pressure_stage_3.py",
+      ".github/workflows/pon-pressure-window-source.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 5
+    }
+  },
+  {
+    "name": "dev/pon-snapshot-verified-delivery-20261010",
+    "sha": "06aa0bef38c73491cc6726a326ea6f157acc6cfe",
+    "commit_date": "2026-10-10T23:31:25+08:00",
+    "subject": "dev: run frozen native source plan with correct YAML transport and non-forced product publication",
+    "unique_commits": 5,
+    "merge_base": "228b156dc14ea938300b9503092e1ddd55014e4a",
+    "core_paths": [
+      ".github/workflows/pon-five-axis-native-work.yml",
+      ".github/workflows/pon-snapshot-verified-delivery.yml",
+      "scripts/ci/stage_five_axis_native.py"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 3
+    }
+  },
+  {
+    "name": "dev/pon-five-axis-offline-export-20261010",
+    "sha": "1311db987f4d22eefc696587126ba30f151eed20",
+    "commit_date": "2026-10-10T23:01:26+08:00",
+    "subject": "build: export exact five-axis source and pinned offline tools without product mutation",
+    "unique_commits": 8,
+    "merge_base": "210c13be9cc5f7210377ee68b4dbc052a36b0c87",
+    "core_paths": [
+      ".github/workflows/chain-readonly-build-export.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "work/pon-nullable-blob-staging-20261010",
+    "sha": "e594e4c20e8dab293f6e3a5a980e294a9ae0f719",
+    "commit_date": "2026-10-10T18:54:35+08:00",
+    "subject": "fix(ci): retain YAML block indentation in additive nullable-blob selector generation",
+    "unique_commits": 3,
+    "merge_base": "8f17e2a777df8ddee8d1645457a75b8da8cc2a61",
+    "core_paths": [
+      ".github/nullable-blob-tests.rs.txt",
+      ".github/workflows/pon-nullable-blob-staging.yml"
+    ],
+    "residual_counts": {
+      "evidence_or_documentation": 1,
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "ci/pon-fixed-blob-inventory-stage-20261010",
+    "sha": "1938bbc5706ebdd880302ca99dd2875ebc7b483f",
+    "commit_date": "2026-10-10T18:09:03+08:00",
+    "subject": "ci(pon): stage original source inventory refresh and full repository-truth",
+    "unique_commits": 1,
+    "merge_base": "f9b6e978ea2c4b906dcf6e862b4261720d5b9cbc",
+    "core_paths": [
+      ".github/workflows/pon-fixed-blob-inventory-stage.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "ci/pon-fixed-blob-bounds-stage-20261010",
+    "sha": "1c27fda2001a242a7285f305bd13760971e47519",
+    "commit_date": "2026-10-10T17:39:00+08:00",
+    "subject": "fix(pon): preserve empty BLOB rejection in bounded projection staging",
+    "unique_commits": 2,
+    "merge_base": "22073a37e1e33c79de6695e47d97c3fea485c189",
+    "core_paths": [
+      ".github/staging/apply_fixed_blob_bounds.py",
+      ".github/staging/native_fixed_blob_tests.rs",
+      ".github/workflows/pon-fixed-blob-stage.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 3
+    }
+  },
+  {
+    "name": "staging/pon-sql-reuse-20261009",
+    "sha": "4e2b0f7c2b074731dd94237b4610476a34bc39d9",
+    "commit_date": "2026-10-09T22:03:07+08:00",
+    "subject": "ci: resolve retained observation path in the runner step",
+    "unique_commits": 4,
+    "merge_base": "d148a4158884fe3955ce99034e050b467eb349c7",
+    "core_paths": [
+      ".github/ci-sql-candidate.patch",
+      ".github/ci-sql-observation.txt",
+      ".github/workflows/pon-sql-native-staging.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 2,
+      "evidence_or_documentation": 1
+    }
+  },
+  {
+    "name": "ci/pon-native-snapshot-qualification-20261009",
+    "sha": "128d9d6ddf92841618328b1399e52565bfc01395",
+    "commit_date": "2026-10-09T19:18:34+08:00",
+    "subject": "ci: qualify bounded native snapshots against original reconstruction and fault controls",
+    "unique_commits": 1,
+    "merge_base": "9f5ebd9283457358fcec067fe0452005fa232b42",
+    "core_paths": [
+      ".github/workflows/pon-native-snapshot-staged.yml",
+      "scripts/ci/native_snapshot_candidate.py"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 2
+    }
+  },
+  {
+    "name": "ci/pon-packed-branch-qualification-20261009",
+    "sha": "8805ce62ff28e76ca4636a0ca1e4465b61fe7911",
+    "commit_date": "2026-10-09T19:05:54+08:00",
+    "subject": "ci: qualify packed account branch transcript without weakening history checks",
+    "unique_commits": 1,
+    "merge_base": "9f5ebd9283457358fcec067fe0452005fa232b42",
+    "core_paths": [
+      ".github/workflows/pon-packed-branch-staged.yml",
+      "scripts/ci/packed_branch_candidate.py"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 2
+    }
+  },
+  {
+    "name": "diagnostic/pon-five-native-lab-20261009",
+    "sha": "b74508f1db7e804436605a428773da41815f7c54",
+    "commit_date": "2026-10-09T16:13:02+08:00",
+    "subject": "ci(pon): preserve complete exact-source tree including compile-time configuration",
+    "unique_commits": 2,
+    "merge_base": "6b34dfe3c68f784465663dc68a48a938ecb7f356",
+    "core_paths": [
+      ".github/workflows/pon-five-native-lab.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "repair/pon-history-cost-20261009",
+    "sha": "ffbdf1b1b0626af25c64095a889118ff7c5305f5",
+    "commit_date": "2026-10-09T14:29:22+08:00",
+    "subject": "ci: execute staged recent batching on both architectures and retain exact native source",
+    "unique_commits": 3,
+    "merge_base": "d4fe8d6f5fab99c05550570fa01ac21db73a4c7e",
+    "core_paths": [
+      ".github/workflows/pon-history-source-readback.yml",
+      ".github/workflows/pon-recent-batch-candidate.yml",
+      "scripts/ci/recent-batch-candidate.patch"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 3
+    }
+  },
+  {
+    "name": "ci/pon-architecture-source-check-20261008",
+    "sha": "a77d94db1525f5cfeec0433b27d9c0ceadde1e1d",
+    "commit_date": "2026-10-08T09:57:28+08:00",
+    "subject": "ci: retain exact paired architecture inputs and preflight on isolated branch",
+    "unique_commits": 1,
+    "merge_base": "376676974c537064b65b5507cbee2e2c7de00c91",
+    "core_paths": [
+      ".github/workflows/pon-architecture-source-check.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "dev/chain-observation-delivery-20261007",
+    "sha": "cecee753c785b1a1ceb511c75ba85b1996b8bd13",
+    "commit_date": "2026-10-07T23:54:17+08:00",
+    "subject": "build: modularize existing growth tests before enforcing unchanged source-size guard",
+    "unique_commits": 6,
+    "merge_base": "97e00fcff9b2ad2d67ed7c3c12997f28c0531eb5",
+    "core_paths": [
+      ".github/workflows/chain-observation-delivery.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "evidence/chain-sixline-native-20261007",
+    "sha": "78d0237083ea753ce714a3184d2a8b49a0934a90",
+    "commit_date": "2026-10-07T22:24:16+08:00",
+    "subject": "ci(evidence): execute exact-source six-line native campaigns",
+    "unique_commits": 1,
+    "merge_base": "e87f92fd66d9025944c57ed04c9e85653cfef864",
+    "core_paths": [
+      ".github/workflows/chain-sixline-native-evidence-20261007.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "dev/chain-directed-delivery-20261006",
+    "sha": "7be021f745fa7b3cd9c9f5063304026f3b1a52f2",
+    "commit_date": "2026-10-07T19:02:10+08:00",
+    "subject": "build: deliver the frozen actual-state boundary continuation through existing guards",
+    "unique_commits": 7,
+    "merge_base": "210c13be9cc5f7210377ee68b4dbc052a36b0c87",
+    "core_paths": [
+      ".github/workflows/chain-directed-delivery.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "work/chain-offline-build-transfer-20261006",
+    "sha": "ce86ecd2019fc2344482db7e75a11f23b44e9a09",
+    "commit_date": "2026-10-06T20:13:34+08:00",
+    "subject": "build: export isolated pinned workspace for offline native development",
+    "unique_commits": 1,
+    "merge_base": "babd9c6ef2065bfd824fc7602fc0a3a7a6dc4b51",
+    "core_paths": [
+      ".github/workflows/chain-offline-build-transfer.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "dev/chain-native-delivery-20261005",
+    "sha": "6363c8399589b84c6837cd14610bc67c11a82aaf",
+    "commit_date": "2026-10-05T20:35:52+08:00",
+    "subject": "chore(dev): transport frozen native acceptance commit to a new development ref",
+    "unique_commits": 1,
+    "merge_base": "69d5ab9e3f20e926a8f56f150d6ef60ed9e32f08",
+    "core_paths": [
+      ".github/native-delivery/part0.bin",
+      ".github/native-delivery/part1.bin",
+      ".github/native-delivery/part2.bin",
+      ".github/workflows/trnm-temporary-native-delivery.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 4
+    }
+  },
+  {
+    "name": "dev/chain-exact-source-20261005",
+    "sha": "4eca52d447624c54156357ba54baa2cec7601a7b",
+    "commit_date": "2026-10-05T20:02:38+08:00",
+    "subject": "chore(dev): export exact PR211 source using existing isolated read-only exporter",
+    "unique_commits": 3,
+    "merge_base": "03a088f6a429cf756a34cdd61d09debd503be8cc",
+    "core_paths": [
+      ".github/workflows/trnm-temporary-native-workspace.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "chore/chain-rust-199-20261004",
+    "sha": "2d20365dd5bfa6df086786fbfdd4854450ee4b5f",
+    "commit_date": "2026-10-05T08:17:54+08:00",
+    "subject": "build: reconcile Rust 1.99 with current research execution candidate",
+    "unique_commits": 6,
+    "merge_base": "24c3015b644d438ae26102630f2abdf919fb8ba5",
+    "core_paths": [
+      ".github/workflows/trnm-required-baseline.yml",
+      "rust-toolchain.toml",
+      "scripts/ci/check_ci_contract.py",
+      "scripts/ci/check_cross_arch_cost.py",
+      "scripts/ci/run_cross_arch_cost.py",
+      "scripts/ci/test_zero_locality_cost.py",
+      "trillionnium/crates/trnm-checkpoint-store/src/lib.rs",
+      "trillionnium/crates/trnm-crypto-primitives/examples/pon_maintenance_cost.rs",
+      "trillionnium/crates/trnm-crypto-primitives/examples/pon_one_zero_io.rs",
+      "trillionnium/crates/trnm-crypto-primitives/examples/pon_one_zero_locality_cost.rs",
+      "trillionnium/crates/trnm-crypto-primitives/examples/pon_paired_io.rs",
+      "trillionnium/crates/trnm-crypto-primitives/examples/pon_producer_comparison.rs",
+      "trillionnium/crates/trnm-crypto-primitives/examples/pon_tiled_io.rs",
+      "trillionnium/crates/trnm-crypto-primitives/examples/pon_work.rs",
+      "trillionnium/crates/trnm-crypto-primitives/examples/pon_work_io.rs",
+      "trillionnium/crates/trnm-crypto-primitives/examples/pon_zero_io.rs",
+      "trillionnium/crates/trnm-crypto-primitives/examples/support/w1_material.rs",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/maintenance_periodic.rs",
+      "trillionnium/crates/trnm-crypto-primitives/src/pon_work/paired_product.rs",
+      "trillionnium/crates/trnm-crypto-primitives/src/qualified_work_task.rs",
+      "trillionnium/crates/trnm-mempool/src/lib.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/checkpoint_tile_material_v1.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/integer_factor_candidate_v2.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/model_evidence_v3.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-owner-v1.rs",
+      "trillionnium/crates/trnm-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs",
+      "trillionnium/crates/trnm-peer-lease/src/payload.rs",
+      "trillionnium/crates/trnm-peer-lease/src/payload_recovery/part_03_wal.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/request_observation.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+      "trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+      "trillionnium/crates/trnm-protocol/src/integer_factor_v2.rs",
+      "trillionnium/crates/trnm-protocol/tests/constant_chunk_slice_equivalence.rs",
+      "trillionnium/crates/trnm-verification-profiles/src/exact_integer_linear_v1.rs"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 5,
+      "evidence_or_documentation": 1,
+      "implementation_or_tooling": 33
+    }
+  },
+  {
+    "name": "chore/chain-development-overhead-20261002",
+    "sha": "a6e78fd090e018e0c07f825ee6751d877259d9e0",
+    "commit_date": "2026-10-02T20:04:26+08:00",
+    "subject": "docs: retain final compiler closure and adversarial re-audit evidence",
+    "unique_commits": 4,
+    "merge_base": "47864b93461c783e684454b24358e23eed6dba1c",
+    "core_paths": [
+      ".gitattributes",
+      ".github/workflows/trnm-required-baseline.yml",
+      "formal/pon-nakamoto-v1/test_reference.py",
+      "scripts/ci/check_invariants.py",
+      "scripts/ci/check_repository.py",
+      "scripts/ci/ci_job.sh",
+      "scripts/ci/report_module_evidence.py",
+      "scripts/ci/source_binding_fixture.py",
+      "scripts/ci/test_applicability.py",
+      "scripts/ci/test_invariants_registry.py",
+      "scripts/ci/test_responsibility_evidence.py",
+      "scripts/ci/test_source_check_efficiency.py",
+      "trillionnium/crates/trnm-executor/src/adaptive.rs",
+      "trillionnium/crates/trnm-executor/src/aggressive_profile.rs",
+      "trillionnium/crates/trnm-executor/src/conflict.rs",
+      "trillionnium/crates/trnm-executor/src/env_config.rs",
+      "trillionnium/crates/trnm-executor/src/reorder.rs",
+      "trillionnium/crates/trnm-executor/src/tests/conflict_tests.rs",
+      "trillionnium/crates/trnm-executor/src/tests/env_auto_tests.rs",
+      "trillionnium/crates/trnm-executor/src/tests/env_auto_tests/adaptive_decision_fail_closed_tests.rs",
+      "trillionnium/crates/trnm-executor/src/tests/env_auto_tests/adaptive_decision_hotspot_boundary_tests.rs",
+      "trillionnium/crates/trnm-executor/src/tests/env_auto_tests/adaptive_decision_sampling_tests.rs",
+      "trillionnium/crates/trnm-executor/src/tests/env_auto_tests/aggressive_env_knobs_tests.rs",
+      "trillionnium/crates/trnm-executor/src/tests/env_auto_tests/auto_numeric_parser_tests.rs",
+      "trillionnium/crates/trnm-executor/src/tests/env_auto_tests/mod.rs",
+      "trillionnium/crates/trnm-executor/src/tests/grouping_tests.rs",
+      "trillionnium/crates/trnm-mempool/src/admission_gate.rs",
+      "trillionnium/crates/trnm-mempool/src/demo.rs",
+      "trillionnium/crates/trnm-mempool/src/gate.rs",
+      "trillionnium/crates/trnm-mempool/src/gate/fairness.rs",
+      "trillionnium/crates/trnm-mempool/src/gate/retry_bookkeeping.rs",
+      "trillionnium/crates/trnm-mempool/src/gate/tests.rs",
+      "trillionnium/crates/trnm-mempool/src/gate/tests/basic_admission.rs",
+      "trillionnium/crates/trnm-mempool/src/gate/tests/fairness.rs",
+      "trillionnium/crates/trnm-mempool/src/gate/tests/fairness/deferral.rs",
+      "trillionnium/crates/trnm-mempool/src/gate/tests/fairness/partial_drain.rs",
+      "trillionnium/crates/trnm-mempool/src/gate/tests/fairness/reservation.rs",
+      "trillionnium/crates/trnm-mempool/src/gate/tests/fairness/spare_capacity.rs",
+      "trillionnium/crates/trnm-mempool/src/gate/tests/poisoned_retry.rs",
+      "trillionnium/crates/trnm-mempool/src/gate/tests/pop_ready_semantics.rs",
+      "trillionnium/crates/trnm-mempool/src/gate/tests/retry_bookkeeping.rs",
+      "trillionnium/crates/trnm-mempool/src/gate/tests/self_heal.rs",
+      "trillionnium/crates/trnm-mempool/src/gate/tests_support.rs",
+      "trillionnium/crates/trnm-mempool/src/lane_admit.rs",
+      "trillionnium/crates/trnm-mempool/src/lane_fairness.rs",
+      "trillionnium/crates/trnm-mempool/src/lane_pop_ready.rs",
+      "trillionnium/crates/trnm-mempool/src/lane_quota.rs",
+      "trillionnium/crates/trnm-mempool/src/lane_recovery/duplicate.rs",
+      "trillionnium/crates/trnm-mempool/src/lane_recovery/mod.rs",
+      "trillionnium/crates/trnm-mempool/src/lane_recovery/records.rs",
+      "trillionnium/crates/trnm-mempool/src/lane_spillover.rs",
+      "trillionnium/crates/trnm-mempool/src/tests.rs",
+      "trillionnium/crates/trnm-mempool/src/tests/admission_limits.rs",
+      "trillionnium/crates/trnm-mempool/src/tests/fairness_tests.rs",
+      "trillionnium/crates/trnm-mempool/src/tests/hard_stop_mode.rs",
+      "trillionnium/crates/trnm-mempool/src/tests/lane_bounds.rs",
+      "trillionnium/crates/trnm-mempool/src/tests/quota_tests.rs",
+      "trillionnium/crates/trnm-mempool/src/tests/recovery_tests.rs",
+      "trillionnium/crates/trnm-mempool/tests/lane_fairness_bound/drain_reset.rs",
+      "trillionnium/crates/trnm-mempool/tests/lane_fairness_bound/normal_latency.rs",
+      "trillionnium/crates/trnm-mempool/tests/lane_fairness_bound/spillover_and_reserve.rs",
+      "trillionnium/crates/trnm-mempool/tests/lane_free_ingress_throughput_bound/lane_free_ingress_throughput_bound_idempotency.rs",
+      "trillionnium/crates/trnm-mempool/tests/lane_free_ingress_throughput_bound/lane_free_ingress_throughput_bound_retry.rs",
+      "trillionnium/crates/trnm-mempool/tests/lane_free_ingress_throughput_bound/lane_free_ingress_throughput_bound_split.rs",
+      "trillionnium/crates/trnm-oracle/src/snapshot.rs",
+      "trillionnium/crates/trnm-oracle/src/tests/mod.rs",
+      "trillionnium/crates/trnm-oracle/src/tests/observed_report/formatting.rs",
+      "trillionnium/crates/trnm-oracle/src/tests/observed_report/mod.rs",
+      "trillionnium/crates/trnm-oracle/src/tests/observed_report/policy.rs",
+      "trillionnium/crates/trnm-oracle/src/tests/observed_report/validation.rs",
+      "trillionnium/crates/trnm-oracle/src/tests/policy.rs",
+      "trillionnium/crates/trnm-oracle/src/tests/shared.rs",
+      "trillionnium/crates/trnm-oracle/src/tests/snapshot.rs",
+      "trillionnium/crates/trnm-oracle/src/validation/policy.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/error.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/hashing.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/identity.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/identity/audit.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/identity/capability.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/identity/did_validation.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/normalize.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/settlement.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/mod.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/registry.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/audit.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/activity_windows.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/issuance.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/renewal.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/renewal_error_paths.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/capability/revocation.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/did.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/controller_mismatch.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/lifecycle_and_issue_inputs.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/missing_subject_and_unknown_token.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/renew_actor_sanitation.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/revoke_actor_sanitation.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/failure_paths/verify_actor_sanitation.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/registry_core.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify/controller.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify/error_paths.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify/happy_path.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/registry/verify/proof_claim_binding.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/error_paths.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle/revert_reason_aliases.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle/terminal_conflicts.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/lifecycle/terminal_reapply.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/route.rs",
+      "trillionnium/crates/trnm-types/src/interop_identity/tests/settlement/status.rs",
+      "trillionnium/crates/trnm-types/src/relay/auth_envelope.rs",
+      "trillionnium/crates/trnm-types/src/relay/records.rs",
+      "trillionnium/crates/trnm-types/src/relay/verifier.rs",
+      "trillionnium/crates/trnm-types/tests/i3_did_revoke_cascade_same_height/i3_did_revoke_cascade_same_height_boundary.rs",
+      "trillionnium/crates/trnm-types/tests/i3_did_revoke_cascade_same_height/i3_did_revoke_cascade_same_height_replay.rs",
+      "trillionnium/crates/trnm-worker-agent/src/adapter.rs",
+      "trillionnium/crates/trnm-worker-agent/src/adapter_constants.rs",
+      "trillionnium/crates/trnm-worker-agent/src/adapter_error.rs",
+      "trillionnium/crates/trnm-worker-agent/src/adapter_error_models.rs",
+      "trillionnium/crates/trnm-worker-agent/src/adapter_error_ops.rs",
+      "trillionnium/crates/trnm-worker-agent/src/adapter_flow.rs",
+      "trillionnium/crates/trnm-worker-agent/src/adapter_model.rs",
+      "trillionnium/crates/trnm-worker-agent/src/adapter_parse.rs",
+      "trillionnium/crates/trnm-worker-agent/src/adapter_parse_hash.rs",
+      "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization.rs",
+      "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/common.rs",
+      "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/compliance.rs",
+      "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/protocol/a2a_aliases.rs",
+      "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/protocol/mcp_aliases.rs",
+      "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/protocol/mod.rs",
+      "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/protocol/sanitization.rs",
+      "trillionnium/crates/trnm-worker-agent/src/adapter_parse_normalization/token_match.rs",
+      "trillionnium/crates/trnm-worker-agent/src/adapter_provenance.rs",
+      "trillionnium/crates/trnm-worker-agent/src/adapter_retry.rs",
+      "trillionnium/crates/trnm-worker-agent/src/adapter_retry_ops.rs",
+      "trillionnium/crates/trnm-worker-agent/src/adapter_retry_policy.rs",
+      "trillionnium/crates/trnm-worker-agent/src/assigned_runner.rs",
+      "trillionnium/crates/trnm-worker-agent/src/audit_export.rs",
+      "trillionnium/crates/trnm-worker-agent/src/audit_export_conversion.rs",
+      "trillionnium/crates/trnm-worker-agent/src/audit_export_format.rs",
+      "trillionnium/crates/trnm-worker-agent/src/audit_export_index.rs",
+      "trillionnium/crates/trnm-worker-agent/src/audit_export_types.rs",
+      "trillionnium/crates/trnm-worker-agent/src/audit_ops.rs",
+      "trillionnium/crates/trnm-worker-agent/src/audit_query.rs",
+      "trillionnium/crates/trnm-worker-agent/src/audit_render.rs",
+      "trillionnium/crates/trnm-worker-agent/src/command_runtime.rs",
+      "trillionnium/crates/trnm-worker-agent/src/command_runtime_parse.rs",
+      "trillionnium/crates/trnm-worker-agent/src/dispatch_assigned.rs",
+      "trillionnium/crates/trnm-worker-agent/src/dispatch_audit.rs",
+      "trillionnium/crates/trnm-worker-agent/src/dispatch_flush.rs",
+      "trillionnium/crates/trnm-worker-agent/src/dispatch_workflow.rs",
+      "trillionnium/crates/trnm-worker-agent/src/flush_submission/bookkeeping.rs",
+      "trillionnium/crates/trnm-worker-agent/src/flush_submission/receipt_update.rs",
+      "trillionnium/crates/trnm-worker-agent/src/flush_submission/retry_outcome.rs",
+      "trillionnium/crates/trnm-worker-agent/src/llm_retry.rs",
+      "trillionnium/crates/trnm-worker-agent/src/llm_runtime.rs",
+      "trillionnium/crates/trnm-worker-agent/src/llm_runtime_exec.rs",
+      "trillionnium/crates/trnm-worker-agent/src/llm_runtime_retry.rs",
+      "trillionnium/crates/trnm-worker-agent/src/llm_runtime_tx.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_core.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_factory.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_factory_tests.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_rules.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_rules_tests.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_selector.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_selector_tests.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_builder.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_builder_accepts.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_builder_separators.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_normalization.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_normalization_json.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_normalization_label.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_normalization_parse.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_standard.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_standard_noise.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_standard_parse.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_standard_verify.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_tee.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_tests_zk.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_utils.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_utils_json.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_utils_norm.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_utils_tests.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_verify.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_verify_core.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_verify_tests.rs",
+      "trillionnium/crates/trnm-worker-agent/src/proof_adapter_verify_tests_core.rs",
+      "trillionnium/crates/trnm-worker-agent/src/state.rs",
+      "trillionnium/crates/trnm-worker-agent/src/state_models.rs",
+      "trillionnium/crates/trnm-worker-agent/src/state_ops.rs",
+      "trillionnium/crates/trnm-worker-agent/src/state_persistence.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_config.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_llm.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_misc.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_parse.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_tee.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_command_timeout.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_ack.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_ingress.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_lock.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_persist.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_adapter_path_flush_result.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_provider.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_reputation.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_alias.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_backward.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_backward_compat.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_backward_gating.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_fail.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_legacy.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_legacy_normalize.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_compat_legacy_schema.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_schema.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_schema_flatten.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_schema_normalize.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_sse.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_streamable.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_conversion_schema_v2_websocket.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build_alias.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build_alias_fingerprint.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build_alias_protocol_profile.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_build_core.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_format.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_format_accept.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_format_detect.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_format_reject.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_markdown.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_markdown_base.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_export_index_markdown_normalize.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_label.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_request.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_request_normalized.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_request_provenance.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_core_schema.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach_keep_v1.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach_reject.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_attach_tests.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias_future.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias_variants.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias_variants_base.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_alias_variants_google.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_misc.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_misc_reject.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_provenance_fields_protocol_norm_misc_websocket.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_query.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_compat.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_lookup.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_lookup_normalize.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_lookup_quotes.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_fingerprint_reject.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_output.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_audit_query_task.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach_ok.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach_reject.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach_reject_invalid.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_attach_reject_separators.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_label.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm_boundary.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm_rejects.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm_separators.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_compliance_profile_norm_tokens.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_status_parse.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_status.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_alias.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_misc.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers_delimiters.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers_layers.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers_quotes.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_accept_wrappers_unicode.rs",
+      "trillionnium/crates/trnm-worker-agent/src/tests_status_parse_tx_hash_reject.rs"
+    ],
+    "residual_counts": {
+      "implementation_or_tooling": 285,
+      "checks_or_configuration": 10,
+      "evidence_or_documentation": 20
+    }
+  },
+  {
+    "name": "chore/chain-clear-readme-20260929",
+    "sha": "2c3e885e033cbe8a5d9d34ef161c7a5c4ed3aad0",
+    "commit_date": "2026-09-29T01:41:13+08:00",
+    "subject": "chore: clear root README",
+    "unique_commits": 1,
+    "merge_base": "6ec6867de8be2c81e3a9aa5909d5869d41f33363",
+    "core_paths": [
+      "README.md"
+    ],
+    "residual_counts": {
+      "evidence_or_documentation": 1
+    }
+  },
+  {
+    "name": "ops/recover-qian-qi-20260925",
+    "sha": "b1a787f0848c464a99b1f9854b6c133f933c5c47",
+    "commit_date": "2026-09-25T16:21:42+08:00",
+    "subject": "ops: recover the authorized qian-qi command relay",
+    "unique_commits": 1,
+    "merge_base": "c552c31c6d3c5ac47522a124e02c6b8bca4e23f2",
+    "core_paths": [
+      ".github/workflows/ops-recover-qian-qi.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  }
+]

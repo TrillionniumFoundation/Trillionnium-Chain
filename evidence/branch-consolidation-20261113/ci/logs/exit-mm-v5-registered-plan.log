@@ -1,0 +1,20 @@
+test_complete_bounded_thread_set_is_required (__main__.MmObservationTests.test_complete_bounded_thread_set_is_required) ... ok
+test_copied_diagnostic_wrong_timestamp_and_plain_dict_cannot_grant_authority (__main__.MmObservationTests.test_copied_diagnostic_wrong_timestamp_and_plain_dict_cannot_grant_authority) ... ok
+test_current_rss_keeps_one_original_status_boundary (__main__.MmObservationTests.test_current_rss_keeps_one_original_status_boundary) ... ok
+test_expired_wall_unknown_owner_and_invalid_wait4_refuse (__main__.MmObservationTests.test_expired_wall_unknown_owner_and_invalid_wait4_refuse) ... ok
+test_held_descriptor_reuse_and_pidfd_identity_change_refuse (__main__.MmObservationTests.test_held_descriptor_reuse_and_pidfd_identity_change_refuse) ... ok
+test_later_pf_exiting_cannot_retrofit_original_missing_sample (__main__.MmObservationTests.test_later_pf_exiting_cannot_retrofit_original_missing_sample) ... ok
+test_legacy_owned_rss_does_not_import_the_v5_dependency (__main__.MmObservationTests.test_legacy_owned_rss_does_not_import_the_v5_dependency) ... ok
+test_live_kthread_memory_and_wrong_prior_identity_refuse (__main__.MmObservationTests.test_live_kthread_memory_and_wrong_prior_identity_refuse) ... ok
+test_namespace_count_observable_rss_and_changed_frontier_refuse (__main__.MmObservationTests.test_namespace_count_observable_rss_and_changed_frontier_refuse) ... ok
+test_new_plan_source_and_drain_cap_are_exact_and_old_default_unchanged (__main__.MmObservationTests.test_new_plan_source_and_drain_cap_are_exact_and_old_default_unchanged) ... ok
+test_old_zombie_only_profile_still_refuses_running_leader (__main__.MmObservationTests.test_old_zombie_only_profile_still_refuses_running_leader) ... ok
+test_original_wait4_and_rss_cap_still_control_supervisor_outcome (__main__.MmObservationTests.test_original_wait4_and_rss_cap_still_control_supervisor_outcome) ... ok
+test_r_state_requires_prior_complete_pf_exiting_and_no_memory_credit (__main__.MmObservationTests.test_r_state_requires_prior_complete_pf_exiting_and_no_memory_credit) ... ok
+test_registered_plan_retains_explicit_v5_profile_and_rejects_cross_profile_binding (__main__.MmObservationTests.test_registered_plan_retains_explicit_v5_profile_and_rejects_cross_profile_binding) ... ok
+test_starttime_change_between_original_sample_and_capture_refuses (__main__.MmObservationTests.test_starttime_change_between_original_sample_and_capture_refuses) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.107s
+
+OK

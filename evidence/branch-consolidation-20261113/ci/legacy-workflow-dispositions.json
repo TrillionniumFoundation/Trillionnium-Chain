@@ -1,0 +1,1799 @@
+{
+  "schema": "trnm-legacy-workflow-disposition-v1",
+  "date": "2026-11-13",
+  "input_inventory_sha256": "a9a8aa34fe22ca8586ef2ff63a2ad3f7437833dea48366c1504951849825ea16",
+  "tips_reviewed": 39,
+  "workflow_files_reviewed": 42,
+  "legacy_workflows_executed": false,
+  "remote_mutations": false,
+  "scheduled_workflows": 0,
+  "pull_request_workflows": 6,
+  "manual_dispatch_workflows": 2,
+  "category_counts": {
+    "source_publisher": 14,
+    "staging_blob_writer": 7,
+    "source_export": 14,
+    "destructive_maintenance": 1,
+    "reusable_read_only_inventory": 1,
+    "historical_native_observation": 2
+  },
+  "scope": "Static review of exact historical workflow bytes, triggers, declared permissions, runners, checkout identities and explicit command side effects. Does not execute archived programs or claim functional equivalence of every embedded payload; runtime integration is a separate source audit.",
+  "items": [
+    {
+      "branch": "dev/pon-snapshot-verified-delivery-20261010",
+      "head": "06aa0bef38c73491cc6726a326ea6f157acc6cfe",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_publisher",
+      "reason": "Two old snapshot-owner authoring jobs run fixed historical commands, POST a workflow blob and push dated product branches; the second executes publication commands from fixed authoring source b72e8cb7.",
+      "all_added_paths": [
+        "A\t.github/workflows/pon-five-axis-native-work.yml",
+        "A\t.github/workflows/pon-snapshot-verified-delivery.yml",
+        "A\tscripts/ci/stage_five_axis_native.py"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-five-axis-native-work.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/06aa0bef38c73491cc6726a326ea6f157acc6cfe/.github/workflows/pon-five-axis-native-work.yml",
+          "sha256": "07a5934b9557216cec30ef8dea5a79a00515ce04ebe74f5f99224077b0e6e50b",
+          "bytes": 19470,
+          "events": {
+            "push": {
+              "branches": [
+                "dev/pon-five-axis-native-work-20261010"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "native",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "write"
+              },
+              "checkout_refs": [
+                "${{ env.SOURCE_SHA }}",
+                "${{ github.sha }}"
+              ]
+            }
+          ]
+        },
+        {
+          "path": ".github/workflows/pon-snapshot-verified-delivery.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/06aa0bef38c73491cc6726a326ea6f157acc6cfe/.github/workflows/pon-snapshot-verified-delivery.yml",
+          "sha256": "b2f95d394a133c172c963e236451522ab6a218557de8fda9f7692faab8ecb8bc",
+          "bytes": 4085,
+          "events": {
+            "push": {
+              "branches": [
+                "dev/pon-snapshot-verified-delivery-20261010"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "deliver",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "write"
+              },
+              "checkout_refs": [
+                "${{ env.SOURCE_SHA }}",
+                "b72e8cb7c6fdb096ec859d04c7ad30b47115eb33"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "test/chain-cached-owner-stage-20261009",
+      "head": "0774bb04ca90333737898c79bb7ee9c70feabfc4",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "staging_blob_writer",
+      "reason": "Adds old owner regressions, tests staged bytes on x64/ARM64 and POSTs a Git blob; exact parent/blob guards bind an old source, not the final candidate.",
+      "all_added_paths": [
+        "A\t.github/workflows/pon-cached-owner-stage.yml",
+        "A\tscripts/ci/staged_cached_owner_tests.rs"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-cached-owner-stage.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/0774bb04ca90333737898c79bb7ee9c70feabfc4/.github/workflows/pon-cached-owner-stage.yml",
+          "sha256": "8a7be974ea33f6f75e2166e901a48181a2908708d3d68d153db895a37b8e7889",
+          "bytes": 7487,
+          "events": {
+            "push": {
+              "branches": [
+                "test/chain-cached-owner-stage-20261009"
+              ]
+            },
+            "workflow_dispatch": ""
+          },
+          "jobs": [
+            {
+              "job": "native",
+              "runs_on": "${{ matrix.runner }}",
+              "matrix": {
+                "runner": [
+                  "ubuntu-24.04",
+                  "ubuntu-24.04-arm"
+                ]
+              },
+              "effective_declared_permissions": {
+                "contents": "write"
+              },
+              "checkout_refs": [
+                "${{ github.sha }}"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "ci/pon-native-snapshot-qualification-20261009",
+      "head": "128d9d6ddf92841618328b1399e52565bfc01395",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "staging_blob_writer",
+      "reason": "PR-path job modifies a snapshot candidate, tests two architectures and POSTs blobs with job-level contents:write; this is staged authoring.",
+      "all_added_paths": [
+        "A\t.github/workflows/pon-native-snapshot-staged.yml",
+        "A\tscripts/ci/native_snapshot_candidate.py"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-native-snapshot-staged.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/128d9d6ddf92841618328b1399e52565bfc01395/.github/workflows/pon-native-snapshot-staged.yml",
+          "sha256": "af8aaca6e926bea1192c03d690266b7bf5ef1299aab07b37e02df3111cb1a1d9",
+          "bytes": 5723,
+          "events": {
+            "pull_request": {
+              "paths": [
+                "scripts/ci/native_snapshot_candidate.py",
+                ".github/workflows/pon-native-snapshot-staged.yml"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "qualify",
+              "runs_on": "${{ matrix.runner }}",
+              "matrix": {
+                "runner": [
+                  "ubuntu-24.04",
+                  "ubuntu-24.04-arm"
+                ]
+              },
+              "effective_declared_permissions": {
+                "contents": "write"
+              },
+              "checkout_refs": [
+                "${{ github.event.pull_request.head.sha }}"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "dev/pon-five-axis-offline-export-20261010",
+      "head": "1311db987f4d22eefc696587126ba30f151eed20",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_export",
+      "reason": "Exports fixed Chain/Hepta Git bundles plus Rust1.95/Cargo cache for an October offline transfer.",
+      "all_added_paths": [
+        "A\t.github/workflows/chain-readonly-build-export.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/chain-readonly-build-export.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/1311db987f4d22eefc696587126ba30f151eed20/.github/workflows/chain-readonly-build-export.yml",
+          "sha256": "ca34a35d68c6af83483cad16a7997398d819f1b1230565cf6caa7c21c4d95581",
+          "bytes": 3864,
+          "events": {
+            "push": {
+              "branches": [
+                "dev/pon-five-axis-offline-export-20261010"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "export",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "read"
+              },
+              "checkout_refs": [
+                "${{ env.SOURCE_SHA }}",
+                "${{ env.HEPTA_SHA }}"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "maintenance/actions-storage-reclaim-20261022",
+      "head": "17ff05b5a2dc93c901dcd76906e9831341d02781",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "destructive_maintenance",
+      "reason": "Dated push/manual dispatch deletes up to 500 disposable-name artifacts older than 14 days and 500 non-tag caches older than 7 days (main/master:30 days), with actions:write and no dry-run stage. NOT scheduled.",
+      "all_added_paths": [
+        "A\t.github/workflows/maintenance-storage-reclaim.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/maintenance-storage-reclaim.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/17ff05b5a2dc93c901dcd76906e9831341d02781/.github/workflows/maintenance-storage-reclaim.yml",
+          "sha256": "3af98d542f2f348e03f9822d82ce3ebe0c31eccc3b428252d59f9fff810819a6",
+          "bytes": 5845,
+          "events": {
+            "push": {
+              "branches": [
+                "maintenance/actions-storage-reclaim-20261022"
+              ],
+              "paths": [
+                ".github/workflows/maintenance-storage-reclaim.yml"
+              ]
+            },
+            "workflow_dispatch": ""
+          },
+          "jobs": [
+            {
+              "job": "reclaim",
+              "runs_on": "ubuntu-latest",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "read",
+                "actions": "write"
+              },
+              "checkout_refs": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "ci/pon-fixed-blob-inventory-stage-20261010",
+      "head": "1938bbc5706ebdd880302ca99dd2875ebc7b483f",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_publisher",
+      "reason": "Checks out fixed f9b6e978, updates an embedded inventory, runs the old repository-truth lane and pushes a dated successor.",
+      "all_added_paths": [
+        "A\t.github/workflows/pon-fixed-blob-inventory-stage.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-fixed-blob-inventory-stage.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/1938bbc5706ebdd880302ca99dd2875ebc7b483f/.github/workflows/pon-fixed-blob-inventory-stage.yml",
+          "sha256": "a5522ec596dc8428b71c602230bc7db5efedf1623ce9a782324b84e203e6f74c",
+          "bytes": 4729,
+          "events": {
+            "push": {
+              "branches": [
+                "ci/pon-fixed-blob-inventory-stage-20261010"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "source",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "write"
+              },
+              "checkout_refs": [
+                "event-default"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "ci/pon-fixed-blob-bounds-stage-20261010",
+      "head": "1c27fda2001a242a7285f305bd13760971e47519",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_publisher",
+      "reason": "Checks out fixed22073a37, constructs a two-file fixed-field source/test candidate, runs historical native controls/lint and publishes it.",
+      "all_added_paths": [
+        "A\t.github/staging/apply_fixed_blob_bounds.py",
+        "A\t.github/staging/native_fixed_blob_tests.rs",
+        "A\t.github/workflows/pon-fixed-blob-stage.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-fixed-blob-stage.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/1c27fda2001a242a7285f305bd13760971e47519/.github/workflows/pon-fixed-blob-stage.yml",
+          "sha256": "c2b8c91aadada9c838927d04591952a2958a9a1f34f6364cf0d6712dbfd6852a",
+          "bytes": 6467,
+          "events": {
+            "push": {
+              "branches": [
+                "ci/pon-fixed-blob-bounds-stage-20261010"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "native",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "write"
+              },
+              "checkout_refs": [
+                "event-default"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "dev/pon-five-axis-source-export-20261011",
+      "head": "291be2c8fef2ffacd5cd3550f9381d0332250775",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_export",
+      "reason": "macOS14 job exports fixed Chain and concurrent Hepta source histories as bundles; read-only transport.",
+      "all_added_paths": [
+        "A\t.github/workflows/chain-readonly-build-export.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/chain-readonly-build-export.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/291be2c8fef2ffacd5cd3550f9381d0332250775/.github/workflows/chain-readonly-build-export.yml",
+          "sha256": "d063ccdc447c5f6e4d1901958d00191bd16669ef6b7c1e0b3cbcafa9189eb08b",
+          "bytes": 2788,
+          "events": {
+            "push": {
+              "branches": [
+                "dev/pon-five-axis-source-export-20261011"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "export",
+              "runs_on": "macos-14",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "read"
+              },
+              "checkout_refs": [
+                "fecfcf93a51ad987262fa1752c344933ca786611",
+                "7941d7050c3432214c7af996ede65b6ed027a3bf"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "ci/pon-source-bundle-20261011",
+      "head": "32f8355f904a5e70ababaf74e70386a6d9f033ac",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_export",
+      "reason": "Exports an old repository bundle, pinned compiler and isolated public dependency cache as short-lived artifacts.",
+      "all_added_paths": [
+        "A\t.github/workflows/pon-source-bundle-export.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-source-bundle-export.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/32f8355f904a5e70ababaf74e70386a6d9f033ac/.github/workflows/pon-source-bundle-export.yml",
+          "sha256": "1b6ca878a0f5cc8e876bb532ce29cb6bc8f7ded8c21f52cac4f7dbd9ec501814",
+          "bytes": 4108,
+          "events": {
+            "push": {
+              "branches": [
+                "ci/pon-source-bundle-20261011"
+              ],
+              "paths": [
+                ".github/workflows/pon-source-bundle-export.yml"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "export",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "read"
+              },
+              "checkout_refs": [
+                "715a21282dbdc491e70c2c9abd9c1056cef739a5"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "staging/pon-sql-reuse-20261009",
+      "head": "4e2b0f7c2b074731dd94237b4610476a34bc39d9",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "staging_blob_writer",
+      "reason": "Applies archived SQL patch to fixedd148a415, tests x64/ARM64, compares source artifacts and POSTs a Git blob without moving refs.",
+      "all_added_paths": [
+        "A\t.github/ci-sql-candidate.patch",
+        "A\t.github/ci-sql-observation.txt",
+        "A\t.github/workflows/pon-sql-native-staging.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-sql-native-staging.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/4e2b0f7c2b074731dd94237b4610476a34bc39d9/.github/workflows/pon-sql-native-staging.yml",
+          "sha256": "2b0dd8bf51aadba044ca3c8eb965fd0dfd519e1e5f87aef9843ab983875041f0",
+          "bytes": 8511,
+          "events": {
+            "push": {
+              "branches": [
+                "staging/pon-sql-reuse-20261009"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "native",
+              "runs_on": "${{ matrix.runner }}",
+              "matrix": {
+                "runner": [
+                  "ubuntu-24.04",
+                  "ubuntu-24.04-arm"
+                ]
+              },
+              "effective_declared_permissions": {
+                "contents": "read"
+              },
+              "checkout_refs": [
+                "event-default"
+              ]
+            },
+            {
+              "job": "blob",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "actions": "read",
+                "contents": "write"
+              },
+              "checkout_refs": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "dev/chain-exact-source-20261005",
+      "head": "4eca52d447624c54156357ba54baa2cec7601a7b",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_export",
+      "reason": "Temporary export of exact historical Git snapshot objects, with read-only contents permission.",
+      "all_added_paths": [
+        "A\t.github/workflows/trnm-temporary-native-workspace.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/trnm-temporary-native-workspace.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/4eca52d447624c54156357ba54baa2cec7601a7b/.github/workflows/trnm-temporary-native-workspace.yml",
+          "sha256": "f4060c683c9429ed95d2ae2972a680301948790cf44db3cc87555167a1bb4e3a",
+          "bytes": 1465,
+          "events": {
+            "push": {
+              "branches": [
+                "dev/chain-exact-source-20261005"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "export",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "read"
+              },
+              "checkout_refs": [
+                "69d5ab9e3f20e926a8f56f150d6ef60ed9e32f08"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "tooling/pon-offline-native-kit-20261011",
+      "head": "5600b8ddd70a5d1394b9a024d26f5cd1a43f5748",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_export",
+      "reason": "PR-path job vendors old locked dependencies and exports compiler plus fixed Chain/Hepta bundles in three artifact parts.",
+      "all_added_paths": [
+        "A\t.github/workflows/pon-offline-native-kit.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-offline-native-kit.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/5600b8ddd70a5d1394b9a024d26f5cd1a43f5748/.github/workflows/pon-offline-native-kit.yml",
+          "sha256": "a35d2c8967ba255d2e3ae18e86409c2ce92446b89c1feb371d116484337f367a",
+          "bytes": 3817,
+          "events": {
+            "pull_request": {
+              "paths": [
+                ".github/workflows/pon-offline-native-kit.yml"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "kit",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "read"
+              },
+              "checkout_refs": [
+                "fecfcf93a51ad987262fa1752c344933ca786611",
+                "e518fcdb6b25e2d6ef1320f80842d3bb8a606230"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "tooling/pon-fixed-native-source-stage-20261011",
+      "head": "60a0cb3826d5622bebb26d98f83a4904484bc82a",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_publisher",
+      "reason": "One workflow applies a frozen patch on fixed25d80608 and pushes the dated bounded-history-fields branch; its companion only exports fixed paired source.",
+      "all_added_paths": [
+        "A\t.ci/pon-fixed-native-reads.patch.gz",
+        "A\t.github/workflows/pon-fixed-native-source-stage.yml",
+        "A\t.github/workflows/pon-paired-source-readback.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-fixed-native-source-stage.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/60a0cb3826d5622bebb26d98f83a4904484bc82a/.github/workflows/pon-fixed-native-source-stage.yml",
+          "sha256": "9c2088bc1579467b27c746a4befb54f5ae826bc0e1723bf8ae34e2edb023b1dd",
+          "bytes": 5125,
+          "events": {
+            "push": {
+              "branches": [
+                "tooling/pon-fixed-native-source-stage-20261011"
+              ],
+              "paths": [
+                ".github/workflows/pon-fixed-native-source-stage.yml",
+                ".ci/pon-fixed-native-reads.patch.gz"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "publish",
+              "runs_on": "ubuntu-22.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "write"
+              },
+              "checkout_refs": [
+                "event-default"
+              ]
+            }
+          ]
+        },
+        {
+          "path": ".github/workflows/pon-paired-source-readback.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/60a0cb3826d5622bebb26d98f83a4904484bc82a/.github/workflows/pon-paired-source-readback.yml",
+          "sha256": "151c3a353db052709561aaa1d35f86e5122091eca71335dfe743407bef9b1539",
+          "bytes": 2942,
+          "events": {
+            "push": {
+              "branches": [
+                "tooling/pon-fixed-native-source-stage-20261011"
+              ],
+              "paths": [
+                ".github/workflows/pon-paired-source-readback.yml"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "export",
+              "runs_on": "ubuntu-22.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "read"
+              },
+              "checkout_refs": [
+                "dd920ddf81cb2ea9bc99e2bc1f402b4f07e85022",
+                "e4c25726283815eb3453fc6b3f965c75a254ba2d"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "dev/chain-native-delivery-20261005",
+      "head": "6363c8399589b84c6837cd14610bc67c11a82aaf",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_publisher",
+      "reason": "Reconstructs fixed4413027b from archived Git-pack parts and creates a dated development ref if absent.",
+      "all_added_paths": [
+        "A\t.github/native-delivery/part0.bin",
+        "A\t.github/native-delivery/part1.bin",
+        "A\t.github/native-delivery/part2.bin",
+        "A\t.github/workflows/trnm-temporary-native-delivery.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/trnm-temporary-native-delivery.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/6363c8399589b84c6837cd14610bc67c11a82aaf/.github/workflows/trnm-temporary-native-delivery.yml",
+          "sha256": "3ff0a08293e1ba5746bdeb4714f41c2d8138337d6fabf0ff502b7689d05be706",
+          "bytes": 3200,
+          "events": {
+            "push": {
+              "branches": [
+                "dev/chain-native-delivery-20261005"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "deliver",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "write"
+              },
+              "checkout_refs": [
+                "event-default"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "ops/github-storage-audit-20261022",
+      "head": "64771d99de08d917631a8c3e1bc8c8a62e4db9da",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "reusable_read_only_inventory",
+      "reason": "GET-only artifact/cache inventory with pagination/truncation reporting. Reusable logic, but dated push-only trigger is obsolete and no required merge gate depends on it.",
+      "all_added_paths": [
+        "A\t.github/workflows/github-storage-audit-20261022.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/github-storage-audit-20261022.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/64771d99de08d917631a8c3e1bc8c8a62e4db9da/.github/workflows/github-storage-audit-20261022.yml",
+          "sha256": "22f0a0cba803dbd581028450b026dbac081f0f83363b4975a88dad0f0d5dcd02",
+          "bytes": 4194,
+          "events": {
+            "push": {
+              "branches": [
+                "ops/github-storage-audit-20261022"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "storage-audit",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "actions": "read",
+                "contents": "read"
+              },
+              "checkout_refs": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "tools/pon-source-export-20261011",
+      "head": "67c057b48e1ef72bf2b42b6189c1f86b26fa6843",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_export",
+      "reason": "Exports fixed Chain/Hepta authoring and main-history bundles after historical preflight; read-only transport.",
+      "all_added_paths": [
+        "A\t.github/workflows/pon-authoring-source-export.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-authoring-source-export.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/67c057b48e1ef72bf2b42b6189c1f86b26fa6843/.github/workflows/pon-authoring-source-export.yml",
+          "sha256": "c4b276f56c608c86e19b5cb1035dc22a0cd82821106c7ba3560cbfa440a7f102",
+          "bytes": 2229,
+          "events": {
+            "push": {
+              "branches": [
+                "tools/pon-source-export-20261011"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "export",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "read"
+              },
+              "checkout_refs": [
+                "d4e2b1b0df12e3d87ce88eae58ce6b488f750920",
+                "a994d1d4658893e3b944cfa1ac1b9dd199bdc0ce"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "ci/pon-baseline-source-repair-20261012",
+      "head": "6a09d7ac50f317f5ade592fbc57a5a7c03396ebd",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_publisher",
+      "reason": "Changes the old87-test applicability roster and maturity inventory on fixed1b63ead7, runs its repository-truth lane and pushes a dated repair branch.",
+      "all_added_paths": [
+        "A\t.github/workflows/pon-baseline-source-repair.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-baseline-source-repair.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/6a09d7ac50f317f5ade592fbc57a5a7c03396ebd/.github/workflows/pon-baseline-source-repair.yml",
+          "sha256": "ae7cf20b67717acbd3d12c083eebcb8f16fcf51bf855b3f14d3d992fbb796a20",
+          "bytes": 5669,
+          "events": {
+            "push": {
+              "branches": [
+                "ci/pon-baseline-source-repair-20261012"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "repair",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "write"
+              },
+              "checkout_refs": [
+                "1b63ead7184df854ff6fb2047f33b8e876963aca"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "tooling/pon-canonical-kernel-stage-20261011",
+      "head": "753f683db8e1f5f0a11926f5c7f9459e99589156",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_publisher",
+      "reason": "Applies archived shared-kernel patch on fixed7837d7d6, requires frozen8dccebf9/tree, runs old controls and publishes the dated performance branch.",
+      "all_added_paths": [
+        "A\t.github/workflows/pon-shared-kernel-source-stage.yml",
+        "A\tscripts/ci/pon-shared-kernel-source.patch"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-shared-kernel-source-stage.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/753f683db8e1f5f0a11926f5c7f9459e99589156/.github/workflows/pon-shared-kernel-source-stage.yml",
+          "sha256": "b2a4db09934f84ae3df50b96096c5ed1396377ca8c4ce376034e807575cd1f5b",
+          "bytes": 6955,
+          "events": {
+            "push": {
+              "branches": [
+                "tooling/pon-canonical-kernel-stage-20261011"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "stage",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "write"
+              },
+              "checkout_refs": [
+                "event-default"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "evidence/chain-sixline-native-20261007",
+      "head": "78d0237083ea753ce714a3184d2a8b49a0934a90",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "historical_native_observation",
+      "reason": "Four jobs run model/growth, sustained service, long-history sync and full-capacity recovery on fixede87f92fd; artifact writes only, not current-head qualification.",
+      "all_added_paths": [
+        "A\t.github/workflows/chain-sixline-native-evidence-20261007.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/chain-sixline-native-evidence-20261007.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/78d0237083ea753ce714a3184d2a8b49a0934a90/.github/workflows/chain-sixline-native-evidence-20261007.yml",
+          "sha256": "72f9bb2dfc81b8deaa24ad5afddf64e5cb5d4a965af40f4d9c6fc56e4481e871",
+          "bytes": 7146,
+          "events": {
+            "push": {
+              "branches": [
+                "evidence/chain-sixline-native-20261007"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "model-and-growth",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "read"
+              },
+              "checkout_refs": [
+                "${{ env.SOURCE_SHA }}"
+              ]
+            },
+            {
+              "job": "sustained-service",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "read"
+              },
+              "checkout_refs": [
+                "${{ env.SOURCE_SHA }}"
+              ]
+            },
+            {
+              "job": "long-history-sync",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "read"
+              },
+              "checkout_refs": [
+                "${{ env.SOURCE_SHA }}"
+              ]
+            },
+            {
+              "job": "full-capacity-recovery",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "read"
+              },
+              "checkout_refs": [
+                "${{ env.SOURCE_SHA }}"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "dev/chain-directed-delivery-20261006",
+      "head": "7be021f745fa7b3cd9c9f5063304026f3b1a52f2",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_publisher",
+      "reason": "Retrieves exact patch/raw-commit blobs, reconstructs fixed54a03abf, requires destination still at oldbasebe8600b2 and non-force advances a dated ref.",
+      "all_added_paths": [
+        "A\t.github/workflows/chain-directed-delivery.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/chain-directed-delivery.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/7be021f745fa7b3cd9c9f5063304026f3b1a52f2/.github/workflows/chain-directed-delivery.yml",
+          "sha256": "b4e03995c8db7ba0b98d3b25ce157633e927dd7175185a61031dee000723b820",
+          "bytes": 6261,
+          "events": {
+            "push": {
+              "branches": [
+                "dev/chain-directed-delivery-20261006"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "deliver",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "write"
+              },
+              "checkout_refs": [
+                "${{ env.BASE }}"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "ci/pon-packed-branch-qualification-20261009",
+      "head": "8805ce62ff28e76ca4636a0ca1e4465b61fe7911",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "staging_blob_writer",
+      "reason": "PR-path job generates/tests a packed-branch staging candidate on two architectures and POSTs source blobs with job-level contents:write.",
+      "all_added_paths": [
+        "A\t.github/workflows/pon-packed-branch-staged.yml",
+        "A\tscripts/ci/packed_branch_candidate.py"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-packed-branch-staged.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/8805ce62ff28e76ca4636a0ca1e4465b61fe7911/.github/workflows/pon-packed-branch-staged.yml",
+          "sha256": "5e63063db1923cb3ef8b4e905fd33cd5ddd002908abacbf99f736a29bda33d2a",
+          "bytes": 5738,
+          "events": {
+            "pull_request": {
+              "paths": [
+                "scripts/ci/packed_branch_candidate.py",
+                ".github/workflows/pon-packed-branch-staged.yml"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "qualify",
+              "runs_on": "${{ matrix.runner }}",
+              "matrix": {
+                "runner": [
+                  "ubuntu-24.04",
+                  "ubuntu-24.04-arm"
+                ]
+              },
+              "effective_declared_permissions": {
+                "contents": "write"
+              },
+              "checkout_refs": [
+                "${{ github.event.pull_request.head.sha }}"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "tools/pon-audit-source-transport-20261011",
+      "head": "887a6f7e1ad66dafba67aec4f7a478b12fc00849",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_export",
+      "reason": "Exports committed fixed Chain/Hepta objects after a source audit; historical read-only transport.",
+      "all_added_paths": [
+        "A\t.github/workflows/pon-audit-source-transport.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-audit-source-transport.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/887a6f7e1ad66dafba67aec4f7a478b12fc00849/.github/workflows/pon-audit-source-transport.yml",
+          "sha256": "3b9f6c48db77c097d492831e5339aa32d8b9924511c94b461887fcdd779c1774",
+          "bytes": 2147,
+          "events": {
+            "push": {
+              "branches": [
+                "tools/pon-audit-source-transport-20261011"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "export",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "read"
+              },
+              "checkout_refs": [
+                "563e461656feed66a0b9ddcf99b22f2f1d39d627",
+                "779d0c744d75c5b04404f3492a11d9e269afaf8e"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "tools/pon-exact-bundles-20261011",
+      "head": "89d38b5937b3c9822a2cc7037042294f39a76df7",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_export",
+      "reason": "Exports exact old Chain/Hepta authoring bundles under read-only repository permission.",
+      "all_added_paths": [
+        "A\t.github/workflows/pon-authoring-bundle-export.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-authoring-bundle-export.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/89d38b5937b3c9822a2cc7037042294f39a76df7/.github/workflows/pon-authoring-bundle-export.yml",
+          "sha256": "b3a61f45e965f1f76d1f3b06f01ea0d6b7ffda7d1a6c75786d94a719a2529026",
+          "bytes": 2138,
+          "events": {
+            "push": {
+              "branches": [
+                "tools/pon-exact-bundles-20261011"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "export",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "read"
+              },
+              "checkout_refs": [
+                "1b63ead7184df854ff6fb2047f33b8e876963aca",
+                "d8717cd0f5ef84b0488ac3d0c589278274e09730"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "chore/chain-work-collector-stage-20261011",
+      "head": "8ed17cf06bec65a098b1f5d6befd82e79cc38929",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_publisher",
+      "reason": "Reconstructs three frozen work-collector changes on fixedce7a9676, runs scoped controls and publishes the dated owner branch.",
+      "all_added_paths": [
+        "A\t.github/workflows/pon-work-collector-source-stage.yml",
+        "A\tscripts/ci/work-collector-source.patch.gz"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-work-collector-source-stage.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/8ed17cf06bec65a098b1f5d6befd82e79cc38929/.github/workflows/pon-work-collector-source-stage.yml",
+          "sha256": "7622b1851c6f42f9f9a4e97b6fe1f46b28a35a0fc3b6bd0df51b5168cc6ef0b2",
+          "bytes": 6216,
+          "events": {
+            "push": {
+              "branches": [
+                "chore/chain-work-collector-stage-20261011"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "source",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "write"
+              },
+              "checkout_refs": [
+                "event-default"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "ci/pon-local-toolchain-export-20261011",
+      "head": "9cd31d3a088bb73d5ebbe6737a440d2e64bff5b9",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_export",
+      "reason": "PR-path job exports pinned compiler/public Cargo cache from old source, rather than testing the current candidate.",
+      "all_added_paths": [
+        "A\t.github/workflows/pon-local-toolchain-export.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-local-toolchain-export.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9cd31d3a088bb73d5ebbe6737a440d2e64bff5b9/.github/workflows/pon-local-toolchain-export.yml",
+          "sha256": "ec744c1fbe7ffbd1568667cda47a9ff21e91f2478eff54170e08451ad856c406",
+          "bytes": 1792,
+          "events": {
+            "pull_request": {
+              "paths": [
+                ".github/workflows/pon-local-toolchain-export.yml"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "export",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "read"
+              },
+              "checkout_refs": [
+                "${{ github.event.pull_request.head.sha }}"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "tooling/pon-cpu-conservation-publication-20261011",
+      "head": "9e471e2369d99623e0320412a237454ed90ecd1b",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_publisher",
+      "reason": "Decompresses literal patch/commit bytes, verifies fixed634fd8ef/tree and creates the dated CPU-conservation branch; no native test stage.",
+      "all_added_paths": [
+        "A\t.github/workflows/pon-cpu-conservation-publication.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-cpu-conservation-publication.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/9e471e2369d99623e0320412a237454ed90ecd1b/.github/workflows/pon-cpu-conservation-publication.yml",
+          "sha256": "7bf8dfa03cc97a94b35bca3459c4de543d7888b648570c2b95833c66165f13ec",
+          "bytes": 14040,
+          "events": {
+            "push": {
+              "branches": [
+                "tooling/pon-cpu-conservation-publication-20261011"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "publish",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "write"
+              },
+              "checkout_refs": [
+                "5c25ed9eadbb10e8193d062ee92c14ef8a9db1b5"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "ci/pon-architecture-source-check-20261008",
+      "head": "a77d94db1525f5cfeec0433b27d9c0ceadde1e1d",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_export",
+      "reason": "Checks fixed Chain/Hepta commits and retains actual preflight exit plus source archives even on failure; historical provenance only.",
+      "all_added_paths": [
+        "A\t.github/workflows/pon-architecture-source-check.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-architecture-source-check.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/a77d94db1525f5cfeec0433b27d9c0ceadde1e1d/.github/workflows/pon-architecture-source-check.yml",
+          "sha256": "a42ec5e563c4d8599e5f87d871b19b8d686e59699f48ecfd33b169282c3aa622",
+          "bytes": 2308,
+          "events": {
+            "push": {
+              "branches": [
+                "ci/pon-architecture-source-check-20261008"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "exact-inputs",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "read"
+              },
+              "checkout_refs": [
+                "376676974c537064b65b5507cbee2e2c7de00c91",
+                "eceaa3697cc873142b73121e9e3fb868c4772357"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "diagnostic/pon-five-native-lab-20261009",
+      "head": "b74508f1db7e804436605a428773da41815f7c54",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_export",
+      "reason": "Despite native-lab name, only archives fixed6b34dfe3 Git objects/tree/identity and explicitly grants no tests or acceptance.",
+      "all_added_paths": [
+        "A\t.github/workflows/pon-five-native-lab.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-five-native-lab.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b74508f1db7e804436605a428773da41815f7c54/.github/workflows/pon-five-native-lab.yml",
+          "sha256": "733933fd29f25d4b867c5126208c0cac9caa748e858230d16cea0def19d2a0f7",
+          "bytes": 2608,
+          "events": {
+            "push": {
+              "branches": [
+                "diagnostic/pon-five-native-lab-20261009"
+              ],
+              "paths": [
+                ".github/workflows/pon-five-native-lab.yml"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "source",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "read"
+              },
+              "checkout_refs": [
+                "6b34dfe3c68f784465663dc68a48a938ecb7f356"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "perf/pon-branch-encoding-stage-20261009",
+      "head": "b879ab7f4bd1500c2f49e1580a1aa560524b880e",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "staging_blob_writer",
+      "reason": "Generates two branch-encoding files, tests staged source on x64/ARM64 and POSTs blobs without moving refs.",
+      "all_added_paths": [
+        "A\t.github/workflows/pon-branch-encoding-stage.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-branch-encoding-stage.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b879ab7f4bd1500c2f49e1580a1aa560524b880e/.github/workflows/pon-branch-encoding-stage.yml",
+          "sha256": "e47ec6bd00b6def6169944096d6b06c67eafe46ad89add6afc3df650e4bad819",
+          "bytes": 11691,
+          "events": {
+            "push": {
+              "branches": [
+                "perf/pon-branch-encoding-stage-20261009"
+              ],
+              "paths": [
+                ".github/workflows/pon-branch-encoding-stage.yml"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "stage",
+              "runs_on": "${{ matrix.runner }}",
+              "matrix": {
+                "runner": [
+                  "ubuntu-24.04",
+                  "ubuntu-24.04-arm"
+                ]
+              },
+              "effective_declared_permissions": {
+                "contents": "write"
+              },
+              "checkout_refs": [
+                "event-default"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "ci/pon-five-track-source-repair-20261012-r2",
+      "head": "b9b981ffc3aafb210f43395a9fe576f1fb691693",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_publisher",
+      "reason": "Author job edits an old observer fixture and pushes its dated r2 branch; dependent Ubuntu/macOS jobs then test the frozen candidate.",
+      "all_added_paths": [
+        "A\t.github/workflows/pon-five-track-source-repair-r2.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-five-track-source-repair-r2.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/b9b981ffc3aafb210f43395a9fe576f1fb691693/.github/workflows/pon-five-track-source-repair-r2.yml",
+          "sha256": "e26b2e3fca8f42f3270171cdb62f07fe155c2c98c50f801c936f234d520709ac",
+          "bytes": 5579,
+          "events": {
+            "push": {
+              "branches": [
+                "ci/pon-five-track-source-repair-20261012-r2"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "author",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "write"
+              },
+              "checkout_refs": [
+                "88c77a35d0841aa4ea53b474714d1030156184f5"
+              ]
+            },
+            {
+              "job": "native-hosts",
+              "runs_on": "${{ matrix.os }}",
+              "matrix": {
+                "os": [
+                  "ubuntu-24.04",
+                  "macos-15"
+                ]
+              },
+              "effective_declared_permissions": {
+                "contents": "read"
+              },
+              "checkout_refs": [
+                "${{ needs.author.outputs.source }}"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "ci/pon-five-track-native-export-20261011",
+      "head": "bccf7063f33d35d5be48640f68f6bbbf3a22c243",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_export",
+      "reason": "Exports historical pinned Rust compiler and locked public dependencies; read-only transport.",
+      "all_added_paths": [
+        "A\t.github/workflows/pon-native-offline-export.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-native-offline-export.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/bccf7063f33d35d5be48640f68f6bbbf3a22c243/.github/workflows/pon-native-offline-export.yml",
+          "sha256": "de7abe2e830adec0158987c2878b6995ae48240b5b315f854b2f1ed4be8fc4d6",
+          "bytes": 3073,
+          "events": {
+            "push": {
+              "branches": [
+                "ci/pon-five-track-native-export-20261011"
+              ],
+              "paths": [
+                ".github/workflows/pon-native-offline-export.yml"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "export",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "read"
+              },
+              "checkout_refs": [
+                "25d806087a74778262edddee5fcb48ef651e9265"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "work/chain-offline-build-transfer-20261006",
+      "head": "ce86ecd2019fc2344482db7e75a11f23b44e9a09",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_export",
+      "reason": "Exports historical source/compiler/dependency directories for offline transfer, with no qualification claim.",
+      "all_added_paths": [
+        "A\t.github/workflows/chain-offline-build-transfer.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/chain-offline-build-transfer.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ce86ecd2019fc2344482db7e75a11f23b44e9a09/.github/workflows/chain-offline-build-transfer.yml",
+          "sha256": "6489a96103dbee62cf79ded0947635734b0637eea4285b92dc4d69f7fcc1202b",
+          "bytes": 2789,
+          "events": {
+            "push": {
+              "branches": [
+                "work/chain-offline-build-transfer-20261006"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "export",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "read"
+              },
+              "checkout_refs": [
+                "babd9c6ef2065bfd824fc7602fc0a3a7a6dc4b51"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "dev/chain-observation-delivery-20261007",
+      "head": "cecee753c785b1a1ceb511c75ba85b1996b8bd13",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_publisher",
+      "reason": "Fetches reviewed repair blobs, retains original counterexamples, freezes changes on fixede87f92fd and non-force pushes the dated source-lineage branch.",
+      "all_added_paths": [
+        "A\t.github/workflows/chain-observation-delivery.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/chain-observation-delivery.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/cecee753c785b1a1ceb511c75ba85b1996b8bd13/.github/workflows/chain-observation-delivery.yml",
+          "sha256": "bcc3a6af3c86ad1552b1fa6548620898656451fb94cea46ddb2c2084b8b34f55",
+          "bytes": 12551,
+          "events": {
+            "push": {
+              "branches": [
+                "dev/chain-observation-delivery-20261007"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "deliver",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "write"
+              },
+              "checkout_refs": [
+                "${{ env.PRODUCT_BASE }}"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "ci/pon-pressure-window-source-20261010",
+      "head": "e4fbaee63d0d01edf8c7aefedff45083f1ee473f",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_publisher",
+      "reason": "Runs archived Python stages on fixed228b156d and publishes the dated pressure-window candidate before subsequent reader/native-service/lint stages.",
+      "all_added_paths": [
+        "A\t.github/pressure_stage_0.py",
+        "A\t.github/pressure_stage_1.py",
+        "A\t.github/pressure_stage_2.py",
+        "A\t.github/pressure_stage_3.py",
+        "A\t.github/workflows/pon-pressure-window-source.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-pressure-window-source.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e4fbaee63d0d01edf8c7aefedff45083f1ee473f/.github/workflows/pon-pressure-window-source.yml",
+          "sha256": "4a350b450a3c83cbab2fa5e0972af935382ef8d6b99078f8de0e763ec5e12f27",
+          "bytes": 6060,
+          "events": {
+            "push": {
+              "branches": [
+                "ci/pon-pressure-window-source-20261010"
+              ],
+              "paths": [
+                ".github/workflows/pon-pressure-window-source.yml"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "native",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "write"
+              },
+              "checkout_refs": [
+                "event-default"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "work/pon-nullable-blob-staging-20261010",
+      "head": "e594e4c20e8dab293f6e3a5a980e294a9ae0f719",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_publisher",
+      "reason": "Starts from fixed8f17e2a7, adds nullable-blob counterexamples and repair, freezes/tests the successor and publishes its dated branch.",
+      "all_added_paths": [
+        "A\t.github/nullable-blob-tests.rs.txt",
+        "A\t.github/workflows/pon-nullable-blob-staging.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-nullable-blob-staging.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/e594e4c20e8dab293f6e3a5a980e294a9ae0f719/.github/workflows/pon-nullable-blob-staging.yml",
+          "sha256": "f4db0d5ea8f6ad98583a2b8af6f983793e1060e14f298862c32c014bfe343fd3",
+          "bytes": 12260,
+          "events": {
+            "push": {
+              "branches": [
+                "work/pon-nullable-blob-staging-20261010"
+              ],
+              "paths": [
+                ".github/nullable-blob-tests.rs.txt",
+                ".github/workflows/pon-nullable-blob-staging.yml"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "native",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "write"
+              },
+              "checkout_refs": [
+                "event-default"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "fix/chain-owner-hotpath-delivery-20261006",
+      "head": "f0c69ed85d1b044d8b38112ed1ff10a5beed592c",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "historical_native_observation",
+      "reason": "Reads fixedbabd9c6e/tree, creates only a local observation branch, runs old native controls/lint and uploads results; no explicit remote ref write.",
+      "all_added_paths": [
+        "A\t.delivery/owner-hotpath/part0",
+        "A\t.delivery/owner-hotpath/part1",
+        "A\t.delivery/owner-hotpath/part2",
+        "A\t.github/workflows/owner-hotpath-delivery-20261006.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/owner-hotpath-delivery-20261006.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/f0c69ed85d1b044d8b38112ed1ff10a5beed592c/.github/workflows/owner-hotpath-delivery-20261006.yml",
+          "sha256": "7c262687f174d31798d4fab380c0419ea5cc66084e7447acfd266fd196866e60",
+          "bytes": 7358,
+          "events": {
+            "push": {
+              "branches": [
+                "fix/chain-owner-hotpath-delivery-20261006"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "prepare-and-test",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "read"
+              },
+              "checkout_refs": [
+                "babd9c6ef2065bfd824fc7602fc0a3a7a6dc4b51"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "work/pon-batched-confirmation-source-20261011",
+      "head": "f2b98437f9a3f37d587a2708bf1908a332faaf14",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "staging_blob_writer",
+      "reason": "PR-path job retrieves a fixed blob, materializes exact source objects and POSTs blobs with contents:write, without ref movement or native execution.",
+      "all_added_paths": [
+        "A\t.github/workflows/pon-batched-confirmation-source.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-batched-confirmation-source.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/f2b98437f9a3f37d587a2708bf1908a332faaf14/.github/workflows/pon-batched-confirmation-source.yml",
+          "sha256": "70d4110ed55a189d004f97091373960ab98cd5c07c60bab04073dbaa98a5aa3e",
+          "bytes": 3475,
+          "events": {
+            "pull_request": {
+              "paths": [
+                ".github/workflows/pon-batched-confirmation-source.yml"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "objects",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "write"
+              },
+              "checkout_refs": [
+                "657512e850e128c605830c4bb961706cb74d03b3"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "ci/pon-native-workbench-20261012-r1",
+      "head": "f4a60bb6bc0cb8eff1de14a0f3fe49a742120b87",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "source_export",
+      "reason": "Dated push plus PR-path exporter retains old compiler/registry bytes with no native execution or acceptance claim.",
+      "all_added_paths": [
+        "A\t.github/workflows/pon-native-workbench-export.yml"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-native-workbench-export.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/f4a60bb6bc0cb8eff1de14a0f3fe49a742120b87/.github/workflows/pon-native-workbench-export.yml",
+          "sha256": "ba7bdcdd7004c066cf23824bd2e84193309fec8cdee50c38962189184a4e3c77",
+          "bytes": 2579,
+          "events": {
+            "push": {
+              "branches": [
+                "ci/pon-native-workbench-20261012-r1"
+              ]
+            },
+            "pull_request": {
+              "paths": [
+                ".github/workflows/pon-native-workbench-export.yml"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "export",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "read"
+              },
+              "checkout_refs": [
+                "64e25442fb4f7fb4151ebbea9f8293b702c3d06e"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "repair/pon-history-cost-20261009",
+      "head": "ffbdf1b1b0626af25c64095a889118ff7c5305f5",
+      "disposition": "HISTORICAL_ONLY",
+      "active_adoption_required": false,
+      "category": "staging_blob_writer",
+      "reason": "One workflow exports old history source; another applies the recent-batch patch, tests x64/ARM64 and POSTs a blob only when both staged outputs match.",
+      "all_added_paths": [
+        "A\t.github/workflows/pon-history-source-readback.yml",
+        "A\t.github/workflows/pon-recent-batch-candidate.yml",
+        "A\tscripts/ci/recent-batch-candidate.patch"
+      ],
+      "workflows": [
+        {
+          "path": ".github/workflows/pon-history-source-readback.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ffbdf1b1b0626af25c64095a889118ff7c5305f5/.github/workflows/pon-history-source-readback.yml",
+          "sha256": "611bd11365ec9dc72f5c95e09ddd58bcf262d318d3b9d7b8659347c2924117bb",
+          "bytes": 1633,
+          "events": {
+            "push": {
+              "branches": [
+                "repair/pon-history-cost-20261009"
+              ],
+              "paths": [
+                ".github/workflows/pon-history-source-readback.yml"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "source",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "read"
+              },
+              "checkout_refs": [
+                "d4fe8d6f5fab99c05550570fa01ac21db73a4c7e"
+              ]
+            }
+          ]
+        },
+        {
+          "path": ".github/workflows/pon-recent-batch-candidate.yml",
+          "source_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/ffbdf1b1b0626af25c64095a889118ff7c5305f5/.github/workflows/pon-recent-batch-candidate.yml",
+          "sha256": "95ff2580070e2c3b8c3c405730a0a3c0a3962c8df271b788a31b3dd4785ae30b",
+          "bytes": 7339,
+          "events": {
+            "push": {
+              "branches": [
+                "repair/pon-history-cost-20261009"
+              ],
+              "paths": [
+                "scripts/ci/recent-batch-candidate.patch",
+                ".github/workflows/pon-recent-batch-candidate.yml"
+              ]
+            }
+          },
+          "jobs": [
+            {
+              "job": "native",
+              "runs_on": "${{ matrix.runner }}",
+              "matrix": {
+                "runner": [
+                  "ubuntu-24.04",
+                  "ubuntu-24.04-arm"
+                ]
+              },
+              "effective_declared_permissions": {
+                "contents": "read"
+              },
+              "checkout_refs": [
+                "${{ github.sha }}"
+              ]
+            },
+            {
+              "job": "retain-blob",
+              "runs_on": "ubuntu-24.04",
+              "matrix": {},
+              "effective_declared_permissions": {
+                "contents": "write"
+              },
+              "checkout_refs": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+test_exact_nine_controls_preserve_all_original_rosters (test_six_workpackage_native_rosters.DurableOutboundRosterTests.test_exact_nine_controls_preserve_all_original_rosters) ... ok
+test_invalid_roster_count_name_or_qualification_refused (test_six_workpackage_native_rosters.DurableOutboundRosterTests.test_invalid_roster_count_name_or_qualification_refused) ... ok
+test_missing_duplicate_or_unreviewed_registered_control_refused (test_six_workpackage_native_rosters.DurableOutboundRosterTests.test_missing_duplicate_or_unreviewed_registered_control_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.421s
+
+OK

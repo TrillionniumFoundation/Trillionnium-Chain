@@ -1,0 +1,193 @@
+{
+  "24648a6fdc": {
+    "decision": "COVERED_BY_SELECTED_SOURCE",
+    "reason": "Selected SQLite loader build owner pins both required source files and separately validates two optional files. Retain its reviewed Cargo 1.95 source contract; old corpus pins are historical identities, not current pins.",
+    "selected_anchors": [
+      "trillionnium/crates/trnm-sqlite-io-boundary/build.rs"
+    ]
+  },
+  "982131d30c": {
+    "decision": "COVERED_BY_SELECTED_SOURCE",
+    "reason": "Selected from-zero stage_format_copy preserves relative module layout and explicit #[path] dependencies, with named negative controls. Current M06 application-v6 and startup controls retain the compatible source changes.",
+    "selected_anchors": [
+      "scripts/ci/run_from_zero_native.py",
+      "scripts/ci/test_run_from_zero_native.py",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/application_v6_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/operator_pq_startup_tests.rs"
+    ]
+  },
+  "e42f85ed5b": {
+    "decision": "COMPATIBLE_SOURCE_PORTED_ALTERNATE_ENDPOINT_ARCHIVED",
+    "integration_commits": [
+      "572b9d6ec008b54cfb6e4184c59c2a21d0904bc8"
+    ],
+    "reason": "Source audit ported the 16KiB bounded ciphertext buffer with original deadline and durable debit before read, plus 16-entry redacted refusal diagnostics. Selected loopback namespace remains; alternate PQE1/PQR1 endpoint policy/CLI profile stays explicitly archived. Client/send_with_evidence interfaces remain compatible with the additive outbound port.",
+    "selected_anchors": [
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls.rs",
+      "config/pon/pq-native-tls-required-tests-v1.json"
+    ],
+    "qualification_limit": "Source audit reports static roster20 and rustfmt pass; final native qualification belongs to the composed source."
+  },
+  "bbdb1af203": {
+    "decision": "COMPATIBLE_SOURCE_PORTED",
+    "integration_commits": [
+      "OUTBOUND_CHECKPOINT"
+    ],
+    "reason": "Ported the create-only durable loopback outbound journal, exact signed request retention, pre-transmit durable attempt charging and sealed verified-reply type. Adapted to selected_client and current absolute-deadline transport evidence, retaining existing public-submit parent-recovery owner. Fresh outbound credential/journal namespace cannot silently share parent ownership. Preserved original52 plus supplemental11 controls and added independent actual-registry9/native +1 named E0308 type boundary.",
+    "selected_anchors": [
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/outbound.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/outbound/tests.rs",
+      "config/pon/pq-durable-outbound-required-tests-v1.json"
+    ],
+    "qualification_limit": "Local native9/9 and rustfmt pass on unchanged source bytes using OpenSSL3.5.7; pinned hosted3.5.9 and final composed-source qualification remain required. Preliminary doctest pending; never counted as PASS."
+  },
+  "5c148d4cd2": {
+    "decision": "COVERED_BY_SELECTED_SOURCE",
+    "reason": "The exact retained52 named native controls remain selected with eleven separate supplemental controls and named transcript readback. The old workflow blob identity is preserved only for its historical checkpoint; final source map requires canonical repinning.",
+    "selected_anchors": [
+      "config/pon/pq-system-required-tests-v1.json",
+      ".github/workflows/pon-pq-system-continuation.yml"
+    ]
+  },
+  "cab60041fe": {
+    "decision": "HISTORICAL_PIN_WITH_CURRENT_SUCCESSOR",
+    "reason": "This tip repins an old reviewed workflow blob. Keep its historical identity; selected workflow retains the52-control roster with current supplemental gates. Root must bind the composed workflow blob, not revive the old pin.",
+    "selected_anchors": [
+      "config/pon/pq-cross-branch-corpus-v1.json"
+    ]
+  },
+  "83735d9600": {
+    "decision": "HISTORICAL_PIN_WITH_CURRENT_SUCCESSOR",
+    "reason": "Old post-roster-correction workflow pin is superseded by selected exact52 plus11 execution ownership. Historical pin remains in Git; current source-binding is a final composed-source operation.",
+    "selected_anchors": [
+      "config/pon/pq-system-required-tests-v1.json",
+      "config/pon/pq-cross-branch-corpus-v1.json"
+    ]
+  },
+  "685e734590": {
+    "decision": "COVERED_BY_SELECTED_SOURCE",
+    "reason": "Older six-to-seven constants count is superseded by actual-registry full-name roster validation; current named selection does not infer success from a grep count.",
+    "selected_anchors": [
+      ".github/workflows/pon-pq-system-continuation.yml"
+    ]
+  },
+  "318a499759": {
+    "decision": "COVERED_BY_SELECTED_SOURCE_WITH_FINAL_REBIND",
+    "reason": "The public_cli inventory tuple is already present. Old exact source inventory pin must remain historical; final generated inventory and current corpus hash must be rebound after all ports.",
+    "selected_anchors": [
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "config/pon/pq-cross-branch-corpus-v1.json"
+    ]
+  },
+  "96d6977ee3": {
+    "decision": "HISTORICAL_PIN_WITH_CURRENT_SUCCESSOR",
+    "reason": "One old quantum runner blob repin contains no independent active implementation. Preserve its original identity and bind only the final canonical reviewed runner in the current corpus map.",
+    "selected_anchors": [
+      "config/pon/pq-cross-branch-corpus-v1.json"
+    ]
+  },
+  "013bd4bab7": {
+    "decision": "ALTERNATIVE_INITIAL_ROOT_OPTIMIZATION_ARCHIVED",
+    "reason": "root_projection, canonical_json and state_root_arithmetic share exact blobs with the01404de initial-root cluster. This optional immutable projection/decoder optimization is distinct from the selected FullRootArithmetic complete-state owner. Preserve source and failures without claiming implementation equivalence.",
+    "selected_anchors": [
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs"
+    ],
+    "cross_owner": "source_audit initial-root cluster mapping"
+  },
+  "fe9cd0ba3c": {
+    "decision": "ALTERNATIVE_INITIAL_ROOT_OPTIMIZATION_ARCHIVED",
+    "reason": "Same exact projection/decoder arithmetic cluster as013bd and01404de plus a pinned-normal workflow variant. Keep current complete-state owner; preserve original frozen workflow, source pins and observations as history.",
+    "selected_anchors": [
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs"
+    ]
+  },
+  "440a510ac5": {
+    "decision": "COVERED_BY_SELECTED_SOURCE",
+    "reason": "Selected observed! macro invokes FnOnce closures through the cfg(test) observation owner and uses the direct production path. It retains error propagation without the older mutable closure binding or weakened Clippy.",
+    "selected_anchors": [
+      "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs"
+    ]
+  },
+  "fb57ce7dcf": {
+    "decision": "EXACT_INERT_ARCHIVE_ALREADY_RETAINED",
+    "reason": "All four recovery library/source files are exactly present by reverse-diff check. Original PQN4 and W1 native identities remain historical reproduction evidence.",
+    "selected_anchors": []
+  },
+  "0865f74dee": {
+    "decision": "HISTORICAL_EVIDENCE_ONLY",
+    "reason": "No active core source delta. Preserve offline PQ evidence-gate-v2 review and HOLD limitations as original documentation; it grants no current activation.",
+    "selected_anchors": []
+  },
+  "b0b99d7bb7": {
+    "decision": "HISTORICAL_FAILURE_EVIDENCE_ONLY",
+    "reason": "No active core source delta. Interrupted candidate evidence and its unmet acceptance target remain failures in Git history, not completed qualification.",
+    "selected_anchors": []
+  },
+  "201e8f5e3b": {
+    "decision": "COVERED_BY_SELECTED_SOURCE",
+    "reason": "Current cold-reopen controls query active.tip with WHERE singleton=1 at the relevant selected sites. Compatible borrowing correction is retained; no fallback table supplies a false tip.",
+    "selected_anchors": [
+      "trillionnium/crates/trnm-pon-node/src/operator_pq_startup_tests.rs",
+      "trillionnium/crates/trnm-pon-node/tests/pq_application_migration_v6.rs"
+    ]
+  },
+  "b46d17be9b": {
+    "decision": "COVERED_BY_SELECTED_SOURCE",
+    "reason": "Selected NPQ5 controls reuse the shared test fixture rather than load the same module twice. Current later migration controls remain alongside it.",
+    "selected_anchors": [
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/application_v6_tests.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tasks_v5_tests.rs"
+    ]
+  },
+  "79d2e8dc3d": {
+    "decision": "COVERED_BY_SELECTED_SOURCE",
+    "reason": "Current startup transfer wire encodes the u64 amount in explicit little-endian bytes and retains the actual singleton tip query and borrowing fixes.",
+    "selected_anchors": [
+      "trillionnium/crates/trnm-pon-node/src/operator_pq_startup_tests.rs"
+    ]
+  },
+  "3dfdb1e08f": {
+    "decision": "COVERED_BY_SELECTED_SOURCE",
+    "reason": "Six of ten old source deltas are exact reverse-diff matches; remaining Rust changes are formatter variants against newer source. Selected handoff-v2 functionality remains. Final rustfmt must run on composed source with pinned1.95.",
+    "selected_anchors": [
+      "trillionnium/crates/trnm-pon-node/src/store/pq_migration_inventory.rs"
+    ]
+  },
+  "87056297a3": {
+    "decision": "COVERED_BY_SELECTED_SOURCE",
+    "reason": "Current PQ source-authority scanner and claim guard retain summary-only HOLD output and current CI source requirements. Cell integration additionally preserves versioned-name detection and examples-directory coverage. Retired parallel Cell PQ modules are not reintroduced as required paths.",
+    "selected_anchors": [
+      "scripts/ci/check_pq_research_integration.py",
+      "scripts/ci/pq_source_reader.py"
+    ]
+  },
+  "35cca89eb1": {
+    "decision": "COVERED_BY_SELECTED_SOURCE",
+    "reason": "Selected strict JSON controls reject exponent overflow and underflow, bool/numeric aliases and symlink input ambiguity while retaining finite controls. Newer frozen native scope remains authoritative; old scope is not restored.",
+    "selected_anchors": [
+      "scripts/ci/pq_source_reader.py"
+    ]
+  },
+  "9a96067817": {
+    "decision": "SELECTED_M06_SUCCESSOR_RETAINED_ALTERNATE_NODE_PROFILE_ARCHIVED",
+    "reason": "Selected M06 native PQ account-v2 and quota-v3 implementation remains with laterV4-V6 application/migration controls. Older parallel Node pq_accounts_v2/pq_quota_v3/native_packet codecs are alternative owners and stay archived; selected pq_application_v6 owns versioned frames. Compatible saturating deadline arithmetic already exists. Old quantum_daa model/native bridge is a research alternative; root preserves currentV3 fixed-target typed-error model and only reviewed compatible quantum additions.",
+    "selected_anchors": [
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+      "trillionnium/crates/trnm-mvcc-fee/tests/pq3_quota_authority.rs",
+      "trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs"
+    ],
+    "qualification_limit": "No claim that all77 historical paths are active or behaviorally identical; conflicting ownership and old standalone profiles are explicitly preserved in history."
+  },
+  "f7b044f654": {
+    "decision": "COVERED_BY_SELECTED_SOURCE",
+    "reason": "Current PQL5 witness owner rejects TEMP shadows, uses the stronger sqlite_* reserved-object policy, and rechecks committed-head acknowledgement ownership. Reviewed statically; no exploit reproduction was performed.",
+    "selected_anchors": [
+      "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness.rs"
+    ]
+  },
+  "e5e92ff2b0": {
+    "decision": "EXACT_COMPATIBLE_SOURCE_ALREADY_RETAINED",
+    "reason": "All four PQI1 native parity source deltas are exact reverse-diff matches, retaining PQG1 nonce, quarantine and all liabilities.",
+    "selected_anchors": []
+  }
+}

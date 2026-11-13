@@ -1,0 +1,559 @@
+[
+  {
+    "name": "fix/pq-source-pin-sqlite-loader-20261107",
+    "sha": "24648a6fdcac29c31c4676a4ef341ceb755ba9e1",
+    "commit_date": "2026-11-07T02:41:15-05:00",
+    "subject": "ci(pq): pin exact Cargo 1.95 SQLite loader source",
+    "unique_commits": 2,
+    "merge_base": "fa1f6a89cc812c5b6daca4e22464b777eeeb3e04",
+    "core_paths": [
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "trillionnium/crates/trnm-sqlite-io-boundary/build.rs"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1,
+      "implementation_or_tooling": 1
+    }
+  },
+  {
+    "name": "fix/chain-pq-format-copy-relative-module-20261107",
+    "sha": "982131d30c33cc474c60027702470c02698461b8",
+    "commit_date": "2026-11-07T01:19:10-05:00",
+    "subject": "test(ci): cover path-preserving W1 rustfmt copy",
+    "unique_commits": 9,
+    "merge_base": "b3f502cd245fd25b310f590f5ee6b13d803f03fa",
+    "core_paths": [
+      "scripts/ci/run_from_zero_native.py",
+      "scripts/ci/test_run_from_zero_native.py",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/application_v6_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/operator_pq_startup_tests.rs"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 2,
+      "implementation_or_tooling": 3
+    }
+  },
+  {
+    "name": "fix/chain-pq-transport-custody-gates-20261106-a864cf",
+    "sha": "e42f85ed5b1d0b4c9ebcfd8d5bd3247becb74959",
+    "commit_date": "2026-11-06T19:45:57-05:00",
+    "subject": "perf(chain): buffer metered TLS reads without renewing deadlines",
+    "unique_commits": 13,
+    "merge_base": "5c60f1387deccd3541f6710e567f65d2b82b55ba",
+    "core_paths": [
+      ".github/workflows/pon-pq-system-continuation.yml",
+      ".github/workflows/pon-recent-batch-acceptance.yml",
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "config/pon/pq-native-tls-endpoint-required-tests-v1.json",
+      "scripts/ci/check_pq_research_integration.py",
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/context.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/diagnostics.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/endpoint_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/io.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/io/buffer_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls_endpoint.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls_profile.rs",
+      "trillionnium/crates/trnm-pon-node/src/pq_tls_cli.rs",
+      "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
+      "trillionnium/crates/trnm-pon-node/tests/pq_tls_endpoint_cli.rs",
+      "trillionnium/crates/trnm-pon-node/tests/pq_tls_refusal_diagnostics.rs",
+      "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/refusal_diagnostics.rs",
+      "trillionnium/crates/trnm-pon-node/tests/pq_tls_witness_cli/support.rs"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 5,
+      "evidence_or_documentation": 2,
+      "implementation_or_tooling": 18
+    }
+  },
+  {
+    "name": "fix/chain-pq-roster-harness-20261107-6f8b",
+    "sha": "bbdb1af203674fec3923c522a49b3dcc6bbca6bc",
+    "commit_date": "2026-11-06T14:43:00-05:00",
+    "subject": "test(ci): bind PQ roster harness to the 61-control workflow",
+    "unique_commits": 7,
+    "merge_base": "5c60f1387deccd3541f6710e567f65d2b82b55ba",
+    "core_paths": [
+      ".github/workflows/pon-pq-system-continuation.yml",
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "config/pon/pq-system-required-tests-v1.json",
+      "scripts/ci/check_pq_research_integration.py",
+      "scripts/ci/test_six_workpackage_native_rosters.py",
+      "scripts/test_llm_runtime_release.py",
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/outbound.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/outbound/tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/tests.rs"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 5,
+      "evidence_or_documentation": 2,
+      "implementation_or_tooling": 7
+    }
+  },
+  {
+    "name": "fix/chain-pq-roster-52-current-head-20261106-gpt6",
+    "sha": "5c148d4cd2bfd493164f614f4029fe67337aff29",
+    "commit_date": "2026-11-06T02:34:23-05:00",
+    "subject": "fix(ci): pin exact updated workspace test workflow",
+    "unique_commits": 4,
+    "merge_base": "1f723bba961ec5f8d7e25e7b33db222dac7ef50c",
+    "core_paths": [
+      ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+      ".github/workflows/pon-pq-system-continuation.yml",
+      "config/pon/pq-cross-branch-corpus-v1.json"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 3
+    }
+  },
+  {
+    "name": "fix/pq-required-controls-52-20261106-gpt6",
+    "sha": "cab60041feb52ee58fe79a4a4b51f710e651a08e",
+    "commit_date": "2026-11-06T02:11:43-05:00",
+    "subject": "ci(pon): repin reviewed PQ control workflow blob",
+    "unique_commits": 2,
+    "merge_base": "b173c1f52d927522af67df30dd08ecfb2e3a1bb0",
+    "core_paths": [
+      ".github/workflows/pon-pq-system-continuation.yml",
+      "config/pon/pq-cross-branch-corpus-v1.json"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 2
+    }
+  },
+  {
+    "name": "fix/chain-pq-system-roster-52-20261106-gpt6",
+    "sha": "83735d9600a93c6fafe16442df72421a8239ec4e",
+    "commit_date": "2026-11-06T01:25:09-05:00",
+    "subject": "fix(ci): repin exact PQ workflow source after roster correction",
+    "unique_commits": 2,
+    "merge_base": "b173c1f52d927522af67df30dd08ecfb2e3a1bb0",
+    "core_paths": [
+      ".github/workflows/pon-pq-system-continuation.yml",
+      "config/pon/pq-cross-branch-corpus-v1.json"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 2
+    }
+  },
+  {
+    "name": "dot/pq-fix-branch-native-count-20261105",
+    "sha": "685e734590cf9fa2effa0ee12e851120e8737a9e",
+    "commit_date": "2026-11-05T03:30:03-05:00",
+    "subject": "fix(ci): bind native constants roster to seven passing tests",
+    "unique_commits": 1,
+    "merge_base": "6ee529046d295e3175f09112492abee373f1f54c",
+    "core_paths": [
+      ".github/workflows/pon-branch-encoding-acceptance.yml"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "dot/pq-fix-exact-inventory-link-20261105",
+    "sha": "318a49975900ae9cd375f76857a5631f783e2f07",
+    "commit_date": "2026-11-04T20:48:28-05:00",
+    "subject": "fix(pq-ci): rebind exact inventory blob pin after tuple repair [HOLD]",
+    "unique_commits": 2,
+    "merge_base": "81da33e609cb64b319e8cfcca7059e5c30d39044",
+    "core_paths": [
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1,
+      "evidence_or_documentation": 1,
+      "implementation_or_tooling": 1
+    }
+  },
+  {
+    "name": "fix/pq-system-ci-job-source-pin-20261104",
+    "sha": "96d6977ee3ffd9aedcc897cc6d6211334df5e107",
+    "commit_date": "2026-11-04T09:35:59-05:00",
+    "subject": "fix(pq-ci): pin exact new quantum test runner blob without weakening source checks",
+    "unique_commits": 1,
+    "merge_base": "ba9cf57c1ff615a854cf93accf4e153614de3548",
+    "core_paths": [
+      "config/pon/pq-cross-branch-corpus-v1.json"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 1
+    }
+  },
+  {
+    "name": "test/chain-pq-normal-source-merge-20261103",
+    "sha": "013bd4bab7a336b12e64ec90909f317f6f223e27",
+    "commit_date": "2026-11-03T18:39:37Z",
+    "subject": "Merge 264049e359caad8c4bc1bb54c9a63bac26bfa86f into 2e72a989d001cf51bd0aed0e1401526e45db31f1",
+    "unique_commits": 5,
+    "merge_base": "1c7e8ab7cd6a321cad4e6c7f7e8a197d7b3be14c",
+    "core_paths": [
+      ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+      ".github/workflows/pon-pq-system-continuation.yml",
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "config/pon/pq-system-required-tests-v1.json",
+      "formal/pon-nakamoto-v1/w1_hardened_verifier/README.md",
+      "formal/pon-nakamoto-v1/w1_hardened_verifier/src/main.rs",
+      "scripts/ci/check_pq_research_integration.py",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/full_root_arithmetic_tests.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_projection.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/canonical_json.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/operation_root_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs",
+      "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+      "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 5,
+      "evidence_or_documentation": 29,
+      "implementation_or_tooling": 20
+    }
+  },
+  {
+    "name": "test/chain-pq-normal-source-20261103",
+    "sha": "fe9cd0ba3ca85901adfa8e444465eb6d486e5f5c",
+    "commit_date": "2026-11-03T14:16:27-05:00",
+    "subject": "ci: verify pinned normal operation-root source and actual merge",
+    "unique_commits": 5,
+    "merge_base": "1c7e8ab7cd6a321cad4e6c7f7e8a197d7b3be14c",
+    "core_paths": [
+      ".github/workflows/pon-original-workspace-large-state-cpu.yml",
+      ".github/workflows/pon-pinned-normal-source-verification.yml",
+      ".github/workflows/pon-pq-system-continuation.yml",
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "config/pon/pq-system-required-tests-v1.json",
+      "formal/pon-nakamoto-v1/w1_hardened_verifier/README.md",
+      "formal/pon-nakamoto-v1/w1_hardened_verifier/src/main.rs",
+      "scripts/ci/check_pq_research_integration.py",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment/full_root_arithmetic_tests.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/root_projection.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/canonical_json.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/detached_admission/tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/large_input_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/operation_root_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache/root_arithmetic.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/pq_network.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/pq_rollback_witness/tests.rs",
+      "trillionnium/crates/trnm-protocol/src/pon_wire.rs",
+      "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic.rs",
+      "trillionnium/crates/trnm-protocol/src/pon_wire/state_root_arithmetic/tests.rs"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 6,
+      "evidence_or_documentation": 29,
+      "implementation_or_tooling": 20
+    }
+  },
+  {
+    "name": "fix/chain-pq-observation-fnonce-followup-20261104-gpt6",
+    "sha": "440a510ac5ea23662ac7dcbaff2eafd04f60b2fd",
+    "commit_date": "2026-11-03T11:13:25-05:00",
+    "subject": "fix(pq): invoke observed FnOnce closures without E0596 or weakened Clippy",
+    "unique_commits": 2,
+    "merge_base": "bebb1f3289cd7050fefde89ea8f2cf33c6c37588",
+    "core_paths": [
+      "trillionnium/crates/trnm-pon-node/src/pq_rollback_witness.rs"
+    ],
+    "residual_counts": {
+      "implementation_or_tooling": 1
+    }
+  },
+  {
+    "name": "recovery/library-pqn4-w1-native-20261103-gpt6",
+    "sha": "fb57ce7dcfa9b5e6740e9e387f4e8200f1120587",
+    "commit_date": "2026-11-03T05:36:17-05:00",
+    "subject": "docs(recovery): pin PQN4 native and W1 original identities and reproduction",
+    "unique_commits": 4,
+    "merge_base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "core_paths": [
+      "library-recovery/pqn4-w1-research-20261103/REPRODUCIBILITY.md",
+      "library-recovery/pqn4-w1-research-20261103/pq_cell_native_verify.c",
+      "library-recovery/pqn4-w1-research-20261103/test_pq_cell_native_verify.py",
+      "library-recovery/pqn4-w1-research-20261103/w1_four_replay_measurement_20261027.py"
+    ],
+    "residual_counts": {
+      "evidence_or_documentation": 1,
+      "implementation_or_tooling": 3
+    }
+  },
+  {
+    "name": "recovery/library-offline-pq-20261103",
+    "sha": "0865f74deee7194aa52820a8dd8077c986b1843a",
+    "commit_date": "2026-11-03T01:04:08-05:00",
+    "subject": "docs(security): preserve offline PQ evidence-gate v2 for review [HOLD]",
+    "unique_commits": 1,
+    "merge_base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "core_paths": [],
+    "residual_counts": {
+      "evidence_or_documentation": 4
+    }
+  },
+  {
+    "name": "docs/chain-pq-acceptance-recovery-20261101",
+    "sha": "b0b99d7bb7827b6cb97b49c1cabfb2d4e4ef7fec",
+    "commit_date": "2026-11-01T05:11:36-05:00",
+    "subject": "docs(pq): preserve interrupted candidate evidence and acceptance target",
+    "unique_commits": 1,
+    "merge_base": "0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0",
+    "core_paths": [],
+    "residual_counts": {
+      "evidence_or_documentation": 70
+    }
+  },
+  {
+    "name": "fix/chain-pq-active-tip-test-query-20261031",
+    "sha": "201e8f5e3b105ce81112a876224fadd5e08eebe7",
+    "commit_date": "2026-10-31T06:02:44-04:00",
+    "subject": "test(pq): query actual active.tip in cold-reopen controls",
+    "unique_commits": 2,
+    "merge_base": "8eb9bbc574cd8d2de0f84a9263eab2dc241ab177",
+    "core_paths": [
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "trillionnium/crates/trnm-pon-node/src/operator_pq_startup_tests.rs"
+    ],
+    "residual_counts": {
+      "implementation_or_tooling": 2
+    }
+  },
+  {
+    "name": "fix/chain-pq-shared-npq5-test-fixture-clippy-20261031",
+    "sha": "b46d17be9b7aaa837b791812720ea3fe5b8d4184",
+    "commit_date": "2026-10-31T05:56:38-04:00",
+    "subject": "fix(pq): reuse the NPQ5 test fixture rather than duplicate module load",
+    "unique_commits": 2,
+    "merge_base": "faa9d5ae99adadb5933cd14ccc6a78d821d5f4c8",
+    "core_paths": [
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/application_v6_tests.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tasks_v5_tests.rs"
+    ],
+    "residual_counts": {
+      "implementation_or_tooling": 2
+    }
+  },
+  {
+    "name": "fix/chain-pq-native-ci-regressions-20261031",
+    "sha": "79d2e8dc3dc26770249af1c2961632b2134cce93",
+    "commit_date": "2026-10-31T05:40:58-04:00",
+    "subject": "fix(pq): encode startup transfer amount in protocol little-endian wire",
+    "unique_commits": 3,
+    "merge_base": "8eb9bbc574cd8d2de0f84a9263eab2dc241ab177",
+    "core_paths": [
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "trillionnium/crates/trnm-pon-node/src/operator_pq_startup_tests.rs"
+    ],
+    "residual_counts": {
+      "implementation_or_tooling": 2
+    }
+  },
+  {
+    "name": "fix/chain-pq-hepta-handoff-v2-20261031",
+    "sha": "3dfdb1e08f3cb64471c5b7e0748ac337e2a02010",
+    "commit_date": "2026-10-31T03:17:07-04:00",
+    "subject": "style(pq): apply exact CI rustfmt diff without security semantic changes",
+    "unique_commits": 10,
+    "merge_base": "b2f960b97f48ba5286f185740c280591385fef78",
+    "core_paths": [
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/canonical_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/funding/tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/storage_service/tests.rs",
+      "trillionnium/crates/trnm-research-protocol/src/hepta_handoff.rs",
+      "trillionnium/crates/trnm-research-protocol/src/hepta_handoff/pq.rs",
+      "trillionnium/crates/trnm-research-protocol/src/lib.rs",
+      "trillionnium/crates/trnm-research-protocol/tests/hepta_handoff_pq.rs"
+    ],
+    "residual_counts": {
+      "implementation_or_tooling": 10
+    }
+  },
+  {
+    "name": "audit/chain-pq-authority-surfaces-20261031",
+    "sha": "87056297a3d23b833015bf13ee2bf7f57d809e80",
+    "commit_date": "2026-10-31T03:11:24-04:00",
+    "subject": "fix(pq): keep CI source inventory output summary-only without losing HOLD status",
+    "unique_commits": 9,
+    "merge_base": "b2f960b97f48ba5286f185740c280591385fef78",
+    "core_paths": [
+      "scripts/ci/ci_job.sh",
+      "scripts/ci/pq_authority_surface_scan.py",
+      "scripts/ci/pq_chain_claim_guard.py",
+      "scripts/ci/test_pq_authority_surface_scan.py",
+      "scripts/ci/test_pq_chain_claim_guard.py"
+    ],
+    "residual_counts": {
+      "evidence_or_documentation": 2,
+      "checks_or_configuration": 5
+    }
+  },
+  {
+    "name": "audit/pq-policy-json-finite-float-20261030",
+    "sha": "35cca89eb13c6246a7e8893070b880bfd977adce",
+    "commit_date": "2026-10-30T22:51:28-04:00",
+    "subject": "test(pq): cover JSON exponent overflow and underflow with finite controls",
+    "unique_commits": 5,
+    "merge_base": "dd6e1c3cbeacbdc532b0679297835b3a0aac78f0",
+    "core_paths": [
+      "scripts/ci/check_repository.py",
+      "scripts/ci/test_repository.py"
+    ],
+    "residual_counts": {
+      "checks_or_configuration": 2
+    }
+  },
+  {
+    "name": "test/chain-native-pq-quota-v3-ci-20261028",
+    "sha": "9a96067817d20b69d19e4e222bc207242a9c89d4",
+    "commit_date": "2026-10-27T22:08:50-04:00",
+    "subject": "Bind native PQ regression to an explicit reviewed source profile",
+    "unique_commits": 7,
+    "merge_base": "d96138532b656d767d1ef46f6db86e7effae485e",
+    "core_paths": [
+      ".gitattributes",
+      ".github/workflows/pon-native-pq-accounts-v2-research.yml",
+      ".github/workflows/pon-native-pq-quota-v3-research.yml",
+      ".github/workflows/pon-recent-batch-acceptance.yml",
+      "config/pon-recent-batch-source-profiles-v1.json",
+      "formal/pon-nakamoto-v1/quantum_daa.py",
+      "formal/pon-nakamoto-v1/quantum_daa_native.rs",
+      "formal/pon-nakamoto-v1/test_quantum_daa.py",
+      "scripts/ci/check_ci_contract.py",
+      "scripts/ci/check_recent_batch_source_profile.py",
+      "scripts/ci/ci_job.sh",
+      "scripts/ci/fixtures/pon_recent_batch_original_workflow.yml",
+      "scripts/ci/run_native_pq_accounts_v2.py",
+      "scripts/ci/run_native_pq_quota_v3.py",
+      "scripts/ci/test_native_pq_accounts_v2_research.py",
+      "scripts/ci/test_native_pq_quota_v3_research.py",
+      "scripts/ci/test_recent_batch_source_profile.py",
+      "scripts/pon_pq_native_fixtures.py",
+      "trillionnium/Cargo.lock",
+      "trillionnium/crates/trnm-mvcc-fee/Cargo.toml",
+      "trillionnium/crates/trnm-mvcc-fee/src/continuity_v1.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/migration.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_accounts_v2/tests.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_native_v1.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_native_v1/tests.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_transfer.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/pon_executor/pq_transfer/tests.rs",
+      "trillionnium/crates/trnm-mvcc-fee/src/repeated_sender_tests.rs",
+      "trillionnium/crates/trnm-mvcc-fee/tests/pq3_quota_authority.rs",
+      "trillionnium/crates/trnm-pon-node/Cargo.toml",
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+      "trillionnium/crates/trnm-pon-node/src/ancestry_index.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+      "trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "trillionnium/crates/trnm-pon-node/src/native_packet.rs",
+      "trillionnium/crates/trnm-pon-node/src/pq_accounts_v2.rs",
+      "trillionnium/crates/trnm-pon-node/src/pq_authority.rs",
+      "trillionnium/crates/trnm-pon-node/src/pq_authority_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/pq_native_v1.rs",
+      "trillionnium/crates/trnm-pon-node/src/pq_quota_v3.rs",
+      "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/admission_parent_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/authenticated_migration/growth_rehearsal.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/funding/payment.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/growth.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/growth/tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/mempool.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_authenticated/arithmetic_cache.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/native_fixed_blob_tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/pq_accounts_v2.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/pq_native_v1.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/pq_quota_v3.rs",
+      "trillionnium/crates/trnm-pon-node/src/store/root_rejection_cache_tests.rs",
+      "trillionnium/crates/trnm-pon-node/tests/model_composition_v4.rs",
+      "trillionnium/crates/trnm-pon-node/tests/native_pq_v1.rs",
+      "trillionnium/crates/trnm-pon-node/tests/native_pq_v2.rs",
+      "trillionnium/crates/trnm-pon-node/tests/native_pq_v3.rs",
+      "trillionnium/crates/trnm-protocol/src/lib.rs",
+      "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2.rs",
+      "trillionnium/crates/trnm-protocol/src/pq_native_accounts_v2/tests.rs",
+      "trillionnium/crates/trnm-protocol/src/pq_native_transfer_v1.rs",
+      "trillionnium/crates/trnm-protocol/src/pq_transfer.rs",
+      "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/duplicate-hint.bin",
+      "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/generation-two.bin",
+      "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/low-fee.bin",
+      "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/manifest.json",
+      "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/nonce-two.bin",
+      "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/same-statement-second-signature.bin",
+      "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/transfer.bin",
+      "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/wrong-network.bin",
+      "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/wrong-public.der",
+      "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/wrong-purpose.bin"
+    ],
+    "residual_counts": {
+      "implementation_or_tooling": 64,
+      "checks_or_configuration": 13,
+      "evidence_or_documentation": 196
+    }
+  },
+  {
+    "name": "research/pq-pql5-temp-schema-ack-fence-20261027",
+    "sha": "f7b044f654b8865b41433dedeb2788f771aea572",
+    "commit_date": "2026-10-27T01:54:49-04:00",
+    "subject": "fix(research/pql5): reject TEMP witness shadows and fence committed head acknowledgements",
+    "unique_commits": 1,
+    "merge_base": "192480f0c5e1fa6077c8c3bc2b9e1790a02c0552",
+    "core_paths": [
+      "formal/pon-nakamoto-v1/pq_pql5_quorum.py",
+      "formal/pon-nakamoto-v1/test_pq_pql5_quorum.py"
+    ],
+    "residual_counts": {
+      "implementation_or_tooling": 2
+    }
+  },
+  {
+    "name": "research/pq-preserved-liability-native-import-20261026",
+    "sha": "e5e92ff2b055b198c087631eb48b4b9ad28e0ad0",
+    "commit_date": "2026-10-26T20:45:23-04:00",
+    "subject": "research(pq): preserve PQG1 nonce, quarantine and all liabilities in PQI1 native parity",
+    "unique_commits": 1,
+    "merge_base": "f4050776006ee67de1075fb247df7a848fb12447",
+    "core_paths": [
+      "formal/pon-nakamoto-v1/pq_import_projection.py",
+      "formal/pon-nakamoto-v1/pqi1_native.c",
+      "formal/pon-nakamoto-v1/test_pq_import_projection.py",
+      "formal/pon-nakamoto-v1/test_pq_native_import.py"
+    ],
+    "residual_counts": {
+      "evidence_or_documentation": 5,
+      "implementation_or_tooling": 4
+    }
+  }
+]

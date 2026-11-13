@@ -1,0 +1,54 @@
+test_absent_search_still_preserves_the_full_planned_denominator (__main__.AttemptJournalTests.test_absent_search_still_preserves_the_full_planned_denominator) ... ok
+test_acknowledgement_cannot_claim_unwritten_or_partial_prefix (__main__.AttemptJournalTests.test_acknowledgement_cannot_claim_unwritten_or_partial_prefix) ... ok
+test_append_fsync_failure_poisoning_propagates_and_forbids_more_records (__main__.AttemptJournalTests.test_append_fsync_failure_poisoning_propagates_and_forbids_more_records) ... ok
+test_attempt_error_keeps_spent_time_and_denominator (__main__.AttemptJournalTests.test_attempt_error_keeps_spent_time_and_denominator) ... ok
+test_crash_after_durable_start_is_unknown_not_unspent (__main__.AttemptJournalTests.test_crash_after_durable_start_is_unknown_not_unspent) ... ok
+test_delete_duplicate_or_reorder_records_cannot_keep_success (__main__.AttemptJournalTests.test_delete_duplicate_or_reorder_records_cannot_keep_success) ... ok
+test_driver_final_fsync_failure_has_no_nested_completed_outputs (__main__.AttemptJournalTests.test_driver_final_fsync_failure_has_no_nested_completed_outputs) ... ERROR
+test_driver_loading_failure_keeps_original_requested_batch_and_tiles (__main__.AttemptJournalTests.test_driver_loading_failure_keeps_original_requested_batch_and_tiles) ... ok
+test_every_real_completed_attempt_replays_without_claiming_cell_acceptance (__main__.AttemptJournalTests.test_every_real_completed_attempt_replays_without_claiming_cell_acceptance) ... ok
+test_existing_evidence_is_never_overwritten (__main__.AttemptJournalTests.test_existing_evidence_is_never_overwritten) ... ok
+test_external_endpoint_refuses_a_truncated_or_rewritten_suffix (__main__.AttemptJournalTests.test_external_endpoint_refuses_a_truncated_or_rewritten_suffix) ... ok
+test_false_trace_with_a_matching_ticket_still_requires_full_arithmetic (__main__.AttemptJournalTests.test_false_trace_with_a_matching_ticket_still_requires_full_arithmetic) ... ok
+test_loaded_diagnostics_cannot_be_relabelled_after_disk_source_changes (__main__.AttemptJournalTests.test_loaded_diagnostics_cannot_be_relabelled_after_disk_source_changes) ... ok
+test_plan_cannot_shrink_tiles_or_use_boolean_numbers (__main__.AttemptJournalTests.test_plan_cannot_shrink_tiles_or_use_boolean_numbers) ... ok
+test_real_exhaustion_retains_miss_and_four_not_run_tiles (__main__.AttemptJournalTests.test_real_exhaustion_retains_miss_and_four_not_run_tiles) ... ok
+test_same_nonce_after_first_hit_and_skipped_nonces_are_refused (__main__.AttemptJournalTests.test_same_nonce_after_first_hit_and_skipped_nonces_are_refused) ... ok
+test_structural_check_cannot_claim_arithmetic_replay (__main__.AttemptJournalTests.test_structural_check_cannot_claim_arithmetic_replay) ... ok
+test_truncated_tail_is_visible_and_never_complete (__main__.AttemptJournalTests.test_truncated_tail_is_visible_and_never_complete) ... ok
+test_unknown_fields_boolean_clocks_and_false_endings_are_refused (__main__.AttemptJournalTests.test_unknown_fields_boolean_clocks_and_false_endings_are_refused) ... ok
+test_wrong_material_or_external_context_cannot_relabel_math (__main__.AttemptJournalTests.test_wrong_material_or_external_context_cannot_relabel_math) ... ok
+
+======================================================================
+ERROR: test_driver_final_fsync_failure_has_no_nested_completed_outputs (__main__.AttemptJournalTests.test_driver_final_fsync_failure_has_no_nested_completed_outputs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/formal/pon-nakamoto-v1/test_useful_cell_attempt_journal_v1.py", line 269, in test_driver_final_fsync_failure_has_no_nested_completed_outputs
+    driver.run(args)
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py", line 172, in run
+    return run_admitted(args, output_dir, records, deadline, execution)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py", line 218, in run_admitted
+    raw, freeze_time = elapsed(lambda: relation.freeze_contract(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py", line 55, in elapsed
+    value = call()
+            ^^^^^^
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/formal/pon-nakamoto-v1/experiments/useful_cell_relation_v1.py", line 218, in <lambda>
+    raw, freeze_time = elapsed(lambda: relation.freeze_contract(
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/formal/pon-nakamoto-v1/useful_cell_relation_v1.py", line 386, in freeze_contract
+    _verify_upstream(model, rows, identity)
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/formal/pon-nakamoto-v1/useful_cell_relation_v1.py", line 313, in _verify_upstream
+    reproduced = json.loads(_replayed_source(source, identity['program_sha256']))
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/formal/pon-nakamoto-v1/useful_cell_relation_v1.py", line 300, in _replayed_source
+    require(result.returncode == 0, 'SOURCE_REPLAY_UNAVAILABLE')
+  File "/workspace/scratch/415d5ba2202d/ci-fixes/formal/pon-nakamoto-v1/useful_cell_relation_v1.py", line 83, in require
+    raise ValueError(code)
+ValueError: SOURCE_REPLAY_UNAVAILABLE
+
+----------------------------------------------------------------------
+Ran 20 tests in 32.020s
+
+FAILED (errors=1)

@@ -1,0 +1,51 @@
+[
+  {
+    "command": [
+      "python3",
+      "scripts/ci/test_ci_contract.py",
+      "PqDurableOutboundControlTests",
+      "PqSystemSupplementalControlTests"
+    ],
+    "exit_code": 0,
+    "log": "final-source-ci-contracts.log"
+  },
+  {
+    "command": [
+      "python3",
+      "scripts/ci/test_six_workpackage_native_rosters.py",
+      "DurableOutboundRosterTests"
+    ],
+    "exit_code": 0,
+    "log": "final-source-native-rosters.log"
+  },
+  {
+    "command": [
+      "/workspace/scratch/415d5ba2202d/toolchain/cargo/bin/rustfmt",
+      "+1.95.0",
+      "--edition",
+      "2021",
+      "--config",
+      "skip_children=true",
+      "--check",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls/tests.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/outbound.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/outbound/tests.rs",
+      "trillionnium/crates/trnm-pon-node/tests/operator_actors.rs",
+      "trillionnium/crates/trnm-pon-node/src/store.rs",
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs"
+    ],
+    "exit_code": 0,
+    "log": "final-source-rustfmt.log"
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "log": "final-source-diff-check.log"
+  }
+]

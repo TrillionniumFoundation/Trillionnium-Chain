@@ -1,0 +1,57 @@
+{
+  "reference": "e531765329ef1eb3698222e8ab0fb4d141197c63",
+  "paths": [
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/measure_step.py",
+      "exists": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/backend-manifest.json",
+      "exists": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/install_backend.py",
+      "exists": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/build_guest.py",
+      "exists": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/host_linker_bfd.sh",
+      "exists": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/Cargo.toml",
+      "exists": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/guests/w1-risc0/check_observations.py",
+      "exists": true
+    },
+    {
+      "path": "trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_complete_relation.rs",
+      "exists": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/Cargo.toml",
+      "exists": true
+    },
+    {
+      "path": "formal/pon-nakamoto-v1/w1_node_adapter_research/tests/test_receiver_comparison.py",
+      "exists": true
+    },
+    {
+      "path": "research/sp2027/02_receiver_liveness/reader_v2",
+      "exists": true
+    },
+    {
+      "path": "scripts/ci/run_sp27_strata_controls.py",
+      "exists": true
+    },
+    {
+      "path": "scripts/ci/run_sp27_receiver_controls.py",
+      "exists": true
+    }
+  ]
+}
