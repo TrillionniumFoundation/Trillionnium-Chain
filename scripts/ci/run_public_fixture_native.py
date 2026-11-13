@@ -108,6 +108,35 @@ def process_identity(pid: int) -> dict:
             'uid': before.st_uid, 'gid': before.st_gid}
 
 
+@contextlib.contextmanager
+def hold_supervisor_directories(pids: tuple[int, ...]):
+    """Keep proc directory dentries referenced for the entire launch and binding."""
+    # proc inode numbers are allocated when dentries are instantiated. An open
+    # directory reference prevents ordinary cache reclamation from changing the
+    # inode observed by the existing fresh identity checks. It grants no verdict:
+    # the original pidfds, start times, owners, source and ELF checks still apply.
+    with contextlib.ExitStack() as held:
+        for pid in pids:
+            require(type(pid) is int and pid > 1, 'PUBLIC_FIXTURE_OWNER_PID')
+            fd = os.open(Path('/proc') / str(pid),
+                         os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC | os.O_NOFOLLOW)
+            held.callback(os.close, fd)
+            identity = process_identity(pid)
+            observed = os.fstat(fd)
+            require(stat.S_ISDIR(observed.st_mode)
+                    and (observed.st_dev, observed.st_ino, observed.st_uid, observed.st_gid)
+                    == (identity['device'], identity['inode'], identity['uid'], identity['gid']),
+                    'PUBLIC_FIXTURE_SUPERVISOR_DIRECTORY_CHANGED')
+        yield
+
+
+def require_supervisor_identity(expected: dict) -> None:
+    observed = process_identity(expected['pid'])
+    if observed != expected:
+        raise ValueError('PUBLIC_FIXTURE_SUPERVISOR_CHANGED:' + json.dumps(
+            {'expected': expected, 'observed': observed}, sort_keys=True, separators=(',', ':')))
+
+
 def parent_binary(pid: int, binary: Path) -> dict:
     """Bind the actual waiting libtest process, not a caller-named executable."""
     process_identity(pid)
@@ -211,7 +240,7 @@ def validate_preparation(out: Path) -> dict:
             and supervisors[0]['process']['pid'] != supervisors[1]['process']['pid'],
             'PUBLIC_FIXTURE_TWO_SUPERVISORS_REQUIRED')
     for row in supervisors:
-        require(row['process'] == process_identity(row['process']['pid']), 'PUBLIC_FIXTURE_SUPERVISOR_CHANGED')
+        require_supervisor_identity(row['process'])
     require(value.get('binary') == parent_binary(value['parent_pid'], Path(value['binary']['path'])),
             'PUBLIC_FIXTURE_PREPARED_ELF_CHANGED')
     require(value.get('native_cwd') == parent_cwd(value['parent_pid']),
@@ -254,10 +283,10 @@ def run_native_process(command: list[str], log: Path, *, environment: dict,
         owners = {}
         for row in supervisors:
             identity = row['process']
-            require(process_identity(identity['pid']) == identity, 'PUBLIC_FIXTURE_SUPERVISOR_CHANGED')
+            require_supervisor_identity(identity)
             fd = os.pidfd_open(identity['pid'], 0)
             fds.append(fd)
-            require(process_identity(identity['pid']) == identity, 'PUBLIC_FIXTURE_SUPERVISOR_CHANGED')
+            require_supervisor_identity(identity)
             poll.register(fd, select.POLLIN | select.POLLHUP | select.POLLERR)
             owners[fd] = row['role']
         require(not poll.poll(0), 'PUBLIC_FIXTURE_SUPERVISOR_ALREADY_EXITED')
@@ -464,25 +493,26 @@ def bind_execution(prepared: dict, out: Path) -> dict:
 
 def launch(out: Path, binary: Path, pid: int, *, target: str, selector: str,
            cli_binary: Path | None) -> dict:
-    prepared = prepare(out, binary, pid, target=target, selector=selector, cli_binary=cli_binary)
-    require(prepared['completed'], 'PUBLIC_FIXTURE_PREPARATION_FAILED')
-    import run_from_zero_host as host
-    command = ['python3', SCRIPT, '--out', str(out)]
-    result = {'schema': 'trnm-ci-public-fixture-host-launch-v1', 'passed': False,
-              'host_exit': None, 'binding': None, 'failures': []}
-    try:
-        with (out / 'launcher.log').open('x') as stream, contextlib.redirect_stdout(stream):
-            result['host_exit'] = host.outer(command)
-        controller, _ = history.load_object(out.with_name(out.name + '-host') / 'controller-result.json')
-        require(result['host_exit'] == 0 and controller.get('passed') is True
-                and controller.get('command_argv') == command, 'PUBLIC_FIXTURE_HOST_EXECUTION_REQUIRED')
-        result['binding'] = bind_execution(prepared, out)
-        result['passed'] = True
-    except BaseException as error:
-        result['failures'].append(type(error).__name__ + ':' + str(error))
-    finally:
-        write_new(out / 'launch.json', result)
-    return result
+    with hold_supervisor_directories((pid, os.getpid())):
+        prepared = prepare(out, binary, pid, target=target, selector=selector, cli_binary=cli_binary)
+        require(prepared['completed'], 'PUBLIC_FIXTURE_PREPARATION_FAILED')
+        import run_from_zero_host as host
+        command = ['python3', SCRIPT, '--out', str(out)]
+        result = {'schema': 'trnm-ci-public-fixture-host-launch-v1', 'passed': False,
+                  'host_exit': None, 'binding': None, 'failures': []}
+        try:
+            with (out / 'launcher.log').open('x') as stream, contextlib.redirect_stdout(stream):
+                result['host_exit'] = host.outer(command)
+            controller, _ = history.load_object(out.with_name(out.name + '-host') / 'controller-result.json')
+            require(result['host_exit'] == 0 and controller.get('passed') is True
+                    and controller.get('command_argv') == command, 'PUBLIC_FIXTURE_HOST_EXECUTION_REQUIRED')
+            result['binding'] = bind_execution(prepared, out)
+            result['passed'] = True
+        except BaseException as error:
+            result['failures'].append(type(error).__name__ + ':' + str(error))
+        finally:
+            write_new(out / 'launch.json', result)
+        return result
 
 
 class FixtureSignal(Exception):

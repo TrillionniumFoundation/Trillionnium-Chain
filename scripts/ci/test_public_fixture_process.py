@@ -202,6 +202,158 @@ class PublicFixtureProcessControls(unittest.TestCase):
         self.assertIn('TimeoutExpired', result['cleanup_errors'][1])
         self.assertFalse(fixture.native_process_succeeded(result, command, 0.1, guards, self.folder))
 
+    def test_proc_directory_references_hold_actual_owners_and_close_on_all_exits(self):
+        pids = tuple(self.owner()[1]['proc_pid'] for _ in range(2))
+        real_open = os.open
+        for fail in (False, True):
+            descriptors = []
+
+            def opened(*args, **kwargs):
+                fd = real_open(*args, **kwargs)
+                descriptors.append(fd)
+                return fd
+
+            def body():
+                with fixture.hold_supervisor_directories(pids):
+                    self.assertEqual(len(descriptors), 2)
+                    for pid, fd in zip(pids, descriptors, strict=True):
+                        identity = fixture.process_identity(pid)
+                        observed = os.fstat(fd)
+                        self.assertEqual((observed.st_dev, observed.st_ino),
+                                         (identity['device'], identity['inode']))
+                        self.assertFalse(os.get_inheritable(fd))
+                    if fail:
+                        raise ValueError('synthetic body failure')
+
+            with self.subTest(fail=fail), patch.object(fixture.os, 'open', side_effect=opened):
+                if fail:
+                    with self.assertRaisesRegex(ValueError, 'synthetic body failure'):
+                        body()
+                else:
+                    body()
+            for fd in descriptors:
+                with self.assertRaises(OSError):
+                    os.fstat(fd)
+
+    def test_second_proc_directory_open_failure_releases_first_without_entering(self):
+        pids = tuple(self.owner()[1]['proc_pid'] for _ in range(2))
+        real_open = os.open
+        descriptors = []
+        entered = Mock()
+
+        def opened(*args, **kwargs):
+            if descriptors:
+                raise PermissionError('synthetic second directory refusal')
+            fd = real_open(*args, **kwargs)
+            descriptors.append(fd)
+            return fd
+
+        with patch.object(fixture.os, 'open', side_effect=opened), \
+                self.assertRaisesRegex(PermissionError, 'synthetic second directory refusal'):
+            with fixture.hold_supervisor_directories(pids):
+                entered()
+        entered.assert_not_called()
+        self.assertEqual(len(descriptors), 1)
+        with self.assertRaises(OSError):
+            os.fstat(descriptors[0])
+
+    def test_proc_directory_mismatch_refuses_and_releases_reference(self):
+        pid = self.owner()[1]['proc_pid']
+        original = fixture.process_identity(pid)
+        changed = dict(original, inode=original['inode'] + 1)
+        real_open = os.open
+        descriptors = []
+        entered = Mock()
+
+        def opened(*args, **kwargs):
+            fd = real_open(*args, **kwargs)
+            descriptors.append(fd)
+            return fd
+
+        with patch.object(fixture.os, 'open', side_effect=opened), \
+                patch.object(fixture, 'process_identity', return_value=changed), \
+                self.assertRaisesRegex(ValueError, 'PUBLIC_FIXTURE_SUPERVISOR_DIRECTORY_CHANGED'):
+            with fixture.hold_supervisor_directories((pid,)):
+                entered()
+        entered.assert_not_called()
+        self.assertEqual(len(descriptors), 1)
+        with self.assertRaises(OSError):
+            os.fstat(descriptors[0])
+
+    def test_every_supervisor_identity_field_remains_exact_and_mismatch_is_recorded(self):
+        original = self.owner()[1]['process']
+        with patch.object(fixture, 'process_identity', return_value=original):
+            fixture.require_supervisor_identity(original)
+            for key in original:
+                changed = dict(original, **{key: original[key] + 1})
+                with self.subTest(field=key), self.assertRaises(ValueError) as error:
+                    fixture.require_supervisor_identity(changed)
+                prefix, raw = str(error.exception).split(':', 1)
+                self.assertEqual(prefix, 'PUBLIC_FIXTURE_SUPERVISOR_CHANGED')
+                diagnostic = json.loads(raw)
+                self.assertEqual(diagnostic, {'expected': changed, 'observed': original})
+            with self.assertRaises(ValueError):
+                fixture.require_supervisor_identity(dict(original, unexpected=True))
+
+    def test_launch_holds_directory_references_through_final_binding_and_receipt(self):
+        import run_from_zero_host as host
+        out = self.folder / 'launch'
+        binary = self.folder / 'unexecuted-elf'
+        prepared = {'completed': True}
+        command = ['python3', fixture.SCRIPT, '--out', str(out)]
+        stages = []
+        active = False
+        real_write = fixture.write_new
+
+        @fixture.contextlib.contextmanager
+        def held(pids):
+            nonlocal active
+            self.assertEqual(pids, (123, os.getpid()))
+            active = True
+            stages.append('enter')
+            try:
+                yield
+            finally:
+                active = False
+                stages.append('leave')
+
+        def prepare(*args, **kwargs):
+            self.assertTrue(active)
+            stages.append('prepare')
+            out.mkdir()
+            return prepared
+
+        def outer(argv):
+            self.assertTrue(active)
+            self.assertEqual(argv, command)
+            stages.append('host')
+            return 0
+
+        def bind(observed, path):
+            self.assertTrue(active)
+            self.assertIs(observed, prepared)
+            self.assertEqual(path, out)
+            stages.append('bind')
+            return {'synthetic': True}
+
+        def write(path, value):
+            self.assertTrue(active)
+            stages.append('receipt')
+            real_write(path, value)
+
+        with patch.object(fixture, 'hold_supervisor_directories', side_effect=held), \
+                patch.object(fixture, 'prepare', side_effect=prepare), \
+                patch.object(host, 'outer', side_effect=outer), \
+                patch.object(fixture.history, 'load_object',
+                             return_value=({'passed': True, 'command_argv': command}, {})), \
+                patch.object(fixture, 'bind_execution', side_effect=bind), \
+                patch.object(fixture, 'write_new', side_effect=write):
+            result = fixture.launch(out, binary, 123, target=fixture.TARGET,
+                                    selector=fixture.SELECTOR, cli_binary=None)
+        self.assertTrue(result['passed'])
+        self.assertFalse(active)
+        self.assertEqual(stages, ['enter', 'prepare', 'host', 'bind', 'receipt', 'leave'])
+
 
 if __name__ == '__main__':
     unittest.main()
