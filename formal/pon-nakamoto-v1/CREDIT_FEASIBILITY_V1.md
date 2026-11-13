@@ -282,3 +282,46 @@ python formal/pon-nakamoto-v1/credit_feasibility.py verify INPUT.json CERTIFICAT
 The subset-success normalization `f=q/g`, work-scale arithmetic, and native
 relation provenance belong to their existing or outer contract modules and
 are deliberately not reimplemented here.
+
+## 6. Outer scope required before using real cost bounds
+
+The matching labels in this finite checker are declarations. Using a result
+for an actual work owner requires separate evidence for the input family,
+admitted strategies, success event, resource convention and lifecycle. The
+checker does not authenticate those facts.
+
+A cost bound must include the permitted selection of tasks, rejected samples,
+preprocessing, advice, cache reuse, sharing and invalidation. A bound for one
+fixed input is not automatically a bound for a selectable family. For example,
+if two permitted tasks have declared deterministic costs 1 and 99, their
+equal-mixture average is 50, while a free selector can choose the task costing
+1. This arithmetic example assumes those costs; it measures no implementation.
+
+The success event must remain exact. Finding a terminal hash, verifying the
+whole relation, delivering before expiry, obtaining original-owner acceptance,
+receiving unique credit and reaching authorized final use are distinct events.
+A probability attached to one event cannot establish the same probability for
+another. An authenticated byte digest also needs the original owner's current
+state and operation identity when the claim depends on a live external effect.
+
+Where a profile permits reuse of an application output that is independent of
+the new challenge, a fresh security seal does not by itself establish another
+application execution or learning improvement. Any cost comparison must state
+which preparation, proof, transport, verification, cache and lifecycle costs it
+includes, and use the same distinct authorized uses and success standard.
+
+For declared matched costs C_H (application), C_S (security) and C_J (joint),
+the expression 1 - C_J / (C_H + C_S) describes a saving only when the denominator
+is positive and all three costs use the same stated resource convention.
+Unknown costs leave that comparison unknown. Allocating joint costs to one
+purpose requires a separate allocation rule.
+
+Query, gate, time and energy quantities require an explicit conversion model
+before a physical comparison can be claimed. A theorem may be applied only
+after its input, access, state-retention and success assumptions have been
+matched to the admitted strategy family. No theorem-specific claim or actual
+cost lower bound is supplied by this section.
+
+These are outer evidence obligations. They add no admission authority, runtime
+dispatch, native credit schedule or qualification. Native qualification remains
+HOLD, and missing evidence must not be replaced with a synthetic example.

@@ -2085,5 +2085,257 @@ class ConfirmationReportTests(unittest.TestCase):
                 self.validate(lambda doc: doc.update(fields))
 
 
+class SustainedPressureEvidenceProjectionTests(unittest.TestCase):
+    """Pure synthetic JSON controls; no native build, workload or traffic."""
+
+    def setUp(self):
+        import read_sustained_pressure_evidence
+        self.reader = read_sustained_pressure_evidence
+        self.directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.directory.cleanup)
+        # Resolve only the test-owned temporary root, never a supplied input.
+        self.root = Path(self.directory.name).resolve()
+        self.path = self.root / 'report.json'
+
+    def project(self, document=None, raw=None):
+        if raw is None:
+            raw = json.dumps(document if document is not None else simulated_sustained_report()).encode()
+        self.path.write_bytes(raw)
+        result = self.reader.project_report(self.path)
+        self.assertEqual(self.path.read_bytes(), raw)
+        return result
+
+    def assert_hold(self, result):
+        self.assertEqual(result['status'], 'HOLD')
+        self.assertTrue(result['original_gate_validated'])
+        self.assertIsNone(result['error'])
+        self.assertEqual(result['causal_pressure'], {'status': 'UNKNOWN', 'demonstrated': None})
+        self.assertIsNone(result['offered_deadline_evidence'])
+        self.assertTrue(result['qualifications'])
+        self.assertTrue(all(value is False for value in result['qualifications'].values()))
+
+    def test_namespace_and_absent_optional_declarations_remain_hold(self):
+        result = self.project()
+        self.assert_hold(result)
+        self.assertEqual(result['schema'], 'trnm-sustained-pressure-evidence-projection-v1')
+        missing = dict(present=False, value=None, consistent_with_retained_values=None)
+        self.assertEqual(result['declarations']['budget_depletion_demonstrated'], missing)
+        self.assertFalse(result['accounting_pressure_from_retained_values'])
+        for phase in result['phases']:
+            self.assertEqual(phase['declarations']['budget_depletion_observed'], missing)
+            self.assertEqual(phase['declarations']['mutation_cpu_refusals'], missing)
+            values = phase['retained_values']
+            self.assertEqual((values['attacks'], values['late_rejections'], values['connections']), (16, 16, 19))
+            self.assertEqual((values['honest_reads'], values['honest_submissions']), (1, 1))
+            self.assertEqual(values['mutation_cpu_refusals'], 0)
+
+    def test_consistent_declarations_are_not_causal_qualification(self):
+        document = simulated_sustained_report()
+        document['budget_depletion_demonstrated'] = False
+        for phase in document['phases']:
+            phase.update(budget_depletion_observed=False, mutation_cpu_refusals=0)
+        result = self.project(document)
+        self.assert_hold(result)
+        self.assertTrue(result['declarations']['budget_depletion_demonstrated']['consistent_with_retained_values'])
+        for phase in result['phases']:
+            for declaration in phase['declarations'].values():
+                self.assertTrue(declaration['present'])
+                self.assertTrue(declaration['consistent_with_retained_values'])
+
+    def test_true_declarations_without_pressure_are_retained_as_inconsistent(self):
+        document = simulated_sustained_report()
+        document['budget_depletion_demonstrated'] = True
+        for phase in document['phases']:
+            phase.update(budget_depletion_observed=True, mutation_cpu_refusals=1)
+        result = self.project(document)
+        self.assert_hold(result)
+        self.assertFalse(result['accounting_pressure_from_retained_values'])
+        declaration = result['declarations']['budget_depletion_demonstrated']
+        self.assertIs(declaration['value'], True)
+        self.assertIs(declaration['consistent_with_retained_values'], False)
+        for phase in result['phases']:
+            self.assertEqual(phase['declarations']['mutation_cpu_refusals']['value'], 1)
+            for declaration in phase['declarations'].values():
+                self.assertIs(declaration['consistent_with_retained_values'], False)
+
+    def test_required_refusal_count_and_document_any_phase_scope(self):
+        document = simulated_sustained_report()
+        document['budget_depletion_demonstrated'] = True
+        document['phases'][0]['service']['metrics']['mutation_cpu_refusals'] = 7
+        document['phases'][0].update(budget_depletion_observed=True, mutation_cpu_refusals=7)
+        document['phases'][1].update(budget_depletion_observed=False, mutation_cpu_refusals=0)
+        result = self.project(document)
+        self.assert_hold(result)
+        self.assertTrue(result['accounting_pressure_from_retained_values'])
+        self.assertEqual([p['accounting_pressure_from_retained_values'] for p in result['phases']], [True, False])
+        self.assertEqual(result['phases'][0]['retained_values']['mutation_cpu_refusals'], 7)
+        self.assertTrue(result['declarations']['budget_depletion_demonstrated']['consistent_with_retained_values'])
+
+    def test_credit_boundary_and_debt_use_validated_reserve_and_samples(self):
+        for credit in (100_000_000, 99_999_999, -1):
+            with self.subTest(credit=credit):
+                document = simulated_sustained_report()
+                phase = document['phases'][0]
+                phase['meter_samples'][0]['meter']['stored_credit_ns'] = credit
+                phase.update(stored_credit_below_start_reserve_observed=credit < 100_000_000,
+                             negative_stored_credit_observed=credit < 0)
+                result = self.project(document)
+                self.assert_hold(result)
+                observed = result['phases'][0]
+                self.assertEqual(observed['retained_values']['minimum_sampled_stored_credit_ns'], credit)
+                self.assertEqual(observed['retained_values']['start_reserve_ns'], 100_000_000)
+                self.assertEqual(observed['sampled_negative_credit'], credit < 0)
+                self.assertEqual(observed['accounting_pressure_from_retained_values'], credit < 100_000_000)
+                self.assertEqual(observed['retained_values']['mutation_cpu_refusals'], 0)
+
+    def test_optional_boolean_and_count_types_are_exact(self):
+        cases = [('document', 'budget_depletion_demonstrated', value) for value in (None, 0, 'true')]
+        cases += [('phase', 'budget_depletion_observed', value) for value in (None, 0, 'true')]
+        cases += [('phase', 'mutation_cpu_refusals', value) for value in (None, True, -1, 1 << 64, '0')]
+        for owner, key, value in cases:
+            with self.subTest(owner=owner, key=key, value=value):
+                document = simulated_sustained_report()
+                target = document if owner == 'document' else document['phases'][0]
+                target[key] = value
+                result = self.project(document)
+                self.assertEqual(result['status'], 'REFUSED')
+                self.assertEqual(result['error']['message'], 'SUSTAINED_OPTIONAL_DECLARATION_TYPE:' + key)
+                self.assertIsNotNone(result['source']['sha256'])
+                self.assertIsNone(result['accounting_pressure_from_retained_values'])
+                self.assertTrue(all(value is False for value in result['qualifications'].values()))
+
+    def test_required_metric_and_original_policy_are_not_made_optional(self):
+        cases = [
+            (lambda d: d['phases'][0]['service']['metrics'].pop('mutation_cpu_refusals'), 'SUSTAINED_NUMBER'),
+            (lambda d: d['phases'][0]['service']['metrics'].update(mutation_cpu_refusals=True), 'SUSTAINED_NUMBER'),
+            (lambda d: d['phases'][0]['meter_samples'][0]['meter'].update(start_reserve_ns=1), 'SUSTAINED_POLICY_CHANGED'),
+        ]
+        for edit, error in cases:
+            with self.subTest(error=error):
+                document = simulated_sustained_report()
+                edit(document)
+                result = self.project(document)
+                self.assertEqual(result['status'], 'REFUSED')
+                self.assertFalse(result['original_gate_validated'])
+                self.assertEqual(result['error']['message'], error)
+
+    def test_original_count_scope_is_not_repaired(self):
+        cases = [
+            (lambda d: d['phases'][0]['observations']['records'].pop(), 'SUSTAINED_CAPTURE'),
+            (lambda d: d['phases'][0].update(honest_reads=[]), 'SUSTAINED_HONEST_COUNT'),
+            (lambda d: d['phases'][0]['service']['metrics'].update(accepted_connections=18), 'SUSTAINED_CAPTURE'),
+        ]
+        for edit, error in cases:
+            with self.subTest(error=error):
+                document = simulated_sustained_report()
+                edit(document)
+                result = self.project(document)
+                self.assertEqual(result['status'], 'REFUSED')
+                self.assertEqual(result['error']['message'], error)
+
+    def test_original_bytes_identity_is_not_reserialized(self):
+        document = simulated_sustained_report()
+        raws = [json.dumps(document, separators=(',', ':')).encode(),
+                (json.dumps(document, indent=2) + '\n').encode()]
+        identities = []
+        for raw in raws:
+            result = self.project(raw=raw)
+            self.assert_hold(result)
+            self.assertEqual(result['source']['raw_bytes'], len(raw))
+            self.assertEqual(result['source']['sha256'], driver.digest(raw))
+            identities.append(result['source']['sha256'])
+        self.assertNotEqual(*identities)
+
+    def test_validator_uses_owned_copy_and_checks_its_returned_digest(self):
+        original = driver.validate_sustained_report
+        copies = []
+        def inspect(path):
+            self.assertNotEqual(path, self.path)
+            self.assertEqual(path.read_bytes(), self.path.read_bytes())
+            self.assertEqual(path.parent.stat().st_mode & 0o077, 0)
+            copies.append(path)
+            return original(path)
+        with patch.object(driver, 'validate_sustained_report', side_effect=inspect):
+            self.assert_hold(self.project())
+        self.assertTrue(copies)
+        self.assertTrue(all(not path.exists() for path in copies))
+        def altered(path):
+            result = original(path)
+            result['sha256'] = '0' * 64
+            return result
+        with patch.object(driver, 'validate_sustained_report', side_effect=altered):
+            result = self.project()
+        self.assertEqual(result['status'], 'REFUSED')
+        self.assertEqual(result['error']['message'], 'SUSTAINED_REPORT_COPY_IDENTITY')
+        self.assertFalse(result['original_gate_validated'])
+        self.assertEqual(result['source']['sha256'], driver.digest(self.path.read_bytes()))
+
+    def test_retained_call_deadline_is_not_offered_deadline_evidence(self):
+        document = simulated_sustained_report()
+        self.assertEqual(document['phases'][0]['honest_reads'][0]['deadline_ms'], 2000)
+        document['offered_deadline_evidence'] = True
+        result = self.project(document)
+        self.assert_hold(result)
+        self.assertIsNone(result['offered_deadline_evidence'])
+
+    def test_invalid_json_and_schema_preserve_readable_raw_identity(self):
+        cases = [
+            (b'{"schema":1,"schema":2}', 'DUPLICATE_JSON_KEY'),
+            (b'{"schema":NaN}', 'NONFINITE_JSON'),
+            (b'{"schema":"different"}', 'SUSTAINED_SCHEMA'),
+            (b'{', None),
+        ]
+        for raw, error in cases:
+            with self.subTest(raw=raw):
+                result = self.project(raw=raw)
+                self.assertEqual(result['status'], 'REFUSED')
+                self.assertEqual(result['source']['sha256'], driver.digest(raw))
+                self.assertEqual(result['source']['raw_bytes'], len(raw))
+                if error is not None:
+                    self.assertEqual(result['error']['message'], error)
+                else:
+                    self.assertEqual(result['error']['type'], 'JSONDecodeError')
+
+    def test_regular_input_and_original_size_limit_are_enforced(self):
+        self.project()
+        leaf = self.root / 'link.json'
+        leaf.symlink_to(self.path)
+        parent = self.root / 'linked-directory'
+        parent.symlink_to(self.root, target_is_directory=True)
+        for path in (leaf, parent / self.path.name, self.root / 'absent.json'):
+            with self.subTest(path=path):
+                result = self.reader.project_report(path)
+                self.assertEqual(result['status'], 'REFUSED')
+                self.assertIsNone(result['source']['sha256'])
+                self.assertIsNone(result['source']['raw_bytes'])
+                self.assertEqual(result['error']['type'], 'SourceReadError')
+        with patch.object(driver, 'REPORT_LIMIT', self.path.stat().st_size - 1):
+            result = self.reader.project_report(self.path)
+        self.assertEqual(result['status'], 'REFUSED')
+        self.assertIsNone(result['source']['sha256'])
+        self.assertIsNone(result['source']['raw_bytes'])
+        self.assertEqual(result['error']['type'], 'SourceReadError')
+
+    def test_cli_success_and_refusal_exit_codes_are_independent_of_qualification(self):
+        self.project()
+        for raw, expected, status in ((self.path.read_bytes(), 0, 'HOLD'), (b'{', 2, 'REFUSED')):
+            with self.subTest(status=status):
+                self.path.write_bytes(raw)
+                stdout = io.StringIO()
+                with redirect_stdout(stdout):
+                    exit_code = self.reader.main(['--report', str(self.path)])
+                result = json.loads(stdout.getvalue())
+                self.assertEqual(exit_code, expected)
+                self.assertEqual(result['status'], status)
+                self.assertTrue(all(value is False for value in result['qualifications'].values()))
+
+    def test_projection_does_not_invoke_native_or_process_helpers(self):
+        with patch.object(driver, 'run', side_effect=AssertionError('runner is not a reader')), \
+             patch.object(driver, 'run_child', side_effect=AssertionError('no child process')), \
+             patch.object(driver, 'source_identity', side_effect=AssertionError('no driver source build')), \
+             patch.object(driver, 'native_build_command', side_effect=AssertionError('no native build')):
+            self.assert_hold(self.project())
+
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)

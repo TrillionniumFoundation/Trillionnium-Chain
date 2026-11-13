@@ -98,3 +98,48 @@ throughput, cheapest physical/matrix cost, remotely sustained CPU exhaustion,
 general Sybil fairness, future-task efficacy, physical power loss or WAN TPS. No
 readiness or authority flag changes. Full65536-key/4105-block and two-repository
 baselines retain their original independent execution requirements.
+
+
+## Read-only sustained-report evidence projection
+
+The independent [sustained-report reader](../../../../scripts/ci/read_sustained_pressure_evidence.py)
+accepts an existing `public-v3-sustained-local-from-zero-v1` report. From the
+repository root, its only entry is:
+
+```sh
+python3 scripts/ci/read_sustained_pressure_evidence.py --report /path/to/report.json
+```
+
+This command reads a regular file within the original report-size limit, records
+the SHA256 and length of its original bytes, and passes an owned copy of those
+same bytes to the [existing validator](../../../../scripts/ci/run_from_zero_native.py).
+It starts no native workload, producer, service, traffic or child process. The
+new output uses `trnm-sustained-pressure-evidence-projection-v1`; the original
+report format, producer, runner, count scopes and admission gates are unchanged.
+
+The projection retains the optional document `budget_depletion_demonstrated`
+declaration and optional phase `budget_depletion_observed` and
+`mutation_cpu_refusals` declarations. Each reports `present`, `value` and
+`consistent_with_retained_values`. An absent declaration remains
+`present: false` with null value and null consistency. A present declaration of
+the wrong type is refused. The service metric `mutation_cpu_refusals` remains
+mandatory under the original validator and is never supplied from an optional
+declaration or replaced with zero.
+
+For each phase, `accounting_pressure_from_retained_values` is the OR of sampled
+credit below the validated start reserve, sampled negative credit, and a positive
+validated service refusal count. The document-level value is the OR across the
+two original phases, matching the producer's declaration scope. The original
+validated counts and minimum sampled credit are retained. A contradictory
+declaration remains visible with false consistency; an agreeing declaration does
+not establish what caused the accounting observations.
+
+Successful reading exits zero with `status: HOLD`. Causal pressure remains
+`UNKNOWN` with null demonstrated result, offered-deadline evidence remains
+null, and every qualification remains false. Retained call deadlines do not
+establish independent offered obligations, causal exhaustion, saturation,
+fairness or a production service guarantee. Validation failure exits two with
+`status: REFUSED`, the error and, when safe bounded reading succeeded, the
+identity of the original bytes. This projection does not qualify either native
+experiment described above; its [ordinary JSON controls](../../../../scripts/ci/test_run_from_zero_native.py)
+are synthetic parser and accounting checks only.
