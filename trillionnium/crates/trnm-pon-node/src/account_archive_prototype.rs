@@ -23,6 +23,8 @@ pub mod multiproof;
 mod native_primitive_tests;
 mod native_root_digest;
 pub(crate) mod native_store;
+#[cfg(test)]
+mod packed_branch_regression_tests;
 
 pub const SCHEMA: &str = "pon-account-archive-prototype-v1";
 pub const MAX_VIEW_ACCOUNTS: usize = 32;

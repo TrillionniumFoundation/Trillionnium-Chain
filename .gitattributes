@@ -52,3 +52,8 @@ evidence/pon-client-confirmation-v1/**/*.log -text -whitespace
 /evidence/pon-throughput-business-20261109/native-mvcc/run4/complete-root-2-streamed.stdout -text -whitespace
 /evidence/pon-throughput-business-20261109/native-mvcc/run4/complete-root-3-original.stdout -text -whitespace
 /evidence/pon-throughput-business-20261109/native-node/run1/source-native.diff -text -whitespace
+
+# Problem-one evidence preserves exact retained probe, diff and native stdout bytes.
+/evidence/pon-problem-one-20261108/metering/fixed_packet_identity_probe.py -text -whitespace
+/evidence/pon-problem-one-20261108/metering/metering-final.diff -text -whitespace
+/evidence/pon-problem-one-20261108/validation/native/pon-work-retained.stdout -text -whitespace
