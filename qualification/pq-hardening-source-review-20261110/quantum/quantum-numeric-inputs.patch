@@ -1,0 +1,144 @@
+--- a/formal/pon-nakamoto-v1/quantum_adversarial_search.py
++++ b/formal/pon-nakamoto-v1/quantum_adversarial_search.py
+@@ -232,8 +232,15 @@
+                    binomial_batch_success(finite_domain_size, p, iterations, processors))
+         elapsed = costs.measured_batch_seconds(iterations)
+         cycle = elapsed + success * costs.proof_seconds
+-        choice = TrialChoice(iterations, success, elapsed, cycle, success / cycle,
+-                             processors * elapsed, processors, len(candidates), finite_domain_size)
++        rate = success / cycle
++        processor_seconds = processors * elapsed
++        # Finite positive inputs can still overflow when a success probability
++        # is divided by a subnormal clock. Do not rank or report an infinite
++        # attack throughput; this float64 model has no result in that range.
++        if not all(math.isfinite(value) for value in (cycle, rate, processor_seconds)):
++            raise ValueError("THROUGHPUT_RESULT_RANGE")
++        choice = TrialChoice(iterations, success, elapsed, cycle, rate,
++                             processor_seconds, processors, len(candidates), finite_domain_size)
+         if best is None or choice.expected_winners_per_second > best.expected_winners_per_second:
+             best = choice
+     assert best is not None
+--- a/formal/pon-nakamoto-v1/quantum_daa_model.py
++++ b/formal/pon-nakamoto-v1/quantum_daa_model.py
+@@ -17,6 +17,8 @@
+ U256 = 1 << 256
+ POW_LIMIT = (1 << 255) - 1
+ PRECISION = 70
++MAX_DECIMAL_CHARS = 100
++MAX_DECIMAL_EXPONENT = 100
+ Policy = Literal["periodic-target", "asert-raw", "asert-mtp11", "fixed-p-work"]
+ Cost = Literal["classical", "quantum-search", "linear-work", "sublinear-work"]
+ 
+@@ -87,6 +89,23 @@
+     return format(value, ".24g")
+ 
+ 
++def scenario_decimal(value: str) -> Decimal:
++    """Read a bounded decimal-text premise, without bool/float coercion.
++
++    The exponent bound is a calculator input limit, not a measured cost floor.
++    It also applies to encoded zero, before arithmetic or integer conversion.
++    """
++    if type(value) is not str or not 1 <= len(value) <= MAX_DECIMAL_CHARS:
++        raise ValueError("SCENARIO_DECIMAL")
++    try:
++        number = Decimal(value)
++    except InvalidOperation as error:
++        raise ValueError("SCENARIO_DECIMAL") from error
++    if number.is_finite() and abs(number.adjusted()) > MAX_DECIMAL_EXPONENT:
++        raise ValueError("SCENARIO_DECIMAL_RANGE")
++    return number
++
++
+ def next_work_budget(parent: int, first: int, last: int, interval: int,
+                      spacing: int, maximum: int) -> int:
+     """New hypothesis: invert the periodic span to adjust mandatory work units.
+@@ -166,10 +185,7 @@
+             raise ValueError("SCENARIO_PARAMETERS")
+         if self.ramp_blocks + self.hold_blocks + self.down_blocks + self.max_tail_blocks > 100000:
+             raise ValueError("MODEL_ROW_LIMIT")
+-        try:
+-            rate, delay = Decimal(self.attacker_rate), Decimal(self.proof_delay_seconds)
+-        except (InvalidOperation, TypeError, ValueError) as error:
+-            raise ValueError("SCENARIO_DECIMAL") from error
++        rate, delay = scenario_decimal(self.attacker_rate), scenario_decimal(self.proof_delay_seconds)
+         if not rate.is_finite() or not 0 < rate <= 1:
+             raise ValueError("ATTACKER_RATE")
+         if not delay.is_finite() or not 0 <= delay <= 86400:
+@@ -254,7 +270,10 @@
+         elapsed_compute += compute
+         elapsed_wait += wait
+         now = finish
+-        honest_blocks = int((now - start) // 10)
++        # For a nonnegative decimal clock, flooring before integer division is
++        # the same floor. Decimal's // instead fails when the integral quotient
++        # has more than PRECISION digits, even when the clock is finite.
++        honest_blocks = int(now - start) // 10
+         honest_credit = honest_blocks * baseline_weight
+         rows.append({
+             "index": index, "height": header.height, "phase": phase,
+--- a/formal/pon-nakamoto-v1/test_quantum_adversarial_search.py
++++ b/formal/pon-nakamoto-v1/test_quantum_adversarial_search.py
+@@ -167,6 +167,30 @@
+                       dict(iteration_seconds=-1), dict(prepare_seconds=True)):
+             with self.assertRaises(ValueError):
+                 bounded_throughput_choice(Fraction(1, 4), (0, 1), 1, replace(self.costs, **patch))
++
++    def test_finite_subnormal_costs_cannot_emit_infinite_throughput(self):
++        tiny = math.nextafter(0.0, 1.0)
++        for rounding in ("nearest", "upward"):
++            costs = TrialCosts(0, tiny, tiny, tiny, 0, clock_rounding=rounding)
++            # Every input and the measured batch remain finite and positive.
++            self.assertTrue(math.isfinite(costs.measured_batch_seconds(0)))
++            for domain in (None, 1):
++                with self.subTest(rounding=rounding, domain=domain):
++                    with self.assertRaisesRegex(ValueError, "THROUGHPUT_RESULT_RANGE"):
++                        bounded_throughput_choice(Fraction(1), (0, 1), 1, costs,
++                                                  finite_domain_size=domain)
++
++    def test_representable_tiny_costs_and_zero_success_remain_valid(self):
++        costs = TrialCosts(0, 1e-308, 1e-308, 1e-308, 0)
++        choice = bounded_throughput_choice(Fraction(1), (0, 1), 1, costs)
++        self.assertEqual(choice.iterations, 0)
++        self.assertTrue(math.isfinite(choice.expected_winners_per_second))
++        self.assertGreater(choice.expected_winners_per_second, 1e307)
++        tiny = math.nextafter(0.0, 1.0)
++        zero = bounded_throughput_choice(Fraction(0), (0, 1), 1,
++                                        TrialCosts(0, tiny, tiny, tiny, 0))
++        self.assertEqual(zero.iterations, 0)
++        self.assertEqual(zero.expected_winners_per_second, 0)
+ 
+ 
+ class CampaignReadbackControls(unittest.TestCase):
+--- a/formal/pon-nakamoto-v1/test_quantum_daa_model.py
++++ b/formal/pon-nakamoto-v1/test_quantum_daa_model.py
+@@ -140,6 +140,29 @@
+         for row in rows:
+             self.assertLessEqual(row["timestamp"], row["modeled_completion_time"] + 120)
+         check_row_arithmetic(case, rows)
++
++    def test_decimal_cost_inputs_reject_numeric_type_coercion(self):
++        good = Scenario("decimal_types", "periodic-target", "classical")
++        for field in ("attacker_rate", "proof_delay_seconds"):
++            for value in (True, False, 0, 1, 0.25, Decimal("0.25"), None):
++                with self.subTest(field=field, value=repr(value)):
++                    with self.assertRaisesRegex(ValueError, "SCENARIO_DECIMAL"):
++                        replace(good, **{field: value}).validate()
++
++    def test_decimal_cost_input_size_and_extreme_exponents_fail_before_execution(self):
++        good = Scenario("decimal_bounds", "periodic-target", "classical")
++        for field in ("attacker_rate", "proof_delay_seconds"):
++            for value in ("1e-1000000", "0e-1000000", "0e1000000", "1e-101", "1" * 101):
++                with self.subTest(field=field, value=value):
++                    with self.assertRaisesRegex(ValueError, "SCENARIO_DECIMAL"):
++                        run_scenario(replace(good, **{field: value}))
++        boundary = replace(good, attacker_rate="1e-100", proof_delay_seconds="1e-100",
++                           ramp_blocks=1, hold_blocks=0, down_blocks=0, max_tail_blocks=0)
++        summary, rows = run_scenario(boundary)
++        self.assertEqual(len(rows), 1)
++        self.assertTrue(Decimal(summary["modeled_elapsed_seconds"]).is_finite())
++        self.assertIs(summary["security_theorem"], False)
++        self.assertIs(summary["production_consensus_activation"], False)
+ 
+ 
+ class ConditionalScheduleTests(unittest.TestCase):
