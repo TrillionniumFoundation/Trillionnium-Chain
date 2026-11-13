@@ -14505,3 +14505,37 @@ The DA ACK/deadline independent review is bound to the two exact 44d source file
 The previous c806 original artifacts were independently read back in run 41777955458 / job 126402598642 and durably checkpointed at `8b30c42f783a0d2c1d7148989ecd314a6a8ea532`. They retain 3/27 planned campaign confirmations, 0/18 pressure confirmations, and 0/6 original four-second root passes. Eight c806 CPU job statuses are successful, but they do not qualify this successor or the protocol/DA/performance gates. Nested Host costs and SQL observation samples are not added together or represented as a full business-cost proof.
 
 Exact source readbacks, the actual generator log, original branch-count failure logs, peer review, commands, hashes, and composition boundaries are in `qualification/frozen-44d-lock-composition-20261104/`. The new source remains **DRAFT / SHADOW_ONLY / DENY_ALL / HOLD_NO_GO** until its own original head and prospective-merge gates meet every original requirement.
+
+## 2026-11-13 — Cell source selection across the 46-tip branch cohort
+
+The [Cell consolidation ledger](../../evidence/branch-consolidation-20261113/cell/README.md)
+records all 46 assigned independent tips and 113 distinct source variants,
+with exact original, starting and selected blobs. Nine original tips are
+retained directly in the Cell merge DAG; root integration must preserve the
+other original heads before retirement. Git mode/type/blob comparison confirms
+1,625 entries in the imported historical evidence trees remain unchanged.
+
+Compatible additions are bounded iterative BEP5 lookup, controlled restoration,
+RS(6,4) domain-loss controls, initialization readiness, historical retirement
+readback, bounded endpoint-keyed soft peer ordering within the original release
+budget, independent local assembly/XOR research and a read-only TPQ1 C oracle.
+The selected authenticated epoch-v3, complete-version, sealed-loader and retained
+key-pool owners remain. The parallel #818 pq3 profile and older PCP2 profiles
+remain archived because their wire/schema/authority contracts are not compatible
+with the selected owner; no fallback or silent migration is introduced.
+The old segmented runtime-root/action-catalog owner is archived without claiming
+its distinct capability is implemented by the selected complete-release path.
+
+Exact code checkpoint `eedc32adadde4992787073f93340ea4cc531cbe7` passed package
+formatting, strict all-target/all-feature Clippy, and all 46 selected controls
+against its 943-test native catalog (zero failed or ignored; 897 filtered).
+The earlier TPQ1 C conformance check passed 10 cases on `d087b37c1d301289ca96162b4501742f93132c5b`.
+Original intermediate failures, historical results and their source identities
+are retained separately. These local results do not qualify the final composed
+source or replace its repository gates.
+
+Node successor-bound retirement from `e6c622a16c6770073435f49cf02a6808b56312b0`
+remains the Node lane's explicit dependency. Final composition still needs
+source corpus/register/inventory rebinding and exact-source checks. Public
+discovery, independently administered custody, ordinary FinalUse, production
+and whole-chain PQ acceptance remain HOLD.
