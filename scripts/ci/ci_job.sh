@@ -177,6 +177,7 @@ PY
     python3 scripts/ci/test_pon_public_v3_phase_read.py
     python3 scripts/ci/test_pon_public_v3_policy_read.py
     python3 scripts/ci/test_pon_v3_cookie_cpu_study.py
+    python3 scripts/ci/test_pon_w1_entrypoint_ownership.py
     python3 scripts/ci/test_run_pon_w1_native_campaign.py
     python3 scripts/ci/test_read_validated_business_goodput.py
     python3 scripts/ci/test_read_failed_native_campaign_zip.py
