@@ -191,3 +191,123 @@ fn initialized_socket_reads_retain_original_quantum_and_do_not_swallow_trailing_
     assert_eq!(error.to_string(), "PUBLIC_READ_OVERFLOW");
     assert_eq!(bytes, data);
 }
+
+// Retained streaming reference and finite error-order controls from the
+// historical arithmetic candidate. These call only the current in-memory decoder;
+// they do not execute the historical CPU observation or socket controls.
+fn canonical_packet_reference(bytes: &[u8], op: u8) -> Result<Request> {
+    ensure(
+        !bytes.is_empty() && bytes.len() <= body_maximum(op)?,
+        "PUBLIC_BODY_LIMIT",
+    )?;
+    if op == 4 {
+        pool_bundle_body_guard(bytes)?;
+    }
+    if matches!(op, 1 | 6 | 7) {
+        // Every packet-bearing profile rejects noncanonical hex before allocation.
+        let prefix: &[u8] = match op {
+            1 => br#"{"op":"submit","packet":""#,
+            6 => br#"{"op":"growth_submit_v1","packet":""#,
+            7 => br#"{"op":"growth_packet_status_v1","packet":""#,
+            _ => unreachable!(),
+        };
+        let text = bytes
+            .strip_prefix(prefix)
+            .and_then(|b| b.strip_suffix(br#""}"#))
+            .ok_or("PUBLIC_REQUEST_CANONICAL")?;
+        ensure(
+            text.len() <= 2 * MAX_PACKET
+                && text.len().is_multiple_of(2)
+                && text
+                    .iter()
+                    .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(b)),
+            "PUBLIC_PACKET_TEXT",
+        )?;
+    }
+    let request: Request = serde_json::from_slice(bytes)?;
+    let mut writer = ExactCanonical { bytes, cursor: 0 };
+    serde_json::to_writer(&mut writer, &request).map_err(|_| "PUBLIC_REQUEST_CANONICAL")?;
+    ensure(
+        writer.cursor == bytes.len() && request_op(&request)? == op,
+        "PUBLIC_REQUEST_CANONICAL",
+    )?;
+    Ok(request)
+}
+
+fn compare_packet_decoder(bytes: &[u8], op: u8) {
+    let reference = canonical_packet_reference(bytes, op).map_err(|error| error.to_string());
+    let actual = canonical_request(bytes, op).map_err(|error| error.to_string());
+    assert_eq!(actual, reference, "op={op}, body_len={}", bytes.len());
+}
+
+#[test]
+fn canonical_packet_decoder_matches_streamed_parent_for_every_single_byte_mutation() {
+    for request in [
+        Request::Submit {
+            packet: "01abef".into(),
+        },
+        Request::GrowthSubmitV1 {
+            packet: "01abef".into(),
+        },
+        Request::GrowthPacketStatusV1 {
+            packet: "01abef".into(),
+        },
+    ] {
+        let op = request_op(&request).unwrap();
+        let raw = serde_json::to_vec(&request).unwrap();
+        compare_packet_decoder(&raw, op);
+        for position in 0..raw.len() {
+            let mut changed = raw.clone();
+            for value in 0..=u8::MAX {
+                changed[position] = value;
+                compare_packet_decoder(&changed, op);
+            }
+            compare_packet_decoder(&raw[..position], op);
+        }
+        for position in 0..=raw.len() {
+            for byte in [b' ', b'\n', b'"', b'\\', b'{', b'}', b',', 0, 0xff] {
+                let mut changed = raw.clone();
+                changed.insert(position, byte);
+                compare_packet_decoder(&changed, op);
+            }
+        }
+        for wrong_op in [1, 6, 7].into_iter().filter(|other| *other != op) {
+            compare_packet_decoder(&raw, wrong_op);
+        }
+    }
+}
+
+#[test]
+fn canonical_packet_decoder_preserves_empty_maximum_and_structural_refusals() {
+    for op in [1, 6, 7] {
+        for length in [
+            0,
+            1,
+            2 * MAX_PACKET,
+            2 * MAX_PACKET + 1,
+            2 * MAX_PACKET + 2,
+            MAX_BODY,
+        ] {
+            let packet = "a".repeat(length);
+            let request = match op {
+                1 => Request::Submit { packet },
+                6 => Request::GrowthSubmitV1 { packet },
+                7 => Request::GrowthPacketStatusV1 { packet },
+                _ => unreachable!(),
+            };
+            compare_packet_decoder(&serde_json::to_vec(&request).unwrap(), op);
+        }
+    }
+    for bytes in [
+        br#"{"op":"submit","packet":"\u0061a"}"#.as_slice(),
+        br#"{"op":"submit","packet":"aa","packet":"aa"}"#,
+        br#"{"op":"submit","packet":"aa","authority":true}"#,
+        br#"{"packet":"aa","op":"submit"}"#,
+        br#"{"op":"submit","packet":"aa"}{}"#,
+        br#"{"op":"submit","packet":"aa"} "#,
+        br#"{"op":"submit","packet":"aA"}"#,
+        br#"{"op":"submit","packet":null}"#,
+    ] {
+        compare_packet_decoder(bytes, 1);
+    }
+}
