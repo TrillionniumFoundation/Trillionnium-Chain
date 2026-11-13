@@ -6,7 +6,7 @@ inventories and implements conditional probability arithmetic. It does not
 prove a complete security experiment, a concrete cryptographic reduction, an
 adversary resource budget, or production qualification.
 
-The review baseline is [PR #837](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/837)
+The initial review baseline was [PR #837](https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/837)
 at [44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/44330b91eb552fd20ef6f2e69bf5e6f1e8f5c0b0).
 The new [machine register](../../config/pon/pq128-lifetime-composition-v2.json),
 [checker](../../scripts/ci/pq_lifetime_composition.py), and
@@ -16,22 +16,43 @@ The new [machine register](../../config/pon/pq128-lifetime-composition-v2.json),
 
 ## 1. What the source bridge establishes
 
-The legacy V1 budget declares 15 source paths at
-`12e510b211110d93d9ead07e02c07a1eecc28ae9`. The root V2/V3/V4 inventory
-declares 37 paths, with `57e6c17ae2fa8a9cc547e271f34d90ef09115f04` as review
-base context. That latter revision is not a claim that all continuation files
-already existed at the review base. The shared path is
-`trillionnium/crates/trnm-release-bundle/src/pq_release.rs`.
+The current legacy V1 budget declares **21 source paths** at
+`2bb56596e637908c44b5a2ef5984c9c37c7d3cc8`. The current root inventory
+declares **45 paths**, all present with the reviewed bytes at
+`b683714cdd5ba241c16c335a81aebc12c1581902`. The latter is also this
+mapping's review context. Child manifest bytes are independently frozen in
+the bridge; a review context does not attest the commit containing the
+metadata update or a native execution.
 
 The V2 inspector requires both exact manifest identities, invokes both existing
-inspectors, checks the overlapping source digest, and reports the union:
+inspectors, checks every overlapping source digest, and reports the union:
 
 | Inventory | Declared paths |
 | --- | ---: |
-| Legacy lifetime | 15 |
-| Root and provider continuation | 37 |
+| Legacy lifetime | 21 |
+| Root and provider/witness continuation | 45 |
 | Shared path | 1 |
-| Distinct union | 51 |
+| Distinct union | 65 |
+
+The sole shared path remains
+`trillionnium/crates/trnm-release-bundle/src/pq_release.rs`; the checker
+requires its exact identity as well as all four counts. The role population
+now explicitly contains the existing sixth `witness-response` role, with
+2-of-3 in each family. This aligns the mapping with the current root input;
+it changes no quorum or arithmetic rule. All six lifetime populations remain
+unknown and the threshold-to-forgery reduction remains uninstantiated.
+
+The previous 15/37/51 mapping, five-role population and input identities are
+retained as historical inputs, not accepted as current ones. They used legacy
+revision `12e510b211110d93d9ead07e02c07a1eecc28ae9` and root review context
+`57e6c17ae2fa8a9cc547e271f34d90ef09115f04`, with manifest SHA-256 digests
+`87108ad195c79d17eebbc0f34e320f7141763b507487cc82a3f62d5945fb9b23` and
+`eedc1db827d97aab0be4c43e58713a2e2f2a3d0331e045a509f0941557834028`.
+Current child manifest SHA-256 digests are
+`3ed0e9d451ff885fb27a4a6f7449ca9050eb44707d801a3a40d675fcf5ceaed4` and
+`a94b3e01c8a78a796496182dc268fe23b6fe844e27edec7553876c735ce37cc8`, respectively.
+Added controls explicitly
+reject the old input pins and the omitted witness population.
 
 An exact manifest change requires a new review. One source map cannot silently
 overwrite the other. Missing inputs, locks, sources, changed bytes, conflicting
@@ -288,8 +309,9 @@ python3 scripts/ci/test_pq_lifetime_composition.py -v
 python3 scripts/ci/pq_lifetime_composition.py --root .
 ```
 
-Both commands are mandatory in `repository-truth`, immediately after the
-unchanged V1 budget commands. CI structure controls reject deletion, duplication,
+Both commands remain mandatory in `repository-truth`, alongside the
+unchanged V1 budget and root-register commands. CI structure controls reject deletion,
+duplication,
 conditional skipping, swallowed failure, movement to another lane, or replacement
 of the checker/test file by a symlink. The four new source/config/document files
 also enter the explicit research corpus and exact Git blob pins. Every existing

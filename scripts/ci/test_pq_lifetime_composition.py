@@ -287,6 +287,35 @@ class InventoryContractTests(ContractCase):
         self.assertEqual(data, composition.default_manifest())
         self.remains_unqualified(composition.validate_manifest(data))
 
+    def test_superseded_child_manifest_identities_are_refused(self):
+        previous = {
+            "legacy": {
+                "sha256": "87108ad195c79d17eebbc0f34e320f7141763b507487cc82a3f62d5945fb9b23",
+                "declared_revision": "12e510b211110d93d9ead07e02c07a1eecc28ae9",
+            },
+            "root": {
+                "sha256": "eedc1db827d97aab0be4c43e58713a2e2f2a3d0331e045a509f0941557834028",
+                "declared_revision": "57e6c17ae2fa8a9cc547e271f34d90ef09115f04",
+            },
+        }
+        for name, fields in previous.items():
+            for field, value in fields.items():
+                with self.subTest(name=name, field=field):
+                    data = load(MANIFEST)
+                    self.assertNotEqual(data["input_manifests"][name][field], value)
+                    data["input_manifests"][name][field] = value
+                    with self.assertRaises(composition.CompositionError):
+                        composition.validate_manifest(data)
+
+    def test_previous_five_role_population_cannot_omit_the_witness(self):
+        data = load(MANIFEST)
+        population = data["conditional_root_arithmetic"]["family_population"]
+        population["roles"].remove("witness-response")
+        del population["required_by_role"]["witness-response"]
+        with self.assertRaises(composition.CompositionError):
+            composition.validate_manifest(data)
+        self.arithmetic_refused(data["conditional_root_arithmetic"])
+
     def test_pure_validation_cannot_report_source_or_deployment_checks(self):
         report = composition.validate_manifest(load(MANIFEST))
         self.assertIs(report["declared_source_union_consistent"], False)
@@ -390,16 +419,21 @@ class SourceInspectionTests(ContractCase):
                                "--root", str(self.root)], capture_output=True, text=True,
                               check=False, timeout=20)
 
-    def test_real_inspection_binds_51_distinct_declared_sources_and_four_scopes(self):
+    def test_real_inspection_binds_65_distinct_declared_sources_and_four_scopes(self):
         report = composition.inspect(self.root)
-        self.assertEqual(report["source_counts"], {"legacy": 15, "root": 37, "shared": 1, "union": 51})
-        self.assertEqual(len(report["source_files_sha256"]), 51)
+        self.assertEqual(report["source_counts"], {"legacy": 21, "root": 45, "shared": 1, "union": 65})
+        self.assertEqual(len(report["source_files_sha256"]), 65)
         self.assertEqual(set(report["source_files_sha256"]), set(self.legacy_files) | set(self.root_files))
         self.assertIs(report["declared_source_union_consistent"], True)
         self.assertEqual(report["source_binding_scope"], "declared-path-union-only")
         self.assertIs(report["source_revision_bound"], False)
         self.assertIs(report["deployment_identity_proved"], False)
         self.assertEqual(report["shared_primitive_scope_count"], 4)
+        self.assertEqual(report["shared_source_paths"],
+                         ["trillionnium/crates/trnm-release-bundle/src/pq_release.rs"])
+        self.assertEqual(set(report["unknown_role_lifetime_populations"]),
+                         {"root-approval", "successor-possession", "anchor-writer",
+                          "anchor-response", "effect-provider", "witness-response"})
         self.assertEqual(decode(report["allocation_headroom"]), 0)
         self.assertIsNone(report["additional_loss_total"])
         self.assertIsNone(report["allocation_sufficiency_under_declared_losses"])
@@ -487,7 +521,7 @@ class SourceInspectionTests(ContractCase):
         self.assertEqual(process.returncode, 0, process.stderr)
         self.assertEqual(process.stderr, "")
         report = json.loads(process.stdout)
-        self.assertEqual(report["source_counts"]["union"], 51)
+        self.assertEqual(report["source_counts"]["union"], 65)
         self.remains_unqualified(report)
 
     def test_cli_changed_input_returns_structured_refusal_without_qualification(self):

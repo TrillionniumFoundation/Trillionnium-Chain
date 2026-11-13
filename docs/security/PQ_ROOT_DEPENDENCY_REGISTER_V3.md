@@ -16,8 +16,8 @@ checked by
 [pq_root_dependency_register.py](../../scripts/ci/pq_root_dependency_register.py).
 Its schema is `trnm-pq-root-dependency-register-v3`, separate from the
 [existing lifetime budget](../../config/pon/pq128-lifetime-budget-v1.json).
-The old fifteen-path register does not acquire coverage of these new modules
-by continuing to pass. The
+The historical fifteen-path register and its current twenty-one-path continuation
+do not acquire coverage of these root modules by continuing to pass. The
 [V2 gap analysis](PQ_ROOT_LIFETIME_GAPS_V2.md) and
 [lifetime contract](PQ128_LIFETIME_BUDGET_V1.md) retain their unresolved
 independence, query-model and composition obligations.
@@ -84,7 +84,7 @@ recovery procedures.
 
 ## 2. Shared primitive accounting
 
-The register contains seventeen declared hash-use groups and four canonical
+The register contains eighteen declared hash-use groups and four canonical
 primitive entries. The use groups identify source-level purposes. They do not
 supply a reduction from scheme operations to primitive queries.
 
@@ -297,6 +297,48 @@ unknown budgets and false qualification fields. Existing historical reports
 keep their original source identities. The inspector still returns
 `source_revision_bound = false`; it supplies no native execution, custody,
 cryptographic lifetime bound or production qualification.
+
+### 2026-11-13 current 45-source mapping
+
+The current root source review binds all **45 declared files** to the exact
+regular bytes in commit
+`b683714cdd5ba241c16c335a81aebc12c1581902`, tree
+`f11a77d95b665207206282f691efc9d1225f26ea`.
+The prior 45-file map retained review context
+`225ab38e1e5f7e0852a28372bd8dd769eec1084b` and canonical digest
+`844d27717babb9b3a286cd28915a06b0cd1152ffcf151ffdf6c30a01708bd9fe`.
+That context predates some retained V6 source files; it was not their Git
+provenance. The current source revision contains every declared file.
+
+Exactly six declared digests change. The other 39 source hashes, the 45-path
+roster, all six authority roles, 18 hash-use groups, shared primitive identities,
+refusal caps, deadlines, null bounds and false qualification fields remain.
+
+| Declared source | Reviewed difference |
+| --- | --- |
+| `trillionnium/Cargo.lock` | Records the current 188-package workspace graph, including Ed25519/curve25519 3.0.0/5.0.0, bundled `rusqlite 0.41.1` / `libsqlite3-sys 0.39.1`, current serde/borsh/clap selections, and the existing node development `getrandom 0.2.17` and checkpoint `socket2` edges. The root OpenSSL, ML-DSA and Rustix selections remain. This inventory does not attest the transitive implementation or a new native run. |
+| `trnm-crypto-primitives/Cargo.toml` | Selects the existing Ed25519 major version 3; root feature selections remain. |
+| `trnm-crypto-primitives/src/lib.rs` | Uses fixed-size hex/signature decoding while preserving malformed/width/case rejection order and canonical R checks; the explicit weak-key check tightens accepted Ed25519 keys. This is a real acceptance change, not a claim of unchanged behavior. |
+| `trnm-pon-node/Cargo.toml` | Retains the exact SQLite 0.41.1 pin and existing feature flags, with a development-only `getrandom 0.2.17` edge for the sealed research owner. |
+| `trnm-pon-node/src/lib.rs` | Adds Cell V2 paged and Linux V3 grouped-storage exports without changing the root exports. Reviewing an export does not qualify its implementation. |
+| `trnm-protocol/src/lib.rs` | Deserializes through a private wire shape and validates the transaction afterwards, retaining unknown-field and decimal rules. Direct serde input is more strictly checked; it grants no root authority. |
+
+The canonical source-map digest for this review is
+`731549321b29739c499f99920eb15259f6df371d36590c3c3aba36898c5c8571`.
+The original B repository-truth failure and the
+independent pre-update run of all 47 controls, both with four failures and one
+error starting at the stale Cargo lock pin, remain failed historical
+observations. The original 47 controls remain; added controls reconstruct the
+exact previous map and reject each superseded pin. No source is rolled back
+and no reader rule is relaxed to satisfy a declaration.
+
+The existing V6 retained-receipt component remains in the 45-file map and the
+eighteenth shared-hash use group. It records retained witness evidence under
+the existing unknown SHA-512 lifetime scope; it supplies no effect authority,
+independent custody proof or new budget. This refresh does not transfer any
+historical native observation to the current source. The source inspector
+still returns `source_revision_bound = false`, `status = HOLD` and false
+production and whole-chain qualification fields.
 
 The checker reuses the existing
 [descriptor-bound source reader](../../scripts/ci/pq_source_reader.py).
