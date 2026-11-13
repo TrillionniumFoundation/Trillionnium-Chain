@@ -5,6 +5,25 @@
 No W1 byte change, no consensus target adjustment, no chainwork, Genesis,
 Cookie, Final-use, Node authority or production flag change.
 
+## Current API boundary
+
+The current [ingress module](../../../../trillionnium/crates/trnm-pon-node/src/ingress.rs)
+keeps `receive_page` and `receive_page_from` as `#[cfg(test)] pub(crate)`
+adapters. The exported page-import functions are
+`receive_public_page_from`, `receive_public_page_from_before`,
+`receive_public_page_from_before_observed` and
+`receive_public_page_from_shared`. Each requires the original fixed Host
+kernel parent even for a loopback source, and enters the
+[paid History importer](../../../../trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs).
+The deadline-taking variants retain the caller's original deadline; a late
+Host failure does not reverse an already committed native admission.
+
+The sections below preserve the earlier candidate designs and observations.
+Their earlier exported API names and loopback exceptions do not describe
+the current public import surface. Source addresses still do not attest
+provenance, and this API summary does not establish global fairness or
+production qualification. Existing HOLD and open gates remain unchanged.
+
 ## Exploit and former gap
 
 Remote source can send complete 49,188-byte W1 proof bytes inside History

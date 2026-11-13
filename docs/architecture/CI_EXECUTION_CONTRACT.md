@@ -2,8 +2,9 @@
 
 The existing five required check names remain unchanged. Their source is the exact
 pull-request head (or the exact pushed main commit). A separate PR-only
-`prospective-merge` matrix runs the same five lane commands on the event's synthetic
-merge commit. Before and after execution, the identity checker verifies a clean
+execution runs the same five lane command sets on the event's synthetic merge
+commit; Rust uses the two shards and required fan-in described below. Before and
+after execution, the identity checker verifies a clean
 checkout and ordered parents equal to the event's exact base and candidate.
 An old base is never reported as the current base; a later base change needs a new
 corresponding merge run. These jobs change no repository protections or approvals.
@@ -18,9 +19,9 @@ The same workflow also runs two exact-head `cross-arch-cost` jobs and one
 `cross-arch-cost-consistency` job. These three jobs do not rename, replace or add
 branch-protection requirements to the original five head and five merge checks.
 
-The full `rust-baseline` job has a 180-minute budget on both the exact head and the
-prospective merge. The merge matrix grants that budget only to its Rust lane;
-the other merge lanes retain 45 minutes. The earlier 90-minute budget followed two actual
+The Rust shard jobs and their required fan-in have 180-minute job budgets on both
+the exact head and prospective merge. The `protocol-contract` lane has 240 minutes;
+the remaining lanes retain 45 minutes. The earlier 90-minute budget followed two actual
 Rust cancellations at the former 45-minute limit in
 [run 37269962242](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/37269962242).
 Their retained logs reached the model-composition integration suite without an
@@ -45,7 +46,7 @@ readbacks still incur real work; endpoint performance needs separate measurement
 
 ## Required native tests must actually execute
 
-The two release controls are filtered, ignored libtest tests. A successful Cargo
+The four release controls are filtered, ignored libtest tests. A successful Cargo
 exit alone is insufficient: an exact filter that no longer matches runs zero tests
 successfully, and omitting `--ignored` can successfully leave the selected test
 ignored. After each existing Cargo/`tee` pipeline,
@@ -565,18 +566,38 @@ commands, then independently recomputes all four groups in Python. The protocol
 lane builds the release `pon_zero_io` bridge and runs `test_zero_work.py` using
 `TRNM_ZERO_WORK` and a fresh `TRNM_ZERO_WORK_OUTPUT`, requiring all88 native calls.
 
-After all workspace/export readers, every head and merge Rust lane explicitly
-runs two exact ignored tests with `--offline --locked --release`, one after the
-other against the same release library graph. The first is the authenticated
-65,536-key continuation/refund/new-entry/pending-reorganization fixture; the second
-compares original/current complete account-check primitives. Their ordinary debug
-ignore is not an execution result. `native-capacity-release.log` and
-`native-account-verification-cost.log` retain stdout/stderr through a pipefail
-pipeline; a failed Cargo process cannot become success merely because `tee` wrote
-a log. The latter also saves every paired raw sample, state, record and SQLite
-under `native-account-verification-cost/`. No whole-Node speedup follows from its
-account-check clock. Original workspace, documentation tests, strict Clippy and
-the180-minute Rust lane budget remain required.
+The current release block contains four exact ignored tests, in this order:
+
+1. `account_archive_prototype::native_store::batch_tests::native_authenticated_full_capacity_refund_entry_and_pending_reorganization_recover`
+2. `store::growth_reference::tests::native_growth_reference_65537_signed_accounts_and_cold_reopen`
+3. `store::growth::tests::native_growth_v2_signed_cross_65536_bounded_io_zero_nonce_and_reopen`
+4. `account_archive_prototype::native_primitive_tests::native_complete_account_verification_cost`
+
+All four use `--offline --locked --release` and
+`--exact --ignored --nocapture --test-threads=1`, sequentially against one release
+library graph. In the complete local `ci_job.sh rust-baseline` command, this block
+follows workspace/export readers and precedes documentation tests and Clippy.
+
+The current [hosted recipe](../../scripts/ci/rust_baseline_shards.py) derives two
+scripts from that same complete command. The `runtime` shard retains the
+workspace/export/oracle block. The `quality` shard runs formatting, supply-chain
+checks, documentation tests and Clippy, then the four release controls above.
+The two shards may run concurrently; no cross-shard completion order is implied.
+Both exact-head and prospective-merge required Rust contexts require successful
+observations from both shards with the exact source, current run and commands.
+
+The four logs are `native-capacity-release.log`,
+`native-growth-reference-release.log`, `native-growth-v2-release.log` and
+`native-account-verification-cost.log`. They retain stdout/stderr through
+pipefail pipelines and each is checked for its exact executed test; ordinary
+debug ignore is not an execution result. The growth-reference export passes
+`check_gsc2_native_readback.py`; the growth-v2 export must contain a nonempty
+`native.json`. The account-cost control also saves every paired raw
+sample, state, record and SQLite under `native-account-verification-cost/`.
+No whole-Node speedup follows from its account-check clock. Historical two-control
+observations elsewhere in this document retain their original scope; they do
+not establish execution of the later four-control roster. The complete command
+set and existing 180-minute Rust job budgets remain required.
 
 ## Actual legal and late-rejection costs
 
@@ -702,8 +723,9 @@ unchanged full workspace/all-target/all-feature command as `workspace-tests.log`
 in the existing receipt directory. Fresh regular-path checks precede the command;
 `set -euo pipefail` preserves both Cargo and output-sink failure. The exact same
 capture runs on the existing prospective merge lane. All independent readers,
-the two mandatory release controls, documentation tests and strict Clippy remain
-in their original sequence. No new job, retry, timeout, permission or successful
+the four mandatory release controls, documentation tests and strict Clippy remain
+required, with the local and hosted ordering described above. No new job, retry,
+timeout, permission or successful
 fallback is introduced.
 
 The log makes exact test names, failures and ignored outcomes available as raw
