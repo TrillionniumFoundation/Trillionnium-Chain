@@ -7,7 +7,10 @@ requires a fresh independent domain after every measured batch. Persistent
 domains, including M=0, are supported by the event evaluator separately.
 
 Binomial weights below are exact rational numbers on a deliberately small
-support. Grover amplitudes and the optimization remain float64 calculations.
+support. Zero-iteration measurements and special Grover fractions 1/4, 1/2 and
+3/4 use rational batch probabilities before one float64 conversion; the special
+fractions have exact periodic reductions. Other Grover amplitudes and the
+optimization remain float64 calculations.
 No normal/Poisson approximation, large-binomial sampler, BBHT implementation,
 complete W1 circuit, hardware measurement or security threshold is implied.
 """
@@ -39,7 +42,7 @@ ADVERSARIAL_ASSUMPTIONS = {
     "finite_fixed_count": "caller-conditioned test premise; count unavailable to strategy selection",
     "fresh_domain": "explicit template/domain salt and paid setup; W1 realizability unproved",
     "binomial_optimizer_support": MAX_EXACT_BINOMIAL_SIZE,
-    "binomial_weights": "exact rational; finite Grover probabilities and rates use float64",
+    "binomial_weights": "exact rational; zero iterations and special Grover fractions 1/4, 1/2, 3/4 aggregate exactly before float64 conversion; other probabilities and rates use float64",
     "measurement_sampler": "exact Bernoulli for the represented binary64 probability; at most 1074 random bits",
     "parallelism": "independent measurements conditional on one shared domain M; all processors paid",
     "persistent_domain_optimality": "not claimed; no BBHT or posterior-optimal policy implemented",
@@ -97,13 +100,28 @@ def upward_float(value: Fraction) -> float:
 
 
 def batch_success(p: float, iterations: int, processors: int = 1) -> float:
-    """Independent measurement outcomes conditional on a *fixed* fraction p."""
+    """Independent measurements conditional on one fixed marked fraction.
+
+    With zero iterations, measurement preserves the stated fraction directly.
+    For p=1/4, 1/2 or 3/4, theta is respectively pi/6, pi/4 or pi/3.
+    Integer-period reduction prevents trigonometric roundoff from inventing
+    marked outcomes at exact zeros or drifting at large iteration counts.
+    Those cases aggregate independent processors rationally and convert once;
+    other fractions retain the explicitly approximate binary64 calculation.
+    """
     if type(p) not in (int, float) or not math.isfinite(p) or not 0 <= p <= 1:
         raise ValueError("PROBABILITY")
     integer(iterations, "ITERATIONS", MAX_ITERATIONS)
     integer(processors, "PROCESSORS", MAX_PROCESSORS, 1)
     if p == 0 or p == 1:
         return float(p)
+    if iterations == 0 and processors == 1:
+        return float(p)
+    if iterations == 0 or p in (0.25, 0.5, 0.75):
+        single_exact = Fraction(p)
+        if iterations and p != 0.5 and iterations % 3 == 1:
+            single_exact = Fraction(int(p == 0.25))
+        return float(1 - (1 - single_exact) ** processors)
     single = math.sin((2 * iterations + 1) * math.asin(math.sqrt(p))) ** 2
     return 1.0 if single >= 1 else -math.expm1(processors * math.log1p(-single))
 

@@ -137,6 +137,85 @@ class ResourceAccounting(unittest.TestCase):
             self.assertLessEqual(Decimal(row["quantum_wall_seconds_ideal_overlap_lower_bound"]),
                                  Decimal(row["quantum_wall_seconds_serial_magic_delivery_schedule"]))
 
+    def test_direct_physical_estimate_rejects_inconsistent_count_shapes(self):
+        # The direct estimator must not turn nonzero work into a zero-time,
+        # zero-error conditional result by bypassing Circuit.validate().
+        base = {"gate_count": 10, "gate_depth": 5, "toffoli_count": 3,
+                "toffoli_depth": 2, "direct_t_count": 2, "direct_t_depth": 1}
+        bad = (
+            ({"gate_count": 100, "gate_depth": 0, "toffoli_count": 0,
+              "toffoli_depth": 0, "direct_t_count": 0, "direct_t_depth": 0}, "COUNT_DEPTH"),
+            ({**base, "gate_depth": 11}, "SHAPE"),
+            ({**base, "gate_count": 4, "gate_depth": 4}, "GATE_SUBTOTAL"),
+            ({**base, "toffoli_depth": 0}, "COUNT_DEPTH"),
+            ({**base, "toffoli_count": 0}, "COUNT_DEPTH"),
+            ({**base, "toffoli_depth": 4}, "COUNT_DEPTH"),
+            ({**base, "direct_t_depth": 0}, "COUNT_DEPTH"),
+            ({**base, "direct_t_count": 0}, "COUNT_DEPTH"),
+            ({**base, "direct_t_depth": 3}, "COUNT_DEPTH"),
+            ({**base, "gate_depth": 1}, "DEPENDENCY_DEPTH"),
+        )
+        model = q.example(True).physical_models[0]
+        for counts, reason in bad:
+            with self.subTest(counts=counts):
+                with self.assertRaisesRegex(ValueError, "PHYSICAL_" + reason):
+                    q.physical_estimate(counts, 3, 1, model)
+                with self.assertRaisesRegex(ValueError, "CIRCUIT_" + reason):
+                    q.Circuit(logical_qubits=3, provenance="shape-control", **counts).validate()
+
+    def test_impossible_width_depth_rejected_at_every_entry(self):
+        # Independent scheduling controls: one wire cannot execute 100 gates
+        # in one layer; a three-wire Toffoli cannot fit on two wires; five
+        # wires hold at most one Toffoli per Toffoli-dependency layer.
+        bad = (
+            (q.Circuit(1, 100, 1, 0, 0, 0, 0, "width-control"), "GATE_WIDTH_DEPTH"),
+            (q.Circuit(2, 1, 1, 1, 1, 0, 0, "width-control"), "GATE_WIDTH_DEPTH"),
+            (q.Circuit(5, 3, 3, 3, 2, 0, 0, "width-control"), "TOFFOLI_WIDTH_DEPTH"),
+            (q.Circuit(2, 3, 3, 0, 0, 3, 1, "width-control"), "T_WIDTH_DEPTH"),
+            (q.Circuit(3, 2, 1, 1, 1, 0, 0, "width-control"), "GATE_WIDTH_DEPTH"),
+        )
+        request = q.example(True)
+        for stage, reason in bad:
+            with self.subTest(stage=stage):
+                changed = replace(request, circuits={key: stage for key in q.STAGES})
+                with self.assertRaisesRegex(ValueError, "CIRCUIT_" + reason):
+                    q.account(changed)
+                with self.assertRaisesRegex(ValueError, "CIRCUIT_" + reason):
+                    q.load_request(wire(changed))
+                counts = {key: value for key, value in asdict(stage).items()
+                          if key not in ("logical_qubits", "provenance")}
+                with self.assertRaisesRegex(ValueError, "PHYSICAL_" + reason):
+                    q.physical_estimate(counts, stage.logical_qubits, 1,
+                                        request.physical_models[0])
+        # A serial one-wire schedule and disjoint parallel gates remain valid.
+        for stage in (q.Circuit(1, 100, 100, 0, 0, 0, 0, "serial-control"),
+                      q.Circuit(6, 2, 1, 2, 1, 0, 0, "parallel-toffoli-control"),
+                      q.Circuit(2, 2, 1, 0, 0, 2, 1, "parallel-T-control"),
+                      q.Circuit(4, 2, 1, 1, 1, 1, 1, "mixed-parallel-control")):
+            self.assertEqual(q.account(replace(request, circuits={key: stage for key in q.STAGES}))["status"],
+                             "CALLER_CONDITIONAL_ACCOUNTING_ONLY")
+
+    def test_direct_estimate_keeps_large_serial_totals_valid(self):
+        # Serial workloads may exceed the per-stage uint64 input limit.
+        # Reusing Circuit.validate() itself would incorrectly shrink this API.
+        gates = q.MAX_COUNT + 1
+        counts = {"gate_count": gates, "gate_depth": gates, "toffoli_count": 0,
+                  "toffoli_depth": 0, "direct_t_count": 0, "direct_t_depth": 0}
+        model = replace(q.example(True).physical_models[0], physical_error="1e-100",
+                        logical_error_prefactor="1e-100", magic_state_error="0",
+                        maximum_distance=3)
+        report = q.physical_estimate(counts, 1, 1, model)
+        self.assertEqual(report["status"], "CONDITIONAL_ESTIMATE")
+        self.assertEqual(report["estimate"]["allocated_code_cycles_per_instance"],
+                         gates * model.toffoli_decomposition_depth * 3)
+
+    def test_direct_estimate_keeps_empty_stage_valid(self):
+        counts = dict.fromkeys(("gate_count", "gate_depth", "toffoli_count", "toffoli_depth",
+                                "direct_t_count", "direct_t_depth"), 0)
+        report = q.physical_estimate(counts, 1, 1, q.example(True).physical_models[0])
+        self.assertEqual(report["status"], "CONDITIONAL_ESTIMATE")
+        self.assertEqual(report["estimate"]["allocated_code_cycles_per_instance"], 0)
+
     def test_surface_code_union_formula_independent(self):
         request = q.example(True)
         report = q.account(request)
@@ -209,12 +288,14 @@ class ResourceAccounting(unittest.TestCase):
                         logical_error_prefactor="1e-100",
                         magic_state_error="9"*60 + "e-121",
                         total_failure_budget="0.1", maximum_distance=3)
-        counts = {"gate_count": t_count, "gate_depth": 1, "toffoli_count": 0,
-                  "toffoli_depth": 0, "direct_t_count": t_count, "direct_t_depth": 1}
+        # A realizable serial one-wire schedule, even for these large
+        # aggregate counts; exact-budget headroom remains the tested boundary.
+        counts = {"gate_count": t_count, "gate_depth": t_count, "toffoli_count": 0,
+                  "toffoli_depth": 0, "direct_t_count": t_count, "direct_t_depth": t_count}
         exact_magic = t_count * Fraction(model.magic_state_error)
         budget = Fraction(1, 10)
         self.assertEqual(budget - exact_magic, Fraction(1, 10**121))
-        cycles = 3 * (10 + 10*t_count)
+        cycles = 3 * (10*t_count + 10*t_count)
         exact_failure = (cycles * Fraction(model.logical_error_prefactor)
                          * (Fraction(model.physical_error) / Fraction(model.threshold))**2
                          + exact_magic)
