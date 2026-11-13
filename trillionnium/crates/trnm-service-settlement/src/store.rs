@@ -788,9 +788,9 @@ fn validate_journal_capacity_before_commit(
 
 fn open_rw(path: &Path, allow_create: bool) -> ConsumptionSettlementResultV1<Connection> {
     if allow_create {
-        // SQLite follows a final symlink when CREATE is requested.  Refuse
-        // anything that appeared between the caller's absence check and this
-        // open, including a dangling symlink.
+        // Refuse an already-present path, including a dangling symlink, before
+        // requesting creation. NOFOLLOW below also checks the final component
+        // when SQLite opens it; this check is not exclusive file creation.
         match fs::symlink_metadata(path) {
             Ok(_) => {
                 return Err(error(
@@ -807,19 +807,20 @@ fn open_rw(path: &Path, allow_create: bool) -> ConsumptionSettlementResultV1<Con
             }
         }
     } else {
-        // Existing writable operations must apply the same direct-file
-        // boundary as strict reopen.  This closes the common rename-to-
-        // symlink window between reject_sidecars and SQLite open.
+        // Existing writable operations retain the direct-file check from
+        // strict reopen. NOFOLLOW separately refuses a final-component symlink
+        // at SQLite open; neither check pins concurrently replaced parents.
         require_existing_regular_store(path)?;
     }
-    let mut flags = OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_NO_MUTEX;
+    let mut flags = OpenFlags::SQLITE_OPEN_READ_WRITE
+        | OpenFlags::SQLITE_OPEN_NO_MUTEX
+        | OpenFlags::SQLITE_OPEN_NOFOLLOW;
     if allow_create {
         flags |= OpenFlags::SQLITE_OPEN_CREATE;
     }
     let connection = Connection::open_with_flags(path, flags)?;
-    // Recheck after SQLite has resolved the path.  No schema or transaction
-    // work occurs until this confirms that the final pathname is still a
-    // direct regular file.
+    // Check the current pathname again before schema or transaction work.
+    // This is a regular-file observation, not a descriptor/inode identity pin.
     require_existing_regular_store(path)?;
     connection.busy_timeout(Duration::from_secs(2))?;
     Ok(connection)
@@ -845,10 +846,14 @@ fn open_read_snapshot(path: &Path) -> ConsumptionSettlementResultV1<Connection> 
             "WAL database format is not supported by read-only store snapshots",
         ));
     }
+    // Keep the final-component symlink refusal at SQLite open as well as the
+    // surrounding path observations. Parent-directory identity stays an owner
+    // responsibility; these checks do not bind it to the opened descriptor.
     let connection = Connection::open_with_flags(
         read_only_store_uri(path),
         OpenFlags::SQLITE_OPEN_READ_ONLY
             | OpenFlags::SQLITE_OPEN_NO_MUTEX
+            | OpenFlags::SQLITE_OPEN_NOFOLLOW
             | OpenFlags::SQLITE_OPEN_URI,
     )?;
     require_existing_regular_store(path)?;

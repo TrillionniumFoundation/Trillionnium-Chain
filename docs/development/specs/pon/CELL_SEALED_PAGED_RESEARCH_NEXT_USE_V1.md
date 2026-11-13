@@ -62,10 +62,24 @@ propagate. Nothing replenishes a budget at a page boundary.
 
 ## Qualification
 
-Current new route status: **NOT_RUN**. Tests, model observations and prior
-V2 copy-recovery evidence must retain their exact source/operation identities.
-A timeout is an actual failed operation under the original contract; it must
-not be converted into a pass by increasing the deadline or reusing hidden work.
+Historical executions exist and retain distinct source and operation identities:
+
+- The [original debug operation](../../../../evidence/cell-paged-model-34e09-20261110/README.md)
+  on runtime `c57a384abe3edf88e79ca7ecbd0de645df4934c6` failed at the original
+  300-second retention deadline, before cold reconstruction or sealed use.
+- The [release-profile operation](../../../../evidence/cell-paged-model-release-34e09-20261110/README.md)
+  on source `8dee97636e2b6932fb7a22b1b54f2cab09ae8406` completed the bounded
+  local cold recovery and two actual sealed forwards within that same limit.
+- The [complete-release continuation](../../../../evidence/cell-storage-four-gates-20261111/README.md)
+  and [native-owner convergence](../../../../evidence/cell-bt-owner-convergence-20261112/README.md)
+  retain their own later source, operation and qualification records.
+
+These historical observations do not qualify the final integrated source,
+which requires its own tests and retained execution receipts. Tests, model
+observations and prior V2 copy-recovery evidence must keep their original
+identities. A timeout is an actual failed operation under the original contract;
+it must not be converted into a pass by increasing the deadline or reusing
+hidden work. Successful execution does not establish model efficacy.
 
 Independent domains/WAN, continuous paid custody, real-model native M12
 settlement, ordinary FinalUse and production remain **HOLD**.
