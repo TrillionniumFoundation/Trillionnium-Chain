@@ -9157,6 +9157,13 @@ pub const FILES: &[(&str, &[u8])] = &[
         )),
     ),
     (
+        "trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/public.der",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../trillionnium/crates/trnm-protocol/tests/fixtures/pq_transfer/public.der"
+        )),
+    ),
+    (
         "trillionnium/crates/trnm-protocol/tests/integer_evolution_v3.rs",
         include_bytes!(concat!(
             env!("CARGO_MANIFEST_DIR"),
