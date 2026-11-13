@@ -244,7 +244,8 @@ jobs:
   protocol-contract:
     name: protocol-contract
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    # Hosted orchestration only; native command and business budgets are unchanged.
+    timeout-minutes: 240
     steps:
       - name: Checkout exact candidate
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -567,7 +568,7 @@ jobs:
     name: prospective-merge (${{ matrix.lane }})
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
-    timeout-minutes: ${{ matrix.lane == 'rust-baseline' && 180 || 45 }}
+    timeout-minutes: ${{ matrix.lane == 'protocol-contract' && 240 || matrix.lane == 'rust-baseline' && 180 || 45 }}
     strategy:
       fail-fast: false
       matrix:

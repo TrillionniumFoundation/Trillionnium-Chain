@@ -21,6 +21,8 @@ NATIVE_CONSENSUS_ORACLE_BLOCK = '''    python3 scripts/ci/test_repository.py
     python3 scripts/ci/run_fuzz_smoke.py
 '''
 WORKFLOW = '.github/workflows/trnm-required-baseline.yml'
+# Allow the complete serial protocol lane to finish; per-command limits stay fixed.
+PROTOCOL_JOB_TIMEOUT_MINUTES = 240
 CHECKOUT = 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262'
 UPLOAD = 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02'
 DOWNLOAD = 'actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0'
@@ -2324,11 +2326,14 @@ def validate(root: Path = ROOT) -> dict:
             text.count(REJECTION_COMPARE_STEP) == 1,
             'actual rejection comparison must bind both native architectures to this head/run/attempt even on earlier failure')
     merge = jobs['prospective-merge']
+    require(re.findall(r'^    timeout-minutes: (.+)$', jobs['protocol-contract'], re.M) ==
+            [str(PROTOCOL_JOB_TIMEOUT_MINUTES)],
+            'the complete head protocol lane requires its explicit 240-minute orchestration budget')
     require(re.findall(r'^    timeout-minutes: (.+)$', jobs['rust-baseline'], re.M) == ['180'],
             'the complete head Rust suite requires its explicit 180-minute job budget')
     require(re.findall(r'^    timeout-minutes: (.+)$', merge, re.M) ==
-            ["${{ matrix.lane == 'rust-baseline' && 180 || 45 }}"],
-            'the merge Rust suite requires the same 180-minute budget; other merge lanes retain 45 minutes')
+            ["${{ matrix.lane == 'protocol-contract' && 240 || matrix.lane == 'rust-baseline' && 180 || 45 }}"],
+            'merge protocol and Rust retain their 240/180-minute orchestration budgets; other merge lanes retain 45 minutes')
     require("    if: github.event_name == 'pull_request'\n" in merge, 'merge lane event boundary')
     require('      fail-fast: false\n' in merge, 'all merge lanes retain their outcomes')
     lanes = re.search(r'^        lane: \[([^\]]+)\]$', merge, re.M)

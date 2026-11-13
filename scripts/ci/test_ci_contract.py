@@ -1618,6 +1618,15 @@ class CiContractTests(unittest.TestCase):
                 self.rejected('.github/workflows/trnm-required-baseline.yml',
                               '    timeout-minutes: 155\n', f'    timeout-minutes: {minutes}\n')
 
+    def test_complete_protocol_budget_must_be_present_once_in_head(self):
+        path = '.github/workflows/trnm-required-baseline.yml'
+        original = '    timeout-minutes: 240\n'
+        for replacement in ['', '    timeout-minutes: 45\n', '    timeout-minutes: 180\n',
+                            '    timeout-minutes: 239\n', '    timeout-minutes: 241\n',
+                            '    timeout-minutes: true\n', original + original]:
+            with self.subTest(replacement=replacement):
+                self.rejected(path, original, replacement)
+
     def test_complete_rust_budget_must_be_present_once_in_head(self):
         path = '.github/workflows/trnm-required-baseline.yml'
         original = '    timeout-minutes: 180\n'
@@ -1628,9 +1637,13 @@ class CiContractTests(unittest.TestCase):
 
     def test_merge_rust_budget_must_match_head_without_expanding_other_lanes(self):
         path = '.github/workflows/trnm-required-baseline.yml'
-        original = "    timeout-minutes: ${{ matrix.lane == 'rust-baseline' && 180 || 45 }}\n"
+        original = "    timeout-minutes: ${{ matrix.lane == 'protocol-contract' && 240 || matrix.lane == 'rust-baseline' && 180 || 45 }}\n"
         for replacement in ['', '    timeout-minutes: 45\n', '    timeout-minutes: 180\n',
                             original.replace('180 || 45', '90 || 45'),
+                            original.replace('240 ||', '45 ||'),
+                            original.replace('240 ||', '180 ||'),
+                            original.replace("'protocol-contract'", "'repository-truth'"),
+                            original.replace("matrix.lane == 'protocol-contract' && 240 || ", ''),
                             original.replace('==', '!='), original.replace('180 || 45', '45 || 180'),
                             original.replace("'rust-baseline'", "'protocol-contract'"), original + original]:
             with self.subTest(replacement=replacement):
