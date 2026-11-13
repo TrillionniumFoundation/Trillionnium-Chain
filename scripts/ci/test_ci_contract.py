@@ -34,7 +34,7 @@ from check_ci_contract import (ROOT, validate, check_inline_source_pins, check_m
                                NATIVE_RELEASE_BLOCK, NATIVE_GROWTH_RELEASE_BLOCK, NATIVE_GROWTH_V2_RELEASE_BLOCK,
                                GSC2_SYNTHETIC_ORACLE,
                                NODE_EXAMPLE_BUILD, ACCOUNT_ARCHIVE_ORACLE, ACCOUNT_EXECUTION_ORACLE)
-from check_ci_contract import (check_pq_release_authority_controls, PQ_RELEASE_WORKFLOW,
+from check_ci_contract import (check_pq_release_authority_controls, check_cell_current_api_workflow, PQ_RELEASE_WORKFLOW,
                                PQ_RELEASE_MANIFEST, PQ_RELEASE_GROUPS, PQ_ROOT_HARNESS_FILES)
 from check_ci_contract import (check_pq_system_required_controls, PQ_SYSTEM_REQUIRED_MANIFEST,
                                PQ_SYSTEM_SUPPLEMENTAL_MANIFEST, PQ_SYSTEM_REQUIRED_STEP,
@@ -3075,19 +3075,23 @@ class MergedQualificationLaneTests(unittest.TestCase):
 
 
 class CellCurrentApiReadbackTests(unittest.TestCase):
-    """Exercise the actual workflow predicate using an unchanged CI observation."""
+    """Keep synthetic historical placement distinct from untouched CI artifacts."""
 
     WORKFLOW = Path(".github/workflows/pon-pq-system-continuation.yml")
-    FIXTURE = Path("tests/fixtures/ci/cell-current-api-readback-v3-944d73a.log")
-    OBSERVATION = Path("tests/fixtures/ci/cell-current-api-readback-v3-944d73a.json")
-    ORIGINAL_SHA256 = "f62af1580b9f3984527b687e0f75881335d72257c952c127aaad9098751ba994"
-    HISTORICAL_FIXTURE = Path("tests/fixtures/ci/cell-current-api-readback-v2-66b7064.log")
-    HISTORICAL_OBSERVATION = Path("tests/fixtures/ci/cell-current-api-readback-v2-66b7064.json")
-    HISTORICAL_SHA256 = "43059fa21c3542eff4f0c4aeb3552207847a8b483d214ce1e1514f79a4c09553"
+    FIXTURE = Path("tests/fixtures/ci/cell-current-api-readback-v2-66b7064.log")
+    OBSERVATION = Path("tests/fixtures/ci/cell-current-api-readback-v2-66b7064.json")
+    ORIGINAL_SHA256 = "43059fa21c3542eff4f0c4aeb3552207847a8b483d214ce1e1514f79a4c09553"
+    CURRENT_FIXTURE = Path("tests/fixtures/ci/cell-current-api-readback-v3-944d73a.log")
+    CURRENT_OBSERVATION = Path("tests/fixtures/ci/cell-current-api-readback-v3-944d73a.json")
+    CURRENT_SHA256 = "f62af1580b9f3984527b687e0f75881335d72257c952c127aaad9098751ba994"
+    CURRENT_CASE = ("test crates/trnm-data-availability/src/cell/pq.rs - "
+                    "cell::pq::VerifiedCellPqReleaseV2 (line 423) - compile fail ... ok")
+    CURRENT_SUMMARY = ("test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; "
+                       "16 filtered out; finished in 0.04s")
     EXACT_CASE = ("test crates/trnm-data-availability/src/cell/pq.rs - "
-                  "cell::pq::VerifiedCellPqReleaseV2 (line 423) - compile fail ... ok")
+                  "cell::pq::VerifiedCellPqReleaseV2 (line 364) - compile fail ... ok")
     SUMMARY = ("test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; "
-               "16 filtered out; finished in 0.04s")
+               "15 filtered out; finished in 0.04s")
 
     @classmethod
     def setUpClass(cls):
@@ -3097,29 +3101,88 @@ class CellCurrentApiReadbackTests(unittest.TestCase):
             raise AssertionError("original compile-fail observation changed")
         cls.observed = raw.decode("utf-8")
         cls.observation = json.loads((cls.root / cls.OBSERVATION).read_bytes())
-        historical = (cls.root / cls.HISTORICAL_FIXTURE).read_bytes()
-        if hashlib.sha256(historical).hexdigest() != cls.HISTORICAL_SHA256:
-            raise AssertionError("historical compile-fail observation changed")
-        cls.historical_observed = historical.decode("utf-8")
-        cls.historical_observation = json.loads(
-            (cls.root / cls.HISTORICAL_OBSERVATION).read_bytes())
-        prefix = "python3 -c '"
-        suffix = "' \"$out/cell-current-api.log\""
-        commands = [line.strip() for line in (cls.root / cls.WORKFLOW).read_text().splitlines()
-                    if line.strip().startswith(prefix) and line.strip().endswith(suffix)]
-        if len(commands) != 1:
-            raise AssertionError("exactly one actual workflow readback command is required")
-        cls.program = commands[0][len(prefix):-len(suffix)]
+        current = (cls.root / cls.CURRENT_FIXTURE).read_bytes()
+        if hashlib.sha256(current).hexdigest() != cls.CURRENT_SHA256:
+            raise AssertionError("DOC944 compile-fail observation changed")
+        cls.current_observed = current.decode("utf-8")
+        cls.current_observation = json.loads(
+            (cls.root / cls.CURRENT_OBSERVATION).read_bytes())
+        cls.program = cls.root / "scripts/ci/check_cell_current_api_readback.py"
+        cls.source = (cls.root / "trillionnium/crates/trnm-data-availability/src/cell/pq.rs").read_text()
+        start = cls.source.index("/// ```compile_fail,E0308")
+        end = cls.source.index("pub struct VerifiedCellPqReleaseV2<'a> {", start)
+        # Synthetic source placement for the unchanged historical log, not a
+        # claim that the current checkout was executed in that historical job.
+        cls.historical_source = "\n" * 363 + cls.source[start:end] + "pub struct VerifiedCellPqReleaseV2<'a> {"
+        cls.workflow = (cls.root / cls.WORKFLOW).read_text()
+        check_cell_current_api_workflow(cls.workflow)
+        cls.workflow_command = ('python3 scripts/ci/check_cell_current_api_readback.py '
+                                '"$out/cell-current-api.log" '
+                                'trillionnium/crates/trnm-data-availability/src/cell/pq.rs')
 
-    def observe(self, text):
+    def observe(self, text, source=None):
         with tempfile.TemporaryDirectory(prefix="trnm-cell-api-readback-") as directory:
             path = Path(directory) / "observation.log"
             path.write_text(text)
+            source_path = Path(directory) / "pq.rs"
+            source_path.write_text(self.historical_source if source is None else source)
             result = subprocess.run(
-                [sys.executable, "-I", "-S", "-B", "-c", self.program, str(path)],
+                [sys.executable, "-I", "-S", "-B", str(self.program), str(path), str(source_path)],
                 capture_output=True, text=True, check=False, timeout=5)
         self.assertEqual(result.stderr, "")
         return result.returncode, json.loads(result.stdout)
+
+    def test_workflow_reader_cannot_be_commented_skipped_swallowed_or_moved(self):
+        recorder = ('          python3 scripts/ci/record_pq_native_command.py '
+                    '"${source_args[@]}" --label {label} --output "$out" -- \\\n')
+        commands = (
+            ('cell-current-api-reader-controls',
+             'python3 -m unittest discover -s scripts/ci -p test_ci_contract.py -k CellCurrentApiReadbackTests -v'),
+            ('cell-current-api',
+             'cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --doc cell::pq -- --show-output --test-threads=1'),
+            ('cell-current-api-readback', self.workflow_command),
+        )
+        blocks = []
+        for label, command in commands:
+            block = recorder.replace('{label}', label) + '            ' + command + '\n'
+            self.assertEqual(self.workflow.count(block), 1)
+            blocks.append(block)
+            variants = (
+                '', block * 2,
+                ''.join('          # ' + line.lstrip() + '\n' for line in block.splitlines()),
+                block.rstrip() + ' || true\n',
+                block.rstrip() + ' &\n',
+                '          if false; then\n' + block + '          fi\n',
+                '          if\n' + block + '          then :; fi\n',
+                '          {\n' + block + '          } || true\n',
+                '          set +e\n' + block,
+            )
+            for replacement in variants:
+                with self.subTest(label=label, replacement=replacement), self.assertRaises(ValueError):
+                    check_cell_current_api_workflow(self.workflow.replace(block, replacement, 1))
+        sequence = ''.join(blocks)
+        self.assertIn(sequence, self.workflow)
+        marker = '      - name: Run independent primitives on the exact candidate\n'
+        for changed in (
+            self.workflow.replace(sequence, ''.join(reversed(blocks)), 1),
+            self.workflow.replace('  primitive-interoperability:\n', '  other-job:\n', 1),
+            self.workflow.replace(marker, marker + '        if: false\n', 1),
+            self.workflow.replace('      - scripts/ci/check_cell_current_api_readback.py\n', '', 1),
+        ):
+            with self.subTest(change=changed), self.assertRaises(ValueError):
+                check_cell_current_api_workflow(changed)
+
+    def test_source_bound_line_shift_and_stale_log(self):
+        line = self.source[:self.source.index("/// ```compile_fail,E0308")].count("\n") + 1
+        shifted = self.observed.replace("(line 364)", f"(line {line})")
+        self.assertEqual(self.observe(shifted, self.source)[0], 0)
+        self.assertEqual(self.observe(shifted, "\n" + self.source)[0], 1)
+        self.assertEqual(self.observe(shifted, self.source.replace("proof.release_at(300)", "proof.release_at(301)"))[0], 1)
+
+    def test_appended_failed_or_ignored_cases_and_failed_summary_refuse(self):
+        for extra in ("test other ... FAILED\n", "test other ... ignored\n",
+                      "test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s\n"):
+            self.assert_refused(self.observed + extra)
 
     def assert_refused(self, text):
         status, report = self.observe(text)
@@ -3140,11 +3203,8 @@ class CellCurrentApiReadbackTests(unittest.TestCase):
 
     def test_old_or_wrong_exact_case_identity_is_refused(self):
         for replacement in (
-            self.EXACT_CASE.replace("(line 423)", "(line 364)"),
-            self.EXACT_CASE.replace("(line 423)", "(line 422)"),
-            self.EXACT_CASE.replace("(line 423)", "(line 424)"),
-            self.EXACT_CASE.replace("(line 423)", "(line 359)"),
-            self.EXACT_CASE.replace("(line 423)", "(line 365)"),
+            self.EXACT_CASE.replace("(line 364)", "(line 359)"),
+            self.EXACT_CASE.replace("(line 364)", "(line 365)"),
             self.EXACT_CASE.replace("VerifiedCellPqReleaseV2", "VerifiedCellPqReleaseV1"),
             self.EXACT_CASE.replace("src/cell/pq.rs", "src/cell/other.rs"),
             self.EXACT_CASE.replace(" ... ok", " ... ignored"),
@@ -3192,35 +3252,97 @@ class CellCurrentApiReadbackTests(unittest.TestCase):
             with self.subTest(text=changed):
                 self.assert_refused(changed)
 
-    def test_fixture_keeps_original_source_and_failed_job_provenance(self):
-        self.assertEqual(self.historical_observation["source_commit"],
-                         "66b7064be597039ce871b5b12ad5568850a2dd46")
-        self.assertEqual(self.historical_observation["source_tree"],
-                         "75ac72605e3647de5a09557bfd7012dc99b0dec6")
-        self.assertEqual(self.historical_observation["original_doctest_exit_code"], 0)
-        self.assertEqual(self.historical_observation["original_readback_exit_code"], 1)
-        self.assertEqual(self.historical_observation["original_job_conclusion"], "failure")
-        self.assertEqual(self.historical_observation["log_sha256"], self.HISTORICAL_SHA256)
-        self.assertEqual(self.historical_observation["log_bytes"], 1159)
-        self.assertEqual(self.historical_observation["source_file_sha256"],
-                         "7326da0ad2c31fe599300d928fde84129ce83de0b072ef3bb46799d424aca3eb")
-        historical_case = self.EXACT_CASE.replace("(line 423)", "(line 364)")
-        self.assertEqual(self.historical_observed.count(historical_case), 1)
-        self.assert_refused(self.historical_observed)
-        self.assertEqual(self.observation["source_commit"],
+    def test_doc944_original_fixture_current_source_and_stale_v2(self):
+        # These are unchanged downloaded bytes, unlike the explicitly
+        # synthetic historical source placement used by the original controls.
+        status, report = self.observe(self.current_observed, self.source)
+        self.assertEqual(status, 0, report)
+        self.assertEqual(report, {
+            "contract": "cell-current-view-required",
+            "diagnostic_codes": ["E0308"],
+            "executed_tests": 1,
+            "result": "PASS",
+            "scope": "compile-fail-type-boundary-observation",
+        })
+        stale_status, stale_report = self.observe(self.observed, self.source)
+        self.assertEqual(stale_status, 1, stale_report)
+        self.assertEqual(stale_report["result"], "FAIL")
+        self.assertEqual(stale_report["contract"], "cell-current-view-required")
+        self.assertEqual(self.current_observation["source_commit"],
                          "944d73aab375b062348b12b67b3159403c901ba1")
-        self.assertEqual(self.observation["source_tree"],
+        self.assertEqual(self.current_observation["source_tree"],
                          "b17cc006d3736a04f0539cfe292bb1c5d2dd7653")
+        self.assertEqual(self.current_observation["original_doctest_exit_code"], 0)
+        self.assertEqual(self.current_observation["original_readback_exit_code"], 1)
+        self.assertEqual(self.current_observation["original_job_conclusion"], "failure")
+        self.assertEqual(self.current_observation["log_sha256"], self.CURRENT_SHA256)
+        self.assertEqual(self.current_observation["log_bytes"], 1159)
+        self.assertEqual(self.current_observation["source_file_sha256"],
+                         "906e3c38a8f038a346e589c514b69dcb585f4d930bd7167d83aa6c495dd2ed33")
+        self.assertEqual(self.current_observation["original_fixed_case_line"], 364)
+        self.assertEqual(self.current_observation["actual_case_line"], 423)
+        self.assertEqual(self.current_observed.count(self.CURRENT_CASE), 1)
+
+    def test_doc944_current_source_negative_readback_controls(self):
+        text = self.current_observed
+        case = self.CURRENT_CASE
+        variants = [
+            text.replace(case, case.replace("(line 423)", f"(line {line})"), 1)
+            for line in (364, 422, 424, 359, 365)
+        ]
+        variants += [
+            text.replace(case, case.replace(old, new), 1)
+            for old, new in (
+                ("VerifiedCellPqReleaseV2", "VerifiedCellPqReleaseV1"),
+                ("src/cell/pq.rs", "src/cell/other.rs"),
+                (" ... ok", " ... ignored"),
+            )
+        ]
+        variants += [
+            text.replace(case + "\n", "", 1),
+            text.replace(case + "\n", (case + "\n") * 2, 1),
+            text.replace("error[E0308]:", "error[E0309]:"),
+            text.replace("error[E0308]:", "error:"),
+            text + "error[E0000]: additional diagnostic\n",
+        ]
+        variants += [
+            text.replace(old, new)
+            for old, new in (
+                ("CellPqReleaseExpectationV2", "DifferentExpectation"),
+                ("integer", "different value"),
+                ("release_at(300)", "release_at(301)"),
+            )
+        ]
+        variants += [
+            text.replace(self.CURRENT_SUMMARY, ""),
+            text + self.CURRENT_SUMMARY + "\n",
+            text.replace("test result: ok.", "test result: FAILED."),
+            text.replace("1 passed;", "0 passed;"),
+            text.replace("1 passed;", "2 passed;"),
+            text.replace("0 failed;", "1 failed;"),
+            text.replace("0 ignored;", "1 ignored;"),
+            text.replace("0 measured;", "1 measured;"),
+        ]
+        for changed in variants:
+            with self.subTest(text=changed):
+                status, report = self.observe(changed, self.source)
+                self.assertEqual(status, 1, report)
+                self.assertEqual(report["result"], "FAIL")
+                self.assertEqual(report["contract"], "cell-current-view-required")
+
+    def test_fixture_keeps_original_source_and_failed_job_provenance(self):
+        self.assertEqual(self.observation["source_commit"],
+                         "66b7064be597039ce871b5b12ad5568850a2dd46")
+        self.assertEqual(self.observation["source_tree"],
+                         "75ac72605e3647de5a09557bfd7012dc99b0dec6")
         self.assertEqual(self.observation["original_doctest_exit_code"], 0)
         self.assertEqual(self.observation["original_readback_exit_code"], 1)
         self.assertEqual(self.observation["original_job_conclusion"], "failure")
         self.assertEqual(self.observation["log_sha256"], self.ORIGINAL_SHA256)
         self.assertEqual(self.observation["log_bytes"], 1159)
         self.assertEqual(self.observation["source_file_sha256"],
-                         "906e3c38a8f038a346e589c514b69dcb585f4d930bd7167d83aa6c495dd2ed33")
-        self.assertEqual(self.observation["original_fixed_case_line"], 364)
-        self.assertEqual(self.observation["actual_case_line"], 423)
-        self.assertIn("(line 423)", self.EXACT_CASE)
+                         "7326da0ad2c31fe599300d928fde84129ce83de0b072ef3bb46799d424aca3eb")
+        self.assertIn("(line 364)", self.EXACT_CASE)
         self.assertEqual(self.observed.count(self.EXACT_CASE), 1)
 
 

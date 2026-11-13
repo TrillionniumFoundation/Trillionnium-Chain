@@ -14,6 +14,7 @@ on:
       - formal/pon-nakamoto-v1/test_pq_root_quorum_research.py
       - scripts/ci/check_ci_contract.py
       - scripts/ci/test_ci_contract.py
+      - scripts/ci/check_cell_current_api_readback.py
       - scripts/ci/record_pq_native_command.py
       - scripts/ci/pinned_native_process.py
       - scripts/ci/test_record_pq_native_command.py
@@ -148,10 +149,12 @@ jobs:
             cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --test tuf_tap21
           python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label cell-current-authority --output "$out" -- \
             cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability cell::pq
+          python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label cell-current-api-reader-controls --output "$out" -- \
+            python3 -m unittest discover -s scripts/ci -p test_ci_contract.py -k CellCurrentApiReadbackTests -v
           python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label cell-current-api --output "$out" -- \
             cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-data-availability --doc cell::pq -- --show-output --test-threads=1
           python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label cell-current-api-readback --output "$out" -- \
-            python3 -c 'import json,pathlib,re,sys; text=pathlib.Path(sys.argv[1]).read_text(); names=re.findall(r"^test crates/trnm-data-availability/src/cell/pq\.rs - cell::pq::VerifiedCellPqReleaseV2 \(line 423\) - compile fail \.\.\. ok$",text,re.M); summaries=re.findall(r"^test result: ok\. ([0-9]+) passed; ([0-9]+) failed; ([0-9]+) ignored; ([0-9]+) measured; ([0-9]+) filtered out;",text,re.M); errors=re.findall(r"^error\[(E[0-9]+)\]:",text,re.M); valid=(len(names)==1 and len(summaries)==1 and tuple(map(int,summaries[0][:4]))==(1,0,0,0) and errors==["E0308"] and "CellPqReleaseExpectationV2" in text and "integer" in text and "release_at(300)" in text); print(json.dumps({"result":"PASS" if valid else "FAIL","contract":"cell-current-view-required","executed_tests":len(names),"diagnostic_codes":errors,"scope":"compile-fail-type-boundary-observation"},sort_keys=True)); sys.exit(0 if valid else 1)' "$out/cell-current-api.log"
+            python3 scripts/ci/check_cell_current_api_readback.py "$out/cell-current-api.log" trillionnium/crates/trnm-data-availability/src/cell/pq.rs
           python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label recovery-release-components --output "$out" -- \
             cargo +1.95.0 test --locked --manifest-path trillionnium/Cargo.toml -p trnm-checkpoint-store -p trnm-release-bundle --all-targets --no-fail-fast -- --test-threads=1
           python3 scripts/ci/record_pq_native_command.py "${source_args[@]}" --label independent-c --output "$out" -- \
