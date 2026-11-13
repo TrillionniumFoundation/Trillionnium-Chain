@@ -319,6 +319,18 @@ class InventoryContractTests(ContractCase):
                 with self.assertRaises(composition.CompositionError):
                     composition.validate_manifest(data)
 
+    def test_pre_client_timing_legacy_identity_remains_refused(self):
+        for field, value in (
+            ("sha256", "3ed0e9d451ff885fb27a4a6f7449ca9050eb44707d801a3a40d675fcf5ceaed4"),
+            ("declared_revision", "2bb56596e637908c44b5a2ef5984c9c37c7d3cc8"),
+        ):
+            with self.subTest(legacy_continuation_field=field):
+                data = load(MANIFEST)
+                self.assertNotEqual(data["input_manifests"]["legacy"][field], value)
+                data["input_manifests"]["legacy"][field] = value
+                with self.assertRaises(composition.CompositionError):
+                    composition.validate_manifest(data)
+
     def test_previous_five_role_population_cannot_omit_the_witness(self):
         data = load(MANIFEST)
         population = data["conditional_root_arithmetic"]["family_population"]

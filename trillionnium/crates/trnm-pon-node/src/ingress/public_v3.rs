@@ -3519,6 +3519,33 @@ fn call_public_protected_v3_with_profile(
         outer_deadline,
     )
 }
+// Carry the original call boundary across immutable PQ key preparation. These
+// client-local times confer no admission, CPU-budget or signature authority.
+struct ClientCallTiming {
+    started: Instant,
+    outer_deadline: Option<Instant>,
+}
+impl ClientCallTiming {
+    fn start(outer_deadline: Option<Instant>) -> Self {
+        Self {
+            started: Instant::now(),
+            outer_deadline,
+        }
+    }
+    fn construction_failure(
+        self,
+        error: &'static str,
+    ) -> (Result<PublicReply>, PublicClientMetrics) {
+        let elapsed = elapsed_ns(self.started);
+        let mut metrics = PublicClientMetrics {
+            total_elapsed_ns: elapsed,
+            ..PublicClientMetrics::default()
+        };
+        metrics.record_failure(PublicClientStage::Construction, elapsed);
+        (Err(error.into()), metrics)
+    }
+}
+
 fn call_public_authenticated(
     address: SocketAddr,
     request: &Request,
@@ -3528,11 +3555,33 @@ fn call_public_authenticated(
     policy_and_arithmetic: (PublicPolicy, ClientProfile),
     outer_deadline: Option<Instant>,
 ) -> (Result<PublicReply>, PublicClientMetrics) {
+    call_public_authenticated_with_timing(
+        address,
+        request,
+        settings,
+        server_pin,
+        caller,
+        policy_and_arithmetic,
+        ClientCallTiming::start(outer_deadline),
+    )
+}
+fn call_public_authenticated_with_timing(
+    address: SocketAddr,
+    request: &Request,
+    settings: &Settings,
+    server_pin: ServerPin<'_>,
+    caller: Caller<'_>,
+    policy_and_arithmetic: (PublicPolicy, ClientProfile),
+    timing: ClientCallTiming,
+) -> (Result<PublicReply>, PublicClientMetrics) {
+    let ClientCallTiming {
+        started: call_start,
+        outer_deadline,
+    } = timing;
     let (policy, client_profile) = policy_and_arithmetic;
     let expected_profile = client_profile.id(policy);
     let pq = caller.is_pq();
     let pinned_server = server_pin.public_key();
-    let call_start = Instant::now();
     let mut phase_start = call_start;
     let mut phase = PublicClientStage::Construction;
     let mut metrics = PublicClientMetrics::default();

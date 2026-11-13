@@ -325,6 +325,10 @@ pub(super) fn response_maximum_for(op: u8, pq: bool) -> usize {
 
 /// The pin is supplied by the caller's protected configuration. No discovery,
 /// TLS certificate or classical identity is accepted as an alternative.
+/// Construction and total elapsed time include pinned-key preparation. An
+/// already expired outer deadline is refused before parsing/expanding that key,
+/// including when the supplied pin is invalid; a live call retains the original
+/// PUBLIC_CHALLENGE_SIGNATURE refusal for an invalid pin.
 #[allow(clippy::too_many_arguments)]
 pub fn call_public_history_pq_v4(
     address: SocketAddr,
@@ -336,16 +340,15 @@ pub fn call_public_history_pq_v4(
     policy: PublicPolicy,
     outer_deadline: Option<Instant>,
 ) -> (Result<PublicReply>, PublicClientMetrics) {
+    let timing = ClientCallTiming::start(outer_deadline);
+    if outer_deadline.is_some_and(|deadline| timing.started >= deadline) {
+        return timing.construction_failure("PUBLIC_CLIENT_DEADLINE");
+    }
     let verifier = match PqNativeVerifier::from_pinned_spki(pinned_server_spki, pinned_server_id) {
         Ok(v) => v,
-        Err(_) => {
-            return (
-                Err("PUBLIC_CHALLENGE_SIGNATURE".into()),
-                PublicClientMetrics::default(),
-            )
-        }
+        Err(_) => return timing.construction_failure("PUBLIC_CHALLENGE_SIGNATURE"),
     };
-    call_public_authenticated(
+    call_public_authenticated_with_timing(
         address,
         request,
         settings,
@@ -355,7 +358,7 @@ pub fn call_public_history_pq_v4(
         },
         Caller::Pq(caller),
         (policy, ClientProfile::PqHistoryV4),
-        outer_deadline,
+        timing,
     )
 }
 

@@ -94,6 +94,108 @@ fn pq_only_account_profile_rejects_classical_public_v3_client_before_connection(
 }
 
 #[test]
+fn pq_client_pin_refusals_record_construction_and_expired_deadline_wins_before_preparation() {
+    let settings = Settings::development(Some(1)).unwrap();
+    let server_key = identity(71);
+    let caller = identity(72);
+    let expected_id = digest(server_key.public_key()).unwrap();
+    let valid_spki: &[u8] = server_key.public_spki();
+    let malformed_spki: &[u8] = b"malformed PQ pin";
+    let expired = Some(Instant::now());
+    let live = Some(Instant::now() + Duration::from_secs(60));
+    for (spki, key_id, deadline, expected) in [
+        (
+            malformed_spki,
+            expected_id,
+            None,
+            "PUBLIC_CHALLENGE_SIGNATURE",
+        ),
+        (
+            malformed_spki,
+            expected_id,
+            live,
+            "PUBLIC_CHALLENGE_SIGNATURE",
+        ),
+        (valid_spki, [0; 32], None, "PUBLIC_CHALLENGE_SIGNATURE"),
+        (
+            malformed_spki,
+            expected_id,
+            expired,
+            "PUBLIC_CLIENT_DEADLINE",
+        ),
+        (valid_spki, expected_id, expired, "PUBLIC_CLIENT_DEADLINE"),
+    ] {
+        // Each case stops at construction before TCP or a signed request.
+        // Port zero has no listener and cannot hide an early-I/O regression.
+        let (result, metrics) = call_public_history_pq_v4(
+            "127.0.0.1:0".parse().unwrap(),
+            &Request::Head,
+            &settings,
+            spki,
+            key_id,
+            &caller,
+            PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+            deadline,
+        );
+        assert_eq!(result.unwrap_err().to_string(), expected);
+        assert_eq!(metrics.failed_stage, Some(PublicClientStage::Construction));
+        assert_eq!(metrics.construction_ns, metrics.total_elapsed_ns);
+        assert_eq!(metrics.challenge_ns, 0);
+        assert_eq!(metrics.solution_search_ns, 0);
+        assert_eq!(metrics.solution_search_thread_cpu_ns, None);
+        assert_eq!(metrics.solution_body_response_ns, 0);
+        assert_eq!(metrics.solution_trials, 0);
+        assert!(!metrics.solution_found);
+    }
+}
+
+#[test]
+fn pq_client_construction_retains_original_pin_preparation_interval() {
+    let settings = Settings::development(Some(1)).unwrap();
+    let server_key = identity(71);
+    let caller = identity(72);
+    let timing = ClientCallTiming::start(None);
+    let pin = ServerPin::Pq {
+        key_id: server_key.public_key().into(),
+        verifier: Box::new(
+            PqNativeVerifier::from_pinned_spki(
+                server_key.public_spki(),
+                digest(server_key.public_key()).unwrap(),
+            )
+            .unwrap(),
+        ),
+    };
+    // Compare two observations of one real preparation interval. This is not
+    // a performance threshold and does not run work search or network I/O.
+    let preparation_ns = elapsed_ns(timing.started);
+    assert!(preparation_ns > 0);
+    let (result, metrics) = call_public_authenticated_with_timing(
+        "127.0.0.1:0".parse().unwrap(),
+        &Request::Submit {
+            packet: String::new(),
+        },
+        &settings,
+        pin,
+        Caller::Pq(&caller),
+        (
+            PublicPolicy::new(8, Duration::from_secs(2)).unwrap(),
+            ClientProfile::PqHistoryV4,
+        ),
+        timing,
+    );
+    assert_eq!(result.unwrap_err().to_string(), "PUBLIC_OPERATION_PROFILE");
+    assert_eq!(metrics.failed_stage, Some(PublicClientStage::Construction));
+    assert!(metrics.construction_ns >= preparation_ns);
+    assert!(metrics.total_elapsed_ns >= metrics.construction_ns);
+    assert_eq!(metrics.challenge_ns, 0);
+    assert_eq!(metrics.solution_search_ns, 0);
+    assert_eq!(metrics.solution_search_thread_cpu_ns, None);
+    assert_eq!(metrics.solution_body_response_ns, 0);
+    assert_eq!(metrics.solution_trials, 0);
+    assert!(!metrics.solution_found);
+}
+
+#[test]
 fn pq_history_real_three_party_messages_are_strict_and_old_wire_is_refused() {
     let settings = Settings::development(Some(1)).unwrap();
     let caller = identity(72);
