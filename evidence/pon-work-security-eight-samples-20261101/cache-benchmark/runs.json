@@ -1,0 +1,170 @@
+[
+  {
+    "ordinal": 1,
+    "round": 1,
+    "variant": "baseline",
+    "command": [
+      "/tmp/pon-cache-benchmark-baseline/target/release/pon-cache-benchmark",
+      "baseline",
+      "1"
+    ],
+    "cwd": "/tmp/pon-cache-benchmark-baseline",
+    "exit_code": 0,
+    "started_unix_ns": 1793552641861399576,
+    "finished_unix_ns": 1793552643934302295,
+    "source_before": {
+      "source_files": 17,
+      "source_verified": true,
+      "elf_sha256": "a3867b20d9cffb12b42bda09470a4daafdcf0608cc74efe8a1fadec6c51bc681",
+      "lock_sha256": "2e04cdc62e48b6b0f95bb1d60406580be704d3b0a08a6bbc7d7036115f74c8e3"
+    },
+    "source_after": {
+      "source_files": 17,
+      "source_verified": true,
+      "elf_sha256": "a3867b20d9cffb12b42bda09470a4daafdcf0608cc74efe8a1fadec6c51bc681",
+      "lock_sha256": "2e04cdc62e48b6b0f95bb1d60406580be704d3b0a08a6bbc7d7036115f74c8e3"
+    },
+    "stdout_sha256": "fd28a0e6f39573d0710c9420eff5a023d57bdc1b0bcdb7d47a9491c4913028d3",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "ordinal": 2,
+    "round": 1,
+    "variant": "candidate",
+    "command": [
+      "/tmp/pon-cache-benchmark-candidate/target/release/pon-cache-benchmark",
+      "candidate",
+      "1"
+    ],
+    "cwd": "/tmp/pon-cache-benchmark-candidate",
+    "exit_code": 0,
+    "started_unix_ns": 1793552643938189352,
+    "finished_unix_ns": 1793552645639791049,
+    "source_before": {
+      "source_files": 18,
+      "source_verified": true,
+      "elf_sha256": "76ab0bec8a443c6014f077980d4e12a5a664a8929487310e77cd810f32722a50",
+      "lock_sha256": "2e04cdc62e48b6b0f95bb1d60406580be704d3b0a08a6bbc7d7036115f74c8e3"
+    },
+    "source_after": {
+      "source_files": 18,
+      "source_verified": true,
+      "elf_sha256": "76ab0bec8a443c6014f077980d4e12a5a664a8929487310e77cd810f32722a50",
+      "lock_sha256": "2e04cdc62e48b6b0f95bb1d60406580be704d3b0a08a6bbc7d7036115f74c8e3"
+    },
+    "stdout_sha256": "94d80fa18eb3e8bee3653d1cc93a97cd8b181287a3405ea853b153f9f17f11ff",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "ordinal": 3,
+    "round": 2,
+    "variant": "candidate",
+    "command": [
+      "/tmp/pon-cache-benchmark-candidate/target/release/pon-cache-benchmark",
+      "candidate",
+      "2"
+    ],
+    "cwd": "/tmp/pon-cache-benchmark-candidate",
+    "exit_code": 0,
+    "started_unix_ns": 1793552645643765595,
+    "finished_unix_ns": 1793552648430153607,
+    "source_before": {
+      "source_files": 18,
+      "source_verified": true,
+      "elf_sha256": "76ab0bec8a443c6014f077980d4e12a5a664a8929487310e77cd810f32722a50",
+      "lock_sha256": "2e04cdc62e48b6b0f95bb1d60406580be704d3b0a08a6bbc7d7036115f74c8e3"
+    },
+    "source_after": {
+      "source_files": 18,
+      "source_verified": true,
+      "elf_sha256": "76ab0bec8a443c6014f077980d4e12a5a664a8929487310e77cd810f32722a50",
+      "lock_sha256": "2e04cdc62e48b6b0f95bb1d60406580be704d3b0a08a6bbc7d7036115f74c8e3"
+    },
+    "stdout_sha256": "277370a69dc69ebfb2b02e31ea9660de88ab73b9481bdc2a8b4bd6987fa41fa8",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "ordinal": 4,
+    "round": 2,
+    "variant": "baseline",
+    "command": [
+      "/tmp/pon-cache-benchmark-baseline/target/release/pon-cache-benchmark",
+      "baseline",
+      "2"
+    ],
+    "cwd": "/tmp/pon-cache-benchmark-baseline",
+    "exit_code": 0,
+    "started_unix_ns": 1793552648433764365,
+    "finished_unix_ns": 1793552652059402078,
+    "source_before": {
+      "source_files": 17,
+      "source_verified": true,
+      "elf_sha256": "a3867b20d9cffb12b42bda09470a4daafdcf0608cc74efe8a1fadec6c51bc681",
+      "lock_sha256": "2e04cdc62e48b6b0f95bb1d60406580be704d3b0a08a6bbc7d7036115f74c8e3"
+    },
+    "source_after": {
+      "source_files": 17,
+      "source_verified": true,
+      "elf_sha256": "a3867b20d9cffb12b42bda09470a4daafdcf0608cc74efe8a1fadec6c51bc681",
+      "lock_sha256": "2e04cdc62e48b6b0f95bb1d60406580be704d3b0a08a6bbc7d7036115f74c8e3"
+    },
+    "stdout_sha256": "6d623e1b9b2154980fe4fb6a1f4ed6f78e6ffa54a88471ca90e9eaa7c37b1853",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "ordinal": 5,
+    "round": 3,
+    "variant": "baseline",
+    "command": [
+      "/tmp/pon-cache-benchmark-baseline/target/release/pon-cache-benchmark",
+      "baseline",
+      "3"
+    ],
+    "cwd": "/tmp/pon-cache-benchmark-baseline",
+    "exit_code": 0,
+    "started_unix_ns": 1793552652066624542,
+    "finished_unix_ns": 1793552656198570015,
+    "source_before": {
+      "source_files": 17,
+      "source_verified": true,
+      "elf_sha256": "a3867b20d9cffb12b42bda09470a4daafdcf0608cc74efe8a1fadec6c51bc681",
+      "lock_sha256": "2e04cdc62e48b6b0f95bb1d60406580be704d3b0a08a6bbc7d7036115f74c8e3"
+    },
+    "source_after": {
+      "source_files": 17,
+      "source_verified": true,
+      "elf_sha256": "a3867b20d9cffb12b42bda09470a4daafdcf0608cc74efe8a1fadec6c51bc681",
+      "lock_sha256": "2e04cdc62e48b6b0f95bb1d60406580be704d3b0a08a6bbc7d7036115f74c8e3"
+    },
+    "stdout_sha256": "57e32fb74f3965912ffac21697e8739d65e6e4b1664552a6d9cbc3d5fd513037",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "ordinal": 6,
+    "round": 3,
+    "variant": "candidate",
+    "command": [
+      "/tmp/pon-cache-benchmark-candidate/target/release/pon-cache-benchmark",
+      "candidate",
+      "3"
+    ],
+    "cwd": "/tmp/pon-cache-benchmark-candidate",
+    "exit_code": 0,
+    "started_unix_ns": 1793552656207409794,
+    "finished_unix_ns": 1793552659583252021,
+    "source_before": {
+      "source_files": 18,
+      "source_verified": true,
+      "elf_sha256": "76ab0bec8a443c6014f077980d4e12a5a664a8929487310e77cd810f32722a50",
+      "lock_sha256": "2e04cdc62e48b6b0f95bb1d60406580be704d3b0a08a6bbc7d7036115f74c8e3"
+    },
+    "source_after": {
+      "source_files": 18,
+      "source_verified": true,
+      "elf_sha256": "76ab0bec8a443c6014f077980d4e12a5a664a8929487310e77cd810f32722a50",
+      "lock_sha256": "2e04cdc62e48b6b0f95bb1d60406580be704d3b0a08a6bbc7d7036115f74c8e3"
+    },
+    "stdout_sha256": "63e7a88d37e23f2ac00a6fd83c3276163f4efe08a5ebddacabb4c09592852fb8",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]
