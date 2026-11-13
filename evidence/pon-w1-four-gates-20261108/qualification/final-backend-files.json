@@ -1,0 +1,135 @@
+{
+  "component": "final-backend",
+  "original_directory": "/home/qian-qi/work/chain-w1-c5-backend-qualification-20261108-ec265b-01",
+  "archive": "final-backend.tar.gz",
+  "bytes": 138446,
+  "sha256": "8dde8b5cf7c0d077e3b2176ccf11be27eddd8c7d8f05c742b43a388ed6ae369c",
+  "manifest_sha256": "7e500f1b607916648f8c3b96402e40018ecae90eb859d930bfa82cd8223142a6",
+  "files": [
+    {
+      "path": "build.command.json",
+      "bytes": 913,
+      "sha256": "c040aaaccad0763fba6844d796e23b94d9548c3a35622ad2071a83ab42762237"
+    },
+    {
+      "path": "build.stderr",
+      "bytes": 207,
+      "sha256": "918abb2a39b7e9aa3290cd390df99b045bab96bce02cf5442985e7686366f29f"
+    },
+    {
+      "path": "build.stdout",
+      "bytes": 333194,
+      "sha256": "c3bd4f5aa02a58e00e195fc1981878d6dfe7340e53136d3126594bc561d4693c"
+    },
+    {
+      "path": "compiler-version.command.json",
+      "bytes": 742,
+      "sha256": "b2dec54df11ba8af5c132f0b81633be2a6a07a7a5ee4bdbfdbb09e5ee81319c2"
+    },
+    {
+      "path": "compiler-version.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "compiler-version.stdout",
+      "bytes": 196,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    {
+      "path": "declaration.json",
+      "bytes": 1400,
+      "sha256": "aaf8bde9bf2309f28065613bfa116199070fba9ba7664af1d3cdef2b87f10c86"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 9959,
+      "sha256": "7e500f1b607916648f8c3b96402e40018ecae90eb859d930bfa82cd8223142a6"
+    },
+    {
+      "path": "metadata.command.json",
+      "bytes": 773,
+      "sha256": "f0c4e95ccc26bc82084f10fb205509cbf7ca810bf181335f5655e2691550dbb3"
+    },
+    {
+      "path": "metadata.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "metadata.stdout",
+      "bytes": 1428636,
+      "sha256": "47e6b20a8755a030a66260be6918f48b04141008341b4fd09a74e4f7151a455f"
+    },
+    {
+      "path": "preflight.command.json",
+      "bytes": 653,
+      "sha256": "a32e6890a35ee1ac079514423c05b0452480f06a9cde03f9c89a41a262208712"
+    },
+    {
+      "path": "preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "preflight.stdout",
+      "bytes": 170,
+      "sha256": "7885d1d19800193c6a37881d4781e5a84dfe2bfb0082d5f3d12df4cdfce9ca04"
+    },
+    {
+      "path": "source-after.command.json",
+      "bytes": 899,
+      "sha256": "67ef82e9b5f36db2ee626ee4d2444a4411c710fe8ae879fe59f6985b2b54b4b5"
+    },
+    {
+      "path": "source-after.json",
+      "bytes": 423,
+      "sha256": "6fb5a9059bd227ff8abbd70e2ee1c16c5da40508121b7f239c1615fce712a362"
+    },
+    {
+      "path": "source-after.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "source-after.stdout",
+      "bytes": 423,
+      "sha256": "6fb5a9059bd227ff8abbd70e2ee1c16c5da40508121b7f239c1615fce712a362"
+    },
+    {
+      "path": "source-before.command.json",
+      "bytes": 903,
+      "sha256": "b06dc1170d096ac560013b9cf32adf3ec939813211d25581dd69c42cafd5c66b"
+    },
+    {
+      "path": "source-before.json",
+      "bytes": 423,
+      "sha256": "6fb5a9059bd227ff8abbd70e2ee1c16c5da40508121b7f239c1615fce712a362"
+    },
+    {
+      "path": "source-before.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "source-before.stdout",
+      "bytes": 423,
+      "sha256": "6fb5a9059bd227ff8abbd70e2ee1c16c5da40508121b7f239c1615fce712a362"
+    },
+    {
+      "path": "source-probe.command.json",
+      "bytes": 964,
+      "sha256": "e9bd5925c29ed1c65ae3cbc5e0a6e5695a091c8383c99bcc38ac24058aba2a1f"
+    },
+    {
+      "path": "source-probe.stderr",
+      "bytes": 21,
+      "sha256": "3f3f0f1e2ceea949f6c2329349c6e89854042da7956a58ff2744bcd409b608ae"
+    },
+    {
+      "path": "source-probe.stdout",
+      "bytes": 888,
+      "sha256": "894f2e8af199effab0a37f27afaf5972820d124e45c29d2fbe43ee6823683520"
+    }
+  ]
+}

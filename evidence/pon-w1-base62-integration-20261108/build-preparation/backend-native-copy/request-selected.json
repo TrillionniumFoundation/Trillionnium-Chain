@@ -1,0 +1,21 @@
+{
+  "args_prefix": [
+    "-B",
+    "-c"
+  ],
+  "cpu_quota_percent": 200,
+  "cwd": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b",
+  "environment_mapping_omitted": true,
+  "executable": "/usr/bin/python3.12",
+  "execution_mode": "operator",
+  "job_id": "1a1b9bc6a15-12894-1677",
+  "memory_max_bytes": 8589934592,
+  "nice": 10,
+  "original_full_request_published": false,
+  "original_request_bytes": 4414,
+  "original_request_path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b9bc6a15-12894-1677/request.json",
+  "original_request_sha256": "a31954cadaeefcadbb06122469d00c5e81e84b058456dff99225ee1da0478413",
+  "script_file": "original-copy-helper.py",
+  "script_sha256": "370c3ec239d77c1e3aa8fbdfa10c1579e33b0e80fbbb8dd44a3d890214e56fe4",
+  "timeout_seconds": 300
+}

@@ -1,0 +1,29 @@
+{
+  "all_descendants_reaped": null,
+  "argv": [
+    "/usr/bin/python3.12",
+    "/home/qian-qi/work/chain-w1-m12-terminal-20261108-ec265b/scripts/w1_owner_cancellation_v1.py",
+    "start",
+    "--config",
+    "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/config.json",
+    "--request",
+    "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/run/target-request.json",
+    "--out",
+    "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/run/owner-cancel-start"
+  ],
+  "can_authorize_payment": false,
+  "completed_monotonic_ns": 1188958698472119,
+  "completion_clock_scope": "actual Rust caller observed helper exit; not helper pre-handoff timestamp",
+  "completion_observed_before_original_proof_deadline": true,
+  "direct_child_waited": true,
+  "original_proof_deadline_ns": 1189048740638185,
+  "pid": 3001938,
+  "proof_deadline_renewed": false,
+  "returncode": 1,
+  "schema": "TRNM-W1-OWNER-CANCEL-COMMAND1",
+  "signal": null,
+  "started_monotonic_ns": 1188938696934831,
+  "stderr_sha256": "7411bd99264dcce201d2714b9c984dcf6830bbeede15d8916aeb24fb7f73abd4",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "timed_out": false
+}

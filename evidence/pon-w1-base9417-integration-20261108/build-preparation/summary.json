@@ -1,0 +1,177 @@
+{
+  "C7_unknown_does_not_establish_phase_cap_refund_or_completion": true,
+  "C7_unknown_job_1994_replayed": false,
+  "History_release_compile_list_is_not_execution_of_ignored_methods": true,
+  "binary_or_private_SQLite_or_inherited_environment_included": false,
+  "cache_copy_attempts": [
+    {
+      "copy_complete": true,
+      "copy_exit_code": 0,
+      "copy_record": {
+        "bytes": 4914,
+        "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/backend-cache-copy-01.json",
+        "sha256": "412f51505ca4f83835f44f46332fcc24345795155c96d5b7a27b9b1e79efec65"
+      },
+      "declared_outer_seconds": 1800,
+      "destination_duplicate_inodes": 0,
+      "destination_hardlinks": 0,
+      "fresh_cargo_target": false,
+      "independent_cleanroom_build": false,
+      "logical_bytes": 1747114780,
+      "regular_files_checked": 3921,
+      "role": "backend",
+      "shared_source_inodes": 0,
+      "source_regular_metadata_unchanged": true
+    },
+    {
+      "copy_complete": true,
+      "copy_exit_code": 0,
+      "copy_record": {
+        "bytes": 5914,
+        "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/native-cache-copy-01.json",
+        "sha256": "78c79694ff878f6e36d4d4efc1d8c6a8e8b543acd7282d351292716fd061f1c2"
+      },
+      "declared_outer_seconds": 1800,
+      "destination_duplicate_inodes": 0,
+      "destination_hardlinks": 0,
+      "fresh_cargo_target": false,
+      "independent_cleanroom_build": false,
+      "logical_bytes": 923467631,
+      "regular_files_checked": 2014,
+      "role": "native",
+      "shared_source_inodes": 0,
+      "source_regular_metadata_unchanged": true
+    },
+    {
+      "copy_complete": true,
+      "copy_exit_code": 0,
+      "copy_record": {
+        "bytes": 6439,
+        "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-cache-copy-01.json",
+        "sha256": "ce1120304c1679afe96f147a21bdb82ae343f5ce57028bec1b38b75bb53b85e2"
+      },
+      "declared_outer_seconds": 1800,
+      "destination_duplicate_inodes": 0,
+      "destination_hardlinks": 0,
+      "fresh_cargo_target": false,
+      "independent_cleanroom_build": false,
+      "logical_bytes": 1676857236,
+      "regular_files_checked": 3065,
+      "role": "owner",
+      "shared_source_inodes": 0,
+      "source_regular_metadata_unchanged": true
+    }
+  ],
+  "copied_logical_bytes": 4347439647,
+  "copied_regular_file_entries": 9000,
+  "current_runtime_readiness": {
+    "actual_measure_default_settlement_grace_seconds": 5,
+    "attempted_methods": 32,
+    "commands": 4,
+    "deadline_selected": false,
+    "expected_branch_marker": "SIGKILL_DURING_SETTLEMENT",
+    "failed": 1,
+    "failed_test": "test_ignored_sigterm_escalates_and_output_overflow_remains_failure",
+    "future_665_is_expected_coverage_contract_not_initial_all_green_result": true,
+    "ignored": 0,
+    "manifest": {
+      "bytes": 5697,
+      "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-staged-01/manifest.json",
+      "sha256": "a6e8363bfa6a157fc1b414b64e4af59bb11211166fe06f1b0962460253e89e25"
+    },
+    "observed_termination_reason": "DEADLINE_EXHAUSTED_BEFORE_SPAWN",
+    "operation_created": false,
+    "original_runtime_fixture_budget_seconds": 0.2,
+    "original_staged_job_id": "1a1ba8f182e-12894-1b97",
+    "original_total_commands": 73,
+    "original_total_failed_methods": 1,
+    "original_total_ignored": 4,
+    "original_total_passed_methods": 664,
+    "passed": 31,
+    "qualified": false,
+    "reason": "Original same-source staged32 control failed before the requested payload spawn branch.",
+    "repeat_not_executed_by_this_package": true,
+    "source_after_exit": 0,
+    "source_before_exit": 0,
+    "test_patch_0_15_is_not_actual_default_grace": true
+  },
+  "full_resource_settlement_established": false,
+  "new_complete_proofs": 0,
+  "new_historical_regressions10_separate_from_owner19": true,
+  "owner_launcher_v2": {
+    "logical_guard_change": "Exact equality with the unchanged original cache_basis string",
+    "material_source_copy_inode_ELF_guards_preserved": true,
+    "original_source_plan_or_launcher_modified": false,
+    "other_changes": [
+      "independent exact-owner-02 output",
+      "independent owner-launch-binding-02.json"
+    ]
+  },
+  "owner_original_launch": {
+    "exit_code": 1,
+    "job_id": "1a1ba70f3e9-12894-1ab5",
+    "phase": "launcher validation before binding and qualifier exec",
+    "qualification_commands_executed": 0,
+    "reason": "The frozen plan said Independent copy, but v1 tested for substring copied.",
+    "test_methods_executed": 0
+  },
+  "owner_qualification": {
+    "commands": 19,
+    "exit_code": 0,
+    "fresh_cargo_target": false,
+    "job_id": "1a1ba7cdd03-12894-1b0d",
+    "manifest": {
+      "bytes": 23587,
+      "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-owner-02/manifest.json",
+      "sha256": "6d9013a9ee10badb278215ac1ac81243ada13cd5c279cbc3833250cc50c63bef"
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "rust": {
+      "failed": 0,
+      "ignored": 4,
+      "passed": 37
+    },
+    "state": "succeeded",
+    "target_origin": "copied currently built C7 owner plus History release cache; original C7 empty origin is historical only"
+  },
+  "prepared_research_code": {
+    "operation_created": false,
+    "original_deadline_selected": false,
+    "proposal": "lifecycle-research-proposal-01.json",
+    "provider_operation": null,
+    "scope": "Future C8 operation requires a separately completed immutable eight-component gate binding and explicit coordinated launch; this package records preparation only. The first staged32 qualification now fails; the v1 preparer/proposal here remain unexecuted drafts. Any later runtime binding must preserve the original failure and any separately predeclared unique repeat; no initial 665-pass claim is authorized.",
+    "source_only": true
+  },
+  "provider_payment_authorized": false,
+  "schema": "TRNM-W1-C8-BUILD-PREPARATION-SUMMARY1",
+  "source": {
+    "commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c"
+  },
+  "stale_original_attempts_reclassified_as_success": false,
+  "strict_owner_import": {
+    "Cargo_or_Node_started": false,
+    "actual_owner_binary": {
+      "bytes": 467190280,
+      "path": "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+      "sha256": "1cc1db569c0d21f27aabc3ddbef4730ce11a6481c026b35ed69460c09028d456"
+    },
+    "exit_code": 0,
+    "job_id": "1a1ba85c4c0-12894-1b51",
+    "manifest": {
+      "bytes": 53864,
+      "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-import-c8-01/manifest.json",
+      "sha256": "d7ce0440c68a30cd6a00c5c1e964a1a360f27767848bdca63667991e3f7d2619"
+    },
+    "new_test_methods": 0,
+    "original_rust_results_independently_reparsed": true,
+    "output_complete": true,
+    "output_durable": true,
+    "raw_log_files_copied": 38,
+    "raw_log_files_verified": 38,
+    "source_prefix_compatibility_verified": true,
+    "state": "succeeded"
+  },
+  "transport_numeric_boundary": "The pre-existing derived backend-native-terminal-01.json contains JSON-decoded request_fingerprint numbers exceeding JavaScript's exact integer range. Do not use those numeric fields as exact request identity. Original bytes, job IDs, launch nonces, request_digest strings, source and artifact hashes retain their independent bindings; raw job records are preserved."
+}

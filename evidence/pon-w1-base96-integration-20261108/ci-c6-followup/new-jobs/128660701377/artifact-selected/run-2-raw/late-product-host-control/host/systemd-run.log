@@ -1,0 +1,7 @@
+Running as unit: trnm-phase-42457886578-1-original-campaign-5160.service; invocation ID: 4ddd41b6c090410dab13d66ebdf77c56
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 36.395s
+CPU time consumed: 9.102s
+Memory peak: 2.7M
+Memory swap peak: 0B

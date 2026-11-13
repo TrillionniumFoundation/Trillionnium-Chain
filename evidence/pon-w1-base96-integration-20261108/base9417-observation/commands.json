@@ -1,0 +1,149 @@
+[
+  {
+    "label": "00-head-before",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit": 0,
+    "stdout_sha256": "0b5f64bc70d4fd3a1c0a858ff3b60be41d822f8bed6c39d82d57e2259e432860",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "01-clean-before",
+    "argv": [
+      "git",
+      "status",
+      "--porcelain"
+    ],
+    "exit": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "02-fetch-observed-base",
+    "argv": [
+      "git",
+      "fetch",
+      "--no-tags",
+      "origin",
+      "9417e495165865ef6c1288b39084856e31020634"
+    ],
+    "exit": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e67c3e791a4013a893a346d61b50d69f587ea9ceda41cc9f07673160eaffe22d"
+  },
+  {
+    "label": "03-base-metadata",
+    "argv": [
+      "git",
+      "show",
+      "-s",
+      "--format=%H%n%T%n%P%n%s%n%ci",
+      "9417e495165865ef6c1288b39084856e31020634"
+    ],
+    "exit": 0,
+    "stdout_sha256": "1c2e447b89ab029d51c15daa3c962ecfcadaf2f6065c54eb6f1c3e3ee1115413",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "04-diff-names",
+    "argv": [
+      "git",
+      "diff",
+      "--name-status",
+      "91c1b7da0f0b1f41c088d9ac0b2ee160b550b80c",
+      "9417e495165865ef6c1288b39084856e31020634"
+    ],
+    "exit": 0,
+    "stdout_sha256": "c63377889430a153ec037f2bd50c3b7831f06bb8561e3ee2afb9492393fa289e",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "05-diff-stat",
+    "argv": [
+      "git",
+      "diff",
+      "--stat",
+      "91c1b7da0f0b1f41c088d9ac0b2ee160b550b80c",
+      "9417e495165865ef6c1288b39084856e31020634"
+    ],
+    "exit": 0,
+    "stdout_sha256": "e73f80ae51743271a8716f5fe4a15eb6162c9d04c8c5ae98e13acf100bdb2bfd",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "06-diff-numstat",
+    "argv": [
+      "git",
+      "diff",
+      "--numstat",
+      "91c1b7da0f0b1f41c088d9ac0b2ee160b550b80c",
+      "9417e495165865ef6c1288b39084856e31020634"
+    ],
+    "exit": 0,
+    "stdout_sha256": "1c3bdf0301e4b97b2c0a8b110ccaafac3f92b6e8d49618dab1822318b9242411",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "07-diff",
+    "argv": [
+      "git",
+      "diff",
+      "--no-ext-diff",
+      "91c1b7da0f0b1f41c088d9ac0b2ee160b550b80c",
+      "9417e495165865ef6c1288b39084856e31020634"
+    ],
+    "exit": 0,
+    "stdout_sha256": "382c823ba3eba1f383b258e143f5bab585fe50ea8df1bd69bf4b01e64faf365e",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "08-canonical-tree",
+    "argv": [
+      "git",
+      "merge-tree",
+      "--write-tree",
+      "9417e495165865ef6c1288b39084856e31020634",
+      "40a3a45d6b8afc5c4706c5235fec47634f4aabbe"
+    ],
+    "exit": 1,
+    "stdout_sha256": "b87f89229d9d2da0ead61dc243a8c48b87414cf076b9655bcd17a6fc613f6a79",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "09-merge-base",
+    "argv": [
+      "git",
+      "merge-base",
+      "9417e495165865ef6c1288b39084856e31020634",
+      "40a3a45d6b8afc5c4706c5235fec47634f4aabbe"
+    ],
+    "exit": 0,
+    "stdout_sha256": "50b30d530cbcc5ffd5714011f3703374c16438578f48d0b96532069784765327",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "10-head-after",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit": 0,
+    "stdout_sha256": "0b5f64bc70d4fd3a1c0a858ff3b60be41d822f8bed6c39d82d57e2259e432860",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "11-clean-after",
+    "argv": [
+      "git",
+      "status",
+      "--porcelain"
+    ],
+    "exit": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

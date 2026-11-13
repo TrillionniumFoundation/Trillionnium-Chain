@@ -1,0 +1,1122 @@
+{
+  "C8_checks": {
+    "count": 104,
+    "declared_total": 104,
+    "enumeration_complete": true,
+    "foreign_source_check_ids": [],
+    "page_counts": [
+      {
+        "declared_total": 104,
+        "page": 1,
+        "returned": 100
+      },
+      {
+        "declared_total": 104,
+        "page": 2,
+        "returned": 4
+      }
+    ],
+    "pagination_errors": [],
+    "status_counts": {
+      "completed:failure": 25,
+      "completed:skipped": 3,
+      "completed:success": 52,
+      "in_progress:None": 24
+    },
+    "unique_ids": true
+  },
+  "C8_workflow_runs": {
+    "count": 15,
+    "declared_total": 15,
+    "enumeration_complete": true,
+    "foreign_source_run_ids": [],
+    "page_counts": [
+      {
+        "declared_total": 15,
+        "page": 1,
+        "returned": 15
+      }
+    ],
+    "pagination_errors": [],
+    "status_counts": {
+      "completed:failure": 5,
+      "completed:success": 4,
+      "in_progress:None": 6
+    },
+    "unique_ids": true
+  },
+  "CI_reruns": 0,
+  "PR_API_final": {
+    "base_sha": "9417e495165865ef6c1288b39084856e31020634",
+    "draft": true,
+    "head_sha": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "merge_commit_sha": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b",
+    "mergeable": true,
+    "mergeable_state": "unstable",
+    "state": "open",
+    "updated_at": "2026-11-08T10:09:03Z"
+  },
+  "PR_API_first": {
+    "base": {
+      "label": "TrillionniumFoundation:fix/chain-six-axis-performance-20261103",
+      "ref": "fix/chain-six-axis-performance-20261103",
+      "repo": {
+        "allow_forking": true,
+        "archive_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/{archive_format}{/ref}",
+        "archived": false,
+        "assignees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/assignees{/user}",
+        "blobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs{/sha}",
+        "branches_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/branches{/branch}",
+        "clone_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+        "collaborators_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/collaborators{/collaborator}",
+        "comments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/comments{/number}",
+        "commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits{/sha}",
+        "compare_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/compare/{base}...{head}",
+        "contents_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contents/{+path}",
+        "contributors_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contributors",
+        "created_at": "2026-08-04T15:13:36Z",
+        "default_branch": "main",
+        "deployments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/deployments",
+        "description": "Trillionnium consensus, canonical runtime/state, proofs, finality, and operator tooling.",
+        "disabled": false,
+        "downloads_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/downloads",
+        "events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/events",
+        "fork": false,
+        "forks": 0,
+        "forks_count": 0,
+        "forks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/forks",
+        "full_name": "TrillionniumFoundation/Trillionnium-Chain",
+        "git_commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits{/sha}",
+        "git_refs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/refs{/sha}",
+        "git_tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/tags{/sha}",
+        "git_url": "git://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+        "has_discussions": false,
+        "has_downloads": false,
+        "has_issues": true,
+        "has_pages": false,
+        "has_projects": true,
+        "has_pull_requests": true,
+        "has_wiki": false,
+        "homepage": null,
+        "hooks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/hooks",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain",
+        "id": 1323087357,
+        "is_template": false,
+        "issue_comment_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/comments{/number}",
+        "issue_events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/events{/number}",
+        "issues_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues{/number}",
+        "keys_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/keys{/key_id}",
+        "labels_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/labels{/name}",
+        "language": "Rust",
+        "languages_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/languages",
+        "license": {
+          "key": "mit",
+          "name": "MIT License",
+          "node_id": "MDc6TGljZW5zZTEz",
+          "spdx_id": "MIT",
+          "url": "https://api.github.com/licenses/mit"
+        },
+        "merges_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/merges",
+        "milestones_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/milestones{/number}",
+        "mirror_url": null,
+        "name": "Trillionnium-Chain",
+        "node_id": "R_kgDOTty1_Q",
+        "notifications_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/notifications{?since,all,participating}",
+        "open_issues": 482,
+        "open_issues_count": 482,
+        "owner": {
+          "avatar_url": "https://avatars.githubusercontent.com/u/262513357?v=4",
+          "events_url": "https://api.github.com/users/TrillionniumFoundation/events{/privacy}",
+          "followers_url": "https://api.github.com/users/TrillionniumFoundation/followers",
+          "following_url": "https://api.github.com/users/TrillionniumFoundation/following{/other_user}",
+          "gists_url": "https://api.github.com/users/TrillionniumFoundation/gists{/gist_id}",
+          "gravatar_id": "",
+          "html_url": "https://github.com/TrillionniumFoundation",
+          "id": 262513357,
+          "login": "TrillionniumFoundation",
+          "node_id": "O_kgDOD6WizQ",
+          "organizations_url": "https://api.github.com/users/TrillionniumFoundation/orgs",
+          "received_events_url": "https://api.github.com/users/TrillionniumFoundation/received_events",
+          "repos_url": "https://api.github.com/users/TrillionniumFoundation/repos",
+          "site_admin": false,
+          "starred_url": "https://api.github.com/users/TrillionniumFoundation/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/TrillionniumFoundation/subscriptions",
+          "type": "Organization",
+          "url": "https://api.github.com/users/TrillionniumFoundation",
+          "user_view_type": "public"
+        },
+        "private": false,
+        "pull_request_creation_policy": "all",
+        "pulls_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls{/number}",
+        "pushed_at": "2026-11-08T10:09:01Z",
+        "releases_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/releases{/id}",
+        "size": 2336884,
+        "ssh_url": "git@github.com:TrillionniumFoundation/Trillionnium-Chain.git",
+        "stargazers_count": 0,
+        "stargazers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/stargazers",
+        "statuses_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/statuses/{sha}",
+        "subscribers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscribers",
+        "subscription_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscription",
+        "svn_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain",
+        "tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/tags",
+        "teams_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/teams",
+        "topics": [
+          "blockchain",
+          "rust",
+          "trillionnium"
+        ],
+        "trees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees{/sha}",
+        "updated_at": "2026-10-30T01:22:21Z",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+        "visibility": "public",
+        "watchers": 0,
+        "watchers_count": 0,
+        "web_commit_signoff_required": true
+      },
+      "sha": "9417e495165865ef6c1288b39084856e31020634",
+      "user": {
+        "avatar_url": "https://avatars.githubusercontent.com/u/262513357?v=4",
+        "events_url": "https://api.github.com/users/TrillionniumFoundation/events{/privacy}",
+        "followers_url": "https://api.github.com/users/TrillionniumFoundation/followers",
+        "following_url": "https://api.github.com/users/TrillionniumFoundation/following{/other_user}",
+        "gists_url": "https://api.github.com/users/TrillionniumFoundation/gists{/gist_id}",
+        "gravatar_id": "",
+        "html_url": "https://github.com/TrillionniumFoundation",
+        "id": 262513357,
+        "login": "TrillionniumFoundation",
+        "node_id": "O_kgDOD6WizQ",
+        "organizations_url": "https://api.github.com/users/TrillionniumFoundation/orgs",
+        "received_events_url": "https://api.github.com/users/TrillionniumFoundation/received_events",
+        "repos_url": "https://api.github.com/users/TrillionniumFoundation/repos",
+        "site_admin": false,
+        "starred_url": "https://api.github.com/users/TrillionniumFoundation/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/TrillionniumFoundation/subscriptions",
+        "type": "Organization",
+        "url": "https://api.github.com/users/TrillionniumFoundation",
+        "user_view_type": "public"
+      }
+    },
+    "draft": true,
+    "head": {
+      "label": "TrillionniumFoundation:fix/chain-w1-runtime-integrated-20261107",
+      "ref": "fix/chain-w1-runtime-integrated-20261107",
+      "repo": {
+        "allow_forking": true,
+        "archive_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/{archive_format}{/ref}",
+        "archived": false,
+        "assignees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/assignees{/user}",
+        "blobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs{/sha}",
+        "branches_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/branches{/branch}",
+        "clone_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+        "collaborators_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/collaborators{/collaborator}",
+        "comments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/comments{/number}",
+        "commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/commits{/sha}",
+        "compare_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/compare/{base}...{head}",
+        "contents_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contents/{+path}",
+        "contributors_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/contributors",
+        "created_at": "2026-08-04T15:13:36Z",
+        "default_branch": "main",
+        "deployments_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/deployments",
+        "description": "Trillionnium consensus, canonical runtime/state, proofs, finality, and operator tooling.",
+        "disabled": false,
+        "downloads_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/downloads",
+        "events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/events",
+        "fork": false,
+        "forks": 0,
+        "forks_count": 0,
+        "forks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/forks",
+        "full_name": "TrillionniumFoundation/Trillionnium-Chain",
+        "git_commits_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/commits{/sha}",
+        "git_refs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/refs{/sha}",
+        "git_tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/tags{/sha}",
+        "git_url": "git://github.com/TrillionniumFoundation/Trillionnium-Chain.git",
+        "has_discussions": false,
+        "has_downloads": false,
+        "has_issues": true,
+        "has_pages": false,
+        "has_projects": true,
+        "has_pull_requests": true,
+        "has_wiki": false,
+        "homepage": null,
+        "hooks_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/hooks",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain",
+        "id": 1323087357,
+        "is_template": false,
+        "issue_comment_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/comments{/number}",
+        "issue_events_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues/events{/number}",
+        "issues_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/issues{/number}",
+        "keys_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/keys{/key_id}",
+        "labels_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/labels{/name}",
+        "language": "Rust",
+        "languages_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/languages",
+        "license": {
+          "key": "mit",
+          "name": "MIT License",
+          "node_id": "MDc6TGljZW5zZTEz",
+          "spdx_id": "MIT",
+          "url": "https://api.github.com/licenses/mit"
+        },
+        "merges_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/merges",
+        "milestones_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/milestones{/number}",
+        "mirror_url": null,
+        "name": "Trillionnium-Chain",
+        "node_id": "R_kgDOTty1_Q",
+        "notifications_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/notifications{?since,all,participating}",
+        "open_issues": 482,
+        "open_issues_count": 482,
+        "owner": {
+          "avatar_url": "https://avatars.githubusercontent.com/u/262513357?v=4",
+          "events_url": "https://api.github.com/users/TrillionniumFoundation/events{/privacy}",
+          "followers_url": "https://api.github.com/users/TrillionniumFoundation/followers",
+          "following_url": "https://api.github.com/users/TrillionniumFoundation/following{/other_user}",
+          "gists_url": "https://api.github.com/users/TrillionniumFoundation/gists{/gist_id}",
+          "gravatar_id": "",
+          "html_url": "https://github.com/TrillionniumFoundation",
+          "id": 262513357,
+          "login": "TrillionniumFoundation",
+          "node_id": "O_kgDOD6WizQ",
+          "organizations_url": "https://api.github.com/users/TrillionniumFoundation/orgs",
+          "received_events_url": "https://api.github.com/users/TrillionniumFoundation/received_events",
+          "repos_url": "https://api.github.com/users/TrillionniumFoundation/repos",
+          "site_admin": false,
+          "starred_url": "https://api.github.com/users/TrillionniumFoundation/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/TrillionniumFoundation/subscriptions",
+          "type": "Organization",
+          "url": "https://api.github.com/users/TrillionniumFoundation",
+          "user_view_type": "public"
+        },
+        "private": false,
+        "pull_request_creation_policy": "all",
+        "pulls_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/pulls{/number}",
+        "pushed_at": "2026-11-08T10:09:01Z",
+        "releases_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/releases{/id}",
+        "size": 2336884,
+        "ssh_url": "git@github.com:TrillionniumFoundation/Trillionnium-Chain.git",
+        "stargazers_count": 0,
+        "stargazers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/stargazers",
+        "statuses_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/statuses/{sha}",
+        "subscribers_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscribers",
+        "subscription_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/subscription",
+        "svn_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain",
+        "tags_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/tags",
+        "teams_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/teams",
+        "topics": [
+          "blockchain",
+          "rust",
+          "trillionnium"
+        ],
+        "trees_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/trees{/sha}",
+        "updated_at": "2026-10-30T01:22:21Z",
+        "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain",
+        "visibility": "public",
+        "watchers": 0,
+        "watchers_count": 0,
+        "web_commit_signoff_required": true
+      },
+      "sha": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+      "user": {
+        "avatar_url": "https://avatars.githubusercontent.com/u/262513357?v=4",
+        "events_url": "https://api.github.com/users/TrillionniumFoundation/events{/privacy}",
+        "followers_url": "https://api.github.com/users/TrillionniumFoundation/followers",
+        "following_url": "https://api.github.com/users/TrillionniumFoundation/following{/other_user}",
+        "gists_url": "https://api.github.com/users/TrillionniumFoundation/gists{/gist_id}",
+        "gravatar_id": "",
+        "html_url": "https://github.com/TrillionniumFoundation",
+        "id": 262513357,
+        "login": "TrillionniumFoundation",
+        "node_id": "O_kgDOD6WizQ",
+        "organizations_url": "https://api.github.com/users/TrillionniumFoundation/orgs",
+        "received_events_url": "https://api.github.com/users/TrillionniumFoundation/received_events",
+        "repos_url": "https://api.github.com/users/TrillionniumFoundation/repos",
+        "site_admin": false,
+        "starred_url": "https://api.github.com/users/TrillionniumFoundation/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/TrillionniumFoundation/subscriptions",
+        "type": "Organization",
+        "url": "https://api.github.com/users/TrillionniumFoundation",
+        "user_view_type": "public"
+      }
+    },
+    "merge_commit_sha": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b",
+    "mergeable": true,
+    "mergeable_state": "unstable",
+    "state": "open",
+    "updated_at": "2026-11-08T10:09:03Z"
+  },
+  "PR_API_reads": 2,
+  "actual_Git_refs": {
+    "refs/heads/fix/chain-six-axis-performance-20261103": "9417e495165865ef6c1288b39084856e31020634",
+    "refs/heads/fix/chain-w1-runtime-integrated-20261107": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "refs/pull/782/head": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "refs/pull/782/merge": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+  },
+  "actual_base": "9417e495165865ef6c1288b39084856e31020634",
+  "actual_head": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "actual_merge": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b",
+  "all_event_expected_values_unobserved": false,
+  "base_C8_compare_projection": {
+    "ahead_by": 14,
+    "base_commit": "9417e495165865ef6c1288b39084856e31020634",
+    "behind_by": 0,
+    "merge_base_commit": "9417e495165865ef6c1288b39084856e31020634",
+    "status": "ahead",
+    "total_commits": 14
+  },
+  "base_changed_since_fixed_integration": false,
+  "dispatches": 0,
+  "event_expected_values_not_inferred_from_merge": true,
+  "expected_C8": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "failure_causes_not_extrapolated_beyond_sampled_jobs": true,
+  "fixed_integrated_base": "9417e495165865ef6c1288b39084856e31020634",
+  "job_sample_limit": 6,
+  "job_samples": [
+    {
+      "conclusion": "failure",
+      "event_declarations": [
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 61,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 62,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 63,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1032,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1033,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 1034,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1063,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1064,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 1065,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1093,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1094,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 1095,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1278,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1279,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 1280,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1306,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1307,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 1308,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1346,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1347,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 1348,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        }
+      ],
+      "event_expected_raw_values": {
+        "EXPECTED_BASE": [
+          "9417e495165865ef6c1288b39084856e31020634"
+        ],
+        "EXPECTED_HEAD": [
+          "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        ],
+        "EXPECTED_KIND": [],
+        "EXPECTED_MERGE": [
+          "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        ]
+      },
+      "event_expected_values": {
+        "EXPECTED_BASE": "9417e495165865ef6c1288b39084856e31020634",
+        "EXPECTED_HEAD": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+        "EXPECTED_KIND": null,
+        "EXPECTED_MERGE": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+      },
+      "event_expected_values_inferred_from_API_or_merge": false,
+      "first_failed_step": {
+        "completed_at": "2026-11-08T10:13:29Z",
+        "conclusion": "failure",
+        "name": "Execute original and fresh service with original Host resources",
+        "number": 7,
+        "started_at": "2026-11-08T10:10:12Z",
+        "status": "completed"
+      },
+      "head_sha": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+      "job_id": 128698905076,
+      "job_log": "job-samples/128698905076/log.stdout",
+      "job_metadata": "job-samples/128698905076/metadata.stdout",
+      "log_fetch_exit": 0,
+      "matching_log_line_count": 22,
+      "metadata_fetch_exit": 0,
+      "name": "W1 fresh challenge service (x64, prospective-merge)",
+      "run_id": 42470186930,
+      "tuple_and_error_log_lines": [
+        {
+          "line": 61,
+          "text": "2026-11-08T10:09:13.9237834Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 62,
+          "text": "2026-11-08T10:09:13.9238201Z   EXPECTED_BASE: 9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "line": 63,
+          "text": "2026-11-08T10:09:13.9238563Z   EXPECTED_MERGE: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "line": 1032,
+          "text": "2026-11-08T10:09:47.9020486Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1033,
+          "text": "2026-11-08T10:09:47.9020686Z   EXPECTED_BASE: 9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "line": 1034,
+          "text": "2026-11-08T10:09:47.9020878Z   EXPECTED_MERGE: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "line": 1063,
+          "text": "2026-11-08T10:09:49.7886467Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1064,
+          "text": "2026-11-08T10:09:49.7886657Z   EXPECTED_BASE: 9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "line": 1065,
+          "text": "2026-11-08T10:09:49.7887020Z   EXPECTED_MERGE: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "line": 1093,
+          "text": "2026-11-08T10:09:57.2070341Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1094,
+          "text": "2026-11-08T10:09:57.2070538Z   EXPECTED_BASE: 9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "line": 1095,
+          "text": "2026-11-08T10:09:57.2070736Z   EXPECTED_MERGE: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "line": 1278,
+          "text": "2026-11-08T10:10:12.3100782Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1279,
+          "text": "2026-11-08T10:10:12.3101069Z   EXPECTED_BASE: 9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "line": 1280,
+          "text": "2026-11-08T10:10:12.3101410Z   EXPECTED_MERGE: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "line": 1287,
+          "text": "2026-11-08T10:13:29.1285534Z ##[error]Process completed with exit code 1."
+        },
+        {
+          "line": 1306,
+          "text": "2026-11-08T10:13:29.1340152Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1307,
+          "text": "2026-11-08T10:13:29.1340345Z   EXPECTED_BASE: 9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "line": 1308,
+          "text": "2026-11-08T10:13:29.1340533Z   EXPECTED_MERGE: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "line": 1346,
+          "text": "2026-11-08T10:13:30.4734426Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1347,
+          "text": "2026-11-08T10:13:30.4734615Z   EXPECTED_BASE: 9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "line": 1348,
+          "text": "2026-11-08T10:13:30.4734804Z   EXPECTED_MERGE: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        }
+      ]
+    },
+    {
+      "conclusion": "success",
+      "event_declarations": [
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1022,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 2944,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        }
+      ],
+      "event_expected_raw_values": {
+        "EXPECTED_BASE": [
+          "9417e495165865ef6c1288b39084856e31020634"
+        ],
+        "EXPECTED_HEAD": [],
+        "EXPECTED_KIND": [],
+        "EXPECTED_MERGE": []
+      },
+      "event_expected_values": {
+        "EXPECTED_BASE": "9417e495165865ef6c1288b39084856e31020634",
+        "EXPECTED_HEAD": null,
+        "EXPECTED_KIND": null,
+        "EXPECTED_MERGE": null
+      },
+      "event_expected_values_inferred_from_API_or_merge": false,
+      "first_failed_step": null,
+      "head_sha": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+      "job_id": 128698904380,
+      "job_log": "job-samples/128698904380/log.stdout",
+      "job_metadata": "job-samples/128698904380/metadata.stdout",
+      "log_fetch_exit": 0,
+      "matching_log_line_count": 2,
+      "metadata_fetch_exit": 0,
+      "name": "CodeQL local SARIF (python, prospective-merge)",
+      "run_id": 42470186921,
+      "tuple_and_error_log_lines": [
+        {
+          "line": 1022,
+          "text": "2026-11-08T10:09:55.0163755Z   EXPECTED_BASE_SHA: 9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "line": 2944,
+          "text": "2026-11-08T10:14:37.1311463Z   EXPECTED_BASE_SHA: 9417e495165865ef6c1288b39084856e31020634"
+        }
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "event_declarations": [
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 61,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 62,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 63,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1039,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1040,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 1041,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1070,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1071,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 1072,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1100,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1101,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 1102,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1285,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1286,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 1287,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1313,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1314,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 1315,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1353,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1354,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 1355,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        }
+      ],
+      "event_expected_raw_values": {
+        "EXPECTED_BASE": [
+          "9417e495165865ef6c1288b39084856e31020634"
+        ],
+        "EXPECTED_HEAD": [
+          "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        ],
+        "EXPECTED_KIND": [],
+        "EXPECTED_MERGE": [
+          "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        ]
+      },
+      "event_expected_values": {
+        "EXPECTED_BASE": "9417e495165865ef6c1288b39084856e31020634",
+        "EXPECTED_HEAD": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+        "EXPECTED_KIND": null,
+        "EXPECTED_MERGE": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+      },
+      "event_expected_values_inferred_from_API_or_merge": false,
+      "first_failed_step": {
+        "completed_at": "2026-11-08T10:14:09Z",
+        "conclusion": "failure",
+        "name": "Execute original and fresh service with original Host resources",
+        "number": 7,
+        "started_at": "2026-11-08T10:10:20Z",
+        "status": "completed"
+      },
+      "head_sha": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+      "job_id": 128698904884,
+      "job_log": "job-samples/128698904884/log.stdout",
+      "job_metadata": "job-samples/128698904884/metadata.stdout",
+      "log_fetch_exit": 0,
+      "matching_log_line_count": 22,
+      "metadata_fetch_exit": 0,
+      "name": "W1 fresh challenge service (x64, head)",
+      "run_id": 42470186930,
+      "tuple_and_error_log_lines": [
+        {
+          "line": 61,
+          "text": "2026-11-08T10:09:14.0617283Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 62,
+          "text": "2026-11-08T10:09:14.0617840Z   EXPECTED_BASE: 9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "line": 63,
+          "text": "2026-11-08T10:09:14.0618388Z   EXPECTED_MERGE: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "line": 1039,
+          "text": "2026-11-08T10:09:53.5959253Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1040,
+          "text": "2026-11-08T10:09:53.5959643Z   EXPECTED_BASE: 9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "line": 1041,
+          "text": "2026-11-08T10:09:53.5959966Z   EXPECTED_MERGE: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "line": 1070,
+          "text": "2026-11-08T10:09:55.7233493Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1071,
+          "text": "2026-11-08T10:09:55.7233811Z   EXPECTED_BASE: 9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "line": 1072,
+          "text": "2026-11-08T10:09:55.7234247Z   EXPECTED_MERGE: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "line": 1100,
+          "text": "2026-11-08T10:10:03.7701595Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1101,
+          "text": "2026-11-08T10:10:03.7701939Z   EXPECTED_BASE: 9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "line": 1102,
+          "text": "2026-11-08T10:10:03.7702307Z   EXPECTED_MERGE: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "line": 1285,
+          "text": "2026-11-08T10:10:20.6101362Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1286,
+          "text": "2026-11-08T10:10:20.6101748Z   EXPECTED_BASE: 9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "line": 1287,
+          "text": "2026-11-08T10:10:20.6102115Z   EXPECTED_MERGE: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "line": 1294,
+          "text": "2026-11-08T10:14:09.9287059Z ##[error]Process completed with exit code 1."
+        },
+        {
+          "line": 1313,
+          "text": "2026-11-08T10:14:09.9356481Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1314,
+          "text": "2026-11-08T10:14:09.9356831Z   EXPECTED_BASE: 9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "line": 1315,
+          "text": "2026-11-08T10:14:09.9357204Z   EXPECTED_MERGE: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "line": 1353,
+          "text": "2026-11-08T10:14:11.3545226Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1354,
+          "text": "2026-11-08T10:14:11.3545551Z   EXPECTED_BASE: 9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "line": 1355,
+          "text": "2026-11-08T10:14:11.3545973Z   EXPECTED_MERGE: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        }
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "event_declarations": [],
+      "event_expected_raw_values": {
+        "EXPECTED_BASE": [],
+        "EXPECTED_HEAD": [],
+        "EXPECTED_KIND": [],
+        "EXPECTED_MERGE": []
+      },
+      "event_expected_values": {
+        "EXPECTED_BASE": null,
+        "EXPECTED_HEAD": null,
+        "EXPECTED_KIND": null,
+        "EXPECTED_MERGE": null
+      },
+      "event_expected_values_inferred_from_API_or_merge": false,
+      "first_failed_step": {
+        "completed_at": "2026-11-08T10:16:11Z",
+        "conclusion": "failure",
+        "name": "Execute exact native from-zero service controls",
+        "number": 12,
+        "started_at": "2026-11-08T10:11:35Z",
+        "status": "completed"
+      },
+      "head_sha": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+      "job_id": 128698905350,
+      "job_log": "job-samples/128698905350/log.stdout",
+      "job_metadata": "job-samples/128698905350/metadata.stdout",
+      "log_fetch_exit": 0,
+      "matching_log_line_count": 1,
+      "metadata_fetch_exit": 0,
+      "name": "cross-arch-cost (arm64)",
+      "run_id": 42470186982,
+      "tuple_and_error_log_lines": [
+        {
+          "line": 1210,
+          "text": "2026-11-08T10:16:11.6252572Z ##[error]Process completed with exit code 1."
+        }
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "event_declarations": [],
+      "event_expected_raw_values": {
+        "EXPECTED_BASE": [],
+        "EXPECTED_HEAD": [],
+        "EXPECTED_KIND": [],
+        "EXPECTED_MERGE": []
+      },
+      "event_expected_values": {
+        "EXPECTED_BASE": null,
+        "EXPECTED_HEAD": null,
+        "EXPECTED_KIND": null,
+        "EXPECTED_MERGE": null
+      },
+      "event_expected_values_inferred_from_API_or_merge": false,
+      "first_failed_step": {
+        "completed_at": "2026-11-08T10:14:33Z",
+        "conclusion": "failure",
+        "name": "Execute exact native from-zero service controls",
+        "number": 12,
+        "started_at": "2026-11-08T10:11:01Z",
+        "status": "completed"
+      },
+      "head_sha": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+      "job_id": 128698905140,
+      "job_log": "job-samples/128698905140/log.stdout",
+      "job_metadata": "job-samples/128698905140/metadata.stdout",
+      "log_fetch_exit": 0,
+      "matching_log_line_count": 1,
+      "metadata_fetch_exit": 0,
+      "name": "cross-arch-cost (x64)",
+      "run_id": 42470186982,
+      "tuple_and_error_log_lines": [
+        {
+          "line": 1202,
+          "text": "2026-11-08T10:14:33.0601368Z ##[error]Process completed with exit code 1."
+        }
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "event_declarations": [
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 49,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 74,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1048,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1148,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1514,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1569,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1618,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1639,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        }
+      ],
+      "event_expected_raw_values": {
+        "EXPECTED_BASE": [],
+        "EXPECTED_HEAD": [
+          "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        ],
+        "EXPECTED_KIND": [],
+        "EXPECTED_MERGE": []
+      },
+      "event_expected_values": {
+        "EXPECTED_BASE": null,
+        "EXPECTED_HEAD": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+        "EXPECTED_KIND": null,
+        "EXPECTED_MERGE": null
+      },
+      "event_expected_values_inferred_from_API_or_merge": false,
+      "first_failed_step": {
+        "completed_at": "2026-11-08T10:19:17Z",
+        "conclusion": "failure",
+        "name": "Run three original campaigns under verified actual limits",
+        "number": 7,
+        "started_at": "2026-11-08T10:10:08Z",
+        "status": "completed"
+      },
+      "head_sha": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+      "job_id": 128698905948,
+      "job_log": "job-samples/128698905948/log.stdout",
+      "job_metadata": "job-samples/128698905948/metadata.stdout",
+      "log_fetch_exit": 0,
+      "matching_log_line_count": 12,
+      "metadata_fetch_exit": 0,
+      "name": "original native campaign (x64, head, release)",
+      "run_id": 42470187035,
+      "tuple_and_error_log_lines": [
+        {
+          "line": 49,
+          "text": "2026-11-08T10:09:14.7057581Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 74,
+          "text": "2026-11-08T10:09:14.7410766Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1048,
+          "text": "2026-11-08T10:09:56.0882582Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1148,
+          "text": "2026-11-08T10:09:59.7076437Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1461,
+          "text": "2026-11-08T10:10:08.9750437Z \u001b[36;1m                r'^test result: ok\\. 1 passed; 0 failed; 0 ignored;',\u001b[0m"
+        },
+        {
+          "line": 1478,
+          "text": "2026-11-08T10:10:08.9757601Z \u001b[36;1m        result['failure'] = 'ORIGINAL_THREE_RUN_CAMPAIGN_FAILED'\u001b[0m"
+        },
+        {
+          "line": 1514,
+          "text": "2026-11-08T10:10:08.9790726Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1569,
+          "text": "2026-11-08T10:10:08.9915002Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1576,
+          "text": "2026-11-08T10:19:17.0137302Z {\"attempts\": [{\"complete_success\": false, \"number\": 1, \"original_criteria_met\": false, \"phase_startup_errors\": [], \"report_directory\": \"run-1-raw\", \"report_sha256\": \"5c25a4fc22a86c4e679c9ca2c895054469dca648e664a90910559d4daf745099\", \"report_validation_failure\": null, \"step\": {\"command\": [\"/home/runner/.cargo/bin/cargo\", \"+1.95.0\", \"test\", \"--locked\", \"--offline\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_multiprocess\", \"separate_process_work_and_signed_confirmation_campaign\", \"--\", \"--exact\", \"--ignored\", \"--nocapture\", \"--test-threads=1\"], \"complete_success\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"elapsed_ns\": 113622614721, \"elapsed_seconds\": 113.622614721, \"error\": null, \"name\": \"run-1\", \"outer_stage_timeout_seconds\": 600, \"returncode\": 101, \"stderr\": \"run-1.stderr.log\", \"stderr_bytes\": 1615, \"stderr_sha256\": \"c5dc1f81d1da731bad92559a4005c22906eedce92d2663955d78f6270548bbba\", \"stderr_truncated\": false, \"stdout\": \"run-1.stdout.log\", \"stdout_bytes\": 271, \"stdout_sha256\": \"6d94802c6de8e5ced2f426c52e6d524d82e086e00c2a27de17afc9435e12f85f\", \"stdout_truncated\": false}}, {\"complete_success\": false, \"number\": 2, \"original_criteria_met\": false, \"phase_startup_errors\": [], \"report_directory\": \"run-2-raw\", \"report_sha256\": \"51be97be0199d67ee65ead3f05c7f41e933b14a0a9a053908535b27d633bec70\", \"report_validation_failure\": null, \"step\": {\"command\": [\"/home/runner/.cargo/bin/cargo\", \"+1.95.0\", \"test\", \"--locked\", \"--offline\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_multiprocess\", \"separate_process_work_and_signed_confirmation_campaign\", \"--\", \"--exact\", \"--ignored\", \"--nocapture\", \"--test-threads=1\"], \"complete_success\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"elapsed_ns\": 113402969263, \"elapsed_seconds\": 113.402969263, \"error\": null, \"name\": \"run-2\", \"outer_stage_timeout_seconds\": 600, \"returncode\": 101, \"stderr\": \"run-2.stderr.log\", \"stderr_bytes\": 1615, \"stderr_sha256\": \"7fdb8350adc7ba9e354c1f677cf64fe4337ca38318bbf69f87dca345d2fe4519\", \"stderr_truncated\": false, \"stdout\": \"run-2.stdout.log\", \"stdout_bytes\": 271, \"stdout_sha256\": \"86c9c89d103c2a69abaf0cec13da95a544f52e846469c9681575d3300f856a6f\", \"stdout_truncated\": false}}, {\"complete_success\": false, \"number\": 3, \"original_criteria_met\": false, \"phase_startup_errors\": [], \"report_directory\": \"run-3-raw\", \"report_sha256\": \"83aa2757ec311953640500eaa7c8e8d4f623d8df97bedd140b467394848dcc03\", \"report_validation_failure\": null, \"step\": {\"command\": [\"/home/runner/.cargo/bin/cargo\", \"+1.95.0\", \"test\", \"--locked\", \"--offline\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_multiprocess\", \"separate_process_work_and_signed_confirmation_campaign\", \"--\", \"--exact\", \"--ignored\", \"--nocapture\", \"--test-threads=1\"], \"complete_success\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"elapsed_ns\": 113315760288, \"elapsed_seconds\": 113.315760288, \"error\": null, \"name\": \"run-3\", \"outer_stage_timeout_seconds\": 600, \"returncode\": 101, \"stderr\": \"run-3.stderr.log\", \"stderr_bytes\": 1615, \"stderr_sha256\": \"d2f9fa4c64305825f9056ae8d40a01c996cb19cb476c567ae03949a597b82455\", \"stderr_truncated\": false, \"stdout\": \"run-3.stdout.log\", \"stdout_bytes\": 271, \"stdout_sha256\": \"e9874239f1a60e85321f47d2171a6d140505d7ecdd2fda365bd8e59597af942a\", \"stdout_truncated\": false}}], \"binary\": {\"actual_compiler_artifact_profile\": {\"debug_assertions\": false, \"debuginfo\": 0, \"opt_level\": \"3\", \"overflow_checks\": false, \"test\": true}, \"build_artifact\": \"/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-7f61597ebed162d6\", \"build_separate_from_measured_campaign\": true, \"bytes\": 11767928, \"execution\": \"original cargo test command using the checked build artifact\", \"retained\": \"public_v3_multiprocess.bin\", \"sha256_after\": \"f06df19ac5c2c1b683dd807604ca50b296979f0f277f121945ededef85ac6a75\", \"sha256_before\": \"f06df19ac5c2c1b683dd807604ca50b296979f0f277f121945ededef85ac6a75\"}, \"build\": {\"command\": [\"/home/runner/.cargo/bin/cargo\", \"+1.95.0\", \"test\", \"--locked\", \"--offline\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_multiprocess\", \"--no-run\", \"--message-format=json\"], \"complete_success\": true, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"elapsed_ns\": 186309800318, \"elapsed_seconds\": 186.309800318, \"error\": null, \"name\": \"build\", \"outer_stage_timeout_seconds\": 1800, \"returncode\": 0, \"stderr\": \"build.stderr.log\", \"stderr_bytes\": 4021, \"stderr_sha256\": \"3b4600545ed702c32134be8e79e15e64e8cc2e037a08ea9d49ed4f64e3c53966\", \"stderr_truncated\": false, \"stdout\": \"build.stdout.log\", \"stdout_bytes\": 111546, \"stdout_sha256\": \"e7c28c2299e2c7186f9894e209d91ee53186755eb4f704ef2b4ad67e4b7a5b6a\", \"stdout_truncated\": false}, \"build_timeout_seconds\": 1800, \"complete_success\": false, \"completed_utc\": \"2026-11-08T10:19:17.010586+00:00\", \"expected_head\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"expected_public_policy_id\": \"6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f\", \"expected_resources\": {\"cpu_max\": \"400000 100000\", \"memory_max\": \"17179869184\", \"nice\": 10}, \"expected_tree\": \"19a4f1a6e1cec5c27e595fa555b97cddc4717a3c\", \"failure\": \"ORIGINAL_THREE_RUN_CAMPAIGN_FAILED\", \"finalization_failures\": [], \"original_campaign_outer_timeout_seconds\": 600, \"original_inputs\": {\"attacker_processes\": [0, 24, 24], \"business_blocks\": 21, \"modes\": [\"baseline\", \"from-zero\", \"late-product\"], \"phase_seconds\": 30, \"seed_blocks\": 4, \"seed_transfers\": 1024}, \"planned_complete_runs\": 3, \"profile\": \"release\", \"public_phase_placement\": {\"attacker_processes_remain_in_original_controller_domain\": true, \"fixed_parent\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"original_3x3_workload_and_depletion_predicates_changed\": false, \"profile\": \"fixed-public-phase-external-actors-v1\", \"receiver_and_verifier_cpu_max\": \"25000 100000\", \"receiver_and_verifier_memory_max\": \"2147483648\"}, \"runner_sha256\": \"c1dfb715aaf8c0c86d66c9ebee6cf64c4a829b89fdf93767e2ce9f847b8534c0\", \"schema\": \"pon-original-native-campaign-ci-v1\", \"scope\": \"same-host controlled loopback; no independent-operator, WAN, hardness, model-efficacy or activation qualification\", \"source_after\": {\"base\": null, \"candidate\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"tested_tree\": \"19a4f1a6e1cec5c27e595fa555b97cddc4717a3c\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 1683157041, \"tracked_entries\": 15390, \"tracked_worktree_verified\": true}, \"source_kind\": \"head\", \"started_utc\": \"2026-11-08T10:10:09.107515+00:00\", \"state_backend\": \"authenticated-v1\", \"toolchain\": \"1.95.0\"}"
+        },
+        {
+          "line": 1583,
+          "text": "2026-11-08T10:19:17.1547208Z ##[error]Process completed with exit code 1."
+        },
+        {
+          "line": 1618,
+          "text": "2026-11-08T10:19:17.1634037Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1639,
+          "text": "2026-11-08T10:19:19.7819628Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        }
+      ]
+    }
+  ],
+  "merge_objects": {
+    "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b": {
+      "message": "Merge 4e007a87ceecbec8d265f6a70cfd71d512a514b5 into 9417e495165865ef6c1288b39084856e31020634",
+      "parents": [
+        "9417e495165865ef6c1288b39084856e31020634",
+        "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+      ],
+      "sha": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b",
+      "tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c"
+    }
+  },
+  "new_base_integration_or_qualification_started": false,
+  "new_operations": 0,
+  "read_failures": [],
+  "schema": "TRNM-W1-C8-POSTPUSH-CI-OBSERVATION1",
+  "snapshot_atomic": false,
+  "source_changes": 0,
+  "source_guard_changes": 0,
+  "window_finished_unix_ns": 1794133476474930938,
+  "window_started_unix_ns": 1794133375303838857
+}

@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "/usr/bin/gh",
+    "api",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701340/annotations?per_page=100"
+  ],
+  "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701340/annotations?per_page=100",
+  "exit_code": 0,
+  "failure": null,
+  "finished_utc": "2026-11-08T07:26:10.901058+00:00",
+  "job_id": 128660701340,
+  "kind": "annotations",
+  "started_utc": "2026-11-08T07:26:05.622589+00:00",
+  "stderr": {
+    "bytes": 0,
+    "path": "jobs/128660701340/annotations.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 940,
+    "path": "jobs/128660701340/annotations.raw",
+    "sha256": "ab40aaf348ac0226ed99e5b6376322023aad4e390a82fa4a31bbe613fb58ba07"
+  }
+}

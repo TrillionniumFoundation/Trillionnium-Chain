@@ -1,0 +1,177 @@
+{
+  "scope": {
+    "reviewed_commit": "9417e495165865ef6c1288b39084856e31020634",
+    "direct_parent": "91c1b7da0f0b1f41c088d9ac0b2ee160b550b80c",
+    "review_kind": "read_only_static_delta_and_dependencies",
+    "source_writes": 0,
+    "test_executions": 0,
+    "cargo_executions": 0,
+    "new_operations": 0,
+    "c8_merged_source_qualified": false
+  },
+  "assessment": "no_specific_new_correctness_issue_found_in_reviewed_delta",
+  "confirmed": [
+    "Legacy snapshot anchor and the first six replay descendants receive eviction preference; different anchors release preferences, and same-anchor forks cannot protect more than seven entries.",
+    "Candidates require both exact block identity and a freshly read SQL root; no State, admission or validation result is returned from the cache.",
+    "Node::checked_commitment and CheckedExecutionParent::check_and_bind_with_arithmetic still validate actual State. matches_unchanged_candidate encodes and compares every actual key/value on a hit; mismatch uses the complete original preparation path. The resulting root is still compared with expected_root.",
+    "Internal arithmetic-tree mismatch retains full-root fallback. Node::invalidate_commitment clears both active and historical material; HistoricalCommitments::clear resets replay_anchor.",
+    "Original reverse-path, snapshot canonical-byte, delta before-value, replay-progress and continuity checks remain in place. AuthenticatedV1 is not enabled for the new prefix preference.",
+    "New source assertions cover an 18-block replay, changed SQL snapshot anchor, same-anchor fork and original-branch readback, identical twelfth cancellation checkpoint warm/cold, protected-prefix rotation and byte-pressure eviction.",
+    "Existing source controls cover foreign SQL snapshot/delta/root corruption, savepoint/rollback, final-writer damage without block publication, wrong block/root material, and invalidation."
+  ],
+  "test_source_inventory": {
+    "module": "store::historical_commitment_tests",
+    "test_attributes": 10,
+    "ignored_attributes": 0,
+    "new_test_methods": 0,
+    "new_lines_in_existing_tests": 131,
+    "executed_in_this_review": false,
+    "recommended_when_root_schedules_exact_c8_qualification": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "store::historical_commitment_tests",
+      "--",
+      "--test-threads=1"
+    ]
+  },
+  "limits": {
+    "entries": 8,
+    "preferred_entries": 7,
+    "payload_bytes": 2097152,
+    "retained_software_charge_bytes": 16777216,
+    "process_rss_bound": false,
+    "full_process_tree_resource_qualification": false,
+    "performance_or_history_budget_improvement_established": false,
+    "cryptographic_or_protocol_security_qualification": false
+  },
+  "observations": [
+    {
+      "job_id": "1a1ba5fb76f-12894-1a2b",
+      "status": {
+        "at_unix_ms": 1794128209644,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1ba5fb76f-12894-1a2b",
+        "launch_nonce": "1e559c71e980952ad7800a374732561c",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 34994,
+            "stored": 34994
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "job_id": "1a1ba6413bb-12894-1a51",
+      "status": {
+        "at_unix_ms": 1794128494088,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1ba6413bb-12894-1a51",
+        "launch_nonce": "25fb0d07d0936a0a34b561bb42c4c49b",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 28223,
+            "stored": 28223
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "job_id": "1a1ba650b4a-12894-1a5a",
+      "status": {
+        "at_unix_ms": 1794128549176,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1ba650b4a-12894-1a5a",
+        "launch_nonce": "55c6229efc858b0bdae01b26ca85428a",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 15027,
+            "stored": 15027
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      }
+    }
+  ],
+  "frozen_unix_ns": 1794128776613532549,
+  "immutable_source_read_manifest": "read-manifest.json",
+  "full_root_dependency_read_manifest": "commitment-read-manifest.json"
+}

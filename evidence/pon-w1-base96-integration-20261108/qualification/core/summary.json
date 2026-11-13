@@ -1,0 +1,573 @@
+{
+  "actual_command_count": 20,
+  "actual_nonzero_commands": [],
+  "all_bound_outputs_match": true,
+  "audit_reran_source_guard": false,
+  "audit_reran_tests": false,
+  "audit_started_operation": false,
+  "command_reviews": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "00-preflight",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+        "--output",
+        "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-ci-core-01/source-before.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "01-source-before",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "02-ci-contract",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "03-pq-integration",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "04-distributed-inventory",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/report_current_implementation.py",
+        "--check"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "05-current-implementation",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_repository.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "06-repository-and-markdown-links",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_contract.py",
+        "-v"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "07-ci-contract-tests",
+      "outcomes": {
+        "named_rust": [],
+        "python": [
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 115,
+            "passed": 115,
+            "reported_duration": "33.515s",
+            "skipped": 0,
+            "terminal": "OK"
+          }
+        ],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_research_integration.py",
+        "-v"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "08-pq-source-negative-tests",
+      "outcomes": {
+        "named_rust": [],
+        "python": [
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 39,
+            "passed": 39,
+            "reported_duration": "124.755s",
+            "skipped": 0,
+            "terminal": "OK"
+          }
+        ],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_execution.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "09-ci-execution-source-integrity-tests",
+      "outcomes": {
+        "named_rust": [],
+        "python": [
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 77,
+            "passed": 77,
+            "reported_duration": "27.178s",
+            "skipped": 0,
+            "terminal": "OK"
+          }
+        ],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_project_boundary.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "10-project-boundary-tests",
+      "outcomes": {
+        "named_rust": [],
+        "python": [
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 16,
+            "passed": 16,
+            "reported_duration": "6.295s",
+            "skipped": 0,
+            "terminal": "OK"
+          }
+        ],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_run_legacy_reorg_root_abba.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "11-integration-legacy-reorg-reader-tests",
+      "outcomes": {
+        "named_rust": [],
+        "python": [
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 3,
+            "passed": 3,
+            "reported_duration": "0.005s",
+            "skipped": 0,
+            "terminal": "OK"
+          }
+        ],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_integration_push_source.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "12-integration-push-source-tests",
+      "outcomes": {
+        "named_rust": [],
+        "python": [
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 13,
+            "passed": 13,
+            "reported_duration": "4.059s",
+            "skipped": 0,
+            "terminal": "OK"
+          }
+        ],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "bash",
+        "-euo",
+        "pipefail",
+        "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-ci-core-01/w1-current-command-block.sh"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "13-w1-current-command-block",
+      "outcomes": {
+        "named_rust": [],
+        "python": [
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 22,
+            "passed": 22,
+            "reported_duration": "13.293s",
+            "skipped": 0,
+            "terminal": "OK"
+          },
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 20,
+            "passed": 20,
+            "reported_duration": "3.634s",
+            "skipped": 0,
+            "terminal": "OK"
+          },
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 11,
+            "passed": 11,
+            "reported_duration": "0.097s",
+            "skipped": 0,
+            "terminal": "OK"
+          },
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 13,
+            "passed": 13,
+            "reported_duration": "2.483s",
+            "skipped": 0,
+            "terminal": "OK"
+          },
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 8,
+            "passed": 8,
+            "reported_duration": "0.592s",
+            "skipped": 0,
+            "terminal": "OK"
+          },
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 8,
+            "passed": 8,
+            "reported_duration": "0.032s",
+            "skipped": 0,
+            "terminal": "OK"
+          },
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 7,
+            "passed": 7,
+            "reported_duration": "0.139s",
+            "skipped": 0,
+            "terminal": "OK"
+          },
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 12,
+            "passed": 12,
+            "reported_duration": "0.016s",
+            "skipped": 0,
+            "terminal": "OK"
+          },
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 4,
+            "passed": 4,
+            "reported_duration": "0.014s",
+            "skipped": 0,
+            "terminal": "OK"
+          },
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 12,
+            "passed": 12,
+            "reported_duration": "0.284s",
+            "skipped": 0,
+            "terminal": "OK"
+          },
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 20,
+            "passed": 20,
+            "reported_duration": "0.291s",
+            "skipped": 0,
+            "terminal": "OK"
+          },
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 14,
+            "passed": 14,
+            "reported_duration": "4.728s",
+            "skipped": 0,
+            "terminal": "OK"
+          }
+        ],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_w1_proof_latency_readback.py",
+        "-v"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "14-w1-historical-readback-tests",
+      "outcomes": {
+        "named_rust": [],
+        "python": [
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 11,
+            "passed": 11,
+            "reported_duration": "1.966s",
+            "skipped": 0,
+            "terminal": "OK"
+          }
+        ],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_w1_full_v2_disposition.py",
+        "-v"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "15-w1-full-v2-disposition-tests",
+      "outcomes": {
+        "named_rust": [],
+        "python": [
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 11,
+            "passed": 11,
+            "reported_duration": "0.397s",
+            "skipped": 0,
+            "terminal": "OK"
+          }
+        ],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_repository.py",
+        "-v"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "16-repository-negatives",
+      "outcomes": {
+        "named_rust": [],
+        "python": [
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 50,
+            "passed": 50,
+            "reported_duration": "328.780s",
+            "skipped": 0,
+            "terminal": "OK"
+          }
+        ],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_history_stage_diagnostic.py",
+        "-v"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "17-history-stage-diagnostic-controls",
+      "outcomes": {
+        "named_rust": [],
+        "python": [
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 6,
+            "passed": 6,
+            "reported_duration": "12.582s",
+            "skipped": 0,
+            "terminal": "OK"
+          }
+        ],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_from_zero_host_ci.py",
+        "-v"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "18-from-zero-host-ci-controls",
+      "outcomes": {
+        "named_rust": [],
+        "python": [
+          {
+            "errors": 0,
+            "failed": 0,
+            "methods": 79,
+            "passed": 79,
+            "reported_duration": "2.307s",
+            "skipped": 0,
+            "terminal": "OK"
+          }
+        ],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+        "--output",
+        "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-ci-core-01/source-after.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "99-source-after",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    }
+  ],
+  "component": "core",
+  "durable_exit": 0,
+  "durable_job_id": "1a1ba2faec5-12894-18dc",
+  "full_source_qualification_aggregate_claimed": false,
+  "new_complete_proofs": 0,
+  "original_manifest_sha256": "d74f30544e9a41d00b209e4016085d33a0ef678cd33a4e64532ab25b20bf3e1d",
+  "provenance": {
+    "history_control_methods": 6,
+    "history_workload_executed": false,
+    "host_helper_control_methods": 79,
+    "staged32_included": false,
+    "w1_retained_suites_methods": [
+      22,
+      20,
+      11,
+      13,
+      8,
+      8,
+      7,
+      12,
+      4,
+      12,
+      20,
+      14
+    ]
+  },
+  "python": {
+    "errors": 0,
+    "failed": 0,
+    "methods": 571,
+    "passed": 571,
+    "skipped": 0
+  },
+  "rust": {},
+  "schema": "TRNM-W1-C7-INDEPENDENT-COMPONENT-REVIEW1",
+  "source": {
+    "commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe"
+  },
+  "source_guards_before_after_exact_equal": true
+}

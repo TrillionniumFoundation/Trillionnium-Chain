@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/launch-owner-c8.py", line 103, in <module>
+    assert plan["fresh_cargo_target"] is False and isinstance(plan["cache_basis"],str) and "copied" in plan["cache_basis"].lower()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

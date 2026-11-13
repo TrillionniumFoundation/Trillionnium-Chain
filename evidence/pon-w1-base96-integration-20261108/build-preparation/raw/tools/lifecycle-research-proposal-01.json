@@ -1,0 +1,127 @@
+{
+  "schema": "TRNM-W1-C7-LIFECYCLE-RESEARCH-PROPOSAL1",
+  "source": {
+    "commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe"
+  },
+  "repo": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+  "status": "unstarted external proposal; not a generated runtime operation plan",
+  "proposed_root": "/home/qian-qi/work/chain-w1-c7-timeout-reorg-20261108-ec265b-01",
+  "provider_operation": null,
+  "statement_id": null,
+  "original_deadline_ns": null,
+  "original_boot_id": null,
+  "operation_created": false,
+  "deadline_selected": false,
+  "proof_started": false,
+  "execution_requires_separate_parent_instruction": true,
+  "driver": {
+    "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/driver-v4.py",
+    "bytes": 20830,
+    "sha256": "b66019d2f47c225174de4f69c508e2b163d69f915b1e9eada59eef9368317464"
+  },
+  "completed_gate_pins": {
+    "backend": {
+      "path": "/home/qian-qi/work/chain-w1-c7-backend-qualification-20261108-ec265b-01/manifest.json",
+      "bytes": 11958,
+      "sha256": "7f9368578b4cb5d12f5e4f50e8a1fbfa320545ebd901a489ca4984ca6e657d9b"
+    },
+    "native": {
+      "path": "/home/qian-qi/work/chain-w1-c7-native-qualification-20261108-ec265b-01/manifest.json",
+      "bytes": 16997,
+      "sha256": "3870f4ff23cc1d9591b92fe5751536b104a6fb5a0db8576f0e5ad09b8cc87681"
+    }
+  },
+  "required_pending_gates": [
+    "exact C7 owner qualification, actual Cargo artifact and ELF pins",
+    "exact C7 core qualification",
+    "exact C7 real receiver controls using the current verifier",
+    "one staged32 control attempt after all build I/O is terminal",
+    "strict derived owner schema mapping if required; original manifest/artifact immutable",
+    "driver C3 unchanged-source-prefix guard and actual runner probe",
+    "all earlier owned build/control jobs terminal before launch"
+  ],
+  "runner": {
+    "bytes": 47813072,
+    "path": "/home/qian-qi/work/chain-w1-base96-backend-target-20261108-ec265b/release/w1-staged-prover-v2",
+    "sha256": "268a2a56a4896aa8da926937f1643c9d2c3dfc690f9b6e3ffa1c7d7e2858dd46"
+  },
+  "native_binaries": {
+    "native_winner": {
+      "bytes": 752472,
+      "path": "/home/qian-qi/work/chain-w1-base96-native-target-20261108-ec265b/release/examples/pon_w1_native_winner_v2",
+      "sha256": "753c8c3610dcf0687e2d54f19e5c5b307dd54683bedabc7fe3d39eed57ee4b03"
+    },
+    "verifier": {
+      "bytes": 19343864,
+      "path": "/home/qian-qi/work/chain-w1-base96-native-target-20261108-ec265b/release/w1-verify-v2",
+      "sha256": "93a1721d829846da2a4ab01f41238cf5d95351ce002556cc0840d009629e4219"
+    }
+  },
+  "owner_binary": null,
+  "owner_import_manifest": null,
+  "runtime_budget": {
+    "original_duration_ns": 120000000000,
+    "deadline_selected_once_at_launch": true,
+    "deadline_extension_allowed": false,
+    "operation_redispatch_allowed": false,
+    "cpus": [
+      8,
+      9,
+      10,
+      11,
+      20,
+      21,
+      22,
+      23
+    ],
+    "cpu_quota_percent": 800,
+    "memory_max_bytes": 8589934592,
+    "segment_workers": 2,
+    "compression_workers": 2,
+    "rayon_threads": 4,
+    "outer_hepta_timeout_seconds": 240,
+    "outer_timeout_does_not_renew_original_deadline": true
+  },
+  "resource_cap": {
+    "cpu_ns": 960000000000,
+    "gpu_ns": 240000000000,
+    "memory_peak_upper_bound_bytes": 8589934592,
+    "receipt_bytes": 16777216
+  },
+  "planned_order": [
+    "Bind a fresh isolated research Node database, provider operation, target-state and output to exact C7 source and qualified ELF inputs; no existing operation reuse.",
+    "Actual research NativeReserve of principal 1000, owner dispatch, and observation of live first prove-batch r0vm with process birth identity.",
+    "Allow the target to reach its one original 120-second deadline naturally; retain actual target cause original-deadline and raw terminal records.",
+    "Consume actual target terminal through typed terminal V3 as Failure Unknown, without fabricated resource totals, before later explicit owner veto.",
+    "Submit the research NativeCancel, prove gross principal 1000 refund with exact wire/packet/fee and canonical state observations.",
+    "Apply a valid alternate ancestry removing that same Cancel, reopen Node/M12 cold while off-branch, prohibit redispatch and payment, then restore the exact original Cancel wire/packet ancestry.",
+    "Run one separate independent cold reconciliation with the same original config, operation and deadline; require no dispatch, no target cancellation and no new Native transaction.",
+    "Read-only terminal check of original owned PID births and cgroups; preserve all historical wait/reap as unknown unless separately proved."
+  ],
+  "resource_accounting_boundary": {
+    "gpu_ns": null,
+    "complete_historical_resource_accounting": null,
+    "consumed": null,
+    "full_resource_cap_retained": true,
+    "provider_payment_authorized": false,
+    "dispatch_done_does_not_imply_resource_settlement": true
+  },
+  "fixture_boundary": {
+    "research_only": true,
+    "public_chain_transactions_sent": false,
+    "principal": 1000,
+    "prior_fixture_native_wire_bytes_may_repeat_deterministically": true,
+    "independent_node_database_required": true,
+    "no_global_new_funds_claim": true,
+    "no_refund_sum_across_c5_c6_c7_fixtures": true
+  },
+  "performance_boundary": {
+    "expected_complete_fresh_proofs": 0,
+    "one_timeout_observation_is_not_tail_latency_estimate": true,
+    "target_terminal_observation_may_follow_deadline_and_is_not_complete_proof": true,
+    "no_original_business_budget_pass_claim": true,
+    "no_deployment_or_cryptographic_security_qualification_claim": true
+  },
+  "publication_allowlist": "Plans/config and safe source/ELF pins, original owner/target/typed failure/reorg/cold JSON, bounded safe logs, raw job terminal metadata, and safe drivers/import provenance; no private SQLite, ELF binaries or inherited process environment."
+}

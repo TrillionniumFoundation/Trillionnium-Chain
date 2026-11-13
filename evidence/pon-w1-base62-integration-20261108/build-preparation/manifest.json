@@ -1,0 +1,385 @@
+{
+  "all_files_under_25_MiB": true,
+  "all_files_utf8_json_log_or_script": true,
+  "all_sources_read_only": true,
+  "bundle_complete": true,
+  "expected_C6_context": {
+    "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+  },
+  "failures": [],
+  "file_count_excluding_manifest": 44,
+  "files": [
+    {
+      "bytes": 7820,
+      "path": "README.md",
+      "provenance": "new public explanation of retained evidence and limits",
+      "sha256": "4dbe1da59930261e8bf928ecba40a3d19dbfbf51164bcbcd5066b1722a25ab19"
+    },
+    {
+      "bytes": 1724,
+      "expected_source_sha256": "3da47b08facaf260f97a2595c709588c68746aad9a949ee69f8eb2f5a44fc938",
+      "path": "backend-native-copy/backend-cache-copy.json",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "3da47b08facaf260f97a2595c709588c68746aad9a949ee69f8eb2f5a44fc938",
+      "source_path": "/home/qian-qi/work/chain-w1-base62-m12-tools-20261108-ec265b/backend-cache-copy.json",
+      "source_sha256": "3da47b08facaf260f97a2595c709588c68746aad9a949ee69f8eb2f5a44fc938"
+    },
+    {
+      "bytes": 626,
+      "expected_source_sha256": "5b62b608fe41aea4a4dfb1d60e35d94e2ce7664c5908baceaa535c6c69e35f96",
+      "path": "backend-native-copy/first-copy-current-scope.json",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "5b62b608fe41aea4a4dfb1d60e35d94e2ce7664c5908baceaa535c6c69e35f96",
+      "source_path": "/home/qian-qi/work/chain-w1-base62-m12-tools-20261108-ec265b/first-copy-current-scope.json",
+      "source_sha256": "5b62b608fe41aea4a4dfb1d60e35d94e2ce7664c5908baceaa535c6c69e35f96"
+    },
+    {
+      "bytes": 2759,
+      "expected_source_sha256": "b504112042a448feb51516645705b306c722153568872b78dd8636912f722fc5",
+      "path": "backend-native-copy/first-copy-witnesses.snapshot.json",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "b504112042a448feb51516645705b306c722153568872b78dd8636912f722fc5",
+      "source_path": "/home/qian-qi/work/chain-w1-base62-m12-tools-20261108-ec265b/first-copy-witnesses.snapshot.json",
+      "source_sha256": "b504112042a448feb51516645705b306c722153568872b78dd8636912f722fc5"
+    },
+    {
+      "bytes": 3387,
+      "path": "backend-native-copy/original-copy-helper.py",
+      "provenance": "exact script string extracted as data; not executed",
+      "sha256": "370c3ec239d77c1e3aa8fbdfa10c1579e33b0e80fbbb8dd44a3d890214e56fe4",
+      "source_environment_values_omitted": true,
+      "source_json_pointer": "/args/2",
+      "source_path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b9bc6a15-12894-1677/request.json",
+      "source_request_sha256": "a31954cadaeefcadbb06122469d00c5e81e84b058456dff99225ee1da0478413"
+    },
+    {
+      "bytes": 730,
+      "path": "backend-native-copy/partial-observation-runtime-status.json",
+      "provenance": "retained tool response or raw process log",
+      "sha256": "7309491119145a74640d659cdeab3529edaf73336262567c8c9ff55aefaea297",
+      "source_observation": "process_status read-only partial-size observation job"
+    },
+    {
+      "bytes": 0,
+      "path": "backend-native-copy/partial-observation.stderr.log",
+      "provenance": "retained tool response or raw process log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_observation": "unmodified stderr of read-only job1a1b9c24ebe-12894-16b4"
+    },
+    {
+      "bytes": 485,
+      "path": "backend-native-copy/partial-observation.stdout.log",
+      "provenance": "retained tool response or raw process log",
+      "sha256": "6ed01c2f9a35ea0624143b04717937b674d3fed5ed59bdab1a0bf9e8492cdcfc",
+      "source_observation": "unmodified stdout of read-only job1a1b9c24ebe-12894-16b4"
+    },
+    {
+      "bytes": 0,
+      "expected_source_sha256": null,
+      "path": "backend-native-copy/preflight-before-cache-copy.stderr",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-w1-base62-m12-tools-20261108-ec265b/preflight-before-cache-copy.stderr",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 170,
+      "expected_source_sha256": null,
+      "path": "backend-native-copy/preflight-before-cache-copy.stdout",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "7885d1d19800193c6a37881d4781e5a84dfe2bfb0082d5f3d12df4cdfce9ca04",
+      "source_path": "/home/qian-qi/work/chain-w1-base62-m12-tools-20261108-ec265b/preflight-before-cache-copy.stdout",
+      "source_sha256": "7885d1d19800193c6a37881d4781e5a84dfe2bfb0082d5f3d12df4cdfce9ca04"
+    },
+    {
+      "bytes": 792,
+      "path": "backend-native-copy/request-selected.json",
+      "provenance": "explicit non-environment selection from original runtime request",
+      "sha256": "73a676c83fa723947241739c9135ec8c00fc62ed4ad0d2f51b50937c2938cb70",
+      "source_request_sha256": "a31954cadaeefcadbb06122469d00c5e81e84b058456dff99225ee1da0478413"
+    },
+    {
+      "bytes": 118,
+      "expected_source_sha256": "e81e94a21f7c05772edea8928ae97ca6cebe2652fd6bd7e1ace5baeaeb2495d9",
+      "path": "backend-native-copy/runtime/child.json",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "e81e94a21f7c05772edea8928ae97ca6cebe2652fd6bd7e1ace5baeaeb2495d9",
+      "source_path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b9bc6a15-12894-1677/child.json",
+      "source_sha256": "e81e94a21f7c05772edea8928ae97ca6cebe2652fd6bd7e1ace5baeaeb2495d9"
+    },
+    {
+      "bytes": 496,
+      "expected_source_sha256": "60fe177b8b6df55d880e8dd2be0ef4b20bf1b36598bc0d417c4a2a48944cb122",
+      "path": "backend-native-copy/runtime/exit.json",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "60fe177b8b6df55d880e8dd2be0ef4b20bf1b36598bc0d417c4a2a48944cb122",
+      "source_path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b9bc6a15-12894-1677/exit.json",
+      "source_sha256": "60fe177b8b6df55d880e8dd2be0ef4b20bf1b36598bc0d417c4a2a48944cb122"
+    },
+    {
+      "bytes": 208,
+      "expected_source_sha256": "bae62e2e2f277733684db40ed249a70568a5c9e96e3fa9ad897a29547e17d7e3",
+      "path": "backend-native-copy/runtime/exit.witness.json",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "bae62e2e2f277733684db40ed249a70568a5c9e96e3fa9ad897a29547e17d7e3",
+      "source_path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b9bc6a15-12894-1677/exit.witness.json",
+      "source_sha256": "bae62e2e2f277733684db40ed249a70568a5c9e96e3fa9ad897a29547e17d7e3"
+    },
+    {
+      "bytes": 333,
+      "expected_source_sha256": "453b349a45530d7aaad9f58a48aa76873e7d488600983add868d9dcd5211ee1d",
+      "path": "backend-native-copy/runtime/started.json",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "453b349a45530d7aaad9f58a48aa76873e7d488600983add868d9dcd5211ee1d",
+      "source_path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b9bc6a15-12894-1677/started.json",
+      "source_sha256": "453b349a45530d7aaad9f58a48aa76873e7d488600983add868d9dcd5211ee1d"
+    },
+    {
+      "bytes": 727,
+      "path": "backend-native-copy/runtime/status-readback.json",
+      "provenance": "retained tool response or raw process log",
+      "sha256": "e0ef7edf7445eb40bd6380e53833954b747d7649342cc540794c3bcbacd97e0c",
+      "source_observation": "process_status original backend/native copy job"
+    },
+    {
+      "bytes": 0,
+      "path": "backend-native-copy/runtime/stderr.log",
+      "provenance": "retained tool response or raw process log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_observation": "unmodified stderr process_read of original copy job 1a1b9bc6a15-12894-1677"
+    },
+    {
+      "bytes": 0,
+      "path": "backend-native-copy/runtime/stdout.log",
+      "provenance": "retained tool response or raw process log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_observation": "unmodified stdout process_read of original copy job 1a1b9bc6a15-12894-1677"
+    },
+    {
+      "bytes": 592,
+      "expected_source_sha256": "8d4a6f86437589822699351968ef1f967ba95283a7be621305b68c09f51b0641",
+      "path": "native-02/empty-setup-02-launch-unknown.json",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "8d4a6f86437589822699351968ef1f967ba95283a7be621305b68c09f51b0641",
+      "source_path": "/home/qian-qi/work/chain-w1-base62-m12-tools-20261108-ec265b/empty-setup-02-launch-unknown.json",
+      "source_sha256": "8d4a6f86437589822699351968ef1f967ba95283a7be621305b68c09f51b0641"
+    },
+    {
+      "bytes": 266,
+      "path": "native-02/status-readback-error.txt",
+      "provenance": "retained tool response or raw process log",
+      "sha256": "601d89f486ce7757bf5bc7d742bf537ac065d80083af51cefd194422a20e50c0",
+      "source_observation": "process_status native02 returned remote helper FileNotFoundError; no authoritative terminal"
+    },
+    {
+      "bytes": 1859,
+      "expected_source_sha256": "cd46981ec210ae6da8fbd8ca19c92118716e0e4cd500d0f42c88b22906f21b4a",
+      "path": "native-03/native-empty-preparation-03.json",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "cd46981ec210ae6da8fbd8ca19c92118716e0e4cd500d0f42c88b22906f21b4a",
+      "source_path": "/home/qian-qi/work/chain-w1-base62-m12-tools-20261108-ec265b/native-empty-preparation-03.json",
+      "source_sha256": "cd46981ec210ae6da8fbd8ca19c92118716e0e4cd500d0f42c88b22906f21b4a"
+    },
+    {
+      "bytes": 1751,
+      "expected_source_sha256": "ad0205296ea144fbdf36fce756db3cad418b94fd873a8e72793468a48393f976",
+      "path": "native-03/qualification-declaration.json",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "ad0205296ea144fbdf36fce756db3cad418b94fd873a8e72793468a48393f976",
+      "source_path": "/home/qian-qi/work/chain-w1-c6-native-qualification-20261108-ec265b-01/declaration.json",
+      "source_sha256": "ad0205296ea144fbdf36fce756db3cad418b94fd873a8e72793468a48393f976"
+    },
+    {
+      "bytes": 164,
+      "expected_source_sha256": null,
+      "path": "owner-copy/copy.stderr.log",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "c3379a50e874c3afc3d427ab4d86febe187533c457345e0d9b433c856f44f018",
+      "source_path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/owner-cache-copy-01/copy.stderr.log",
+      "source_sha256": "c3379a50e874c3afc3d427ab4d86febe187533c457345e0d9b433c856f44f018"
+    },
+    {
+      "bytes": 0,
+      "expected_source_sha256": null,
+      "path": "owner-copy/copy.stdout.log",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/owner-cache-copy-01/copy.stdout.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1745,
+      "expected_source_sha256": null,
+      "path": "owner-copy/declaration.json",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "23db5f4209760b6bee51fd10d5d183d6a9ccef4aa4edd44deb4a913b8c262d9f",
+      "source_path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/owner-cache-copy-01/declaration.json",
+      "source_sha256": "23db5f4209760b6bee51fd10d5d183d6a9ccef4aa4edd44deb4a913b8c262d9f"
+    },
+    {
+      "bytes": 285,
+      "expected_source_sha256": null,
+      "path": "owner-copy/preflight-transport.json",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "ac2d9398a752a8912962db98cb0a58ce44f89d283e2612437108f2a9e5b83ee6",
+      "source_path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/owner-cache-copy-01/preflight-transport.json",
+      "source_sha256": "ac2d9398a752a8912962db98cb0a58ce44f89d283e2612437108f2a9e5b83ee6"
+    },
+    {
+      "bytes": 0,
+      "expected_source_sha256": null,
+      "path": "owner-copy/preflight.stderr.log",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/owner-cache-copy-01/preflight.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1448,
+      "expected_source_sha256": null,
+      "path": "owner-copy/preflight.stdout.jsonl",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "286eaea5075dbe97824f41ca123286be01f144f8bba0cb0a41140d38d23ea01c",
+      "source_path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/owner-cache-copy-01/preflight.stdout.jsonl",
+      "source_sha256": "286eaea5075dbe97824f41ca123286be01f144f8bba0cb0a41140d38d23ea01c"
+    },
+    {
+      "bytes": 118,
+      "expected_source_sha256": "bd191dda16e5e29a2457477dc34156fa3d3e325cf1884178a893aafbccb4c37a",
+      "path": "owner-copy/runtime/child.json",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "bd191dda16e5e29a2457477dc34156fa3d3e325cf1884178a893aafbccb4c37a",
+      "source_path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b9bd043d-12894-167b/child.json",
+      "source_sha256": "bd191dda16e5e29a2457477dc34156fa3d3e325cf1884178a893aafbccb4c37a"
+    },
+    {
+      "bytes": 496,
+      "expected_source_sha256": "09b94178ed3fe31d501249dd7c7d5a8d9d376ed7553a59b585c80f351360c0ec",
+      "path": "owner-copy/runtime/exit.json",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "09b94178ed3fe31d501249dd7c7d5a8d9d376ed7553a59b585c80f351360c0ec",
+      "source_path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b9bd043d-12894-167b/exit.json",
+      "source_sha256": "09b94178ed3fe31d501249dd7c7d5a8d9d376ed7553a59b585c80f351360c0ec"
+    },
+    {
+      "bytes": 208,
+      "expected_source_sha256": "8471fbbb513063af083e31f3dc37d302091ccc17a35a532540558587ca1758ca",
+      "path": "owner-copy/runtime/exit.witness.json",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "8471fbbb513063af083e31f3dc37d302091ccc17a35a532540558587ca1758ca",
+      "source_path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b9bd043d-12894-167b/exit.witness.json",
+      "source_sha256": "8471fbbb513063af083e31f3dc37d302091ccc17a35a532540558587ca1758ca"
+    },
+    {
+      "bytes": 333,
+      "expected_source_sha256": "08e6f0ed8c39057691b1596ed2325c83fa152f4c1b7c8dad1dabb97aad6c955d",
+      "path": "owner-copy/runtime/started.json",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "08e6f0ed8c39057691b1596ed2325c83fa152f4c1b7c8dad1dabb97aad6c955d",
+      "source_path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b9bd043d-12894-167b/started.json",
+      "source_sha256": "08e6f0ed8c39057691b1596ed2325c83fa152f4c1b7c8dad1dabb97aad6c955d"
+    },
+    {
+      "bytes": 727,
+      "path": "owner-copy/runtime/status-readback.json",
+      "provenance": "retained tool response or raw process log",
+      "sha256": "92e49b91a6a6c7f1433b5e392d5ba42be9b3becd28293c746be528ec4cdbccc7",
+      "source_observation": "process_status original owner copy job"
+    },
+    {
+      "bytes": 0,
+      "path": "owner-copy/runtime/stderr.log",
+      "provenance": "retained tool response or raw process log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_observation": "unmodified stderr process_read of original copy job 1a1b9bd043d-12894-167b"
+    },
+    {
+      "bytes": 0,
+      "path": "owner-copy/runtime/stdout.log",
+      "provenance": "retained tool response or raw process log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_observation": "unmodified stdout process_read of original copy job 1a1b9bd043d-12894-167b"
+    },
+    {
+      "bytes": 1004,
+      "expected_source_sha256": "30b5295d2fd0915992954355d451584cf05edbcb4d7c66ebc432d59c304e6cb2",
+      "path": "owner-empty/SHA256SUMS.json",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "30b5295d2fd0915992954355d451584cf05edbcb4d7c66ebc432d59c304e6cb2",
+      "source_path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/owner-empty-target-preparation-01/SHA256SUMS.json",
+      "source_sha256": "30b5295d2fd0915992954355d451584cf05edbcb4d7c66ebc432d59c304e6cb2"
+    },
+    {
+      "bytes": 252,
+      "expected_source_sha256": null,
+      "path": "owner-empty/cancel-tool-result.json",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "f1de54b443226469f219aae13f9149990dc68d53ce69de73bc5d5c7ea7300985",
+      "source_path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/owner-empty-target-preparation-01/cancel-tool-result.json",
+      "source_sha256": "f1de54b443226469f219aae13f9149990dc68d53ce69de73bc5d5c7ea7300985"
+    },
+    {
+      "bytes": 4341,
+      "expected_source_sha256": null,
+      "path": "owner-empty/copy-processes-before-cancel.json",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "5fb8706bae13ac3e59cc22fe9f6f804d40a410e37c902f8d918c269384a5f640",
+      "source_path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/owner-empty-target-preparation-01/copy-processes-before-cancel.json",
+      "source_sha256": "5fb8706bae13ac3e59cc22fe9f6f804d40a410e37c902f8d918c269384a5f640"
+    },
+    {
+      "bytes": 728,
+      "expected_source_sha256": null,
+      "path": "owner-empty/copy-runtime-terminal.json",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "3d0058076961ae72b188c3f08196740ad7109599b9e6f3b87c7d259f1fc21b12",
+      "source_path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/owner-empty-target-preparation-01/copy-runtime-terminal.json",
+      "source_sha256": "3d0058076961ae72b188c3f08196740ad7109599b9e6f3b87c7d259f1fc21b12"
+    },
+    {
+      "bytes": 1745,
+      "expected_source_sha256": null,
+      "path": "owner-empty/original-copy-declaration.json",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "23db5f4209760b6bee51fd10d5d183d6a9ccef4aa4edd44deb4a913b8c262d9f",
+      "source_path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/owner-empty-target-preparation-01/original-copy-declaration.json",
+      "source_sha256": "23db5f4209760b6bee51fd10d5d183d6a9ccef4aa4edd44deb4a913b8c262d9f"
+    },
+    {
+      "bytes": 8327,
+      "expected_source_sha256": null,
+      "path": "owner-empty/original-copy-helper.py",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "120a57838a6f0a8ebd893f14fadcfad2d1aa4ebed750edddd811c9a82e882161",
+      "source_path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/owner-empty-target-preparation-01/original-copy-helper.py",
+      "source_sha256": "120a57838a6f0a8ebd893f14fadcfad2d1aa4ebed750edddd811c9a82e882161"
+    },
+    {
+      "bytes": 732,
+      "path": "owner-empty/preparation-runtime-status.json",
+      "provenance": "retained tool response or raw process log",
+      "sha256": "2d4c7926f0026a5556596e828b52154f8588f1e52aec4ef5cd5585d2a15c3f9c",
+      "source_observation": "process_status owner empty-target preparation job"
+    },
+    {
+      "bytes": 6404,
+      "expected_source_sha256": "55f18f4e02646b013dd87e47d7e86291068edc59f85036fe87433c3a831d8fe7",
+      "path": "owner-empty/preparation.json",
+      "provenance": "unchanged allowlisted source file",
+      "sha256": "55f18f4e02646b013dd87e47d7e86291068edc59f85036fe87433c3a831d8fe7",
+      "source_path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/owner-empty-target-preparation-01/preparation.json",
+      "source_sha256": "55f18f4e02646b013dd87e47d7e86291068edc59f85036fe87433c3a831d8fe7"
+    },
+    {
+      "bytes": 6724,
+      "path": "summary.json",
+      "provenance": "new cross-record summary; original terminal and component outcomes kept separate",
+      "sha256": "b0ad69f40771e1b04f0d930c70e9a50913e926bc1d683c40b2a23487113423d6"
+    }
+  ],
+  "max_file_bytes": 8327,
+  "schema": "TRNM-W1-D4-COPY-PREPARATION-ALLOWLIST1",
+  "self_excluded": true,
+  "total_bytes_excluding_manifest": 60624
+}

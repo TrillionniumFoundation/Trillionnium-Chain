@@ -1,0 +1,44 @@
+{
+  "schema": "w1-base62-readonly-base-advance-summary-v1",
+  "scope": "Historical read-only discovery before C6 integration. Not C6 execution qualification.",
+  "old_base": "cb314bb4656e5da4844325cd83994ab4764fe8e9",
+  "new_base": "62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+  "c5": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+  "old_base_is_ancestor": true,
+  "direct_new_commits": 1,
+  "docs_only": false,
+  "changed_paths": [
+    ".github/workflows/pon-recent-batch-acceptance.yml",
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "trillionnium/crates/trnm-pon-node/src/store.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs"
+  ],
+  "conflict_files": [
+    ".github/workflows/pon-recent-batch-acceptance.yml",
+    "config/pon/pq-cross-branch-corpus-v1.json"
+  ],
+  "merge_tree_exit": 1,
+  "conflicted_tree_object": "1b74d8046125d3fc23d9849af0046feb090a716d",
+  "conflicted_tree_is_qualified_candidate": false,
+  "pr_merge_at_this_historical_snapshot": {
+    "label": "actual_pr_merge_parents_vs_expected",
+    "commit": "991168a783c3bf82e04f978091adbdc740998c47",
+    "tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+    "parents": [
+      "cb314bb4656e5da4844325cd83994ab4764fe8e9",
+      "034aa74358e0a5fa33f33e83cb63669e9738da4b"
+    ],
+    "expected_base": "62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+    "expected_head": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+    "ordered_parents_match": false
+  },
+  "source_worktree_unchanged": {
+    "label": "source_worktree_unchanged",
+    "head_unchanged": true,
+    "tracked_status_unchanged": true,
+    "head": "034aa74358e0a5fa33f33e83cb63669e9738da4b"
+  },
+  "new_tests_run": 0,
+  "operations_started": 0,
+  "source_edits": 0
+}

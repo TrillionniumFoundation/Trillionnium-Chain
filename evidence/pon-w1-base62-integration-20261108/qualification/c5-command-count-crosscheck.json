@@ -1,0 +1,79 @@
+{
+  "schema": "TRNM-W1-C5-COMMAND-COUNT-CROSSCHECK1",
+  "tested_source_commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+  "review_context": "C6/D4 independent read-only recount of old C5 published component arrays; no reruns and no modification of D3",
+  "components": [
+    {
+      "original_manifest_path": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/qualification/final-ci-core-manifest.json",
+      "manifest_bytes": 20678,
+      "manifest_sha256": "5d12af80e48036c7a9a5549a2910f1c41da5c106460ed9fda7e7727c3e6ab702",
+      "actual_commands_array_length": 19,
+      "actual_exit_counts": {
+        "0": 19
+      },
+      "source": {
+        "commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "tree": "8dd452c376452224602fb202940ae84fc1f84d2e"
+      }
+    },
+    {
+      "original_manifest_path": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/qualification/final-owner-manifest.json",
+      "manifest_bytes": 23342,
+      "manifest_sha256": "182b317b9d90962a2595be2421d7813fda627b5654404305edf9f4124833a466",
+      "actual_commands_array_length": 19,
+      "actual_exit_counts": {
+        "0": 19
+      },
+      "source": {
+        "commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "tree": "8dd452c376452224602fb202940ae84fc1f84d2e"
+      }
+    },
+    {
+      "original_manifest_path": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/qualification/final-receiver-manifest.json",
+      "manifest_bytes": 6662,
+      "manifest_sha256": "85b90b184ec79f8c9a0fc19d662593d2085532a77015528e6e86114a8414d436",
+      "actual_commands_array_length": 4,
+      "actual_exit_counts": {
+        "0": 4
+      },
+      "source": {
+        "commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "tree": "8dd452c376452224602fb202940ae84fc1f84d2e"
+      }
+    },
+    {
+      "original_manifest_path": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01/manifest.json",
+      "manifest_bytes": 14965,
+      "manifest_sha256": "557caa36c01ade287b9183c8bb846f4bcc8977edb4aef5bc38284820f504c84f",
+      "actual_commands_array_length": 10,
+      "actual_exit_counts": {
+        "0": 10
+      },
+      "source": {
+        "commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "tree": "8dd452c376452224602fb202940ae84fc1f84d2e"
+      }
+    },
+    {
+      "original_manifest_path": "/home/qian-qi/work/chain-w1-c5-backend-qualification-20261108-ec265b-01/manifest.json",
+      "manifest_bytes": 9959,
+      "manifest_sha256": "7e500f1b607916648f8c3b96402e40018ecae90eb859d930bfa82cd8223142a6",
+      "actual_commands_array_length": 7,
+      "actual_exit_counts": {
+        "0": 6,
+        "1": 1
+      },
+      "source": {
+        "commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "tree": "8dd452c376452224602fb202940ae84fc1f84d2e"
+      }
+    }
+  ],
+  "original_published_total_commands": 59,
+  "original_published_native_count": 10,
+  "all_original_component_sha256_match_published_summary": true,
+  "erratum_required": false,
+  "new_c6_tests_claimed_from_c5_records": 0,
+  "recomputed_total_commands": 59
+}

@@ -1,0 +1,266 @@
+{
+  "archive_sha256": "2367b455fc67d701575fb28acdbe87d85f300794110adeb26c7f866fbca85845",
+  "members": [
+    {
+      "encoding": "utf8",
+      "raw_bytes": 108305,
+      "raw_sha256": "b46f5208c52f04269b1578130d95ec8ea8079e8acd61252619baeacd07b4c1e0",
+      "stored_bytes": 108305,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service/build.log",
+      "stored_sha256": "b46f5208c52f04269b1578130d95ec8ea8079e8acd61252619baeacd07b4c1e0",
+      "zip_member": "fresh-service/build.log"
+    },
+    {
+      "encoding": "gzip-lossless-utf8",
+      "raw_bytes": 6829303,
+      "raw_sha256": "a32d193d7a94b7a37ad202a10d57c2aae93826b2745dc63a1e36bdd17f5dbd38",
+      "stored_bytes": 380838,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service/fresh/report.json.gz",
+      "stored_sha256": "b2056ce947770bf34984d6fe0779e9643725cd95d19da1ba608217b26d736e65",
+      "zip_member": "fresh-service/fresh/report.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 914,
+      "raw_sha256": "830a5d267df3ab9b7ddd1a0dab3711adb1109c58e4895f130eaf3730f431b065",
+      "stored_bytes": 914,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service/fresh.log",
+      "stored_sha256": "830a5d267df3ab9b7ddd1a0dab3711adb1109c58e4895f130eaf3730f431b065",
+      "zip_member": "fresh-service/fresh.log"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 8919,
+      "raw_sha256": "895e22623bd205cbd0fa32a9ed33d74f70a02e29adf1e57fce3eaa786ee5adaf",
+      "stored_bytes": 8919,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service/manifest.json",
+      "stored_sha256": "895e22623bd205cbd0fa32a9ed33d74f70a02e29adf1e57fce3eaa786ee5adaf",
+      "zip_member": "fresh-service/manifest.json"
+    },
+    {
+      "encoding": "gzip-lossless-utf8",
+      "raw_bytes": 9851327,
+      "raw_sha256": "8313f468dc9058054d6c60b0accac3d8549fb90b5d73db59c884cd5689f5cd17",
+      "stored_bytes": 418407,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service/original/report.json.gz",
+      "stored_sha256": "13f85a307068a60f456cf9f842bb391379f94e84c8fd56bdc1e72351b06dd659",
+      "zip_member": "fresh-service/original/report.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 420,
+      "raw_sha256": "c86f4864a83496bc49248d45ac612570161689058220e4ef227cc07c4b4ba285",
+      "stored_bytes": 420,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service/original.log",
+      "stored_sha256": "c86f4864a83496bc49248d45ac612570161689058220e4ef227cc07c4b4ba285",
+      "zip_member": "fresh-service/original.log"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 200,
+      "raw_sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+      "stored_bytes": 200,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service-host/actual-systemd-parent-after.log",
+      "stored_sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+      "zip_member": "fresh-service-host/actual-systemd-parent-after.log"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 200,
+      "raw_sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+      "stored_bytes": 200,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service-host/actual-systemd-parent.log",
+      "stored_sha256": "251aa282c289d7a152c48ec876369121b1ff818157cbbb4c1426dc89342501d3",
+      "zip_member": "fresh-service-host/actual-systemd-parent.log"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 1634,
+      "raw_sha256": "53013765a8c3962ccd82aa8e52d59b962608627a9420ff3d67a3560724b46e7e",
+      "stored_bytes": 1634,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service-host/after-provision.json",
+      "stored_sha256": "53013765a8c3962ccd82aa8e52d59b962608627a9420ff3d67a3560724b46e7e",
+      "zip_member": "fresh-service-host/after-provision.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 2801,
+      "raw_sha256": "a6eba56d9c4e565af0b79e3940b37a055dcd908e3493126a899812a1382b09c9",
+      "stored_bytes": 2801,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service-host/before-provision.json",
+      "stored_sha256": "a6eba56d9c4e565af0b79e3940b37a055dcd908e3493126a899812a1382b09c9",
+      "zip_member": "fresh-service-host/before-provision.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 10,
+      "raw_sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76",
+      "stored_bytes": 10,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service-host/child-final-load-state.log",
+      "stored_sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76",
+      "zip_member": "fresh-service-host/child-final-load-state.log"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 10,
+      "raw_sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76",
+      "stored_bytes": 10,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service-host/child-load-state.log",
+      "stored_sha256": "391bc413c3044926b4afa41806bf4a5c4fad68a3165b8563fe1bffec0792fc76",
+      "zip_member": "fresh-service-host/child-load-state.log"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 353,
+      "raw_sha256": "408579e7b59cce7910f11954156d4f2b10f040c18a424575e27a96ebd596cbae",
+      "stored_bytes": 353,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service-host/child-result.json",
+      "stored_sha256": "408579e7b59cce7910f11954156d4f2b10f040c18a424575e27a96ebd596cbae",
+      "zip_member": "fresh-service-host/child-result.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 7701,
+      "raw_sha256": "a580e08bdad01929358f493d924178c4e633e007451c6d252750bb7ad18cac3d",
+      "stored_bytes": 7701,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service-host/controller-result.json",
+      "stored_sha256": "a580e08bdad01929358f493d924178c4e633e007451c6d252750bb7ad18cac3d",
+      "zip_member": "fresh-service-host/controller-result.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 1712,
+      "raw_sha256": "52012e0a1613e75d62538bd6cb1520fc96d765b08c5603240b8c29a9457681b5",
+      "stored_bytes": 1712,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service-host/inside-after.json",
+      "stored_sha256": "52012e0a1613e75d62538bd6cb1520fc96d765b08c5603240b8c29a9457681b5",
+      "zip_member": "fresh-service-host/inside-after.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 1699,
+      "raw_sha256": "923fef322861d1b0d2adad1ea41fae5827fc8f3ec91f5ea95878b7c899347d39",
+      "stored_bytes": 1699,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service-host/inside-before.json",
+      "stored_sha256": "923fef322861d1b0d2adad1ea41fae5827fc8f3ec91f5ea95878b7c899347d39",
+      "zip_member": "fresh-service-host/inside-before.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 0,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service-host/install-reviewed-unit.log",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zip_member": "fresh-service-host/install-reviewed-unit.log"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 1668,
+      "raw_sha256": "984378ba2db2c96c4834f5931b40a6f3e0b6b9ce31e74c306896c82a5358a424",
+      "stored_bytes": 1668,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service-host/outside-after.json",
+      "stored_sha256": "984378ba2db2c96c4834f5931b40a6f3e0b6b9ce31e74c306896c82a5358a424",
+      "zip_member": "fresh-service-host/outside-after.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 146,
+      "raw_sha256": "313ae0beb72fab5cfa2506271e7b1bab522a702995c7be248e46b91311afe343",
+      "stored_bytes": 146,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service-host/parent-properties.log",
+      "stored_sha256": "313ae0beb72fab5cfa2506271e7b1bab522a702995c7be248e46b91311afe343",
+      "zip_member": "fresh-service-host/parent-properties.log"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 921,
+      "raw_sha256": "0e6f2a8a848d72a50842d301361e2c9d772dabc5a3ee73556ab78cd130d3eff2",
+      "stored_bytes": 921,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service-host/prepare-build/process.json",
+      "stored_sha256": "0e6f2a8a848d72a50842d301361e2c9d772dabc5a3ee73556ab78cd130d3eff2",
+      "zip_member": "fresh-service-host/prepare-build/process.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 7069,
+      "raw_sha256": "30359245f3f9181d7503b2b1ac37e4843302f84929646a001012bd9d5c3f41c5",
+      "stored_bytes": 7069,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service-host/prepare-build/stderr",
+      "stored_sha256": "30359245f3f9181d7503b2b1ac37e4843302f84929646a001012bd9d5c3f41c5",
+      "zip_member": "fresh-service-host/prepare-build/stderr"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 108363,
+      "raw_sha256": "dd2da7f49f1bbd988c59a2658c9d695a65e29c0f8040c901e79d11ac989a96f6",
+      "stored_bytes": 108363,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service-host/prepare-build/stdout",
+      "stored_sha256": "dd2da7f49f1bbd988c59a2658c9d695a65e29c0f8040c901e79d11ac989a96f6",
+      "zip_member": "fresh-service-host/prepare-build/stdout"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 3406,
+      "raw_sha256": "15627fb38065cabe2d1482c3fa6c5e37c8abaab499ee42ad9d64ad7e4bdc47e8",
+      "stored_bytes": 3406,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service-host/prepare-build.json",
+      "stored_sha256": "15627fb38065cabe2d1482c3fa6c5e37c8abaab499ee42ad9d64ad7e4bdc47e8",
+      "zip_member": "fresh-service-host/prepare-build.json"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 0,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service-host/seal-parent-directory.log",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zip_member": "fresh-service-host/seal-parent-directory.log"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 0,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service-host/seal-parent-receipt.log",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zip_member": "fresh-service-host/seal-parent-receipt.log"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 0,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service-host/start-fixed-parent.log",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zip_member": "fresh-service-host/start-fixed-parent.log"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 0,
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stored_bytes": 0,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service-host/systemd-reload.log",
+      "stored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "zip_member": "fresh-service-host/systemd-reload.log"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 591,
+      "raw_sha256": "89e4b9c87e59b1db7012721b5a9b7cc0cfc3f378038bea3e204a8f2f3234bcdb",
+      "stored_bytes": 591,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service-host/systemd-run.log",
+      "stored_sha256": "89e4b9c87e59b1db7012721b5a9b7cc0cfc3f378038bea3e204a8f2f3234bcdb",
+      "zip_member": "fresh-service-host/systemd-run.log"
+    },
+    {
+      "encoding": "utf8",
+      "raw_bytes": 229,
+      "raw_sha256": "8141d0f99d8dde3a4ebd71cdd60aabe3fd6528da8a8e126ab36ac94264db1d22",
+      "stored_bytes": 229,
+      "stored_path": "new-jobs/128660701948/artifact-selected/fresh-service-host/unprovisioned-parent.json",
+      "stored_sha256": "8141d0f99d8dde3a4ebd71cdd60aabe3fd6528da8a8e126ab36ac94264db1d22",
+      "zip_member": "fresh-service-host/unprovisioned-parent.json"
+    }
+  ]
+}

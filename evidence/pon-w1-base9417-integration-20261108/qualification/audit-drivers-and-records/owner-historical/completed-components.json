@@ -1,0 +1,42 @@
+{
+  "components": [
+    {
+      "component": "owner",
+      "manifest_sha256": "1c2dc86659813e9bbb5290b59792facc824c3e548f2d6e7ad2457498227ecd54",
+      "raw_archive_bytes": 533691,
+      "raw_archive_sha256": "e34ba01b7225ba4910a750fdbb821b581a73c4d4022cbd308f15c2578a57eecf",
+      "raw_members": 55
+    },
+    {
+      "component": "historical-regressions",
+      "manifest_sha256": "1bc9f12e7c190056ee0850b338c565665c55668ae491dbcf684dcda2f3028ace",
+      "raw_archive_bytes": 8371,
+      "raw_archive_sha256": "40bbf0152121236e1ac1ce66b1360006d7b2c5d19e478bce56223f339a04bba5",
+      "raw_members": 15
+    }
+  ],
+  "counts": {
+    "commands": 23,
+    "python_passed": 0,
+    "rust_ignored": 4,
+    "rust_passed": 47
+  },
+  "full_source_qualification_aggregate_claimed": false,
+  "new_complete_proofs": 0,
+  "ordinary_passes": 47,
+  "pending_components": [
+    "history-local-compile-list",
+    "staged32"
+  ],
+  "schema": "TRNM-W1-C8-COMPLETED-COMPONENTS1",
+  "separately_audited_components": [
+    "backend",
+    "native",
+    "core",
+    "receiver"
+  ],
+  "source": {
+    "commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c"
+  }
+}

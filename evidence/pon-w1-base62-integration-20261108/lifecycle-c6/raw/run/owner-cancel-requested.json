@@ -1,0 +1,26 @@
+{
+  "native_task": "93fdb42f44108cd1125e755dbbb1818a23c404ec85f198ddac7bdd89b43beb1e",
+  "native_task_action": "cancel-reserved",
+  "original_deadline_ns": 1199343004629858,
+  "original_job": {
+    "identity": {
+      "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+      "pid": 3666955,
+      "start_ticks": 119923218
+    },
+    "job_id": "142e5b9c67fd1078cc1ecc29ac16152451829f41c22bcbae80cba6dd79a52ff1",
+    "operation": "8058cfa81675504da3f0593b8df7c51cb0b1f3fd6db1daa4d3f83172a6d4eacc",
+    "provider_namespace": "1b05d4586e26ca25a26482764e3787754743958b5ff5abf8dc9d5835dbcc2169",
+    "request_sha256": "5c4ccea91866b42480652e5a62faa4473f26758c2da07a1d55fe5d26d3253dfc"
+  },
+  "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+  "provider_failure_is_not_owner_authority": true,
+  "provider_operation": "8058cfa81675504da3f0593b8df7c51cb0b1f3fd6db1daa4d3f83172a6d4eacc",
+  "reason_sha256": "2411a759adecb3d8d8e018b746272c2692a79b6385152e57ab6654e8585c6faf",
+  "request_is_not_acceptance": true,
+  "requested_monotonic_ns": 1199345486900409,
+  "schema": "TRNM-W1-EXPLICIT-OWNER-TIMEOUT1",
+  "start_observation_sha256": "5d450db324782c52e7a55645be93f1ae1c379432f7e94a98f9897a27f76b3fca",
+  "state": "REQUESTED",
+  "statement": "52a53b4c6264f99141cda3d84ee5793dbd9a21778693848435809fbcd3fd4ca6"
+}

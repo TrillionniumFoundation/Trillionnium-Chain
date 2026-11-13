@@ -1,0 +1,14 @@
+{
+  "cancellation_at_failure": null,
+  "consumed": null,
+  "evidence_digest": "b310ec2a11efe9edfd35a5df2a0c19734f7bd775e26557adc46a0e695b03a2a6",
+  "failure_kind": "Unknown",
+  "m12_resource_cap_retained": true,
+  "native_refund_authorized": false,
+  "operation": "3c722d76b352db7450c53321368b305782f25612b9ed1fb806c49c5ec7fb5c77",
+  "provider_payment_authorized": false,
+  "recorded_before_owner_veto": true,
+  "recorded_monotonic_ns": 1191798112448497,
+  "schema": "TRNM-W1-ACTUAL-TIMEOUT-M12-FAILURE1",
+  "statement": "5592f86e015fe11571eecdb9594d3b35b7eeb074a1b9488cb4a50acfeb89ef7b"
+}

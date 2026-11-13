@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/usr/bin/gh",
+    "api",
+    "user",
+    "--jq",
+    ".login"
+  ],
+  "cwd": null,
+  "error": null,
+  "exit_code": 0,
+  "finished_unix_ns": 1794133378878906150,
+  "label": "00-operator-login",
+  "started_unix_ns": 1794133375304116579,
+  "stderr": {
+    "bytes": 0,
+    "path": "00-operator-login.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 10,
+    "path": "00-operator-login.stdout",
+    "sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981"
+  },
+  "timed_out": false
+}

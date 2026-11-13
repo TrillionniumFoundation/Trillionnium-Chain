@@ -1,0 +1,25 @@
+{
+  "schema": "TRNM-W1-C6-LIFECYCLE-INDEPENDENT-REVIEW-FILES1",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 3783,
+      "sha256": "ea9a3860a6a22d81b96b5105a7661a743684f16f5d96df07ef4e48e882698c35"
+    },
+    {
+      "path": "input-artifact-index.json",
+      "bytes": 7335,
+      "sha256": "0845ce419eb3e67fc3ea8a0ec2031b5287f68eb0cdbc8a79b10ea0b7e7226f45"
+    },
+    {
+      "path": "original-job-readbacks.json",
+      "bytes": 2948,
+      "sha256": "80f1b5cce82697f909d922714dc74b3d6d02752a061ded4134a9abf2f581961d"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 18376,
+      "sha256": "ad5b616ba305a1ebed807d526eb610503ad5eac76ae4420e3b34beb0422674ec"
+    }
+  ]
+}

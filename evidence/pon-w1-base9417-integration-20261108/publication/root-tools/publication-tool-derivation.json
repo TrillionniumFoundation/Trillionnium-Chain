@@ -1,0 +1,96 @@
+{
+  "schema": "TRNM-W1-C8-PUBLICATION-TOOL-DERIVATION1",
+  "records": [
+    {
+      "source": "/home/qian-qi/work/chain-w1-c7-root-tools-20261108-ec265b/verify_git_publication.py",
+      "source_sha256": "0a82f77d954be4de17aa533b943f307d620bd9d3fa3f65e8429e5d8f1223d886",
+      "result": "/home/qian-qi/work/chain-w1-c8-root-tools-20261108-ec265b/verify_git_publication.py",
+      "result_sha256": "4a16432af60fe7c9a8e5d9241f6915f0063d9da4dfdc9a9ed985b59e176e4d1f",
+      "replacements": [
+        {
+          "old": "('evidence/pon-w1-base96-integration-20261108',a.expected_new_inventory_sha256,None)",
+          "new": "('evidence/pon-w1-base96-integration-20261108','9c0c06ea019853aededd8e24475b34480ec05b45f7cc101a3e54d7a27f0b982a',1242),\n ('evidence/pon-w1-base9417-integration-20261108',a.expected_new_inventory_sha256,None)",
+          "count": 1
+        },
+        {
+          "old": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+          "new": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+          "count": 1
+        },
+        {
+          "old": "no_extra_tracked_paths_in_three_packages",
+          "new": "no_extra_tracked_paths_in_four_packages",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-c7-root-tools-20261108-ec265b/publish_c7_source.py",
+      "source_sha256": "9d67d9a1e4788efc905c345fd3839d0c0978b6f3a8107a92b0a81b58025764a0",
+      "result": "/home/qian-qi/work/chain-w1-c8-root-tools-20261108-ec265b/publish_c8_source.py",
+      "result_sha256": "f8e64fe76dc1602cf8703aa78b096810d0bc5c74a0219b6dfbf6bae8d44a696b",
+      "replacements": [
+        {
+          "old": "chain-w1-base96-integration-20261108-ec265b",
+          "new": "chain-w1-base9417-integration-20261108-ec265b",
+          "count": 1
+        },
+        {
+          "old": "chain-w1-c7-root-validation-20261108-ec265b",
+          "new": "chain-w1-c8-root-validation-20261108-ec265b",
+          "count": 1
+        },
+        {
+          "old": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+          "new": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+          "count": 1
+        },
+        {
+          "old": "4b25e3194a0682adff40bb476f2e7c0a395639fe",
+          "new": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c",
+          "count": 1
+        },
+        {
+          "old": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+          "new": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+          "count": 1
+        },
+        {
+          "old": "exact-owner-01/manifest.json",
+          "new": "exact-owner-02/manifest.json",
+          "count": 1
+        },
+        {
+          "old": "('history-local',v/'exact-history-local-01/manifest.json')",
+          "new": "('history-local',v/'exact-history-local-01/manifest.json'),('historical-regressions',v/'exact-historical-regressions-01/manifest.json')",
+          "count": 1
+        },
+        {
+          "old": "chain-w1-c7-backend-qualification",
+          "new": "chain-w1-c8-backend-qualification",
+          "count": 1
+        },
+        {
+          "old": "chain-w1-c7-native-qualification",
+          "new": "chain-w1-c8-native-qualification",
+          "count": 1
+        },
+        {
+          "old": "(69,655,4,1)",
+          "new": "(73,665,4,1)",
+          "count": 1
+        },
+        {
+          "old": "TRNM-W1-C7-SOURCE-PUBLICATION1",
+          "new": "TRNM-W1-C8-SOURCE-PUBLICATION1",
+          "count": 1
+        },
+        {
+          "old": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+          "new": "9417e495165865ef6c1288b39084856e31020634",
+          "count": 2
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "preflight": {
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b",
+    "exit": 0,
+    "stderr": {
+      "bytes": 0,
+      "path": "/home/qian-qi/work/chain-w1-m12-timeout-tools-20261108-ec265b/publication-preflight-01.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 185,
+      "path": "/home/qian-qi/work/chain-w1-m12-timeout-tools-20261108-ec265b/publication-preflight-01.stdout",
+      "sha256": "b469ff2247a1885c23220effdbb0af77c3ebafd0d88be03e1d2db876ed12f562"
+    }
+  },
+  "published": [
+    {
+      "archive": {
+        "bytes": 262080,
+        "path": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/lifecycle-c5/raw-artifacts.tar.gz",
+        "sha256": "53d10a7e01f0b20fb277e1952c4c3b112ffdcbabfe7abd57398098600f349c65"
+      },
+      "directory": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/lifecycle-c5",
+      "manifest": {
+        "bytes": 27548,
+        "path": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/lifecycle-c5/manifest.json",
+        "sha256": "3e4b348552400a35eff9bcfeb2b3c3984ffae932b589f3280aac0698a9552d2e"
+      },
+      "raw_files": 71,
+      "readme": {
+        "bytes": 7200,
+        "path": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/lifecycle-c5/README.md",
+        "sha256": "c95b641f16be76ff59b3f9b7f1c1df70380d9103d74ac152809f1e69bafee8a8"
+      }
+    },
+    {
+      "archive": {
+        "bytes": 106924,
+        "path": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/failed-operation/raw-artifacts.tar.gz",
+        "sha256": "4fbcd80715a689a2eda37eb33232024ab9ffda976a57328854b241cb96aa086a"
+      },
+      "directory": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/failed-operation",
+      "manifest": {
+        "bytes": 10648,
+        "path": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/failed-operation/manifest.json",
+        "sha256": "87558e2ff0663a5eeafd45c1588340ffec6f465714dfd2a245bd3ef66e1c4bfd"
+      },
+      "raw_files": 25,
+      "readme": {
+        "bytes": 3642,
+        "path": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/failed-operation/README.md",
+        "sha256": "c4edc02a80ea91708f76df7b941c288b81d4ddceb709812a34981eb90929a6a8"
+      }
+    }
+  ],
+  "source": {
+    "commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+    "tree": "8dd452c376452224602fb202940ae84fc1f84d2e"
+  }
+}

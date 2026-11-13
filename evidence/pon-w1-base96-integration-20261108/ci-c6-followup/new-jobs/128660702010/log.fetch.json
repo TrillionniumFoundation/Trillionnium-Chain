@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/usr/bin/gh",
+    "api",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128660702010/logs"
+  ],
+  "complete_download": true,
+  "exception": null,
+  "exit_code": 0,
+  "finished_unix_ns": 1794126005683788229,
+  "job_id": 128660702010,
+  "kind": "source-guard-sample",
+  "label": "new-jobs/128660702010",
+  "per_stream_byte_cap": 25165824,
+  "raw": {
+    "bytes": 141582,
+    "path": "new-jobs/128660702010/job.log",
+    "sha256": "6bda45642aae012b4eb75d8abf9ffb8ca4b992aa1b6b7b9d7396047b68584e1f"
+  },
+  "started_unix_ns": 1794125998028422478,
+  "stderr": {
+    "bytes": 0,
+    "path": "new-jobs/128660702010/log.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "timed_out": false
+}

@@ -1,0 +1,43 @@
+{
+  "schema": "TRNM-W1-C7-D5-PUBLICATION1",
+  "commit": "41d717cc9608153dec0daa26ad68ebf8129ed215",
+  "tree": "9ba9cb61087e9421d149dac224c1a1acf704fc44",
+  "parents": [
+    "3daf5d06e84aeb02530e14eecc7ba1f8ec674e24",
+    "40a3a45d6b8afc5c4706c5235fec47634f4aabbe"
+  ],
+  "tested_source": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+  "actor": "ProfHepta",
+  "branch": "docs/chain-w1-base96-qualification-20261108-ec265b",
+  "push_kind": "ordinary-new-branch",
+  "inventory_sha256": "9c0c06ea019853aededd8e24475b34480ec05b45f7cc101a3e54d7a27f0b982a",
+  "new_package_files": 1243,
+  "old_package_files": 895,
+  "all_committed_files_verified": 2138,
+  "remote_groups": [
+    {
+      "prefix": "evidence/pon-w1-four-gates-20261108",
+      "tree": "8989aece12e381da0845b71a41ebe31ea44b6180",
+      "remote_blob_count": 422,
+      "all_blob_oids_match_byte_verified_commit": true
+    },
+    {
+      "prefix": "evidence/pon-w1-base62-integration-20261108",
+      "tree": "fff4ae81437b369be93aa0b9aee7d968b67dbb40",
+      "remote_blob_count": 473,
+      "all_blob_oids_match_byte_verified_commit": true
+    },
+    {
+      "prefix": "evidence/pon-w1-base96-integration-20261108",
+      "tree": "d796e9b82f421aa97ab1ef846b6d0abe2ee3ee23",
+      "remote_blob_count": 1243,
+      "all_blob_oids_match_byte_verified_commit": true
+    }
+  ],
+  "readme_api_exact_bytes": true,
+  "restored_ignored_logs": 104,
+  "old_inventory_hashes_unchanged": true,
+  "lifecycle_qualified": false,
+  "documentation_commit_executed_as_source": false,
+  "observed_unix_ns": 1794129824382367387
+}

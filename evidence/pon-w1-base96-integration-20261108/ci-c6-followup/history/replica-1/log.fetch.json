@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/usr/bin/gh",
+    "api",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128655993256/logs"
+  ],
+  "complete_download": true,
+  "exception": null,
+  "exit_code": 0,
+  "finished_unix_ns": 1794125994432094154,
+  "job_id": 128655993256,
+  "kind": "history-failure",
+  "label": "history/replica-1",
+  "per_stream_byte_cap": 25165824,
+  "raw": {
+    "bytes": 152691,
+    "path": "history/replica-1/job.log",
+    "sha256": "44c60dadd9dda639c1990565f2c12cf1598f3d1dca40dc540dd722176d12ec4c"
+  },
+  "started_unix_ns": 1794125983886403952,
+  "stderr": {
+    "bytes": 0,
+    "path": "history/replica-1/log.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "timed_out": false
+}

@@ -1,0 +1,96 @@
+{
+  "schema": "w1-independent-review-raw-output-index-v1",
+  "scope": "Positive allowlist of unmodified UTF-8 command outputs and provenance receipts; no runtime state, binaries or environment dump.",
+  "files": [
+    {
+      "archive_member": "commands/ci-contract.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "commands/ci-contract.stdout",
+      "bytes": 180,
+      "sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54"
+    },
+    {
+      "archive_member": "commands/ci-pin-and-w1-negatives.stderr",
+      "bytes": 2178,
+      "sha256": "c2d3fe740c81560980d5857f7a6a4432abbb0fc5dedea02be6bed1af914aa635"
+    },
+    {
+      "archive_member": "commands/ci-pin-and-w1-negatives.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "commands/diff-check.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "commands/diff-check.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "commands/pq-checker.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "commands/pq-checker.stdout",
+      "bytes": 557,
+      "sha256": "8acbcab9e45540255e8e577cbc51776debef5005f06e49757cf9bbc6f9dc7f0c"
+    },
+    {
+      "archive_member": "commands/pq-negatives.stderr",
+      "bytes": 5643,
+      "sha256": "bab5e90ac596cac30f12389388881b7b4fe0a2ddb6eeb89ea950be73928ae3c5"
+    },
+    {
+      "archive_member": "commands/pq-negatives.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "commands/preflight.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "commands/preflight.stdout",
+      "bytes": 178,
+      "sha256": "dfe7ed4bf1a2fa120ab384a40149f30a0e1c5c6d6c17ad1bd0ee1a3e0185db83"
+    },
+    {
+      "archive_member": "final-readback.json",
+      "bytes": 839,
+      "sha256": "15cddf8d0a0444abbb7d4e01fd963d5e421b971b77951c5782cce3c292e6e9f4"
+    },
+    {
+      "archive_member": "job-status.json",
+      "bytes": 735,
+      "sha256": "9566d6e1c19582fd5159eb46a7ceae41c2be35410b45bd239f2559037a6e315b"
+    },
+    {
+      "archive_member": "resolution.json",
+      "bytes": 2144,
+      "sha256": "a3a90dda68b49867d5878a2b221881d25c757c6309fb3e731e5e8228515e94ce"
+    },
+    {
+      "archive_member": "resolved-two-files.diff",
+      "bytes": 4512,
+      "sha256": "688bf75864c1110cd4305904f0bcdc69ab12657d7151148325c62538ceed72f4"
+    },
+    {
+      "archive_member": "validation-log.raw",
+      "bytes": 15178,
+      "sha256": "af796f5622338fca37a8348f1d63b1eff7b8d69f861806e93d9f98a74198ec28"
+    },
+    {
+      "archive_member": "validation.json",
+      "bytes": 13335,
+      "sha256": "9fe28de05de84b2deb1875266033e4b5d62080ab22a8d0e515105d6a11b6756e"
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/codeql-real-exact-source.yml:46:          EXPECTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/codeql-real-exact-source.yml:56:            args+=(--expected-base "$EXPECTED_BASE_SHA" --expected-merge "$EXPECTED_SOURCE_SHA")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/codeql-real-exact-source.yml:109:          EXPECTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/codeql-real-exact-source.yml:116:            args+=(--expected-base "$EXPECTED_BASE_SHA" --expected-merge "$EXPECTED_SOURCE_SHA")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-baseline-diagnostic-readback.yml:353:      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-baseline-diagnostic-readback.yml:374:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-baseline-diagnostic-readback.yml:419:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-branch-encoding-acceptance.yml:33:      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-branch-encoding-acceptance.yml:52:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-branch-encoding-acceptance.yml:183:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-model-parent-acceptance.yml:21:      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-model-parent-acceptance.yml:39:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-model-parent-acceptance.yml:68:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-original-large-state-cpu.yml:33:      "EXPECTED_BASE": "${{ github.event.pull_request.base.sha }}"
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-original-large-state-cpu.yml:57:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-original-large-state-cpu.yml:163:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-original-workspace-large-state-cpu.yml:34:      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-original-workspace-large-state-cpu.yml:56:          args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-original-workspace-large-state-cpu.yml:476:          args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-owned-process-cleanup.yml:20:      BASE_SHA: ${{ github.event.pull_request.base.sha }}
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-owned-process-cleanup.yml:143:      BASE_SHA: ${{ github.event.pull_request.base.sha }}
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-pq-system-continuation.yml:33:      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-pq-system-continuation.yml:73:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_TESTED")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-priority-acceptance.yml:117:      EXPECTED_BASE: ${{ github.event_name == 'push' && needs.push-source-context.outputs.base || github.event.pull_request.base.sha }}
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-priority-acceptance.yml:149:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-priority-acceptance.yml:356:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-recent-batch-acceptance.yml:50:      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-recent-batch-acceptance.yml:70:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-recent-batch-acceptance.yml:398:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-recent-batch-acceptance.yml:420:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_MERGE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-w1-transparent-profile.yml:76:      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-w1-transparent-profile.yml:99:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-w1-transparent-profile.yml:427:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-w1-work-security.yml:95:      EXPECTED_BASE: ${{ github.event_name == 'push' && needs.push-source-context.outputs.base || github.event.pull_request.base.sha }}
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-w1-work-security.yml:126:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-w1-work-security.yml:194:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-w1-work-security.yml:239:      EXPECTED_BASE: ${{ github.event_name == 'push' && needs.push-source-context.outputs.base || github.event.pull_request.base.sha }}
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-w1-work-security.yml:270:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-w1-work-security.yml:310:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-w1-work-security.yml:351:      EXPECTED_BASE: ${{ github.event_name == 'push' && needs.push-source-context.outputs.base || github.event.pull_request.base.sha }}
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-w1-work-security.yml:382:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-w1-work-security.yml:481:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-w1-work-security.yml:515:      EXPECTED_BASE: ${{ github.event_name == 'push' && needs.push-source-context.outputs.base || github.event.pull_request.base.sha }}
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-w1-work-security.yml:546:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-w1-work-security.yml:569:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-w1-work-security.yml:608:      EXPECTED_BASE: ${{ github.event_name == 'push' && needs.push-source-context.outputs.base || github.event.pull_request.base.sha }}
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-w1-work-security.yml:638:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/pon-w1-work-security.yml:682:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/release-finality-reference.yml:35:      BASE: ${{ github.event.pull_request.base.sha }}
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/release-finality-reference.yml:50:            args+=(--expected-base "$BASE" --expected-merge "$TESTED")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/release-finality-reference.yml:145:            args+=(--expected-base "$BASE" --expected-merge "$TESTED")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/trnm-required-baseline.yml:141:      TRNM_EXPECTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/trnm-required-baseline.yml:155:            args+=(--expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/trnm-required-baseline.yml:180:            args+=(--expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/trnm-required-baseline.yml:428:      TRNM_EXPECTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/trnm-required-baseline.yml:437:        run: python3 scripts/ci/verify_ci_source.py --kind prospective-merge --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA" --expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/trnm-required-baseline.yml:459:        run: python3 scripts/ci/rust_baseline_shards.py run --kind prospective-merge --candidate "$TRNM_EXPECTED_CANDIDATE_SHA" --base "$TRNM_EXPECTED_BASE_SHA" --tested "$TRNM_EXPECTED_SOURCE_SHA" --shard "${{ matrix.shard }}" --output "$RUNNER_TEMP/ci-observations/rust-shard.json"
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/trnm-required-baseline.yml:462:        run: python3 scripts/ci/verify_ci_source.py --kind prospective-merge --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA" --expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA"
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/trnm-required-baseline.yml:490:      TRNM_EXPECTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/trnm-required-baseline.yml:500:        run: python3 scripts/ci/verify_ci_source.py --kind prospective-merge --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA" --expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/trnm-required-baseline.yml:509:        run: python3 scripts/ci/rust_baseline_shards.py check --kind prospective-merge --candidate "$TRNM_EXPECTED_CANDIDATE_SHA" --base "$TRNM_EXPECTED_BASE_SHA" --tested "$TRNM_EXPECTED_SOURCE_SHA" --inputs "$RUNNER_TEMP/rust-shards" --dependency-result "$TRNM_RUST_SHARD_RESULT" --output "$RUNNER_TEMP/ci-observations/rust-fanin.json"
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/trnm-required-baseline.yml:512:        run: python3 scripts/ci/verify_ci_source.py --kind prospective-merge --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA" --expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA"
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/trnm-required-baseline.yml:571:      TRNM_EXPECTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/trnm-required-baseline.yml:580:        run: python3 scripts/ci/verify_ci_source.py --kind prospective-merge --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA" --expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA" --output "$RUNNER_TEMP/ci-observations/source.json"
+2bdd252aa6c300b7431b9ee897b254b7953cf562:.github/workflows/trnm-required-baseline.yml:614:        run: python3 scripts/ci/verify_ci_source.py --kind prospective-merge --expected-head "$TRNM_EXPECTED_CANDIDATE_SHA" --expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA"
+2bdd252aa6c300b7431b9ee897b254b7953cf562:scripts/ci/check_ci_contract.py:77:      TRNM_EXPECTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+2bdd252aa6c300b7431b9ee897b254b7953cf562:scripts/ci/check_ci_contract.py:91:            args+=(--expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:scripts/ci/check_ci_contract.py:116:            args+=(--expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:scripts/ci/check_ci_contract.py:548:      EXPECTED_BASE: ${{ github.event.pull_request.base.sha }}
+2bdd252aa6c300b7431b9ee897b254b7953cf562:scripts/ci/check_ci_contract.py:575:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:scripts/ci/check_ci_contract.py:693:            args+=(--expected-base "$EXPECTED_BASE" --expected-merge "$EXPECTED_SOURCE")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:scripts/ci/check_ci_contract.py:879:PUSH_SOURCE_BASE = "${{ github.event_name == 'push' && needs.push-source-context.outputs.base || github.event.pull_request.base.sha }}"
+2bdd252aa6c300b7431b9ee897b254b7953cf562:scripts/ci/check_ci_contract.py:1150:                 'TRNM_EXPECTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}']:
+2bdd252aa6c300b7431b9ee897b254b7953cf562:scripts/ci/check_ci_contract.py:1153:               '--expected-base "$TRNM_EXPECTED_BASE_SHA" --expected-merge "$TRNM_EXPECTED_SOURCE_SHA"')
+2bdd252aa6c300b7431b9ee897b254b7953cf562:scripts/ci/check_ci_contract.py:1178:            args = '--kind prospective-merge --candidate "$TRNM_EXPECTED_CANDIDATE_SHA" --base "$TRNM_EXPECTED_BASE_SHA" --tested "$TRNM_EXPECTED_SOURCE_SHA"'
+2bdd252aa6c300b7431b9ee897b254b7953cf562:scripts/ci/check_ci_contract.py:1182:                             'TRNM_EXPECTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}']:
+2bdd252aa6c300b7431b9ee897b254b7953cf562:scripts/ci/read_native_cache_observation.py:173:    parser.add_argument("--expected-base")
+2bdd252aa6c300b7431b9ee897b254b7953cf562:scripts/ci/run_from_zero_host.py:46:    'TRNM_EXPECTED_BASE_SHA', 'TRNM_COST_RUNNER_LABEL',
+2bdd252aa6c300b7431b9ee897b254b7953cf562:scripts/ci/test_ci_contract.py:558:            ('--expected-base "$TRNM_EXPECTED_BASE_SHA" ', ''),
+2bdd252aa6c300b7431b9ee897b254b7953cf562:scripts/ci/test_ci_contract.py:613:                       TRNM_EXPECTED_BASE_SHA=base, TRNM_EXPECTED_SOURCE_SHA=head)
+2bdd252aa6c300b7431b9ee897b254b7953cf562:scripts/ci/test_ci_contract.py:636:            env['TRNM_EXPECTED_BASE_SHA'] = head
+2bdd252aa6c300b7431b9ee897b254b7953cf562:scripts/ci/test_ci_contract.py:638:            env['TRNM_EXPECTED_BASE_SHA'] = base
+2bdd252aa6c300b7431b9ee897b254b7953cf562:scripts/ci/verify_ci_source.py:206:    parser.add_argument('--expected-base')

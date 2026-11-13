@@ -1,0 +1,159 @@
+{
+  "schema": "TRNM-W1-C8-CI-EXACT-SCOPE-AUDIT1",
+  "source_commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "read_only_existing_records": true,
+  "new_API_calls": 0,
+  "original_snapshot_modified": false,
+  "snapshot": {
+    "path": "snapshot.json",
+    "bytes": 53724,
+    "sha256": "572738750c14057ed436ef4602085692810bd7c88b0a8c576f09ebb1b16bd5b0"
+  },
+  "check_rows": {
+    "path": "C8-all-checks.json",
+    "bytes": 521414,
+    "sha256": "624a74edad280bd5290fc7fe40c0bb344c6c01dccad9d298e990404be48e79d9"
+  },
+  "workflow_rows": {
+    "path": "C8-all-workflow-runs.json",
+    "bytes": 261467,
+    "sha256": "439a41ccb3cb56274524159bf39b5d699ce17afc7393efa961cc15aa057da499"
+  },
+  "foreign_check_ids": [],
+  "foreign_workflow_run_ids": [],
+  "check_ids_unique": true,
+  "workflow_ids_unique": true,
+  "check_page_totals_match": true,
+  "workflow_page_totals_match": true,
+  "samples": [
+    {
+      "job_id": 128698905076,
+      "run_id": 42470186930,
+      "check_id": 128698905076,
+      "name": "W1 fresh challenge service (x64, prospective-merge)",
+      "checks": {
+        "unique_snapshot_check": true,
+        "metadata_job_id": true,
+        "metadata_run_id": true,
+        "metadata_head_sha": true,
+        "snapshot_check_head": true,
+        "check_run_url_id": true,
+        "name_matches": true
+      },
+      "all_identity_checks_pass": true,
+      "metadata": {
+        "path": "job-samples/128698905076/metadata.stdout",
+        "bytes": 3246,
+        "sha256": "de21a2e7a5703629f145020ae237bd045441255e3243902e3eb0d60d41f084d1"
+      }
+    },
+    {
+      "job_id": 128698904380,
+      "run_id": 42470186921,
+      "check_id": 128698904380,
+      "name": "CodeQL local SARIF (python, prospective-merge)",
+      "checks": {
+        "unique_snapshot_check": true,
+        "metadata_job_id": true,
+        "metadata_run_id": true,
+        "metadata_head_sha": true,
+        "snapshot_check_head": true,
+        "check_run_url_id": true,
+        "name_matches": true
+      },
+      "all_identity_checks_pass": true,
+      "metadata": {
+        "path": "job-samples/128698904380/metadata.stdout",
+        "bytes": 3398,
+        "sha256": "dfc49ed74e7978f1461bed3dd8a4411ab20988cf09e8f17bdbc43ff09845509b"
+      }
+    },
+    {
+      "job_id": 128698904884,
+      "run_id": 42470186930,
+      "check_id": 128698904884,
+      "name": "W1 fresh challenge service (x64, head)",
+      "checks": {
+        "unique_snapshot_check": true,
+        "metadata_job_id": true,
+        "metadata_run_id": true,
+        "metadata_head_sha": true,
+        "snapshot_check_head": true,
+        "check_run_url_id": true,
+        "name_matches": true
+      },
+      "all_identity_checks_pass": true,
+      "metadata": {
+        "path": "job-samples/128698904884/metadata.stdout",
+        "bytes": 3233,
+        "sha256": "27d35dcead7719a53e6462d11762351d51d59c531bc31e61509a13b4762a6498"
+      }
+    },
+    {
+      "job_id": 128698905350,
+      "run_id": 42470186982,
+      "check_id": 128698905350,
+      "name": "cross-arch-cost (arm64)",
+      "checks": {
+        "unique_snapshot_check": true,
+        "metadata_job_id": true,
+        "metadata_run_id": true,
+        "metadata_head_sha": true,
+        "snapshot_check_head": true,
+        "check_run_url_id": true,
+        "name_matches": true
+      },
+      "all_identity_checks_pass": true,
+      "metadata": {
+        "path": "job-samples/128698905350/metadata.stdout",
+        "bytes": 3905,
+        "sha256": "5404950e79d9af9f4faf405d4f1163c02b3685ef6fcf6fbbd20795b9ad1defdd"
+      }
+    },
+    {
+      "job_id": 128698905140,
+      "run_id": 42470186982,
+      "check_id": 128698905140,
+      "name": "cross-arch-cost (x64)",
+      "checks": {
+        "unique_snapshot_check": true,
+        "metadata_job_id": true,
+        "metadata_run_id": true,
+        "metadata_head_sha": true,
+        "snapshot_check_head": true,
+        "check_run_url_id": true,
+        "name_matches": true
+      },
+      "all_identity_checks_pass": true,
+      "metadata": {
+        "path": "job-samples/128698905140/metadata.stdout",
+        "bytes": 3899,
+        "sha256": "9758f4c7d17fca50e057f0ba1011246ba28ab88eeed1aeca66e0597177a76352"
+      }
+    },
+    {
+      "job_id": 128698905948,
+      "run_id": 42470187035,
+      "check_id": 128698905948,
+      "name": "original native campaign (x64, head, release)",
+      "checks": {
+        "unique_snapshot_check": true,
+        "metadata_job_id": true,
+        "metadata_run_id": true,
+        "metadata_head_sha": true,
+        "snapshot_check_head": true,
+        "check_run_url_id": true,
+        "name_matches": true
+      },
+      "all_identity_checks_pass": true,
+      "metadata": {
+        "path": "job-samples/128698905948/metadata.stdout",
+        "bytes": 3119,
+        "sha256": "a19d8c05ea2dd4fa374bb6fabba59f3384d77cba53652a9c52a65c12890f3ce4"
+      }
+    }
+  ],
+  "exact_check_enumeration_complete": true,
+  "exact_workflow_enumeration_complete": true,
+  "all_sample_identities_verified": true
+}

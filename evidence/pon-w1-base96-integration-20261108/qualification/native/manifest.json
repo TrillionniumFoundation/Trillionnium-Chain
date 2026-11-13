@@ -1,0 +1,34 @@
+{
+  "component": "native",
+  "files": [
+    {
+      "bytes": 1016,
+      "path": "README.md",
+      "sha256": "8ee6e61e59efdeb6f364e23cad906b6f4d50381b90e00ab78fb5b897483946d5"
+    },
+    {
+      "bytes": 162517,
+      "path": "raw-logs.tar.gz",
+      "sha256": "8a55c0cfee332209f194342fd0bbf1718463152ba075c4358dbc2dade9ac1111"
+    },
+    {
+      "bytes": 8121,
+      "path": "raw-output-index.json",
+      "sha256": "1d05f01c1363653f8f9198d4981edee058ffc0595f33f9b8d5a0ea6253eaea75"
+    },
+    {
+      "bytes": 8468,
+      "path": "summary.json",
+      "sha256": "6b7cd5019cc7e27993ca26a0f5ed896c3cb1dd502eaa7c0ae6175cd4fa590bc2"
+    }
+  ],
+  "filesystem_members_verified": true,
+  "git_index_or_commit_verified_by_this_audit": false,
+  "raw_tar_members": 30,
+  "raw_tar_readback_verified": true,
+  "schema": "TRNM-W1-C7-COMPONENT-PUBLICATION1",
+  "source": {
+    "commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe"
+  }
+}

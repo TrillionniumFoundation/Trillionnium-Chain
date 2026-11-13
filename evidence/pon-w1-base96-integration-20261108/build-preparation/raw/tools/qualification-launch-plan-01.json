@@ -1,0 +1,96 @@
+{
+  "schema": "TRNM-W1-C7-EXACT-QUALIFICATION-LAUNCH-PLAN1",
+  "source": {
+    "commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe"
+  },
+  "repo": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+  "preparation_plan": {
+    "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/qualification-plan-01.json",
+    "bytes": 12083,
+    "sha256": "b3e9b3037be81307628926a604c9e27d991cf28356df7930d912d20cc81162b8"
+  },
+  "qualifiers": [
+    {
+      "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/qualify-backend-copied-v1.py",
+      "bytes": 11389,
+      "sha256": "26f1b479b09912be1607359b89d3868b0fd636240b56915db53ddf2e0150e4dd"
+    },
+    {
+      "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/qualify-native-copied-v1.py",
+      "bytes": 11558,
+      "sha256": "ac4eb360d8e6687c5c0c31cfa3ff6e1a678a64dcc57f813e96ecdbd90d4e61d6"
+    }
+  ],
+  "requests": [
+    {
+      "host": "desktop",
+      "executable": "/usr/bin/python3.12",
+      "args": [
+        "-B",
+        "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/qualify-backend-copied-v1.py",
+        "--repo",
+        "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+        "--out",
+        "/home/qian-qi/work/chain-w1-c7-backend-qualification-20261108-ec265b-01",
+        "--target",
+        "/home/qian-qi/work/chain-w1-base96-backend-target-20261108-ec265b",
+        "--expected-head",
+        "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+        "--expected-tree",
+        "4b25e3194a0682adff40bb476f2e7c0a395639fe",
+        "--cache-copy-record",
+        "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/backend-cache-copy-01.json",
+        "--cache-copy-sha256",
+        "5b142b1a66eb8a8d757b21028eb358c1bac39e4644e26d1aef334f03374abbeb",
+        "--qualification-budget-seconds",
+        "2400"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "idempotency_key": "w1-c7-backend-exact-qualified-copied-20261108-ec265b-01",
+      "timeout_seconds": 2400,
+      "cpu_quota_percent": 800,
+      "memory_max_bytes": 8589934592,
+      "nice": 10
+    },
+    {
+      "host": "desktop",
+      "executable": "/usr/bin/python3.12",
+      "args": [
+        "-B",
+        "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/qualify-native-copied-v1.py",
+        "--repo",
+        "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+        "--out",
+        "/home/qian-qi/work/chain-w1-c7-native-qualification-20261108-ec265b-01",
+        "--target",
+        "/home/qian-qi/work/chain-w1-base96-native-target-20261108-ec265b",
+        "--expected-head",
+        "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+        "--expected-tree",
+        "4b25e3194a0682adff40bb476f2e7c0a395639fe",
+        "--cache-copy-record",
+        "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/native-cache-copy-01.json",
+        "--cache-copy-sha256",
+        "3f01ca29a3c0d6419658f819dabc2fb8762b7c17189225d474dd31caba8ace4a",
+        "--qualification-budget-seconds",
+        "2400"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "idempotency_key": "w1-c7-native-exact-qualified-copied-20261108-ec265b-01",
+      "timeout_seconds": 2400,
+      "cpu_quota_percent": 800,
+      "memory_max_bytes": 8589934592,
+      "nice": 10
+    }
+  ],
+  "sequence": "backend terminal success, then native; parent owner Cargo waits for both",
+  "fresh_cargo_targets": false,
+  "target_origin": "copied from qualified C6 targets; immutable source and inode isolation verified by pinned copy receipts",
+  "cargo_commands_authorized": true,
+  "proof_started": false,
+  "operation_created": false,
+  "deadline_selected": false,
+  "old_operations_or_deadlines_modified": false,
+  "actual_lifecycle_requires_separate_parent_instruction": true
+}

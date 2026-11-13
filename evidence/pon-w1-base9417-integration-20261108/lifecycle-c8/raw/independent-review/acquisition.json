@@ -1,0 +1,7 @@
+{
+  "job_streams": 4,
+  "readset_sha256": "8802ca4bd358c1fb38c406ff8a021c7a857f9fa2464b3e0eea74021d4950a14c",
+  "schema": "TRNM-W1-C8-INDEPENDENT-LIFECYCLE-AUDIT-READSET1",
+  "scope": "Complete original UTF-8 files returned by two bounded h_read_multiple_files calls; each file independently stable, not a multi-file atomic snapshot.",
+  "source_files": 18
+}

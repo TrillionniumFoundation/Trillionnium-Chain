@@ -1,0 +1,16 @@
+{
+  "schema": "TRNM-W1-C6-MIDQUALIFICATION-REMOTE-REFS1",
+  "observed_unix_ns": 1794120822555997595,
+  "refs": [
+    {
+      "ref": "refs/heads/fix/chain-six-axis-performance-20261103",
+      "sha": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75"
+    },
+    {
+      "ref": "refs/heads/fix/chain-w1-runtime-integrated-20261107",
+      "sha": "034aa74358e0a5fa33f33e83cb63669e9738da4b"
+    }
+  ],
+  "frozen_qualifying_source": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+  "mutations": 0
+}

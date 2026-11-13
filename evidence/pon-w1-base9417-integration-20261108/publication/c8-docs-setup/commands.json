@@ -1,0 +1,169 @@
+[
+  {
+    "label": "00-preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--dev"
+    ],
+    "cwd": "/home/qian-qi/work/chain-w1-c7-attestation-20261108-ec265b",
+    "exit": 0,
+    "stdout_sha256": "4e7060f9ee7fa64b71c2afa9051a09ad8a4481f2b2e8e4a831ba362a2f6c24d3",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "01-docs-head",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/home/qian-qi/work/chain-w1-c7-attestation-20261108-ec265b",
+    "exit": 0,
+    "stdout_sha256": "5eabc826c47aa9f326e01c1fbcea7ba0bd03344bed103f3b9d1946ff29518a7c",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "02-docs-clean",
+    "argv": [
+      "git",
+      "status",
+      "--porcelain"
+    ],
+    "cwd": "/home/qian-qi/work/chain-w1-c7-attestation-20261108-ec265b",
+    "exit": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "03-new-branch-check",
+    "argv": [
+      "git",
+      "for-each-ref",
+      "--format=%(refname)",
+      "refs/heads/docs/chain-w1-base9417-qualification-20261108-ec265b"
+    ],
+    "cwd": "/home/qian-qi/work/chain-w1-c7-attestation-20261108-ec265b",
+    "exit": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "04-new-worktree",
+    "argv": [
+      "git",
+      "worktree",
+      "add",
+      "-b",
+      "docs/chain-w1-base9417-qualification-20261108-ec265b",
+      "/home/qian-qi/work/chain-w1-c8-attestation-20261108-ec265b",
+      "41d717cc9608153dec0daa26ad68ebf8129ed215"
+    ],
+    "cwd": "/home/qian-qi/work/chain-w1-c7-attestation-20261108-ec265b",
+    "exit": 0,
+    "stdout_sha256": "8cd580d7a0dd9b7124470fc43b0f4beff7c885c287c59955732bc1a27b2467f6",
+    "stderr_sha256": "ed6f67a552b3d083e496b4943ccdc178964e4b30d6d083bbfd0e3e949c224e1b"
+  },
+  {
+    "label": "05-merge-c8",
+    "argv": [
+      "git",
+      "merge",
+      "--no-ff",
+      "--no-commit",
+      "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    ],
+    "cwd": "/home/qian-qi/work/chain-w1-c8-attestation-20261108-ec265b",
+    "exit": 1,
+    "stdout_sha256": "5b010b37ee4a43c5a99607263386d37d43d37ba52ad54ff782ecdf1a7ec93d47",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "06-conflict-list",
+    "argv": [
+      "git",
+      "diff",
+      "--name-only",
+      "--diff-filter=U"
+    ],
+    "cwd": "/home/qian-qi/work/chain-w1-c8-attestation-20261108-ec265b",
+    "exit": 0,
+    "stdout_sha256": "4a17948bde06ea53889cdd41279184c4fdf6ae6a46f529c55c58e0cae02b9c29",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "07-plan-base",
+    "argv": [
+      "git",
+      "show",
+      ":1:docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    ],
+    "cwd": "/home/qian-qi/work/chain-w1-c8-attestation-20261108-ec265b",
+    "exit": 0,
+    "stdout_sha256": "c461b79c8bbe6b55b7d228b3d19cf247f6ea67cdcbe83e2b9bfc4a5e34d27e1e",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "08-plan-ours",
+    "argv": [
+      "git",
+      "show",
+      ":2:docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    ],
+    "cwd": "/home/qian-qi/work/chain-w1-c8-attestation-20261108-ec265b",
+    "exit": 0,
+    "stdout_sha256": "ec215a93253054b7e4242971f4efe4f02d60dba32406834642d753cd8fcfd00c",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "09-plan-theirs",
+    "argv": [
+      "git",
+      "show",
+      ":3:docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    ],
+    "cwd": "/home/qian-qi/work/chain-w1-c8-attestation-20261108-ec265b",
+    "exit": 0,
+    "stdout_sha256": "1b3bdf47bc17c7f4877b43a1147ba68d968109fc49c85c7599572fd57d92770e",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "10-resolve-sole-plan",
+    "argv": [
+      "git",
+      "add",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    ],
+    "cwd": "/home/qian-qi/work/chain-w1-c8-attestation-20261108-ec265b",
+    "exit": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "11-no-unmerged",
+    "argv": [
+      "git",
+      "diff",
+      "--name-only",
+      "--diff-filter=U"
+    ],
+    "cwd": "/home/qian-qi/work/chain-w1-c8-attestation-20261108-ec265b",
+    "exit": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "12-index-vs-c8",
+    "argv": [
+      "git",
+      "diff",
+      "--cached",
+      "--name-only",
+      "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    ],
+    "cwd": "/home/qian-qi/work/chain-w1-c8-attestation-20261108-ec265b",
+    "exit": 0,
+    "stdout_sha256": "985a6c126479df31ff67a2513185d6a862f0e35c86d8edff987b5632c922af4e",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

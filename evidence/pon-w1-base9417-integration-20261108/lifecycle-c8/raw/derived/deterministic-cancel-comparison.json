@@ -1,0 +1,113 @@
+{
+  "comparisons": [
+    {
+      "files": [
+        {
+          "C8": {
+            "bytes": 191,
+            "path": "/home/qian-qi/work/chain-w1-c8-timeout-reorg-20261108-ec265b-01/run/native-cancel-wire.bin",
+            "sha256": "f73e5433dc740e181426a3e50fc5f4e54d19cd9a84a1c96043257f0bfcfeb17d"
+          },
+          "exact_bytes_equal": true,
+          "old": {
+            "bytes": 191,
+            "path": "/home/qian-qi/work/chain-w1-c5-timeout-reorg-20261108-ec265b-01/run/native-cancel-wire.bin",
+            "sha256": "f73e5433dc740e181426a3e50fc5f4e54d19cd9a84a1c96043257f0bfcfeb17d"
+          }
+        },
+        {
+          "C8": {
+            "bytes": 49953,
+            "path": "/home/qian-qi/work/chain-w1-c8-timeout-reorg-20261108-ec265b-01/run/native-cancel-packet.bin",
+            "sha256": "6a6125eceb7916ccf4afb673e9abeaa54d4c66ea6a21de5b0a45956dc4805295"
+          },
+          "exact_bytes_equal": true,
+          "old": {
+            "bytes": 49953,
+            "path": "/home/qian-qi/work/chain-w1-c5-timeout-reorg-20261108-ec265b-01/run/native-cancel-packet.bin",
+            "sha256": "6a6125eceb7916ccf4afb673e9abeaa54d4c66ea6a21de5b0a45956dc4805295"
+          }
+        }
+      ],
+      "independent_node_fixture": true,
+      "native_task": {
+        "C8": "93fdb42f44108cd1125e755dbbb1818a23c404ec85f198ddac7bdd89b43beb1e",
+        "equal": true,
+        "older": "93fdb42f44108cd1125e755dbbb1818a23c404ec85f198ddac7bdd89b43beb1e",
+        "older_intent": {
+          "bytes": 1227,
+          "path": "/home/qian-qi/work/chain-w1-c5-timeout-reorg-20261108-ec265b-01/run/native-funded-intent.json",
+          "sha256": "194e81b6d3bc6d8b84e31f6d15140e7e081922bef1858a3a2d30f1f060681fba"
+        }
+      },
+      "older_fixture": "C5",
+      "older_plan": {
+        "bytes": 50024,
+        "path": "/home/qian-qi/work/chain-w1-c5-timeout-reorg-20261108-ec265b-01/plan.json",
+        "sha256": "c833c0ff591cc4f5bcfbe49afac243c5f40b67e510dbe07c4021b2e65a637703"
+      },
+      "older_root": "/home/qian-qi/work/chain-w1-c5-timeout-reorg-20261108-ec265b-01",
+      "older_source": {
+        "commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "tree": "8dd452c376452224602fb202940ae84fc1f84d2e"
+      },
+      "same_global_funds_claimed": false
+    },
+    {
+      "files": [
+        {
+          "C8": {
+            "bytes": 191,
+            "path": "/home/qian-qi/work/chain-w1-c8-timeout-reorg-20261108-ec265b-01/run/native-cancel-wire.bin",
+            "sha256": "f73e5433dc740e181426a3e50fc5f4e54d19cd9a84a1c96043257f0bfcfeb17d"
+          },
+          "exact_bytes_equal": true,
+          "old": {
+            "bytes": 191,
+            "path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/native-cancel-wire.bin",
+            "sha256": "f73e5433dc740e181426a3e50fc5f4e54d19cd9a84a1c96043257f0bfcfeb17d"
+          }
+        },
+        {
+          "C8": {
+            "bytes": 49953,
+            "path": "/home/qian-qi/work/chain-w1-c8-timeout-reorg-20261108-ec265b-01/run/native-cancel-packet.bin",
+            "sha256": "6a6125eceb7916ccf4afb673e9abeaa54d4c66ea6a21de5b0a45956dc4805295"
+          },
+          "exact_bytes_equal": true,
+          "old": {
+            "bytes": 49953,
+            "path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/native-cancel-packet.bin",
+            "sha256": "6a6125eceb7916ccf4afb673e9abeaa54d4c66ea6a21de5b0a45956dc4805295"
+          }
+        }
+      ],
+      "independent_node_fixture": true,
+      "native_task": {
+        "C8": "93fdb42f44108cd1125e755dbbb1818a23c404ec85f198ddac7bdd89b43beb1e",
+        "equal": true,
+        "older": "93fdb42f44108cd1125e755dbbb1818a23c404ec85f198ddac7bdd89b43beb1e",
+        "older_intent": {
+          "bytes": 1227,
+          "path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/native-funded-intent.json",
+          "sha256": "4eb480f783bf5cb4c2fa2fa4979c5ca50b18a18a79e139aa1a3b277ac2a9be22"
+        }
+      },
+      "older_fixture": "C6",
+      "older_plan": {
+        "bytes": 50070,
+        "path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/plan.json",
+        "sha256": "c38c7d6105d8658e5eb2403c9e990b902902a0073d19e9d499b33f28ccee044d"
+      },
+      "older_root": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01",
+      "older_source": {
+        "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+      },
+      "same_global_funds_claimed": false
+    }
+  ],
+  "interpretation": "Identical deterministic NativeTask/Cancel wire and packet across separate research Nodes; provider operation/deadline/output domain is new. Gross refunds must not be summed as global-chain funds.",
+  "public_chain_transactions_sent": false,
+  "schema": "TRNM-W1-C8-DETERMINISTIC-INDEPENDENT-FIXTURE-COMPARISON1"
+}

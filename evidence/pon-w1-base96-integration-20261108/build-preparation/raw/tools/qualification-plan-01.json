@@ -1,0 +1,312 @@
+{
+  "schema": "TRNM-W1-C7-EXTERNAL-QUALIFICATION-PREPARATION-PLAN1",
+  "source_repository": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+  "source_expected_commit": null,
+  "source_expected_tree": null,
+  "source_frozen_by_parent_before_any_cargo": true,
+  "qualification_launch_requires_parent_start": true,
+  "qualification_sequence": [
+    "backend",
+    "native"
+  ],
+  "qualification_attempt_budget_seconds": {
+    "backend": 2400,
+    "native": 2400
+  },
+  "cache_copy_attempt_budget_seconds": {
+    "backend": 1800,
+    "native": 1800
+  },
+  "copy_preparation_complete": true,
+  "source_currently_qualified_for_c7": false,
+  "cargo_started": false,
+  "operation_created": false,
+  "operation_deadline_selected": false,
+  "unchanged_runtime_driver": {
+    "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/driver-v4.py",
+    "bytes": 20830,
+    "sha256": "b66019d2f47c225174de4f69c508e2b163d69f915b1e9eada59eef9368317464"
+  },
+  "jobs": [
+    {
+      "role": "backend-copy",
+      "request": {
+        "host": "desktop",
+        "executable": "/usr/bin/python3.12",
+        "args": [
+          "-B",
+          "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/copy-qualified-cache-v1.py",
+          "--role",
+          "backend",
+          "--inventory",
+          "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/cache-source-inventory-01.json",
+          "--inventory-sha256",
+          "b3b13acdf4a273201b97424e34fcf999665b7b6bf37526d72821e17e08de2f10",
+          "--record-prefix",
+          "backend-cache-copy-01",
+          "--outer-timeout-seconds",
+          "1800"
+        ],
+        "cwd": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b",
+        "timeout_seconds": 1800,
+        "idempotency_key": "w1-c7-backend-independent-cache-copy-ec265b-01"
+      },
+      "launch": {
+        "audit_recorded": true,
+        "job": {
+          "args": [
+            "-B",
+            "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/copy-qualified-cache-v1.py",
+            "--role",
+            "backend",
+            "--inventory",
+            "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/cache-source-inventory-01.json",
+            "--inventory-sha256",
+            "b3b13acdf4a273201b97424e34fcf999665b7b6bf37526d72821e17e08de2f10",
+            "--record-prefix",
+            "backend-cache-copy-01",
+            "--outer-timeout-seconds",
+            "1800"
+          ],
+          "created_unix_ms": 1794124357535,
+          "cwd": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b",
+          "env_keys": [],
+          "executable": "/usr/bin/python3.12",
+          "execution_mode": "operator",
+          "host": "desktop",
+          "id": "1a1ba251f9f-12894-189e",
+          "idempotency_key": "w1-c7-backend-independent-cache-copy-ec265b-01",
+          "launch_error": null,
+          "launch_state": "launched",
+          "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1ba251f9f-12894-189e",
+          "request_digest": "764bebd5faac918d4a74fd89d80b2f711c5cf626e4ece2bf703f1ce2e75f6d6a",
+          "request_fingerprint": 8524166023994970000,
+          "ssh_target": "desktop-ts",
+          "system_jobctl": false,
+          "unit": "hepta-runtime-job-1a1ba251f9f-12894-189e"
+        },
+        "launch": {
+          "backend": "systemd",
+          "launcher_pid": null,
+          "ok": true,
+          "unit": "hepta-runtime-job-1a1ba251f9f-12894-189e"
+        },
+        "local_record_pending": false,
+        "reused": false
+      },
+      "terminal": {
+        "at_unix_ms": 1794124391935,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1ba251f9f-12894-189e",
+        "launch_nonce": "b7e64aabdff7cfa59725d1143c934083",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 719,
+            "stored": 719
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "record": {
+        "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/backend-cache-copy-01.json",
+        "bytes": 4472,
+        "sha256": "5b142b1a66eb8a8d757b21028eb358c1bac39e4644e26d1aef334f03374abbeb"
+      }
+    },
+    {
+      "role": "native-copy",
+      "request": {
+        "host": "desktop",
+        "executable": "/usr/bin/python3.12",
+        "args": [
+          "-B",
+          "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/copy-qualified-cache-v1.py",
+          "--role",
+          "native",
+          "--inventory",
+          "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/cache-source-inventory-01.json",
+          "--inventory-sha256",
+          "b3b13acdf4a273201b97424e34fcf999665b7b6bf37526d72821e17e08de2f10",
+          "--record-prefix",
+          "native-cache-copy-01",
+          "--outer-timeout-seconds",
+          "1800"
+        ],
+        "cwd": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b",
+        "timeout_seconds": 1800,
+        "idempotency_key": "w1-c7-native-independent-cache-copy-ec265b-01"
+      },
+      "launch": {
+        "audit_recorded": true,
+        "job": {
+          "args": [
+            "-B",
+            "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/copy-qualified-cache-v1.py",
+            "--role",
+            "native",
+            "--inventory",
+            "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/cache-source-inventory-01.json",
+            "--inventory-sha256",
+            "b3b13acdf4a273201b97424e34fcf999665b7b6bf37526d72821e17e08de2f10",
+            "--record-prefix",
+            "native-cache-copy-01",
+            "--outer-timeout-seconds",
+            "1800"
+          ],
+          "created_unix_ms": 1794124436869,
+          "cwd": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b",
+          "env_keys": [],
+          "executable": "/usr/bin/python3.12",
+          "execution_mode": "operator",
+          "host": "desktop",
+          "id": "1a1ba265585-12894-18a5",
+          "idempotency_key": "w1-c7-native-independent-cache-copy-ec265b-01",
+          "launch_error": null,
+          "launch_state": "launched",
+          "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1ba265585-12894-18a5",
+          "request_digest": "b929ac7570cff222b194ebf181417a65d0873f5834757b2aec38aecd997b388f",
+          "request_fingerprint": 13342384991465632000,
+          "ssh_target": "desktop-ts",
+          "system_jobctl": false,
+          "unit": "hepta-runtime-job-1a1ba265585-12894-18a5"
+        },
+        "launch": {
+          "backend": "systemd",
+          "launcher_pid": null,
+          "ok": true,
+          "unit": "hepta-runtime-job-1a1ba265585-12894-18a5"
+        },
+        "local_record_pending": false,
+        "reused": false
+      },
+      "terminal": {
+        "at_unix_ms": 1794124466371,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1ba265585-12894-18a5",
+        "launch_nonce": "f35b9299176245798374b7ae0ef559d8",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 1007,
+            "stored": 1007
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "record": {
+        "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/native-cache-copy-01.json",
+        "bytes": 5516,
+        "sha256": "3f01ca29a3c0d6419658f819dabc2fb8762b7c17189225d474dd31caba8ace4a"
+      }
+    }
+  ],
+  "qualifiers": [
+    {
+      "role": "backend",
+      "driver": {
+        "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/qualify-backend-copied-v1.py",
+        "bytes": 11389,
+        "sha256": "26f1b479b09912be1607359b89d3868b0fd636240b56915db53ddf2e0150e4dd"
+      },
+      "cache_record": {
+        "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/backend-cache-copy-01.json",
+        "bytes": 4472,
+        "sha256": "5b142b1a66eb8a8d757b21028eb358c1bac39e4644e26d1aef334f03374abbeb"
+      },
+      "target": "/home/qian-qi/work/chain-w1-base96-backend-target-20261108-ec265b",
+      "output": "/home/qian-qi/work/chain-w1-c7-backend-qualification-20261108-ec265b-01",
+      "expected_command_count": 7,
+      "expected_source_probe_exit": 1,
+      "source_probe_stderr": "Error: unknown stage",
+      "actual_source_probe_required": true,
+      "expensive_proof_started": false
+    },
+    {
+      "role": "native",
+      "driver": {
+        "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/qualify-native-copied-v1.py",
+        "bytes": 11558,
+        "sha256": "ac4eb360d8e6687c5c0c31cfa3ff6e1a678a64dcc57f813e96ecdbd90d4e61d6"
+      },
+      "cache_record": {
+        "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/native-cache-copy-01.json",
+        "bytes": 5516,
+        "sha256": "3f01ca29a3c0d6419658f819dabc2fb8762b7c17189225d474dd31caba8ace4a"
+      },
+      "target": "/home/qian-qi/work/chain-w1-base96-native-target-20261108-ec265b",
+      "output": "/home/qian-qi/work/chain-w1-c7-native-qualification-20261108-ec265b-01",
+      "expected_command_count": 10,
+      "expected_tests": {
+        "native_example": 2,
+        "verifier": 2
+      },
+      "historical_native_243_reexecution": false,
+      "expensive_proof_started": false
+    }
+  ],
+  "target_origin": "copied-from-qualified-C6-targets",
+  "fresh_cargo_targets": false,
+  "registry_cache_reused": true,
+  "toolchain_reused": true,
+  "independent_cleanroom_build": false,
+  "guards": [
+    "exact frozen source HEAD and tree; clean before and after",
+    "project-preflight before build",
+    "absolute Rust 1.95 compiler/rustdoc/rustfmt and Cargo",
+    "locked/offline metadata and actual current-checkout Cargo artifacts",
+    "pinned successful copy receipt, original qualification and initial destination ELF hashes/inodes",
+    "backend exact source-only runtime probe; intentional unknown-stage exit 1, no checkpoint creation",
+    "native example 2 and verifier 2 actual tests, actual release ELF pins"
+  ],
+  "retained_history": "All C5/C6 failures, successful qualifications, source/targets, operations, and original deadlines remain immutable; new copies do not alter their conclusions.",
+  "hosted_history_boundary": "HOSTED_CI_ONLY_NO_LOCAL_PROVISION is respected. No hosted-CI environment impersonation or local Host wrapper provisioning.",
+  "staged_isolation": "Parent schedules the 32 retained staged controls after all Cargo/build I/O is terminal.",
+  "later_runtime": "No new operation authorized by this preparation plan. A later explicit parent instruction must bind completed C7 gates, a fresh isolated Node/provider operation and target/output, 8 CPU/8 GiB, segment workers 2, one newly selected original 120s research deadline, and independent cold replay. Unknown resource accounting retains full cap and cannot authorize payment."
+}

@@ -1,0 +1,106 @@
+{
+  "binary": {
+    "ctime_ns": 1794120851708419268,
+    "device": 2049,
+    "inode": 9706427,
+    "mtime_ns": 1794120851706419262,
+    "path": "/home/runner/work/_temp/target-history-diagnostic/release/deps/history_stage_diagnostic-9b826b863c9887cc",
+    "sha256": "35028f05638df22d332b94facd4801f100c3caf2026c1a98853ccc7473a490c6",
+    "size_bytes": 9897064
+  },
+  "build_env": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_ENCODED_RUSTFLAGS": null,
+    "CARGO_HOME": "/home/runner/work/_temp/cargo-history-diagnostic",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_TARGET_DIR": "/home/runner/work/_temp/target-history-diagnostic",
+    "OPENSSL_CONF": null,
+    "OPENSSL_DIR": null,
+    "OPENSSL_MODULES": null,
+    "OPENSSL_STATIC": null,
+    "RUSTFLAGS": null,
+    "RUSTUP_TOOLCHAIN": null,
+    "TRNM_PQ_OPENSSL": null,
+    "TRNM_PQ_OPENSSL_SHA256": null,
+    "TRNM_PQ_OPENSSL_VERSION": null
+  },
+  "build_log": {
+    "ctime_ns": 1794120856448430335,
+    "device": 2049,
+    "inode": 9699330,
+    "mtime_ns": 1794120856448430335,
+    "path": "/home/runner/work/_temp/history-stage-diagnostic/history-diagnostic/build.jsonl",
+    "sha256": "acf6fb39da59da628a07bbdfb26223daeb2253ba54fe6ecaecccb70591a163ae",
+    "size_bytes": 112913
+  },
+  "completed": true,
+  "failures": [],
+  "job": {
+    "GITHUB_JOB": "diagnostic",
+    "GITHUB_RUN_ATTEMPT": "1",
+    "GITHUB_RUN_ID": "42456320219"
+  },
+  "native_tests_executed": false,
+  "process": {
+    "cleanup_errors": [],
+    "command": [
+      "cargo",
+      "+1.95.0",
+      "test",
+      "--release",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "history_stage_diagnostic",
+      "--no-run",
+      "--message-format=json"
+    ],
+    "exit_code": 0,
+    "failure": null,
+    "pid": 2617,
+    "started": true
+  },
+  "schema": "trnm-ci-history-diagnostic-build-preparation-v1",
+  "selector": "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+  "service_resource_observation": false,
+  "source_after": {
+    "commit": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+    "test_sha256": "df6a53b13730e0408092d6b7fda1951708dbf29f02e2b0af7f14bc29f5b42df3",
+    "tracked_source_identity": {
+      "base": null,
+      "candidate": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+      "tested_tree": "633468b75b0d62ba6f766789255bd71f55c0cf71",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 1652308489,
+      "tracked_entries": 14990,
+      "tracked_worktree_verified": true
+    },
+    "tree": "633468b75b0d62ba6f766789255bd71f55c0cf71"
+  },
+  "source_before": {
+    "commit": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+    "test_sha256": "df6a53b13730e0408092d6b7fda1951708dbf29f02e2b0af7f14bc29f5b42df3",
+    "tracked_source_identity": {
+      "base": null,
+      "candidate": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+      "tested_tree": "633468b75b0d62ba6f766789255bd71f55c0cf71",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 1652308489,
+      "tracked_entries": 14990,
+      "tracked_worktree_verified": true
+    },
+    "tree": "633468b75b0d62ba6f766789255bd71f55c0cf71"
+  },
+  "target": "history_stage_diagnostic"
+}

@@ -1,0 +1,82 @@
+{
+  "schema": "w1-narrow-static-review-files-v1",
+  "members": [
+    {
+      "path": "01-store.rs",
+      "bytes": 376419,
+      "sha256": "822d0b643b03ff6e1c317c1e16681acbd351a1d1f43d02c0aa4978940408369f"
+    },
+    {
+      "path": "02-historical_commitment.rs",
+      "bytes": 6187,
+      "sha256": "21e0f7e286d95cde1e95eb819f158293f807dda52e5db0c1c29783bdbcf10ae4"
+    },
+    {
+      "path": "03-historical_commitment_tests.rs",
+      "bytes": 38652,
+      "sha256": "e79f708799634c180600b8b5c8372def03dfc045d7b852a779b7334d9dde295e"
+    },
+    {
+      "path": "04-pon_commitment.rs",
+      "bytes": 111392,
+      "sha256": "624b2fb4bb9bd511999ff94883dc4e76891565d2c9beaf43a735b8ae1fea0fe6"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2330,
+      "sha256": "15f55253d4ab54dbb580328e84de0440bb7a940ac46704b34697ffce4c47475c"
+    },
+    {
+      "path": "base9417-parent-delta.patch",
+      "bytes": 18890,
+      "sha256": "382c823ba3eba1f383b258e143f5bab585fe50ea8df1bd69bf4b01e64faf365e"
+    },
+    {
+      "path": "canonical-match-view.json",
+      "bytes": 8015,
+      "sha256": "cb17dc23b1b6ecd61b28a6d36cd8230bf58b1c248ba6f3cf2f1bc8c49a1041ea"
+    },
+    {
+      "path": "commitment-read-manifest.json",
+      "bytes": 631,
+      "sha256": "e353a1b8080e5874b77af18bbcbcea546bb10ae5760a7229a6045fc51a2a5209"
+    },
+    {
+      "path": "commitment-review-snippets.json",
+      "bytes": 16378,
+      "sha256": "912467013bbf12370a9b6a7dee94463705db13558a31f45dcb5d5eb1760d641a"
+    },
+    {
+      "path": "dependency-grep-command.json",
+      "bytes": 667,
+      "sha256": "216a36db2af1ece0c404e0433389318328c66589ac191d9a91df699e9f5bd285"
+    },
+    {
+      "path": "dependency-grep.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "dependency-grep.stdout",
+      "bytes": 402,
+      "sha256": "377c5c727353ac513f288962af2c2c124fbb22d3a8902a955f70aad127e0697b"
+    },
+    {
+      "path": "read-manifest.json",
+      "bytes": 2236,
+      "sha256": "b1771281687918559429a26ade9cbb65a455a4821a2f421bd4812fd0df37542e"
+    },
+    {
+      "path": "store-review-snippets.json",
+      "bytes": 30581,
+      "sha256": "23361fd3172c83d8460b37c0224452e52870fb7d947e209dc9dd601f15a7cf38"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 6088,
+      "sha256": "bc265728672a1adfab70f68a87a2054853a67d14af10464bf8776cb86fc1711e"
+    }
+  ],
+  "file_count": 15,
+  "total_bytes": 618868
+}

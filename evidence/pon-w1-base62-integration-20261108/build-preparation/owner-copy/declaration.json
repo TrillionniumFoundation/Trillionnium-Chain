@@ -1,0 +1,50 @@
+{
+  "cache_basis": "copy of stable C5 development target; incremental directories excluded; no shared writable hardlinks",
+  "cargo_invoked": false,
+  "cleanroom_build": false,
+  "copy_command": [
+    "/usr/bin/rsync",
+    "-a",
+    "--exclude=incremental/",
+    "--stats",
+    "/home/qian-qi/work/chain-w1-four-gates-target-20261108-ec265b/",
+    "/home/qian-qi/work/chain-w1-base62-owner-target-20261108-ec265b/"
+  ],
+  "copy_complete": false,
+  "copy_exit_code": null,
+  "destination": "/home/qian-qi/work/chain-w1-base62-owner-target-20261108-ec265b",
+  "destination_existed_before": false,
+  "disk_before": {
+    "free": 138569920512,
+    "total": 982240026624,
+    "used": 823671832576
+  },
+  "expected_original_C5_owner_sha256": "41c2d70d80282414bef23a90f22130e5da26e1ac30c8fddc8c5aec6e9de54d24",
+  "independent_reproducible_build_established": false,
+  "old_targets_deleted": false,
+  "proof_generation_started": false,
+  "schema": "TRNM-W1-INDEPENDENT-OWNER-CACHE-COPY1",
+  "source": "/home/qian-qi/work/chain-w1-four-gates-target-20261108-ec265b",
+  "source_elf_before": {
+    "bytes": 468126952,
+    "device": 2050,
+    "inode": 415622,
+    "mtime_ns": 1794113748434594589,
+    "nlink": 1,
+    "path": "/home/qian-qi/work/chain-w1-four-gates-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+    "regular": true,
+    "sha256": "41c2d70d80282414bef23a90f22130e5da26e1ac30c8fddc8c5aec6e9de54d24"
+  },
+  "source_modified": false,
+  "source_snapshot": {
+    "excluded_incremental_directories": [
+      "debug/incremental"
+    ],
+    "regular_bytes": 15088019932,
+    "regular_files": 3229,
+    "symlinks": [],
+    "unsupported_entries": []
+  },
+  "started_utc": "2026-11-08T05:59:00.734433+00:00",
+  "tests_run": false
+}

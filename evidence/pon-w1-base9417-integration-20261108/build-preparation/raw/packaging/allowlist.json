@@ -1,0 +1,553 @@
+{
+  "schema": "TRNM-W1-C8-BUILD-PREPARATION-ALLOWLIST1",
+  "source": {
+    "commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c"
+  },
+  "docs_repo": "/home/qian-qi/work/chain-w1-c8-attestation-20261108-ec265b",
+  "evidence_root": "/home/qian-qi/work/chain-w1-c8-attestation-20261108-ec265b/evidence/pon-w1-base9417-integration-20261108",
+  "bundle": "build-preparation",
+  "items": [
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/c8-cache-source-inventory-01.json",
+      "relative": "tools/c8-cache-source-inventory-01.json",
+      "sha256": "7c62827edf2d82107e4202401d7b54dccb3e23c8375c74b80698a43e86c6645a"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/copy-qualified-cache-v1.py",
+      "relative": "tools/copy-qualified-cache-v1.py",
+      "sha256": "2440c5de58082c860ec5e1050b7ac63140ff67a92186566038acc6c077e5e1db"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/qualification-plan-01.json",
+      "relative": "tools/qualification-plan-01.json",
+      "sha256": "6839aa6de21e5c8a5528dc2cb3f28258b204ab4c4bbe73a53ff6be8d29807813"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/qualification-launch-plan-01.json",
+      "relative": "tools/qualification-launch-plan-01.json",
+      "sha256": "528d8c78549539e894809998084292b5f7ebabb706a640b28fffd9c53f067fcb"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/qualify-backend-copied-v1.py",
+      "relative": "tools/qualify-backend-copied-v1.py",
+      "sha256": "e1ac6fdc852145c9d52eab924a2fe43306c244f8fd91a7c9c874a47b742881dc"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/qualify-native-copied-v1.py",
+      "relative": "tools/qualify-native-copied-v1.py",
+      "sha256": "0b3bcb20089b2019803cd9c355b1a60db4bca12e32d13bf8b28ea33eb871e4b9"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/backend-native-terminal-01.json",
+      "relative": "tools/backend-native-terminal-01.json",
+      "sha256": "1cbe9e5163e1839ea2705b0e34d8f03d5da5fdc16c6e43df7e48bfb86b7e8ee8"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-cache-launch-provenance-01.json",
+      "relative": "tools/owner-cache-launch-provenance-01.json",
+      "sha256": "da7e333fd83be87a306b1d99fd4d49dab931a53d48e2bee78d40c6dbe76f51c1"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/launch-owner-c8.py",
+      "relative": "tools/launch-owner-c8.py",
+      "sha256": "0bd74bea2beb9e7279b403b661021adbc0e1a8aa91343f0c1b9f9592d2af81c7"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/launcher-v2.py",
+      "relative": "tools/launcher-v2.py",
+      "sha256": "4fd57b12bcbc34300681d98bbfdd540f7186df272a791e87aad310341a04bd37"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-launch-validation-failure-01.json",
+      "relative": "tools/owner-launch-validation-failure-01.json",
+      "sha256": "da784f113addb7e22069461929766e82cd1577a7d442d2f5a928f93308745680"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-attempt-02-declaration.json",
+      "relative": "tools/owner-attempt-02-declaration.json"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-attempt-02-launch.json",
+      "relative": "tools/owner-attempt-02-launch.json"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-attempt-02-terminal.json",
+      "relative": "tools/owner-attempt-02-terminal.json"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/import-owner-c8-v1.py",
+      "relative": "tools/import-owner-c8-v1.py",
+      "sha256": "7c119c06bcc38a2f35ea2afc3ab65a1d75e4cc271807dedb646dcb528028bcf7"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-import-c8-plan-01.json",
+      "relative": "tools/owner-import-c8-plan-01.json"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-import-c8-terminal-01.json",
+      "relative": "tools/owner-import-c8-terminal-01.json"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/driver-v4.py",
+      "relative": "tools/driver-v4.py",
+      "sha256": "b66019d2f47c225174de4f69c508e2b163d69f915b1e9eada59eef9368317464"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/prepare-c8-operation-v1.py",
+      "relative": "tools/prepare-c8-operation-v1.py",
+      "sha256": "b3761a533472cba8bc477c25d2a24a52ef618ef5d8be031a13d5548fed9b4462"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/lifecycle-research-proposal-01.json",
+      "relative": "tools/lifecycle-research-proposal-01.json",
+      "sha256": "4ac02bf805ed2c53b099d0c4a02f06406afac7b592bf63ffb0534054cc559420"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/lifecycle-input-bindings-01.json",
+      "relative": "tools/lifecycle-input-bindings-01.json"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/backend-cache-copy-01.json",
+      "relative": "copies/backend/receipt.json",
+      "sha256": "412f51505ca4f83835f44f46332fcc24345795155c96d5b7a27b9b1e79efec65"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/backend-cache-copy-01.declaration.json",
+      "relative": "copies/backend/declaration.json",
+      "sha256": "caaa8877405534ea94efec92ee20d334fd1336c05768ab01d03967757f3d4855"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/backend-cache-copy-01.child.json",
+      "relative": "copies/backend/child.json",
+      "sha256": "2f195548625ebe93eda2044a52f615bc98f585b8cbf0d90811c9e728be802996"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/backend-cache-copy-01.stdout",
+      "relative": "copies/backend/stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/backend-cache-copy-01.stderr",
+      "relative": "copies/backend/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/backend-cache-copy-01.return.json",
+      "relative": "copies/backend/return.json"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-c7-backend-qualification-20261108-ec265b-01/manifest.json",
+      "relative": "source-C7-qualification/backend-0-manifest.json",
+      "sha256": "7f9368578b4cb5d12f5e4f50e8a1fbfa320545ebd901a489ca4984ca6e657d9b"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/native-cache-copy-01.json",
+      "relative": "copies/native/receipt.json",
+      "sha256": "78c79694ff878f6e36d4d4efc1d8c6a8e8b543acd7282d351292716fd061f1c2"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/native-cache-copy-01.declaration.json",
+      "relative": "copies/native/declaration.json",
+      "sha256": "602edebf07bb28147757a42a23a7015cfecf56deb930530d8d6b26488e67d749"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/native-cache-copy-01.child.json",
+      "relative": "copies/native/child.json",
+      "sha256": "7a4bd7c9f5f1b061dba2cdf19f6bc6f7ca73488c07e7891cf2a1959aea1d453d"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/native-cache-copy-01.stdout",
+      "relative": "copies/native/stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/native-cache-copy-01.stderr",
+      "relative": "copies/native/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/native-cache-copy-01.return.json",
+      "relative": "copies/native/return.json"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-c7-native-qualification-20261108-ec265b-01/manifest.json",
+      "relative": "source-C7-qualification/native-0-manifest.json",
+      "sha256": "3870f4ff23cc1d9591b92fe5751536b104a6fb5a0db8576f0e5ad09b8cc87681"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-cache-copy-01.json",
+      "relative": "copies/owner/receipt.json",
+      "sha256": "ce1120304c1679afe96f147a21bdb82ae343f5ce57028bec1b38b75bb53b85e2"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-cache-copy-01.declaration.json",
+      "relative": "copies/owner/declaration.json",
+      "sha256": "9b89f436da6ff0a6b2fa0d0c3b65eb2f73df96f7e135cd078779352fca230a1b"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-cache-copy-01.child.json",
+      "relative": "copies/owner/child.json",
+      "sha256": "5bd59033496a145900f8a2936129c26002e6baf14061455513b589f6a1e4e401"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-cache-copy-01.stdout",
+      "relative": "copies/owner/stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-cache-copy-01.stderr",
+      "relative": "copies/owner/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-cache-copy-01.return.json",
+      "relative": "copies/owner/return.json"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/manifest.json",
+      "relative": "source-C7-qualification/owner-0-manifest.json",
+      "sha256": "6aeb6311539926f0e4f96c9fc2469953fbb879ba5897e7e3e0d16f1399d26261"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-history-local-01/manifest.json",
+      "relative": "source-C7-qualification/owner-1-manifest.json",
+      "sha256": "5025eadebdb08f85b1e8bb8c68076f29adc59d1048b277630deb2618b1189c3c"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-c8-root-tools-20261108-ec265b/owner-plan.json",
+      "relative": "owner-plan.json",
+      "sha256": "47185c7eefa4e782478f193c1aaefca7748d957937d3d22616d1fa61fd87ec86"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-c8-root-tools-20261108-ec265b/qualify_source.py",
+      "relative": "qualify_source.py",
+      "sha256": "d3c6953430a8efce70396eac88c891aa91501633013c09d5018f0b00e9fb7d1f"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-staged-01/manifest.json",
+      "relative": "readiness/original-staged/manifest.json",
+      "sha256": "a6e8363bfa6a157fc1b414b64e4af59bb11211166fe06f1b0962460253e89e25"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-staged-01/00-preflight.stdout",
+      "relative": "readiness/original-staged/00-preflight.stdout",
+      "sha256": "65586326e5793b95834cbef1dbae480b2b3425a5d1585881b4b33954001542c2"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-staged-01/00-preflight.stderr",
+      "relative": "readiness/original-staged/00-preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-staged-01/01-source-before.stdout",
+      "relative": "readiness/original-staged/01-source-before.stdout",
+      "sha256": "ae4700561bdd1dd273af73d36ca712162d430097daa9d1c3147704c9fe07083c"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-staged-01/01-source-before.stderr",
+      "relative": "readiness/original-staged/01-source-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-staged-01/02-w1-retained-staged-tests.stdout",
+      "relative": "readiness/original-staged/02-w1-retained-staged-tests.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-staged-01/02-w1-retained-staged-tests.stderr",
+      "relative": "readiness/original-staged/02-w1-retained-staged-tests.stderr",
+      "sha256": "6523776cafbcfcb998f508af0a9a890ef1714adfc5a06aadd59a952baf4bca4c"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-staged-01/99-source-after.stdout",
+      "relative": "readiness/original-staged/99-source-after.stdout",
+      "sha256": "ae4700561bdd1dd273af73d36ca712162d430097daa9d1c3147704c9fe07083c"
+    },
+    {
+      "source": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-staged-01/99-source-after.stderr",
+      "relative": "readiness/original-staged/99-source-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "jobs": [
+    {
+      "role": "cache-source-inventory",
+      "id": "1a1ba5c5897-12894-1a11",
+      "expected_exit": 0
+    },
+    {
+      "role": "backend-copy",
+      "id": "1a1ba6050e7-12894-1a2f",
+      "expected_exit": 0
+    },
+    {
+      "role": "native-copy",
+      "id": "1a1ba618e42-12894-1a38",
+      "expected_exit": 0
+    },
+    {
+      "role": "owner-copy",
+      "id": "1a1ba6286e9-12894-1a45",
+      "expected_exit": 0
+    },
+    {
+      "role": "owner-launch-validation-failure",
+      "id": "1a1ba70f3e9-12894-1ab5",
+      "expected_exit": 1
+    },
+    {
+      "role": "owner-qualification-02",
+      "id": "1a1ba7cdd03-12894-1b0d",
+      "expected_exit": 0
+    },
+    {
+      "role": "strict-owner-import",
+      "id": "1a1ba85c4c0-12894-1b51",
+      "expected_exit": 0
+    },
+    {
+      "role": "original-staged-failed",
+      "id": "1a1ba8f182e-12894-1b97",
+      "expected_exit": 1
+    }
+  ],
+  "owner_import": {
+    "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-import-c8-01/manifest.json",
+    "bytes": 53864,
+    "sha256": "d7ce0440c68a30cd6a00c5c1e964a1a360f27767848bdca63667991e3f7d2619"
+  },
+  "owner_import_artifact": {
+    "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-import-c8-01/extracted-owner-artifact.json",
+    "bytes": 4062,
+    "sha256": "0eca4307270fcad43b7b21a6b8141307294c7b122214e4c9153a80e3ef17894e"
+  },
+  "summary": {
+    "schema": "TRNM-W1-C8-BUILD-PREPARATION-SUMMARY1",
+    "source": {
+      "commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+      "tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c"
+    },
+    "cache_copy_attempts": [
+      {
+        "role": "backend",
+        "copy_record": {
+          "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/backend-cache-copy-01.json",
+          "bytes": 4914,
+          "sha256": "412f51505ca4f83835f44f46332fcc24345795155c96d5b7a27b9b1e79efec65"
+        },
+        "declared_outer_seconds": 1800,
+        "copy_exit_code": 0,
+        "copy_complete": true,
+        "regular_files_checked": 3921,
+        "logical_bytes": 1747114780,
+        "source_regular_metadata_unchanged": true,
+        "shared_source_inodes": 0,
+        "destination_hardlinks": 0,
+        "destination_duplicate_inodes": 0,
+        "fresh_cargo_target": false,
+        "independent_cleanroom_build": false
+      },
+      {
+        "role": "native",
+        "copy_record": {
+          "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/native-cache-copy-01.json",
+          "bytes": 5914,
+          "sha256": "78c79694ff878f6e36d4d4efc1d8c6a8e8b543acd7282d351292716fd061f1c2"
+        },
+        "declared_outer_seconds": 1800,
+        "copy_exit_code": 0,
+        "copy_complete": true,
+        "regular_files_checked": 2014,
+        "logical_bytes": 923467631,
+        "source_regular_metadata_unchanged": true,
+        "shared_source_inodes": 0,
+        "destination_hardlinks": 0,
+        "destination_duplicate_inodes": 0,
+        "fresh_cargo_target": false,
+        "independent_cleanroom_build": false
+      },
+      {
+        "role": "owner",
+        "copy_record": {
+          "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-cache-copy-01.json",
+          "bytes": 6439,
+          "sha256": "ce1120304c1679afe96f147a21bdb82ae343f5ce57028bec1b38b75bb53b85e2"
+        },
+        "declared_outer_seconds": 1800,
+        "copy_exit_code": 0,
+        "copy_complete": true,
+        "regular_files_checked": 3065,
+        "logical_bytes": 1676857236,
+        "source_regular_metadata_unchanged": true,
+        "shared_source_inodes": 0,
+        "destination_hardlinks": 0,
+        "destination_duplicate_inodes": 0,
+        "fresh_cargo_target": false,
+        "independent_cleanroom_build": false
+      }
+    ],
+    "copied_regular_file_entries": 9000,
+    "copied_logical_bytes": 4347439647,
+    "owner_original_launch": {
+      "job_id": "1a1ba70f3e9-12894-1ab5",
+      "exit_code": 1,
+      "phase": "launcher validation before binding and qualifier exec",
+      "qualification_commands_executed": 0,
+      "test_methods_executed": 0,
+      "reason": "The frozen plan said Independent copy, but v1 tested for substring copied."
+    },
+    "owner_launcher_v2": {
+      "logical_guard_change": "Exact equality with the unchanged original cache_basis string",
+      "other_changes": [
+        "independent exact-owner-02 output",
+        "independent owner-launch-binding-02.json"
+      ],
+      "original_source_plan_or_launcher_modified": false,
+      "material_source_copy_inode_ELF_guards_preserved": true
+    },
+    "owner_qualification": {
+      "job_id": "1a1ba7cdd03-12894-1b0d",
+      "state": "succeeded",
+      "exit_code": 0,
+      "output_complete": true,
+      "output_durable": true,
+      "commands": 19,
+      "rust": {
+        "passed": 37,
+        "failed": 0,
+        "ignored": 4
+      },
+      "manifest": {
+        "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-owner-02/manifest.json",
+        "bytes": 23587,
+        "sha256": "6d9013a9ee10badb278215ac1ac81243ada13cd5c279cbc3833250cc50c63bef"
+      },
+      "target_origin": "copied currently built C7 owner plus History release cache; original C7 empty origin is historical only",
+      "fresh_cargo_target": false
+    },
+    "strict_owner_import": {
+      "job_id": "1a1ba85c4c0-12894-1b51",
+      "state": "succeeded",
+      "exit_code": 0,
+      "output_complete": true,
+      "output_durable": true,
+      "manifest": {
+        "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-import-c8-01/manifest.json",
+        "bytes": 53864,
+        "sha256": "d7ce0440c68a30cd6a00c5c1e964a1a360f27767848bdca63667991e3f7d2619"
+      },
+      "raw_log_files_verified": 38,
+      "raw_log_files_copied": 38,
+      "original_rust_results_independently_reparsed": true,
+      "source_prefix_compatibility_verified": true,
+      "actual_owner_binary": {
+        "path": "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+        "bytes": 467190280,
+        "sha256": "1cc1db569c0d21f27aabc3ddbef4730ce11a6481c026b35ed69460c09028d456"
+      },
+      "new_test_methods": 0,
+      "Cargo_or_Node_started": false
+    },
+    "new_historical_regressions10_separate_from_owner19": true,
+    "History_release_compile_list_is_not_execution_of_ignored_methods": true,
+    "prepared_research_code": {
+      "proposal": "lifecycle-research-proposal-01.json",
+      "source_only": true,
+      "operation_created": false,
+      "original_deadline_selected": false,
+      "provider_operation": null,
+      "scope": "Future C8 operation requires a separately completed immutable eight-component gate binding and explicit coordinated launch; this package records preparation only. The first staged32 qualification now fails; the v1 preparer/proposal here remain unexecuted drafts. Any later runtime binding must preserve the original failure and any separately predeclared unique repeat; no initial 665-pass claim is authorized."
+    },
+    "C7_unknown_job_1994_replayed": false,
+    "C7_unknown_does_not_establish_phase_cap_refund_or_completion": true,
+    "provider_payment_authorized": false,
+    "full_resource_settlement_established": false,
+    "new_complete_proofs": 0,
+    "transport_numeric_boundary": "The pre-existing derived backend-native-terminal-01.json contains JSON-decoded request_fingerprint numbers exceeding JavaScript's exact integer range. Do not use those numeric fields as exact request identity. Original bytes, job IDs, launch nonces, request_digest strings, source and artifact hashes retain their independent bindings; raw job records are preserved.",
+    "binary_or_private_SQLite_or_inherited_environment_included": false,
+    "stale_original_attempts_reclassified_as_success": false,
+    "current_runtime_readiness": {
+      "qualified": false,
+      "reason": "Original same-source staged32 control failed before the requested payload spawn branch.",
+      "original_staged_job_id": "1a1ba8f182e-12894-1b97",
+      "manifest": {
+        "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-staged-01/manifest.json",
+        "bytes": 5697,
+        "sha256": "a6e8363bfa6a157fc1b414b64e4af59bb11211166fe06f1b0962460253e89e25"
+      },
+      "commands": 4,
+      "attempted_methods": 32,
+      "passed": 31,
+      "failed": 1,
+      "ignored": 0,
+      "failed_test": "test_ignored_sigterm_escalates_and_output_overflow_remains_failure",
+      "observed_termination_reason": "DEADLINE_EXHAUSTED_BEFORE_SPAWN",
+      "expected_branch_marker": "SIGKILL_DURING_SETTLEMENT",
+      "source_before_exit": 0,
+      "source_after_exit": 0,
+      "original_total_commands": 73,
+      "original_total_passed_methods": 664,
+      "original_total_failed_methods": 1,
+      "original_total_ignored": 4,
+      "future_665_is_expected_coverage_contract_not_initial_all_green_result": true,
+      "original_runtime_fixture_budget_seconds": 0.2,
+      "actual_measure_default_settlement_grace_seconds": 5,
+      "test_patch_0_15_is_not_actual_default_grace": true,
+      "repeat_not_executed_by_this_package": true,
+      "operation_created": false,
+      "deadline_selected": false
+    }
+  },
+  "readme": "# C8 copied-cache preparation, owner launch failure, and strict import\n\nThis bundle binds the preparation and owner qualification for source `4e007a87ceecbec8d265f6a70cfd71d512a514b5`, tree `19a4f1a6e1cec5c27e595fa555b97cddc4717a3c`. It records three independent cache copies, a preserved owner launcher validation failure, the corrected external launcher, the completed owner qualification, and a strict import of its original evidence. It does not record a C8 runtime operation, timeout, refund, or cold reconciliation.\n\n**Runtime readiness is blocked at this freeze.** The first same-source staged32 job `1a1ba8f182e-12894-1b97` failed with exit 1: 31 methods passed and 1 failed. Across the original eight qualification groups, this is **73 commands, 664 passed methods, 1 failed method, and 4 ignored**. The proposal's 665-method number is an expected coverage contract, not an observed initially all-green result.\n\n## Cache origins and actual copy results\n\n| Component | Regular file entries | Logical bytes | Copy result | New-stage origin |\n| --- | ---: | ---: | --- | --- |\n| Backend | 3,921 | 1,747,114,780 | Complete; direct child waited; exit 0 | Independent copy of the qualified C7 backend cache |\n| Native/verifier | 2,014 | 923,467,631 | Complete; direct child waited; exit 0 | Independent copy of the qualified C7 native cache |\n| Owner | 3,065 | 1,676,857,236 | Complete; direct child waited; exit 0 | Independent copy of the already built C7 debug owner and History release cache |\n\nEach copy had its own declared 1,800-second preparation bound and completed before the next copy began. The receipts retain source ELF hashes and stat inventories before and after copying, initial destination ELF identities, and zero source-inode sharing, destination hardlinks, and duplicate destination inodes. Reflink copy-on-write extents may be shared. The old C7 targets and all prior operations remain preserved.\n\nAll three C8 targets have `fresh_cargo_target=false`. Registry and toolchain caches are reused. The owner's earlier C7 empty-target creation is historical provenance; it does not make the C8 copied target empty or an independent cleanroom build. Initial copied C7 executable hashes are not C8 qualification hashes. New C8 backend/native qualifications are separately pinned, and the owner qualification below binds its actual C8 Cargo artifact and executable.\n\n## Preserved launcher failure and new qualification\n\nThe original owner job `1a1ba70f3e9-12894-1ab5` failed with exit 1 before creating the owner binding or executing the qualification driver. The frozen plan's cache description began `Independent copy`; v1 asserted that it contained `copied`. This was a launcher validation error, with **zero qualification commands and zero executed test methods**.\n\nThe original script, plan, traceback, process identity, and terminal records remain unchanged. V2 changes exactly three lines: the cache description guard now equals the original complete description, and the output and binding names use the independent `02` namespace. Actual source, copied-cache, inode, ELF, and 19-command guards remain in force.\n\nThe new owner job `1a1ba7cdd03-12894-1b0d` completed with authoritative exit 0 and complete, durable output. All **19 commands** succeeded. The actual test totals were **37 passed, 0 failed, 4 ignored**: M12 11, Node short paths 20, legacy admission 1, and legacy reorg 5. Source-before and source-after both bind exact C8. The separate new historical module's 10 regressions are not added to this owner total. History release compilation and listing execute no ignored test methods.\n\n## Strict owner import\n\nJob `1a1ba85c4c0-12894-1b51` completed the read-only import with exit 0. It independently rehashed and copied all **38 original stdout/stderr logs**, reparsed the Rust outcome summaries, verified both source identities, and selected the unique original no-run Cargo test artifact. It also checked the actual executable, current compiled checkout observation, original copied-cache receipt, launcher binding, unchanged plan and qualification driver, and both original job exits.\n\nThe C8 owner ELF is 467,190,280 bytes with SHA-256 `1cc1db569c0d21f27aabc3ddbef4730ce11a6481c026b35ed69460c09028d456`. The import records executable pins; executable bytes are not published here. The import performed no Cargo build, Node run, new test method, operation, or deadline selection. Its mapped manifest is explicitly derived and does not impersonate a previously existing root artifact.\n\n## Original staged failure retained\n\nThe original staged manifest has `qualification_complete=false`. Its raw stderr reports `Ran 32 tests`, 31 `ok` results, and one failure in `test_ignored_sigterm_escalates_and_output_overflow_remains_failure`. The test expected `SIGKILL_DURING_SETTLEMENT`, but the actual result was `DEADLINE_EXHAUSTED_BEFORE_SPAWN`. Source-before and source-after both succeeded. The original 0.2-second fixture deadline is retained; the actual measure function uses the pre-existing 5-second default settlement grace. A test patch to 0.15 does not change that default argument, and 0.15 is not reported as the observed grace.\n\nThe first failure and its full job metadata, manifest, and raw logs are included. No repeat or research operation is run by this bundle. Any later separately declared repeat must be recorded as another attempt, retain this failure, and distinguish selected successful coverage from cumulative attempted tests. The unexecuted v1 preparer and proposal are preserved as drafts; a later binding must also explicitly retain the original failure and the unique repeat rather than treating the original suite as all passed.\n\n## Prepared research code and boundaries\n\nThe unchanged driver-v4 has SHA-256 `b66019d2f47c225174de4f69c508e2b163d69f915b1e9eada59eef9368317464`. The C8 preparer fixes a new C8 experiment namespace and the actual qualified C8 inputs. It requires a later immutable eight-component gate binding, its exact digest, original successful job exits and raw command logs before creating an operation. The included proposal is an unstarted plan: operation ID, clock, and deadline are unset.\n\nA later authorized C8 experiment would have one original 120-second runtime budget, 8 CPUs, 8 GiB, two segment workers, two compression workers, and Rayon 4. Its target timeout would precede typed Failure Unknown, explicit owner veto/NativeCancel, canonical fork removal/restoration of the same Cancel, and independent cold reconciliation. This bundle claims none of those runtime outcomes. Unknown GPU and full historical accounting cannot authorize provider payment or full cap release. A deterministic independent Node fixture's gross principal 1,000 cannot be added across C5/C6/future C8 as new global funds. The C7 launch-Unknown request is frozen and is never replayed.\n\n## Evidence layout and precision\n\nTop-level files provide the three copy receipts, the original launch failure, successful owner/import records, the derived owner qualification, and the unstarted research proposal. `raw/` retains allowlisted source receipts, original job metadata/logs, scripts, and all strict-import source records. `raw.tar.gz` has the exact same raw members, individually checked for byte length and SHA-256. `manifest.json` inventories every member and primary copy.\n\nThe earlier derived `backend-native-terminal-01.json` contains JSON-decoded `request_fingerprint` integers above JavaScript's exact integer range. Those numeric fields are not used as exact request identity. Original job IDs, launch nonces, string digests, and source/artifact hashes have separate bindings; no old derived JSON is silently rewritten. Original job metadata is retained as raw bytes. Packaging does not publish private SQLite databases, executable bytes, inherited environments, or credential-bearing request files. Packaging preflight is recorded separately and adds no source qualification methods or commands.\n",
+  "primary": [
+    {
+      "raw": "copies/backend/receipt.json",
+      "name": "backend-cache-copy.json"
+    },
+    {
+      "raw": "copies/native/receipt.json",
+      "name": "native-cache-copy.json"
+    },
+    {
+      "raw": "copies/owner/receipt.json",
+      "name": "owner-cache-copy.json"
+    },
+    {
+      "raw": "tools/owner-launch-validation-failure-01.json",
+      "name": "owner-launch-validation-failure.json"
+    },
+    {
+      "raw": "tools/owner-attempt-02-terminal.json",
+      "name": "owner-qualification-terminal.json"
+    },
+    {
+      "raw": "tools/owner-import-c8-terminal-01.json",
+      "name": "owner-import-terminal.json"
+    },
+    {
+      "raw": "owner-import/manifest.json",
+      "name": "owner-import-manifest.json"
+    },
+    {
+      "raw": "owner-import/extracted-owner-artifact.json",
+      "name": "owner-artifact.json"
+    },
+    {
+      "raw": "tools/lifecycle-research-proposal-01.json",
+      "name": "lifecycle-research-proposal.json"
+    },
+    {
+      "raw": "tools/lifecycle-input-bindings-01.json",
+      "name": "lifecycle-input-bindings.json"
+    },
+    {
+      "raw": "readiness/original-staged/manifest.json",
+      "name": "original-staged-manifest.json"
+    },
+    {
+      "raw": "readiness/original-staged/02-w1-retained-staged-tests.stderr",
+      "name": "original-staged-tests.stderr"
+    }
+  ]
+}

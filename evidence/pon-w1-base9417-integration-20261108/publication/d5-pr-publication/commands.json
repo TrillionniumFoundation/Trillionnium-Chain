@@ -1,0 +1,52 @@
+[
+  {
+    "label": "00-actor",
+    "argv": [
+      "gh",
+      "api",
+      "user",
+      "--jq",
+      ".login"
+    ],
+    "exit": 0,
+    "stdout_sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "01-before",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/782"
+    ],
+    "exit": 0,
+    "stdout_sha256": "911b0c5007519db1bedacaf47e839bac4e1dd38d7a377bfccc84700702fadcad",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "02-patch",
+    "argv": [
+      "gh",
+      "api",
+      "--method",
+      "PATCH",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/782",
+      "--input",
+      "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/pr-d5-publication-01/request.json"
+    ],
+    "exit": 0,
+    "stdout_sha256": "9cbff2f816d6c2db3bf7abb146fbf1cec420b8acd7c5dae757468e6eff679d92",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "03-after",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/782"
+    ],
+    "exit": 0,
+    "stdout_sha256": "52656c57fb434fec2c9742c72f75b5d00360a8ad307c549806ad85b3d0ef2134",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

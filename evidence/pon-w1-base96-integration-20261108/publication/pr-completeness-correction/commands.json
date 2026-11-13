@@ -1,0 +1,63 @@
+[
+  {
+    "label": "00-preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--dev"
+    ],
+    "exit": 0,
+    "stdout_sha256": "7885d1d19800193c6a37881d4781e5a84dfe2bfb0082d5f3d12df4cdfce9ca04",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "01-actor",
+    "argv": [
+      "gh",
+      "api",
+      "user",
+      "--jq",
+      ".login"
+    ],
+    "exit": 0,
+    "stdout_sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "02-before",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/782"
+    ],
+    "exit": 0,
+    "stdout_sha256": "d69b9b632870938fdd0f2b9a97b477de09bb7b61e1d84d4bf5bf352c1bc42035",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "03-correction",
+    "argv": [
+      "gh",
+      "api",
+      "--method",
+      "PATCH",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/782",
+      "--input",
+      "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/pr-publication-correction-01/request.json"
+    ],
+    "exit": 0,
+    "stdout_sha256": "7611ec164a41e01c5867001f70e51f39c905b877a059f51827327dd4ccaf8010",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "04-readback",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/782"
+    ],
+    "exit": 0,
+    "stdout_sha256": "7611ec164a41e01c5867001f70e51f39c905b877a059f51827327dd4ccaf8010",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

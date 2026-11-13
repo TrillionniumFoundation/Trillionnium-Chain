@@ -1,0 +1,1605 @@
+[
+  {
+    "bytes": 4021,
+    "compressed_bytes": 1041,
+    "crc32": "381e93b7",
+    "is_dir": false,
+    "name": "build.stderr.log"
+  },
+  {
+    "bytes": 111546,
+    "compressed_bytes": 7846,
+    "crc32": "03f84e36",
+    "is_dir": false,
+    "name": "build.stdout.log"
+  },
+  {
+    "bytes": 8561,
+    "compressed_bytes": 2425,
+    "crc32": "a0b9320e",
+    "is_dir": false,
+    "name": "results.json"
+  },
+  {
+    "bytes": 752,
+    "compressed_bytes": 405,
+    "crc32": "8ec18c73",
+    "is_dir": false,
+    "name": "run-1-raw/baseline-host-control/host/child-result.json"
+  },
+  {
+    "bytes": 2525,
+    "compressed_bytes": 1008,
+    "crc32": "79391306",
+    "is_dir": false,
+    "name": "run-1-raw/baseline-host-control/host/controller-result.json"
+  },
+  {
+    "bytes": 157,
+    "compressed_bytes": 118,
+    "crc32": "81e3d3d5",
+    "is_dir": false,
+    "name": "run-1-raw/baseline-host-control/host/native.stdout.txt"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "run-1-raw/baseline-host-control/host/native.stderr.txt"
+  },
+  {
+    "bytes": 3174886,
+    "compressed_bytes": 336252,
+    "crc32": "9d5e5cd9",
+    "is_dir": false,
+    "name": "run-1-raw/baseline-host-control/phase-result.json"
+  },
+  {
+    "bytes": 337,
+    "compressed_bytes": 223,
+    "crc32": "882b9e52",
+    "is_dir": false,
+    "name": "run-1-raw/campaign-failure.json"
+  },
+  {
+    "bytes": 53229,
+    "compressed_bytes": 7675,
+    "crc32": "35cc3008",
+    "is_dir": false,
+    "name": "run-1-raw/cost-0/report.json"
+  },
+  {
+    "bytes": 53227,
+    "compressed_bytes": 7697,
+    "crc32": "19d0d3c0",
+    "is_dir": false,
+    "name": "run-1-raw/cost-1/report.json"
+  },
+  {
+    "bytes": 53244,
+    "compressed_bytes": 7703,
+    "crc32": "21635b19",
+    "is_dir": false,
+    "name": "run-1-raw/cost-2/report.json"
+  },
+  {
+    "bytes": 53232,
+    "compressed_bytes": 7678,
+    "crc32": "38f74908",
+    "is_dir": false,
+    "name": "run-1-raw/cost-3/report.json"
+  },
+  {
+    "bytes": 53204,
+    "compressed_bytes": 7677,
+    "crc32": "c7c505e2",
+    "is_dir": false,
+    "name": "run-1-raw/cost-4/report.json"
+  },
+  {
+    "bytes": 53210,
+    "compressed_bytes": 7702,
+    "crc32": "91ec4662",
+    "is_dir": false,
+    "name": "run-1-raw/cost-5/report.json"
+  },
+  {
+    "bytes": 53212,
+    "compressed_bytes": 7683,
+    "crc32": "16eb8c38",
+    "is_dir": false,
+    "name": "run-1-raw/cost-6/report.json"
+  },
+  {
+    "bytes": 53201,
+    "compressed_bytes": 7675,
+    "crc32": "7f05467e",
+    "is_dir": false,
+    "name": "run-1-raw/cost-7/report.json"
+  },
+  {
+    "bytes": 76078,
+    "compressed_bytes": 8631,
+    "crc32": "d035c13e",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero/attacker-00/report.json"
+  },
+  {
+    "bytes": 76260,
+    "compressed_bytes": 8755,
+    "crc32": "60941545",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero/attacker-01/report.json"
+  },
+  {
+    "bytes": 75077,
+    "compressed_bytes": 8463,
+    "crc32": "1bcec41b",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero/attacker-02/report.json"
+  },
+  {
+    "bytes": 76063,
+    "compressed_bytes": 8643,
+    "crc32": "a06a9eea",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero/attacker-03/report.json"
+  },
+  {
+    "bytes": 75287,
+    "compressed_bytes": 8568,
+    "crc32": "5a33d81d",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero/attacker-04/report.json"
+  },
+  {
+    "bytes": 74290,
+    "compressed_bytes": 8410,
+    "crc32": "e632bdbf",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero/attacker-05/report.json"
+  },
+  {
+    "bytes": 75096,
+    "compressed_bytes": 8467,
+    "crc32": "7232a1da",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero/attacker-06/report.json"
+  },
+  {
+    "bytes": 76270,
+    "compressed_bytes": 8698,
+    "crc32": "fe3dd68d",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero/attacker-07/report.json"
+  },
+  {
+    "bytes": 75872,
+    "compressed_bytes": 8518,
+    "crc32": "d108292e",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero/attacker-08/report.json"
+  },
+  {
+    "bytes": 74821,
+    "compressed_bytes": 8630,
+    "crc32": "a67dc8f6",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero/attacker-09/report.json"
+  },
+  {
+    "bytes": 74803,
+    "compressed_bytes": 8644,
+    "crc32": "28d7b395",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero/attacker-10/report.json"
+  },
+  {
+    "bytes": 76236,
+    "compressed_bytes": 8685,
+    "crc32": "61f6cc8b",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero/attacker-11/report.json"
+  },
+  {
+    "bytes": 74837,
+    "compressed_bytes": 8650,
+    "crc32": "0cdce4b4",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero/attacker-12/report.json"
+  },
+  {
+    "bytes": 74318,
+    "compressed_bytes": 8384,
+    "crc32": "d4afae1b",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero/attacker-13/report.json"
+  },
+  {
+    "bytes": 76067,
+    "compressed_bytes": 8620,
+    "crc32": "e6bcbf99",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero/attacker-14/report.json"
+  },
+  {
+    "bytes": 75879,
+    "compressed_bytes": 8552,
+    "crc32": "a1306440",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero/attacker-15/report.json"
+  },
+  {
+    "bytes": 75081,
+    "compressed_bytes": 8469,
+    "crc32": "b711601d",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero/attacker-16/report.json"
+  },
+  {
+    "bytes": 76040,
+    "compressed_bytes": 8588,
+    "crc32": "ba244e41",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero/attacker-17/report.json"
+  },
+  {
+    "bytes": 75279,
+    "compressed_bytes": 8549,
+    "crc32": "d4fbd760",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero/attacker-18/report.json"
+  },
+  {
+    "bytes": 75886,
+    "compressed_bytes": 8525,
+    "crc32": "735842f3",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero/attacker-19/report.json"
+  },
+  {
+    "bytes": 76653,
+    "compressed_bytes": 8558,
+    "crc32": "54ae468e",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero/attacker-20/report.json"
+  },
+  {
+    "bytes": 75122,
+    "compressed_bytes": 8483,
+    "crc32": "7a4ba067",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero/attacker-21/report.json"
+  },
+  {
+    "bytes": 75263,
+    "compressed_bytes": 8578,
+    "crc32": "7573f40f",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero/attacker-22/report.json"
+  },
+  {
+    "bytes": 76368,
+    "compressed_bytes": 9092,
+    "crc32": "24e68377",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero/attacker-23/report.json"
+  },
+  {
+    "bytes": 752,
+    "compressed_bytes": 404,
+    "crc32": "3d1c5d50",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero-host-control/host/child-result.json"
+  },
+  {
+    "bytes": 2525,
+    "compressed_bytes": 1008,
+    "crc32": "e819b9bd",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero-host-control/host/controller-result.json"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero-host-control/host/native.stderr.txt"
+  },
+  {
+    "bytes": 157,
+    "compressed_bytes": 119,
+    "crc32": "7277fd4d",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero-host-control/host/native.stdout.txt"
+  },
+  {
+    "bytes": 19097022,
+    "compressed_bytes": 1354550,
+    "crc32": "af0baa06",
+    "is_dir": false,
+    "name": "run-1-raw/from-zero-host-control/phase-result.json"
+  },
+  {
+    "bytes": 73225,
+    "compressed_bytes": 8294,
+    "crc32": "c6cf3537",
+    "is_dir": false,
+    "name": "run-1-raw/late-product/attacker-00/report.json"
+  },
+  {
+    "bytes": 76149,
+    "compressed_bytes": 8814,
+    "crc32": "13a5c5e5",
+    "is_dir": false,
+    "name": "run-1-raw/late-product/attacker-01/report.json"
+  },
+  {
+    "bytes": 75045,
+    "compressed_bytes": 8535,
+    "crc32": "fc9bc7b0",
+    "is_dir": false,
+    "name": "run-1-raw/late-product/attacker-02/report.json"
+  },
+  {
+    "bytes": 74837,
+    "compressed_bytes": 8441,
+    "crc32": "b329df5a",
+    "is_dir": false,
+    "name": "run-1-raw/late-product/attacker-03/report.json"
+  },
+  {
+    "bytes": 75800,
+    "compressed_bytes": 8607,
+    "crc32": "407eb649",
+    "is_dir": false,
+    "name": "run-1-raw/late-product/attacker-04/report.json"
+  },
+  {
+    "bytes": 75789,
+    "compressed_bytes": 8624,
+    "crc32": "971725d0",
+    "is_dir": false,
+    "name": "run-1-raw/late-product/attacker-05/report.json"
+  },
+  {
+    "bytes": 75820,
+    "compressed_bytes": 8591,
+    "crc32": "222e06ad",
+    "is_dir": false,
+    "name": "run-1-raw/late-product/attacker-06/report.json"
+  },
+  {
+    "bytes": 75631,
+    "compressed_bytes": 8531,
+    "crc32": "9e3f6a70",
+    "is_dir": false,
+    "name": "run-1-raw/late-product/attacker-07/report.json"
+  },
+  {
+    "bytes": 76575,
+    "compressed_bytes": 8982,
+    "crc32": "69a98ef1",
+    "is_dir": false,
+    "name": "run-1-raw/late-product/attacker-08/report.json"
+  },
+  {
+    "bytes": 75443,
+    "compressed_bytes": 8734,
+    "crc32": "766560a3",
+    "is_dir": false,
+    "name": "run-1-raw/late-product/attacker-09/report.json"
+  },
+  {
+    "bytes": 76007,
+    "compressed_bytes": 8716,
+    "crc32": "19107d77",
+    "is_dir": false,
+    "name": "run-1-raw/late-product/attacker-10/report.json"
+  },
+  {
+    "bytes": 74602,
+    "compressed_bytes": 8641,
+    "crc32": "b6411932",
+    "is_dir": false,
+    "name": "run-1-raw/late-product/attacker-11/report.json"
+  },
+  {
+    "bytes": 75653,
+    "compressed_bytes": 8566,
+    "crc32": "cec8e986",
+    "is_dir": false,
+    "name": "run-1-raw/late-product/attacker-12/report.json"
+  },
+  {
+    "bytes": 75635,
+    "compressed_bytes": 8525,
+    "crc32": "56413b24",
+    "is_dir": false,
+    "name": "run-1-raw/late-product/attacker-13/report.json"
+  },
+  {
+    "bytes": 73286,
+    "compressed_bytes": 8347,
+    "crc32": "663ac833",
+    "is_dir": false,
+    "name": "run-1-raw/late-product/attacker-14/report.json"
+  },
+  {
+    "bytes": 75647,
+    "compressed_bytes": 8502,
+    "crc32": "df09955b",
+    "is_dir": false,
+    "name": "run-1-raw/late-product/attacker-15/report.json"
+  },
+  {
+    "bytes": 75965,
+    "compressed_bytes": 8684,
+    "crc32": "317a96db",
+    "is_dir": false,
+    "name": "run-1-raw/late-product/attacker-16/report.json"
+  },
+  {
+    "bytes": 75846,
+    "compressed_bytes": 8614,
+    "crc32": "4e0eba7e",
+    "is_dir": false,
+    "name": "run-1-raw/late-product/attacker-17/report.json"
+  },
+  {
+    "bytes": 76029,
+    "compressed_bytes": 8696,
+    "crc32": "15ce6bf6",
+    "is_dir": false,
+    "name": "run-1-raw/late-product/attacker-18/report.json"
+  },
+  {
+    "bytes": 74095,
+    "compressed_bytes": 8376,
+    "crc32": "43f0c531",
+    "is_dir": false,
+    "name": "run-1-raw/late-product/attacker-19/report.json"
+  },
+  {
+    "bytes": 75831,
+    "compressed_bytes": 8618,
+    "crc32": "470ffa00",
+    "is_dir": false,
+    "name": "run-1-raw/late-product/attacker-20/report.json"
+  },
+  {
+    "bytes": 75628,
+    "compressed_bytes": 8521,
+    "crc32": "58a4107a",
+    "is_dir": false,
+    "name": "run-1-raw/late-product/attacker-21/report.json"
+  },
+  {
+    "bytes": 75792,
+    "compressed_bytes": 8642,
+    "crc32": "90366d2d",
+    "is_dir": false,
+    "name": "run-1-raw/late-product/attacker-22/report.json"
+  },
+  {
+    "bytes": 74065,
+    "compressed_bytes": 8371,
+    "crc32": "7d936a76",
+    "is_dir": false,
+    "name": "run-1-raw/late-product/attacker-23/report.json"
+  },
+  {
+    "bytes": 752,
+    "compressed_bytes": 404,
+    "crc32": "15113eec",
+    "is_dir": false,
+    "name": "run-1-raw/late-product-host-control/host/child-result.json"
+  },
+  {
+    "bytes": 2528,
+    "compressed_bytes": 1010,
+    "crc32": "2579cc38",
+    "is_dir": false,
+    "name": "run-1-raw/late-product-host-control/host/controller-result.json"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "run-1-raw/late-product-host-control/host/native.stderr.txt"
+  },
+  {
+    "bytes": 157,
+    "compressed_bytes": 119,
+    "crc32": "f1fbfe2e",
+    "is_dir": false,
+    "name": "run-1-raw/late-product-host-control/host/native.stdout.txt"
+  },
+  {
+    "bytes": 19122008,
+    "compressed_bytes": 1356685,
+    "crc32": "c6c11308",
+    "is_dir": false,
+    "name": "run-1-raw/late-product-host-control/phase-result.json"
+  },
+  {
+    "bytes": 1368,
+    "compressed_bytes": 638,
+    "crc32": "23bc7959",
+    "is_dir": false,
+    "name": "run-1-result.json"
+  },
+  {
+    "bytes": 1615,
+    "compressed_bytes": 589,
+    "crc32": "40f977fe",
+    "is_dir": false,
+    "name": "run-1.stderr.log"
+  },
+  {
+    "bytes": 271,
+    "compressed_bytes": 160,
+    "crc32": "12f79933",
+    "is_dir": false,
+    "name": "run-1.stdout.log"
+  },
+  {
+    "bytes": 752,
+    "compressed_bytes": 405,
+    "crc32": "e6db344b",
+    "is_dir": false,
+    "name": "run-2-raw/baseline-host-control/host/child-result.json"
+  },
+  {
+    "bytes": 2524,
+    "compressed_bytes": 1009,
+    "crc32": "3f9f70e7",
+    "is_dir": false,
+    "name": "run-2-raw/baseline-host-control/host/controller-result.json"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "run-2-raw/baseline-host-control/host/native.stderr.txt"
+  },
+  {
+    "bytes": 157,
+    "compressed_bytes": 119,
+    "crc32": "fceb9c5f",
+    "is_dir": false,
+    "name": "run-2-raw/baseline-host-control/host/native.stdout.txt"
+  },
+  {
+    "bytes": 3105100,
+    "compressed_bytes": 334441,
+    "crc32": "71a155dd",
+    "is_dir": false,
+    "name": "run-2-raw/baseline-host-control/phase-result.json"
+  },
+  {
+    "bytes": 337,
+    "compressed_bytes": 223,
+    "crc32": "c152ab7d",
+    "is_dir": false,
+    "name": "run-2-raw/campaign-failure.json"
+  },
+  {
+    "bytes": 53228,
+    "compressed_bytes": 7668,
+    "crc32": "22110fdd",
+    "is_dir": false,
+    "name": "run-2-raw/cost-0/report.json"
+  },
+  {
+    "bytes": 53227,
+    "compressed_bytes": 7684,
+    "crc32": "9ca19245",
+    "is_dir": false,
+    "name": "run-2-raw/cost-1/report.json"
+  },
+  {
+    "bytes": 53226,
+    "compressed_bytes": 7683,
+    "crc32": "b218efb0",
+    "is_dir": false,
+    "name": "run-2-raw/cost-3/report.json"
+  },
+  {
+    "bytes": 53244,
+    "compressed_bytes": 7699,
+    "crc32": "53e458e9",
+    "is_dir": false,
+    "name": "run-2-raw/cost-2/report.json"
+  },
+  {
+    "bytes": 53204,
+    "compressed_bytes": 7670,
+    "crc32": "f4dec55e",
+    "is_dir": false,
+    "name": "run-2-raw/cost-4/report.json"
+  },
+  {
+    "bytes": 53209,
+    "compressed_bytes": 7702,
+    "crc32": "f453b2e1",
+    "is_dir": false,
+    "name": "run-2-raw/cost-5/report.json"
+  },
+  {
+    "bytes": 53210,
+    "compressed_bytes": 7676,
+    "crc32": "4a198c25",
+    "is_dir": false,
+    "name": "run-2-raw/cost-6/report.json"
+  },
+  {
+    "bytes": 53200,
+    "compressed_bytes": 7688,
+    "crc32": "09017fad",
+    "is_dir": false,
+    "name": "run-2-raw/cost-7/report.json"
+  },
+  {
+    "bytes": 75286,
+    "compressed_bytes": 8561,
+    "crc32": "5e7b4ce2",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero/attacker-00/report.json"
+  },
+  {
+    "bytes": 77036,
+    "compressed_bytes": 8812,
+    "crc32": "8cd2ff45",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero/attacker-01/report.json"
+  },
+  {
+    "bytes": 77505,
+    "compressed_bytes": 8637,
+    "crc32": "1b7a5c63",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero/attacker-02/report.json"
+  },
+  {
+    "bytes": 76856,
+    "compressed_bytes": 8713,
+    "crc32": "1e57b3bc",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero/attacker-03/report.json"
+  },
+  {
+    "bytes": 76892,
+    "compressed_bytes": 8701,
+    "crc32": "c0149a2c",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero/attacker-04/report.json"
+  },
+  {
+    "bytes": 75918,
+    "compressed_bytes": 8545,
+    "crc32": "23d51a0e",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero/attacker-05/report.json"
+  },
+  {
+    "bytes": 77499,
+    "compressed_bytes": 8691,
+    "crc32": "2524a9b6",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero/attacker-06/report.json"
+  },
+  {
+    "bytes": 76246,
+    "compressed_bytes": 8685,
+    "crc32": "cd9943d1",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero/attacker-07/report.json"
+  },
+  {
+    "bytes": 77478,
+    "compressed_bytes": 8711,
+    "crc32": "af39df22",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero/attacker-08/report.json"
+  },
+  {
+    "bytes": 76444,
+    "compressed_bytes": 8806,
+    "crc32": "c295ff5f",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero/attacker-09/report.json"
+  },
+  {
+    "bytes": 76466,
+    "compressed_bytes": 8812,
+    "crc32": "0dfc8d77",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero/attacker-10/report.json"
+  },
+  {
+    "bytes": 77051,
+    "compressed_bytes": 8773,
+    "crc32": "74610dee",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero/attacker-11/report.json"
+  },
+  {
+    "bytes": 77996,
+    "compressed_bytes": 8932,
+    "crc32": "b086440a",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero/attacker-12/report.json"
+  },
+  {
+    "bytes": 77480,
+    "compressed_bytes": 8667,
+    "crc32": "5dd61e25",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero/attacker-13/report.json"
+  },
+  {
+    "bytes": 76863,
+    "compressed_bytes": 8691,
+    "crc32": "ba4e5c9a",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero/attacker-14/report.json"
+  },
+  {
+    "bytes": 77445,
+    "compressed_bytes": 8665,
+    "crc32": "44448a2f",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero/attacker-15/report.json"
+  },
+  {
+    "bytes": 77488,
+    "compressed_bytes": 8669,
+    "crc32": "5a95e5ce",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero/attacker-16/report.json"
+  },
+  {
+    "bytes": 77624,
+    "compressed_bytes": 8762,
+    "crc32": "01a673af",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero/attacker-17/report.json"
+  },
+  {
+    "bytes": 77626,
+    "compressed_bytes": 8761,
+    "crc32": "6c555eb6",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero/attacker-18/report.json"
+  },
+  {
+    "bytes": 76705,
+    "compressed_bytes": 8579,
+    "crc32": "dbfdb785",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero/attacker-19/report.json"
+  },
+  {
+    "bytes": 77450,
+    "compressed_bytes": 8635,
+    "crc32": "0e23a29d",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero/attacker-20/report.json"
+  },
+  {
+    "bytes": 77452,
+    "compressed_bytes": 8661,
+    "crc32": "ffd5ac28",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero/attacker-21/report.json"
+  },
+  {
+    "bytes": 77638,
+    "compressed_bytes": 8769,
+    "crc32": "bbb74768",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero/attacker-22/report.json"
+  },
+  {
+    "bytes": 77969,
+    "compressed_bytes": 9217,
+    "crc32": "7c97ffce",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero/attacker-23/report.json"
+  },
+  {
+    "bytes": 752,
+    "compressed_bytes": 404,
+    "crc32": "af237206",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero-host-control/host/child-result.json"
+  },
+  {
+    "bytes": 2525,
+    "compressed_bytes": 1009,
+    "crc32": "3eb63db1",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero-host-control/host/controller-result.json"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero-host-control/host/native.stderr.txt"
+  },
+  {
+    "bytes": 157,
+    "compressed_bytes": 119,
+    "crc32": "7277fd4d",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero-host-control/host/native.stdout.txt"
+  },
+  {
+    "bytes": 19421611,
+    "compressed_bytes": 1375233,
+    "crc32": "8a4e4004",
+    "is_dir": false,
+    "name": "run-2-raw/from-zero-host-control/phase-result.json"
+  },
+  {
+    "bytes": 75643,
+    "compressed_bytes": 8526,
+    "crc32": "0e42c88a",
+    "is_dir": false,
+    "name": "run-2-raw/late-product/attacker-00/report.json"
+  },
+  {
+    "bytes": 78557,
+    "compressed_bytes": 8981,
+    "crc32": "9b7b03b6",
+    "is_dir": false,
+    "name": "run-2-raw/late-product/attacker-01/report.json"
+  },
+  {
+    "bytes": 77406,
+    "compressed_bytes": 8734,
+    "crc32": "3f21b873",
+    "is_dir": false,
+    "name": "run-2-raw/late-product/attacker-02/report.json"
+  },
+  {
+    "bytes": 77215,
+    "compressed_bytes": 8685,
+    "crc32": "261fe118",
+    "is_dir": false,
+    "name": "run-2-raw/late-product/attacker-03/report.json"
+  },
+  {
+    "bytes": 78220,
+    "compressed_bytes": 8855,
+    "crc32": "8f629d18",
+    "is_dir": false,
+    "name": "run-2-raw/late-product/attacker-04/report.json"
+  },
+  {
+    "bytes": 78211,
+    "compressed_bytes": 8862,
+    "crc32": "df32c6fc",
+    "is_dir": false,
+    "name": "run-2-raw/late-product/attacker-05/report.json"
+  },
+  {
+    "bytes": 78167,
+    "compressed_bytes": 8845,
+    "crc32": "bc98e60f",
+    "is_dir": false,
+    "name": "run-2-raw/late-product/attacker-06/report.json"
+  },
+  {
+    "bytes": 77246,
+    "compressed_bytes": 8691,
+    "crc32": "d807812c",
+    "is_dir": false,
+    "name": "run-2-raw/late-product/attacker-07/report.json"
+  },
+  {
+    "bytes": 78160,
+    "compressed_bytes": 9102,
+    "crc32": "75a0e794",
+    "is_dir": false,
+    "name": "run-2-raw/late-product/attacker-08/report.json"
+  },
+  {
+    "bytes": 77818,
+    "compressed_bytes": 8917,
+    "crc32": "313d1365",
+    "is_dir": false,
+    "name": "run-2-raw/late-product/attacker-09/report.json"
+  },
+  {
+    "bytes": 78374,
+    "compressed_bytes": 8924,
+    "crc32": "bb0c1ab8",
+    "is_dir": false,
+    "name": "run-2-raw/late-product/attacker-10/report.json"
+  },
+  {
+    "bytes": 76958,
+    "compressed_bytes": 8883,
+    "crc32": "d0bf518b",
+    "is_dir": false,
+    "name": "run-2-raw/late-product/attacker-11/report.json"
+  },
+  {
+    "bytes": 78015,
+    "compressed_bytes": 8759,
+    "crc32": "76afbbf1",
+    "is_dir": false,
+    "name": "run-2-raw/late-product/attacker-12/report.json"
+  },
+  {
+    "bytes": 77191,
+    "compressed_bytes": 8657,
+    "crc32": "bd4c61a9",
+    "is_dir": false,
+    "name": "run-2-raw/late-product/attacker-13/report.json"
+  },
+  {
+    "bytes": 75643,
+    "compressed_bytes": 8496,
+    "crc32": "cc59b379",
+    "is_dir": false,
+    "name": "run-2-raw/late-product/attacker-14/report.json"
+  },
+  {
+    "bytes": 77216,
+    "compressed_bytes": 8701,
+    "crc32": "8852f61a",
+    "is_dir": false,
+    "name": "run-2-raw/late-product/attacker-15/report.json"
+  },
+  {
+    "bytes": 77604,
+    "compressed_bytes": 8871,
+    "crc32": "21736a50",
+    "is_dir": false,
+    "name": "run-2-raw/late-product/attacker-16/report.json"
+  },
+  {
+    "bytes": 78225,
+    "compressed_bytes": 8881,
+    "crc32": "08a3cf30",
+    "is_dir": false,
+    "name": "run-2-raw/late-product/attacker-17/report.json"
+  },
+  {
+    "bytes": 77563,
+    "compressed_bytes": 8824,
+    "crc32": "0db2419d",
+    "is_dir": false,
+    "name": "run-2-raw/late-product/attacker-18/report.json"
+  },
+  {
+    "bytes": 77218,
+    "compressed_bytes": 8650,
+    "crc32": "27bf2947",
+    "is_dir": false,
+    "name": "run-2-raw/late-product/attacker-19/report.json"
+  },
+  {
+    "bytes": 77405,
+    "compressed_bytes": 8749,
+    "crc32": "df50731d",
+    "is_dir": false,
+    "name": "run-2-raw/late-product/attacker-20/report.json"
+  },
+  {
+    "bytes": 78740,
+    "compressed_bytes": 8830,
+    "crc32": "72d42da6",
+    "is_dir": false,
+    "name": "run-2-raw/late-product/attacker-21/report.json"
+  },
+  {
+    "bytes": 78196,
+    "compressed_bytes": 8787,
+    "crc32": "57fa55f9",
+    "is_dir": false,
+    "name": "run-2-raw/late-product/attacker-22/report.json"
+  },
+  {
+    "bytes": 76404,
+    "compressed_bytes": 8601,
+    "crc32": "7c300bab",
+    "is_dir": false,
+    "name": "run-2-raw/late-product/attacker-23/report.json"
+  },
+  {
+    "bytes": 752,
+    "compressed_bytes": 404,
+    "crc32": "75c53548",
+    "is_dir": false,
+    "name": "run-2-raw/late-product-host-control/host/child-result.json"
+  },
+  {
+    "bytes": 2528,
+    "compressed_bytes": 1011,
+    "crc32": "636625bb",
+    "is_dir": false,
+    "name": "run-2-raw/late-product-host-control/host/controller-result.json"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "run-2-raw/late-product-host-control/host/native.stderr.txt"
+  },
+  {
+    "bytes": 157,
+    "compressed_bytes": 119,
+    "crc32": "08b7ae2d",
+    "is_dir": false,
+    "name": "run-2-raw/late-product-host-control/host/native.stdout.txt"
+  },
+  {
+    "bytes": 19562086,
+    "compressed_bytes": 1389049,
+    "crc32": "8bb533d6",
+    "is_dir": false,
+    "name": "run-2-raw/late-product-host-control/phase-result.json"
+  },
+  {
+    "bytes": 1615,
+    "compressed_bytes": 589,
+    "crc32": "f3e16243",
+    "is_dir": false,
+    "name": "run-2.stderr.log"
+  },
+  {
+    "bytes": 1368,
+    "compressed_bytes": 638,
+    "crc32": "02ef5f39",
+    "is_dir": false,
+    "name": "run-2-result.json"
+  },
+  {
+    "bytes": 271,
+    "compressed_bytes": 160,
+    "crc32": "2ef911cd",
+    "is_dir": false,
+    "name": "run-2.stdout.log"
+  },
+  {
+    "bytes": 2524,
+    "compressed_bytes": 1008,
+    "crc32": "4ec61770",
+    "is_dir": false,
+    "name": "run-3-raw/baseline-host-control/host/controller-result.json"
+  },
+  {
+    "bytes": 752,
+    "compressed_bytes": 403,
+    "crc32": "4d38f344",
+    "is_dir": false,
+    "name": "run-3-raw/baseline-host-control/host/child-result.json"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "run-3-raw/baseline-host-control/host/native.stderr.txt"
+  },
+  {
+    "bytes": 157,
+    "compressed_bytes": 118,
+    "crc32": "81e3d3d5",
+    "is_dir": false,
+    "name": "run-3-raw/baseline-host-control/host/native.stdout.txt"
+  },
+  {
+    "bytes": 3275281,
+    "compressed_bytes": 338918,
+    "crc32": "8d811a8e",
+    "is_dir": false,
+    "name": "run-3-raw/baseline-host-control/phase-result.json"
+  },
+  {
+    "bytes": 337,
+    "compressed_bytes": 224,
+    "crc32": "4f5545a7",
+    "is_dir": false,
+    "name": "run-3-raw/campaign-failure.json"
+  },
+  {
+    "bytes": 53228,
+    "compressed_bytes": 7668,
+    "crc32": "dbe1cbfd",
+    "is_dir": false,
+    "name": "run-3-raw/cost-0/report.json"
+  },
+  {
+    "bytes": 53228,
+    "compressed_bytes": 7706,
+    "crc32": "9e13523f",
+    "is_dir": false,
+    "name": "run-3-raw/cost-1/report.json"
+  },
+  {
+    "bytes": 53246,
+    "compressed_bytes": 7706,
+    "crc32": "65d8b68d",
+    "is_dir": false,
+    "name": "run-3-raw/cost-2/report.json"
+  },
+  {
+    "bytes": 53229,
+    "compressed_bytes": 7683,
+    "crc32": "227af4c8",
+    "is_dir": false,
+    "name": "run-3-raw/cost-3/report.json"
+  },
+  {
+    "bytes": 53204,
+    "compressed_bytes": 7695,
+    "crc32": "6ddf32a8",
+    "is_dir": false,
+    "name": "run-3-raw/cost-4/report.json"
+  },
+  {
+    "bytes": 53213,
+    "compressed_bytes": 7704,
+    "crc32": "e221b431",
+    "is_dir": false,
+    "name": "run-3-raw/cost-5/report.json"
+  },
+  {
+    "bytes": 53210,
+    "compressed_bytes": 7682,
+    "crc32": "525ebdcc",
+    "is_dir": false,
+    "name": "run-3-raw/cost-6/report.json"
+  },
+  {
+    "bytes": 53198,
+    "compressed_bytes": 7658,
+    "crc32": "d9cdc7c6",
+    "is_dir": false,
+    "name": "run-3-raw/cost-7/report.json"
+  },
+  {
+    "bytes": 78462,
+    "compressed_bytes": 8851,
+    "crc32": "f6af57b5",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero/attacker-00/report.json"
+  },
+  {
+    "bytes": 80981,
+    "compressed_bytes": 9130,
+    "crc32": "4e6a4a33",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero/attacker-01/report.json"
+  },
+  {
+    "bytes": 79858,
+    "compressed_bytes": 8880,
+    "crc32": "ea77703d",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero/attacker-02/report.json"
+  },
+  {
+    "bytes": 80807,
+    "compressed_bytes": 9025,
+    "crc32": "767c6f54",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero/attacker-03/report.json"
+  },
+  {
+    "bytes": 80066,
+    "compressed_bytes": 8990,
+    "crc32": "77500666",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero/attacker-04/report.json"
+  },
+  {
+    "bytes": 78240,
+    "compressed_bytes": 8699,
+    "crc32": "30dde315",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero/attacker-05/report.json"
+  },
+  {
+    "bytes": 79872,
+    "compressed_bytes": 8879,
+    "crc32": "4a8f7827",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero/attacker-06/report.json"
+  },
+  {
+    "bytes": 80197,
+    "compressed_bytes": 9050,
+    "crc32": "02a07121",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero/attacker-07/report.json"
+  },
+  {
+    "bytes": 79811,
+    "compressed_bytes": 8879,
+    "crc32": "dcdbb0ee",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero/attacker-08/report.json"
+  },
+  {
+    "bytes": 78824,
+    "compressed_bytes": 8984,
+    "crc32": "1d85aa46",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero/attacker-09/report.json"
+  },
+  {
+    "bytes": 78820,
+    "compressed_bytes": 8986,
+    "crc32": "7d149339",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero/attacker-10/report.json"
+  },
+  {
+    "bytes": 80208,
+    "compressed_bytes": 9058,
+    "crc32": "520f67eb",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero/attacker-11/report.json"
+  },
+  {
+    "bytes": 79613,
+    "compressed_bytes": 9078,
+    "crc32": "7376f288",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero/attacker-12/report.json"
+  },
+  {
+    "bytes": 79817,
+    "compressed_bytes": 8886,
+    "crc32": "ef4e8f89",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero/attacker-13/report.json"
+  },
+  {
+    "bytes": 80058,
+    "compressed_bytes": 8976,
+    "crc32": "c01a2adf",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero/attacker-14/report.json"
+  },
+  {
+    "bytes": 80610,
+    "compressed_bytes": 8975,
+    "crc32": "3be20eb1",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero/attacker-15/report.json"
+  },
+  {
+    "bytes": 79878,
+    "compressed_bytes": 8910,
+    "crc32": "ca5aadec",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero/attacker-16/report.json"
+  },
+  {
+    "bytes": 80020,
+    "compressed_bytes": 8995,
+    "crc32": "85740df5",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero/attacker-17/report.json"
+  },
+  {
+    "bytes": 80029,
+    "compressed_bytes": 8972,
+    "crc32": "74626cee",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero/attacker-18/report.json"
+  },
+  {
+    "bytes": 79831,
+    "compressed_bytes": 8842,
+    "crc32": "758a1ff6",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero/attacker-19/report.json"
+  },
+  {
+    "bytes": 79852,
+    "compressed_bytes": 8856,
+    "crc32": "e29111fb",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero/attacker-20/report.json"
+  },
+  {
+    "bytes": 79854,
+    "compressed_bytes": 8872,
+    "crc32": "b5c1449e",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero/attacker-21/report.json"
+  },
+  {
+    "bytes": 80828,
+    "compressed_bytes": 9056,
+    "crc32": "60af1b94",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero/attacker-22/report.json"
+  },
+  {
+    "bytes": 81917,
+    "compressed_bytes": 9576,
+    "crc32": "2f519692",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero/attacker-23/report.json"
+  },
+  {
+    "bytes": 752,
+    "compressed_bytes": 404,
+    "crc32": "4577883b",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero-host-control/host/child-result.json"
+  },
+  {
+    "bytes": 2525,
+    "compressed_bytes": 1009,
+    "crc32": "9776d730",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero-host-control/host/controller-result.json"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero-host-control/host/native.stderr.txt"
+  },
+  {
+    "bytes": 157,
+    "compressed_bytes": 118,
+    "crc32": "35d7879d",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero-host-control/host/native.stdout.txt"
+  },
+  {
+    "bytes": 20092828,
+    "compressed_bytes": 1417769,
+    "crc32": "32d5f550",
+    "is_dir": false,
+    "name": "run-3-raw/from-zero-host-control/phase-result.json"
+  },
+  {
+    "bytes": 74818,
+    "compressed_bytes": 8437,
+    "crc32": "ff4ab9c7",
+    "is_dir": false,
+    "name": "run-3-raw/late-product/attacker-00/report.json"
+  },
+  {
+    "bytes": 76978,
+    "compressed_bytes": 8858,
+    "crc32": "5a86dea6",
+    "is_dir": false,
+    "name": "run-3-raw/late-product/attacker-01/report.json"
+  },
+  {
+    "bytes": 76599,
+    "compressed_bytes": 8695,
+    "crc32": "ac4308f9",
+    "is_dir": false,
+    "name": "run-3-raw/late-product/attacker-02/report.json"
+  },
+  {
+    "bytes": 76453,
+    "compressed_bytes": 8634,
+    "crc32": "9adb5106",
+    "is_dir": false,
+    "name": "run-3-raw/late-product/attacker-03/report.json"
+  },
+  {
+    "bytes": 77389,
+    "compressed_bytes": 8756,
+    "crc32": "361cdc95",
+    "is_dir": false,
+    "name": "run-3-raw/late-product/attacker-04/report.json"
+  },
+  {
+    "bytes": 76580,
+    "compressed_bytes": 8695,
+    "crc32": "cc7a31cb",
+    "is_dir": false,
+    "name": "run-3-raw/late-product/attacker-05/report.json"
+  },
+  {
+    "bytes": 76628,
+    "compressed_bytes": 8722,
+    "crc32": "f009399c",
+    "is_dir": false,
+    "name": "run-3-raw/late-product/attacker-06/report.json"
+  },
+  {
+    "bytes": 75669,
+    "compressed_bytes": 8534,
+    "crc32": "4a7a422f",
+    "is_dir": false,
+    "name": "run-3-raw/late-product/attacker-07/report.json"
+  },
+  {
+    "bytes": 77337,
+    "compressed_bytes": 9050,
+    "crc32": "ff0dd511",
+    "is_dir": false,
+    "name": "run-3-raw/late-product/attacker-08/report.json"
+  },
+  {
+    "bytes": 77786,
+    "compressed_bytes": 8959,
+    "crc32": "4a8ee26e",
+    "is_dir": false,
+    "name": "run-3-raw/late-product/attacker-09/report.json"
+  },
+  {
+    "bytes": 75997,
+    "compressed_bytes": 8708,
+    "crc32": "9cc27be8",
+    "is_dir": false,
+    "name": "run-3-raw/late-product/attacker-10/report.json"
+  },
+  {
+    "bytes": 76157,
+    "compressed_bytes": 8787,
+    "crc32": "7769ceec",
+    "is_dir": false,
+    "name": "run-3-raw/late-product/attacker-11/report.json"
+  },
+  {
+    "bytes": 75577,
+    "compressed_bytes": 8497,
+    "crc32": "adfc2af3",
+    "is_dir": false,
+    "name": "run-3-raw/late-product/attacker-12/report.json"
+  },
+  {
+    "bytes": 76437,
+    "compressed_bytes": 8587,
+    "crc32": "36da3993",
+    "is_dir": false,
+    "name": "run-3-raw/late-product/attacker-13/report.json"
+  },
+  {
+    "bytes": 75657,
+    "compressed_bytes": 8523,
+    "crc32": "c9a938f8",
+    "is_dir": false,
+    "name": "run-3-raw/late-product/attacker-14/report.json"
+  },
+  {
+    "bytes": 77199,
+    "compressed_bytes": 8641,
+    "crc32": "125c960d",
+    "is_dir": false,
+    "name": "run-3-raw/late-product/attacker-15/report.json"
+  },
+  {
+    "bytes": 76004,
+    "compressed_bytes": 8722,
+    "crc32": "43dc9b53",
+    "is_dir": false,
+    "name": "run-3-raw/late-product/attacker-16/report.json"
+  },
+  {
+    "bytes": 76606,
+    "compressed_bytes": 8699,
+    "crc32": "9ae3c715",
+    "is_dir": false,
+    "name": "run-3-raw/late-product/attacker-17/report.json"
+  },
+  {
+    "bytes": 76807,
+    "compressed_bytes": 8791,
+    "crc32": "df6ec8f1",
+    "is_dir": false,
+    "name": "run-3-raw/late-product/attacker-18/report.json"
+  },
+  {
+    "bytes": 75599,
+    "compressed_bytes": 8500,
+    "crc32": "e5b6b3f7",
+    "is_dir": false,
+    "name": "run-3-raw/late-product/attacker-19/report.json"
+  },
+  {
+    "bytes": 75874,
+    "compressed_bytes": 8655,
+    "crc32": "d3b0ca8e",
+    "is_dir": false,
+    "name": "run-3-raw/late-product/attacker-20/report.json"
+  },
+  {
+    "bytes": 76424,
+    "compressed_bytes": 8615,
+    "crc32": "7a12974d",
+    "is_dir": false,
+    "name": "run-3-raw/late-product/attacker-21/report.json"
+  },
+  {
+    "bytes": 76641,
+    "compressed_bytes": 8682,
+    "crc32": "86d7cb40",
+    "is_dir": false,
+    "name": "run-3-raw/late-product/attacker-22/report.json"
+  },
+  {
+    "bytes": 74824,
+    "compressed_bytes": 8406,
+    "crc32": "63726e08",
+    "is_dir": false,
+    "name": "run-3-raw/late-product/attacker-23/report.json"
+  },
+  {
+    "bytes": 752,
+    "compressed_bytes": 403,
+    "crc32": "99fa59d5",
+    "is_dir": false,
+    "name": "run-3-raw/late-product-host-control/host/child-result.json"
+  },
+  {
+    "bytes": 2528,
+    "compressed_bytes": 1010,
+    "crc32": "29591848",
+    "is_dir": false,
+    "name": "run-3-raw/late-product-host-control/host/controller-result.json"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "run-3-raw/late-product-host-control/host/native.stderr.txt"
+  },
+  {
+    "bytes": 157,
+    "compressed_bytes": 119,
+    "crc32": "344fd6c1",
+    "is_dir": false,
+    "name": "run-3-raw/late-product-host-control/host/native.stdout.txt"
+  },
+  {
+    "bytes": 19306992,
+    "compressed_bytes": 1371482,
+    "crc32": "2fd0eb3e",
+    "is_dir": false,
+    "name": "run-3-raw/late-product-host-control/phase-result.json"
+  },
+  {
+    "bytes": 1368,
+    "compressed_bytes": 640,
+    "crc32": "af811b08",
+    "is_dir": false,
+    "name": "run-3-result.json"
+  },
+  {
+    "bytes": 1615,
+    "compressed_bytes": 589,
+    "crc32": "07619b5d",
+    "is_dir": false,
+    "name": "run-3.stderr.log"
+  },
+  {
+    "bytes": 271,
+    "compressed_bytes": 160,
+    "crc32": "91c9afac",
+    "is_dir": false,
+    "name": "run-3.stdout.log"
+  },
+  {
+    "bytes": 423,
+    "compressed_bytes": 238,
+    "crc32": "1b44c535",
+    "is_dir": false,
+    "name": "source-before-campaigns.json"
+  }
+]

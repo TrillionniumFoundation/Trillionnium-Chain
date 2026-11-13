@@ -1,0 +1,68 @@
+{
+  "all_historical_wait_reap_qualified": false,
+  "argv": [
+    "/home/qian-qi/work/chain-w1-four-gates-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+    "store::async_w1_generation_v2::tests::heavy::funded_fresh_full_w1_generation_timeout_then_refund_and_reorg",
+    "--exact",
+    "--ignored",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "config": {
+    "bytes": 49077,
+    "path": "/home/qian-qi/work/chain-w1-c5-timeout-reorg-20261108-ec265b-01/config.json",
+    "sha256": "e02653e72d102696d1a08d99671b9c76884faf338e9d3835d5714bc41dafcac3"
+  },
+  "driver": {
+    "bytes": 20830,
+    "path": "/home/qian-qi/work/chain-w1-m12-timeout-tools-20261108-ec265b/driver-v4.py",
+    "sha256": "b66019d2f47c225174de4f69c508e2b163d69f915b1e9eada59eef9368317464"
+  },
+  "env": {
+    "LANG": "C",
+    "LC_ALL": "C",
+    "PATH": "/usr/bin:/bin",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "RAYON_NUM_THREADS": "4",
+    "TRNM_W1_FUNDED_CONFIG": "/home/qian-qi/work/chain-w1-c5-timeout-reorg-20261108-ec265b-01/config.json"
+  },
+  "gpu_accounting": "UNKNOWN",
+  "original_deadline_ns": 1191795668407846,
+  "original_identity": {
+    "affinity": [
+      8,
+      9,
+      10,
+      11,
+      20,
+      21,
+      22,
+      23
+    ],
+    "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+    "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b9872cfc-12894-14e6.service",
+    "cpu_max": "800000 100000",
+    "memory_max_bytes": 8589934592,
+    "observed_monotonic_ns": 1191675668404734,
+    "pid": 3170780,
+    "proc_stat": "3170780 (python3.12) R 3170772 3170780 3170780 0 -1 4194304 3415 1816 0 0 186 14 4 7 30 10 1 0 119167357 32878592 4705 18446744073709551615 4325376 7352253 140720616258704 0 0 0 0 16781312 2 0 0 0 17 8 0 0 0 0 0 10653128 12216448 347754496 140720616264793 140720616265689 140720616265689 140720616267748 0\n"
+  },
+  "owner_binary": {
+    "bytes": 468126952,
+    "path": "/home/qian-qi/work/chain-w1-four-gates-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+    "sha256": "41c2d70d80282414bef23a90f22130e5da26e1ac30c8fddc8c5aec6e9de54d24"
+  },
+  "plan": {
+    "bytes": 50024,
+    "path": "/home/qian-qi/work/chain-w1-c5-timeout-reorg-20261108-ec265b-01/plan.json",
+    "sha256": "c833c0ff591cc4f5bcfbe49afac243c5f40b67e510dbe07c4021b2e65a637703"
+  },
+  "proof_deadline_can_be_extended": false,
+  "public_chain_transactions_sent": false,
+  "schema": "TRNM-W1-OWNER-TIMEOUT-LAUNCH1",
+  "selected_monotonic_ns": 1191675668407846,
+  "source": {
+    "commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+    "tree": "8dd452c376452224602fb202940ae84fc1f84d2e"
+  }
+}

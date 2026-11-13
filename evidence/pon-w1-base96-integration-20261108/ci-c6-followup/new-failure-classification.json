@@ -1,0 +1,467 @@
+{
+  "metadata_complete": true,
+  "no_new_regression_causal_claim": true,
+  "rows": [
+    {
+      "business_execution_observed": false,
+      "classification": "pre_execution_source_guard",
+      "first_failed_step": {
+        "completed_at": "2026-11-08T07:22:55Z",
+        "conclusion": "failure",
+        "name": "Verify immutable source identity",
+        "number": 3,
+        "started_at": "2026-11-08T07:22:55Z",
+        "status": "completed"
+      },
+      "full_job_log_present": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128662532819,
+      "metadata_path": "new-jobs/128662532819/metadata.raw.json",
+      "name": "prospective-merge (rust-baseline)",
+      "run_id": 42457886543,
+      "skipped_steps": [
+        "Retrieve both current-run Rust shard observations"
+      ]
+    },
+    {
+      "business_execution_observed": false,
+      "classification": "pre_execution_source_guard",
+      "first_failed_step": {
+        "completed_at": "2026-11-08T07:22:09Z",
+        "conclusion": "failure",
+        "name": "Verify merge identity and exact ordered parents",
+        "number": 3,
+        "started_at": "2026-11-08T07:22:08Z",
+        "status": "completed"
+      },
+      "full_job_log_present": false,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128662229998,
+      "metadata_path": "new-jobs/128662229998/metadata.raw.json",
+      "name": "prospective-merge (external-evidence-contract)",
+      "run_id": 42457886543,
+      "skipped_steps": [
+        "Set isolated Cargo paths after runner allocation",
+        "Install pinned compiler and tools in isolated hosted runner",
+        "Install isolated conformance and evidence Python environment",
+        "Install pinned coverage-guided fuzz tools",
+        "Install pinned dependency auditor",
+        "Check PQ provider CI wiring and failure controls",
+        "Prepare pinned OpenSSL 3.5.9 PQ provider",
+        "Execute the same lane on the prospective merge"
+      ]
+    },
+    {
+      "business_execution_observed": false,
+      "classification": "pre_execution_source_guard",
+      "first_failed_step": {
+        "completed_at": "2026-11-08T07:22:11Z",
+        "conclusion": "failure",
+        "name": "Verify merge identity and exact ordered parents",
+        "number": 3,
+        "started_at": "2026-11-08T07:22:11Z",
+        "status": "completed"
+      },
+      "full_job_log_present": false,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128662229957,
+      "metadata_path": "new-jobs/128662229957/metadata.raw.json",
+      "name": "prospective-merge (fuzz-smoke)",
+      "run_id": 42457886543,
+      "skipped_steps": [
+        "Set isolated Cargo paths after runner allocation",
+        "Install pinned compiler and tools in isolated hosted runner",
+        "Install isolated conformance and evidence Python environment",
+        "Install pinned coverage-guided fuzz tools",
+        "Install pinned dependency auditor",
+        "Check PQ provider CI wiring and failure controls",
+        "Prepare pinned OpenSSL 3.5.9 PQ provider",
+        "Execute the same lane on the prospective merge"
+      ]
+    },
+    {
+      "business_execution_observed": false,
+      "classification": "pre_execution_source_guard",
+      "first_failed_step": {
+        "completed_at": "2026-11-08T07:22:29Z",
+        "conclusion": "failure",
+        "name": "Verify merge identity and exact ordered parents",
+        "number": 3,
+        "started_at": "2026-11-08T07:22:29Z",
+        "status": "completed"
+      },
+      "full_job_log_present": false,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128662229947,
+      "metadata_path": "new-jobs/128662229947/metadata.raw.json",
+      "name": "prospective-merge (protocol-contract)",
+      "run_id": 42457886543,
+      "skipped_steps": [
+        "Set isolated Cargo paths after runner allocation",
+        "Install pinned compiler and tools in isolated hosted runner",
+        "Install isolated conformance and evidence Python environment",
+        "Install pinned coverage-guided fuzz tools",
+        "Install pinned dependency auditor",
+        "Check PQ provider CI wiring and failure controls",
+        "Prepare pinned OpenSSL 3.5.9 PQ provider",
+        "Execute the same lane on the prospective merge"
+      ]
+    },
+    {
+      "business_execution_observed": false,
+      "classification": "pre_execution_source_guard",
+      "first_failed_step": {
+        "completed_at": "2026-11-08T07:21:39Z",
+        "conclusion": "failure",
+        "name": "Verify V3 exact source and ordered merge before execution",
+        "number": 3,
+        "started_at": "2026-11-08T07:21:39Z",
+        "status": "completed"
+      },
+      "full_job_log_present": false,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128662229937,
+      "metadata_path": "new-jobs/128662229937/metadata.raw.json",
+      "name": "W1 actual reuse V3 (arm64, prospective-merge)",
+      "run_id": 42457886543,
+      "skipped_steps": [
+        "Check original repository boundary before native V3 build",
+        "Set isolated Cargo paths after runner allocation",
+        "Install pinned native release compiler",
+        "Install matching native formatter",
+        "Execute the complete native W1 actual reuse V3 grid"
+      ]
+    },
+    {
+      "business_execution_observed": false,
+      "classification": "pre_execution_source_guard",
+      "first_failed_step": {
+        "completed_at": "2026-11-08T07:22:07Z",
+        "conclusion": "failure",
+        "name": "Verify immutable source identity",
+        "number": 3,
+        "started_at": "2026-11-08T07:22:07Z",
+        "status": "completed"
+      },
+      "full_job_log_present": false,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128662229935,
+      "metadata_path": "new-jobs/128662229935/metadata.raw.json",
+      "name": "prospective Rust shard (quality)",
+      "run_id": 42457886543,
+      "skipped_steps": [
+        "Set isolated Cargo paths after runner allocation",
+        "Install pinned compiler and tools in isolated hosted runner",
+        "Install pinned dependency auditor",
+        "Install isolated signed-state oracle Python environment",
+        "Prepare pinned OpenSSL 3.5.9 PQ provider",
+        "Run retained Rust shard"
+      ]
+    },
+    {
+      "business_execution_observed": true,
+      "classification": "executed_target_failure",
+      "first_failed_step": {
+        "completed_at": "2026-11-08T07:26:34Z",
+        "conclusion": "failure",
+        "name": "Execute exact native from-zero service controls",
+        "number": 12,
+        "started_at": "2026-11-08T07:23:20Z",
+        "status": "completed"
+      },
+      "full_job_log_present": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128662229865,
+      "metadata_path": "new-jobs/128662229865/metadata.raw.json",
+      "name": "cross-arch-cost (x64)",
+      "run_id": 42457886543,
+      "skipped_steps": []
+    },
+    {
+      "business_execution_observed": false,
+      "classification": "pre_execution_source_guard",
+      "first_failed_step": {
+        "completed_at": "2026-11-08T07:21:31Z",
+        "conclusion": "failure",
+        "name": "Verify merge identity and exact ordered parents",
+        "number": 3,
+        "started_at": "2026-11-08T07:21:30Z",
+        "status": "completed"
+      },
+      "full_job_log_present": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128662229854,
+      "metadata_path": "new-jobs/128662229854/metadata.raw.json",
+      "name": "prospective-merge (repository-truth)",
+      "run_id": 42457886543,
+      "skipped_steps": [
+        "Set isolated Cargo paths after runner allocation",
+        "Install pinned compiler and tools in isolated hosted runner",
+        "Install isolated conformance and evidence Python environment",
+        "Install pinned coverage-guided fuzz tools",
+        "Install pinned dependency auditor",
+        "Check PQ provider CI wiring and failure controls",
+        "Prepare pinned OpenSSL 3.5.9 PQ provider",
+        "Execute the same lane on the prospective merge"
+      ]
+    },
+    {
+      "business_execution_observed": false,
+      "classification": "pre_execution_source_guard",
+      "first_failed_step": {
+        "completed_at": "2026-11-08T07:21:42Z",
+        "conclusion": "failure",
+        "name": "Verify V3 exact source and ordered merge before execution",
+        "number": 3,
+        "started_at": "2026-11-08T07:21:42Z",
+        "status": "completed"
+      },
+      "full_job_log_present": false,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128662229829,
+      "metadata_path": "new-jobs/128662229829/metadata.raw.json",
+      "name": "W1 actual reuse V3 (x64, prospective-merge)",
+      "run_id": 42457886543,
+      "skipped_steps": [
+        "Check original repository boundary before native V3 build",
+        "Set isolated Cargo paths after runner allocation",
+        "Install pinned native release compiler",
+        "Install matching native formatter",
+        "Execute the complete native W1 actual reuse V3 grid"
+      ]
+    },
+    {
+      "business_execution_observed": true,
+      "classification": "executed_target_failure",
+      "first_failed_step": {
+        "completed_at": "2026-11-08T07:28:37Z",
+        "conclusion": "failure",
+        "name": "Execute exact native from-zero service controls",
+        "number": 12,
+        "started_at": "2026-11-08T07:24:00Z",
+        "status": "completed"
+      },
+      "full_job_log_present": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128662229758,
+      "metadata_path": "new-jobs/128662229758/metadata.raw.json",
+      "name": "cross-arch-cost (arm64)",
+      "run_id": 42457886543,
+      "skipped_steps": []
+    },
+    {
+      "business_execution_observed": false,
+      "classification": "pre_execution_source_guard",
+      "first_failed_step": {
+        "completed_at": "2026-11-08T07:22:04Z",
+        "conclusion": "failure",
+        "name": "Verify immutable source identity",
+        "number": 3,
+        "started_at": "2026-11-08T07:22:04Z",
+        "status": "completed"
+      },
+      "full_job_log_present": false,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128662229746,
+      "metadata_path": "new-jobs/128662229746/metadata.raw.json",
+      "name": "prospective Rust shard (runtime)",
+      "run_id": 42457886543,
+      "skipped_steps": [
+        "Set isolated Cargo paths after runner allocation",
+        "Install pinned compiler and tools in isolated hosted runner",
+        "Install pinned dependency auditor",
+        "Install isolated signed-state oracle Python environment",
+        "Prepare pinned OpenSSL 3.5.9 PQ provider",
+        "Run retained Rust shard"
+      ]
+    },
+    {
+      "business_execution_observed": true,
+      "classification": "executed_target_failure",
+      "first_failed_step": {
+        "completed_at": "2026-11-08T07:27:25Z",
+        "conclusion": "failure",
+        "name": "Run actual protocol-contract checks",
+        "number": 8,
+        "started_at": "2026-11-08T07:23:29Z",
+        "status": "completed"
+      },
+      "full_job_log_present": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128662229491,
+      "metadata_path": "new-jobs/128662229491/metadata.raw.json",
+      "name": "protocol-contract",
+      "run_id": 42457886543,
+      "skipped_steps": []
+    },
+    {
+      "business_execution_observed": false,
+      "classification": "pre_execution_source_guard",
+      "first_failed_step": {
+        "completed_at": "2026-11-08T07:19:45Z",
+        "conclusion": "failure",
+        "name": "Reserve observations and verify ordered source identity",
+        "number": 4,
+        "started_at": "2026-11-08T07:19:45Z",
+        "status": "completed"
+      },
+      "full_job_log_present": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660702010,
+      "metadata_path": "new-jobs/128660702010/metadata.raw.json",
+      "name": "W1 factorial legal strategies v3 (x64, prospective-merge)",
+      "run_id": 42457886518,
+      "skipped_steps": [
+        "Reproduce the frozen integration-push source",
+        "Install exact original compiler and tools",
+        "Verify retained and factorial readers and command-owner failures",
+        "Verify actual locked graph and original formatting",
+        "Execute native producer, header, History and CPU cancellation controls",
+        "Prepare pinned provider required by native all-feature controls",
+        "Run strict native lint for all affected owners",
+        "Execute all thirty separate v3 shards under the original per-shard budget",
+        "Verify measured source after execution",
+        "Preserve this lane's actual push source context"
+      ]
+    },
+    {
+      "business_execution_observed": true,
+      "classification": "executed_target_failure",
+      "first_failed_step": {
+        "completed_at": "2026-11-08T07:24:02Z",
+        "conclusion": "failure",
+        "name": "Execute original and fresh service with original Host resources",
+        "number": 7,
+        "started_at": "2026-11-08T07:19:30Z",
+        "status": "completed"
+      },
+      "full_job_log_present": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701948,
+      "metadata_path": "new-jobs/128660701948/metadata.raw.json",
+      "name": "W1 fresh challenge service (x64, head)",
+      "run_id": 42457886518,
+      "skipped_steps": [
+        "Reproduce the frozen integration-push source",
+        "Preserve this lane's actual push source context"
+      ]
+    },
+    {
+      "business_execution_observed": true,
+      "classification": "executed_target_failure",
+      "first_failed_step": {
+        "completed_at": "2026-11-08T07:22:51Z",
+        "conclusion": "failure",
+        "name": "Execute original release from-zero controls",
+        "number": 7,
+        "started_at": "2026-11-08T07:18:20Z",
+        "status": "completed"
+      },
+      "full_job_log_present": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701711,
+      "metadata_path": "new-jobs/128660701711/metadata.raw.json",
+      "name": "native priorities (ubuntu-24.04-arm, head, service-model)",
+      "run_id": 42457886555,
+      "skipped_steps": [
+        "Reproduce the frozen integration-push source",
+        "Execute original large-state CPU-budget tests",
+        "Execute original native full-capacity test",
+        "Execute original source-preserving migration tests",
+        "Execute actual obligation ranges and native reorganization regressions",
+        "Build the original long-history test separately from measurement",
+        "Execute 4105 real work blocks and paid public full sync",
+        "Preserve this lane's actual push source context"
+      ]
+    },
+    {
+      "business_execution_observed": true,
+      "classification": "executed_target_failure",
+      "first_failed_step": {
+        "completed_at": "2026-11-08T08:08:54Z",
+        "conclusion": "failure",
+        "name": "Execute 4105 real work blocks and paid public full sync",
+        "number": 21,
+        "started_at": "2026-11-08T07:21:42Z",
+        "status": "completed"
+      },
+      "full_job_log_present": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701637,
+      "metadata_path": "new-jobs/128660701637/metadata.raw.json",
+      "name": "native priorities (ubuntu-24.04, head, history)",
+      "run_id": 42457886555,
+      "skipped_steps": [
+        "Reproduce the frozen integration-push source",
+        "Execute original window owner and context-bound consumer controls",
+        "Execute original release from-zero controls",
+        "Execute actual CLI observation boundaries and retain every child result",
+        "Execute isolated original debug pressure regression",
+        "Execute original public service cancellation and actual CPU accounting controls",
+        "Reject valid W1 state-root replay without durable admission",
+        "Require actual shared CPU depletion and native public recovery",
+        "Execute real native model lifecycle and adverse decisions",
+        "Require native replay, packet encoding and admissible DAA controls",
+        "Observe complete native history and packet response cost",
+        "Execute original large-state CPU-budget tests",
+        "Execute original native full-capacity test",
+        "Execute original source-preserving migration tests",
+        "Execute actual obligation ranges and native reorganization regressions",
+        "Preserve this lane's actual push source context"
+      ]
+    },
+    {
+      "business_execution_observed": true,
+      "classification": "executed_target_failure",
+      "first_failed_step": {
+        "completed_at": "2026-11-08T07:23:24Z",
+        "conclusion": "failure",
+        "name": "Execute original release from-zero controls",
+        "number": 7,
+        "started_at": "2026-11-08T07:18:38Z",
+        "status": "completed"
+      },
+      "full_job_log_present": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701605,
+      "metadata_path": "new-jobs/128660701605/metadata.raw.json",
+      "name": "native priorities (ubuntu-24.04, head, service-model)",
+      "run_id": 42457886555,
+      "skipped_steps": [
+        "Reproduce the frozen integration-push source",
+        "Execute original large-state CPU-budget tests",
+        "Execute original native full-capacity test",
+        "Execute original source-preserving migration tests",
+        "Execute actual obligation ranges and native reorganization regressions",
+        "Build the original long-history test separately from measurement",
+        "Execute 4105 real work blocks and paid public full sync",
+        "Preserve this lane's actual push source context"
+      ]
+    },
+    {
+      "business_execution_observed": true,
+      "classification": "executed_target_failure",
+      "first_failed_step": {
+        "completed_at": "2026-11-08T07:25:03Z",
+        "conclusion": "failure",
+        "name": "Run three original campaigns under verified actual limits",
+        "number": 7,
+        "started_at": "2026-11-08T07:15:53Z",
+        "status": "completed"
+      },
+      "full_job_log_present": true,
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "job_id": 128660701377,
+      "metadata_path": "new-jobs/128660701377/metadata.raw.json",
+      "name": "original native campaign (x64, head, release)",
+      "run_id": 42457886578,
+      "skipped_steps": []
+    }
+  ],
+  "schema": "TRNM-W1-C6-LATER-FAILURE-CLASSIFICATION1",
+  "source_guard_exact_parent_mismatch_log_samples": [
+    128662532819,
+    128662229854,
+    128660702010
+  ]
+}

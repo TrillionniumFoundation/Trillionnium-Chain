@@ -1,0 +1,6 @@
+{"label": "00-preflight", "exit": 0, "python_test_counts": [], "rust_test_outcomes": []}
+{"label": "01-source-before", "exit": 0, "python_test_counts": [], "rust_test_outcomes": []}
+{"label": "02-history-release-compile", "exit": 0, "python_test_counts": [], "rust_test_outcomes": []}
+{"label": "03-history-ignored-entry-list", "exit": 0, "python_test_counts": [], "rust_test_outcomes": []}
+{"label": "99-source-after", "exit": 0, "python_test_counts": [], "rust_test_outcomes": []}
+{"qualification_complete": true, "actual_command_count": 5, "python_test_methods_reported": 0, "rust_test_outcomes": {"passed": 0, "failed": 0, "ignored": 0}}

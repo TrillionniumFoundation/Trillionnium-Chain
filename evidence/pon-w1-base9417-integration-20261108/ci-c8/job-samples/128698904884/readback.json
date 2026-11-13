@@ -1,0 +1,236 @@
+{
+  "conclusion": "failure",
+  "event_declarations": [
+    {
+      "field": "EXPECTED_HEAD",
+      "line": 61,
+      "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "field": "EXPECTED_BASE",
+      "line": 62,
+      "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+    },
+    {
+      "field": "EXPECTED_MERGE",
+      "line": 63,
+      "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+    },
+    {
+      "field": "EXPECTED_HEAD",
+      "line": 1039,
+      "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "field": "EXPECTED_BASE",
+      "line": 1040,
+      "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+    },
+    {
+      "field": "EXPECTED_MERGE",
+      "line": 1041,
+      "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+    },
+    {
+      "field": "EXPECTED_HEAD",
+      "line": 1070,
+      "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "field": "EXPECTED_BASE",
+      "line": 1071,
+      "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+    },
+    {
+      "field": "EXPECTED_MERGE",
+      "line": 1072,
+      "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+    },
+    {
+      "field": "EXPECTED_HEAD",
+      "line": 1100,
+      "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "field": "EXPECTED_BASE",
+      "line": 1101,
+      "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+    },
+    {
+      "field": "EXPECTED_MERGE",
+      "line": 1102,
+      "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+    },
+    {
+      "field": "EXPECTED_HEAD",
+      "line": 1285,
+      "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "field": "EXPECTED_BASE",
+      "line": 1286,
+      "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+    },
+    {
+      "field": "EXPECTED_MERGE",
+      "line": 1287,
+      "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+    },
+    {
+      "field": "EXPECTED_HEAD",
+      "line": 1313,
+      "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "field": "EXPECTED_BASE",
+      "line": 1314,
+      "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+    },
+    {
+      "field": "EXPECTED_MERGE",
+      "line": 1315,
+      "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+    },
+    {
+      "field": "EXPECTED_HEAD",
+      "line": 1353,
+      "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "field": "EXPECTED_BASE",
+      "line": 1354,
+      "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+    },
+    {
+      "field": "EXPECTED_MERGE",
+      "line": 1355,
+      "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+    }
+  ],
+  "event_expected_raw_values": {
+    "EXPECTED_BASE": [
+      "9417e495165865ef6c1288b39084856e31020634"
+    ],
+    "EXPECTED_HEAD": [
+      "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    ],
+    "EXPECTED_KIND": [],
+    "EXPECTED_MERGE": [
+      "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+    ]
+  },
+  "event_expected_values": {
+    "EXPECTED_BASE": "9417e495165865ef6c1288b39084856e31020634",
+    "EXPECTED_HEAD": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "EXPECTED_KIND": null,
+    "EXPECTED_MERGE": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+  },
+  "event_expected_values_inferred_from_API_or_merge": false,
+  "first_failed_step": {
+    "completed_at": "2026-11-08T10:14:09Z",
+    "conclusion": "failure",
+    "name": "Execute original and fresh service with original Host resources",
+    "number": 7,
+    "started_at": "2026-11-08T10:10:20Z",
+    "status": "completed"
+  },
+  "head_sha": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "job_id": 128698904884,
+  "job_log": "job-samples/128698904884/log.stdout",
+  "job_metadata": "job-samples/128698904884/metadata.stdout",
+  "log_fetch_exit": 0,
+  "matching_log_line_count": 22,
+  "metadata_fetch_exit": 0,
+  "name": "W1 fresh challenge service (x64, head)",
+  "run_id": 42470186930,
+  "tuple_and_error_log_lines": [
+    {
+      "line": 61,
+      "text": "2026-11-08T10:09:14.0617283Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "line": 62,
+      "text": "2026-11-08T10:09:14.0617840Z   EXPECTED_BASE: 9417e495165865ef6c1288b39084856e31020634"
+    },
+    {
+      "line": 63,
+      "text": "2026-11-08T10:09:14.0618388Z   EXPECTED_MERGE: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+    },
+    {
+      "line": 1039,
+      "text": "2026-11-08T10:09:53.5959253Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "line": 1040,
+      "text": "2026-11-08T10:09:53.5959643Z   EXPECTED_BASE: 9417e495165865ef6c1288b39084856e31020634"
+    },
+    {
+      "line": 1041,
+      "text": "2026-11-08T10:09:53.5959966Z   EXPECTED_MERGE: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+    },
+    {
+      "line": 1070,
+      "text": "2026-11-08T10:09:55.7233493Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "line": 1071,
+      "text": "2026-11-08T10:09:55.7233811Z   EXPECTED_BASE: 9417e495165865ef6c1288b39084856e31020634"
+    },
+    {
+      "line": 1072,
+      "text": "2026-11-08T10:09:55.7234247Z   EXPECTED_MERGE: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+    },
+    {
+      "line": 1100,
+      "text": "2026-11-08T10:10:03.7701595Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "line": 1101,
+      "text": "2026-11-08T10:10:03.7701939Z   EXPECTED_BASE: 9417e495165865ef6c1288b39084856e31020634"
+    },
+    {
+      "line": 1102,
+      "text": "2026-11-08T10:10:03.7702307Z   EXPECTED_MERGE: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+    },
+    {
+      "line": 1285,
+      "text": "2026-11-08T10:10:20.6101362Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "line": 1286,
+      "text": "2026-11-08T10:10:20.6101748Z   EXPECTED_BASE: 9417e495165865ef6c1288b39084856e31020634"
+    },
+    {
+      "line": 1287,
+      "text": "2026-11-08T10:10:20.6102115Z   EXPECTED_MERGE: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+    },
+    {
+      "line": 1294,
+      "text": "2026-11-08T10:14:09.9287059Z ##[error]Process completed with exit code 1."
+    },
+    {
+      "line": 1313,
+      "text": "2026-11-08T10:14:09.9356481Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "line": 1314,
+      "text": "2026-11-08T10:14:09.9356831Z   EXPECTED_BASE: 9417e495165865ef6c1288b39084856e31020634"
+    },
+    {
+      "line": 1315,
+      "text": "2026-11-08T10:14:09.9357204Z   EXPECTED_MERGE: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+    },
+    {
+      "line": 1353,
+      "text": "2026-11-08T10:14:11.3545226Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "line": 1354,
+      "text": "2026-11-08T10:14:11.3545551Z   EXPECTED_BASE: 9417e495165865ef6c1288b39084856e31020634"
+    },
+    {
+      "line": 1355,
+      "text": "2026-11-08T10:14:11.3545973Z   EXPECTED_MERGE: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+    }
+  ]
+}

@@ -1,0 +1,202 @@
+{
+  "schema": "TRNM-W1-C6-FOUR-GATES-READBACK1",
+  "tested_source": {
+    "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81",
+    "parents": [
+      "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+      "62d2d90c9e1f4c8450c89843f1e08360a24283ce"
+    ]
+  },
+  "prior_attestation": {
+    "commit": "05d8bb25dacab1d6589fa86061e6c23220b96b1d",
+    "inventory_sha256": "524bb438ef63bc5fb25ecba3a723e9bb64dc5d7dbf8560797c6788410c282dda",
+    "listed_members": 421,
+    "including_inventory": 422,
+    "all_bytes_preserved": true
+  },
+  "qualification": {
+    "initial_regular_method_attempts": 570,
+    "initial_passed": 568,
+    "initial_failed": 2,
+    "ignored_heavy_entries": 4,
+    "isolated_methods": 32,
+    "isolated_passed": 32,
+    "isolated_repeated_passes": 30,
+    "isolated_previously_failed_methods": 2,
+    "isolated_attempt_limit": 1,
+    "source_or_fixture_parameters_changed_for_isolated_run": false,
+    "isolated_command_records": 4,
+    "initial_core_qualification_complete": false,
+    "initial_core_exit": 1,
+    "backend_first_attempt_exit": 124,
+    "backend_first_budget_seconds": 900,
+    "backend_second_budget_seconds": 1800,
+    "backend_second_complete": true,
+    "full_tree_production_release_qualified": false,
+    "selected_component_command_records": 59
+  },
+  "manifests": {
+    "core": {
+      "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-ci-core-01/manifest.json",
+      "job_id": "1a1b9c9a486-12894-16e2",
+      "sha256": "6d357aaea2673fa6952dd648d39b0aac38759ce31b5e945d06b9805a84d11b29"
+    },
+    "owner": {
+      "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-owner-01/manifest.json",
+      "sha256": "5a5b7d7ef41a5cf4f5429ef420326777706aae54e4bd88eabf83658530b85b3f",
+      "job_id": "1a1b9cc0794-12894-16f1"
+    },
+    "native": {
+      "path": "/home/qian-qi/work/chain-w1-c6-native-qualification-20261108-ec265b-01/manifest.json",
+      "sha256": "1a7bec56da77f9d0fc0fc647adb618f705c42f03e7e40c2728773cc55844e352",
+      "job_id": "1a1b9d1f3a4-12894-1714",
+      "command_count": 10
+    },
+    "receiver": {
+      "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-receiver-01/manifest.json",
+      "sha256": "e0109e80fbc0eb48f44fd5d91197d1b68c5476622a1408e8f9c9da8b9b820cdc",
+      "job_id": "1a1b9e7a8dc-12894-178e"
+    },
+    "backend": {
+      "path": "/home/qian-qi/work/chain-w1-c6-backend-qualification-20261108-ec265b-02/manifest.json",
+      "sha256": "f7c538e360541f15ebea2f8aea7e2fc50bde53ee1cdcd1354b3624b042c2979c",
+      "job_id": "1a1b9ed804c-12894-17aa",
+      "command_count": 7
+    },
+    "isolated": {
+      "path": "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-staged-isolated-01/manifest.json",
+      "sha256": "930ca954936e198dfa3fdab2df0b2d4ca8438111f4e20042ae178c790b095103",
+      "job_id": "1a1b9f1bf0b-12894-17b8"
+    }
+  },
+  "binaries": {
+    "owner": {
+      "path": "/home/qian-qi/work/chain-w1-base62-owner-empty-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+      "bytes": 467878704,
+      "sha256": "66190e5b704edc538b42d18ef12750d134f85ae6da4eb42122681f814cd4efa6"
+    },
+    "runner": {
+      "path": "/home/qian-qi/work/chain-w1-base62-backend-target-20261108-ec265b/release/w1-staged-prover-v2",
+      "bytes": 47812232,
+      "sha256": "9ff491a702f6833a73c10129d688ad77a905fc7ebaedfbc8784c7f8c485b77ac"
+    },
+    "verifier": {
+      "path": "/home/qian-qi/work/chain-w1-base62-native-empty-target-20261108-ec265b-03/release/w1-verify-v2",
+      "bytes": 19353192,
+      "sha256": "f9de534d894e4d0e012d31055fdc4a626addd5efd12ad19d61ff9d7d9867e7a1"
+    },
+    "native": {
+      "path": "/home/qian-qi/work/chain-w1-base62-native-empty-target-20261108-ec265b-03/release/examples/pon_w1_native_winner_v2",
+      "bytes": 752472,
+      "sha256": "753c8c3610dcf0687e2d54f19e5c5b307dd54683bedabc7fe3d39eed57ee4b03"
+    }
+  },
+  "new_base_observation": {
+    "base_commit": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+    "parent": "62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+    "static_merge_tree": "d73e57c9e7a5764a1ab33540c97af587bb6e4a69",
+    "text_conflicts": false,
+    "executed_as_tested_source": false,
+    "paths_changed": 6,
+    "production_rust_src_or_m12_or_w1_generation_changes": false,
+    "executable_diagnostics_and_shared_host_helper_changed": true
+  },
+  "new_full_proofs": 0,
+  "full_generation_abba_executed": false,
+  "original_business_budget_qualified": false,
+  "payment_qualified": false,
+  "resource_billing_complete": false,
+  "crypto_protocol_security_qualified": false,
+  "lifecycle": {
+    "root": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01",
+    "operation": "8058cfa81675504da3f0593b8df7c51cb0b1f3fd6db1daa4d3f83172a6d4eacc",
+    "plan_sha256": "c38c7d6105d8658e5eb2403c9e990b902902a0073d19e9d499b33f28ccee044d",
+    "config_sha256": "20750c225e152c99ac19e05bb891b87bca01b8e451a752f405340be03128a7ea",
+    "selected_monotonic_ns": "1199223004629858",
+    "original_deadline_monotonic_ns": "1199343004629858",
+    "r0vm_live_observed_monotonic_ns": "1199255881430349",
+    "target_job_id": "142e5b9c67fd1078cc1ecc29ac16152451829f41c22bcbae80cba6dd79a52ff1",
+    "r0vm_pid": 3668546,
+    "r0vm_birth_ticks": "119925536",
+    "heavy_job_id": "1a1b9fa4d54-12894-17e1",
+    "terminal_observed": true,
+    "stage": "prove-batch-0000",
+    "heavy_passed": 1,
+    "heavy_elapsed_seconds": 123.43,
+    "cold_job_id": "1a1b9fdb57b-12894-17ef",
+    "cold_passed": 1,
+    "cold_elapsed_seconds": 0.35,
+    "target_finished_monotonic_ns": "1199343395352233",
+    "target_terminal_after_original_deadline_ns": "390722375",
+    "target_terminal_cause": "original-deadline",
+    "target_exit_code": -9,
+    "sticky_cancel": false,
+    "failure_consumed": null,
+    "full_resource_cap_retained": true,
+    "provider_payment": false,
+    "main_result_sha256": "929c953f4a1be2e60240226b4b348b82413a9394533745884cc0374edfa5689b",
+    "failure_result_sha256": "03d6c1ec7ebd4352f1c326eecac8093addd81c729cfa34fb27b778f635e54517",
+    "reorg_result_sha256": "061cf17ce68db066205e8776cc67f93b0e983c556251ec4c485a4a1c40b696f9",
+    "cold_result_sha256": "93d94e99e5ee81bcdd1fa1393a1310a9b142da57f4808847a460a9d6e3983c6e",
+    "gross_principal_refund_in_isolated_node": 1000,
+    "cold_new_dispatches": 0,
+    "cold_target_cancel_calls": 0,
+    "cold_new_native_transactions": 0,
+    "deterministic_native_cancel_bytes_equal_c5": true,
+    "independent_new_node_database": true,
+    "global_chain_funds_claim": false,
+    "gpu_usage": null,
+    "memory_peak": null,
+    "full_historical_reaping": null,
+    "statement": "52a53b4c6264f99141cda3d84ee5793dbd9a21778693848435809fbcd3fd4ca6",
+    "parent_helper_exit_observed_monotonic_ns": "1199345345919711",
+    "failure_unknown_recorded_monotonic_ns": "1199345481705597",
+    "owner_request_monotonic_ns": "1199345486900409",
+    "runtime_evidence_digest": "545bfc5d2537aee23a885d24373a121913d8c841a14001e508a0c2e6a0bdbf24",
+    "typed_failure_digest": "f38a93aeecc62d5d46944fe9d44dc48bda90dd368086fadb368da6529b81e880",
+    "independent_review_sha256": "ad5b616ba305a1ebed807d526eb610503ad5eac76ae4420e3b34beb0422674ec",
+    "publication_manifest_sha256": "b9ebecdf26fc8aad9f17baa5f7856723d0393a7f31d1c1105479cbaba051905c"
+  },
+  "publication": {
+    "source_head_pushed": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "pr": 782,
+    "draft": true,
+    "push_kind": "ordinary-fast-forward",
+    "actual_git_base_at_push": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+    "api_base_at_initial_push_readback": "62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+    "public_source_readback": "publication/source/readback.json"
+  },
+  "final_actual_source_identity_sha256": "2edd14596053103164150807856703c7fac8d4fd5ade634f8acc7203a35025e4",
+  "final_lifecycle_readonly_verification_sha256": "7243ae747d9722b30ff45d6ccb9d4635a78677f5e2eba3c87a32d4e3169f5be5",
+  "remote_ci_snapshot": {
+    "path": "publication/ci-snapshot.json",
+    "observed_unix_ns": "1794122390975428297",
+    "check_runs": 85,
+    "completed_failure": 40,
+    "completed_success": 10,
+    "completed_skipped": 3,
+    "in_progress": 32,
+    "prospective_source_binding_failure_steps": 38,
+    "export_parent_binding_failure": 1,
+    "historical_artifact_missing": 1,
+    "all_terminal": false,
+    "actual_merge_commit": "7b4a63b6f08687e93270407772951aa71087ca3d",
+    "actual_merge_tree": "d73e57c9e7a5764a1ab33540c97af587bb6e4a69",
+    "actual_merge_parents": [
+      "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+      "2bdd252aa6c300b7431b9ee897b254b7953cf562"
+    ],
+    "expected_event_base_in_observed_logs": "62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+    "all_failed_business_workloads_ran": false,
+    "guard_relaxed": false
+  },
+  "public_subpackage_manifests": {
+    "qualification/manifest.json": "1c37e4fbbb3f2f534b45df17589d825947af0713f7685ddb172879c3c847e652",
+    "lifecycle-c6/manifest.json": "b9ebecdf26fc8aad9f17baa5f7856723d0393a7f31d1c1105479cbaba051905c",
+    "base96-observation/manifest.json": "e163907f3469a2a6a2ba4d50322852794dd0d4dccadacde308d4d5b71e1c5906",
+    "ci-c6/manifest.json": "616944c31383d5953f0e167b2eb731d05b99240aee4a0bdc865a3774c98b8d37",
+    "build-preparation/manifest.json": "24846ae87a40ef1cc2166da091ae9668abf97163ab782ccb98b3389ea9f0203a"
+  },
+  "prior_package_preservation_record": "publication/preserve-c5-integrate-c6.json"
+}

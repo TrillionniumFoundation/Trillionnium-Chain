@@ -1,0 +1,287 @@
+{
+  "candidate_count": 95,
+  "complete_download": true,
+  "first_candidates": [
+    {
+      "line": 113,
+      "text": "2026-11-08T07:18:09.0213613Z  * [new branch]          archive/chain-state-json-failed-d55daefd-20261103 -> origin/archive/chain-state-json-failed-d55daefd-20261103"
+    },
+    {
+      "line": 144,
+      "text": "2026-11-08T07:18:09.0262000Z  * [new branch]          audit/pq-pcp2-verify-deadline-checkpoints-20261030 -> origin/audit/pq-pcp2-verify-deadline-checkpoints-20261030"
+    },
+    {
+      "line": 669,
+      "text": "2026-11-08T07:18:09.0845948Z  * [new branch]          fix/pq-pcp2-publish-deadline-result-20261030 -> origin/fix/pq-pcp2-publish-deadline-result-20261030"
+    },
+    {
+      "line": 749,
+      "text": "2026-11-08T07:18:09.0919650Z  * [new branch]          research/pon-daa-bounded-summary-20261025 -> origin/research/pon-daa-bounded-summary-20261025"
+    },
+    {
+      "line": 1166,
+      "text": "2026-11-08T07:18:36.7568042Z test_failed_reported_gate_cannot_be_relabelled_as_adopted_model (__main__.ProspectiveGenerationLineageTests.test_failed_reported_gate_cannot_be_relabelled_as_adopted_model) ... ok"
+    },
+    {
+      "line": 1244,
+      "text": "2026-11-08T07:23:24.5503815Z ##[error]Process completed with exit code 1."
+    },
+    {
+      "line": 1288,
+      "text": "2026-11-08T07:23:34.6185391Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.04s"
+    },
+    {
+      "line": 1302,
+      "text": "2026-11-08T07:23:38.7881766Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 4.04s"
+    },
+    {
+      "line": 1316,
+      "text": "2026-11-08T07:23:39.0318408Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.12s"
+    },
+    {
+      "line": 1330,
+      "text": "2026-11-08T07:23:47.2035063Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 8.04s"
+    },
+    {
+      "line": 1344,
+      "text": "2026-11-08T07:23:51.3572265Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 4.02s"
+    },
+    {
+      "line": 1358,
+      "text": "2026-11-08T07:23:55.5072891Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 4.02s"
+    }
+  ],
+  "job_id": 128660701605,
+  "kind": "executed-failure",
+  "last_candidates": [
+    {
+      "line": 1880,
+      "text": "2026-11-08T07:33:03.7290689Z     ingress::public_v3::completion_deadline_tests::timely_completion_keeps_output_bytes_and_original_total_deadline"
+    },
+    {
+      "line": 1881,
+      "text": "2026-11-08T07:33:03.7291466Z     ingress::public_v3::completion_deadline_tests::timely_completion_transfers_output_under_original_total_and_service_caps"
+    },
+    {
+      "line": 1886,
+      "text": "2026-11-08T07:33:03.7295364Z     ingress::public_v3::cpu_start_wait_tests::shared_clock_uncertainty_during_wait_is_not_retried_until_deadline"
+    },
+    {
+      "line": 1894,
+      "text": "2026-11-08T07:33:03.7301349Z     ingress::public_v3::history_response::tests::public_history_formatting_checks_original_cancel_stop_and_deadline"
+    },
+    {
+      "line": 1921,
+      "text": "2026-11-08T07:33:03.7321342Z     ingress::public_v3::intake_domain_tests::public_epoch_start_keeps_original_deadline_and_stop_while_owner_is_busy"
+    },
+    {
+      "line": 1925,
+      "text": "2026-11-08T07:33:03.7324536Z     ingress::public_v3::paid_settlement_consistency_tests::paid_dispatch_known_sample_cannot_hide_failed_reservation_return"
+    },
+    {
+      "line": 1964,
+      "text": "2026-11-08T07:33:03.7355709Z     ingress::public_v3::scalar_cpu::completion_tests::completion_keeps_original_cancellation_deadline_and_unknown_clock_fences"
+    },
+    {
+      "line": 1989,
+      "text": "2026-11-08T07:33:03.7375430Z     ingress::public_v3::scalar_cpu::metered_fact_tests::failed_product_and_warm_retry_each_pay_exact_cpu_without_poisoning"
+    },
+    {
+      "line": 2019,
+      "text": "2026-11-08T07:33:03.7398497Z     ingress::public_v3::tests::abandoned_public_work_preserves_cancel_then_deadline_order_without_admission"
+    },
+    {
+      "line": 2023,
+      "text": "2026-11-08T07:33:03.7401235Z     ingress::public_v3::tests::client_stage_identity_preserves_observation_labels_and_exact_failed_phase_accounting"
+    },
+    {
+      "line": 2034,
+      "text": "2026-11-08T07:33:03.7408629Z     ingress::public_v3::tests::eight_paid_submits_wait_for_full_queue_without_losing_body_or_absolute_deadline"
+    },
+    {
+      "line": 2035,
+      "text": "2026-11-08T07:33:03.7409304Z     ingress::public_v3::tests::failed_output_closes_only_that_connection_and_later_honest_request_succeeds"
+    },
+    {
+      "line": 2036,
+      "text": "2026-11-08T07:33:03.7409958Z     ingress::public_v3::tests::failed_scoped_previews_and_parallel_requests_keep_separate_complete_cpu"
+    },
+    {
+      "line": 2037,
+      "text": "2026-11-08T07:33:03.7410590Z     ingress::public_v3::tests::finished_queue_and_failed_send_keep_output_owned_until_request_closes"
+    },
+    {
+      "line": 2054,
+      "text": "2026-11-08T07:33:03.7421776Z     ingress::public_v3::tests::queue_backpressure_preserves_deadline_and_releases_permits_on_drop"
+    },
+    {
+      "line": 2067,
+      "text": "2026-11-08T07:33:03.7430466Z     ingress::public_v3::tests::slow_initial_frames_cannot_occupy_read_worker_or_renew_absolute_deadline"
+    },
+    {
+      "line": 2085,
+      "text": "2026-11-08T07:33:03.7443080Z test result: ok. 214 passed; 0 failed; 2 ignored; 0 measured; 995 filtered out; finished in 25.05s"
+    },
+    {
+      "line": 2087,
+      "text": "2026-11-08T07:33:03.7443720Z test result: ok. 214 passed; 0 failed; 2 ignored; 0 measured; 995 filtered out; finished in 25.05s"
+    },
+    {
+      "line": 2122,
+      "text": "2026-11-08T07:33:13.2911300Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 0.15s"
+    },
+    {
+      "line": 2184,
+      "text": "2026-11-08T07:33:20.3297471Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 4.25s"
+    },
+    {
+      "line": 2191,
+      "text": "2026-11-08T07:33:20.4062256Z \u001b[36;1mtest \"$(grep -Ec '^test result: ok\\. [1-9][0-9]* passed; 0 failed;' \"$TRNM_CI_RECEIPT_DIR/model-regressions.log\")\" -eq 2\u001b[0m"
+    },
+    {
+      "line": 2241,
+      "text": "2026-11-08T07:34:06.2219951Z test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 40.85s"
+    },
+    {
+      "line": 2263,
+      "text": "2026-11-08T07:34:32.9899597Z test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 26.76s"
+    },
+    {
+      "line": 2310,
+      "text": "2026-11-08T07:38:20.3520257Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1210 filtered out; finished in 0.08s"
+    },
+    {
+      "line": 2324,
+      "text": "2026-11-08T07:38:20.7049690Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1210 filtered out; finished in 0.21s"
+    },
+    {
+      "line": 2338,
+      "text": "2026-11-08T07:38:20.8838563Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1210 filtered out; finished in 0.04s"
+    },
+    {
+      "line": 2352,
+      "text": "2026-11-08T07:38:21.0633287Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1210 filtered out; finished in 0.04s"
+    },
+    {
+      "line": 2366,
+      "text": "2026-11-08T07:38:21.2393719Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1210 filtered out; finished in 0.04s"
+    },
+    {
+      "line": 2386,
+      "text": "2026-11-08T07:38:22.0277973Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1210 filtered out; finished in 0.65s"
+    },
+    {
+      "line": 2401,
+      "text": "2026-11-08T07:38:24.5811560Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.96s"
+    },
+    {
+      "line": 2438,
+      "text": "2026-11-08T07:38:26.1875089Z {\"architecture\":\"x86_64\",\"binary_sha256\":\"6373cadb44434943a84eb7fa66d5238d3d6692151e55108647d2974bd94ac396\",\"build_profile\":\"release\",\"builder_commit_claim\":null,\"builder_tree_claim\":null,\"cases\":3,\"first_full_blocks\":8,\"independent_accepted\":false,\"one_owner\":true,\"os\":\"linux\",\"page_cache_cleared\":false,\"pairs_per_case\":128,\"production_activation\":false,\"public_network_ready\":false,\"reader_writer_split\":false,\"reference_scope\":\"original complete packet copy for length and grow-and-append response codec in same current binary; same history traversal and actual SQLite owner\",\"rss_measured\":false,\"schema\":\"native-packet-history-cost-source-v2\",\"signed_transactions_per_full_block\":256,\"source_files\":[{\"path\":\"config/consensus-mainline.json\",\"sha256\":\"a3a703bd9fc1244f0c0190fee52b9cfae68c2a2c0008bbdf704bf0c0b03416f3\"},{\"path\":\"config/finality-profile-v1.json\",\"sha256\":\"0e16c664f1414d256bad31aadb201df508dbf6e52b340fe32a9da47adc79fc31\"},{\"path\":\"config/pon-nakamoto-v1.json\",\"sha256\":\"906a85681c7da5108bdbd7f8187c53aa4ab797ac3a72bfb154d46c91e621b085\"},{\"path\":\"config/pon/applicability-v1.json\",\"sha256\":\"431f5d766fa78ffad267a954e458002e937785ea4445c0b33ed4cbf4d4d59640\"},{\"path\":\"config/pon/binary-diverse60-training-v3.json\",\"sha256\":\"d457f4b01cc6aaa445403e81b1fa9511e24f23e4254a6ef9ff9ec29abab693cf\"},{\"path\":\"config/pon/checkpoint-tile-task-v1.json\",\"sha256\":\"2f2da936598864c6b73b96410ed88d3b8f7bd836357fbf7385b681af5591df46\"},{\"path\":\"config/pon/continuity-v1.json\",\"sha256\":\"6932399d708ae73c81183e67e376bd9321bf2f69bbe792a78a6b672188f34821\"},{\"path\":\"config/pon/devnet-v1.json\",\"sha256\":\"4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4\"},{\"path\":\"config/pon/evaluation-round-v1.json\",\"sha256\":\"f65de29ae87bbcdb1cfb3a54bba22323e68d7decfd29763"
+    },
+    {
+      "line": 3213,
+      "text": "2026-11-08T07:38:26.6577436Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1210 filtered out; finished in 1.38s"
+    }
+  ],
+  "log_lines": 3303,
+  "log_sha256": "c9a346f03c06b357436c6566948209ae855f9150599bd720697a2b273d94049e",
+  "note": "Pattern hits are navigation only; expected refusal controls can match; not inferred failure causes.",
+  "tail": [
+    {
+      "line": 3280,
+      "text": "2026-11-08T07:38:28.8930615Z Root directory input is valid!"
+    },
+    {
+      "line": 3281,
+      "text": "2026-11-08T07:38:29.3087959Z Beginning upload of artifact content to blob storage"
+    },
+    {
+      "line": 3282,
+      "text": "2026-11-08T07:38:30.4363299Z (node:9016) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities."
+    },
+    {
+      "line": 3283,
+      "text": "2026-11-08T07:38:31.2751570Z Uploaded bytes 7841170"
+    },
+    {
+      "line": 3284,
+      "text": "2026-11-08T07:38:31.3465564Z Finished uploading artifact content to blob storage!"
+    },
+    {
+      "line": 3285,
+      "text": "2026-11-08T07:38:31.3469692Z SHA256 digest of uploaded artifact zip is 3895103c42a25630c143cce33bee1f71ffd6f2ede5b1f344cc3cf605f72dec56"
+    },
+    {
+      "line": 3286,
+      "text": "2026-11-08T07:38:31.3472012Z Finalizing artifact upload"
+    },
+    {
+      "line": 3287,
+      "text": "2026-11-08T07:38:31.7741490Z Artifact priority-ubuntu-24.04-head-service-model-2bdd252aa6c300b7431b9ee897b254b7953cf562-1.zip successfully finalized. Artifact ID 13608438878"
+    },
+    {
+      "line": 3288,
+      "text": "2026-11-08T07:38:31.7743062Z Artifact priority-ubuntu-24.04-head-service-model-2bdd252aa6c300b7431b9ee897b254b7953cf562-1 has been successfully uploaded! Final size is 7841170 bytes. Artifact ID is 13608438878"
+    },
+    {
+      "line": 3289,
+      "text": "2026-11-08T07:38:31.7751493Z Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886555/artifacts/13608438878"
+    },
+    {
+      "line": 3290,
+      "text": "2026-11-08T07:38:31.8032717Z Post job cleanup."
+    },
+    {
+      "line": 3291,
+      "text": "2026-11-08T07:38:31.8941621Z [command]/usr/bin/git version"
+    },
+    {
+      "line": 3292,
+      "text": "2026-11-08T07:38:31.8987775Z git version 2.56.0"
+    },
+    {
+      "line": 3293,
+      "text": "2026-11-08T07:38:31.9028531Z Temporarily overriding HOME='/home/runner/work/_temp/6eaebf35-00e8-49a2-9471-7bec3a1f598b' before making global git config changes"
+    },
+    {
+      "line": 3294,
+      "text": "2026-11-08T07:38:31.9030112Z Adding repository directory to the temporary git global config as a safe directory"
+    },
+    {
+      "line": 3295,
+      "text": "2026-11-08T07:38:31.9035327Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain"
+    },
+    {
+      "line": 3296,
+      "text": "2026-11-08T07:38:31.9078439Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand"
+    },
+    {
+      "line": 3297,
+      "text": "2026-11-08T07:38:31.9118805Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+    },
+    {
+      "line": 3298,
+      "text": "2026-11-08T07:38:31.9412565Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader"
+    },
+    {
+      "line": 3299,
+      "text": "2026-11-08T07:38:31.9454361Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+    },
+    {
+      "line": 3300,
+      "text": "2026-11-08T07:38:31.9773017Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:"
+    },
+    {
+      "line": 3301,
+      "text": "2026-11-08T07:38:31.9824029Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url"
+    },
+    {
+      "line": 3302,
+      "text": "2026-11-08T07:38:32.0310255Z Cleaning up orphan processes"
+    },
+    {
+      "line": 3303,
+      "text": "2026-11-08T07:38:32.0690067Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "schema": "TRNM-W1-C8-POSTOWNER-LAUNCH1",
+  "stage": "historical",
+  "source_commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "source_tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c",
+  "driver_launched": true,
+  "qualification_complete": true,
+  "started_monotonic_ns": 1208568920821115,
+  "gate_path": "/home/qian-qi/work/chain-w1-c8-postowner-tools-20261108-ec265b/gate-historical-01.json",
+  "gate_sha256": "6285d464d3d54ad591a80f18ca0ca5d3ea5b9ccd032699969d6762eef3ce7d33",
+  "full_history_executed": false,
+  "fresh_cargo_target": false,
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/home/qian-qi/work/chain-w1-c8-root-tools-20261108-ec265b/qualify_source.py",
+    "--repo",
+    "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+    "--head",
+    "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "--out",
+    "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-historical-regressions-01",
+    "--plan",
+    "/home/qian-qi/work/chain-w1-c8-root-tools-20261108-ec265b/historical-regressions-plan.json",
+    "--target",
+    "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b"
+  ],
+  "output": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-historical-regressions-01",
+  "driver_exit": 0,
+  "manifest": {
+    "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-historical-regressions-01/manifest.json",
+    "sha256": "eef45c33e9aae4650c70fcaefc174841e6f75cd8c018139705d459e1fc71c1e6"
+  },
+  "rust_test_outcomes": {
+    "passed": 10,
+    "failed": 0,
+    "ignored": 0
+  },
+  "actual_command_count": 4,
+  "finished_monotonic_ns": 1208604500149496
+}

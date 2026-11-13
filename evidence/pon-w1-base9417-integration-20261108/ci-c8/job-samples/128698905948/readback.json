@@ -1,0 +1,127 @@
+{
+  "conclusion": "failure",
+  "event_declarations": [
+    {
+      "field": "EXPECTED_HEAD",
+      "line": 49,
+      "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "field": "EXPECTED_HEAD",
+      "line": 74,
+      "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "field": "EXPECTED_HEAD",
+      "line": 1048,
+      "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "field": "EXPECTED_HEAD",
+      "line": 1148,
+      "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "field": "EXPECTED_HEAD",
+      "line": 1514,
+      "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "field": "EXPECTED_HEAD",
+      "line": 1569,
+      "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "field": "EXPECTED_HEAD",
+      "line": 1618,
+      "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "field": "EXPECTED_HEAD",
+      "line": 1639,
+      "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    }
+  ],
+  "event_expected_raw_values": {
+    "EXPECTED_BASE": [],
+    "EXPECTED_HEAD": [
+      "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    ],
+    "EXPECTED_KIND": [],
+    "EXPECTED_MERGE": []
+  },
+  "event_expected_values": {
+    "EXPECTED_BASE": null,
+    "EXPECTED_HEAD": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "EXPECTED_KIND": null,
+    "EXPECTED_MERGE": null
+  },
+  "event_expected_values_inferred_from_API_or_merge": false,
+  "first_failed_step": {
+    "completed_at": "2026-11-08T10:19:17Z",
+    "conclusion": "failure",
+    "name": "Run three original campaigns under verified actual limits",
+    "number": 7,
+    "started_at": "2026-11-08T10:10:08Z",
+    "status": "completed"
+  },
+  "head_sha": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "job_id": 128698905948,
+  "job_log": "job-samples/128698905948/log.stdout",
+  "job_metadata": "job-samples/128698905948/metadata.stdout",
+  "log_fetch_exit": 0,
+  "matching_log_line_count": 12,
+  "metadata_fetch_exit": 0,
+  "name": "original native campaign (x64, head, release)",
+  "run_id": 42470187035,
+  "tuple_and_error_log_lines": [
+    {
+      "line": 49,
+      "text": "2026-11-08T10:09:14.7057581Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "line": 74,
+      "text": "2026-11-08T10:09:14.7410766Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "line": 1048,
+      "text": "2026-11-08T10:09:56.0882582Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "line": 1148,
+      "text": "2026-11-08T10:09:59.7076437Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "line": 1461,
+      "text": "2026-11-08T10:10:08.9750437Z \u001b[36;1m                r'^test result: ok\\. 1 passed; 0 failed; 0 ignored;',\u001b[0m"
+    },
+    {
+      "line": 1478,
+      "text": "2026-11-08T10:10:08.9757601Z \u001b[36;1m        result['failure'] = 'ORIGINAL_THREE_RUN_CAMPAIGN_FAILED'\u001b[0m"
+    },
+    {
+      "line": 1514,
+      "text": "2026-11-08T10:10:08.9790726Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "line": 1569,
+      "text": "2026-11-08T10:10:08.9915002Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "line": 1576,
+      "text": "2026-11-08T10:19:17.0137302Z {\"attempts\": [{\"complete_success\": false, \"number\": 1, \"original_criteria_met\": false, \"phase_startup_errors\": [], \"report_directory\": \"run-1-raw\", \"report_sha256\": \"5c25a4fc22a86c4e679c9ca2c895054469dca648e664a90910559d4daf745099\", \"report_validation_failure\": null, \"step\": {\"command\": [\"/home/runner/.cargo/bin/cargo\", \"+1.95.0\", \"test\", \"--locked\", \"--offline\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_multiprocess\", \"separate_process_work_and_signed_confirmation_campaign\", \"--\", \"--exact\", \"--ignored\", \"--nocapture\", \"--test-threads=1\"], \"complete_success\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"elapsed_ns\": 113622614721, \"elapsed_seconds\": 113.622614721, \"error\": null, \"name\": \"run-1\", \"outer_stage_timeout_seconds\": 600, \"returncode\": 101, \"stderr\": \"run-1.stderr.log\", \"stderr_bytes\": 1615, \"stderr_sha256\": \"c5dc1f81d1da731bad92559a4005c22906eedce92d2663955d78f6270548bbba\", \"stderr_truncated\": false, \"stdout\": \"run-1.stdout.log\", \"stdout_bytes\": 271, \"stdout_sha256\": \"6d94802c6de8e5ced2f426c52e6d524d82e086e00c2a27de17afc9435e12f85f\", \"stdout_truncated\": false}}, {\"complete_success\": false, \"number\": 2, \"original_criteria_met\": false, \"phase_startup_errors\": [], \"report_directory\": \"run-2-raw\", \"report_sha256\": \"51be97be0199d67ee65ead3f05c7f41e933b14a0a9a053908535b27d633bec70\", \"report_validation_failure\": null, \"step\": {\"command\": [\"/home/runner/.cargo/bin/cargo\", \"+1.95.0\", \"test\", \"--locked\", \"--offline\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_multiprocess\", \"separate_process_work_and_signed_confirmation_campaign\", \"--\", \"--exact\", \"--ignored\", \"--nocapture\", \"--test-threads=1\"], \"complete_success\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"elapsed_ns\": 113402969263, \"elapsed_seconds\": 113.402969263, \"error\": null, \"name\": \"run-2\", \"outer_stage_timeout_seconds\": 600, \"returncode\": 101, \"stderr\": \"run-2.stderr.log\", \"stderr_bytes\": 1615, \"stderr_sha256\": \"7fdb8350adc7ba9e354c1f677cf64fe4337ca38318bbf69f87dca345d2fe4519\", \"stderr_truncated\": false, \"stdout\": \"run-2.stdout.log\", \"stdout_bytes\": 271, \"stdout_sha256\": \"86c9c89d103c2a69abaf0cec13da95a544f52e846469c9681575d3300f856a6f\", \"stdout_truncated\": false}}, {\"complete_success\": false, \"number\": 3, \"original_criteria_met\": false, \"phase_startup_errors\": [], \"report_directory\": \"run-3-raw\", \"report_sha256\": \"83aa2757ec311953640500eaa7c8e8d4f623d8df97bedd140b467394848dcc03\", \"report_validation_failure\": null, \"step\": {\"command\": [\"/home/runner/.cargo/bin/cargo\", \"+1.95.0\", \"test\", \"--locked\", \"--offline\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_multiprocess\", \"separate_process_work_and_signed_confirmation_campaign\", \"--\", \"--exact\", \"--ignored\", \"--nocapture\", \"--test-threads=1\"], \"complete_success\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"elapsed_ns\": 113315760288, \"elapsed_seconds\": 113.315760288, \"error\": null, \"name\": \"run-3\", \"outer_stage_timeout_seconds\": 600, \"returncode\": 101, \"stderr\": \"run-3.stderr.log\", \"stderr_bytes\": 1615, \"stderr_sha256\": \"d2f9fa4c64305825f9056ae8d40a01c996cb19cb476c567ae03949a597b82455\", \"stderr_truncated\": false, \"stdout\": \"run-3.stdout.log\", \"stdout_bytes\": 271, \"stdout_sha256\": \"e9874239f1a60e85321f47d2171a6d140505d7ecdd2fda365bd8e59597af942a\", \"stdout_truncated\": false}}], \"binary\": {\"actual_compiler_artifact_profile\": {\"debug_assertions\": false, \"debuginfo\": 0, \"opt_level\": \"3\", \"overflow_checks\": false, \"test\": true}, \"build_artifact\": \"/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-7f61597ebed162d6\", \"build_separate_from_measured_campaign\": true, \"bytes\": 11767928, \"execution\": \"original cargo test command using the checked build artifact\", \"retained\": \"public_v3_multiprocess.bin\", \"sha256_after\": \"f06df19ac5c2c1b683dd807604ca50b296979f0f277f121945ededef85ac6a75\", \"sha256_before\": \"f06df19ac5c2c1b683dd807604ca50b296979f0f277f121945ededef85ac6a75\"}, \"build\": {\"command\": [\"/home/runner/.cargo/bin/cargo\", \"+1.95.0\", \"test\", \"--locked\", \"--offline\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_multiprocess\", \"--no-run\", \"--message-format=json\"], \"complete_success\": true, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"elapsed_ns\": 186309800318, \"elapsed_seconds\": 186.309800318, \"error\": null, \"name\": \"build\", \"outer_stage_timeout_seconds\": 1800, \"returncode\": 0, \"stderr\": \"build.stderr.log\", \"stderr_bytes\": 4021, \"stderr_sha256\": \"3b4600545ed702c32134be8e79e15e64e8cc2e037a08ea9d49ed4f64e3c53966\", \"stderr_truncated\": false, \"stdout\": \"build.stdout.log\", \"stdout_bytes\": 111546, \"stdout_sha256\": \"e7c28c2299e2c7186f9894e209d91ee53186755eb4f704ef2b4ad67e4b7a5b6a\", \"stdout_truncated\": false}, \"build_timeout_seconds\": 1800, \"complete_success\": false, \"completed_utc\": \"2026-11-08T10:19:17.010586+00:00\", \"expected_head\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"expected_public_policy_id\": \"6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f\", \"expected_resources\": {\"cpu_max\": \"400000 100000\", \"memory_max\": \"17179869184\", \"nice\": 10}, \"expected_tree\": \"19a4f1a6e1cec5c27e595fa555b97cddc4717a3c\", \"failure\": \"ORIGINAL_THREE_RUN_CAMPAIGN_FAILED\", \"finalization_failures\": [], \"original_campaign_outer_timeout_seconds\": 600, \"original_inputs\": {\"attacker_processes\": [0, 24, 24], \"business_blocks\": 21, \"modes\": [\"baseline\", \"from-zero\", \"late-product\"], \"phase_seconds\": 30, \"seed_blocks\": 4, \"seed_transfers\": 1024}, \"planned_complete_runs\": 3, \"profile\": \"release\", \"public_phase_placement\": {\"attacker_processes_remain_in_original_controller_domain\": true, \"fixed_parent\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"original_3x3_workload_and_depletion_predicates_changed\": false, \"profile\": \"fixed-public-phase-external-actors-v1\", \"receiver_and_verifier_cpu_max\": \"25000 100000\", \"receiver_and_verifier_memory_max\": \"2147483648\"}, \"runner_sha256\": \"c1dfb715aaf8c0c86d66c9ebee6cf64c4a829b89fdf93767e2ce9f847b8534c0\", \"schema\": \"pon-original-native-campaign-ci-v1\", \"scope\": \"same-host controlled loopback; no independent-operator, WAN, hardness, model-efficacy or activation qualification\", \"source_after\": {\"base\": null, \"candidate\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"tested_tree\": \"19a4f1a6e1cec5c27e595fa555b97cddc4717a3c\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 1683157041, \"tracked_entries\": 15390, \"tracked_worktree_verified\": true}, \"source_kind\": \"head\", \"started_utc\": \"2026-11-08T10:10:09.107515+00:00\", \"state_backend\": \"authenticated-v1\", \"toolchain\": \"1.95.0\"}"
+    },
+    {
+      "line": 1583,
+      "text": "2026-11-08T10:19:17.1547208Z ##[error]Process completed with exit code 1."
+    },
+    {
+      "line": 1618,
+      "text": "2026-11-08T10:19:17.1634037Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    },
+    {
+      "line": 1639,
+      "text": "2026-11-08T10:19:19.7819628Z   EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    }
+  ]
+}

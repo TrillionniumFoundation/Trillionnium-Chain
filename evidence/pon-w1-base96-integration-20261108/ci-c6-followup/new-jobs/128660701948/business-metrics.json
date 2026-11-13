@@ -1,0 +1,66 @@
+[
+  {
+    "finite_target_met": false,
+    "label": "original",
+    "phases": [
+      {
+        "business_started_ns": 146934,
+        "client_confirmation_latency_ns": 3098021827,
+        "client_confirmed_before_original_window_end": true,
+        "client_confirmed_transactions": 1,
+        "confirmation_ended_ns": 3098168761,
+        "finite_business_target_met": true,
+        "mode": "attack-free-baseline",
+        "requested_window_ns": 4000000000,
+        "verification_errors": [],
+        "workers": 0
+      },
+      {
+        "business_started_ns": 98859779,
+        "client_confirmation_latency_ns": null,
+        "client_confirmed_before_original_window_end": false,
+        "client_confirmed_transactions": 0,
+        "confirmation_ended_ns": null,
+        "finite_business_target_met": false,
+        "mode": "from-zero-pressure",
+        "requested_window_ns": 4000000000,
+        "verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "workers": 16
+      }
+    ]
+  },
+  {
+    "finite_target_met": false,
+    "label": "fresh",
+    "phases": [
+      {
+        "business_started_ns": 152244,
+        "client_confirmation_latency_ns": 3091566631,
+        "client_confirmed_before_original_window_end": true,
+        "client_confirmed_transactions": 1,
+        "confirmation_ended_ns": 3091718875,
+        "finite_business_target_met": true,
+        "mode": "attack-free-baseline",
+        "requested_window_ns": 4000000000,
+        "verification_errors": [],
+        "workers": 0
+      },
+      {
+        "business_started_ns": 107141769,
+        "client_confirmation_latency_ns": null,
+        "client_confirmed_before_original_window_end": false,
+        "client_confirmed_transactions": 0,
+        "confirmation_ended_ns": null,
+        "finite_business_target_met": false,
+        "mode": "from-zero-pressure",
+        "requested_window_ns": 4000000000,
+        "verification_errors": [
+          "PUBLIC_REQUEST_DEADLINE"
+        ],
+        "workers": 16
+      }
+    ]
+  }
+]

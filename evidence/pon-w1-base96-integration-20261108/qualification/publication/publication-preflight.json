@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh",
+    "--dev"
+  ],
+  "cwd": "/home/qian-qi/work/chain-w1-c7-attestation-20261108-ec265b",
+  "exit": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "4e7060f9ee7fa64b71c2afa9051a09ad8a4481f2b2e8e4a831ba362a2f6c24d3"
+}

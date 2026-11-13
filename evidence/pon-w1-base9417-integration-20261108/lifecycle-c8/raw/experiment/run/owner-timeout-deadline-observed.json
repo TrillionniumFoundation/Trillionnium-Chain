@@ -1,0 +1,8 @@
+{
+  "deadline_renewed": false,
+  "observed_monotonic_ns": 1210689012186887,
+  "original_deadline_ns": 1210689011653932,
+  "schema": "TRNM-W1-OWNER-TIMEOUT-WAIT1",
+  "target_cancel_request_sent": false,
+  "target_terminal_state_not_yet_inferred": true
+}

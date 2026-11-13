@@ -1,0 +1,30 @@
+{
+  "child_intent": {
+    "bytes": 586,
+    "device": 2050,
+    "inode": 57689995,
+    "nlink": 1,
+    "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/native-cache-copy-01.child.json",
+    "sha256": "78038332794f82c35ac988702a038e492f8110f60a13ff2cf21cebcd51548205"
+  },
+  "direct_child_waited": true,
+  "exit_code": 0,
+  "finished_monotonic_ns": 1202131643932354,
+  "started_monotonic_ns": 1202126594169345,
+  "stderr": {
+    "bytes": 0,
+    "device": 2050,
+    "inode": 57689994,
+    "nlink": 1,
+    "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/native-cache-copy-01.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 0,
+    "device": 2050,
+    "inode": 57689993,
+    "nlink": 1,
+    "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/native-cache-copy-01.stdout",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

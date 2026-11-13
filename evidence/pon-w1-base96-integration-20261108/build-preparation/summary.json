@@ -1,0 +1,69 @@
+{
+  "C7_full_gate_inputs": {
+    "commands": 69,
+    "history_compile_list_executed_test_methods": 0,
+    "ignored": 4,
+    "passed_tests": 655
+  },
+  "backend_qualification": {
+    "commands": 7,
+    "new_test_methods": 0,
+    "source_probe_expected_exit": 1
+  },
+  "cache_copies": [
+    {
+      "budget_seconds": 1800,
+      "exit": 0,
+      "job": "1a1ba251f9f-12894-189e",
+      "logical_bytes": 1683319194,
+      "regular_files": 3894,
+      "role": "backend",
+      "terminal": "succeeded"
+    },
+    {
+      "budget_seconds": 1800,
+      "exit": 0,
+      "job": "1a1ba265585-12894-18a5",
+      "logical_bytes": 864041323,
+      "regular_files": 1974,
+      "role": "native",
+      "terminal": "succeeded"
+    }
+  ],
+  "complete_resource_billing_qualified": false,
+  "destination_duplicate_inodes": 0,
+  "destination_hardlinks": 0,
+  "expensive_proof_started_by_this_preparation": false,
+  "guest_recompiled": false,
+  "independent_cleanroom_build": false,
+  "lifecycle_completion_established": false,
+  "native_qualification": {
+    "commands": 10,
+    "historical_native243_reexecuted": false,
+    "tests_passed": 4
+  },
+  "owner_import": {
+    "commands_verified": 19,
+    "derived_schema_mapping": true,
+    "job": "1a1ba426182-12894-1950",
+    "new_tests_executed_by_import": 0,
+    "original_tests_ignored": 4,
+    "original_tests_passed": 37,
+    "raw_logs_copied": 38,
+    "raw_logs_verified": 38
+  },
+  "provider_payment_qualified": false,
+  "registry_toolchain_reused": true,
+  "schema": "TRNM-W1-C7-BUILD-PREPARATION-SUMMARY1",
+  "source": {
+    "commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe"
+  },
+  "source_elf_pins_and_regular_metadata_unchanged": true,
+  "source_inode_sharing": 0,
+  "target_origins": {
+    "backend": "copied qualified C6 cache; fresh=false",
+    "native": "copied qualified C6 native03 cache; fresh=false",
+    "owner": "root-qualified C7 empty target at build start; fresh=true"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "schema": "TRNM-W1-LOCAL-ORCHESTRATION-FAILURE1",
+  "phase": "JavaScript source compilation before tool execution",
+  "error": "SyntaxError: Unexpected token '{'",
+  "tools_executed_in_failed_call": 0,
+  "remote_mutations_in_failed_call": 0,
+  "scope": "Local finalizer assembly only; no experiment or Git operation"
+}

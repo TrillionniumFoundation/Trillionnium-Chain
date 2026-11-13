@@ -1,0 +1,102 @@
+{
+  "actual_cold_reopen": {
+    "canonical_cancel_observed": false,
+    "canonical_inclusion": null,
+    "funding_row": {
+      "deadline": 20,
+      "output": null,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "remaining": 1000,
+      "status": "reserved"
+    },
+    "gross_owner_refund_units": null,
+    "native_cancel_attempt_retained": true,
+    "net_account_delta_not_claimed": true,
+    "new_transaction_submitted": false,
+    "original_operation": "dba9793565d7ae83790eaba3abb255fad2643d9b2d5696196a426ae289c7d83f",
+    "refund_basis": "actual original owner-signed tag 3 in canonical ancestry; not provider status or resource accounting",
+    "refund_claim": false
+  },
+  "all_descendants_reaped": null,
+  "alternate_tip": "535a1c54134b9e9fd0f97fbaf027fd42453a3cfa803693d83a0ce89e64b138b5",
+  "before_reorg": {
+    "canonical_cancel_observed": true,
+    "canonical_inclusion": "9106aa00fd98086ceba112c228c487398311b407bf81dd886378c2b0587f06fd",
+    "funding_row": {
+      "deadline": 20,
+      "output": null,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "remaining": 0,
+      "status": "cancelled"
+    },
+    "gross_owner_refund_units": 1000,
+    "native_cancel_attempt_retained": true,
+    "net_account_delta_not_claimed": true,
+    "new_transaction_submitted": false,
+    "original_operation": "dba9793565d7ae83790eaba3abb255fad2643d9b2d5696196a426ae289c7d83f",
+    "refund_basis": "actual original owner-signed tag 3 in canonical ancestry; not provider status or resource accounting",
+    "refund_claim": true
+  },
+  "cancel_removed": {
+    "canonical_cancel_observed": false,
+    "canonical_inclusion": null,
+    "funding_row": {
+      "deadline": 20,
+      "output": null,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "remaining": 1000,
+      "status": "reserved"
+    },
+    "gross_owner_refund_units": null,
+    "native_cancel_attempt_retained": true,
+    "net_account_delta_not_claimed": true,
+    "new_transaction_submitted": false,
+    "original_operation": "dba9793565d7ae83790eaba3abb255fad2643d9b2d5696196a426ae289c7d83f",
+    "refund_basis": "actual original owner-signed tag 3 in canonical ancestry; not provider status or resource accounting",
+    "refund_claim": false
+  },
+  "deadline_renewed": false,
+  "m12_dispatch_begin": "Done",
+  "m12_original_resource_cap_retained": true,
+  "m12_readback_unchanged": true,
+  "new_cancel_wire_signed": false,
+  "new_generation_dispatches": 0,
+  "new_native_cancel_transactions": 0,
+  "new_target_cancel_requests": 0,
+  "original_cancel_packet_sha256": "6a6125eceb7916ccf4afb673e9abeaa54d4c66ea6a21de5b0a45956dc4805295",
+  "original_cancel_restored": {
+    "canonical_cancel_observed": true,
+    "canonical_inclusion": "9106aa00fd98086ceba112c228c487398311b407bf81dd886378c2b0587f06fd",
+    "funding_row": {
+      "deadline": 20,
+      "output": null,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "remaining": 0,
+      "status": "cancelled"
+    },
+    "gross_owner_refund_units": 1000,
+    "native_cancel_attempt_retained": true,
+    "net_account_delta_not_claimed": true,
+    "new_transaction_submitted": false,
+    "original_operation": "dba9793565d7ae83790eaba3abb255fad2643d9b2d5696196a426ae289c7d83f",
+    "refund_basis": "actual original owner-signed tag 3 in canonical ancestry; not provider status or resource accounting",
+    "refund_claim": true
+  },
+  "original_cancel_tip": "9106aa00fd98086ceba112c228c487398311b407bf81dd886378c2b0587f06fd",
+  "original_cancel_wire_sha256": "f73e5433dc740e181426a3e50fc5f4e54d19cd9a84a1c96043257f0bfcfeb17d",
+  "original_deadline_ns": 1191795668407846,
+  "owner_balance_after_cancel": 9999290,
+  "owner_balance_while_cancel_removed": 9998581,
+  "production_qualified": false,
+  "provider_balance_unchanged": true,
+  "provider_operation": "3c722d76b352db7450c53321368b305782f25612b9ed1fb806c49c5ec7fb5c77",
+  "public_chain_transactions_sent": false,
+  "resource_accounting": "UNKNOWN",
+  "restored_tip": "3b14d813c528a1acb2bb4e8b56eca4da5050fe91ac81799e8aacce788915b1ee",
+  "schema": "TRNM-W1-OWNER-TIMEOUT-REORG1",
+  "statement": "5592f86e015fe11571eecdb9594d3b35b7eeb074a1b9488cb4a50acfeb89ef7b"
+}

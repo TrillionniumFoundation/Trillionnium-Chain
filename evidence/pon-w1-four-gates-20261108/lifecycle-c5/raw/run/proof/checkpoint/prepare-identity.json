@@ -1,0 +1,22 @@
+{
+  "schema": "TRNM-W1-STAGED-PROOF2",
+  "source_commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+  "runner_sha256": "499b9e67297907cc5a2ab1062b17c57c60bb5a022240f27526451c1d9ff6ae91",
+  "guest_sha256": "25718312ec3c6f5219d832e3516adfb5f82983156f669c5e7daa15bd22d1798f",
+  "image_id": [
+    1958252411,
+    3287394615,
+    1805488136,
+    1516578702,
+    78549041,
+    790278610,
+    301018785,
+    4279049364
+  ],
+  "r0vm_sha256": "2acdf550f9aca4d05b74072463e4ed307c3824309c754a5cb5f93aa84f3390e6",
+  "input_sha256": "67b74fa2f417c0240d974e5ecea410d2b68d97d6dde667603aeb4d7ce59036cb",
+  "journal_sha256": "56a5fcd0a18fc4db36aa37583dc8f7f75fe8f811482eec36d9b7121bae6f07ee",
+  "full_claim_digest": "ee723bb7fbf8883ce892809ec2248abca9cd8c269944eb0e2c669d36880f0f32",
+  "segment_limit_po2": 18,
+  "segments": []
+}

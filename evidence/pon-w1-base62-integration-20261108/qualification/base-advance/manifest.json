@@ -1,0 +1,25 @@
+{
+  "schema": "w1-independent-review-bundle-manifest-v1",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 1106,
+      "sha256": "fbff984808f5d7ce0de8775d7f27c90d3d3e7e639ebb46b6c30bd417c41d565d"
+    },
+    {
+      "path": "raw-logs.tar.gz",
+      "bytes": 11310,
+      "sha256": "efd809dbbc44f4a9ac2c4808d1f5e41da1176833c591681711297ee8d3bc349f"
+    },
+    {
+      "path": "raw-output-index.json",
+      "bytes": 739,
+      "sha256": "6a7ef53ded680f00acb98ff93d17535fd58123be062adf85d970abc0a9fdef3f"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 1726,
+      "sha256": "bbe154610f1b92f90ce80191d851d11210ceda41e67f6199045d92aed68a3c35"
+    }
+  ]
+}

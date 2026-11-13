@@ -1,0 +1,71 @@
+{
+  "cargo_started": false,
+  "copy_argv": [
+    "/usr/bin/cp",
+    "-a",
+    "--reflink=auto",
+    "--no-preserve=links",
+    "--",
+    "/home/qian-qi/work/chain-w1-base62-backend-target-20261108-ec265b",
+    "/home/qian-qi/work/chain-w1-base96-backend-target-20261108-ec265b"
+  ],
+  "deadline_extension_allowed": false,
+  "destination": "/home/qian-qi/work/chain-w1-base96-backend-target-20261108-ec265b",
+  "destination_binaries_qualified_for_c7": false,
+  "disk_free_bytes_before": 91275395072,
+  "hardlinks_to_source_allowed": false,
+  "operation_created": false,
+  "outer_hepta_timeout_seconds": 1800,
+  "owner_cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1ba251f9f-12894-189e.service",
+  "owner_identity": {
+    "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+    "pid": 3823230,
+    "start_ticks": 120202875,
+    "state": "R"
+  },
+  "reflink_auto_may_share_copy_on_write_extents": true,
+  "role": "backend",
+  "schema": "TRNM-W1-C7-CACHE-COPY-DECLARATION1",
+  "scope": "this independent preparation attempt only",
+  "source": {
+    "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+  },
+  "source_binaries_before": {
+    "release/w1-staged-prover-v2": {
+      "bytes": 47812232,
+      "device": 2050,
+      "inode": 54840908,
+      "nlink": 2,
+      "path": "/home/qian-qi/work/chain-w1-base62-backend-target-20261108-ec265b/release/w1-staged-prover-v2",
+      "sha256": "9ff491a702f6833a73c10129d688ad77a905fc7ebaedfbc8784c7f8c485b77ac"
+    }
+  },
+  "source_inventory": {
+    "bytes": 4524,
+    "device": 2050,
+    "inode": 57672536,
+    "nlink": 1,
+    "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/cache-source-inventory-01.json",
+    "sha256": "b3b13acdf4a273201b97424e34fcf999665b7b6bf37526d72821e17e08de2f10"
+  },
+  "source_qualification": {
+    "bytes": 11652,
+    "device": 2050,
+    "inode": 56773612,
+    "nlink": 1,
+    "path": "/home/qian-qi/work/chain-w1-c6-backend-qualification-20261108-ec265b-02/manifest.json",
+    "sha256": "f7c538e360541f15ebea2f8aea7e2fc50bde53ee1cdcd1354b3624b042c2979c"
+  },
+  "source_regular_file_count": 3894,
+  "source_regular_logical_bytes": 1683319194,
+  "source_stat_inventory_sha256": "3f8d357e85b0611ff318644146c8ab9c06e8c9d7a65a0be212816348b443463a",
+  "source_target": "/home/qian-qi/work/chain-w1-base62-backend-target-20261108-ec265b",
+  "started_monotonic_ns": 1202029388372696,
+  "supervisor_identity": {
+    "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+    "pid": 3823104,
+    "start_ticks": 120202731,
+    "state": "D"
+  }
+}

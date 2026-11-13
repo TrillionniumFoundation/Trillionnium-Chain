@@ -1,0 +1,102 @@
+{
+  "head": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+  "sources": [
+    {
+      "bytes": 18932,
+      "path": "scripts/export_codeql_analysis.py",
+      "selected_lines": [
+        "58:        path.parent.mkdir(parents=True, exist_ok=True)",
+        "106:                            \"Duplicate IDs across API pages; snapshot was not stable\")",
+        "112:    event = json.loads(Path(os.environ[\"GITHUB_EVENT_PATH\"]).read_text())",
+        "113:    name = os.environ[\"GITHUB_EVENT_NAME\"]",
+        "116:    require(name in {\"pull_request\", \"workflow_dispatch\"}, \"Unsupported event\")",
+        "117:    number = event.get(\"number\") if name == \"pull_request\" else os.environ.get(\"EXPORT_PR_NUMBER\")",
+        "123:    if name == \"pull_request\":",
+        "124:        event_pr = event[\"pull_request\"]",
+        "127:        merge = sha(os.environ[\"GITHUB_SHA\"])",
+        "138:    require(commit[\"sha\"] == merge and [p[\"sha\"] for p in commit[\"parents\"]] == [base, head],",
+        "139:            \"Prospective merge does not have the exact ordered base/head parents\")",
+        "173:def snapshot(api, target, directory):",
+        "240:    associations = row.get(\"pull_requests\")",
+        "309:    args.out.mkdir(parents=True, exist_ok=False)",
+        "330:            ready, state = snapshot(api, target, f\"poll-{attempt:03d}\")",
+        "338:                final_ready, final_state = snapshot(api, target, f\"poll-{attempt:03d}-after-export\")"
+      ],
+      "sha256": "31217ef028048e8e47ad71257a8978fe4971d9a97c664a96b0d311bb8e7a98bf"
+    },
+    {
+      "bytes": 19272,
+      "path": "scripts/test_export_codeql_analysis.py",
+      "sha256": "7327eb8a26f66c87ee7e48604a7cd0e22424fa5e684e3d8c7c52c28f1f0103df",
+      "targeted_tests": [
+        {
+          "end_line": 260,
+          "line": 251,
+          "name": "test_pr_source_drift_and_wrong_merge_parents_fail",
+          "text": "    def test_pr_source_drift_and_wrong_merge_parents_fail(self):\n        moved = Server()\n        moved.pr = {**PR, \"head\": {**PR[\"head\"], \"sha\": STALE}}\n        wrong_merge = Server()\n        wrong_merge.parents.reverse()\n        for server, reason in [(moved, \"head/base moved\"), (wrong_merge, \"ordered base/head parents\")]:\n            with self.subTest(reason=reason):\n                code, result, _ = self.run_export(server)\n                self.assertEqual(code, 1)\n                self.assertIn(reason, result[\"error\"])"
+        }
+      ]
+    },
+    {
+      "bytes": 107053,
+      "path": "scripts/ci/test_ci_contract.py",
+      "sha256": "4467bd4d6badc77143613a7d32ef2aab74ce6bfaeef07fecb559d0b14a30c417",
+      "targeted_tests": []
+    },
+    {
+      "bytes": 16518,
+      "path": "scripts/ci/test_integration_push_source.py",
+      "sha256": "f2ce1dcb585bed2f2420bfa29e6673041c14f88cb735b969e42641577264e3b4",
+      "targeted_tests": [
+        {
+          "end_line": 205,
+          "line": 194,
+          "name": "test_wrong_tree_and_reversed_parent_commit_cannot_borrow_correct_inputs",
+          "text": "    def test_wrong_tree_and_reversed_parent_commit_cannot_borrow_correct_inputs(self):\n        context = self.resolve()\n        for reverse in (False, True):\n            changed = dict(context)\n            if reverse:\n                changed['merge'] = self.command(self.root, 'commit-tree', context['merge_tree'],\n                                                '-p', self.head, '-p', self.base, '-m', 'wrong parents')\n            else:\n                changed['merge_tree'] = self.command(self.root, 'rev-parse', self.head + '^{tree}')\n            with self.subTest(reverse=reverse), self.assertRaisesRegex(ValueError, 'PUSH_REPRODUCED_SOURCE'):\n                source.materialize(changed, source.digest(changed), 'head', root=self.root,\n                                   environment=self.expected(changed))"
+        }
+      ]
+    },
+    {
+      "bytes": 14458,
+      "path": "scripts/ci/integration_push_source.py",
+      "selected_lines": [
+        "9:attempt's resolver outputs. Separate workflow runs retain separate base snapshots.",
+        "26:ROOT = Path(__file__).resolve().parents[2]",
+        "32:MERGE_FORMAT = 'canonical-git-merge-tree-ordered-base-head-v1'",
+        "83:def event_identity(environment):",
+        "84:    require(environment.get('GITHUB_EVENT_NAME') == 'push'",
+        "88:    expected = environment.get('GITHUB_SHA')",
+        "90:    path = Path(environment['GITHUB_EVENT_PATH'])",
+        "227:            'github_event_name': environment['GITHUB_EVENT_NAME'],",
+        "228:            'github_sha': environment['GITHUB_SHA'], 'is_github_pr_merge': False}",
+        "244:                  'GITHUB_EVENT_NAME', 'GITHUB_REPOSITORY', 'GITHUB_REF', 'GITHUB_SHA',",
+        "264:                          source_kind=args.kind, github_event_name=os.environ.get('GITHUB_EVENT_NAME'),",
+        "265:                          github_sha=os.environ.get('GITHUB_SHA'))",
+        "276:        args.output.parent.mkdir(parents=True, exist_ok=True)"
+      ],
+      "sha256": "d72d6106fa4bad0f82d88d2c98b06f5cad0c8823e98a7dbda72d4977d0e610d3"
+    },
+    {
+      "bytes": 3293,
+      "path": ".github/workflows/codeql-analysis-export.yml",
+      "selected_lines": [
+        "12:  security-events: read",
+        "16:  group: codeql-analysis-export-${{ github.event.pull_request.number || inputs.pr_number }}",
+        "20:    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository",
+        "25:      EXPORTER_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}",
+        "26:      EXPORT_PR_NUMBER: ${{ inputs.pr_number }}",
+        "36:        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+        "38:          ref: ${{ env.EXPORTER_HEAD }}",
+        "45:          python3 scripts/ci/verify_ci_source.py --kind head --expected-head \"$EXPORTER_HEAD\" --output \"$OUT/exporter-source-before.json\"",
+        "47:          python3 scripts/test_export_codeql_analysis.py 2>&1 | tee \"$OUT/exporter-offline-tests.log\"",
+        "54:          python3 scripts/export_codeql_analysis.py --out \"$OUT/analysis\" --wait-seconds 1200 --poll-seconds 30",
+        "60:          python3 scripts/ci/verify_ci_source.py --kind head --expected-head \"$EXPORTER_HEAD\" --output \"$OUT/exporter-source-after.json\"",
+        "70:          hashes = {str(p.relative_to(out)): hashlib.sha256(p.read_bytes()).hexdigest()",
+        "71:                    for p in sorted(out.rglob('*')) if p.is_file() and p.name != 'sha256.json'}",
+        "72:          (out / 'sha256.json').write_text(json.dumps(hashes, indent=2) + '\\n')"
+      ],
+      "sha256": "b49236cd3dc667ea70598a4410b283186265403b6daf303242cfc6bee1e13136"
+    }
+  ]
+}
+

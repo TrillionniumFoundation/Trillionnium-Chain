@@ -1,0 +1,159 @@
+{
+  "schema": "TRNM-W1-EXACT-SOURCE-QUALIFICATION5",
+  "source_commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "repo": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+  "plan_sha256": "cb6381162e1ad22bb12a5476cafeb9abfd84213e75900c88d05722dcc7f6adb9",
+  "driver_sha256": "d3c6953430a8efce70396eac88c891aa91501633013c09d5018f0b00e9fb7d1f",
+  "commands": [
+    {
+      "label": "00-preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "started_monotonic_ns": 1208570639190263,
+      "exit": 0,
+      "finished_monotonic_ns": 1208570754139748,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-historical-regressions-01/00-preflight.stdout",
+        "bytes": 180,
+        "sha256": "65586326e5793b95834cbef1dbae480b2b3425a5d1585881b4b33954001542c2"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-historical-regressions-01/00-preflight.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "01-source-before",
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+        "--output",
+        "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-historical-regressions-01/source-before.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "started_monotonic_ns": 1208570755299186,
+      "exit": 0,
+      "finished_monotonic_ns": 1208574881020137,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-historical-regressions-01/01-source-before.stdout",
+        "bytes": 423,
+        "sha256": "ae4700561bdd1dd273af73d36ca712162d430097daa9d1c3147704c9fe07083c"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-historical-regressions-01/01-source-before.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "02-historical-commitment-cache-tests",
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "store::historical_commitment_tests::",
+        "--",
+        "--show-output",
+        "--test-threads=1"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "started_monotonic_ns": 1208574886235293,
+      "exit": 0,
+      "finished_monotonic_ns": 1208598968547186,
+      "python_test_counts": [],
+      "rust_test_outcomes": [
+        {
+          "passed": 10,
+          "failed": 0,
+          "ignored": 0
+        }
+      ],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-historical-regressions-01/02-historical-commitment-cache-tests.stdout",
+        "bytes": 2539,
+        "sha256": "aa22b1dedf72c149fdd320bcf76b1390736a90f0b1ac8ee4626a25dabb393545"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-historical-regressions-01/02-historical-commitment-cache-tests.stderr",
+        "bytes": 217,
+        "sha256": "c8a147210298ab7c4e9b5286c99a756b8401e0a119d0cdd4220a3c4c4e2440be"
+      }
+    },
+    {
+      "label": "99-source-after",
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+        "--output",
+        "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-historical-regressions-01/source-after.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "started_monotonic_ns": 1208598969671785,
+      "exit": 0,
+      "finished_monotonic_ns": 1208602795388660,
+      "python_test_counts": [],
+      "rust_test_outcomes": [],
+      "stdout": {
+        "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-historical-regressions-01/99-source-after.stdout",
+        "bytes": 423,
+        "sha256": "ae4700561bdd1dd273af73d36ca712162d430097daa9d1c3147704c9fe07083c"
+      },
+      "stderr": {
+        "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-historical-regressions-01/99-source-after.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "fresh_proof_generations": 0,
+  "production_qualified": false,
+  "security_qualified": false,
+  "original_business_budget_qualified": false,
+  "resource_billing_complete": false,
+  "payment_qualified": false,
+  "cargo_target": "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b",
+  "build_env": {
+    "RUSTUP_TOOLCHAIN": "1.95.0",
+    "CARGO_BUILD_JOBS": "8",
+    "CARGO_INCREMENTAL": "0",
+    "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTDOC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc"
+  },
+  "fresh_cargo_target": false,
+  "independent_reproducible_build_established": false,
+  "cache_basis": "Reuse completed C8 owner target; committed-source historical arithmetic/cache regression methods only",
+  "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "source_tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c",
+  "qualification_complete": true,
+  "actual_command_count": 4,
+  "python_test_methods_reported": 0,
+  "rust_test_outcomes": {
+    "passed": 10,
+    "failed": 0,
+    "ignored": 0
+  }
+}

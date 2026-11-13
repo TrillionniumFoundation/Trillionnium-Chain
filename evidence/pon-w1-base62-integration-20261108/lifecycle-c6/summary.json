@@ -1,0 +1,59 @@
+{
+  "all_historical_descendants_wait_reaped": null,
+  "consumed": null,
+  "deadline_to_target_terminal_ns": 390722375,
+  "deterministic_native_fixture": {
+    "global_chain_funds_created": false,
+    "native_cancel_operation_id": "dba9793565d7ae83790eaba3abb255fad2643d9b2d5696196a426ae289c7d83f",
+    "new_research_node_path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/research-node",
+    "not_reusing_old_node_database": true,
+    "packet_sha256": "6a6125eceb7916ccf4afb673e9abeaa54d4c66ea6a21de5b0a45956dc4805295",
+    "provider_operation_is_fresh": true,
+    "same_native_cancel_bytes_as_c5": true,
+    "wire_sha256": "f73e5433dc740e181426a3e50fc5f4e54d19cd9a84a1c96043257f0bfcfeb17d"
+  },
+  "fresh_generation_attempts": 1,
+  "full_original_resource_cap_retained": true,
+  "full_w1_header_node_admission_qualified": false,
+  "gpu_ns": null,
+  "m12_dispatch_lifecycle": "Done",
+  "m12_failure_kind": "Unknown",
+  "maximum_original_budget_ns": 120000000000,
+  "memory_peak_bytes": null,
+  "native_gross_refund_in_one_independent_fixture": 1000,
+  "new_complete_proofs": 0,
+  "operation": "8058cfa81675504da3f0593b8df7c51cb0b1f3fd6db1daa4d3f83172a6d4eacc",
+  "original_boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "original_deadline_ns": 1199343004629858,
+  "production_qualified": false,
+  "provider_payment_observed": false,
+  "public_chain_transactions_sent": false,
+  "refund_total_across_fixtures": null,
+  "resource_cap": {
+    "cpu_ns": 960000000000,
+    "gpu_ns": 240000000000,
+    "memory_peak_upper_bound_bytes": 8589934592,
+    "receipt_bytes": 16777216
+  },
+  "runtime_tests": {
+    "independent_cold": {
+      "failed": 0,
+      "job_id": "1a1b9fdb57b-12894-17ef",
+      "passed": 1,
+      "seconds": 0.35
+    },
+    "main": {
+      "failed": 0,
+      "job_id": "1a1b9fa4d54-12894-17e1",
+      "passed": 1,
+      "seconds": 123.43
+    }
+  },
+  "selected_monotonic_ns": 1199223004629858,
+  "source": {
+    "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+  },
+  "statement": "52a53b4c6264f99141cda3d84ee5793dbd9a21778693848435809fbcd3fd4ca6",
+  "target_finished_monotonic_ns": 1199343395352233
+}

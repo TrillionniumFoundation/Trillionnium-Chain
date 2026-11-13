@@ -1,0 +1,10 @@
+ControlGroup=
+Id=trnmponpublic.slice
+LoadState=loaded
+ActiveState=inactive
+SubState=dead
+FragmentPath=
+SourcePath=
+DropInPaths=
+Job=
+Transient=no

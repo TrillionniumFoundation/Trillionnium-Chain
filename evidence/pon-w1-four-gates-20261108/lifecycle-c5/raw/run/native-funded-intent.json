@@ -1,0 +1,24 @@
+{
+  "can_authorize_payment": false,
+  "journal_identity": "02406bb6d8fe4200dd81edcadc5db02be8dd78416f0f389c9ea0dc3131200594",
+  "local_proof_plan": {
+    "compression_mode": "balanced",
+    "compression_workers": 2,
+    "rayon_threads": 4,
+    "segment_workers": 2
+  },
+  "native_obligation_units": 1000,
+  "native_reserve_parent": "88e947fbcd0f40304edaf0325a57b41cb959c02c4473119b350032c91fe7b312",
+  "native_reserve_tip": "3f3e2bead3d12278ea3e27696e65373e92c46e227132f51117b0329fb0f8ccdf",
+  "normalized_request_digest": "870003c47c146cd2494885ab9f7e92dfe1b2d8111ceb110ffd4a4775b06ebeea",
+  "original_deadline_ns": 1191795668407846,
+  "provider_operation": "3c722d76b352db7450c53321368b305782f25612b9ed1fb806c49c5ec7fb5c77",
+  "research_genesis_only": true,
+  "research_node_path": "/home/qian-qi/work/chain-w1-c5-timeout-reorg-20261108-ec265b-01/research-node",
+  "reserve_nonce": 1,
+  "schema": "TRNM-W1-FUNDED-DISPATCH2",
+  "statement": "5592f86e015fe11571eecdb9594d3b35b7eeb074a1b9488cb4a50acfeb89ef7b",
+  "target_request_sha256": "175e1e5209a4c53b0000c0d52ff41706f0e3d5515561926f1060a71c021342d0",
+  "task": "93fdb42f44108cd1125e755dbbb1818a23c404ec85f198ddac7bdd89b43beb1e",
+  "winner_monotonic_ns": 1191679278254360
+}

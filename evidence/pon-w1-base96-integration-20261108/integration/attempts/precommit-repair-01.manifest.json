@@ -1,0 +1,182 @@
+{
+  "ci_reruns": 0,
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "elapsed_ns": 89815068,
+      "exit_code": 0,
+      "name": "00-preflight",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 178,
+      "stdout_sha256": "fc3911c320a46305c42bab476b1e4b06c720633e46046a460f2afec14cdeb4a1",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "elapsed_ns": 174310973,
+      "exit_code": 0,
+      "name": "01-refresh-inventory",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 35,
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/refresh_distributed_source_inventory.py",
+        "--check"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "elapsed_ns": 99126099,
+      "exit_code": 0,
+      "name": "02-source-inventory",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 35,
+      "stdout_sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_pq_research_integration.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "elapsed_ns": 487549883,
+      "exit_code": 0,
+      "name": "03-pq-source-pins",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 557,
+      "stdout_sha256": "7e6bdf32bcc0240c48849d8e4eaed57ba468fe015b6ff99166584618b421396f",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/check_ci_contract.py"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "elapsed_ns": 174922853,
+      "exit_code": 0,
+      "name": "04-ci-contract",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 180,
+      "stdout_sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "cargo",
+        "+1.95.0",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "elapsed_ns": 19402682782,
+      "exit_code": 0,
+      "name": "05-format",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_pq_research_integration.py",
+        "-v"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "elapsed_ns": 125309391328,
+      "exit_code": 0,
+      "name": "06-pq-rejection-controls",
+      "stderr_bytes": 5643,
+      "stderr_sha256": "c7ed07ee35d8f3efbca2b91578648f4bef24021c1f333e5610a422629d77c931",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/test_ci_contract.py",
+        "W1PostwinLaneTests",
+        "-v"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "elapsed_ns": 1289380285,
+      "exit_code": 0,
+      "name": "07-w1-ci-contract-controls",
+      "stderr_bytes": 1725,
+      "stderr_sha256": "f1cf7677127411b9238e3d85ff8fe4111e0c5bc2a26d5852ce9f666598dadcf6",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "elapsed_ns": 34716517,
+      "exit_code": 0,
+      "name": "08-diff-check",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=all"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "elapsed_ns": 53467761,
+      "exit_code": 0,
+      "name": "09-source-c6-status",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timed_out": false
+    }
+  ],
+  "committed": false,
+  "complete": true,
+  "full_proof_generations": 0,
+  "guard_or_event_context_changed": false,
+  "history_ignored_workload_executions": 0,
+  "merge_parent_base96": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+  "new_operations": 0,
+  "original_failed_precommit_manifest_sha256": "f57bfb6aaf656d9fd77bbf9c2fa334e8c59c3bad3551d2b809726355081e2c54",
+  "postcommit_qualification": false,
+  "pushed": false,
+  "schema": "TRNM-W1-C7-PRECOMMIT-REPAIR-CHECKS1",
+  "source_parent_c6": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+  "worktree": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b"
+}

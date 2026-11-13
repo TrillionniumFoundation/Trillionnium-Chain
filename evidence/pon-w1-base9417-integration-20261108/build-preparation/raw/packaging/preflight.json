@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "bash",
+    "scripts/project-preflight.sh",
+    "--dev"
+  ],
+  "cwd": "/home/qian-qi/work/chain-w1-c8-attestation-20261108-ec265b",
+  "exit": 0,
+  "scope": "Packaging preflight only; zero source qualification methods or commands are added.",
+  "stderr": {
+    "bytes": 0,
+    "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/build-preparation-publication-preflight.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 183,
+    "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/build-preparation-publication-preflight.stdout",
+    "sha256": "627e8f778d5de841cb93a89f6793a9e8052cdb7005bc133c1c40a36fd83991b7"
+  }
+}

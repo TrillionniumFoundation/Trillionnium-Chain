@@ -1,0 +1,24 @@
+{
+  "source": {
+    "commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c"
+  },
+  "manifests": [
+    {
+      "component": "backend",
+      "path": "/home/qian-qi/work/chain-w1-c8-backend-qualification-20261108-ec265b-01/manifest.json",
+      "bytes": 12337,
+      "sha256": "a3d530e67e3fd916f3c5e906ba0b851c00c3393cef0173db443d644109e1a47d"
+    },
+    {
+      "component": "native",
+      "path": "/home/qian-qi/work/chain-w1-c8-native-qualification-20261108-ec265b-01/manifest.json",
+      "bytes": 17384,
+      "sha256": "0fcf604c56d415907fc721f9262d7b6a843b1db49cd62246d706ccf8d319f310"
+    }
+  ],
+  "terminals": {
+    "backend": "{\"at_unix_ms\":1794128933972,\"audit_recorded\":true,\"automatic_retry\":false,\"cancelled\":false,\"exit_code\":0,\"job_id\":\"1a1ba69e477-12894-1a74\",\"launch_nonce\":\"f59849cb1a625dcbe0792f3140e07c03\",\"log_bytes\":{\"stderr\":{\"seen\":0,\"stored\":0},\"stdout\":{\"seen\":648,\"stored\":648}},\"log_errors\":{\"stderr\":null,\"stdout\":null},\"log_synced\":{\"stderr\":true,\"stdout\":true},\"log_truncated\":{\"stderr\":false,\"stdout\":false},\"output_complete\":true,\"output_durable\":true,\"state\":\"succeeded\",\"terminal_publication_confirmed\":true,\"terminal_publication_protocol\":1,\"timed_out\":false}",
+    "native": "{\"at_unix_ms\":1794129064621,\"audit_recorded\":true,\"automatic_retry\":false,\"cancelled\":false,\"exit_code\":0,\"job_id\":\"1a1ba6bcd14-12894-1a85\",\"launch_nonce\":\"8d6e3df1c0b3cfe46c06a1a0e20943d3\",\"log_bytes\":{\"stderr\":{\"seen\":0,\"stored\":0},\"stdout\":{\"seen\":3254,\"stored\":3254}},\"log_errors\":{\"stderr\":null,\"stdout\":null},\"log_synced\":{\"stderr\":true,\"stdout\":true},\"log_truncated\":{\"stderr\":false,\"stdout\":false},\"output_complete\":true,\"output_durable\":true,\"state\":\"succeeded\",\"terminal_publication_confirmed\":true,\"terminal_publication_protocol\":1,\"timed_out\":false}"
+  }
+}

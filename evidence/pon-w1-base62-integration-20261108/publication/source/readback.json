@@ -1,0 +1,30 @@
+{
+  "schema": "TRNM-W1-C6-SOURCE-PUBLICATION1",
+  "actual_source_commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+  "actual_source_tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81",
+  "actor": "ProfHepta",
+  "push_kind": "ordinary-fast-forward",
+  "before_refs": {
+    "refs/heads/fix/chain-six-axis-performance-20261103": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+    "refs/heads/fix/chain-w1-runtime-integrated-20261107": "034aa74358e0a5fa33f33e83cb63669e9738da4b"
+  },
+  "after_refs": {
+    "refs/heads/fix/chain-six-axis-performance-20261103": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+    "refs/heads/fix/chain-w1-runtime-integrated-20261107": "2bdd252aa6c300b7431b9ee897b254b7953cf562"
+  },
+  "pr_readback": {
+    "number": 782,
+    "draft": true,
+    "state": "open",
+    "mergeable": true,
+    "mergeable_state": "clean",
+    "merge_commit_sha": "7b4a63b6f08687e93270407772951aa71087ca3d",
+    "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/782"
+  },
+  "api_head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+  "api_base_sha": "62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+  "prior_core_failure_preserved": true,
+  "isolated_unchanged_32_passed": true,
+  "new_base_qualified_by_c6_tests": false,
+  "observed_unix_ns": 1794122001213791985
+}

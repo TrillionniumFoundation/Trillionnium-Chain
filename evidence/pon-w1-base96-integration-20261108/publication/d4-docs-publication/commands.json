@@ -1,0 +1,199 @@
+[
+  {
+    "label": "00-head",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "4c40cfc8e6772ee34b531ebf268dacec0998dce6af06713c3594c03d45ce516a",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "01-merge-parent",
+    "argv": [
+      "git",
+      "rev-parse",
+      "MERGE_HEAD"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "c77647d3e9b175c045ca6f32f006ae9d53b4c82e30bcf9d7b23538040404d33b",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "02-branch",
+    "argv": [
+      "git",
+      "branch",
+      "--show-current"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "ba4dfca31719406266dfe38be485901dbb65a027ed77511835227260ecd870a8",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "03-preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--dev"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "1a6648a1694ecdfb1047f814a24abc3f223e8a80374fb6b053255b3ca79b3a4b",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "04-actor",
+    "argv": [
+      "gh",
+      "api",
+      "user",
+      "--jq",
+      ".login"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "05-no-unstaged",
+    "argv": [
+      "git",
+      "diff",
+      "--exit-code"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "06-index-vs-c6",
+    "argv": [
+      "git",
+      "diff",
+      "--cached",
+      "--name-only",
+      "2bdd252aa6c300b7431b9ee897b254b7953cf562"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "ea8ffcfca723036057c62ca50174213dcf28bc9306d536944154ca0234fa6437",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "07-remote-before",
+    "argv": [
+      "git",
+      "ls-remote",
+      "origin",
+      "refs/heads/docs/chain-w1-base62-qualification-20261108-ec265b"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "08-commit",
+    "argv": [
+      "git",
+      "commit",
+      "-m",
+      "docs(w1): preserve C6 qualification, deadline lifecycle and CI binding evidence"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "bc07e4c16168c1bf6e974963486fab71a676b7150f45b91d3853261fe2f1c9fa",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "09-commit-head",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "a9129bedba62325b589ca724c38ec359dfc5075d3e94c69370cccae61c4bd888",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "10-parents",
+    "argv": [
+      "git",
+      "show",
+      "-s",
+      "--format=%P",
+      "HEAD"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "e18346fb44cba073bc7850a592d64268e908fe3b9dfb304095000f653071da9d",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "11-tree",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "21b5ffbad4dd5ddba06424c71cd82470bac6f9ac526eb33f731623ea99d1252c",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "12-clean",
+    "argv": [
+      "git",
+      "status",
+      "--porcelain"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "13-pre-push-preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--dev"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "1a6648a1694ecdfb1047f814a24abc3f223e8a80374fb6b053255b3ca79b3a4b",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "14-push",
+    "argv": [
+      "git",
+      "push",
+      "origin",
+      "HEAD:refs/heads/docs/chain-w1-base62-qualification-20261108-ec265b"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "5d096af234d1f3ea89b27da151353a19735665519bde70e8d0cb5ff2f8a3b322"
+  },
+  {
+    "label": "15-remote-after",
+    "argv": [
+      "git",
+      "ls-remote",
+      "origin",
+      "refs/heads/docs/chain-w1-base62-qualification-20261108-ec265b"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "c1c8fb93bf1b3aa1e2683bb0645c9cbed94c51ed41ec2b8b7a89654c3ccb7434",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "16-readme-api",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/contents/evidence/pon-w1-base62-integration-20261108/README.md?ref=3daf5d06e84aeb02530e14eecc7ba1f8ec674e24"
+    ],
+    "exit_code": 0,
+    "stdout_sha256": "50847c05cbb09755050fbb3a3100c75598169b9c40a873c2cd2e4dc2f2f41eee",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

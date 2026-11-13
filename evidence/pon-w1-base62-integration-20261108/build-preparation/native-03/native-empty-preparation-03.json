@@ -1,0 +1,42 @@
+{
+  "schema": "TRNM-W1-C6-EMPTY-TARGET1",
+  "role": "native",
+  "destination": "/home/qian-qi/work/chain-w1-base62-native-empty-target-20261108-ec265b-03",
+  "origin": "empty-directory",
+  "initial_entries": [],
+  "created_monotonic_ns": null,
+  "creation_method": "file API created a unique own marker and parent directory, then removed the same own marker",
+  "marker_before_removal": {
+    "metadata": {
+      "acl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gid": 1000,
+      "link_count": 1,
+      "metadata_platform": "linux",
+      "mode": 432,
+      "uid": 1000,
+      "xattr_names": [],
+      "xattr_sha256": {}
+    },
+    "mode": 432,
+    "path": "/home/qian-qi/work/chain-w1-base62-native-empty-target-20261108-ec265b-03/preparation-marker.txt",
+    "sha256": "45cfce47380940f34a5bdf18b729a3f66649b4c5ed99240e030e8556bafdd3a6",
+    "size": 137,
+    "version": "2050:56396974:137:1794118667630558012:1794118668059627781"
+  },
+  "empty_observation": "file API successful empty listing including hidden entries; strict Path.iterdir() emptiness asserted again before Cargo",
+  "fresh_cargo_target": true,
+  "registry_cache_reused": true,
+  "toolchain_reused": true,
+  "independent_cleanroom_build": false,
+  "cargo_started": false,
+  "operation_created": false,
+  "copied_artifacts": false,
+  "previous_partial_target_preserved": "/home/qian-qi/work/chain-w1-base62-native-target-20261108-ec265b",
+  "previous_overall_copy_job": "1a1b9bc6a15-12894-1677",
+  "previous_overall_copy_exit": 124,
+  "previous_unknown_setup_job": "1a1b9c7ff2c-12894-16d7",
+  "previous_unknown_output_namespace": "/home/qian-qi/work/chain-w1-base62-native-empty-target-20261108-ec265b-02",
+  "current_original_copy_cgroup_absent": true,
+  "current_matching_copy_processes": 0,
+  "complete_historical_process_reaping_qualified": false
+}

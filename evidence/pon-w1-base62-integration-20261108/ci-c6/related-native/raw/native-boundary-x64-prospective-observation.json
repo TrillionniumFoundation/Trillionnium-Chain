@@ -1,0 +1,421 @@
+{
+  "bounded_error_excerpts": [
+    {
+      "line": 57,
+      "text": "2026-11-08T07:17:40.3228430Z   EXPECTED_BASE: 62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+      "truncated_line": false
+    },
+    {
+      "line": 58,
+      "text": "2026-11-08T07:17:40.3228820Z   EXPECTED_MERGE: 7b4a63b6f08687e93270407772951aa71087ca3d",
+      "truncated_line": false
+    },
+    {
+      "line": 59,
+      "text": "2026-11-08T07:17:40.3229182Z   SOURCE_KIND: prospective-merge",
+      "truncated_line": false
+    },
+    {
+      "line": 60,
+      "text": "2026-11-08T07:17:40.3229462Z ##[endgroup]",
+      "truncated_line": false
+    },
+    {
+      "line": 61,
+      "text": "2026-11-08T07:17:40.5173067Z Syncing repository: TrillionniumFoundation/Trillionnium-Chain",
+      "truncated_line": false
+    },
+    {
+      "line": 62,
+      "text": "2026-11-08T07:17:40.5174213Z ##[group]Getting Git version info",
+      "truncated_line": false
+    },
+    {
+      "line": 1007,
+      "text": "2026-11-08T07:18:13.8579337Z \u001b[36;1mecho \"CARGO_HOME=$RUNNER_TEMP/cargo-boundary\" >> \"$GITHUB_ENV\"\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1008,
+      "text": "2026-11-08T07:18:13.8579592Z \u001b[36;1mecho \"CARGO_TARGET_DIR=$RUNNER_TEMP/target-boundary\" >> \"$GITHUB_ENV\"\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1009,
+      "text": "2026-11-08T07:18:13.8579846Z \u001b[36;1margs=(--kind \"$SOURCE_KIND\" --expected-head \"$EXPECTED_HEAD\")\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1010,
+      "text": "2026-11-08T07:18:13.8580074Z \u001b[36;1mif test \"$SOURCE_KIND\" = prospective-merge; then\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1011,
+      "text": "2026-11-08T07:18:13.8580327Z \u001b[36;1m  args+=(--expected-base \"$EXPECTED_BASE\" --expected-merge \"$EXPECTED_MERGE\")\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1012,
+      "text": "2026-11-08T07:18:13.8580542Z \u001b[36;1mfi\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1013,
+      "text": "2026-11-08T07:18:13.8580791Z \u001b[36;1mpython3 scripts/ci/verify_ci_source.py \"${args[@]}\" --output \"$TRNM_CI_RECEIPT_DIR/source.json\"\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1022,
+      "text": "2026-11-08T07:18:13.8600620Z   EXPECTED_BASE: 62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+      "truncated_line": false
+    },
+    {
+      "line": 1023,
+      "text": "2026-11-08T07:18:13.8600822Z   EXPECTED_MERGE: 7b4a63b6f08687e93270407772951aa71087ca3d",
+      "truncated_line": false
+    },
+    {
+      "line": 1024,
+      "text": "2026-11-08T07:18:13.8601001Z   SOURCE_KIND: prospective-merge",
+      "truncated_line": false
+    },
+    {
+      "line": 1025,
+      "text": "2026-11-08T07:18:13.8601140Z ##[endgroup]",
+      "truncated_line": false
+    },
+    {
+      "line": 1026,
+      "text": "2026-11-08T07:18:14.0017395Z Traceback (most recent call last):",
+      "truncated_line": false
+    },
+    {
+      "line": 1027,
+      "text": "2026-11-08T07:18:14.0017892Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/verify_ci_source.py\", line 219, in <module>",
+      "truncated_line": false
+    },
+    {
+      "line": 1028,
+      "text": "2026-11-08T07:18:14.0018605Z     main()",
+      "truncated_line": false
+    },
+    {
+      "line": 1029,
+      "text": "2026-11-08T07:18:14.0019289Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/verify_ci_source.py\", line 210, in main",
+      "truncated_line": false
+    },
+    {
+      "line": 1031,
+      "text": "2026-11-08T07:18:14.0020558Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "truncated_line": false
+    },
+    {
+      "line": 1032,
+      "text": "2026-11-08T07:18:14.0021041Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/verify_ci_source.py\", line 153, in verify",
+      "truncated_line": false
+    },
+    {
+      "line": 1033,
+      "text": "2026-11-08T07:18:14.0021577Z     raise ValueError('merge parents differ from the event base and candidate')",
+      "truncated_line": false
+    },
+    {
+      "line": 1034,
+      "text": "2026-11-08T07:18:14.0021978Z ValueError: merge parents differ from the event base and candidate",
+      "truncated_line": false
+    },
+    {
+      "line": 1035,
+      "text": "2026-11-08T07:18:14.0133983Z ##[error]Process completed with exit code 1.",
+      "truncated_line": false
+    },
+    {
+      "line": 1036,
+      "text": "2026-11-08T07:18:14.0364563Z ##[group]Run set -euo pipefail",
+      "truncated_line": false
+    },
+    {
+      "line": 1037,
+      "text": "2026-11-08T07:18:14.0364739Z \u001b[36;1mset -euo pipefail\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1038,
+      "text": "2026-11-08T07:18:14.0364928Z \u001b[36;1margs=(--kind \"$SOURCE_KIND\" --expected-head \"$EXPECTED_HEAD\")\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1039,
+      "text": "2026-11-08T07:18:14.0365156Z \u001b[36;1mif test \"$SOURCE_KIND\" = prospective-merge; then\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1040,
+      "text": "2026-11-08T07:18:14.0365409Z \u001b[36;1m  args+=(--expected-base \"$EXPECTED_BASE\" --expected-merge \"$EXPECTED_MERGE\")\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1041,
+      "text": "2026-11-08T07:18:14.0365638Z \u001b[36;1mfi\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1042,
+      "text": "2026-11-08T07:18:14.0365790Z \u001b[36;1mpython3 scripts/ci/verify_ci_source.py \"${args[@]}\"\u001b[0m",
+      "truncated_line": false
+    },
+    {
+      "line": 1050,
+      "text": "2026-11-08T07:18:14.0382788Z   EXPECTED_BASE: 62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+      "truncated_line": false
+    },
+    {
+      "line": 1051,
+      "text": "2026-11-08T07:18:14.0382985Z   EXPECTED_MERGE: 7b4a63b6f08687e93270407772951aa71087ca3d",
+      "truncated_line": false
+    },
+    {
+      "line": 1052,
+      "text": "2026-11-08T07:18:14.0383166Z   SOURCE_KIND: prospective-merge",
+      "truncated_line": false
+    },
+    {
+      "line": 1053,
+      "text": "2026-11-08T07:18:14.0383343Z   TRNM_CI_RECEIPT_DIR: /home/runner/work/_temp/native-boundary",
+      "truncated_line": false
+    },
+    {
+      "line": 1054,
+      "text": "2026-11-08T07:18:14.0383544Z   CARGO_HOME: /home/runner/work/_temp/cargo-boundary",
+      "truncated_line": false
+    },
+    {
+      "line": 1055,
+      "text": "2026-11-08T07:18:14.0383738Z   CARGO_TARGET_DIR: /home/runner/work/_temp/target-boundary",
+      "truncated_line": false
+    },
+    {
+      "line": 1056,
+      "text": "2026-11-08T07:18:14.0383916Z ##[endgroup]",
+      "truncated_line": false
+    },
+    {
+      "line": 1057,
+      "text": "2026-11-08T07:18:14.1639497Z Traceback (most recent call last):",
+      "truncated_line": false
+    },
+    {
+      "line": 1058,
+      "text": "2026-11-08T07:18:14.1640121Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/verify_ci_source.py\", line 219, in <module>",
+      "truncated_line": false
+    },
+    {
+      "line": 1059,
+      "text": "2026-11-08T07:18:14.1640593Z     main()",
+      "truncated_line": false
+    },
+    {
+      "line": 1060,
+      "text": "2026-11-08T07:18:14.1640997Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/verify_ci_source.py\", line 210, in main",
+      "truncated_line": false
+    },
+    {
+      "line": 1062,
+      "text": "2026-11-08T07:18:14.1668656Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "truncated_line": false
+    },
+    {
+      "line": 1063,
+      "text": "2026-11-08T07:18:14.1669171Z   File \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/verify_ci_source.py\", line 153, in verify",
+      "truncated_line": false
+    },
+    {
+      "line": 1064,
+      "text": "2026-11-08T07:18:14.1669561Z     raise ValueError('merge parents differ from the event base and candidate')",
+      "truncated_line": false
+    },
+    {
+      "line": 1065,
+      "text": "2026-11-08T07:18:14.1669820Z ValueError: merge parents differ from the event base and candidate",
+      "truncated_line": false
+    },
+    {
+      "line": 1066,
+      "text": "2026-11-08T07:18:14.1743229Z ##[error]Process completed with exit code 1.",
+      "truncated_line": false
+    },
+    {
+      "line": 1067,
+      "text": "2026-11-08T07:18:14.2831565Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+      "truncated_line": false
+    },
+    {
+      "line": 1068,
+      "text": "2026-11-08T07:18:14.2831803Z with:",
+      "truncated_line": false
+    },
+    {
+      "line": 1069,
+      "text": "2026-11-08T07:18:14.2832060Z   name: native-boundary-ubuntu-24.04-prospective-merge-2bdd252aa6c300b7431b9ee897b254b7953cf562-1",
+      "truncated_line": false
+    },
+    {
+      "line": 1082,
+      "text": "2026-11-08T07:18:14.2834261Z   EXPECTED_BASE: 62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+      "truncated_line": false
+    },
+    {
+      "line": 1083,
+      "text": "2026-11-08T07:18:14.2834458Z   EXPECTED_MERGE: 7b4a63b6f08687e93270407772951aa71087ca3d",
+      "truncated_line": false
+    },
+    {
+      "line": 1084,
+      "text": "2026-11-08T07:18:14.2834634Z   SOURCE_KIND: prospective-merge",
+      "truncated_line": false
+    },
+    {
+      "line": 1085,
+      "text": "2026-11-08T07:18:14.2834812Z   TRNM_CI_RECEIPT_DIR: /home/runner/work/_temp/native-boundary",
+      "truncated_line": false
+    },
+    {
+      "line": 1086,
+      "text": "2026-11-08T07:18:14.2835016Z   CARGO_HOME: /home/runner/work/_temp/cargo-boundary",
+      "truncated_line": false
+    },
+    {
+      "line": 1087,
+      "text": "2026-11-08T07:18:14.2835210Z   CARGO_TARGET_DIR: /home/runner/work/_temp/target-boundary",
+      "truncated_line": false
+    },
+    {
+      "line": 1089,
+      "text": "2026-11-08T07:18:14.3948786Z (node:2238) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.",
+      "truncated_line": false
+    },
+    {
+      "line": 1090,
+      "text": "2026-11-08T07:18:14.3949513Z (Use `node --trace-deprecation ...` to show where the warning was created)",
+      "truncated_line": false
+    },
+    {
+      "line": 1091,
+      "text": "2026-11-08T07:18:14.4046830Z ##[error]No files were found with the provided path: /home/runner/work/_temp/native-boundary/. No artifacts will be uploaded.",
+      "truncated_line": false
+    },
+    {
+      "line": 1092,
+      "text": "2026-11-08T07:18:14.4214174Z Post job cleanup.",
+      "truncated_line": false
+    },
+    {
+      "line": 1093,
+      "text": "2026-11-08T07:18:14.4826513Z [command]/usr/bin/git version",
+      "truncated_line": false
+    },
+    {
+      "line": 1094,
+      "text": "2026-11-08T07:18:14.4889303Z git version 2.56.0",
+      "truncated_line": false
+    }
+  ],
+  "completed_at": "2026-11-08T07:18:16Z",
+  "conclusion": "failure",
+  "error_marker_count": 17,
+  "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+  "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886547/job/128660701420",
+  "job_id": 128660701420,
+  "log": {
+    "bytes": 142280,
+    "path": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/native-boundary-x64-prospective-log.stdout",
+    "sha256": "2266f4a61e38f8edfb0234f7443fa2787f078ebef44f911a1e8ff647479bf23a"
+  },
+  "log_line_count": 1105,
+  "metadata": {
+    "bytes": 3296,
+    "path": "/home/qian-qi/work/chain-w1-c6-ci-native-readback-20261108-ec265b-01/native-boundary-x64-prospective-metadata.stdout",
+    "sha256": "df1d5d4483078c685ed501b4fab9e2e23aa121bda4c3f176bcb450d01471dfa6"
+  },
+  "name": "native boundary (ubuntu-24.04, prospective-merge)",
+  "role": "native-boundary-x64-prospective",
+  "run_id": 42457886547,
+  "scope": "completed original job only; no inference about unobserved sibling jobs or head-lane business targets",
+  "started_at": "2026-11-08T07:17:39Z",
+  "status": "completed",
+  "steps": [
+    {
+      "conclusion": "success",
+      "name": "Set up job",
+      "number": 1,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Checkout exact current source or actual target merge",
+      "number": 2,
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "name": "Verify source and original project boundary",
+      "number": 3,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Install source-pinned compiler and lint tools",
+      "number": 4,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+      "number": 5,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Preserve exact formatter diagnostics without changing source",
+      "number": 6,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Execute strict native all-target Clippy before long campaigns",
+      "number": 7,
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "name": "Execute original accounting and new cooffered depletion regressions",
+      "number": 8,
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "name": "Reverify unchanged tested source",
+      "number": 9,
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "name": "Retain current native results including every failure",
+      "number": 10,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Post Checkout exact current source or actual target merge",
+      "number": 20,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Complete job",
+      "number": 21,
+      "status": "completed"
+    }
+  ]
+}

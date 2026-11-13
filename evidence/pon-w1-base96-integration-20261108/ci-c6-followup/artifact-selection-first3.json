@@ -1,0 +1,18 @@
+{
+  "records": [
+    {
+      "job_id": 128662229865,
+      "selected": 51
+    },
+    {
+      "job_id": 128662229758,
+      "selected": 51
+    },
+    {
+      "job_id": 128662229491,
+      "selected": 51
+    }
+  ],
+  "source_mutations": 0,
+  "CI_mutations": 0
+}

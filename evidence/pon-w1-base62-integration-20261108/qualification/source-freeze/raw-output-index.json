@@ -1,0 +1,27 @@
+[
+  {
+    "archive_member": "core-source-before.json",
+    "bytes": 423,
+    "sha256": "2edd14596053103164150807856703c7fac8d4fd5ade634f8acc7203a35025e4"
+  },
+  {
+    "archive_member": "job-status.json",
+    "bytes": 735,
+    "sha256": "fbd6b20c6b9330a9f08b83884114099470e522345ec476f478f6503876c63be0"
+  },
+  {
+    "archive_member": "original-commands.stdout.jsonl",
+    "bytes": 15572,
+    "sha256": "363505ff0ccc1df823a03ddc362f5d55fce3e69ba098a0c39736bab81a032d16"
+  },
+  {
+    "archive_member": "owner-source-before.json",
+    "bytes": 423,
+    "sha256": "2edd14596053103164150807856703c7fac8d4fd5ade634f8acc7203a35025e4"
+  },
+  {
+    "archive_member": "w1-current-command-block.sh",
+    "bytes": 3040,
+    "sha256": "834bdd9e3b21373e527917eeab8f0c44b065390b8303b301a71592675a2973e5"
+  }
+]

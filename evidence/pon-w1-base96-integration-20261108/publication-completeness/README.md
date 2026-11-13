@@ -1,0 +1,7 @@
+# Publication completeness correction
+
+The D3 and D4 local inventories were byte-complete, but earlier publication checks did not verify every inventory member in the Git tree. The repository rule .gitignore:23:*.log excluded 104 retained raw logs. In the immutable D4 commit, the C5 package contained 346 of its 421 inventory members (75 absent, 1,000,778 bytes); the C6 package contained 443 of its 472 inventory members (29 absent, 7,438 bytes). The two inventory JSON files themselves were tracked. This supersedes any interpretation of the earlier local member counts as proof that every member was publicly available in those old commits.
+
+D5 restores those exact 104 pre-existing files, validates their bytes against the unchanged original inventories, and force-adds only the enumerated paths. It does not rewrite the old commits, normalize raw logs, alter inventory hashes, or change runtime source. All 895 C5/C6 paths (893 members plus two inventories) were read from the new Git index through git cat-file --batch and verified for exact byte count and SHA-256. Final commit publication repeats this check against the committed tree.
+
+The initial D5 setup failure and this discovery are retained. The new publication path verifies indexed and committed bytes instead of treating local existence or a README API readback as sufficient. These corrections add no test pass, full proof, payment, budget or security qualification.

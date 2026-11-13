@@ -1,0 +1,343 @@
+{
+  "actual_freeze_command_count": 19,
+  "candidate_and_committed_diff_sha256": "5d115e88325dcfb963e12c87591285a05d9c2323324301ee06b5da21edf6bd52",
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_monotonic_ns": 1206369357169128,
+      "label": "00-preflight",
+      "started_monotonic_ns": 1206368994458294,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 180,
+      "stdout_sha256": "65586326e5793b95834cbef1dbae480b2b3425a5d1585881b4b33954001542c2"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_monotonic_ns": 1206369361411242,
+      "label": "01-before-head",
+      "started_monotonic_ns": 1206369357513235,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 41,
+      "stdout_sha256": "0b5f64bc70d4fd3a1c0a858ff3b60be41d822f8bed6c39d82d57e2259e432860"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "MERGE_HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_monotonic_ns": 1206369364690182,
+      "label": "02-before-merge",
+      "started_monotonic_ns": 1206369361634570,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 41,
+      "stdout_sha256": "4b118e0d49f1a9bd1b090fb3fd3be16a51a2d7ebf5b081ee661ade8fc56f3f5e"
+    },
+    {
+      "argv": [
+        "git",
+        "ls-files",
+        "-u"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_monotonic_ns": 1206369396954212,
+      "label": "03-before-unmerged",
+      "started_monotonic_ns": 1206369364903866,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--exit-code"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_monotonic_ns": 1206369662182630,
+      "label": "04-before-unstaged",
+      "started_monotonic_ns": 1206369397240069,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "ls-files",
+        "--others",
+        "--exclude-standard"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_monotonic_ns": 1206372069816031,
+      "label": "05-before-untracked",
+      "started_monotonic_ns": 1206369662406574,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--name-only",
+        "40a3a45d6b8afc5c4706c5235fec47634f4aabbe"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_monotonic_ns": 1206372169985549,
+      "label": "06-before-paths",
+      "started_monotonic_ns": 1206372070096860,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 458,
+      "stdout_sha256": "942b53ad1aedbc1d60eb5054d61b856d0b5b2a8c3a5450b8a1e39ba0ca5690c1"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--binary",
+        "40a3a45d6b8afc5c4706c5235fec47634f4aabbe"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_monotonic_ns": 1206372399797211,
+      "label": "07-before-diff",
+      "started_monotonic_ns": 1206372170281367,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 26777,
+      "stdout_sha256": "5d115e88325dcfb963e12c87591285a05d9c2323324301ee06b5da21edf6bd52"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_monotonic_ns": 1206372405233670,
+      "label": "08-old-head-before",
+      "started_monotonic_ns": 1206372400451748,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 41,
+      "stdout_sha256": "0b5f64bc70d4fd3a1c0a858ff3b60be41d822f8bed6c39d82d57e2259e432860"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_monotonic_ns": 1206375673141640,
+      "label": "09-old-status-before",
+      "started_monotonic_ns": 1206372405481394,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "write-tree"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_monotonic_ns": 1206375889476962,
+      "label": "10-staged-tree",
+      "started_monotonic_ns": 1206375779077314,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 41,
+      "stdout_sha256": "ddf3ac3928890eca54b7939a9b8b8ee2401a5be363245986d54164d325f6b674"
+    },
+    {
+      "argv": [
+        "git",
+        "commit",
+        "--file",
+        "/home/qian-qi/work/chain-w1-base9417-adversarial-integration-20261108-ec265b-01/freeze-01/commit-message.txt"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_monotonic_ns": 1206375936922399,
+      "label": "11-local-merge-commit",
+      "started_monotonic_ns": 1206375889928073,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 113,
+      "stdout_sha256": "98ad21f60cf39121b685a2992cce7c9e03e61e11c94c29f5c703b2b520198872"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "-s",
+        "--format=%H%n%T%n%P%n%s",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_monotonic_ns": 1206376021613758,
+      "label": "12-committed-identity",
+      "started_monotonic_ns": 1206375937186679,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 215,
+      "stdout_sha256": "06baf3e6d561f945bde0de503e09ca53a55669ecd623c8253ba926501468eee2"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_monotonic_ns": 1206376079624831,
+      "label": "13-new-status-after",
+      "started_monotonic_ns": 1206376021833062,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_monotonic_ns": 1206376083251515,
+      "label": "14-old-head-after",
+      "started_monotonic_ns": 1206376079798943,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 41,
+      "stdout_sha256": "0b5f64bc70d4fd3a1c0a858ff3b60be41d822f8bed6c39d82d57e2259e432860"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_monotonic_ns": 1206376141114261,
+      "label": "15-old-status-after",
+      "started_monotonic_ns": 1206376083501391,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--binary",
+        "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+        "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_monotonic_ns": 1206376181983353,
+      "label": "16-committed-diff",
+      "started_monotonic_ns": 1206376141291917,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 26777,
+      "stdout_sha256": "5d115e88325dcfb963e12c87591285a05d9c2323324301ee06b5da21edf6bd52"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--stat",
+        "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+        "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_monotonic_ns": 1206376215613583,
+      "label": "17-committed-stat",
+      "started_monotonic_ns": 1206376182313729,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 566,
+      "stdout_sha256": "1b398faace68a7512ce76c231e2373a18ccf22619c56523c18e3404536844658"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--name-status",
+        "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+        "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_monotonic_ns": 1206376223219469,
+      "label": "18-committed-name-status",
+      "started_monotonic_ns": 1206376215892842,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 474,
+      "stdout_sha256": "0a241c2a3d6f6f205dec386b9fa5f337b1ffd10ee00b1d655922d35802d152bb"
+    }
+  ],
+  "commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "complete": true,
+  "new_operations": 0,
+  "new_proofs": 0,
+  "old_c7_checkout_clean_before_after": true,
+  "old_c7_checkout_head_unchanged": true,
+  "parents": [
+    "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "9417e495165865ef6c1288b39084856e31020634"
+  ],
+  "postcommit_qualification_executed": false,
+  "precommit_manifest_sha256": "2b1659a56353c8096646e72b7447921ba3d79501424a11c35a38b31c91e1e57d",
+  "pushed": false,
+  "repo": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+  "schema": "TRNM-W1-C8-LOCAL-FREEZE1",
+  "scope": "Local merge freeze only. The 160 precommit Python method executions do not establish full exact committed C8 qualification.",
+  "source_clean_after": true,
+  "tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c"
+}

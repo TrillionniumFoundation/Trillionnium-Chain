@@ -1,0 +1,37 @@
+{
+  "manifests": [
+    {
+      "bytes": 23587,
+      "component": "owner",
+      "job_id": "1a1ba7cdd03-12894-1b0d",
+      "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-owner-02/manifest.json",
+      "sha256": "6d9013a9ee10badb278215ac1ac81243ada13cd5c279cbc3833250cc50c63bef"
+    },
+    {
+      "bytes": 6184,
+      "component": "historical-regressions",
+      "job_id": "1a1ba88e958-12894-1b6a",
+      "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-historical-regressions-01/manifest.json",
+      "sha256": "eef45c33e9aae4650c70fcaefc174841e6f75cd8c018139705d459e1fc71c1e6"
+    }
+  ],
+  "previous_audit_driver": {
+    "bytes": 17497,
+    "path": "/home/qian-qi/work/chain-w1-c8-audit-owner-historical-20261108-ec265b.py",
+    "sha256": "d4a70245c750c2a0e644ffdf5e6958f31bfa1e85609def3f873c2e5979e59fa4"
+  },
+  "previous_audit_failure": {
+    "bytes": 4282,
+    "path": "/home/qian-qi/work/chain-w1-c8-owner-historical-audit-attempt-01-failure-20261108-ec265b.json",
+    "sha256": "96998912de89ff52381e3a1626e5ca8989bf3242e5af0a58e9f930471e971850"
+  },
+  "source": {
+    "commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c"
+  },
+  "terminals": {
+    "historical-regressions": "{\n  \"at_unix_ms\": 1794130938535,\n  \"audit_recorded\": true,\n  \"automatic_retry\": false,\n  \"cancelled\": false,\n  \"exit_code\": 0,\n  \"job_id\": \"1a1ba88e958-12894-1b6a\",\n  \"launch_nonce\": \"48bd663b7c2260222c7e46819470ee04\",\n  \"log_bytes\": {\n    \"stderr\": {\n      \"seen\": 0,\n      \"stored\": 0\n    },\n    \"stdout\": {\n      \"seen\": 2221,\n      \"stored\": 2221\n    }\n  },\n  \"log_errors\": {\n    \"stderr\": null,\n    \"stdout\": null\n  },\n  \"log_synced\": {\n    \"stderr\": true,\n    \"stdout\": true\n  },\n  \"log_truncated\": {\n    \"stderr\": false,\n    \"stdout\": false\n  },\n  \"output_complete\": true,\n  \"output_durable\": true,\n  \"state\": \"succeeded\",\n  \"terminal_publication_confirmed\": true,\n  \"terminal_publication_protocol\": 1,\n  \"timed_out\": false\n}",
+    "owner": "{\n  \"at_unix_ms\": 1794130508220,\n  \"audit_recorded\": true,\n  \"automatic_retry\": false,\n  \"cancelled\": false,\n  \"exit_code\": 0,\n  \"job_id\": \"1a1ba7cdd03-12894-1b0d\",\n  \"launch_nonce\": \"702d03970c6b5ac1d641717e5c197ddb\",\n  \"log_bytes\": {\n    \"stderr\": {\n      \"seen\": 0,\n      \"stored\": 0\n    },\n    \"stdout\": {\n      \"seen\": 2647,\n      \"stored\": 2647\n    }\n  },\n  \"log_errors\": {\n    \"stderr\": null,\n    \"stdout\": null\n  },\n  \"log_synced\": {\n    \"stderr\": true,\n    \"stdout\": true\n  },\n  \"log_truncated\": {\n    \"stderr\": false,\n    \"stdout\": false\n  },\n  \"output_complete\": true,\n  \"output_durable\": true,\n  \"state\": \"succeeded\",\n  \"terminal_publication_confirmed\": true,\n  \"terminal_publication_protocol\": 1,\n  \"timed_out\": false\n}",
+    "owner-import": "{\n  \"at_unix_ms\": 1794130709159,\n  \"audit_recorded\": true,\n  \"automatic_retry\": false,\n  \"cancelled\": false,\n  \"exit_code\": 0,\n  \"job_id\": \"1a1ba85c4c0-12894-1b51\",\n  \"launch_nonce\": \"7fbeb8e6ab2f77573aff831400c98abf\",\n  \"log_bytes\": {\n    \"stderr\": {\n      \"seen\": 0,\n      \"stored\": 0\n    },\n    \"stdout\": {\n      \"seen\": 1256,\n      \"stored\": 1256\n    }\n  },\n  \"log_errors\": {\n    \"stderr\": null,\n    \"stdout\": null\n  },\n  \"log_synced\": {\n    \"stderr\": true,\n    \"stdout\": true\n  },\n  \"log_truncated\": {\n    \"stderr\": false,\n    \"stdout\": false\n  },\n  \"output_complete\": true,\n  \"output_durable\": true,\n  \"state\": \"succeeded\",\n  \"terminal_publication_confirmed\": true,\n  \"terminal_publication_protocol\": 1,\n  \"timed_out\": false\n}"
+  }
+}

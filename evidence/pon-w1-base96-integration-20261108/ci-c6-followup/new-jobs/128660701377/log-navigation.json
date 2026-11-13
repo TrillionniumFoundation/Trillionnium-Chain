@@ -1,0 +1,235 @@
+{
+  "candidate_count": 19,
+  "complete_download": true,
+  "first_candidates": [
+    {
+      "line": 129,
+      "text": "2026-11-08T07:15:35.4551639Z  * [new branch]          archive/chain-state-json-failed-d55daefd-20261103 -> origin/archive/chain-state-json-failed-d55daefd-20261103"
+    },
+    {
+      "line": 160,
+      "text": "2026-11-08T07:15:35.4600855Z  * [new branch]          audit/pq-pcp2-verify-deadline-checkpoints-20261030 -> origin/audit/pq-pcp2-verify-deadline-checkpoints-20261030"
+    },
+    {
+      "line": 685,
+      "text": "2026-11-08T07:15:35.5178197Z  * [new branch]          fix/pq-pcp2-publish-deadline-result-20261030 -> origin/fix/pq-pcp2-publish-deadline-result-20261030"
+    },
+    {
+      "line": 765,
+      "text": "2026-11-08T07:15:35.5344981Z  * [new branch]          research/pon-daa-bounded-summary-20261025 -> origin/research/pon-daa-bounded-summary-20261025"
+    },
+    {
+      "line": 1078,
+      "text": "2026-11-08T07:15:42.8467983Z test_failed_startup_does_not_change_fixed_round_denominator (test_pon_public_v3_phase_read.ReaderTests.test_failed_startup_does_not_change_fixed_round_denominator) ... ok"
+    },
+    {
+      "line": 1115,
+      "text": "2026-11-08T07:15:43.1921805Z test_v4_nested_failed_and_cancelled_intervals_are_separate (test_pon_public_v3_phase_read.ReaderTests.test_v4_nested_failed_and_cancelled_intervals_are_separate) ... ok"
+    },
+    {
+      "line": 1373,
+      "text": "2026-11-08T07:15:53.2366071Z \u001b[36;1m    bounds.require(build['complete_success'], 'RELEASE_TEST_BUILD_FAILED')\u001b[0m"
+    },
+    {
+      "line": 1438,
+      "text": "2026-11-08T07:15:53.2419063Z \u001b[36;1m                           'ORIGINAL_NATIVE_PHASE_STARTUP_FAILED')\u001b[0m"
+    },
+    {
+      "line": 1457,
+      "text": "2026-11-08T07:15:53.2426277Z \u001b[36;1m                r'^test result: ok\\. 1 passed; 0 failed; 0 ignored;',\u001b[0m"
+    },
+    {
+      "line": 1462,
+      "text": "2026-11-08T07:15:53.2428394Z \u001b[36;1m        except (OSError, ValueError, KeyError, TypeError) as error:\u001b[0m"
+    },
+    {
+      "line": 1468,
+      "text": "2026-11-08T07:15:53.2430837Z \u001b[36;1m        # A failed native run stays failed; the next predeclared run is\u001b[0m"
+    },
+    {
+      "line": 1474,
+      "text": "2026-11-08T07:15:53.2433019Z \u001b[36;1m        result['failure'] = 'ORIGINAL_THREE_RUN_CAMPAIGN_FAILED'\u001b[0m"
+    }
+  ],
+  "job_id": 128660701377,
+  "kind": "executed-failure",
+  "last_candidates": [
+    {
+      "line": 129,
+      "text": "2026-11-08T07:15:35.4551639Z  * [new branch]          archive/chain-state-json-failed-d55daefd-20261103 -> origin/archive/chain-state-json-failed-d55daefd-20261103"
+    },
+    {
+      "line": 160,
+      "text": "2026-11-08T07:15:35.4600855Z  * [new branch]          audit/pq-pcp2-verify-deadline-checkpoints-20261030 -> origin/audit/pq-pcp2-verify-deadline-checkpoints-20261030"
+    },
+    {
+      "line": 685,
+      "text": "2026-11-08T07:15:35.5178197Z  * [new branch]          fix/pq-pcp2-publish-deadline-result-20261030 -> origin/fix/pq-pcp2-publish-deadline-result-20261030"
+    },
+    {
+      "line": 765,
+      "text": "2026-11-08T07:15:35.5344981Z  * [new branch]          research/pon-daa-bounded-summary-20261025 -> origin/research/pon-daa-bounded-summary-20261025"
+    },
+    {
+      "line": 1078,
+      "text": "2026-11-08T07:15:42.8467983Z test_failed_startup_does_not_change_fixed_round_denominator (test_pon_public_v3_phase_read.ReaderTests.test_failed_startup_does_not_change_fixed_round_denominator) ... ok"
+    },
+    {
+      "line": 1115,
+      "text": "2026-11-08T07:15:43.1921805Z test_v4_nested_failed_and_cancelled_intervals_are_separate (test_pon_public_v3_phase_read.ReaderTests.test_v4_nested_failed_and_cancelled_intervals_are_separate) ... ok"
+    },
+    {
+      "line": 1373,
+      "text": "2026-11-08T07:15:53.2366071Z \u001b[36;1m    bounds.require(build['complete_success'], 'RELEASE_TEST_BUILD_FAILED')\u001b[0m"
+    },
+    {
+      "line": 1438,
+      "text": "2026-11-08T07:15:53.2419063Z \u001b[36;1m                           'ORIGINAL_NATIVE_PHASE_STARTUP_FAILED')\u001b[0m"
+    },
+    {
+      "line": 1457,
+      "text": "2026-11-08T07:15:53.2426277Z \u001b[36;1m                r'^test result: ok\\. 1 passed; 0 failed; 0 ignored;',\u001b[0m"
+    },
+    {
+      "line": 1462,
+      "text": "2026-11-08T07:15:53.2428394Z \u001b[36;1m        except (OSError, ValueError, KeyError, TypeError) as error:\u001b[0m"
+    },
+    {
+      "line": 1468,
+      "text": "2026-11-08T07:15:53.2430837Z \u001b[36;1m        # A failed native run stays failed; the next predeclared run is\u001b[0m"
+    },
+    {
+      "line": 1474,
+      "text": "2026-11-08T07:15:53.2433019Z \u001b[36;1m        result['failure'] = 'ORIGINAL_THREE_RUN_CAMPAIGN_FAILED'\u001b[0m"
+    },
+    {
+      "line": 1475,
+      "text": "2026-11-08T07:15:53.2433514Z \u001b[36;1mexcept (OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError) as error:\u001b[0m"
+    },
+    {
+      "line": 1486,
+      "text": "2026-11-08T07:15:53.2437353Z \u001b[36;1m        except (OSError, ValueError, subprocess.SubprocessError) as error:\u001b[0m"
+    },
+    {
+      "line": 1494,
+      "text": "2026-11-08T07:15:53.2440504Z \u001b[36;1m        except (OSError, ValueError) as error:\u001b[0m"
+    },
+    {
+      "line": 1572,
+      "text": "2026-11-08T07:25:03.7723334Z {\"attempts\": [{\"complete_success\": false, \"number\": 1, \"original_criteria_met\": false, \"phase_startup_errors\": [], \"report_directory\": \"run-1-raw\", \"report_sha256\": \"4367841015c2973ba746ffd9e68c74ab10f26f72bc79f91fe131ce2574c35ee6\", \"report_validation_failure\": null, \"step\": {\"command\": [\"/home/runner/.cargo/bin/cargo\", \"+1.95.0\", \"test\", \"--locked\", \"--offline\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_multiprocess\", \"separate_process_work_and_signed_confirmation_campaign\", \"--\", \"--exact\", \"--ignored\", \"--nocapture\", \"--test-threads=1\"], \"complete_success\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"elapsed_ns\": 113106867917, \"elapsed_seconds\": 113.106867917, \"error\": null, \"name\": \"run-1\", \"outer_stage_timeout_seconds\": 600, \"returncode\": 101, \"stderr\": \"run-1.stderr.log\", \"stderr_bytes\": 1615, \"stderr_sha256\": \"c81d4d4ae66279c5f7dbbcadaf67e0dc0dc44664a4ec354740aebe3d6ff49c16\", \"stderr_truncated\": false, \"stdout\": \"run-1.stdout.log\", \"stdout_bytes\": 271, \"stdout_sha256\": \"62063cae61acb2416f581aa1468e657eb399244c217713e0afcc93fc9bce511b\", \"stdout_truncated\": false}}, {\"complete_success\": false, \"number\": 2, \"original_criteria_met\": false, \"phase_startup_errors\": [], \"report_directory\": \"run-2-raw\", \"report_sha256\": \"cac04b6a2b7d70345ae65850998e7ff0fd50ded6870caa5ebccd2c253a39b339\", \"report_validation_failure\": null, \"step\": {\"command\": [\"/home/runner/.cargo/bin/cargo\", \"+1.95.0\", \"test\", \"--locked\", \"--offline\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_multiprocess\", \"separate_process_work_and_signed_confirmation_campaign\", \"--\", \"--exact\", \"--ignored\", \"--nocapture\", \"--test-threads=1\"]"
+    },
+    {
+      "line": 1579,
+      "text": "2026-11-08T07:25:03.8919502Z ##[error]Process completed with exit code 1."
+    },
+    {
+      "line": 1591,
+      "text": "2026-11-08T07:25:03.8973289Z \u001b[36;1m        raise ValueError('artifact symlink is not a retained regular file')\u001b[0m"
+    },
+    {
+      "line": 1601,
+      "text": "2026-11-08T07:25:03.8977064Z \u001b[36;1m    json.dump({'scope': 'retained files including failed or partial runs; not a PASS verdict',\u001b[0m"
+    }
+  ],
+  "log_lines": 1676,
+  "log_sha256": "348f02fb37d730ee259446e16766e963a8ab4b98df255cc90316e10e8d5499f0",
+  "note": "Pattern hits are navigation only; expected refusal controls can match; not inferred failure causes.",
+  "tail": [
+    {
+      "line": 1653,
+      "text": "2026-11-08T07:25:12.9818166Z Uploaded bytes 50331648"
+    },
+    {
+      "line": 1654,
+      "text": "2026-11-08T07:25:13.6894043Z Uploaded bytes 58720256"
+    },
+    {
+      "line": 1655,
+      "text": "2026-11-08T07:25:14.6857608Z Uploaded bytes 67108864"
+    },
+    {
+      "line": 1656,
+      "text": "2026-11-08T07:25:15.7015518Z Uploaded bytes 74732742"
+    },
+    {
+      "line": 1657,
+      "text": "2026-11-08T07:25:15.7578994Z Finished uploading artifact content to blob storage!"
+    },
+    {
+      "line": 1658,
+      "text": "2026-11-08T07:25:15.7582642Z SHA256 digest of uploaded artifact zip is 6ce912de9030bc3da292c92dd95438b4bd5eba609f64194da5432b3d48ad2f80"
+    },
+    {
+      "line": 1659,
+      "text": "2026-11-08T07:25:15.7584350Z Finalizing artifact upload"
+    },
+    {
+      "line": 1660,
+      "text": "2026-11-08T07:25:16.2900314Z Artifact pon-native-campaign-x64-head-release-2bdd252aa6c300b7431b9ee897b254b7953cf562-1.zip successfully finalized. Artifact ID 13609325077"
+    },
+    {
+      "line": 1661,
+      "text": "2026-11-08T07:25:16.2902669Z Artifact pon-native-campaign-x64-head-release-2bdd252aa6c300b7431b9ee897b254b7953cf562-1 has been successfully uploaded! Final size is 74732742 bytes. Artifact ID is 13609325077"
+    },
+    {
+      "line": 1662,
+      "text": "2026-11-08T07:25:16.2908615Z Artifact download URL: https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886578/artifacts/13609325077"
+    },
+    {
+      "line": 1663,
+      "text": "2026-11-08T07:25:16.3231998Z Post job cleanup."
+    },
+    {
+      "line": 1664,
+      "text": "2026-11-08T07:25:16.4124808Z [command]/usr/bin/git version"
+    },
+    {
+      "line": 1665,
+      "text": "2026-11-08T07:25:16.4171493Z git version 2.56.0"
+    },
+    {
+      "line": 1666,
+      "text": "2026-11-08T07:25:16.4213176Z Temporarily overriding HOME='/home/runner/work/_temp/3aa1da8a-cfed-4788-ac5d-c5da3ef81b98' before making global git config changes"
+    },
+    {
+      "line": 1667,
+      "text": "2026-11-08T07:25:16.4214936Z Adding repository directory to the temporary git global config as a safe directory"
+    },
+    {
+      "line": 1668,
+      "text": "2026-11-08T07:25:16.4217449Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain"
+    },
+    {
+      "line": 1669,
+      "text": "2026-11-08T07:25:16.4259192Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand"
+    },
+    {
+      "line": 1670,
+      "text": "2026-11-08T07:25:16.4297606Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+    },
+    {
+      "line": 1671,
+      "text": "2026-11-08T07:25:16.4538552Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader"
+    },
+    {
+      "line": 1672,
+      "text": "2026-11-08T07:25:16.4575566Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+    },
+    {
+      "line": 1673,
+      "text": "2026-11-08T07:25:16.4841430Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:"
+    },
+    {
+      "line": 1674,
+      "text": "2026-11-08T07:25:16.4891575Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url"
+    },
+    {
+      "line": 1675,
+      "text": "2026-11-08T07:25:16.5312601Z Cleaning up orphan processes"
+    },
+    {
+      "line": 1676,
+      "text": "2026-11-08T07:25:16.5631015Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+    }
+  ]
+}

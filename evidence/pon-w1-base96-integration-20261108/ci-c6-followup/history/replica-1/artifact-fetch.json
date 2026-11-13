@@ -1,0 +1,29 @@
+{
+  "archive_bytes": 55464180,
+  "archive_sha256": "8eaaaf20cec4e4a10fb3180329c5aed1bf72e4df128f71dae3e21005ee5dcc0f",
+  "argv": [
+    "/usr/bin/gh",
+    "api",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13609158758/zip"
+  ],
+  "artifact_id": 13609158758,
+  "cache_path": "/home/qian-qi/work/chain-w1-c6-later-failures-and-history-20261108-ec265b-01-download-cache/13609158758.zip",
+  "candidate_count": 28,
+  "exception": null,
+  "exit_code": 0,
+  "finished_unix_ns": 1794126356146289496,
+  "job_id": 128655993256,
+  "label": "history/replica-1",
+  "member_count": 4142,
+  "metadata_digest": "sha256:8eaaaf20cec4e4a10fb3180329c5aed1bf72e4df128f71dae3e21005ee5dcc0f",
+  "metadata_digest_matches": true,
+  "metadata_exit": 0,
+  "metadata_sha256": "11cb00b23693f3ee0d3d8947dd398457732dd31afcc1437bcdfa2f204848411f",
+  "metadata_size": 55464180,
+  "metadata_size_matches": true,
+  "metadata_source": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+  "read_only": true,
+  "source": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+  "started_unix_ns": 1794126237486207410,
+  "timed_out": false
+}

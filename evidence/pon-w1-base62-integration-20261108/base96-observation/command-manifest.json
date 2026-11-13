@@ -1,0 +1,341 @@
+{
+  "branch_or_source_edits_performed": false,
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_utc": "2026-11-08T07:00:39.297679+00:00",
+      "label": "head-before",
+      "started_utc": "2026-11-08T07:00:39.293547+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "head-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "head-before.stdout",
+        "sha256": "c77647d3e9b175c045ca6f32f006ae9d53b4c82e30bcf9d7b23538040404d33b"
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "symbolic-ref",
+        "--short",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_utc": "2026-11-08T07:00:39.472935+00:00",
+      "label": "branch-before",
+      "started_utc": "2026-11-08T07:00:39.297796+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "branch-before.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 48,
+        "path": "branch-before.stdout",
+        "sha256": "2685f0b89a7b0f5dfdc80bb2e3123900a7a215e8baa0989a332940752879c75a"
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "show",
+        "--no-patch",
+        "--format=fuller",
+        "--parents",
+        "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_utc": "2026-11-08T07:00:39.876787+00:00",
+      "label": "new-commit",
+      "started_utc": "2026-11-08T07:00:39.473033+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "new-commit.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 384,
+        "path": "new-commit.stdout",
+        "sha256": "311ea0ef7f22ff781367dcddee2f12769d410905faff7880b543429a3c603760"
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "log",
+        "--no-decorate",
+        "--format=%H %P %s",
+        "62d2d90c9e1f4c8450c89843f1e08360a24283ce..96a241bf43f6a46d35dfb3d4ced9594ed8ceca75"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_utc": "2026-11-08T07:00:39.906728+00:00",
+      "label": "new-range-log",
+      "started_utc": "2026-11-08T07:00:39.876897+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "new-range-log.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 154,
+        "path": "new-range-log.stdout",
+        "sha256": "f2f9ebc2504edccceb5b9828d6263aa5947e93313191d1c559f4be936db4f48c"
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "merge-base",
+        "--is-ancestor",
+        "62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+        "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_utc": "2026-11-08T07:00:39.911079+00:00",
+      "label": "old-is-ancestor",
+      "started_utc": "2026-11-08T07:00:39.906838+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "old-is-ancestor.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "old-is-ancestor.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "merge-base",
+        "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_utc": "2026-11-08T07:00:40.177140+00:00",
+      "label": "common-base",
+      "started_utc": "2026-11-08T07:00:39.911151+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "common-base.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "common-base.stdout",
+        "sha256": "7a66857c337908b3add46ac44db760b62517b1e18280b7172e71e77508067665"
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "diff",
+        "--no-ext-diff",
+        "--no-renames",
+        "--name-status",
+        "62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+        "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_utc": "2026-11-08T07:00:40.182714+00:00",
+      "label": "base-name-status",
+      "started_utc": "2026-11-08T07:00:40.177270+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "base-name-status.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 287,
+        "path": "base-name-status.stdout",
+        "sha256": "b6c985276548428343fcf9f5b04cecf9f5eb65847a8d57719cd8c8305b25c9fc"
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "diff",
+        "--no-ext-diff",
+        "--no-renames",
+        "--numstat",
+        "62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+        "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_utc": "2026-11-08T07:00:43.660905+00:00",
+      "label": "base-numstat",
+      "started_utc": "2026-11-08T07:00:40.182819+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "base-numstat.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 306,
+        "path": "base-numstat.stdout",
+        "sha256": "c899ae4c104afc3b0d1042174993c08c600f78c5cba3d5df49aaeb3cf80d4848"
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "diff",
+        "--no-ext-diff",
+        "--no-renames",
+        "--stat",
+        "62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+        "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_utc": "2026-11-08T07:00:43.670192+00:00",
+      "label": "base-stat",
+      "started_utc": "2026-11-08T07:00:43.661039+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "base-stat.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 441,
+        "path": "base-stat.stdout",
+        "sha256": "8439260f1dc4db0d137a2e0466f0f2a0666318cdda73550c579be1628cb1636a"
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "diff",
+        "--no-ext-diff",
+        "--no-renames",
+        "--name-status",
+        "62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+        "2bdd252aa6c300b7431b9ee897b254b7953cf562"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_utc": "2026-11-08T07:00:43.695253+00:00",
+      "label": "c6-own-name-status",
+      "started_utc": "2026-11-08T07:00:43.670336+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "c6-own-name-status.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 36647,
+        "path": "c6-own-name-status.stdout",
+        "sha256": "2888ec40562161e3f4a97a318bed5bea15c5c131c71eb8cfb48d1ded605af6ab"
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "merge-tree",
+        "--write-tree",
+        "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_utc": "2026-11-08T07:00:43.743539+00:00",
+      "label": "static-merge-tree",
+      "started_utc": "2026-11-08T07:00:43.695821+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "static-merge-tree.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "static-merge-tree.stdout",
+        "sha256": "aa48bed738be6562723d1dc61c3148b620ae39f1278be89ff72f0580b7cd612a"
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_utc": "2026-11-08T07:00:43.748175+00:00",
+      "label": "head-after",
+      "started_utc": "2026-11-08T07:00:43.743663+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "head-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "head-after.stdout",
+        "sha256": "c77647d3e9b175c045ca6f32f006ae9d53b4c82e30bcf9d7b23538040404d33b"
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "symbolic-ref",
+        "--short",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "finished_utc": "2026-11-08T07:00:43.751184+00:00",
+      "label": "branch-after",
+      "started_utc": "2026-11-08T07:00:43.748288+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "branch-after.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 48,
+        "path": "branch-after.stdout",
+        "sha256": "2685f0b89a7b0f5dfdc80bb2e3123900a7a215e8baa0989a332940752879c75a"
+      }
+    }
+  ],
+  "fetch_required": false,
+  "frozen_C6": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+  "full_sourceguard_run": false,
+  "merge_tree_note": "git merge-tree --write-tree may create unreferenced objects; no ref, index, worktree or branch update",
+  "new_base": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+  "old_base": "62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+  "schema": "TRNM-W1-BASE96-STATIC-IMPACT-COMMANDS1",
+  "tests_run": false,
+  "worktree_created": false
+}

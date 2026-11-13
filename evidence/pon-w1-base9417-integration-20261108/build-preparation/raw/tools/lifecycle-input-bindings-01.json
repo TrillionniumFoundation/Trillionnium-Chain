@@ -1,0 +1,166 @@
+{
+  "schema": "TRNM-W1-C8-LIFECYCLE-INPUT-BINDINGS1",
+  "source": {
+    "commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c"
+  },
+  "proposal": {
+    "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/lifecycle-research-proposal-01.json",
+    "bytes": 8799,
+    "sha256": "4ac02bf805ed2c53b099d0c4a02f06406afac7b592bf63ffb0534054cc559420"
+  },
+  "driver": {
+    "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/driver-v4.py",
+    "bytes": 20830,
+    "sha256": "b66019d2f47c225174de4f69c508e2b163d69f915b1e9eada59eef9368317464"
+  },
+  "preparer": {
+    "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/prepare-c8-operation-v1.py",
+    "bytes": 9218,
+    "sha256": "b3761a533472cba8bc477c25d2a24a52ef618ef5d8be031a13d5548fed9b4462",
+    "gate_binding_required_at_execution": true,
+    "gate_binding_schema": "TRNM-W1-C8-LIFECYCLE-COMPLETE-GATES1",
+    "gate_binding_file": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/lifecycle-complete-gates-01.json",
+    "gate_binding_sha256": "must be supplied from the later completed, immutable eight-component binding; no current binding exists"
+  },
+  "strict_owner_import": {
+    "manifest": {
+      "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-import-c8-01/manifest.json",
+      "bytes": 53864,
+      "sha256": "d7ce0440c68a30cd6a00c5c1e964a1a360f27767848bdca63667991e3f7d2619"
+    },
+    "extracted_binding": {
+      "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-import-c8-01/extracted-owner-artifact.json",
+      "bytes": 4062,
+      "sha256": "0eca4307270fcad43b7b21a6b8141307294c7b122214e4c9153a80e3ef17894e"
+    },
+    "owner_binary": {
+      "path": "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+      "bytes": 467190280,
+      "sha256": "1cc1db569c0d21f27aabc3ddbef4730ce11a6481c026b35ed69460c09028d456"
+    },
+    "tests": {
+      "passed": 37,
+      "failed": 0,
+      "ignored": 4
+    },
+    "commands": 19,
+    "raw_logs_verified": 38,
+    "raw_logs_copied": 38,
+    "source_prefix_compatibility_passed": true,
+    "compiled_checkout_observation": {
+      "path": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium/crates/trnm-pon-node",
+      "elf_byte_offset": 3997810,
+      "scope": "Corroborating byte presence; source binding also requires original exact Cargo artifact, clean source identities and the independent copied-cache launch provenance."
+    },
+    "operation_created": false,
+    "deadline_selected": false,
+    "adapter": {
+      "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/import-owner-c8-v1.py",
+      "bytes": 16751,
+      "sha256": "7c119c06bcc38a2f35ea2afc3ab65a1d75e4cc271807dedb646dcb528028bcf7"
+    },
+    "job_id": "1a1ba85c4c0-12894-1b51",
+    "terminal_raw_mcp": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\n  \"at_unix_ms\": 1794130709159,\n  \"audit_recorded\": true,\n  \"automatic_retry\": false,\n  \"cancelled\": false,\n  \"exit_code\": 0,\n  \"job_id\": \"1a1ba85c4c0-12894-1b51\",\n  \"launch_nonce\": \"7fbeb8e6ab2f77573aff831400c98abf\",\n  \"log_bytes\": {\n    \"stderr\": {\n      \"seen\": 0,\n      \"stored\": 0\n    },\n    \"stdout\": {\n      \"seen\": 1256,\n      \"stored\": 1256\n    }\n  },\n  \"log_errors\": {\n    \"stderr\": null,\n    \"stdout\": null\n  },\n  \"log_synced\": {\n    \"stderr\": true,\n    \"stdout\": true\n  },\n  \"log_truncated\": {\n    \"stderr\": false,\n    \"stdout\": false\n  },\n  \"output_complete\": true,\n  \"output_durable\": true,\n  \"state\": \"succeeded\",\n  \"terminal_publication_confirmed\": true,\n  \"terminal_publication_protocol\": 1,\n  \"timed_out\": false\n}"
+        }
+      ],
+      "structuredContent": null,
+      "isError": false
+    },
+    "new_tests_executed_by_import": 0,
+    "Cargo_or_Node_executed_by_import": false
+  },
+  "completed_gate_pins": {
+    "backend": {
+      "path": "/home/qian-qi/work/chain-w1-c8-backend-qualification-20261108-ec265b-01/manifest.json",
+      "bytes": 12337,
+      "sha256": "a3d530e67e3fd916f3c5e906ba0b851c00c3393cef0173db443d644109e1a47d"
+    },
+    "native": {
+      "path": "/home/qian-qi/work/chain-w1-c8-native-qualification-20261108-ec265b-01/manifest.json",
+      "bytes": 17384,
+      "sha256": "0fcf604c56d415907fc721f9262d7b6a843b1db49cd62246d706ccf8d319f310"
+    },
+    "owner": {
+      "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-owner-02/manifest.json",
+      "bytes": 23587,
+      "sha256": "6d9013a9ee10badb278215ac1ac81243ada13cd5c279cbc3833250cc50c63bef"
+    },
+    "core": {
+      "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-ci-core-01/manifest.json",
+      "bytes": 21362,
+      "sha256": "ed8cd6e6d6e2772ec0bbfc97181581df53e2d116d0c76823f3a68e90defe3daf"
+    },
+    "receiver": {
+      "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-receiver-01/manifest.json",
+      "bytes": 6603,
+      "sha256": "6cefe7af75dc4f075b26bb1f8ac77693769f16ce4a31173708399f334ebda29b"
+    }
+  },
+  "runner": {
+    "path": "/home/qian-qi/work/chain-w1-base9417-backend-target-20261108-ec265b/release/w1-staged-prover-v2",
+    "bytes": 47809632,
+    "sha256": "258ec975410fddfb984d22671631851c459a8c18ff6424bdb3bce4e3ad124b99"
+  },
+  "runner_build_log": {
+    "bytes": 331956,
+    "path": "/home/qian-qi/work/chain-w1-c8-backend-qualification-20261108-ec265b-01/build.stdout",
+    "sha256": "a5534a26f24c3316395d517ae2d87bc0d94e0ee4c625893288f445ec89d5eff6"
+  },
+  "native_binaries": {
+    "native_winner": {
+      "path": "/home/qian-qi/work/chain-w1-base9417-native-target-20261108-ec265b/release/examples/pon_w1_native_winner_v2",
+      "bytes": 752472,
+      "sha256": "753c8c3610dcf0687e2d54f19e5c5b307dd54683bedabc7fe3d39eed57ee4b03"
+    },
+    "verifier": {
+      "path": "/home/qian-qi/work/chain-w1-base9417-native-target-20261108-ec265b/release/w1-verify-v2",
+      "bytes": 19346216,
+      "sha256": "c667ec4cff650909734c4343fc814d0b3dd8bdb68b5c85085b11bd9c2d68cd2f"
+    }
+  },
+  "owner_binary": {
+    "path": "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+    "bytes": 467190280,
+    "sha256": "1cc1db569c0d21f27aabc3ddbef4730ce11a6481c026b35ed69460c09028d456"
+  },
+  "pending_required_before_runtime_prepare": [
+    "Freeze and bind the separate C8 historical-regressions4/10 qualification and authoritative terminal (resource reports completed; exact raw pins to be imported).",
+    "C8 History release compile/list5 complete terminal with zero executed methods and exact source result.",
+    "All owned builds and audits terminal; target handed back by resource.",
+    "One isolated staged32 control attempt complete and passed after all builds end.",
+    "Immutable complete eight-component qualification binding with actual raw job exits, source-before/after and 73 command / 665 method accounting (including backend expected-exit1 separately).",
+    "Root's separate actual-operation instruction and explicit all-agent SSH/I/O quiet window."
+  ],
+  "source_prefix_guard": {
+    "base": "abab79dac0cb89eb2753d3f579119ac135650eb5",
+    "head": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "changed_paths": [],
+    "verified_by": {
+      "path": "/home/qian-qi/work/chain-w1-base9417-m12-tools-20261108-ec265b/owner-import-c8-01/manifest.json",
+      "bytes": 53864,
+      "sha256": "d7ce0440c68a30cd6a00c5c1e964a1a360f27767848bdca63667991e3f7d2619"
+    }
+  },
+  "operation_created": false,
+  "provider_operation": null,
+  "deadline_selected": false,
+  "original_deadline_ns": null,
+  "Node_or_NativeTask_started": false,
+  "C7_unknown_request_replayed": false,
+  "resource_cap_settlement": "Unknown remains unknown; no resource payment or cap release is authorized by source/build qualification or this schema import.",
+  "research_fixture_boundary": {
+    "research_only": true,
+    "public_chain_transactions_sent": false,
+    "principal": 1000,
+    "prior_fixture_native_wire_bytes_may_repeat_deterministically": true,
+    "independent_node_database_required": true,
+    "no_global_new_funds_claim": true,
+    "no_refund_sum_across_C5_C6_and_future_C8_fixtures": true,
+    "C7_unknown_has_no_established_refund_or_M12_phase": true
+  }
+}

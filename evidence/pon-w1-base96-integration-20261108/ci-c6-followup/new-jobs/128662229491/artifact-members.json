@@ -1,0 +1,552 @@
+{
+  "archive_sha256": "1839373b09e380a132f833a01e66aa8e3d79b9dcb5a148685dd386c0a2e3da93",
+  "artifact_id": 13608394535,
+  "members": [
+    {
+      "bytes": 893,
+      "compressed_bytes": 501,
+      "crc32": "f9af844c",
+      "is_dir": false,
+      "name": "from-zero-native/build/process.json"
+    },
+    {
+      "bytes": 112320,
+      "compressed_bytes": 7849,
+      "crc32": "e27fe216",
+      "is_dir": false,
+      "name": "from-zero-native/build/stdout"
+    },
+    {
+      "bytes": 62,
+      "compressed_bytes": 64,
+      "crc32": "f08349eb",
+      "is_dir": false,
+      "name": "from-zero-native/build/stderr"
+    },
+    {
+      "bytes": 887,
+      "compressed_bytes": 521,
+      "crc32": "2fca825e",
+      "is_dir": false,
+      "name": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/process.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stderr"
+    },
+    {
+      "bytes": 189,
+      "compressed_bytes": 136,
+      "crc32": "40e2fc58",
+      "is_dir": false,
+      "name": "from-zero-native/caller_cpu_clock_keeps_missing_overflow_and_wrong_owner_distinct/stdout"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33622,
+      "crc32": "5e4b18b9",
+      "is_dir": false,
+      "name": "from-zero-native/confirmation/baseline/independent-client/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/confirmation/baseline/independent-client/owner.lock"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33772,
+      "crc32": "dfac9927",
+      "is_dir": false,
+      "name": "from-zero-native/confirmation/baseline/receiver/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/confirmation/baseline/receiver/owner.lock"
+    },
+    {
+      "bytes": 245760,
+      "compressed_bytes": 13267,
+      "crc32": "d93133ef",
+      "is_dir": false,
+      "name": "from-zero-native/confirmation/pressure/independent-client/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/confirmation/pressure/independent-client/owner.lock"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33772,
+      "crc32": "dfac9927",
+      "is_dir": false,
+      "name": "from-zero-native/confirmation/pressure/receiver/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/confirmation/pressure/receiver/owner.lock"
+    },
+    {
+      "bytes": 499712,
+      "compressed_bytes": 33470,
+      "crc32": "cb142e8e",
+      "is_dir": false,
+      "name": "from-zero-native/confirmation/producer/native.sqlite"
+    },
+    {
+      "bytes": 11129217,
+      "compressed_bytes": 457115,
+      "crc32": "07a402b0",
+      "is_dir": false,
+      "name": "from-zero-native/confirmation/report.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/confirmation/producer/owner.lock"
+    },
+    {
+      "bytes": 793,
+      "compressed_bytes": 412,
+      "crc32": "8eeb2520",
+      "is_dir": false,
+      "name": "from-zero-native/format-check/process.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/format-check/stderr"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/format-check/stdout"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/format-copy/stderr"
+    },
+    {
+      "bytes": 820,
+      "compressed_bytes": 443,
+      "crc32": "987fd2aa",
+      "is_dir": false,
+      "name": "from-zero-native/format-copy/process.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/format-copy/stdout"
+    },
+    {
+      "bytes": 1035,
+      "compressed_bytes": 563,
+      "crc32": "dd129c35",
+      "is_dir": false,
+      "name": "from-zero-native/format-copy-source/examples/support/w1_from_zero.rs"
+    },
+    {
+      "bytes": 11911,
+      "compressed_bytes": 3812,
+      "crc32": "43dacd18",
+      "is_dir": false,
+      "name": "from-zero-native/format-copy-source/tests/public_v3_from_zero/fresh_challenge.rs"
+    },
+    {
+      "bytes": 79067,
+      "compressed_bytes": 18284,
+      "crc32": "3fd5c45c",
+      "is_dir": false,
+      "name": "from-zero-native/format-copy-source/tests/public_v3_from_zero.rs"
+    },
+    {
+      "bytes": 79067,
+      "compressed_bytes": 18284,
+      "crc32": "3fd5c45c",
+      "is_dir": false,
+      "name": "from-zero-native/formatted.rs"
+    },
+    {
+      "bytes": 899,
+      "compressed_bytes": 529,
+      "crc32": "80d7708e",
+      "is_dir": false,
+      "name": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/process.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stderr"
+    },
+    {
+      "bytes": 3363,
+      "compressed_bytes": 1344,
+      "crc32": "5d775588",
+      "is_dir": false,
+      "name": "from-zero-native/four_from_zero_w1_traces_keep_native_state_and_chainwork_unchanged/stdout"
+    },
+    {
+      "bytes": 893,
+      "compressed_bytes": 524,
+      "crc32": "694d8a7b",
+      "is_dir": false,
+      "name": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/process.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stderr"
+    },
+    {
+      "bytes": 195,
+      "compressed_bytes": 141,
+      "crc32": "76575159",
+      "is_dir": false,
+      "name": "from-zero-native/from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection/stdout"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stderr"
+    },
+    {
+      "bytes": 913,
+      "compressed_bytes": 541,
+      "crc32": "259d1e9c",
+      "is_dir": false,
+      "name": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/process.json"
+    },
+    {
+      "bytes": 915,
+      "compressed_bytes": 398,
+      "crc32": "60753a48",
+      "is_dir": false,
+      "name": "from-zero-native/from_zero_service_shares_cpu_with_honest_work_and_reopened_owner/stdout"
+    },
+    {
+      "bytes": 950,
+      "compressed_bytes": 561,
+      "crc32": "f75f3397",
+      "is_dir": false,
+      "name": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stderr"
+    },
+    {
+      "bytes": 407,
+      "compressed_bytes": 264,
+      "crc32": "e8cd6c70",
+      "is_dir": false,
+      "name": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/stdout"
+    },
+    {
+      "bytes": 73128,
+      "compressed_bytes": 11086,
+      "crc32": "afc6a79b",
+      "is_dir": false,
+      "name": "from-zero-native/manifest.json"
+    },
+    {
+      "bytes": 245760,
+      "compressed_bytes": 13059,
+      "crc32": "0dccb9f8",
+      "is_dir": false,
+      "name": "from-zero-native/native/producer/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/native/producer/owner.lock"
+    },
+    {
+      "bytes": 245760,
+      "compressed_bytes": 13381,
+      "crc32": "6c7488bf",
+      "is_dir": false,
+      "name": "from-zero-native/native/receiver/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/native/receiver/owner.lock"
+    },
+    {
+      "bytes": 3475417,
+      "compressed_bytes": 71563,
+      "crc32": "063527fa",
+      "is_dir": false,
+      "name": "from-zero-native/native/report.json"
+    },
+    {
+      "bytes": 245760,
+      "compressed_bytes": 13067,
+      "crc32": "f8d4c5dd",
+      "is_dir": false,
+      "name": "from-zero-native/native/sustained/producer/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/native/sustained/producer/owner.lock"
+    },
+    {
+      "bytes": 245760,
+      "compressed_bytes": 13385,
+      "crc32": "c7c301f3",
+      "is_dir": false,
+      "name": "from-zero-native/native/sustained/receiver/native.sqlite"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native/native/sustained/receiver/owner.lock"
+    },
+    {
+      "bytes": 19721897,
+      "compressed_bytes": 778224,
+      "crc32": "85bf6d77",
+      "is_dir": false,
+      "name": "from-zero-native/native/sustained/report.json"
+    },
+    {
+      "bytes": 10971936,
+      "compressed_bytes": 4425717,
+      "crc32": "c89bda10",
+      "is_dir": false,
+      "name": "from-zero-native/public_v3_from_zero"
+    },
+    {
+      "bytes": 200,
+      "compressed_bytes": 145,
+      "crc32": "b37d4686",
+      "is_dir": false,
+      "name": "from-zero-native-host/actual-systemd-parent-after.log"
+    },
+    {
+      "bytes": 200,
+      "compressed_bytes": 145,
+      "crc32": "b37d4686",
+      "is_dir": false,
+      "name": "from-zero-native-host/actual-systemd-parent.log"
+    },
+    {
+      "bytes": 1630,
+      "compressed_bytes": 787,
+      "crc32": "73a55f8c",
+      "is_dir": false,
+      "name": "from-zero-native-host/after-provision.json"
+    },
+    {
+      "bytes": 2797,
+      "compressed_bytes": 704,
+      "crc32": "0562e31e",
+      "is_dir": false,
+      "name": "from-zero-native-host/before-provision.json"
+    },
+    {
+      "bytes": 10,
+      "compressed_bytes": 12,
+      "crc32": "132d2814",
+      "is_dir": false,
+      "name": "from-zero-native-host/child-final-load-state.log"
+    },
+    {
+      "bytes": 10,
+      "compressed_bytes": 12,
+      "crc32": "132d2814",
+      "is_dir": false,
+      "name": "from-zero-native-host/child-load-state.log"
+    },
+    {
+      "bytes": 333,
+      "compressed_bytes": 217,
+      "crc32": "f5952b0c",
+      "is_dir": false,
+      "name": "from-zero-native-host/child-result.json"
+    },
+    {
+      "bytes": 7953,
+      "compressed_bytes": 2089,
+      "crc32": "f00620a1",
+      "is_dir": false,
+      "name": "from-zero-native-host/controller-result.json"
+    },
+    {
+      "bytes": 1703,
+      "compressed_bytes": 815,
+      "crc32": "7ead5ea2",
+      "is_dir": false,
+      "name": "from-zero-native-host/inside-after.json"
+    },
+    {
+      "bytes": 1690,
+      "compressed_bytes": 806,
+      "crc32": "2a53183d",
+      "is_dir": false,
+      "name": "from-zero-native-host/inside-before.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native-host/install-reviewed-unit.log"
+    },
+    {
+      "bytes": 1664,
+      "compressed_bytes": 831,
+      "crc32": "8fc1e648",
+      "is_dir": false,
+      "name": "from-zero-native-host/outside-after.json"
+    },
+    {
+      "bytes": 146,
+      "compressed_bytes": 111,
+      "crc32": "f132333d",
+      "is_dir": false,
+      "name": "from-zero-native-host/parent-properties.log"
+    },
+    {
+      "bytes": 920,
+      "compressed_bytes": 518,
+      "crc32": "485c66c0",
+      "is_dir": false,
+      "name": "from-zero-native-host/prepare-build/process.json"
+    },
+    {
+      "bytes": 6896,
+      "compressed_bytes": 1510,
+      "crc32": "81a57530",
+      "is_dir": false,
+      "name": "from-zero-native-host/prepare-build/stderr"
+    },
+    {
+      "bytes": 112440,
+      "compressed_bytes": 7850,
+      "crc32": "53eab6fc",
+      "is_dir": false,
+      "name": "from-zero-native-host/prepare-build/stdout"
+    },
+    {
+      "bytes": 3715,
+      "compressed_bytes": 1347,
+      "crc32": "7ede2f65",
+      "is_dir": false,
+      "name": "from-zero-native-host/prepare-build.json"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native-host/seal-parent-directory.log"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native-host/seal-parent-receipt.log"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native-host/start-fixed-parent.log"
+    },
+    {
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000",
+      "is_dir": false,
+      "name": "from-zero-native-host/systemd-reload.log"
+    },
+    {
+      "bytes": 6910,
+      "compressed_bytes": 1408,
+      "crc32": "4b19a734",
+      "is_dir": false,
+      "name": "from-zero-native-host/systemd-run.log"
+    },
+    {
+      "bytes": 229,
+      "compressed_bytes": 139,
+      "crc32": "794c098a",
+      "is_dir": false,
+      "name": "from-zero-native-host/unprovisioned-parent.json"
+    },
+    {
+      "bytes": 1176109,
+      "compressed_bytes": 36018,
+      "crc32": "f4d5f322",
+      "is_dir": false,
+      "name": "pq-provider/build-and-smoke.log"
+    },
+    {
+      "bytes": 2700,
+      "compressed_bytes": 1064,
+      "crc32": "b8234fae",
+      "is_dir": false,
+      "name": "pq-provider/provider.json"
+    },
+    {
+      "bytes": 3204,
+      "compressed_bytes": 1225,
+      "crc32": "f8cfba21",
+      "is_dir": false,
+      "name": "public-fixture-parent.json"
+    },
+    {
+      "bytes": 423,
+      "compressed_bytes": 238,
+      "crc32": "1b44c535",
+      "is_dir": false,
+      "name": "source.json"
+    }
+  ]
+}

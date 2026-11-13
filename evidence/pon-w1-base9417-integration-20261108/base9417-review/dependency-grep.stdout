@@ -1,0 +1,3 @@
+9417e495165865ef6c1288b39084856e31020634:trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs:762:pub fn checked_snapshot_with_arithmetic(
+9417e495165865ef6c1288b39084856e31020634:trillionnium/crates/trnm-mvcc-fee/src/pon_commitment.rs:1014:    pub fn check_and_bind(
+9417e495165865ef6c1288b39084856e31020634:trillionnium/crates/trnm-pon-node/src/store.rs:3137:    fn invalidate_commitment(&self) {

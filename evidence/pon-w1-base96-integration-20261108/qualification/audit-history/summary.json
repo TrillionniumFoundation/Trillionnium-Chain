@@ -1,0 +1,26 @@
+{
+  "attempts": [
+    {
+      "driver_sha256": "236ea6fccac307c733d1903c43fe59903a2658c5f310d1ee4224153ff50062fa",
+      "exit": 1,
+      "interpretation": "Audit-only assertion error after sealing core, owner, receiver; required current Cargo backend binary nlink==1 without basis. No qualification command or test failed here.",
+      "job_id": "1a1ba4785b2-12894-1972"
+    },
+    {
+      "driver_sha256": "f4cd49e61d7b108380146db840f790ce1efe42b574b2bd505fff1a6a328ca1b8",
+      "exit": 0,
+      "interpretation": "Only backend/native records continued. Current Cargo ELF regular-file hashes verified, link counts recorded, original isolated cache-copy inode evidence retained; no tests rerun.",
+      "job_id": "1a1ba488995-12894-1978"
+    },
+    {
+      "driver_sha256": "d368cefef50d73ff2d4e178990ae5cbfeea7025bd8dc202acb4345330efd8712",
+      "exit": 0,
+      "interpretation": "History compile/list and single staged32 records independently audited after their terminal qualification; no workload or tests rerun. History list counts 0 passes.",
+      "job_id": "1a1ba525296-12894-19ba"
+    }
+  ],
+  "first_audit_assertion_is_not_a_qualification_failure": true,
+  "qualification_results_rewritten": false,
+  "schema": "TRNM-W1-C7-AUDIT-HISTORY1",
+  "tests_rerun_by_audits": 0
+}

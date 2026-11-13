@@ -1,0 +1,19 @@
+{
+  "schema": "TRNM-W1-C8-PUBLICATION-PRESERVED-FAILURE-DERIVATION1",
+  "source_changes": 0,
+  "old_attempts_reclassified": false,
+  "records": [
+    {
+      "source": "publish_c8_source.py",
+      "source_sha256": "f8e64fe76dc1602cf8703aa78b096810d0bc5c74a0219b6dfbf6bae8d44a696b",
+      "result": "publish_c8_source_v2.py",
+      "result_sha256": "5cd7e0e0741b7b38d32b35eb41da28a02a481badde0f4eb0d20cc9b455ae5537"
+    },
+    {
+      "source": "assemble_validate_d6.py",
+      "source_sha256": "8a463b1b842779e3b0f59b0ce1671f69d8b911abd4802c97d9f5330c80d72816",
+      "result": "assemble_validate_d6_v2.py",
+      "result_sha256": "a4a40d69f3bd1bbdfa30a001bc6aa57b27535a556434249212648ca0944ad9d9"
+    }
+  ]
+}

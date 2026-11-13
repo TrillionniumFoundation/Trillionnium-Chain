@@ -1,0 +1,86 @@
+[
+  {
+    "status": {
+      "at_unix_ms": 1794121680519,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b9fa4d54-12894-17e1",
+      "launch_nonce": "9400c6365a3834f0e73a09895160e1eb",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 510,
+          "stored": 510
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "{\"launch_intent_recorded\": true, \"operation\": \"8058cfa81675504da3f0593b8df7c51cb0b1f3fd6db1daa4d3f83172a6d4eacc\", \"original_deadline_ns\": 1199343004629858, \"source\": {\"commit\": \"2bdd252aa6c300b7431b9ee897b254b7953cf562\", \"tree\": \"ac3cb7171c429fa5e12e29ee16839fa6f49f1b81\"}}\n\nrunning 1 test\ntest store::async_w1_generation_v2::tests::heavy::funded_fresh_full_w1_generation_timeout_then_refund_and_reorg ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1210 filtered out; finished in 123.43s\n\n",
+    "stdout_sha256": "c464f869775d9476fc429c4f18df6b3a9bed16a832d9a86c2297e350d7f61342"
+  },
+  {
+    "status": {
+      "at_unix_ms": 1794121781210,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b9fdb57b-12894-17ef",
+      "launch_nonce": "e42093572033beeccdec61038f5c1d2e",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 216,
+          "stored": 216
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "\nrunning 1 test\ntest store::async_w1_generation_v2::tests::heavy::funded_w1_owner_cancellation_cold_reconcile ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1210 filtered out; finished in 0.35s\n\n",
+    "stdout_sha256": "4b4083323285dfb40004579e9f128fb441ac804aa6ebf98d3cc6279f48b210bc"
+  }
+]

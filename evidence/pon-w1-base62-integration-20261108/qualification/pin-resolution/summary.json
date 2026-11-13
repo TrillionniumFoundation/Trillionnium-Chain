@@ -1,0 +1,60 @@
+{
+  "schema": "w1-base62-precommit-pin-controls-summary-v1",
+  "scope": "Precommit conflict resolution and related source-pin controls; excluded from postcommit C6 qualification counts.",
+  "ordinary_control_methods": 52,
+  "ci_pin_and_w1_methods": 13,
+  "pq_methods": 39,
+  "all_completed_without_skip": true,
+  "preflight_and_static_checkers_exit_zero": true,
+  "corpus_source_pins": 645,
+  "cryptographic_acceptance": false,
+  "qualification_status": "HOLD_NO_GO",
+  "resolution": {
+    "schema": "w1-base62-pin-resolution-v1",
+    "worktree": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+    "head": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+    "merge_head": "62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+    "edited_paths": [
+      ".github/workflows/pon-recent-batch-acceptance.yml",
+      "config/pon/pq-cross-branch-corpus-v1.json"
+    ],
+    "corpus_pin_count": 645,
+    "all_c5_pin_keys_retained": true,
+    "all_non_updated_corpus_fields_equal_c5": true,
+    "profile_pin_retained": {
+      "path": ".github/workflows/pon-w1-transparent-profile.yml",
+      "blob": "710446f42bee1206d16b0019ecf8ecf8866fdfec"
+    },
+    "pin_changes": {
+      ".github/workflows/pon-recent-batch-acceptance.yml": {
+        "before": "3648c5057d8cdab63975d39fa467a766631ce9a7",
+        "after": "724e561ebc89e5f1d85399e01a447ce1f4baa673"
+      },
+      "trillionnium/crates/trnm-pon-node/src/store.rs": {
+        "before": "aa4a73b4092cff5d37fdf2b8263f0a484767c25a",
+        "after": "7dd40f051e68cc72853217c31f0d025275114829"
+      },
+      "trillionnium/crates/trnm-pon-node/src/store/legacy_reorg_root_tests.rs": {
+        "before": "86ddedea0b03e0016707b5b0a0fbc940d2472ab2",
+        "after": "f30e827038dddb0285716af8ff8c04316ee148bd"
+      }
+    },
+    "workflow_before_c5_blob": "3648c5057d8cdab63975d39fa467a766631ce9a7",
+    "workflow_final_blob": "724e561ebc89e5f1d85399e01a447ce1f4baa673",
+    "workflow_final_sha256": "75324076fefe60c5c17d08ada3c94fd34fa13760bdfb68c03ecd5df6ec3a126a",
+    "corpus_before_c5_blob": "8e703fa5cb47720862d11573398fe0b32da5efbb",
+    "corpus_final_blob": "8ddd5db168cbf97f2b715da6fe727bc6e69ef644",
+    "corpus_final_sha256": "a867332797d6a91d5623c724b5d98c4b1e09e04721003a84f4f1eb7106e2042f",
+    "store_final_blob": "7dd40f051e68cc72853217c31f0d025275114829",
+    "store_final_sha256": "a44e759012fade4d13274ef7a53f2f8e438d866f78ca163f0c375cac4600eee5",
+    "legacy_test_final_blob": "f30e827038dddb0285716af8ff8c04316ee148bd",
+    "legacy_test_final_sha256": "7345903e8002d1459a52d1ce4b2846c4b607efbfc3f3f4d7f2ea7fbacb755e0a",
+    "store_and_test_unmodified_by_resolution": true,
+    "conflicts_remaining": 0,
+    "committed": false,
+    "pushed": false
+  },
+  "source_commit_created_by_review_agent": false,
+  "source_pushes_by_review_agent": 0,
+  "postcommit_c6_qualification_granted": false
+}

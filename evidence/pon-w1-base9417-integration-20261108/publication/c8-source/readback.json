@@ -1,0 +1,100 @@
+{
+  "schema": "TRNM-W1-C8-SOURCE-PUBLICATION2",
+  "source_commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "source_tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c",
+  "source_parents": [
+    "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "9417e495165865ef6c1288b39084856e31020634"
+  ],
+  "actor": "ProfHepta",
+  "push_kind": "ordinary-fast-forward",
+  "components": [
+    {
+      "name": "core",
+      "manifest": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-ci-core-01/manifest.json",
+      "sha256": "ed8cd6e6d6e2772ec0bbfc97181581df53e2d116d0c76823f3a68e90defe3daf",
+      "commands": 20
+    },
+    {
+      "name": "owner",
+      "manifest": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-owner-02/manifest.json",
+      "sha256": "6d9013a9ee10badb278215ac1ac81243ada13cd5c279cbc3833250cc50c63bef",
+      "commands": 19
+    },
+    {
+      "name": "receiver",
+      "manifest": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-receiver-01/manifest.json",
+      "sha256": "6cefe7af75dc4f075b26bb1f8ac77693769f16ce4a31173708399f334ebda29b",
+      "commands": 4
+    },
+    {
+      "name": "history-local",
+      "manifest": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-history-local-01/manifest.json",
+      "sha256": "b39888daf3d2223c6600a693f663ca213698dffd6d9854ee887afd36af741738",
+      "commands": 5
+    },
+    {
+      "name": "historical-regressions",
+      "manifest": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-historical-regressions-01/manifest.json",
+      "sha256": "eef45c33e9aae4650c70fcaefc174841e6f75cd8c018139705d459e1fc71c1e6",
+      "commands": 4
+    },
+    {
+      "name": "staged",
+      "manifest": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-staged-02/manifest.json",
+      "sha256": "f7c7527fb00f542021f0c7ab0469b2c0f2905e0f71b9b55f5e577b8f94c3104f",
+      "commands": 4
+    },
+    {
+      "name": "backend",
+      "manifest": "/home/qian-qi/work/chain-w1-c8-backend-qualification-20261108-ec265b-01/manifest.json",
+      "sha256": "a3d530e67e3fd916f3c5e906ba0b851c00c3393cef0173db443d644109e1a47d",
+      "commands": 7
+    },
+    {
+      "name": "native",
+      "manifest": "/home/qian-qi/work/chain-w1-c8-native-qualification-20261108-ec265b-01/manifest.json",
+      "sha256": "0fcf604c56d415907fc721f9262d7b6a843b1db49cd62246d706ccf8d319f310",
+      "commands": 10
+    }
+  ],
+  "selected_coverage_command_count": 73,
+  "selected_coverage_passed_methods": 665,
+  "ordinary_ignored": 4,
+  "all_declared_qualification_attempts": {
+    "commands": 77,
+    "method_executions": 697,
+    "passed_methods": 696,
+    "failed_methods": 1,
+    "ignored_methods": 4,
+    "exit_zero_commands": 75,
+    "expected_nonzero_commands": 1,
+    "unexpected_nonzero_commands": 1,
+    "all_first_attempts_passed": false,
+    "source_guard_failures": 0,
+    "original_staged_failure_manifest_sha256": "a6e8363bfa6a157fc1b414b64e4af59bb11211166fe06f1b0962460253e89e25",
+    "unique_repeat_manifest_sha256": "f7c7527fb00f542021f0c7ab0469b2c0f2905e0f71b9b55f5e577b8f94c3104f",
+    "repeat_declaration_sha256": "7b51a7dee784b9375eb1c1dcc9b8f54869538810c763ee1514208ba42912ce95",
+    "causal_explanation_established": false
+  },
+  "expected_negative_exit_commands": 1,
+  "before_refs": {
+    "refs/heads/fix/chain-six-axis-performance-20261103": "9417e495165865ef6c1288b39084856e31020634",
+    "refs/heads/fix/chain-w1-runtime-integrated-20261107": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "refs/pull/782/merge": "7b4a63b6f08687e93270407772951aa71087ca3d"
+  },
+  "after_refs": {
+    "refs/heads/fix/chain-six-axis-performance-20261103": "9417e495165865ef6c1288b39084856e31020634",
+    "refs/heads/fix/chain-w1-runtime-integrated-20261107": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "refs/pull/782/merge": "7b4a63b6f08687e93270407772951aa71087ca3d"
+  },
+  "api_base_before": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+  "api_base_after": "9417e495165865ef6c1288b39084856e31020634",
+  "api_head_after": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "api_merge_after": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b",
+  "pr_draft": true,
+  "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/pull/782",
+  "new_ci_not_yet_qualified": true,
+  "tested_base_parent_matches_current_remote_base": true,
+  "observed_unix_ns": 1794132548308570688
+}

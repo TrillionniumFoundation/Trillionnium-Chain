@@ -1,0 +1,1400 @@
+{
+  "failure_count": 58,
+  "failures": [
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550735
+      },
+      "completed_at": "2026-11-08T07:22:57Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/job/128662532819",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/job/128662532819",
+      "id": 128662532819,
+      "job_id_from_url": 128662532819,
+      "name": "prospective-merge (rust-baseline)",
+      "output": {
+        "annotations_count": 4,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128662532819/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886543",
+      "started_at": "2026-11-08T07:22:13Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550735
+      },
+      "completed_at": "2026-11-08T07:22:11Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/job/128662229998",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/job/128662229998",
+      "id": 128662229998,
+      "job_id_from_url": 128662229998,
+      "name": "prospective-merge (external-evidence-contract)",
+      "output": {
+        "annotations_count": 4,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128662229998/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886543",
+      "started_at": "2026-11-08T07:21:26Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550735
+      },
+      "completed_at": "2026-11-08T07:22:14Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/job/128662229957",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/job/128662229957",
+      "id": 128662229957,
+      "job_id_from_url": 128662229957,
+      "name": "prospective-merge (fuzz-smoke)",
+      "output": {
+        "annotations_count": 4,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128662229957/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886543",
+      "started_at": "2026-11-08T07:21:30Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550735
+      },
+      "completed_at": "2026-11-08T07:22:33Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/job/128662229947",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/job/128662229947",
+      "id": 128662229947,
+      "job_id_from_url": 128662229947,
+      "name": "prospective-merge (protocol-contract)",
+      "output": {
+        "annotations_count": 4,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128662229947/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886543",
+      "started_at": "2026-11-08T07:21:32Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550735
+      },
+      "completed_at": "2026-11-08T07:21:43Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/job/128662229937",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/job/128662229937",
+      "id": 128662229937,
+      "job_id_from_url": 128662229937,
+      "name": "W1 actual reuse V3 (arm64, prospective-merge)",
+      "output": {
+        "annotations_count": 4,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128662229937/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886543",
+      "started_at": "2026-11-08T07:20:51Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550735
+      },
+      "completed_at": "2026-11-08T07:22:10Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/job/128662229935",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/job/128662229935",
+      "id": 128662229935,
+      "job_id_from_url": 128662229935,
+      "name": "prospective Rust shard (quality)",
+      "output": {
+        "annotations_count": 5,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128662229935/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886543",
+      "started_at": "2026-11-08T07:21:17Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550735
+      },
+      "completed_at": "2026-11-08T07:26:40Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/job/128662229865",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/job/128662229865",
+      "id": 128662229865,
+      "job_id_from_url": 128662229865,
+      "name": "cross-arch-cost (x64)",
+      "output": {
+        "annotations_count": 2,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128662229865/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886543",
+      "started_at": "2026-11-08T07:21:34Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550735
+      },
+      "completed_at": "2026-11-08T07:21:34Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/job/128662229854",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/job/128662229854",
+      "id": 128662229854,
+      "job_id_from_url": 128662229854,
+      "name": "prospective-merge (repository-truth)",
+      "output": {
+        "annotations_count": 4,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128662229854/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886543",
+      "started_at": "2026-11-08T07:20:51Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550735
+      },
+      "completed_at": "2026-11-08T07:21:44Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/job/128662229829",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/job/128662229829",
+      "id": 128662229829,
+      "job_id_from_url": 128662229829,
+      "name": "W1 actual reuse V3 (x64, prospective-merge)",
+      "output": {
+        "annotations_count": 4,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128662229829/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886543",
+      "started_at": "2026-11-08T07:21:00Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550735
+      },
+      "completed_at": "2026-11-08T07:28:44Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/job/128662229758",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/job/128662229758",
+      "id": 128662229758,
+      "job_id_from_url": 128662229758,
+      "name": "cross-arch-cost (arm64)",
+      "output": {
+        "annotations_count": 2,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128662229758/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886543",
+      "started_at": "2026-11-08T07:21:39Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550735
+      },
+      "completed_at": "2026-11-08T07:22:07Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/job/128662229746",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/job/128662229746",
+      "id": 128662229746,
+      "job_id_from_url": 128662229746,
+      "name": "prospective Rust shard (runtime)",
+      "output": {
+        "annotations_count": 5,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128662229746/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886543",
+      "started_at": "2026-11-08T07:21:25Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550735
+      },
+      "completed_at": "2026-11-08T07:27:33Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/job/128662229491",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886543/job/128662229491",
+      "id": 128662229491,
+      "job_id_from_url": 128662229491,
+      "name": "protocol-contract",
+      "output": {
+        "annotations_count": 2,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128662229491/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886543",
+      "started_at": "2026-11-08T07:20:46Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550696
+      },
+      "completed_at": "2026-11-08T07:19:49Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660702010",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660702010",
+      "id": 128660702010,
+      "job_id_from_url": 128660702010,
+      "name": "W1 factorial legal strategies v3 (x64, prospective-merge)",
+      "output": {
+        "annotations_count": 3,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660702010/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886518",
+      "started_at": "2026-11-08T07:18:49Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550696
+      },
+      "completed_at": "2026-11-08T07:16:30Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660702000",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660702000",
+      "id": 128660702000,
+      "job_id_from_url": 128660702000,
+      "name": "W1 false trace reuse (arm64, prospective-merge)",
+      "output": {
+        "annotations_count": 3,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660702000/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886518",
+      "started_at": "2026-11-08T07:15:45Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550696
+      },
+      "completed_at": "2026-11-08T07:19:36Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660701997",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660701997",
+      "id": 128660701997,
+      "job_id_from_url": 128660701997,
+      "name": "W1 complete legal strategies (v2, arm64, prospective-merge)",
+      "output": {
+        "annotations_count": 3,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701997/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886518",
+      "started_at": "2026-11-08T07:18:53Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550696
+      },
+      "completed_at": "2026-11-08T07:18:10Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660701995",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660701995",
+      "id": 128660701995,
+      "job_id_from_url": 128660701995,
+      "name": "W1 complete legal strategies (v2, x64, prospective-merge)",
+      "output": {
+        "annotations_count": 3,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701995/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886518",
+      "started_at": "2026-11-08T07:17:25Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550696
+      },
+      "completed_at": "2026-11-08T07:18:55Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660701957",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660701957",
+      "id": 128660701957,
+      "job_id_from_url": 128660701957,
+      "name": "W1 paid rank and batch v5 (x64, prospective-merge)",
+      "output": {
+        "annotations_count": 3,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701957/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886518",
+      "started_at": "2026-11-08T07:18:14Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550696
+      },
+      "completed_at": "2026-11-08T07:24:07Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660701948",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660701948",
+      "id": 128660701948,
+      "job_id_from_url": 128660701948,
+      "name": "W1 fresh challenge service (x64, head)",
+      "output": {
+        "annotations_count": 2,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701948/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886518",
+      "started_at": "2026-11-08T07:18:18Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550696
+      },
+      "completed_at": "2026-11-08T07:19:24Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660701943",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660701943",
+      "id": 128660701943,
+      "job_id_from_url": 128660701943,
+      "name": "W1 complete legal strategies (v1, x64, prospective-merge)",
+      "output": {
+        "annotations_count": 3,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701943/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886518",
+      "started_at": "2026-11-08T07:18:36Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550696
+      },
+      "completed_at": "2026-11-08T07:17:16Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660701933",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660701933",
+      "id": 128660701933,
+      "job_id_from_url": 128660701933,
+      "name": "W1 fresh challenge service (x64, prospective-merge)",
+      "output": {
+        "annotations_count": 3,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701933/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886518",
+      "started_at": "2026-11-08T07:16:30Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550696
+      },
+      "completed_at": "2026-11-08T07:19:46Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660701927",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660701927",
+      "id": 128660701927,
+      "job_id_from_url": 128660701927,
+      "name": "W1 complete legal strategies (v1, arm64, prospective-merge)",
+      "output": {
+        "annotations_count": 3,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701927/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886518",
+      "started_at": "2026-11-08T07:19:00Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550696
+      },
+      "completed_at": "2026-11-08T07:16:34Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660701909",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660701909",
+      "id": 128660701909,
+      "job_id_from_url": 128660701909,
+      "name": "W1 factorial legal strategies v3 (arm64, prospective-merge)",
+      "output": {
+        "annotations_count": 3,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701909/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886518",
+      "started_at": "2026-11-08T07:15:50Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550696
+      },
+      "completed_at": "2026-11-08T07:18:12Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660701885",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660701885",
+      "id": 128660701885,
+      "job_id_from_url": 128660701885,
+      "name": "W1 paid rank and batch v5 (arm64, prospective-merge)",
+      "output": {
+        "annotations_count": 3,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701885/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886518",
+      "started_at": "2026-11-08T07:17:27Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550696
+      },
+      "completed_at": "2026-11-08T07:16:26Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660701856",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886518/job/128660701856",
+      "id": 128660701856,
+      "job_id_from_url": 128660701856,
+      "name": "W1 false trace reuse (x64, prospective-merge)",
+      "output": {
+        "annotations_count": 3,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701856/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886518",
+      "started_at": "2026-11-08T07:15:26Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550874
+      },
+      "completed_at": "2026-11-08T07:16:50Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886584/job/128660701788",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886584/job/128660701788",
+      "id": 128660701788,
+      "job_id_from_url": 128660701788,
+      "name": "reference (ubuntu-24.04, prospective-merge)",
+      "output": {
+        "annotations_count": 5,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701788/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886584",
+      "started_at": "2026-11-08T07:16:05Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550874
+      },
+      "completed_at": "2026-11-08T07:16:42Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886584/job/128660701752",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886584/job/128660701752",
+      "id": 128660701752,
+      "job_id_from_url": 128660701752,
+      "name": "reference (ubuntu-24.04-arm, prospective-merge)",
+      "output": {
+        "annotations_count": 5,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701752/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886584",
+      "started_at": "2026-11-08T07:15:59Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550811
+      },
+      "completed_at": "2026-11-08T07:38:35Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886555/job/128660701711",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886555/job/128660701711",
+      "id": 128660701711,
+      "job_id_from_url": 128660701711,
+      "name": "native priorities (ubuntu-24.04-arm, head, service-model)",
+      "output": {
+        "annotations_count": 2,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701711/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886555",
+      "started_at": "2026-11-08T07:17:21Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550811
+      },
+      "completed_at": "2026-11-08T08:09:03Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886555/job/128660701637",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886555/job/128660701637",
+      "id": 128660701637,
+      "job_id_from_url": 128660701637,
+      "name": "native priorities (ubuntu-24.04, head, history)",
+      "output": {
+        "annotations_count": 2,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701637/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886555",
+      "started_at": "2026-11-08T07:17:39Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550811
+      },
+      "completed_at": "2026-11-08T07:17:29Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886555/job/128660701632",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886555/job/128660701632",
+      "id": 128660701632,
+      "job_id_from_url": 128660701632,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, history)",
+      "output": {
+        "annotations_count": 4,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701632/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886555",
+      "started_at": "2026-11-08T07:16:45Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550811
+      },
+      "completed_at": "2026-11-08T07:16:28Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886555/job/128660701606",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886555/job/128660701606",
+      "id": 128660701606,
+      "job_id_from_url": 128660701606,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)",
+      "output": {
+        "annotations_count": 4,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701606/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886555",
+      "started_at": "2026-11-08T07:15:44Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550811
+      },
+      "completed_at": "2026-11-08T07:38:35Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886555/job/128660701605",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886555/job/128660701605",
+      "id": 128660701605,
+      "job_id_from_url": 128660701605,
+      "name": "native priorities (ubuntu-24.04, head, service-model)",
+      "output": {
+        "annotations_count": 2,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701605/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886555",
+      "started_at": "2026-11-08T07:17:07Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550811
+      },
+      "completed_at": "2026-11-08T07:17:22Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886555/job/128660701603",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886555/job/128660701603",
+      "id": 128660701603,
+      "job_id_from_url": 128660701603,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, state)",
+      "output": {
+        "annotations_count": 4,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701603/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886555",
+      "started_at": "2026-11-08T07:16:38Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550829
+      },
+      "completed_at": "2026-11-08T07:17:37Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886583/job/128660701601",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886583/job/128660701601",
+      "id": 128660701601,
+      "job_id_from_url": 128660701601,
+      "name": "original state and exit (ubuntu-24.04, prospective-merge)",
+      "output": {
+        "annotations_count": 4,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701601/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886583",
+      "started_at": "2026-11-08T07:16:52Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550811
+      },
+      "completed_at": "2026-11-08T07:16:35Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886555/job/128660701599",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886555/job/128660701599",
+      "id": 128660701599,
+      "job_id_from_url": 128660701599,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, state)",
+      "output": {
+        "annotations_count": 4,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701599/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886555",
+      "started_at": "2026-11-08T07:15:53Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550811
+      },
+      "completed_at": "2026-11-08T07:16:31Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886555/job/128660701592",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886555/job/128660701592",
+      "id": 128660701592,
+      "job_id_from_url": 128660701592,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, history)",
+      "output": {
+        "annotations_count": 4,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701592/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886555",
+      "started_at": "2026-11-08T07:15:54Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550811
+      },
+      "completed_at": "2026-11-08T07:16:48Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886555/job/128660701543",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886555/job/128660701543",
+      "id": 128660701543,
+      "job_id_from_url": 128660701543,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, service-model)",
+      "output": {
+        "annotations_count": 4,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701543/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886555",
+      "started_at": "2026-11-08T07:15:53Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550792
+      },
+      "completed_at": "2026-11-08T07:16:06Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886547/job/128660701441",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886547/job/128660701441",
+      "id": 128660701441,
+      "job_id_from_url": 128660701441,
+      "name": "native boundary (ubuntu-24.04-arm, prospective-merge)",
+      "output": {
+        "annotations_count": 4,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701441/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886547",
+      "started_at": "2026-11-08T07:15:22Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550792
+      },
+      "completed_at": "2026-11-08T07:18:16Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886547/job/128660701420",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886547/job/128660701420",
+      "id": 128660701420,
+      "job_id_from_url": 128660701420,
+      "name": "native boundary (ubuntu-24.04, prospective-merge)",
+      "output": {
+        "annotations_count": 4,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701420/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886547",
+      "started_at": "2026-11-08T07:17:39Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550829
+      },
+      "completed_at": "2026-11-08T07:17:23Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886583/job/128660701409",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886583/job/128660701409",
+      "id": 128660701409,
+      "job_id_from_url": 128660701409,
+      "name": "original state and exit (ubuntu-24.04-arm, prospective-merge)",
+      "output": {
+        "annotations_count": 4,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701409/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886583",
+      "started_at": "2026-11-08T07:16:40Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550859
+      },
+      "completed_at": "2026-11-08T07:25:18Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886578/job/128660701377",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886578/job/128660701377",
+      "id": 128660701377,
+      "job_id_from_url": 128660701377,
+      "name": "original native campaign (x64, head, release)",
+      "output": {
+        "annotations_count": 2,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701377/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886578",
+      "started_at": "2026-11-08T07:14:55Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550709
+      },
+      "completed_at": "2026-11-08T07:15:20Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886520/job/128660701347",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886520/job/128660701347",
+      "id": 128660701347,
+      "job_id_from_url": 128660701347,
+      "name": "original workspace test CPU (ubuntu-24.04-arm, prospective-merge)",
+      "output": {
+        "annotations_count": 4,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701347/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886520",
+      "started_at": "2026-11-08T07:14:36Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550811
+      },
+      "completed_at": "2026-11-08T07:15:51Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886555/job/128660701340",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886555/job/128660701340",
+      "id": 128660701340,
+      "job_id_from_url": 128660701340,
+      "name": "retained-pressure-failure",
+      "output": {
+        "annotations_count": 2,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701340/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886555",
+      "started_at": "2026-11-08T07:15:47Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550726
+      },
+      "completed_at": "2026-11-08T07:14:25Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886526/job/128660701319",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886526/job/128660701319",
+      "id": 128660701319,
+      "job_id_from_url": 128660701319,
+      "name": "recent batch (ubuntu-24.04, prospective-merge)",
+      "output": {
+        "annotations_count": 3,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701319/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886526",
+      "started_at": "2026-11-08T07:13:46Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550748
+      },
+      "completed_at": "2026-11-08T07:16:15Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886533/job/128660701306",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886533/job/128660701306",
+      "id": 128660701306,
+      "job_id_from_url": 128660701306,
+      "name": "parent evidence (ubuntu-24.04, prospective-merge)",
+      "output": {
+        "annotations_count": 3,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701306/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886533",
+      "started_at": "2026-11-08T07:15:31Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550709
+      },
+      "completed_at": "2026-11-08T07:15:14Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886520/job/128660701285",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886520/job/128660701285",
+      "id": 128660701285,
+      "job_id_from_url": 128660701285,
+      "name": "original workspace test CPU (ubuntu-24.04, prospective-merge)",
+      "output": {
+        "annotations_count": 4,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701285/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886520",
+      "started_at": "2026-11-08T07:14:30Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550748
+      },
+      "completed_at": "2026-11-08T07:15:23Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886533/job/128660701271",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886533/job/128660701271",
+      "id": 128660701271,
+      "job_id_from_url": 128660701271,
+      "name": "parent evidence (ubuntu-24.04-arm, prospective-merge)",
+      "output": {
+        "annotations_count": 3,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701271/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886533",
+      "started_at": "2026-11-08T07:14:29Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550698
+      },
+      "completed_at": "2026-11-08T07:16:58Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886519/job/128660701244",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886519/job/128660701244",
+      "id": 128660701244,
+      "job_id_from_url": 128660701244,
+      "name": "PQ network and witness (ubuntu-24.04, prospective-merge)",
+      "output": {
+        "annotations_count": 2,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701244/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886519",
+      "started_at": "2026-11-08T07:16:10Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550701
+      },
+      "completed_at": "2026-11-08T07:15:29Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886523/job/128660701243",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886523/job/128660701243",
+      "id": 128660701243,
+      "job_id_from_url": 128660701243,
+      "name": "cleanup (ubuntu-24.04, prospective-merge)",
+      "output": {
+        "annotations_count": 3,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701243/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886523",
+      "started_at": "2026-11-08T07:14:48Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550701
+      },
+      "completed_at": "2026-11-08T07:15:41Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886523/job/128660701236",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886523/job/128660701236",
+      "id": 128660701236,
+      "job_id_from_url": 128660701236,
+      "name": "aggregate-owner-controls (prospective-merge)",
+      "output": {
+        "annotations_count": 3,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701236/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886523",
+      "started_at": "2026-11-08T07:14:47Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550701
+      },
+      "completed_at": "2026-11-08T07:15:24Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886523/job/128660701207",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886523/job/128660701207",
+      "id": 128660701207,
+      "job_id_from_url": 128660701207,
+      "name": "cleanup (macos-15, prospective-merge)",
+      "output": {
+        "annotations_count": 4,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701207/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886523",
+      "started_at": "2026-11-08T07:14:11Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550701
+      },
+      "completed_at": "2026-11-08T07:15:57Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886523/job/128660701190",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886523/job/128660701190",
+      "id": 128660701190,
+      "job_id_from_url": 128660701190,
+      "name": "cleanup (ubuntu-24.04-arm, prospective-merge)",
+      "output": {
+        "annotations_count": 3,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701190/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886523",
+      "started_at": "2026-11-08T07:15:16Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550726
+      },
+      "completed_at": "2026-11-08T07:14:22Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886526/job/128660701166",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886526/job/128660701166",
+      "id": 128660701166,
+      "job_id_from_url": 128660701166,
+      "name": "recent batch (ubuntu-24.04-arm, prospective-merge)",
+      "output": {
+        "annotations_count": 3,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701166/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886526",
+      "started_at": "2026-11-08T07:13:39Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550783
+      },
+      "completed_at": "2026-11-08T07:14:28Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886542/job/128660701162",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886542/job/128660701162",
+      "id": 128660701162,
+      "job_id_from_url": 128660701162,
+      "name": "export",
+      "output": {
+        "annotations_count": 2,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701162/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886542",
+      "started_at": "2026-11-08T07:13:38Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550677
+      },
+      "completed_at": "2026-11-08T07:16:22Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886506/job/128660701119",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886506/job/128660701119",
+      "id": 128660701119,
+      "job_id_from_url": 128660701119,
+      "name": "CodeQL local SARIF (rust, prospective-merge)",
+      "output": {
+        "annotations_count": 3,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701119/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886506",
+      "started_at": "2026-11-08T07:15:31Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550677
+      },
+      "completed_at": "2026-11-08T07:14:33Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886506/job/128660701102",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886506/job/128660701102",
+      "id": 128660701102,
+      "job_id_from_url": 128660701102,
+      "name": "CodeQL local SARIF (actions, prospective-merge)",
+      "output": {
+        "annotations_count": 3,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701102/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886506",
+      "started_at": "2026-11-08T07:13:42Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550746
+      },
+      "completed_at": "2026-11-08T07:15:29Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886532/job/128660701100",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886532/job/128660701100",
+      "id": 128660701100,
+      "job_id_from_url": 128660701100,
+      "name": "W1 transparent candidate (prospective-merge, x64)",
+      "output": {
+        "annotations_count": 2,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701100/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886532",
+      "started_at": "2026-11-08T07:14:42Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550698
+      },
+      "completed_at": "2026-11-08T07:15:26Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886519/job/128660701090",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886519/job/128660701090",
+      "id": 128660701090,
+      "job_id_from_url": 128660701090,
+      "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)",
+      "output": {
+        "annotations_count": 2,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701090/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886519",
+      "started_at": "2026-11-08T07:14:41Z",
+      "status": "completed"
+    },
+    {
+      "app_id": 15368,
+      "check_suite": {
+        "id": 115016550677
+      },
+      "completed_at": "2026-11-08T07:14:30Z",
+      "conclusion": "failure",
+      "details_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886506/job/128660701001",
+      "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42457886506/job/128660701001",
+      "id": 128660701001,
+      "job_id_from_url": 128660701001,
+      "name": "CodeQL local SARIF (python, prospective-merge)",
+      "output": {
+        "annotations_count": 3,
+        "annotations_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/check-runs/128660701001/annotations",
+        "summary": null,
+        "text": null,
+        "title": null
+      },
+      "run_id_from_url": "42457886506",
+      "started_at": "2026-11-08T07:13:43Z",
+      "status": "completed"
+    }
+  ],
+  "full_job_steps_not_fetched": true,
+  "query_commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+  "schema": "TRNM-W1-C6-CURRENT-FAILURE-METADATA1"
+}

@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/home/runner/work/_temp/target-priority/release/deps/public_v3_from_zero-6b1ef8169f26aa09",
+    "from_zero_search_preserves_misses_exhaustion_and_full_replay_rejection",
+    "--exact",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "wall_ns": 5443344,
+  "user_cpu_ns": 1962000,
+  "system_cpu_ns": 1308000,
+  "cpu_ns": 3270000,
+  "max_rss_kib": 43700,
+  "rss_scope": "whole waited child including pre-exec image; no Rust-only RSS attribution",
+  "minor_faults": 222,
+  "major_faults": 0,
+  "voluntary_switches": 3,
+  "involuntary_switches": 0,
+  "cpu_scope": "entire child, not apportioned to nested wall intervals",
+  "wait4_cpu_resolution_ns": 1000,
+  "stdout_sha256": "b5ba7177bc078013a798c29ff083c3a07215ff5ff8adfa2454d548476e27f548",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

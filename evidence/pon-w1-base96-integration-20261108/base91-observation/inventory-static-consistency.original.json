@@ -1,0 +1,31 @@
+{
+  "actual_merge_performed": false,
+  "c7_existing_readonly_renderer_matches_inventory": true,
+  "extra_generated_inventory_registration_fix_needed_for_this_delta": false,
+  "generator_same_bytes": true,
+  "generator_sha256": "c83d9c0b84c21beec6917a86b2a3207c5f3bf6fd26cf432f2ef0990750e16a33",
+  "history_blob_base91_and_hypothetical_tree": "0ad34d092863dd32c5e9793daa618a91cd6c15f8",
+  "history_blob_c7": "d6650671ccc93462623351d05fdf434d52669ce1",
+  "history_registration": "    (\n        \"trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs\",\n        include_bytes!(concat!(\n            env!(\"CARGO_MANIFEST_DIR\"),\n            \"/../../../trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs\"\n        )),\n    ),\n",
+  "hypothetical_merge_tree": "e8550e15374ce6a0cc60f435ccd4a0c401741930",
+  "inventory_blob": "c4fd4e40d80c2a2d0387c23432c56c57ca3fe135",
+  "inventory_registered_file_count": 1279,
+  "inventory_same_bytes": true,
+  "inventory_sha256": "d44dc342ab665b9abfeaf85bafcdb3a115069f45c80ad0fe09a8d6fe3d747b92",
+  "limits": [
+    "Static consistency does not imply complete source qualification or a completed gate on a new worktree.",
+    "A future integrated source must build/bind its own ELF and run exact source guards; the old C7 binary cannot borrow the new History bytes or commit identity.",
+    "C7 History local scope remains compile/list only; no 4105-block workload execution or qualification is asserted."
+  ],
+  "new_tree_check_command_executed": false,
+  "new_tree_compiled": false,
+  "new_tree_worktree_created": false,
+  "path_set_sha256": "e6679c18a985b4dbd8cea43094cc26a7270831b6768f53dc7c89b5863ca19058",
+  "reason": "The generated Rust file registers include_bytes paths; it stores neither a fixed digest nor literal old History bytes. Changed contents at the same registered path are incorporated at compilation. Unchanged path set and generator leave the generated registration text unchanged.",
+  "same_all_tracked_path_set": true,
+  "schema": "TRNM-W1-C7-BASE91-INVENTORY-STATIC-CONSISTENCY1",
+  "source_commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+  "source_mutations": 0,
+  "tests_executed": 0,
+  "tracked_paths": 15390
+}

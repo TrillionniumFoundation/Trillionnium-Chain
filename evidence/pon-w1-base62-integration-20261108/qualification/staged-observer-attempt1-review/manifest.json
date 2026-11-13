@@ -1,0 +1,25 @@
+{
+  "schema": "w1-c6-staged-first-failure-review-manifest-v1",
+  "files": [
+    {
+      "path": "fixture-source.py",
+      "bytes": 34560,
+      "sha256": "826b4348d8af00f03c5c3ec1fa1e15ebd30067b9e0fe0fb73f0179d78db5e25d"
+    },
+    {
+      "path": "original-stderr.raw",
+      "bytes": 7159,
+      "sha256": "cf18d6d687a704370b76ed5fbf14e869c7215fac73256b46c1ea4863ae5b162b"
+    },
+    {
+      "path": "production-stage-source.py",
+      "bytes": 35951,
+      "sha256": "a3c80e25ec202749225ddd1a4fc45f3f22ab753f5e9e6941e694a3aa4a547df9"
+    },
+    {
+      "path": "review.json",
+      "bytes": 7515,
+      "sha256": "6e242ccb99c268cd83d09ff6fb92a6f3a106eabc1a0411e0050384ed75ebe56b"
+    }
+  ]
+}

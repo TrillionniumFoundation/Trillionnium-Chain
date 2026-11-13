@@ -1,0 +1,158 @@
+{
+  "active_target_modified": false,
+  "archive_failures": [],
+  "cargo_started_by_archive": false,
+  "cleanroom_build_qualified": false,
+  "created_utc": "2026-11-08T06:30:22.958820+00:00",
+  "historical_process_reaping_qualified": false,
+  "known_missing_completion_records": {
+    "absence_is_not_a_success_verdict": true,
+    "combined_cache_copy_summary_json_exists": false,
+    "owner_copy_result_json_exists": false
+  },
+  "new_proof_started_by_archive": false,
+  "operation_created_by_archive": false,
+  "outcomes": {
+    "backend_native_copy": {
+      "all_historical_descendants_reaped": null,
+      "backend_component": {
+        "copied_binaries_at_component_record_time": {
+          "release/w1-staged-prover-v2": {
+            "bytes": 47794488,
+            "path": "/home/qian-qi/work/chain-w1-base62-backend-target-20261108-ec265b/release/w1-staged-prover-v2",
+            "sha256": "499b9e67297907cc5a2ab1062b17c57c60bb5a022240f27526451c1d9ff6ae91"
+          }
+        },
+        "copy_success_supported_by_checked_original_helper_flow": true,
+        "destination_hardlink_count": 0,
+        "destination_regular_files_checked": 3867,
+        "direct_cp_returncode": null,
+        "direct_cp_returncode_recorded": false,
+        "not_a_current_C6_binary_attestation": true,
+        "record_present": true,
+        "shared_source_inode_count": 0,
+        "source_commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+        "source_tree": "8dd452c376452224602fb202940ae84fc1f84d2e"
+      },
+      "current_scope_record": {
+        "all_historical_child_births_captured": false,
+        "all_historical_wait_reaped": null,
+        "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+        "current_matching_native_copy_processes": [],
+        "known_pids": [
+          {
+            "pid": 3365781,
+            "present": false
+          },
+          {
+            "pid": 3365799,
+            "present": false
+          }
+        ],
+        "original_cgroup_exists": false,
+        "original_cgroup_path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b9bc6a15-12894-1677.service",
+        "original_job_id": "1a1b9bc6a15-12894-1677",
+        "schema": "TRNM-W1-C6-COPY-CURRENT-SCOPE1",
+        "signals_sent": 0
+      },
+      "job_id": "1a1b9bc6a15-12894-1677",
+      "native_component": {
+        "complete": false,
+        "recorded_du_bytes": 376579857,
+        "retained_partial_target": "/home/qian-qi/work/chain-w1-base62-native-target-20261108-ec265b",
+        "reused_by_archive": false
+      },
+      "whole_copy_complete": false,
+      "whole_job_exit_code": 124,
+      "whole_job_state": "timed_out",
+      "whole_job_timeout_seconds": 300
+    },
+    "native_empty_03_origin": {
+      "created_monotonic_ns": null,
+      "creation_method": "file API created a unique own marker and parent directory, then removed the same own marker",
+      "current_target_emptiness_asserted": false,
+      "destination": "/home/qian-qi/work/chain-w1-base62-native-empty-target-20261108-ec265b-03",
+      "initial_entries": [],
+      "origin": "empty-directory",
+      "preparation_process_job_id": null,
+      "qualification_outcome_asserted": false,
+      "separate_C6_qualification_declaration_sha256": "ad0205296ea144fbdf36fce756db3cad418b94fd873a8e72793468a48393f976",
+      "setup_02_unknown_resolved": false,
+      "subsequent_native_qualification_job_outside_archive": "1a1b9d1f3a4-12894-1714"
+    },
+    "native_setup_02": {
+      "independent_status_readback": "remote helper FileNotFoundError for job directory; not a terminal",
+      "job_id": "1a1b9c7ff2c-12894-16d7",
+      "launch_state": "launch_unknown",
+      "namespace_reused_by_archive": false,
+      "never_started_established": false,
+      "output_namespace": "/home/qian-qi/work/chain-w1-base62-native-empty-target-20261108-ec265b-02",
+      "retried_launch": false,
+      "same_key_reconciliation_reused": true,
+      "status_authoritative": false,
+      "terminal_outcome": "unknown",
+      "terminated_established": false
+    },
+    "owner_copy": {
+      "all_historical_descendants_reaped": null,
+      "bounded_metadata_observation_stable": true,
+      "complete_historical_wait_reap_qualified": false,
+      "exit_code": -15,
+      "inner_timeout_seconds": 1800,
+      "job_id": "1a1b9bd043d-12894-167b",
+      "known_births_absent_after_cancel": true,
+      "original_cgroup_absent_in_record": true,
+      "outer_runtime_timeout_seconds": 2100,
+      "partial_observed_file_count": 2320,
+      "partial_observed_logical_bytes": 4017461806,
+      "partial_target_preserved": "/home/qian-qi/work/chain-w1-base62-owner-target-20261108-ec265b",
+      "state": "cancelled",
+      "timed_out": false,
+      "whole_copy_complete": false
+    },
+    "owner_empty_origin": {
+      "current_target_emptiness_asserted": false,
+      "entries_at_preparation": 0,
+      "origin": "empty",
+      "preparation_exit_code": 0,
+      "preparation_job_id": "1a1b9c851ec-12894-16da",
+      "prepared_at_utc": "2026-11-08T06:11:43.540982+00:00",
+      "source_C5_owner_sha256_after": "41c2d70d80282414bef23a90f22130e5da26e1ac30c8fddc8c5aec6e9de54d24",
+      "source_C5_owner_sha256_before": "41c2d70d80282414bef23a90f22130e5da26e1ac30c8fddc8c5aec6e9de54d24",
+      "subsequent_owner_qualification_job_outside_archive": "1a1b9cc0794-12894-16f1",
+      "target": "/home/qian-qi/work/chain-w1-base62-owner-empty-target-20261108-ec265b",
+      "target_preexisted": false
+    }
+  },
+  "privacy": {
+    "arbitrary_directory_recursion_used": false,
+    "declared_nonsecret_build_knobs_in_native_declaration": true,
+    "source_environment_values_published": false,
+    "sqlite_or_binary_payloads_published": false
+  },
+  "production_qualified": false,
+  "proof_deadlines_changed": false,
+  "prospective_qualification_source": {
+    "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+  },
+  "published_D3_or_D4_written": false,
+  "reproducible_build_qualified": false,
+  "resource_billing_qualified": false,
+  "schema": "TRNM-W1-D4-COPY-FAILURE-EMPTY-ORIGIN-ARCHIVE1",
+  "scope": "retained build-preparation records only; no active qualification target inspected or modified",
+  "security_qualified": false,
+  "source_worktree_modified": false,
+  "terminal_witness_checks": [
+    {
+      "exit_sha256": "09b94178ed3fe31d501249dd7c7d5a8d9d376ed7553a59b585c80f351360c0ec",
+      "job_id": "1a1b9bd043d-12894-167b",
+      "publication_witness_matches": true
+    },
+    {
+      "exit_sha256": "60fe177b8b6df55d880e8dd2be0ef4b20bf1b36598bc0d417c4a2a48944cb122",
+      "job_id": "1a1b9bc6a15-12894-1677",
+      "publication_witness_matches": true
+    }
+  ]
+}

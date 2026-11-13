@@ -1,0 +1,69 @@
+{
+  "schema": "TRNM-W1-D6-PUBLICATION-LINK-FIX-DECLARATION1",
+  "tested_source": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "old_git_paths": 2138,
+  "four_gate_status": [
+    "HOLD",
+    "HOLD",
+    "HOLD",
+    "HOLD"
+  ],
+  "initial_job": "1a1bac67b64-12894-1d21",
+  "initial_inventory_sha256": "5f46ba76e06a23c445ea58a19bdeaecec3186f1b0a2205303a0026a51cf519d5",
+  "original_root_readme_sha256": "fa842812bd747a26c604595fc62b45b3b96c9e518abfce17820c7c866bdafc8d",
+  "original_root_summary_sha256": "d43b905b84ba8a4be0cb2cec9473d623eb8f4e74e06f02c8ba2367074aecd4eb",
+  "helper_sha256": "4d4cf72b8d1159eeb002bd445e6c9b24a2893db8ee29c6c8e08cb2338d404a4a",
+  "package_manifest_pins": {
+    "integration": "5535e642c8ae2b9b1960be983f1c048d604b18c95e04d0ef2f54c4d6d9238676",
+    "qualification": "d087c47faef1290bfb88edee517c1ee41dee06f23e04ac0ffad1af37c87e8f76",
+    "build-preparation": "0baf614b409ccfc031a6a260f94c69da9b65da394d9b3326d8dcb2aea58c421d",
+    "base9417-review": "e37402e40d0220ce45edf3fef8e6d00a46cf66da9e6f74f661bc524e39c9e2e5",
+    "lifecycle-c8": "7e2792bdc3c4b644413e5228a8ffbc7b32dd5863a49dd4459ac632593a62f601",
+    "ci-c8": "0e8df3440595b3d8b56c5e57ecf78b07f15590d437b28166a31b8bea4b7f1ed4"
+  },
+  "inputs": {
+    "d6-readme-publish-corrected.md": {
+      "bytes": 20519,
+      "sha256": "afeefcbcc6af23e0ee55a8733534541816932942a5f0a0abb12aa48aa8ae29f2",
+      "archive_name": "d6-readme-publish-corrected.md.txt"
+    },
+    "d6-summary-publish-corrected.json": {
+      "bytes": 12514,
+      "sha256": "1fc7f66f352ed842fd293ec166505dffb3d79558cc0bba93f70fbbcdf2345b1d",
+      "archive_name": "d6-summary-publish-corrected.json"
+    },
+    "d6-initial-assembly-tool-receipts.json": {
+      "bytes": 7687,
+      "sha256": "834eceb9dac97a7eb5f4830074437144be6b35213bcf73ec641f5eb453957a42",
+      "archive_name": "d6-initial-assembly-tool-receipts.json"
+    },
+    "publish_d6_v2.py": {
+      "bytes": 5354,
+      "sha256": "aeddc34ac48c510ffa3b3983d620b56065423b16fa9528cbff3f41cf322f2aa6",
+      "archive_name": "publish_d6_v2.py"
+    }
+  },
+  "archived_input_renames": [
+    {
+      "old": "d6-readme-final.md",
+      "new": "d6-readme-final.md.txt",
+      "sha256": "fa842812bd747a26c604595fc62b45b3b96c9e518abfce17820c7c866bdafc8d"
+    },
+    {
+      "old": "d6-sole-plan-append.md",
+      "new": "d6-sole-plan-append.md.txt",
+      "sha256": "92edfeedd66f7910d9629e1f035b60f7006b9dd7ed681d4e12465d71f3c9f8e3"
+    },
+    {
+      "old": "d6-pr-body-template.md",
+      "new": "d6-pr-body-template.md.txt",
+      "sha256": "ac65232cabefed44ad3f65d8e0a860bee4e885417d73d6173518a0ff34da7609"
+    }
+  ],
+  "source_changed": false,
+  "checker_changed": false,
+  "qualification_rerun": false,
+  "initial_failure_retained": true,
+  "independent_scope_review": "Archive inputs may use .md.txt while the final authored Markdown stays subject to unchanged repository link checks.",
+  "publisher_v2_only_change": "docs-validation-01/manifest.json -> docs-validation-02/manifest.json"
+}

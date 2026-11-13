@@ -1,0 +1,90 @@
+[
+  {
+    "job_directory": "protocol-contract",
+    "original_archive": {
+      "path": "protocol-contract/artifact.zip",
+      "bytes": 5982059,
+      "sha256": "bc14d7e9820214e379ccbc5a0a546bdb19f524643439a14f70ce55700e176d5e"
+    },
+    "original_archive_external_path": "/tmp/chain-w1-c5-protocol-original-artifacts-ec265b/protocol-contract/artifact.zip",
+    "moved_out_of_git": [
+      "artifact.zip",
+      "artifact-index.json",
+      "archive-member-manifest.json",
+      "selected-raw"
+    ],
+    "original_archive_entries": 78,
+    "published_allowlisted_entries": 39,
+    "published_archive": {
+      "path": "protocol-contract/retained-evidence.tar.gz",
+      "bytes": 1116515,
+      "sha256": "c9326e0f8e1d4c78c17b87f253135492cd56c81725507e43c1420f91023e0d78"
+    }
+  },
+  {
+    "job_directory": "prospective-merge-protocol-contract",
+    "original_archive": {
+      "path": "prospective-merge-protocol-contract/artifact.zip",
+      "bytes": 6075424,
+      "sha256": "120f3f2855da6e49fe36ca6677a441fc53f20be2d4d96efaaf75820e899c15a7"
+    },
+    "original_archive_external_path": "/tmp/chain-w1-c5-protocol-original-artifacts-ec265b/prospective-merge-protocol-contract/artifact.zip",
+    "moved_out_of_git": [
+      "artifact.zip",
+      "artifact-index.json",
+      "archive-member-manifest.json",
+      "selected-raw"
+    ],
+    "original_archive_entries": 78,
+    "published_allowlisted_entries": 39,
+    "published_archive": {
+      "path": "prospective-merge-protocol-contract/retained-evidence.tar.gz",
+      "bytes": 1195327,
+      "sha256": "3f47d3048f212a4e16b2c61fa0886d92d5e3f5315160ace662b924c621f6f09e"
+    }
+  },
+  {
+    "job_directory": "cross-arch-cost-x64",
+    "original_archive": {
+      "path": "cross-arch-cost-x64/artifact.zip",
+      "bytes": 8739310,
+      "sha256": "119ddc0bb1d0cda8669e59596d0acf94e7f5542afc55e64dd74b30dfe20fffd9"
+    },
+    "original_archive_external_path": "/tmp/chain-w1-c5-protocol-original-artifacts-ec265b/cross-arch-cost-x64/artifact.zip",
+    "moved_out_of_git": [
+      "artifact.zip",
+      "artifact-index.json",
+      "archive-member-manifest.json",
+      "selected-raw"
+    ],
+    "original_archive_entries": 154,
+    "published_allowlisted_entries": 39,
+    "published_archive": {
+      "path": "cross-arch-cost-x64/retained-evidence.tar.gz",
+      "bytes": 1016980,
+      "sha256": "5e7feb0c9fd457293ff84fbdd8f1d42035799a4f5961b413db35be817d91153b"
+    }
+  },
+  {
+    "job_directory": "cross-arch-cost-arm64",
+    "original_archive": {
+      "path": "cross-arch-cost-arm64/artifact.zip",
+      "bytes": 8750553,
+      "sha256": "b2f58e247b79889c5222180ae00472d9894d63990a8324e17c280b159077086e"
+    },
+    "original_archive_external_path": "/tmp/chain-w1-c5-protocol-original-artifacts-ec265b/cross-arch-cost-arm64/artifact.zip",
+    "moved_out_of_git": [
+      "artifact.zip",
+      "artifact-index.json",
+      "archive-member-manifest.json",
+      "selected-raw"
+    ],
+    "original_archive_entries": 154,
+    "published_allowlisted_entries": 39,
+    "published_archive": {
+      "path": "cross-arch-cost-arm64/retained-evidence.tar.gz",
+      "bytes": 1249936,
+      "sha256": "1ef524b85182654f3d832c3b7e55eb7a6117463435702b0283b5951456d3f515"
+    }
+  }
+]

@@ -1,0 +1,144 @@
+{
+  "actual_command_count": 5,
+  "all_bound_outputs_match": true,
+  "audit_reran_source_guard": false,
+  "audit_reran_tests": false,
+  "audit_started_operation": false,
+  "command_reviews": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "00-preflight",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+        "--output",
+        "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-history-local-01/source-before.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "01-source-before",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "/home/qian-qi/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--release",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "history_stage_diagnostic",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "02-history-release-compile",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "/home/qian-qi/work/chain-w1-c8-root-tools-20261108-ec265b/history_compile_list.py",
+        "--cargo-log",
+        "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-history-local-01/02-history-release-compile.stdout",
+        "--repo",
+        "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+        "--head",
+        "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+        "--output",
+        "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-history-local-01/history-artifact-and-list.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "03-history-ignored-entry-list",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+        "--output",
+        "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-history-local-01/source-after.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "99-source-after",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    }
+  ],
+  "component": "history-local",
+  "durable_job_id": "1a1ba8a832f-12894-1b7a",
+  "full_source_qualification_aggregate_claimed": false,
+  "new_complete_proofs": 0,
+  "original_manifest_sha256": "b39888daf3d2223c6600a693f663ca213698dffd6d9854ee887afd36af741738",
+  "provenance": {
+    "elf_hash_recomputed_by_original_compile_list_helper": true,
+    "elf_published": false,
+    "elf_rehashed_by_this_audit": false,
+    "fresh_target": false,
+    "full_4105_block_History_budget_qualified": false,
+    "full_History_workload_executed": false,
+    "history_elf": {
+      "bytes": 9910608,
+      "path": "/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b/release/deps/history_stage_diagnostic-9b826b863c9887cc",
+      "sha256": "cc252a4f811e981a90fa3f8adb8f59b2df20249c32246e8a365928e04e3ca9fd"
+    },
+    "listed_entry_counted_as_executed_or_ignored_method": false,
+    "listed_ignored_entries": 1,
+    "release_compile_and_exact_ignored_entry_listing_only": true,
+    "unique_actual_C8_Cargo_artifact_reparsed": true
+  },
+  "python": {},
+  "qualification_complete": true,
+  "rust": {},
+  "schema": "TRNM-W1-C8-INDEPENDENT-COMPONENT-REVIEW1",
+  "scope": "Exact C8 head source and explicit attempt only; no current prospective-merge event qualification.",
+  "source": {
+    "commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c"
+  },
+  "source_guards_before_after_exact_equal": true
+}

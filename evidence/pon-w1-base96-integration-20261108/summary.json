@@ -1,0 +1,104 @@
+{
+  "schema": "TRNM-W1-C7-D5-SUMMARY1",
+  "source": {
+    "commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe",
+    "parents": [
+      "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75"
+    ],
+    "published": true
+  },
+  "qualification": {
+    "commands": 69,
+    "exit_zero": 68,
+    "expected_negative_exit_one": 1,
+    "python_passes": 614,
+    "rust_passes": 41,
+    "ordinary_passes": 655,
+    "ordinary_failed": 0,
+    "rust_ignored": 4,
+    "history_body_executed": false,
+    "history_listed_only": 1,
+    "independent_raw_streams_checked": 138,
+    "publication_and_audit_checks_added_to_test_count": false
+  },
+  "lifecycle": {
+    "prepared_intent": "b515f62d1a8ade59f4bf3a01ae5ef774d463ed43adc129de88602555cca945c1",
+    "plan_sha256": "3fc21976c7c60c705d12080126ebf090c81d9f01bec182b94f679fa073429591",
+    "prepare_job": "1a1ba4b4ca5-12894-198a",
+    "launch_job": "1a1ba4cf251-12894-1994",
+    "launch_state": "Unknown",
+    "same_key_reused": true,
+    "retried_launch": false,
+    "actual_application_deadline": null,
+    "actual_m12_state": null,
+    "actual_reserve": null,
+    "actual_resource_cap_state": null,
+    "actual_refund": null,
+    "actual_reorg": null,
+    "actual_cold": null,
+    "new_complete_proofs_established": 0,
+    "absence_observations_do_not_prove_no_execution": true
+  },
+  "publication_correction": {
+    "previous_commit": "3daf5d06e84aeb02530e14eecc7ba1f8ec674e24",
+    "c5_missing_log_members": 75,
+    "c6_missing_log_members": 29,
+    "total_missing_log_members": 104,
+    "restored_bytes": 1008216,
+    "old_paths_including_inventories": 895,
+    "original_inventory_hashes_unchanged": true,
+    "previous_public_completeness_overclaim_disclosed": true
+  },
+  "c6_ci_snapshot": {
+    "at": "2026-11-08 08:10 UTC",
+    "checks": 105,
+    "failure": 58,
+    "success": 42,
+    "skipped": 3,
+    "running": 2,
+    "failure_classes": {
+      "source_gate": 49,
+      "missing_historical_artifact": 1,
+      "actual_execution": 8
+    },
+    "final_all_checks_state_claimed": false
+  },
+  "c7_remote": {
+    "source_published": true,
+    "actual_base_after_push": "9417e495165865ef6c1288b39084856e31020634",
+    "api_base_after_push": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+    "mergeable": false,
+    "merge_commit_sha": null,
+    "exact_head_check_runs_at_bounded_snapshot": 0,
+    "exact_head_workflow_runs_at_bounded_snapshot": 0,
+    "new_event_tuple_observed": false,
+    "static_merge_conflicts": [
+      ".github/workflows/pon-recent-batch-acceptance.yml",
+      "config/pon/pq-cross-branch-corpus-v1.json"
+    ],
+    "ci_qualified": false
+  },
+  "flags": {
+    "new_full_generation_experiment": false,
+    "original_business_budget_qualified": false,
+    "provider_payment_qualified": false,
+    "resource_billing_complete": false,
+    "all_historical_processes_reaped": false,
+    "deployment_wan_qualified": false,
+    "actual_same_winner_node_admitted": false,
+    "cryptographic_security_qualified": false,
+    "protocol_security_qualified": false,
+    "production_qualified": false
+  },
+  "packages": {
+    "integration_manifest": "667326b7a2736b6b37e9ebf39269bbb298148bde44cbfe68acaaad3f8b0fc04e",
+    "qualification_manifest": "f2d06b054d1f6e96b2f095dd557591ac9bd815faef6c9c1c5acdf80dd7852d7f",
+    "base91_manifest": "f4b13249dbba3a1fe90d1f413b1b0cd0c1a10c166c8fec0d98f3cf7979b64538",
+    "build_preparation_manifest": "1234e19bd14d8971bb00ef4e693b87f11cfd9b378b3d3f3e98070c613f45f4d2",
+    "lifecycle_manifest": "35e66452ee5ba6e78a89002f84cf375910c7dce5fe7037fff49105ba6508f71d",
+    "c6_ci_followup_manifest": "34ca0a17997cac9377930fbc8b9ccec5dc2089d78f5bef9fc717a8658d126c55",
+    "c7_ci_manifest": "c5efce13a2bdb401c9688aba313169ab49b0ce05d9e6b92305dedd0321770f0d"
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "schema": "TRNM-W1-C7-LAUNCH-UNKNOWN-TRANSPORT1",
+  "original_job_id": "1a1ba4cf251-12894-1994",
+  "provider_operation": "b515f62d1a8ade59f4bf3a01ae5ef774d463ed43adc129de88602555cca945c1",
+  "plan": {
+    "path": "/home/qian-qi/work/chain-w1-c7-timeout-reorg-20261108-ec265b-01/plan.json",
+    "bytes": 50283,
+    "sha256": "3fc21976c7c60c705d12080126ebf090c81d9f01bec182b94f679fa073429591"
+  },
+  "request": {
+    "host": "desktop",
+    "executable": "/usr/bin/python3.12",
+    "args": [
+      "-B",
+      "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/driver-v4.py",
+      "launch",
+      "--repo",
+      "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "--root",
+      "/home/qian-qi/work/chain-w1-c7-timeout-reorg-20261108-ec265b-01",
+      "--expected-commit",
+      "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+      "--owner-binary",
+      "/home/qian-qi/work/chain-w1-c7-owner-empty-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+      "--target-dir",
+      "/home/qian-qi/work/chain-w1-c7-owner-empty-target-20261108-ec265b",
+      "--runner-binary",
+      "/home/qian-qi/work/chain-w1-base96-backend-target-20261108-ec265b/release/w1-staged-prover-v2",
+      "--runner-build-log",
+      "/home/qian-qi/work/chain-w1-c7-backend-qualification-20261108-ec265b-01/build.stdout",
+      "--native-qualification",
+      "/home/qian-qi/work/chain-w1-c7-native-qualification-20261108-ec265b-01/manifest.json",
+      "--plan-sha256",
+      "3fc21976c7c60c705d12080126ebf090c81d9f01bec182b94f679fa073429591"
+    ],
+    "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+    "idempotency_key": "w1-c7-only-original120s-heavy-timeout-reorg-20261108-ec265b-01",
+    "timeout_seconds": 240,
+    "cpu_quota_percent": 800,
+    "memory_max_bytes": 8589934592
+  },
+  "original_start": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"audit_recorded\": true,\n  \"job\": {\n    \"args\": [\n      \"-B\",\n      \"/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/driver-v4.py\",\n      \"launch\",\n      \"--repo\",\n      \"/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b\",\n      \"--root\",\n      \"/home/qian-qi/work/chain-w1-c7-timeout-reorg-20261108-ec265b-01\",\n      \"--expected-commit\",\n      \"40a3a45d6b8afc5c4706c5235fec47634f4aabbe\",\n      \"--owner-binary\",\n      \"/home/qian-qi/work/chain-w1-c7-owner-empty-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8\",\n      \"--target-dir\",\n      \"/home/qian-qi/work/chain-w1-c7-owner-empty-target-20261108-ec265b\",\n      \"--runner-binary\",\n      \"/home/qian-qi/work/chain-w1-base96-backend-target-20261108-ec265b/release/w1-staged-prover-v2\",\n      \"--runner-build-log\",\n      \"/home/qian-qi/work/chain-w1-c7-backend-qualification-20261108-ec265b-01/build.stdout\",\n      \"--native-qualification\",\n      \"/home/qian-qi/work/chain-w1-c7-native-qualification-20261108-ec265b-01/manifest.json\",\n      \"--plan-sha256\",\n      \"3fc21976c7c60c705d12080126ebf090c81d9f01bec182b94f679fa073429591\"\n    ],\n    \"created_unix_ms\": 1794126967377,\n    \"cwd\": \"/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b\",\n    \"env_keys\": [],\n    \"executable\": \"/usr/bin/python3.12\",\n    \"execution_mode\": \"operator\",\n    \"host\": \"desktop\",\n    \"id\": \"1a1ba4cf251-12894-1994\",\n    \"idempotency_key\": \"w1-c7-only-original120s-heavy-timeout-reorg-20261108-ec265b-01\",\n    \"launch_error\": \"Remote launch outcome unavailable\",\n    \"launch_state\": \"launch_unknown\",\n    \"remote_job_dir\": \"/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1ba4cf251-12894-1994\",\n    \"request_digest\": \"69da02d01748d5a8117e00f130d2b60b606cc85de58d9094c1ea6ece6be0aa91\",\n    \"request_fingerprint\": 7627412011672458664,\n    \"ssh_target\": \"desktop-ts\",\n    \"system_jobctl\": false,\n    \"unit\": \"hepta-runtime-job-1a1ba4cf251-12894-1994\"\n  },\n  \"launch\": {\n    \"automatic_retry\": false,\n    \"job_id\": \"1a1ba4cf251-12894-1994\",\n    \"outcome\": \"unknown\",\n    \"reconcile_via\": \"process_status\",\n    \"state\": \"launch_unknown\",\n    \"status_authoritative\": false\n  },\n  \"local_record_pending\": false,\n  \"reused\": false\n}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "original_status": {
+    "content": [
+      {
+        "type": "text",
+        "text": "remote helper on desktop-ts failed with 1\nstdout:\n\nstderr:\nTraceback (most recent call last):\n  File \"<string>\", line 6, in <module>\n  File \"<string>\", line 25, in private_job_directory\nFileNotFoundError: [Errno 2] No such file or directory: '1a1ba4cf251-12894-1994'"
+      }
+    ],
+    "structuredContent": {
+      "error_code": "INVALID_ARGUMENT"
+    },
+    "isError": true
+  },
+  "current_root_listing": {
+    "content": [
+      {
+        "type": "text",
+        "text": "plan.json\t49KB\npreparation-provenance.json\t5KB\nqualification/extracted-owner-artifact.json\t2KB\nqualification/manifest.json\t47KB\nqualification/original-qualification-manifest.json\t22KB\nqualification/original-source-after.json\t423B\nqualification/original-source-before.json\t423B\nrunner-source-probe.json\t3KB\nrunner-source-probe.stderr\t21B\nrunner-source-probe.stdout\t888B"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "exact_same_request_reconciliation": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\n  \"audit_recorded\": true,\n  \"job\": {\n    \"args\": [\n      \"-B\",\n      \"/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/driver-v4.py\",\n      \"launch\",\n      \"--repo\",\n      \"/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b\",\n      \"--root\",\n      \"/home/qian-qi/work/chain-w1-c7-timeout-reorg-20261108-ec265b-01\",\n      \"--expected-commit\",\n      \"40a3a45d6b8afc5c4706c5235fec47634f4aabbe\",\n      \"--owner-binary\",\n      \"/home/qian-qi/work/chain-w1-c7-owner-empty-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8\",\n      \"--target-dir\",\n      \"/home/qian-qi/work/chain-w1-c7-owner-empty-target-20261108-ec265b\",\n      \"--runner-binary\",\n      \"/home/qian-qi/work/chain-w1-base96-backend-target-20261108-ec265b/release/w1-staged-prover-v2\",\n      \"--runner-build-log\",\n      \"/home/qian-qi/work/chain-w1-c7-backend-qualification-20261108-ec265b-01/build.stdout\",\n      \"--native-qualification\",\n      \"/home/qian-qi/work/chain-w1-c7-native-qualification-20261108-ec265b-01/manifest.json\",\n      \"--plan-sha256\",\n      \"3fc21976c7c60c705d12080126ebf090c81d9f01bec182b94f679fa073429591\"\n    ],\n    \"created_unix_ms\": 1794126967377,\n    \"cwd\": \"/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b\",\n    \"env_keys\": [],\n    \"executable\": \"/usr/bin/python3.12\",\n    \"execution_mode\": \"operator\",\n    \"host\": \"desktop\",\n    \"id\": \"1a1ba4cf251-12894-1994\",\n    \"idempotency_key\": \"w1-c7-only-original120s-heavy-timeout-reorg-20261108-ec265b-01\",\n    \"launch_error\": \"Remote launch outcome unavailable\",\n    \"launch_state\": \"launch_unknown\",\n    \"remote_job_dir\": \"/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1ba4cf251-12894-1994\",\n    \"request_digest\": \"69da02d01748d5a8117e00f130d2b60b606cc85de58d9094c1ea6ece6be0aa91\",\n    \"request_fingerprint\": 7627412011672458664,\n    \"ssh_target\": \"desktop-ts\",\n    \"system_jobctl\": false,\n    \"unit\": \"hepta-runtime-job-1a1ba4cf251-12894-1994\"\n  },\n  \"launch\": null,\n  \"retried_launch\": false,\n  \"reused\": true,\n  \"status\": {\n    \"automatic_retry\": false,\n    \"job_id\": \"1a1ba4cf251-12894-1994\",\n    \"outcome\": \"unknown\",\n    \"state\": \"status_unavailable\",\n    \"status_authoritative\": false\n  }\n}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "classification": "launch_unknown; no authoritative remote execution terminal available",
+  "retried_launch": false,
+  "new_idempotency_key_for_same_operation": false,
+  "no_success_or_business_failure_claim": true
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "TRNM-W1-C6-D4-MERGE-PREPARATION1",
+  "tested_source": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+  "d3_parent": "05d8bb25dacab1d6589fa86061e6c23220b96b1d",
+  "c5_inventory_sha256": "524bb438ef63bc5fb25ecba3a723e9bb64dc5d7dbf8560797c6788410c282dda",
+  "c5_manifest_members_checked": 421,
+  "c5_actual_files_including_inventory": 422,
+  "c5_all_member_bytes_and_hashes_preserved": true,
+  "runtime_index_bytes_equal_c6": true,
+  "only_plan_and_c5_evidence_differ_from_c6": true,
+  "plan_sha256": "5041ae5866d7be9858db397004fa34b0a0b64561d8bbd35c1cf37ffbaa60acd6",
+  "monotonic_ns": 1196827019339112,
+  "observed_c6_qualification_complete": false
+}

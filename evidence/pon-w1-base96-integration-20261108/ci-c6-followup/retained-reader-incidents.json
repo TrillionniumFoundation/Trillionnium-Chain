@@ -1,0 +1,35 @@
+[
+  {
+    "artifact_id": 13608847990,
+    "job_id": 128655993533,
+    "kind": "artifact-download-timeout",
+    "meaning": "Incomplete artifact read; the observed History replica-2 CI success is not changed.",
+    "partial_bytes": 21413888,
+    "partial_sha256": "f5660018a142121dba4ac92dbe4021d89fc2d76337626a8c5e921c5d24cbd0b7",
+    "retry": false,
+    "timeout_seconds": 120
+  },
+  {
+    "error": "INVALID_ARGUMENT: multi-file read could not complete; regular file / strict UTF-8 / byte budget constraints",
+    "kind": "bounded-multiple-file-read-refused",
+    "meaning": "No partial response; subsequent narrow reads and validated ZIP members supplied the required facts.",
+    "paths": [
+      "new-jobs/128660701948/artifact-members.json",
+      "new-jobs/128660701637/artifact-members.json"
+    ]
+  },
+  {
+    "idempotency_key": "w1-c6-later-campaign-confirmations-ec265-01",
+    "initial_error": "MCP request timed out",
+    "kind": "metrics-helper-start-transport-timeout",
+    "meaning": "Read-only helper only; exact request/key later returned launched. Its actual completed result is retained. No GitHub CI was retried.",
+    "subsequent_exact_request_job": "1a1ba4c9a57-12894-1992",
+    "subsequent_reused": false
+  },
+  {
+    "error": "SyntaxError: Invalid or unexpected token",
+    "kind": "local-freeze-orchestration-syntax-error",
+    "meaning": "JavaScript parse failed before any remote tool call or filesystem mutation; corrected payload is separate.",
+    "remote_call_submitted": false
+  }
+]

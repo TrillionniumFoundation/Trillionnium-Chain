@@ -1,0 +1,606 @@
+[
+  {
+    "label": "original",
+    "phases": [
+      {
+        "nested": {
+          "attacks": {
+            "length": 0
+          },
+          "business_receive_clock": [
+            "clock_scope",
+            "first_business_packet_body_digest",
+            "has_control_authority",
+            "independent_confirmation_in_observer_ns",
+            "request_binding_stage",
+            "schema",
+            "traffic_epoch_in_observer_ns"
+          ],
+          "final_meter": [
+            "accounting_unavailable",
+            "burst_ns",
+            "in_flight",
+            "refill_ns_per_second",
+            "schema",
+            "start_reserve_ns",
+            "stored_credit_ns",
+            "worker_limit"
+          ],
+          "honest_heads": {
+            "length": 55
+          },
+          "honest_history": {
+            "length": 7
+          },
+          "honest_submissions": {
+            "length": 7
+          },
+          "independent_client_confirmation": [
+            "active_generation",
+            "confirmed",
+            "depth",
+            "execution_authority",
+            "finalized",
+            "genesis",
+            "included_block",
+            "included_height",
+            "network",
+            "observed_height",
+            "observed_now",
+            "observed_tip",
+            "parameters",
+            "policy",
+            "reorged",
+            "required_work_delta",
+            "transaction",
+            "work_delta"
+          ],
+          "independent_final_confirmation_stage": [
+            "clock_scope",
+            "confirmation_ended_ns",
+            "confirmation_started_ns",
+            "confirmation_thread_cpu_ns",
+            "confirmation_wall_ns",
+            "observation_returned"
+          ],
+          "independent_history_page_replay": {
+            "length": 7
+          },
+          "initial_meter": [
+            "accounting_unavailable",
+            "burst_ns",
+            "in_flight",
+            "refill_ns_per_second",
+            "schema",
+            "start_reserve_ns",
+            "stored_credit_ns",
+            "worker_limit"
+          ],
+          "observations": [
+            "accepted_connections_seen",
+            "capacity",
+            "counter_overflow",
+            "cpu_includes_reactor_authentication",
+            "cpu_includes_reactor_authentication_or_response_signing",
+            "cpu_intervals_are_nested_not_additive",
+            "cpu_wait_is_outside_dispatch",
+            "dispatch_cpu_includes_paid_body_decode",
+            "dispatch_cpu_includes_response_signing",
+            "measurement_failures",
+            "monotonic_epoch_is_observer_local",
+            "observation_has_consensus_authority",
+            "phase_parent_links_are_inclusive",
+            "records",
+            "records_not_retained",
+            "schema",
+            "stream_bytes_are_physical_network_bytes",
+            "submit_phase_cpu_excludes_scoped_workers"
+          ],
+          "service": [
+            "error",
+            "metrics"
+          ],
+          "verification_errors": {
+            "length": 0
+          }
+        },
+        "scalars": {
+          "accounting_closed": true,
+          "attacker_workers_cpu_ns": 0,
+          "attacker_workers_cpu_scope": "disjoint joined client threads; includes every failed negotiation, resource-ticket search, encoding and output record; excludes receiver and separately recorded from-zero setup",
+          "business_started_ns": 146934,
+          "client_confirmation_latency_ns": 3098021827,
+          "client_confirmed_before_original_window_end": true,
+          "client_confirmed_transactions": 1,
+          "completed_false_calls_at_confirmation": 0,
+          "completed_false_calls_before_business": 0,
+          "confirmation_ended_ns": 3098168761,
+          "finite_business_target_met": true,
+          "full_native_state_equal": true,
+          "honest_head_successes_in_window": 55,
+          "independent_operator_accepted": false,
+          "independent_replay_and_confirmation_cpu_ns": 539210676,
+          "independent_replay_and_confirmation_wall_ns": 2873783519,
+          "initial_state_root": "a38261e0626576626728f955fa597c25420324cf6fd5bc7e55bd3da525f3a338",
+          "initial_tip": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+          "invariant_target_met": true,
+          "maximum_honest_head_gap_ns": 108158137,
+          "mode": "attack-free-baseline",
+          "no_attack_accepted": true,
+          "overlap_demonstrated": true,
+          "overlapping_false_calls": 0,
+          "production_activation": false,
+          "public_network_ready": false,
+          "reader_cpu_ns": 28924295,
+          "receiver_matches_valid_honest_prefix": true,
+          "requested_window_ns": 4000000000,
+          "resource_fairness_qualified": false,
+          "scope": "one host, same operator; separate native verifying client; six depth/work confirmations during unchanged four-second traffic window; no post-pressure drain credit",
+          "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "task": "56dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f34",
+          "work_profile_qualified": false,
+          "workers": 0
+        }
+      },
+      {
+        "nested": {
+          "attacks": {
+            "length": 16
+          },
+          "business_receive_clock": [
+            "clock_scope",
+            "first_business_packet_body_digest",
+            "has_control_authority",
+            "independent_confirmation_in_observer_ns",
+            "request_binding_stage",
+            "schema",
+            "traffic_epoch_in_observer_ns"
+          ],
+          "final_meter": [
+            "accounting_unavailable",
+            "burst_ns",
+            "in_flight",
+            "refill_ns_per_second",
+            "schema",
+            "start_reserve_ns",
+            "stored_credit_ns",
+            "worker_limit"
+          ],
+          "honest_heads": {
+            "length": 24
+          },
+          "honest_history": {
+            "length": 3
+          },
+          "honest_submissions": {
+            "length": 7
+          },
+          "independent_history_page_replay": {
+            "length": 3
+          },
+          "initial_meter": [
+            "accounting_unavailable",
+            "burst_ns",
+            "in_flight",
+            "refill_ns_per_second",
+            "schema",
+            "start_reserve_ns",
+            "stored_credit_ns",
+            "worker_limit"
+          ],
+          "observations": [
+            "accepted_connections_seen",
+            "capacity",
+            "counter_overflow",
+            "cpu_includes_reactor_authentication",
+            "cpu_includes_reactor_authentication_or_response_signing",
+            "cpu_intervals_are_nested_not_additive",
+            "cpu_wait_is_outside_dispatch",
+            "dispatch_cpu_includes_paid_body_decode",
+            "dispatch_cpu_includes_response_signing",
+            "measurement_failures",
+            "monotonic_epoch_is_observer_local",
+            "observation_has_consensus_authority",
+            "phase_parent_links_are_inclusive",
+            "records",
+            "records_not_retained",
+            "schema",
+            "stream_bytes_are_physical_network_bytes",
+            "submit_phase_cpu_excludes_scoped_workers"
+          ],
+          "service": [
+            "error",
+            "metrics"
+          ],
+          "verification_errors": {
+            "length": 1
+          }
+        },
+        "scalars": {
+          "accounting_closed": true,
+          "attacker_workers_cpu_ns": 348944657,
+          "attacker_workers_cpu_scope": "disjoint joined client threads; includes every failed negotiation, resource-ticket search, encoding and output record; excludes receiver and separately recorded from-zero setup",
+          "business_started_ns": 98859779,
+          "client_confirmation_latency_ns": null,
+          "client_confirmed_before_original_window_end": false,
+          "client_confirmed_transactions": 0,
+          "completed_false_calls_at_confirmation": 312,
+          "completed_false_calls_before_business": 2,
+          "confirmation_ended_ns": null,
+          "finite_business_target_met": false,
+          "full_native_state_equal": false,
+          "honest_head_successes_in_window": 23,
+          "independent_client_confirmation": null,
+          "independent_final_confirmation_stage": null,
+          "independent_operator_accepted": false,
+          "independent_replay_and_confirmation_cpu_ns": 184003332,
+          "independent_replay_and_confirmation_wall_ns": 2402619079,
+          "initial_state_root": "a38261e0626576626728f955fa597c25420324cf6fd5bc7e55bd3da525f3a338",
+          "initial_tip": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+          "invariant_target_met": true,
+          "maximum_honest_head_gap_ns": 297020515,
+          "mode": "from-zero-pressure",
+          "no_attack_accepted": true,
+          "overlap_demonstrated": false,
+          "overlapping_false_calls": 0,
+          "production_activation": false,
+          "public_network_ready": false,
+          "reader_cpu_ns": 13539538,
+          "receiver_matches_valid_honest_prefix": true,
+          "requested_window_ns": 4000000000,
+          "resource_fairness_qualified": false,
+          "scope": "one host, same operator; separate native verifying client; six depth/work confirmations during unchanged four-second traffic window; no post-pressure drain credit",
+          "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "task": "56dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f34",
+          "work_profile_qualified": false,
+          "workers": 16
+        }
+      }
+    ],
+    "shape": {
+      "nested": {
+        "from_zero_construction": {
+          "length": 16
+        },
+        "phases": {
+          "length": 2
+        },
+        "signed_honest_packets": {
+          "length": 7
+        }
+      },
+      "scalars": {
+        "attacker_construction_cpu_ns": 7568742,
+        "attacker_construction_wall_ns": 7568259,
+        "finite_target_met": false,
+        "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+        "honest_chain_acquisition_wall_ns": 185737630,
+        "honest_chain_aggregate_cpu_ns": null,
+        "honest_chain_process_cpu_ns": 36630443,
+        "honest_chain_process_cpu_scope": "all threads of this test process during seven-block mining and durable acquisition, before service/traffic start; includes search/setup/execution/storage, not pure W1 cost or exclusive actor attribution",
+        "invariant_target_met": true,
+        "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+        "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+        "policy_id": "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+        "production_activation": false,
+        "public_network_ready": false,
+        "same_packet_sequence_in_both_runs": true,
+        "schema": "public-v3-signed-confirmation-pressure-v1",
+        "scope": "same-source, task, target and signed business; attack-free versus independently driven loopback attack clients; shared controller, not independent operators or a saturated WAN benchmark",
+        "strongest_honest_producer_used": false,
+        "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "task": "56dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f34",
+        "test_success_scope": "native protocol/accounting invariants; finite business target is a separately retained actual outcome and cannot be inferred from cargo exit zero",
+        "work_profile_qualified": false
+      }
+    }
+  },
+  {
+    "label": "fresh",
+    "phases": [
+      {
+        "nested": {
+          "attacks": {
+            "length": 0
+          },
+          "business_receive_clock": [
+            "clock_scope",
+            "first_business_packet_body_digest",
+            "has_control_authority",
+            "independent_confirmation_in_observer_ns",
+            "request_binding_stage",
+            "schema",
+            "traffic_epoch_in_observer_ns"
+          ],
+          "final_meter": [
+            "accounting_unavailable",
+            "burst_ns",
+            "in_flight",
+            "refill_ns_per_second",
+            "schema",
+            "start_reserve_ns",
+            "stored_credit_ns",
+            "worker_limit"
+          ],
+          "honest_heads": {
+            "length": 54
+          },
+          "honest_history": {
+            "length": 7
+          },
+          "honest_submissions": {
+            "length": 7
+          },
+          "independent_client_confirmation": [
+            "active_generation",
+            "confirmed",
+            "depth",
+            "execution_authority",
+            "finalized",
+            "genesis",
+            "included_block",
+            "included_height",
+            "network",
+            "observed_height",
+            "observed_now",
+            "observed_tip",
+            "parameters",
+            "policy",
+            "reorged",
+            "required_work_delta",
+            "transaction",
+            "work_delta"
+          ],
+          "independent_final_confirmation_stage": [
+            "clock_scope",
+            "confirmation_ended_ns",
+            "confirmation_started_ns",
+            "confirmation_thread_cpu_ns",
+            "confirmation_wall_ns",
+            "observation_returned"
+          ],
+          "independent_history_page_replay": {
+            "length": 7
+          },
+          "initial_meter": [
+            "accounting_unavailable",
+            "burst_ns",
+            "in_flight",
+            "refill_ns_per_second",
+            "schema",
+            "start_reserve_ns",
+            "stored_credit_ns",
+            "worker_limit"
+          ],
+          "observations": [
+            "accepted_connections_seen",
+            "capacity",
+            "counter_overflow",
+            "cpu_includes_reactor_authentication",
+            "cpu_includes_reactor_authentication_or_response_signing",
+            "cpu_intervals_are_nested_not_additive",
+            "cpu_wait_is_outside_dispatch",
+            "dispatch_cpu_includes_paid_body_decode",
+            "dispatch_cpu_includes_response_signing",
+            "measurement_failures",
+            "monotonic_epoch_is_observer_local",
+            "observation_has_consensus_authority",
+            "phase_parent_links_are_inclusive",
+            "records",
+            "records_not_retained",
+            "schema",
+            "stream_bytes_are_physical_network_bytes",
+            "submit_phase_cpu_excludes_scoped_workers"
+          ],
+          "service": [
+            "error",
+            "metrics"
+          ],
+          "verification_errors": {
+            "length": 0
+          }
+        },
+        "scalars": {
+          "accounting_closed": true,
+          "attacker_workers_cpu_ns": 0,
+          "attacker_workers_cpu_scope": "disjoint joined client threads; includes every failed negotiation, resource-ticket search, encoding and output record; excludes receiver and separately recorded from-zero setup",
+          "business_started_ns": 152244,
+          "client_confirmation_latency_ns": 3091566631,
+          "client_confirmed_before_original_window_end": true,
+          "client_confirmed_transactions": 1,
+          "completed_false_calls_at_confirmation": 0,
+          "completed_false_calls_before_business": 0,
+          "confirmation_ended_ns": 3091718875,
+          "finite_business_target_met": true,
+          "full_native_state_equal": true,
+          "honest_head_successes_in_window": 54,
+          "independent_operator_accepted": false,
+          "independent_replay_and_confirmation_cpu_ns": 540839241,
+          "independent_replay_and_confirmation_wall_ns": 2812375702,
+          "initial_state_root": "a38261e0626576626728f955fa597c25420324cf6fd5bc7e55bd3da525f3a338",
+          "initial_tip": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+          "invariant_target_met": true,
+          "maximum_honest_head_gap_ns": 104761502,
+          "mode": "attack-free-baseline",
+          "no_attack_accepted": true,
+          "overlap_demonstrated": true,
+          "overlapping_false_calls": 0,
+          "production_activation": false,
+          "public_network_ready": false,
+          "reader_cpu_ns": 27899664,
+          "receiver_matches_valid_honest_prefix": true,
+          "requested_window_ns": 4000000000,
+          "resource_fairness_qualified": false,
+          "scope": "one host, same operator; separate native verifying client; six depth/work confirmations during unchanged four-second traffic window; no post-pressure drain credit",
+          "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "task": "56dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f34",
+          "work_profile_qualified": false,
+          "workers": 0
+        }
+      },
+      {
+        "nested": {
+          "attacks": {
+            "length": 16
+          },
+          "business_receive_clock": [
+            "clock_scope",
+            "first_business_packet_body_digest",
+            "has_control_authority",
+            "independent_confirmation_in_observer_ns",
+            "request_binding_stage",
+            "schema",
+            "traffic_epoch_in_observer_ns"
+          ],
+          "final_meter": [
+            "accounting_unavailable",
+            "burst_ns",
+            "in_flight",
+            "refill_ns_per_second",
+            "schema",
+            "start_reserve_ns",
+            "stored_credit_ns",
+            "worker_limit"
+          ],
+          "honest_heads": {
+            "length": 18
+          },
+          "honest_history": {
+            "length": 2
+          },
+          "honest_submissions": {
+            "length": 7
+          },
+          "independent_history_page_replay": {
+            "length": 2
+          },
+          "initial_meter": [
+            "accounting_unavailable",
+            "burst_ns",
+            "in_flight",
+            "refill_ns_per_second",
+            "schema",
+            "start_reserve_ns",
+            "stored_credit_ns",
+            "worker_limit"
+          ],
+          "observations": [
+            "accepted_connections_seen",
+            "capacity",
+            "counter_overflow",
+            "cpu_includes_reactor_authentication",
+            "cpu_includes_reactor_authentication_or_response_signing",
+            "cpu_intervals_are_nested_not_additive",
+            "cpu_wait_is_outside_dispatch",
+            "dispatch_cpu_includes_paid_body_decode",
+            "dispatch_cpu_includes_response_signing",
+            "measurement_failures",
+            "monotonic_epoch_is_observer_local",
+            "observation_has_consensus_authority",
+            "phase_parent_links_are_inclusive",
+            "records",
+            "records_not_retained",
+            "schema",
+            "stream_bytes_are_physical_network_bytes",
+            "submit_phase_cpu_excludes_scoped_workers"
+          ],
+          "service": [
+            "error",
+            "metrics"
+          ],
+          "verification_errors": {
+            "length": 1
+          }
+        },
+        "scalars": {
+          "accounting_closed": true,
+          "attacker_workers_cpu_ns": 365073031,
+          "attacker_workers_cpu_scope": "disjoint joined threads; fresh per-call setup, every failed/successful false-ticket trial, construction records, packet digest, negotiation, resource tickets and network I/O; shared public material setup recorded separately",
+          "business_started_ns": 107141769,
+          "client_confirmation_latency_ns": null,
+          "client_confirmed_before_original_window_end": false,
+          "client_confirmed_transactions": 0,
+          "completed_false_calls_at_confirmation": 207,
+          "completed_false_calls_before_business": 1,
+          "confirmation_ended_ns": null,
+          "finite_business_target_met": false,
+          "full_native_state_equal": false,
+          "honest_head_successes_in_window": 17,
+          "independent_client_confirmation": null,
+          "independent_final_confirmation_stage": null,
+          "independent_operator_accepted": false,
+          "independent_replay_and_confirmation_cpu_ns": 85860794,
+          "independent_replay_and_confirmation_wall_ns": 1798069816,
+          "initial_state_root": "a38261e0626576626728f955fa597c25420324cf6fd5bc7e55bd3da525f3a338",
+          "initial_tip": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+          "invariant_target_met": true,
+          "maximum_honest_head_gap_ns": 301051735,
+          "mode": "from-zero-pressure",
+          "no_attack_accepted": true,
+          "overlap_demonstrated": false,
+          "overlapping_false_calls": 0,
+          "production_activation": false,
+          "public_network_ready": false,
+          "reader_cpu_ns": 10805238,
+          "receiver_matches_valid_honest_prefix": true,
+          "requested_window_ns": 4000000000,
+          "resource_fairness_qualified": false,
+          "scope": "one host, same operator; separate native verifying client; six depth/work confirmations during unchanged four-second traffic window; no post-pressure drain credit",
+          "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "task": "56dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f34",
+          "work_profile_qualified": false,
+          "workers": 16
+        }
+      }
+    ],
+    "shape": {
+      "nested": {
+        "construction_coverage": [
+          "accounting_scope",
+          "all_context_bindings_and_challenges_unique",
+          "all_nested_cpu_measurements_known",
+          "constructed",
+          "exhausted",
+          "full_transcript_rejections",
+          "nested_from_zero_construction_cpu_ns",
+          "submitted",
+          "unique_challenges",
+          "unique_packet_indices"
+        ],
+        "phases": {
+          "length": 2
+        },
+        "signed_honest_packets": {
+          "length": 7
+        }
+      },
+      "scalars": {
+        "attack_workers": 16,
+        "attacker_setup_and_workers_cpu_ns": 365123245,
+        "finite_target_met": false,
+        "genesis": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+        "honest_chain_acquisition_wall_ns": 186133081,
+        "honest_chain_process_cpu_ns": 36686180,
+        "honest_chain_process_cpu_scope": "entire process during seven-block acquisition before service; not isolated W1 or exclusive producer CPU",
+        "negative_cache_enabled": true,
+        "negative_cache_observation_source": "actual-request-work-rejection-observations-v1",
+        "network": "df94dffcbc31d34ecd6dd126baa63fdf3f91f65355bd6892e2a76a7e16a26e53",
+        "parameters": "daf3f93ff0d61cf40eaf6e59b4bcf2b9c11ff72bc426485c82d8e11f6137ed4e",
+        "per_worker_attempt_cap": 1024,
+        "policy_id": "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+        "production_activation": false,
+        "public_network_ready": false,
+        "requested_window_ns": 4000000000,
+        "resource_fairness_qualified": false,
+        "same_signed_business_packets": true,
+        "schema": "public-v3-fresh-challenge-confirmation-pressure-v1",
+        "scope": "explicit diagnostic with actual business assertion; separate from unchanged retained-packet original gate; one host/operator, no WAN fairness or cheapest-work claim",
+        "shared_material_setup_cpu_ns": 50214,
+        "shared_material_setup_wall_ns": 55374,
+        "target": "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "task": "56dac087e1241f23d72e47421fee9b439d9c8e4ad7eab89598ed46f8c6e61f34",
+        "work_profile_qualified": false
+      }
+    }
+  }
+]

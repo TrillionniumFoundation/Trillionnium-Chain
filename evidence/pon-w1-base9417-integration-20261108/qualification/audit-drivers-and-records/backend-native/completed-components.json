@@ -1,0 +1,44 @@
+{
+  "components": [
+    {
+      "component": "backend",
+      "manifest_sha256": "76ddf549ca569cdc146a5f454d2384783696712cfe7a3b0f51c834abc1c587c6",
+      "raw_archive_bytes": 146354,
+      "raw_archive_sha256": "ac247f5c33206aa0bafb57c2386980d01835d33802ee4d66acd520c1dad68dda",
+      "raw_members": 24
+    },
+    {
+      "component": "native",
+      "manifest_sha256": "33df73464a74152d159cd590bac63e4e1a5470dd6891b1147918e1611ae9c675",
+      "raw_archive_bytes": 164350,
+      "raw_archive_sha256": "981f12bb84d8bb9f8e93e0da3235ccd7e09166730aa961e8de18d0aa58991af8",
+      "raw_members": 30
+    }
+  ],
+  "counts": {
+    "commands": 17,
+    "python_passed": 0,
+    "rust_ignored": 0,
+    "rust_passed": 4
+  },
+  "initial_inode_isolation_limit": "Copy-time inode isolation is separate from current Cargo artifact link counts; current regular-file link counts are recorded, not forced to one.",
+  "new_complete_proofs": 0,
+  "ordinary_passes": 4,
+  "other_components": "Not audited or claimed by this backend/native-only review.",
+  "pending_components": [
+    "core",
+    "owner",
+    "receiver",
+    "historical-regressions",
+    "history-local-compile-list",
+    "staged32"
+  ],
+  "prior_audit_attempt": "Preserved in prior-audit-failure.json and prior-audit-driver.py; an incorrect auditor digest stopped attempt01 before raw-test or ELF review, with no qualification rerun.",
+  "publication_state": "filesystem verified; index and committed publication completeness not claimed by this audit",
+  "qualification_aggregate_complete_claimed": false,
+  "schema": "TRNM-W1-C8-COMPLETED-COMPONENTS1",
+  "source": {
+    "commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c"
+  }
+}

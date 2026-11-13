@@ -1,0 +1,18 @@
+--- assemble_validate_d6.py
++++ assemble_validate_d6_v2.py
+@@ -31,7 +31,7 @@
+   dst=new/name;assert not dst.exists();shutil.copyfile(src,dst)
+ summary=json.loads((new/'summary.json').read_text())
+ assert summary['tested_source']==c8 and summary['tested_tree']==tree and summary['four_gate_status']==['HOLD']*4
+-assert summary['ordinary_test_method_executions']==665 and summary['qualified_command_count']==73 and summary['ignored']==4
++assert summary['ordinary_test_method_executions']==697 and summary['qualification_command_count_all_attempts']==77 and summary['ordinary_passed']==696 and summary['ordinary_failed']==1 and summary['ignored']==4 and summary['all_first_attempts_passed'] is False
+ src=tool/'verify_git_publication.py'
+ assert hashlib.sha256(src.read_bytes()).hexdigest()==d['verify_git_publication_sha256']
+ shutil.copyfile(src,new/'verify_git_publication.py')
+@@ -66,5 +66,5 @@
+ run('08-repository-links-and-boundaries',['python3','scripts/ci/check_repository.py'])
+ authored=[str(plan.relative_to(r)),str((new/'README.md').relative_to(r)),str((new/'summary.json').relative_to(r)),str(ip.relative_to(r)),str((new/'verify_git_publication.py').relative_to(r)),str((pub/'README.md').relative_to(r))]
+ run('09-authored-whitespace',['git','diff','--cached','--check','--']+authored)
+-result={'schema':'TRNM-W1-C8-D6-DOCS-VALIDATION1','tested_source':c8,'new_manifest_members':len(files),'new_files_including_inventory':len(files)+1,'new_bytes_excluding_inventory':sum(x['bytes'] for x in files),'new_json_files_validated':json_count,'inventory_sha256':ish,'old_paths_git_index_verified':2138,'all_old_and_new_git_index_blobs_verified':True,'all_git_index_paths_verified':iv['file_count'],'runtime_index_equal_c8':True,'four_gate_status':['HOLD']*4,'qualification_flags_promoted':False,'assembly_declaration_sha256':a.declaration_sha256,'commands':records,'observed_monotonic_ns':time.monotonic_ns()}
++result={'schema':'TRNM-W1-C8-D6-DOCS-VALIDATION2','tested_source':c8,'new_manifest_members':len(files),'new_files_including_inventory':len(files)+1,'new_bytes_excluding_inventory':sum(x['bytes'] for x in files),'new_json_files_validated':json_count,'inventory_sha256':ish,'old_paths_git_index_verified':2138,'all_old_and_new_git_index_blobs_verified':True,'all_git_index_paths_verified':iv['file_count'],'runtime_index_equal_c8':True,'four_gate_status':['HOLD']*4,'qualification_flags_promoted':False,'assembly_declaration_sha256':a.declaration_sha256,'commands':records,'observed_monotonic_ns':time.monotonic_ns()}
+ (out/'manifest.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps({k:v for k,v in result.items() if k!='commands'}))

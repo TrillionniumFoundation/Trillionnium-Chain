@@ -1,0 +1,50 @@
+[
+  {
+    "component": "prior-c4-ci",
+    "original_directory": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b-validation/exact-c4-ci-01",
+    "archive": "prior-c4-ci.tar.gz",
+    "bytes": 27016,
+    "sha256": "58301df8bc75bbc8915037b886d400c6f8e624064351151ada2eee77d7005e31",
+    "manifest_sha256": "4572341d2ea38a81319eb9f6dcf6c920096c9f4deb4a0b2097ca9eab2def6b4a"
+  },
+  {
+    "component": "prior-c4-owner",
+    "original_directory": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b-validation/exact-c4-owner-01",
+    "archive": "prior-c4-owner.tar.gz",
+    "bytes": 509520,
+    "sha256": "b4ec0553e02ab753b618307193bacb2122d65a76682d3a3bc52e27f46dadeb2a",
+    "manifest_sha256": "d4bf9a88850d7fea09e0ad3c376ec9855830920b0866a355f5e8c6ff8609a5d7"
+  },
+  {
+    "component": "final-owner",
+    "original_directory": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b-validation/exact-final-owner-01",
+    "archive": "final-owner.tar.gz",
+    "bytes": 509163,
+    "sha256": "16a3d59b2fd3d6fce6afce93970b345737b36dcec9a60b7200f98d36c3e2fc32",
+    "manifest_sha256": "182b317b9d90962a2595be2421d7813fda627b5654404305edf9f4124833a466"
+  },
+  {
+    "component": "final-receiver",
+    "original_directory": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b-validation/exact-final-receiver-01",
+    "archive": "final-receiver.tar.gz",
+    "bytes": 386976,
+    "sha256": "1fbafe08644c5e2b07f01b2f1976cf599db4586ac2ae4196ac5d8b5ca543aca2",
+    "manifest_sha256": "85b90b184ec79f8c9a0fc19d662593d2085532a77015528e6e86114a8414d436"
+  },
+  {
+    "component": "final-backend",
+    "original_directory": "/home/qian-qi/work/chain-w1-c5-backend-qualification-20261108-ec265b-01",
+    "archive": "final-backend.tar.gz",
+    "bytes": 138446,
+    "sha256": "8dde8b5cf7c0d077e3b2176ccf11be27eddd8c7d8f05c742b43a388ed6ae369c",
+    "manifest_sha256": "7e500f1b607916648f8c3b96402e40018ecae90eb859d930bfa82cd8223142a6"
+  },
+  {
+    "component": "final-native",
+    "original_directory": "/home/qian-qi/work/chain-w1-c5-native-qualification-20261108-ec265b-01",
+    "archive": "final-native.tar.gz",
+    "bytes": 158238,
+    "sha256": "30e4c89570736e90426c11576363d2421d8af74b1cf392ed49543250408c96f5",
+    "manifest_sha256": "557caa36c01ade287b9183c8bb846f4bcc8977edb4aef5bc38284820f504c84f"
+  }
+]

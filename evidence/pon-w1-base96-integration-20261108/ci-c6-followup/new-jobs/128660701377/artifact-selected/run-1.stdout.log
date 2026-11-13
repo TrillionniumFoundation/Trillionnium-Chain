@@ -1,0 +1,11 @@
+
+running 1 test
+test separate_process_work_and_signed_confirmation_campaign ... FAILED
+
+failures:
+
+failures:
+    separate_process_work_and_signed_confirmation_campaign
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 24 filtered out; finished in 113.02s
+

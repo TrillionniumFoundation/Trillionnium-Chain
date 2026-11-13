@@ -1,0 +1,150 @@
+[
+  {
+    "label": "00-head",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit": 0,
+    "stdout_sha256": "39cd30bde48e955f1af683c5c957d690db77697b1bbde5cffd8b845d8711809d",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "01-tree",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "exit": 0,
+    "stdout_sha256": "ddf3ac3928890eca54b7939a9b8b8ee2401a5be363245986d54164d325f6b674",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "02-clean",
+    "argv": [
+      "git",
+      "status",
+      "--porcelain"
+    ],
+    "exit": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "03-preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--dev"
+    ],
+    "exit": 0,
+    "stdout_sha256": "65586326e5793b95834cbef1dbae480b2b3425a5d1585881b4b33954001542c2",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "04-source-identity",
+    "argv": [
+      "python3",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+      "--output",
+      "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/source-publication-01/prepush-source.json"
+    ],
+    "exit": 0,
+    "stdout_sha256": "ae4700561bdd1dd273af73d36ca712162d430097daa9d1c3147704c9fe07083c",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "05-actor",
+    "argv": [
+      "gh",
+      "api",
+      "user",
+      "--jq",
+      ".login"
+    ],
+    "exit": 0,
+    "stdout_sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "06-fast-forward",
+    "argv": [
+      "git",
+      "merge-base",
+      "--is-ancestor",
+      "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+      "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    ],
+    "exit": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "07-remote-before",
+    "argv": [
+      "git",
+      "ls-remote",
+      "origin",
+      "refs/heads/fix/chain-w1-runtime-integrated-20261107",
+      "refs/heads/fix/chain-six-axis-performance-20261103",
+      "refs/pull/782/merge"
+    ],
+    "exit": 0,
+    "stdout_sha256": "2ce4390f36c3453166eddc6695dc51a073581a5ed11fe7cf9f786554a1f2854c",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "08-pr-before",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/782"
+    ],
+    "exit": 0,
+    "stdout_sha256": "8c4cd3b513b139190a581b78fd51dfded4b44e06596f8fbe1dfffa08daf309f7",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "09-source-push",
+    "argv": [
+      "git",
+      "push",
+      "origin",
+      "HEAD:refs/heads/fix/chain-w1-runtime-integrated-20261107"
+    ],
+    "exit": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "1bbcb7a8a3288a54fecf34385dfc0ee840c03744bd413446e6efad288f88f3e2"
+  },
+  {
+    "label": "10-remote-after",
+    "argv": [
+      "git",
+      "ls-remote",
+      "origin",
+      "refs/heads/fix/chain-w1-runtime-integrated-20261107",
+      "refs/heads/fix/chain-six-axis-performance-20261103",
+      "refs/pull/782/merge"
+    ],
+    "exit": 0,
+    "stdout_sha256": "6a0ba4999816f0227bed6d69382eed85ec34c51c51ce09c831e5a797d5e1da56",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "11-pr-after",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/782"
+    ],
+    "exit": 0,
+    "stdout_sha256": "c9ddfca873d8715eb542f41613bb4f7ccd2edbd3b09eedf843b04a1cf073d127",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

@@ -1,0 +1,44 @@
+{
+  "argv": [
+    "cp",
+    "-a",
+    "--reflink=auto",
+    "--no-preserve=links",
+    "/home/qian-qi/work/chain-w1-four-gates-backend-target-20261108-ec265b",
+    "/home/qian-qi/work/chain-w1-base62-backend-target-20261108-ec265b"
+  ],
+  "cargo_started": false,
+  "copied_binaries": {
+    "release/w1-staged-prover-v2": {
+      "bytes": 47794488,
+      "path": "/home/qian-qi/work/chain-w1-base62-backend-target-20261108-ec265b/release/w1-staged-prover-v2",
+      "sha256": "499b9e67297907cc5a2ab1062b17c57c60bb5a022240f27526451c1d9ff6ae91"
+    }
+  },
+  "destination": "/home/qian-qi/work/chain-w1-base62-backend-target-20261108-ec265b",
+  "destination_hardlink_count": 0,
+  "destination_regular_files_checked": 3867,
+  "fresh_cargo_target": false,
+  "independent_cleanroom_build": false,
+  "operation_created": false,
+  "role": "backend",
+  "schema": "TRNM-W1-C6-CACHE-COPY1",
+  "shared_source_inode_count": 0,
+  "source": "/home/qian-qi/work/chain-w1-four-gates-backend-target-20261108-ec265b",
+  "source_binaries_after": {
+    "release/w1-staged-prover-v2": {
+      "bytes": 47794488,
+      "path": "/home/qian-qi/work/chain-w1-four-gates-backend-target-20261108-ec265b/release/w1-staged-prover-v2",
+      "sha256": "499b9e67297907cc5a2ab1062b17c57c60bb5a022240f27526451c1d9ff6ae91"
+    }
+  },
+  "source_binaries_before": {
+    "release/w1-staged-prover-v2": {
+      "bytes": 47794488,
+      "path": "/home/qian-qi/work/chain-w1-four-gates-backend-target-20261108-ec265b/release/w1-staged-prover-v2",
+      "sha256": "499b9e67297907cc5a2ab1062b17c57c60bb5a022240f27526451c1d9ff6ae91"
+    }
+  },
+  "source_commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+  "source_tree": "8dd452c376452224602fb202940ae84fc1f84d2e"
+}

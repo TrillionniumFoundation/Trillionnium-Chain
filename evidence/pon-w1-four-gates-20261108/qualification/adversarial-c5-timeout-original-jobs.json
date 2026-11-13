@@ -1,0 +1,122 @@
+[
+  {
+    "job": "1a1b9872cfc-12894-14e6",
+    "status": {
+      "at_unix_ms": 1794114132962,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b9872cfc-12894-14e6",
+      "launch_nonce": "5c9989338dbd7def2a6ce5491c6105dd",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 510,
+          "stored": 510
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "read": {
+      "audit_recorded": true,
+      "job_id": "1a1b9872cfc-12894-14e6",
+      "stderr": {
+        "bytes_hex": "",
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "bytes_hex": "7b226c61756e63685f696e74656e745f7265636f72646564223a20747275652c20226f7065726174696f6e223a202233633732326437366233353264623734353063353333323133363862333035373832663235363132623965643166623830366334396335656337666235633737222c20226f726967696e616c5f646561646c696e655f6e73223a20313139313739353636383430373834362c2022736f75726365223a207b22636f6d6d6974223a202230333461613734333538653061356661333366333365383363623633363639653937333864613462222c202274726565223a202238646434353263333736343532323234363032666232303239343061653834666331663834643265227d7d0a0a72756e6e696e67203120746573740a746573742073746f72653a3a6173796e635f77315f67656e65726174696f6e5f76323a3a74657374733a3a68656176793a3a66756e6465645f66726573685f66756c6c5f77315f67656e65726174696f6e5f74696d656f75745f7468656e5f726566756e645f616e645f72656f7267202e2e2e206f6b0a0a7465737420726573756c743a206f6b2e2031207061737365643b2030206661696c65643b20302069676e6f7265643b2030206d656173757265643b20313231302066696c7465726564206f75743b2066696e697368656420696e203132332e3233730a0a",
+        "eof": true,
+        "next_offset": 510,
+        "offset": 0,
+        "size": 510,
+        "text": "{\"launch_intent_recorded\": true, \"operation\": \"3c722d76b352db7450c53321368b305782f25612b9ed1fb806c49c5ec7fb5c77\", \"original_deadline_ns\": 1191795668407846, \"source\": {\"commit\": \"034aa74358e0a5fa33f33e83cb63669e9738da4b\", \"tree\": \"8dd452c376452224602fb202940ae84fc1f84d2e\"}}\n\nrunning 1 test\ntest store::async_w1_generation_v2::tests::heavy::funded_fresh_full_w1_generation_timeout_then_refund_and_reorg ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1210 filtered out; finished in 123.23s\n\n"
+      }
+    }
+  },
+  {
+    "job": "1a1b98a26b8-12894-14f7",
+    "status": {
+      "at_unix_ms": 1794114210602,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b98a26b8-12894-14f7",
+      "launch_nonce": "2810423fa3c3f93c3a41223a208544fe",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 216,
+          "stored": 216
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "read": {
+      "audit_recorded": true,
+      "job_id": "1a1b98a26b8-12894-14f7",
+      "stderr": {
+        "bytes_hex": "",
+        "eof": true,
+        "next_offset": 0,
+        "offset": 0,
+        "size": 0,
+        "text": ""
+      },
+      "stdout": {
+        "bytes_hex": "0a72756e6e696e67203120746573740a746573742073746f72653a3a6173796e635f77315f67656e65726174696f6e5f76323a3a74657374733a3a68656176793a3a66756e6465645f77315f6f776e65725f63616e63656c6c6174696f6e5f636f6c645f7265636f6e63696c65202e2e2e206f6b0a0a7465737420726573756c743a206f6b2e2031207061737365643b2030206661696c65643b20302069676e6f7265643b2030206d656173757265643b20313231302066696c7465726564206f75743b2066696e697368656420696e20302e3435730a0a",
+        "eof": true,
+        "next_offset": 216,
+        "offset": 0,
+        "size": 216,
+        "text": "\nrunning 1 test\ntest store::async_w1_generation_v2::tests::heavy::funded_w1_owner_cancellation_cold_reconcile ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1210 filtered out; finished in 0.45s\n\n"
+      }
+    }
+  }
+]

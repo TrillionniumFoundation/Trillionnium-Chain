@@ -1,0 +1,807 @@
+{
+  "attempts": [
+    {
+      "business_blocks": 21,
+      "finite_experiment_criteria_met": false,
+      "number": 1,
+      "phases": [
+        {
+          "actor_reports_successful_without_cap_or_kill": true,
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 0,
+          "attacker_processes_requested": 0,
+          "business_started_ns": 1000962637,
+          "confirmation_nested": [
+            {
+              "observation": [
+                "active_generation",
+                "confirmed",
+                "depth",
+                "execution_authority",
+                "finalized",
+                "genesis",
+                "included_block",
+                "included_height",
+                "network",
+                "observed_height",
+                "observed_now",
+                "observed_tip",
+                "parameters",
+                "policy",
+                "reorged",
+                "required_work_delta",
+                "transaction",
+                "work_delta"
+              ],
+              "receiver_hostile_after": [
+                "matched_requests",
+                "rejected_work_cpu_ns",
+                "scope",
+                "work_accepted",
+                "work_rejected",
+                "work_started"
+              ],
+              "receiver_hostile_before": [
+                "matched_requests",
+                "rejected_work_cpu_ns",
+                "scope",
+                "work_accepted",
+                "work_rejected",
+                "work_started"
+              ]
+            },
+            {
+              "receiver_hostile_after": [
+                "matched_requests",
+                "rejected_work_cpu_ns",
+                "scope",
+                "work_accepted",
+                "work_rejected",
+                "work_started"
+              ],
+              "receiver_hostile_before": [
+                "matched_requests",
+                "rejected_work_cpu_ns",
+                "scope",
+                "work_accepted",
+                "work_rejected",
+                "work_started"
+              ]
+            }
+          ],
+          "confirmations": [
+            {
+              "confirmed_inside_pressure_window": true,
+              "ended_ns": 16111312958,
+              "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+              "paid_credit_depletion_observed_during_round": false,
+              "receiver_hostile_work_rejected_during_round": false,
+              "round": 0,
+              "started_ns": 1000962896,
+              "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+              "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+            },
+            {
+              "confirmed_inside_pressure_window": false,
+              "ended_ns": 30002601164,
+              "included_block": "cb491d5dd5071dbec06dfe4f018c7340e130051c4c701054973a035fa39be709",
+              "observation": null,
+              "paid_credit_depletion_observed_during_round": false,
+              "receiver_hostile_work_rejected_during_round": false,
+              "round": 1,
+              "started_ns": 16111393637,
+              "tip": "62affbac7ab5e11197ab993e7485b9ba923d403ca8c2bf7f993bee08435e8400",
+              "transaction": "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82"
+            }
+          ],
+          "depletion_at_ns": null,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "mode": "baseline",
+          "observer_complete": true,
+          "receiver_and_verifier_setup_cpu_ns": 1106138348,
+          "receiver_and_verifier_setup_wall_ns": 4484928730,
+          "receiver_client_state_equal": false,
+          "whole_parent_phase_cpu_ns": 8410224436,
+          "whole_parent_phase_wall_ns": 34787927599
+        },
+        {
+          "actor_reports_successful_without_cap_or_kill": true,
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 24,
+          "attacker_processes_requested": 24,
+          "business_started_ns": 1072447809,
+          "confirmation_nested": [
+            {
+              "receiver_hostile_after": [
+                "matched_requests",
+                "rejected_work_cpu_ns",
+                "scope",
+                "work_accepted",
+                "work_rejected",
+                "work_started"
+              ],
+              "receiver_hostile_before": [
+                "matched_requests",
+                "rejected_work_cpu_ns",
+                "scope",
+                "work_accepted",
+                "work_rejected",
+                "work_started"
+              ]
+            }
+          ],
+          "confirmations": [
+            {
+              "confirmed_inside_pressure_window": false,
+              "ended_ns": 30073885750,
+              "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+              "observation": null,
+              "paid_credit_depletion_observed_during_round": false,
+              "receiver_hostile_work_rejected_during_round": true,
+              "round": 0,
+              "started_ns": 1072447979,
+              "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+              "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+            }
+          ],
+          "depletion_at_ns": null,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "mode": "from-zero",
+          "observer_complete": true,
+          "receiver_and_verifier_setup_cpu_ns": 1114121642,
+          "receiver_and_verifier_setup_wall_ns": 4494322165,
+          "receiver_client_state_equal": false,
+          "whole_parent_phase_cpu_ns": 8847001834,
+          "whole_parent_phase_wall_ns": 35588656044
+        },
+        {
+          "actor_reports_successful_without_cap_or_kill": true,
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 24,
+          "attacker_processes_requested": 24,
+          "business_started_ns": 1000336355,
+          "confirmation_nested": [
+            {
+              "receiver_hostile_after": [
+                "matched_requests",
+                "rejected_work_cpu_ns",
+                "scope",
+                "work_accepted",
+                "work_rejected",
+                "work_started"
+              ],
+              "receiver_hostile_before": [
+                "matched_requests",
+                "rejected_work_cpu_ns",
+                "scope",
+                "work_accepted",
+                "work_rejected",
+                "work_started"
+              ]
+            }
+          ],
+          "confirmations": [
+            {
+              "confirmed_inside_pressure_window": false,
+              "ended_ns": 30082333923,
+              "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+              "observation": null,
+              "paid_credit_depletion_observed_during_round": false,
+              "receiver_hostile_work_rejected_during_round": true,
+              "round": 0,
+              "started_ns": 1000336573,
+              "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+              "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+            }
+          ],
+          "depletion_at_ns": null,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "mode": "late-product",
+          "observer_complete": false,
+          "receiver_and_verifier_setup_cpu_ns": 1089105261,
+          "receiver_and_verifier_setup_wall_ns": 4393343238,
+          "receiver_client_state_equal": false,
+          "whole_parent_phase_cpu_ns": 8767803509,
+          "whole_parent_phase_wall_ns": 35295762650
+        }
+      ],
+      "public_resource_policy": {
+        "lifetime_ms": 2000,
+        "policy_id": "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+        "schema": "public-protected-resource-policy-observation-v1",
+        "ticket_bits": 8,
+        "transport_profile": "public-protected-development-v3"
+      },
+      "step": {
+        "command": [
+          "/home/runner/.cargo/bin/cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "public_v3_multiprocess",
+          "separate_process_work_and_signed_confirmation_campaign",
+          "--",
+          "--exact",
+          "--ignored",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "complete_success": false,
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+        "elapsed_ns": 113106867917,
+        "elapsed_seconds": 113.106867917,
+        "error": null,
+        "name": "run-1",
+        "outer_stage_timeout_seconds": 600,
+        "returncode": 101,
+        "stderr": "run-1.stderr.log",
+        "stderr_bytes": 1615,
+        "stderr_sha256": "c81d4d4ae66279c5f7dbbcadaf67e0dc0dc44664a4ec354740aebe3d6ff49c16",
+        "stderr_truncated": false,
+        "stdout": "run-1.stdout.log",
+        "stdout_bytes": 271,
+        "stdout_sha256": "62063cae61acb2416f581aa1468e657eb399244c217713e0afcc93fc9bce511b",
+        "stdout_truncated": false
+      }
+    },
+    {
+      "business_blocks": 21,
+      "finite_experiment_criteria_met": false,
+      "number": 2,
+      "phases": [
+        {
+          "actor_reports_successful_without_cap_or_kill": true,
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 0,
+          "attacker_processes_requested": 0,
+          "business_started_ns": 1000836427,
+          "confirmation_nested": [
+            {
+              "observation": [
+                "active_generation",
+                "confirmed",
+                "depth",
+                "execution_authority",
+                "finalized",
+                "genesis",
+                "included_block",
+                "included_height",
+                "network",
+                "observed_height",
+                "observed_now",
+                "observed_tip",
+                "parameters",
+                "policy",
+                "reorged",
+                "required_work_delta",
+                "transaction",
+                "work_delta"
+              ],
+              "receiver_hostile_after": [
+                "matched_requests",
+                "rejected_work_cpu_ns",
+                "scope",
+                "work_accepted",
+                "work_rejected",
+                "work_started"
+              ],
+              "receiver_hostile_before": [
+                "matched_requests",
+                "rejected_work_cpu_ns",
+                "scope",
+                "work_accepted",
+                "work_rejected",
+                "work_started"
+              ]
+            },
+            {
+              "receiver_hostile_after": [
+                "matched_requests",
+                "rejected_work_cpu_ns",
+                "scope",
+                "work_accepted",
+                "work_rejected",
+                "work_started"
+              ],
+              "receiver_hostile_before": [
+                "matched_requests",
+                "rejected_work_cpu_ns",
+                "scope",
+                "work_accepted",
+                "work_rejected",
+                "work_started"
+              ]
+            }
+          ],
+          "confirmations": [
+            {
+              "confirmed_inside_pressure_window": true,
+              "ended_ns": 16206307183,
+              "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+              "paid_credit_depletion_observed_during_round": false,
+              "receiver_hostile_work_rejected_during_round": false,
+              "round": 0,
+              "started_ns": 1000837046,
+              "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+              "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+            },
+            {
+              "confirmed_inside_pressure_window": false,
+              "ended_ns": 30002375739,
+              "included_block": "cb491d5dd5071dbec06dfe4f018c7340e130051c4c701054973a035fa39be709",
+              "observation": null,
+              "paid_credit_depletion_observed_during_round": false,
+              "receiver_hostile_work_rejected_during_round": false,
+              "round": 1,
+              "started_ns": 16206385164,
+              "tip": "62affbac7ab5e11197ab993e7485b9ba923d403ca8c2bf7f993bee08435e8400",
+              "transaction": "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82"
+            }
+          ],
+          "depletion_at_ns": null,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "mode": "baseline",
+          "observer_complete": true,
+          "receiver_and_verifier_setup_cpu_ns": 1114793544,
+          "receiver_and_verifier_setup_wall_ns": 4494837519,
+          "receiver_client_state_equal": false,
+          "whole_parent_phase_cpu_ns": 8423484661,
+          "whole_parent_phase_wall_ns": 34800843271
+        },
+        {
+          "actor_reports_successful_without_cap_or_kill": true,
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 24,
+          "attacker_processes_requested": 24,
+          "business_started_ns": 1000075791,
+          "confirmation_nested": [
+            {
+              "receiver_hostile_after": [
+                "matched_requests",
+                "rejected_work_cpu_ns",
+                "scope",
+                "work_accepted",
+                "work_rejected",
+                "work_started"
+              ],
+              "receiver_hostile_before": [
+                "matched_requests",
+                "rejected_work_cpu_ns",
+                "scope",
+                "work_accepted",
+                "work_rejected",
+                "work_started"
+              ]
+            }
+          ],
+          "confirmations": [
+            {
+              "confirmed_inside_pressure_window": false,
+              "ended_ns": 30085532804,
+              "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+              "observation": null,
+              "paid_credit_depletion_observed_during_round": false,
+              "receiver_hostile_work_rejected_during_round": true,
+              "round": 0,
+              "started_ns": 1000076084,
+              "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+              "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+            }
+          ],
+          "depletion_at_ns": null,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "mode": "from-zero",
+          "observer_complete": true,
+          "receiver_and_verifier_setup_cpu_ns": 1111365562,
+          "receiver_and_verifier_setup_wall_ns": 4489431886,
+          "receiver_client_state_equal": false,
+          "whole_parent_phase_cpu_ns": 8836075281,
+          "whole_parent_phase_wall_ns": 35588328644
+        },
+        {
+          "actor_reports_successful_without_cap_or_kill": true,
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 24,
+          "attacker_processes_requested": 24,
+          "business_started_ns": 1001026217,
+          "confirmation_nested": [
+            {
+              "receiver_hostile_after": [
+                "matched_requests",
+                "rejected_work_cpu_ns",
+                "scope",
+                "work_accepted",
+                "work_rejected",
+                "work_started"
+              ],
+              "receiver_hostile_before": [
+                "matched_requests",
+                "rejected_work_cpu_ns",
+                "scope",
+                "work_accepted",
+                "work_rejected",
+                "work_started"
+              ]
+            }
+          ],
+          "confirmations": [
+            {
+              "confirmed_inside_pressure_window": false,
+              "ended_ns": 30038265702,
+              "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+              "observation": null,
+              "paid_credit_depletion_observed_during_round": false,
+              "receiver_hostile_work_rejected_during_round": true,
+              "round": 0,
+              "started_ns": 1001026723,
+              "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+              "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+            }
+          ],
+          "depletion_at_ns": null,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "mode": "late-product",
+          "observer_complete": true,
+          "receiver_and_verifier_setup_cpu_ns": 1098036565,
+          "receiver_and_verifier_setup_wall_ns": 4402384052,
+          "receiver_client_state_equal": false,
+          "whole_parent_phase_cpu_ns": 8792295709,
+          "whole_parent_phase_wall_ns": 35379477307
+        }
+      ],
+      "public_resource_policy": {
+        "lifetime_ms": 2000,
+        "policy_id": "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+        "schema": "public-protected-resource-policy-observation-v1",
+        "ticket_bits": 8,
+        "transport_profile": "public-protected-development-v3"
+      },
+      "step": {
+        "command": [
+          "/home/runner/.cargo/bin/cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "public_v3_multiprocess",
+          "separate_process_work_and_signed_confirmation_campaign",
+          "--",
+          "--exact",
+          "--ignored",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "complete_success": false,
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+        "elapsed_ns": 112896625855,
+        "elapsed_seconds": 112.896625855,
+        "error": null,
+        "name": "run-2",
+        "outer_stage_timeout_seconds": 600,
+        "returncode": 101,
+        "stderr": "run-2.stderr.log",
+        "stderr_bytes": 1615,
+        "stderr_sha256": "8ceb6ec0c64e5862b8ba4b68c8d821b9420e880816d3d530b8020728ca70fdc5",
+        "stderr_truncated": false,
+        "stdout": "run-2.stdout.log",
+        "stdout_bytes": 271,
+        "stdout_sha256": "2572f2bfad05dcc883956a0cbc4bc41c37e66e53a21e62d7792cec29680efcf3",
+        "stdout_truncated": false
+      }
+    },
+    {
+      "business_blocks": 21,
+      "finite_experiment_criteria_met": false,
+      "number": 3,
+      "phases": [
+        {
+          "actor_reports_successful_without_cap_or_kill": true,
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 0,
+          "attacker_processes_requested": 0,
+          "business_started_ns": 1000807182,
+          "confirmation_nested": [
+            {
+              "observation": [
+                "active_generation",
+                "confirmed",
+                "depth",
+                "execution_authority",
+                "finalized",
+                "genesis",
+                "included_block",
+                "included_height",
+                "network",
+                "observed_height",
+                "observed_now",
+                "observed_tip",
+                "parameters",
+                "policy",
+                "reorged",
+                "required_work_delta",
+                "transaction",
+                "work_delta"
+              ],
+              "receiver_hostile_after": [
+                "matched_requests",
+                "rejected_work_cpu_ns",
+                "scope",
+                "work_accepted",
+                "work_rejected",
+                "work_started"
+              ],
+              "receiver_hostile_before": [
+                "matched_requests",
+                "rejected_work_cpu_ns",
+                "scope",
+                "work_accepted",
+                "work_rejected",
+                "work_started"
+              ]
+            },
+            {
+              "receiver_hostile_after": [
+                "matched_requests",
+                "rejected_work_cpu_ns",
+                "scope",
+                "work_accepted",
+                "work_rejected",
+                "work_started"
+              ],
+              "receiver_hostile_before": [
+                "matched_requests",
+                "rejected_work_cpu_ns",
+                "scope",
+                "work_accepted",
+                "work_rejected",
+                "work_started"
+              ]
+            }
+          ],
+          "confirmations": [
+            {
+              "confirmed_inside_pressure_window": true,
+              "ended_ns": 16416152516,
+              "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+              "paid_credit_depletion_observed_during_round": false,
+              "receiver_hostile_work_rejected_during_round": false,
+              "round": 0,
+              "started_ns": 1000807505,
+              "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+              "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+            },
+            {
+              "confirmed_inside_pressure_window": false,
+              "ended_ns": 30002163013,
+              "included_block": "cb491d5dd5071dbec06dfe4f018c7340e130051c4c701054973a035fa39be709",
+              "observation": null,
+              "paid_credit_depletion_observed_during_round": false,
+              "receiver_hostile_work_rejected_during_round": false,
+              "round": 1,
+              "started_ns": 16416236001,
+              "tip": "62affbac7ab5e11197ab993e7485b9ba923d403ca8c2bf7f993bee08435e8400",
+              "transaction": "7fd88b9f9882f0cdf279b79d6eab6ec2c7583c3e1511442b3f1318d914ec5f82"
+            }
+          ],
+          "depletion_at_ns": null,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "mode": "baseline",
+          "observer_complete": true,
+          "receiver_and_verifier_setup_cpu_ns": 1105403207,
+          "receiver_and_verifier_setup_wall_ns": 4483645421,
+          "receiver_client_state_equal": false,
+          "whole_parent_phase_cpu_ns": 8411002151,
+          "whole_parent_phase_wall_ns": 34786541846
+        },
+        {
+          "actor_reports_successful_without_cap_or_kill": true,
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 24,
+          "attacker_processes_requested": 24,
+          "business_started_ns": 1001575528,
+          "confirmation_nested": [
+            {
+              "receiver_hostile_after": [
+                "matched_requests",
+                "rejected_work_cpu_ns",
+                "scope",
+                "work_accepted",
+                "work_rejected",
+                "work_started"
+              ],
+              "receiver_hostile_before": [
+                "matched_requests",
+                "rejected_work_cpu_ns",
+                "scope",
+                "work_accepted",
+                "work_rejected",
+                "work_started"
+              ]
+            }
+          ],
+          "confirmations": [
+            {
+              "confirmed_inside_pressure_window": false,
+              "ended_ns": 30028004742,
+              "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+              "observation": null,
+              "paid_credit_depletion_observed_during_round": false,
+              "receiver_hostile_work_rejected_during_round": true,
+              "round": 0,
+              "started_ns": 1001576053,
+              "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+              "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+            }
+          ],
+          "depletion_at_ns": null,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "mode": "from-zero",
+          "observer_complete": true,
+          "receiver_and_verifier_setup_cpu_ns": 1099647293,
+          "receiver_and_verifier_setup_wall_ns": 4405211690,
+          "receiver_client_state_equal": false,
+          "whole_parent_phase_cpu_ns": 8812518889,
+          "whole_parent_phase_wall_ns": 35488798505
+        },
+        {
+          "actor_reports_successful_without_cap_or_kill": true,
+          "all_signed_rounds_confirmed_in_window": false,
+          "attacker_processes_ready": 24,
+          "attacker_processes_requested": 24,
+          "business_started_ns": 1018082720,
+          "confirmation_nested": [
+            {
+              "receiver_hostile_after": [
+                "matched_requests",
+                "rejected_work_cpu_ns",
+                "scope",
+                "work_accepted",
+                "work_rejected",
+                "work_started"
+              ],
+              "receiver_hostile_before": [
+                "matched_requests",
+                "rejected_work_cpu_ns",
+                "scope",
+                "work_accepted",
+                "work_rejected",
+                "work_started"
+              ]
+            }
+          ],
+          "confirmations": [
+            {
+              "confirmed_inside_pressure_window": false,
+              "ended_ns": 30018842865,
+              "included_block": "1bbddf43d04bb6512e9f4fd84e394ca9a2f9c9ff5d1ef5ea54e525a2098c19ee",
+              "observation": null,
+              "paid_credit_depletion_observed_during_round": false,
+              "receiver_hostile_work_rejected_during_round": true,
+              "round": 0,
+              "started_ns": 1018082970,
+              "tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+              "transaction": "c6ee62ac00fdec64b6823d4ddeece3106dc969616053730e52750ecdfb4ebf21"
+            }
+          ],
+          "depletion_at_ns": null,
+          "duration_seconds": 30,
+          "finite_phase_criteria_met": false,
+          "genuine_budget_depletion_observed": false,
+          "mode": "late-product",
+          "observer_complete": true,
+          "receiver_and_verifier_setup_cpu_ns": 1075458033,
+          "receiver_and_verifier_setup_wall_ns": 4304491946,
+          "receiver_client_state_equal": false,
+          "whole_parent_phase_cpu_ns": 8769817730,
+          "whole_parent_phase_wall_ns": 35305584457
+        }
+      ],
+      "public_resource_policy": {
+        "lifetime_ms": 2000,
+        "policy_id": "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+        "schema": "public-protected-resource-policy-observation-v1",
+        "ticket_bits": 8,
+        "transport_profile": "public-protected-development-v3"
+      },
+      "step": {
+        "command": [
+          "/home/runner/.cargo/bin/cargo",
+          "+1.95.0",
+          "test",
+          "--locked",
+          "--offline",
+          "--release",
+          "--manifest-path",
+          "trillionnium/Cargo.toml",
+          "-p",
+          "trnm-pon-node",
+          "--test",
+          "public_v3_multiprocess",
+          "separate_process_work_and_signed_confirmation_campaign",
+          "--",
+          "--exact",
+          "--ignored",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "complete_success": false,
+        "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+        "elapsed_ns": 112692097277,
+        "elapsed_seconds": 112.692097277,
+        "error": null,
+        "name": "run-3",
+        "outer_stage_timeout_seconds": 600,
+        "returncode": 101,
+        "stderr": "run-3.stderr.log",
+        "stderr_bytes": 1615,
+        "stderr_sha256": "1ff4cd4cbdb1725add81ced8ca31474fba560cdbdebbd354a7c895523321f355",
+        "stderr_truncated": false,
+        "stdout": "run-3.stdout.log",
+        "stdout_bytes": 271,
+        "stdout_sha256": "7d539f7fca2ba5a5de108c64c8272848812cd278055f9b0af17a607848cfefd8",
+        "stdout_truncated": false
+      }
+    }
+  ],
+  "expected_resources": {
+    "cpu_max": "400000 100000",
+    "memory_max": "17179869184",
+    "nice": 10
+  },
+  "failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+  "job_id": 128660701377,
+  "original_inputs": {
+    "attacker_processes": [
+      0,
+      24,
+      24
+    ],
+    "business_blocks": 21,
+    "modes": [
+      "baseline",
+      "from-zero",
+      "late-product"
+    ],
+    "phase_seconds": 30,
+    "seed_blocks": 4,
+    "seed_transfers": 1024
+  },
+  "outer_timeout_seconds": 600,
+  "public_phase_placement": {
+    "attacker_processes_remain_in_original_controller_domain": true,
+    "fixed_parent": "/sys/fs/cgroup/trnmponpublic.slice",
+    "original_3x3_workload_and_depletion_predicates_changed": false,
+    "profile": "fixed-public-phase-external-actors-v1",
+    "receiver_and_verifier_cpu_max": "25000 100000",
+    "receiver_and_verifier_memory_max": "2147483648"
+  }
+}

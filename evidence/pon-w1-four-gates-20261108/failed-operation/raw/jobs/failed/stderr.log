@@ -1,0 +1,4 @@
+
+thread 'store::async_w1_generation_v2::tests::heavy::funded_fresh_full_w1_generation_timeout_then_refund_and_reorg' (3001394) panicked at crates/trnm-pon-node/src/store/async_w1_generation_v2/tests/heavy.rs:985:31:
+original timeout observation incomplete; retain original effects, never redispatch: Invalid("CANCEL_OBSERVATION_COMMAND_FAILED")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

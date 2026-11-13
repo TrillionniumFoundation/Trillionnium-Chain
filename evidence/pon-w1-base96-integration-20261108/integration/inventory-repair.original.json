@@ -1,0 +1,27 @@
+{
+  "added_inventory_files": [
+    "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs"
+  ],
+  "additional_existing_pin_mirrors": 0,
+  "all_other_corpus_fields_unchanged": true,
+  "corpus_after_sha256": "8026562eb0d7c2c7cf749b34b748439608750e23d4cbe631e77c2299c29f9f12",
+  "corpus_before_sha256": "e415a8c7806ff884eee1b33a1e303f13c41c1c76ae3e2b32309fe136d93b36aa",
+  "existing_pin_updates": {
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": {
+      "new": "c4fd4e40d80c2a2d0387c23432c56c57ca3fe135",
+      "old": "5076e6953e98868fae50d95e9e47db14b65929ea"
+    }
+  },
+  "final_plan_appended_paragraphs": 1,
+  "guard_or_event_context_changed": false,
+  "inventory_after_blob": "c4fd4e40d80c2a2d0387c23432c56c57ca3fe135",
+  "inventory_after_sha256": "d44dc342ab665b9abfeaf85bafcdb3a115069f45c80ad0fe09a8d6fe3d747b92",
+  "inventory_before_blob": "5076e6953e98868fae50d95e9e47db14b65929ea",
+  "inventory_before_sha256": "0f81413fb5938e9e304689ad908cf626d22e7a38f9b0364cdbfd87aac17626a2",
+  "inventory_path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+  "pin_count": 650,
+  "plan_prior_c6_bytes_preserved": true,
+  "removed_inventory_files": [],
+  "required_count": 558,
+  "schema": "TRNM-W1-C7-INVENTORY-EXACT-PIN-REPAIR1"
+}

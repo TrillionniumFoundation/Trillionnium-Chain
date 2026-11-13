@@ -1,0 +1,49 @@
+{
+  "files": [
+    {
+      "bytes": 4572,
+      "path": "README.md",
+      "sha256": "aa8f4f7a4df77d585b00131477148ac3083d19ae1b20ad89a9f61ddc72ff8efa"
+    },
+    {
+      "bytes": 359,
+      "path": "acquisition.json",
+      "sha256": "3570334706c0d857c6efff7517d6f18655a8f11b4e002085921fea413fca8db7"
+    },
+    {
+      "bytes": 33071,
+      "path": "audit.py",
+      "sha256": "622c9c85324c09bc5a9ed634ca9af296aef2527481530b44b8f515566895bcd7"
+    },
+    {
+      "bytes": 99895,
+      "path": "payload.tar.gz",
+      "sha256": "e6acd22b5ad2cbb39b3792474644c7a40f1b17c0cc9815979fa4ea4dc4e506db"
+    },
+    {
+      "bytes": 100693,
+      "path": "readset.json.gz",
+      "sha256": "db08e378c6c7ae42a2d8a8b428f13c8d4e461769185a969632187caf9baadd1f"
+    },
+    {
+      "bytes": 6551,
+      "path": "source-index.json",
+      "sha256": "82d8f988b3f04a7ce68da1c9b1a163358370e54e43f790abd7c4ac03dcfcbaaa"
+    },
+    {
+      "bytes": 8704,
+      "path": "summary.json",
+      "sha256": "9002eb008fe79b3b85c3fc3551d9eb22679c06aacffc9be0ad489ea64265e05b"
+    }
+  ],
+  "four_engineering_gates": "HOLD",
+  "manifest_excludes_itself": true,
+  "operation": "a35153e046b91421e3d8d67c0d5f053b88a87f4f8ac8213f8e3ee09f5f1be1e9",
+  "raw_bytes": 291595,
+  "raw_member_count": 22,
+  "schema": "TRNM-W1-C8-INDEPENDENT-LIFECYCLE-PACKAGE1",
+  "source": {
+    "commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c"
+  }
+}

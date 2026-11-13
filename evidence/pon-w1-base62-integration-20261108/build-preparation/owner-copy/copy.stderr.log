@@ -1,0 +1,2 @@
+rsync error: received SIGINT, SIGTERM, or SIGHUP (code 20) at rsync.c(716) [sender=3.2.7]
+rsync error: received SIGUSR1 (code 19) at main.c(1635) [generator=3.2.7]

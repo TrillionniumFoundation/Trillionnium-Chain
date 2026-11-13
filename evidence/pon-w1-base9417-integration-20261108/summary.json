@@ -1,0 +1,299 @@
+{
+  "schema": "TRNM-W1-C8-D6-SUMMARY2",
+  "tested_source": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "tested_tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c",
+  "source_parents": [
+    "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "9417e495165865ef6c1288b39084856e31020634"
+  ],
+  "documentation_first_parent": "41d717cc9608153dec0daa26ad68ebf8129ed215",
+  "qualification_command_count_all_attempts": 77,
+  "ordinary_test_method_executions": 697,
+  "ordinary_passed": 696,
+  "ordinary_failed": 1,
+  "ignored": 4,
+  "python_passed": 645,
+  "python_failed": 1,
+  "rust_passed": 51,
+  "command_exit_counts": {
+    "zero": 75,
+    "expected_negative": 1,
+    "unexpected_negative": 1
+  },
+  "first_campaign": {
+    "commands": 73,
+    "methods": 665,
+    "passed": 664,
+    "failed": 1,
+    "ignored": 4
+  },
+  "unique_staged_repeat": {
+    "job": "1a1ba97e353-12894-1bcf",
+    "commands": 4,
+    "methods": 32,
+    "passed": 32,
+    "failed": 0,
+    "manifest_sha256": "f7c7527fb00f542021f0c7ab0469b2c0f2905e0f71b9b55f5e577b8f94c3104f",
+    "declaration_sha256": "7b51a7dee784b9375eb1c1dcc9b8f54869538810c763ee1514208ba42912ce95"
+  },
+  "selected_successful_coverage": {
+    "commands": 73,
+    "passed_methods": 665,
+    "does_not_replace_full_attempt_accounting": true
+  },
+  "all_first_attempts_passed": false,
+  "staged_failure_cause_established": false,
+  "short_deadline_stability_established": false,
+  "raw_command_streams_reverified": 154,
+  "precommit_methods_excluded": 160,
+  "history_local_executed_test_methods": 0,
+  "full_4105_history_locally_executed": false,
+  "fresh_cargo_target": {
+    "owner": false,
+    "native": false,
+    "backend": false
+  },
+  "four_gate_status": [
+    "HOLD",
+    "HOLD",
+    "HOLD",
+    "HOLD"
+  ],
+  "source_published": true,
+  "source_push_kind": "ordinary-fast-forward",
+  "source_publication_job": "1a1baa13bb5-12894-1c09",
+  "source_pr_draft": true,
+  "source_publication_readback_base_matches_9417": true,
+  "c8_lifecycle": {
+    "operation": "a35153e046b91421e3d8d67c0d5f053b88a87f4f8ac8213f8e3ee09f5f1be1e9",
+    "prepare_job": "1a1baa4cf76-12894-1c24",
+    "main_job": "1a1baa770fd-12894-1c3b",
+    "cold_job": "1a1baac4fa2-12894-1c66",
+    "main_terminal": "succeeded",
+    "cold_terminal": "succeeded",
+    "output_complete": true,
+    "output_durable": true,
+    "main_rust_test_passes": 1,
+    "main_rust_reported_seconds": 122.68,
+    "cold_rust_test_passes": 1,
+    "cold_rust_reported_seconds": 0.32,
+    "research_test_passes_excluded_from_ordinary_campaign": 2,
+    "selected_monotonic_ns": 1210569011653932,
+    "live_r0vm_monotonic_ns": 1210605351876087,
+    "original_deadline_ns": 1210689011653932,
+    "wait_observation_ns": 1210689012186887,
+    "target_finished_ns": 1210689304224509,
+    "target_finished_after_original_deadline_ns": 292570577,
+    "typed_unknown_observation_ns": 1210691359119848,
+    "explicit_owner_request_ns": 1210691361115576,
+    "original_duration_ns": 120000000000,
+    "deadline_renewed": false,
+    "complete_proofs_established": 0,
+    "hot_target_equals_cold_retained_target": true,
+    "original_cancel_equals_restored_cancel": true,
+    "off_branch_cold_reopen_reserved_principal": 1000,
+    "m12_dispatch_phase_after_cold": "Done",
+    "cold_new_dispatches": 0,
+    "cold_new_native_transactions": 0,
+    "cold_target_cancel_requests": 0,
+    "consumed": null,
+    "full_resource_cap_retained": true,
+    "gpu_accounting": "UNKNOWN",
+    "complete_resource_settlement_established": false,
+    "provider_payment_established": false,
+    "recorded_process_births_currently_absent": 5,
+    "recorded_exact_cgroups_currently_absent": 2,
+    "all_historical_processes_wait_reaped": null,
+    "terminal_readonly_observation_sha256": "4631d3661bc1463b348764c7596a5d48ab4f416d1732b1878347de95054174c7",
+    "old_operations_rewritten": false,
+    "C7_unknown_replayed": false,
+    "lifecycle_complete_gate_sha256": "8fed6b6149038a6376df1ce54d243efad20355b270088162894d9ec07c441e3a",
+    "lifecycle_gate_verification_sha256": "b7d7b87a394cda9d739d35c64e6807b1228a8cf7e2de26e71e11c3e2aebe4cb9",
+    "package_manifest_sha256": "7e2792bdc3c4b644413e5228a8ffbc7b32dd5863a49dd4459ac632593a62f601",
+    "independent_review_sha256": "849d4795981d9c2f2f5fc186b88d2b14b7f6d3882a21506d5f20fffe567d55b1",
+    "target_exit_code": -9,
+    "target_terminal_cause": "original-deadline",
+    "typed_unknown_precedes_explicit_owner_request_ns": 1995728,
+    "independent_review_summary_sha256": "9002eb008fe79b3b85c3fc3551d9eb22679c06aacffc9be0ad489ea64265e05b",
+    "sticky_cancel": false,
+    "accepted_outcome_independent_timestamp_ns": null,
+    "new_cancel_journal_event_proven": false,
+    "independent_review_reopened_database": false,
+    "isolated_fixture_gross_principal": 1000,
+    "gross_principal_is_net_balance_increase": false,
+    "cumulative_refund_across_fixtures_established": false,
+    "package_summary_sha256": "649c4f664828d0b3ad75762ca0e4b3c3dd1f7a53e2ca381c9744c33c665c6abb",
+    "package_readme_sha256": "8667bac2b225ad1decab3271424ee76820dac31cdd2815a093a0b684803dd144",
+    "original_cancel_wire_and_packet_bytes_equal_C5_C6_C8": true,
+    "cross_fixture_cancel_comparison_sha256": "7050666ab1fa07eabe099435be8c30ea4ef2da90d6e54640c8b4962509cc8bb7",
+    "statement": "a2dd4830465ce6192ef48b53be74582feb886b526a93fb4f8e8f52b1c7cb80e2",
+    "retained_resource_cap": {
+      "cpu_ns": 960000000000,
+      "gpu_ns": 240000000000,
+      "memory_upper_bound_bytes": 8589934592,
+      "receipt_bytes": 16777216
+    },
+    "provider_positive_payments": 0,
+    "cap_releases": 0,
+    "primary_sha256": {
+      "plan.json": "80701ee1af27ab4239f0f34ae3b9ad92c3f3dd5e007b4bb2f1820168ed11bf98",
+      "config.json": "65ebdd227bce004bbc8fdec3baa97c864d64e1fe63047b27b427ec569eb793f4",
+      "launch-declaration.json": "5899d168e262852a38380a0d04521bdc002d86d3f8d99449250444aa1c79b015",
+      "result.json": "25026f1e7b2bd27cfdb1c0b6c78add8b9557ab281b812ac30b8e2551c782522d",
+      "typed-failure.json": "94bdf58550a2cf7bdc4618c75126c34d65f842f3e3b8f1fac1cad2f8295434f8",
+      "reorg.json": "ec2b38a55571cced6135cec5258658e10241ec97a8e66f04e882510d7a58d9e2",
+      "cold.json": "61b917b9b58f14b653bab13c6abb5a299dacf1edda79c890f1a8e182642a9ef9",
+      "started.json": "8ac01b7d6ebc3ac33bf18d1c1868f5f2b746a9496fab754b3e892e45cdedf651",
+      "terminal-observation.json": "9d2cbb5da44395ffcc56b55228b561c0e47153e7feaba8777393c56a9190434f",
+      "current-owned-readback.json": "4631d3661bc1463b348764c7596a5d48ab4f416d1732b1878347de95054174c7",
+      "gates.json": "8fed6b6149038a6376df1ce54d243efad20355b270088162894d9ec07c441e3a",
+      "independent-review.json": "9002eb008fe79b3b85c3fc3551d9eb22679c06aacffc9be0ad489ea64265e05b"
+    }
+  },
+  "c8_ci_snapshot": {
+    "window_start_utc": "2026-11-08T10:22:55.303Z",
+    "window_end_utc": "2026-11-08T10:24:36.474Z",
+    "atomic_snapshot": false,
+    "checks": {
+      "total": 104,
+      "success": 52,
+      "failure": 25,
+      "running": 24,
+      "skipped": 3
+    },
+    "workflow_runs": {
+      "total": 15,
+      "success": 4,
+      "failure": 5,
+      "running": 6
+    },
+    "pr_get_requests": 2,
+    "api_request_failures": 0,
+    "head": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "base": "9417e495165865ef6c1288b39084856e31020634",
+    "merge": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b",
+    "actual_merge_parents": [
+      "9417e495165865ef6c1288b39084856e31020634",
+      "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+    ],
+    "actual_merge_tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c",
+    "new_merge_qualification_inferred_from_head_tests": false,
+    "original_native_campaign_run_exit_codes": [
+      101,
+      101,
+      101
+    ],
+    "original_native_campaign_seconds": [
+      113.6226,
+      113.403,
+      113.3158
+    ],
+    "all_ci_complete": false,
+    "snapshot_sha256": "572738750c14057ed436ef4602085692810bd7c88b0a8c576f09ebb1b16bd5b0",
+    "scope_validation": {
+      "complete_for_observed_snapshot": true,
+      "check_foreign_sources": [],
+      "workflow_foreign_sources": [],
+      "sample_identity_bindings_verified": 6,
+      "scope_audit_sha256": "5980096ddb4792e176b77fe3a36303b51ae27129fd55eb59f6b2d74dc55837f1",
+      "observer_original_predicate_limitation_retained": true,
+      "api_queries_repeated_for_correction": false
+    },
+    "package_manifest_sha256": "0e8df3440595b3d8b56c5e57ecf78b07f15590d437b28166a31b8bea4b7f1ed4",
+    "sampled_failed_checks": 5,
+    "unsampled_failed_check_causes_unknown": 20,
+    "expected_event_declarations": {
+      "w1_fresh_prospective": {
+        "samples": 2,
+        "base": "9417e495165865ef6c1288b39084856e31020634",
+        "head": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+        "merge": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+      },
+      "cross_architecture": {
+        "samples": 2,
+        "base": null,
+        "head": null,
+        "merge": null
+      },
+      "codeql": {
+        "samples": 1,
+        "base": "9417e495165865ef6c1288b39084856e31020634",
+        "head": null,
+        "merge": null
+      },
+      "original_campaign": {
+        "samples": 1,
+        "base": null,
+        "head": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+        "merge": null
+      }
+    },
+    "sample_inner_service_reports_not_retrieved": true,
+    "raw_api_status_counts": {
+      "checks": {
+        "completed:success": 52,
+        "completed:failure": 25,
+        "completed:skipped": 3,
+        "in_progress:null": 24
+      },
+      "workflow_runs": {
+        "completed:success": 4,
+        "completed:failure": 5,
+        "in_progress:null": 6
+      }
+    },
+    "package_summary_sha256": "fc193f420709dfcd98514764472dda6f2535a603a002bc7a671913b73e382f3e",
+    "package_readme_sha256": "bc3ae5002087d738171f7532d6b85d70ffd1299a64aec395c1db4599267ecf18",
+    "archive_publication_job": "1a1bac4afe6-12894-1d10",
+    "archive_publication_terminal": "succeeded",
+    "additional_observation_queries_after_snapshot": 0
+  },
+  "old_publication_files_preserved": 2138,
+  "prior_104_log_correction_retained": true,
+  "old_inventory_sha256": {
+    "C5": "524bb438ef63bc5fb25ecba3a723e9bb64dc5d7dbf8560797c6788410c282dda",
+    "C6": "1a25fdb927a8ad7b7e980718cd85a1f0bced231b7f37df1ffa817ce142996d95",
+    "C7": "9c0c06ea019853aededd8e24475b34480ec05b45f7cc101a3e54d7a27f0b982a"
+  },
+  "package_manifest_pins": {
+    "integration": "5535e642c8ae2b9b1960be983f1c048d604b18c95e04d0ef2f54c4d6d9238676",
+    "qualification": "d087c47faef1290bfb88edee517c1ee41dee06f23e04ac0ffad1af37c87e8f76",
+    "build-preparation": "0baf614b409ccfc031a6a260f94c69da9b65da394d9b3326d8dcb2aea58c421d",
+    "base9417-review": "e37402e40d0220ce45edf3fef8e6d00a46cf66da9e6f74f661bc524e39c9e2e5",
+    "lifecycle-c8": "7e2792bdc3c4b644413e5228a8ffbc7b32dd5863a49dd4459ac632593a62f601",
+    "ci-c8": "0e8df3440595b3d8b56c5e57ecf78b07f15590d437b28166a31b8bea4b7f1ed4"
+  },
+  "actual_publication_tools": {
+    "source": "publish_c8_source_v2.py",
+    "assembly": "finalize_d6_after_link_fix.py",
+    "docs": "publish_d6_v2.py",
+    "pr_update": "update_pr_d6.py",
+    "pr_update_sha256": "6105cdd1da03d1332ee6943e22a5b3fdab66009d762eb4016e150848cc90a666",
+    "initial_assembly": "assemble_validate_d6_v2.py"
+  },
+  "documentation_commit_executed_as_source": false,
+  "publication_validation": {
+    "initial_job": "1a1bac67b64-12894-1d21",
+    "initial_terminal": "failed",
+    "initial_exit_code": 1,
+    "initial_output_complete": true,
+    "initial_output_durable": true,
+    "first_repository_link_check_exit_code": 2,
+    "initial_inventory_sha256": "5f46ba76e06a23c445ea58a19bdeaecec3186f1b0a2205303a0026a51cf519d5",
+    "initial_git_index_paths_verified": 2984,
+    "initial_commands": 9,
+    "initial_commands_exit_zero": 8,
+    "initial_failure_cause": "Copied Markdown input draft retained relative links for its authored destination; archived copy was parsed from a different directory.",
+    "archived_input_byte_preserving_renames": [
+      "d6-readme-final.md -> d6-readme-final.md.txt",
+      "d6-sole-plan-append.md -> d6-sole-plan-append.md.txt",
+      "d6-pr-body-template.md -> d6-pr-body-template.md.txt"
+    ],
+    "retained_initial_validation_directory": "publication/docs-validation-initial-01",
+    "success_validation_directory": "docs-validation-02",
+    "checker_changed": false,
+    "source_changed": false,
+    "functional_qualification_rerun": false,
+    "publisher_v2_only_change": "docs-validation-01/manifest.json -> docs-validation-02/manifest.json"
+  }
+}

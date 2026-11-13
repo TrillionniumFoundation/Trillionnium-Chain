@@ -1,0 +1,506 @@
+[
+  {
+    "bytes": 3974,
+    "compressed_bytes": 1006,
+    "crc32": "ea734314",
+    "is_dir": false,
+    "name": "cross-arch-cost/build.stderr"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "cross-arch-cost/campaign-0.stderr"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "cross-arch-cost/build.stdout"
+  },
+  {
+    "bytes": 1483158,
+    "compressed_bytes": 96365,
+    "crc32": "3c3b212d",
+    "is_dir": false,
+    "name": "cross-arch-cost/campaign-0.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "cross-arch-cost/campaign-1.stderr"
+  },
+  {
+    "bytes": 701335,
+    "compressed_bytes": 42912,
+    "crc32": "8aa6c2c3",
+    "is_dir": false,
+    "name": "cross-arch-cost/campaign-1.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "cross-arch-cost/cargo.stderr"
+  },
+  {
+    "bytes": 36,
+    "compressed_bytes": 38,
+    "crc32": "71504da5",
+    "is_dir": false,
+    "name": "cross-arch-cost/cargo.stdout"
+  },
+  {
+    "bytes": 8927,
+    "compressed_bytes": 2466,
+    "crc32": "2b163654",
+    "is_dir": false,
+    "name": "cross-arch-cost/manifest.json"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "cross-arch-cost/rustc.stderr"
+  },
+  {
+    "bytes": 196,
+    "compressed_bytes": 151,
+    "crc32": "5e616a24",
+    "is_dir": false,
+    "name": "cross-arch-cost/rustc.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "cross-arch-cost/uname.stderr"
+  },
+  {
+    "bytes": 128,
+    "compressed_bytes": 115,
+    "crc32": "be1e0d03",
+    "is_dir": false,
+    "name": "cross-arch-cost/uname.stdout"
+  },
+  {
+    "bytes": 206,
+    "compressed_bytes": 138,
+    "crc32": "09f416b3",
+    "is_dir": false,
+    "name": "cross-arch-maintenance-cost/build.stderr"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "cross-arch-maintenance-cost/build.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "cross-arch-maintenance-cost/campaign-0.stderr"
+  },
+  {
+    "bytes": 357742,
+    "compressed_bytes": 21448,
+    "crc32": "2612bd82",
+    "is_dir": false,
+    "name": "cross-arch-maintenance-cost/campaign-0.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "cross-arch-maintenance-cost/campaign-1.stderr"
+  },
+  {
+    "bytes": 171042,
+    "compressed_bytes": 10259,
+    "crc32": "9dcadf70",
+    "is_dir": false,
+    "name": "cross-arch-maintenance-cost/campaign-1.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "cross-arch-maintenance-cost/cargo.stderr"
+  },
+  {
+    "bytes": 36,
+    "compressed_bytes": 38,
+    "crc32": "71504da5",
+    "is_dir": false,
+    "name": "cross-arch-maintenance-cost/cargo.stdout"
+  },
+  {
+    "bytes": 10671,
+    "compressed_bytes": 3130,
+    "crc32": "f9d6e578",
+    "is_dir": false,
+    "name": "cross-arch-maintenance-cost/manifest.json"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "cross-arch-maintenance-cost/rustc.stderr"
+  },
+  {
+    "bytes": 196,
+    "compressed_bytes": 151,
+    "crc32": "5e616a24",
+    "is_dir": false,
+    "name": "cross-arch-maintenance-cost/rustc.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "cross-arch-maintenance-cost/uname.stderr"
+  },
+  {
+    "bytes": 128,
+    "compressed_bytes": 115,
+    "crc32": "be1e0d03",
+    "is_dir": false,
+    "name": "cross-arch-maintenance-cost/uname.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "cross-arch-one-zero-locality-cost/build.stdout"
+  },
+  {
+    "bytes": 206,
+    "compressed_bytes": 138,
+    "crc32": "08367c84",
+    "is_dir": false,
+    "name": "cross-arch-one-zero-locality-cost/build.stderr"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "cross-arch-one-zero-locality-cost/campaign-0.stderr"
+  },
+  {
+    "bytes": 266217,
+    "compressed_bytes": 21959,
+    "crc32": "ce6f9f0f",
+    "is_dir": false,
+    "name": "cross-arch-one-zero-locality-cost/campaign-0.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "cross-arch-one-zero-locality-cost/campaign-1.stderr"
+  },
+  {
+    "bytes": 124376,
+    "compressed_bytes": 9855,
+    "crc32": "f2f4be9e",
+    "is_dir": false,
+    "name": "cross-arch-one-zero-locality-cost/campaign-1.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "cross-arch-one-zero-locality-cost/cargo.stderr"
+  },
+  {
+    "bytes": 36,
+    "compressed_bytes": 38,
+    "crc32": "71504da5",
+    "is_dir": false,
+    "name": "cross-arch-one-zero-locality-cost/cargo.stdout"
+  },
+  {
+    "bytes": 9349,
+    "compressed_bytes": 2607,
+    "crc32": "344817a8",
+    "is_dir": false,
+    "name": "cross-arch-one-zero-locality-cost/manifest.json"
+  },
+  {
+    "bytes": 196,
+    "compressed_bytes": 151,
+    "crc32": "5e616a24",
+    "is_dir": false,
+    "name": "cross-arch-one-zero-locality-cost/rustc.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "cross-arch-one-zero-locality-cost/rustc.stderr"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "cross-arch-one-zero-locality-cost/uname.stderr"
+  },
+  {
+    "bytes": 128,
+    "compressed_bytes": 115,
+    "crc32": "be1e0d03",
+    "is_dir": false,
+    "name": "cross-arch-one-zero-locality-cost/uname.stdout"
+  },
+  {
+    "bytes": 206,
+    "compressed_bytes": 137,
+    "crc32": "0f3fd458",
+    "is_dir": false,
+    "name": "cross-arch-zero-locality-cost/build.stderr"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "cross-arch-zero-locality-cost/build.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "cross-arch-zero-locality-cost/campaign-0.stderr"
+  },
+  {
+    "bytes": 220514,
+    "compressed_bytes": 15557,
+    "crc32": "4a57313e",
+    "is_dir": false,
+    "name": "cross-arch-zero-locality-cost/campaign-0.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "cross-arch-zero-locality-cost/campaign-1.stderr"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "cross-arch-zero-locality-cost/cargo.stderr"
+  },
+  {
+    "bytes": 103636,
+    "compressed_bytes": 7121,
+    "crc32": "e479d7af",
+    "is_dir": false,
+    "name": "cross-arch-zero-locality-cost/campaign-1.stdout"
+  },
+  {
+    "bytes": 36,
+    "compressed_bytes": 38,
+    "crc32": "71504da5",
+    "is_dir": false,
+    "name": "cross-arch-zero-locality-cost/cargo.stdout"
+  },
+  {
+    "bytes": 10396,
+    "compressed_bytes": 3031,
+    "crc32": "f6026d72",
+    "is_dir": false,
+    "name": "cross-arch-zero-locality-cost/manifest.json"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "cross-arch-zero-locality-cost/rustc.stderr"
+  },
+  {
+    "bytes": 196,
+    "compressed_bytes": 151,
+    "crc32": "5e616a24",
+    "is_dir": false,
+    "name": "cross-arch-zero-locality-cost/rustc.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "cross-arch-zero-locality-cost/uname.stderr"
+  },
+  {
+    "bytes": 128,
+    "compressed_bytes": 115,
+    "crc32": "be1e0d03",
+    "is_dir": false,
+    "name": "cross-arch-zero-locality-cost/uname.stdout"
+  },
+  {
+    "bytes": 12347611,
+    "compressed_bytes": 509940,
+    "crc32": "73eb36b9",
+    "is_dir": false,
+    "name": "from-zero-native/confirmation/report.json"
+  },
+  {
+    "bytes": 948,
+    "compressed_bytes": 564,
+    "crc32": "e951bcb6",
+    "is_dir": false,
+    "name": "from-zero-native/from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline/process.json"
+  },
+  {
+    "bytes": 73035,
+    "compressed_bytes": 11079,
+    "crc32": "a058bdc6",
+    "is_dir": false,
+    "name": "from-zero-native/manifest.json"
+  },
+  {
+    "bytes": 3475129,
+    "compressed_bytes": 71539,
+    "crc32": "085bdde8",
+    "is_dir": false,
+    "name": "from-zero-native/native/report.json"
+  },
+  {
+    "bytes": 19811649,
+    "compressed_bytes": 781178,
+    "crc32": "a9f11ed5",
+    "is_dir": false,
+    "name": "from-zero-native/native/sustained/report.json"
+  },
+  {
+    "bytes": 333,
+    "compressed_bytes": 217,
+    "crc32": "f5952b0c",
+    "is_dir": false,
+    "name": "from-zero-native-host/child-result.json"
+  },
+  {
+    "bytes": 7644,
+    "compressed_bytes": 1983,
+    "crc32": "afd057f1",
+    "is_dir": false,
+    "name": "from-zero-native-host/controller-result.json"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "from-zero-native-host/seal-parent-receipt.log"
+  },
+  {
+    "bytes": 206,
+    "compressed_bytes": 136,
+    "crc32": "487eee36",
+    "is_dir": false,
+    "name": "work-rejection/build.stderr"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "work-rejection/cargo.stderr"
+  },
+  {
+    "bytes": 36,
+    "compressed_bytes": 38,
+    "crc32": "71504da5",
+    "is_dir": false,
+    "name": "work-rejection/cargo.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "work-rejection/build.stdout"
+  },
+  {
+    "bytes": 193388,
+    "compressed_bytes": 61755,
+    "crc32": "95894f13",
+    "is_dir": false,
+    "name": "work-rejection/manifest.json"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "work-rejection/native.stderr"
+  },
+  {
+    "bytes": 11186939,
+    "compressed_bytes": 1131267,
+    "crc32": "68fdd5d5",
+    "is_dir": false,
+    "name": "work-rejection/native.stdout"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "work-rejection/rustc.stderr"
+  },
+  {
+    "bytes": 196,
+    "compressed_bytes": 151,
+    "crc32": "5e616a24",
+    "is_dir": false,
+    "name": "work-rejection/rustc.stdout"
+  },
+  {
+    "bytes": 91878,
+    "compressed_bytes": 8975,
+    "crc32": "eca124ff",
+    "is_dir": false,
+    "name": "work-rejection/summary.json"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "work-rejection/uname.stderr"
+  },
+  {
+    "bytes": 128,
+    "compressed_bytes": 115,
+    "crc32": "be1e0d03",
+    "is_dir": false,
+    "name": "work-rejection/uname.stdout"
+  }
+]

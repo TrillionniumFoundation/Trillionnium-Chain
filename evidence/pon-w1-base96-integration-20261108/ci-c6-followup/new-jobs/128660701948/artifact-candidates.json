@@ -1,0 +1,44 @@
+[
+  {
+    "bytes": 6829303,
+    "compressed_bytes": 365592,
+    "crc32": "dbae358f",
+    "is_dir": false,
+    "name": "fresh-service/fresh/report.json"
+  },
+  {
+    "bytes": 8919,
+    "compressed_bytes": 1987,
+    "crc32": "7d7d186e",
+    "is_dir": false,
+    "name": "fresh-service/manifest.json"
+  },
+  {
+    "bytes": 9851327,
+    "compressed_bytes": 404042,
+    "crc32": "3e1d57e1",
+    "is_dir": false,
+    "name": "fresh-service/original/report.json"
+  },
+  {
+    "bytes": 353,
+    "compressed_bytes": 233,
+    "crc32": "07d25456",
+    "is_dir": false,
+    "name": "fresh-service-host/child-result.json"
+  },
+  {
+    "bytes": 7701,
+    "compressed_bytes": 1992,
+    "crc32": "454c89ab",
+    "is_dir": false,
+    "name": "fresh-service-host/controller-result.json"
+  },
+  {
+    "bytes": 0,
+    "compressed_bytes": 2,
+    "crc32": "00000000",
+    "is_dir": false,
+    "name": "fresh-service-host/seal-parent-receipt.log"
+  }
+]

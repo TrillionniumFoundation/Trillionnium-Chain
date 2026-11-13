@@ -1,0 +1,40 @@
+{
+  "conclusion": "failure",
+  "event_declarations": [],
+  "event_expected_raw_values": {
+    "EXPECTED_BASE": [],
+    "EXPECTED_HEAD": [],
+    "EXPECTED_KIND": [],
+    "EXPECTED_MERGE": []
+  },
+  "event_expected_values": {
+    "EXPECTED_BASE": null,
+    "EXPECTED_HEAD": null,
+    "EXPECTED_KIND": null,
+    "EXPECTED_MERGE": null
+  },
+  "event_expected_values_inferred_from_API_or_merge": false,
+  "first_failed_step": {
+    "completed_at": "2026-11-08T10:16:11Z",
+    "conclusion": "failure",
+    "name": "Execute exact native from-zero service controls",
+    "number": 12,
+    "started_at": "2026-11-08T10:11:35Z",
+    "status": "completed"
+  },
+  "head_sha": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "job_id": 128698905350,
+  "job_log": "job-samples/128698905350/log.stdout",
+  "job_metadata": "job-samples/128698905350/metadata.stdout",
+  "log_fetch_exit": 0,
+  "matching_log_line_count": 1,
+  "metadata_fetch_exit": 0,
+  "name": "cross-arch-cost (arm64)",
+  "run_id": 42470186982,
+  "tuple_and_error_log_lines": [
+    {
+      "line": 1210,
+      "text": "2026-11-08T10:16:11.6252572Z ##[error]Process completed with exit code 1."
+    }
+  ]
+}

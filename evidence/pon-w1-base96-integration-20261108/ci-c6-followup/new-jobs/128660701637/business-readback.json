@@ -1,0 +1,147 @@
+{
+  "history_log": "\nrunning 1 test\ntest actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal ... FAILED\n\nsuccesses:\n\nsuccesses:\n\nfailures:\n\n---- actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal stdout ----\n{\"elapsed_ns\":43509590960,\"height\":500,\"kind\":\"actual-pnw1-progress\"}\n{\"elapsed_ns\":111187279987,\"height\":1000,\"kind\":\"actual-pnw1-progress\"}\n{\"elapsed_ns\":201003716689,\"height\":1500,\"kind\":\"actual-pnw1-progress\"}\n{\"elapsed_ns\":311006303946,\"height\":2000,\"kind\":\"actual-pnw1-progress\"}\n{\"elapsed_ns\":445011054491,\"height\":2500,\"kind\":\"actual-pnw1-progress\"}\n{\"elapsed_ns\":595805760690,\"height\":3000,\"kind\":\"actual-pnw1-progress\"}\n{\"elapsed_ns\":768102410478,\"height\":3500,\"kind\":\"actual-pnw1-progress\"}\n{\"elapsed_ns\":968404613849,\"height\":4000,\"kind\":\"actual-pnw1-progress\"}\n{\"elapsed_ns\":1236706538016,\"height\":500,\"kind\":\"independent-native-fullsync-progress\"}\n{\"elapsed_ns\":1467892173754,\"height\":1000,\"kind\":\"independent-native-fullsync-progress\"}\n{\"elapsed_ns\":1699902240243,\"height\":1500,\"kind\":\"independent-native-fullsync-progress\"}\n{\"elapsed_ns\":1944303045911,\"height\":2000,\"kind\":\"independent-native-fullsync-progress\"}\n{\"elapsed_ns\":2191403221990,\"height\":2500,\"kind\":\"independent-native-fullsync-progress\"}\n{\"elapsed_ns\":2423505023940,\"height\":3000,\"kind\":\"independent-native-fullsync-progress\"}\n{\"elapsed_ns\":2646708350050,\"height\":3500,\"kind\":\"independent-native-fullsync-progress\"}\n{\"configured_lifetime_seconds\":1800,\"loop_exit_before_internal_shutdown\":{\"configured_lifetime_ns\":1800000000000,\"elapsed_ns\":1800000502746,\"lifetime_reached_before_shutdown\":true,\"reason\":\"lifetime_expired\",\"stop_requested_before_shutdown\":false},\"production_activation\":false,\"schema\":\"native-ancestry-public-server-exit-evidence-v1\",\"scope\":\"actual native loopback server; observation only, not a readiness or qualification verdict\",\"server_exit_error\":null,\"server_exit_ok\":true,\"service_elapsed_ns\":1800001573022,\"stop_requested_when_exited\":true}\n{\"elapsed_ns\":2812305665118,\"failure_location\":{\"activation_cursor\":null,\"advertised_page_complete\":null,\"completed_import_calls\":3853,\"durable_committed_blocks\":null,\"head_rpc_elapsed_ns\":6448880,\"last_history_rpc_elapsed_ns\":139751,\"last_import_call_expression_elapsed_ns\":null,\"last_requested_after\":\"5d8ae436a8ceb9d5485cd92237a1e9c93c4a1b666f9020f6092940af3b287058\",\"last_successful_after\":\"5d8ae436a8ceb9d5485cd92237a1e9c93c4a1b666f9020f6092940af3b287058\",\"pinned_tip\":\"7c04e12199d6b0be7959afdf6f2e5af738e4b1282d900cce43f18bb926be93e6\",\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-failure-location-v1\",\"scope\":\"Original returning call expressions before confirmer cleanup; import includes existing clock argument preparation. Completed imports are successful returns, not durable commit counts. Page completion is the unvalidated reply value; unreturned call timing remains null.\",\"stage\":\"history-rpc\"},\"native_legacy_reorg_observation\":{\"after\":{\"backend\":\"legacy\",\"counter_scope\":\"raw zero counters mean unentered; saturated or failed measurements are unavailable; compare only the same owner's monotone snapshots without reset\",\"cpu_scope\":\"calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU\",\"enabled\":true,\"has_consensus_authority\":false,\"interval_scope\":\"component intervals are not complete importer time; nested observations are not generally additive\",\"roles\":[{\"collector_stage\":\"verify_state\",\"complete_cpu_ns\":null,\"complete_wall_ns\":null,\"counter_saturated\":false,\"known_cpu_ns_subtotal\":null,\"per_outcome_counts\":null,\"role\":\"staging_validation\",\"totals\":{\"calls\":0,\"cpu_known_calls\":0,\"cpu_ns\":0,\"cpu_unknown_calls\":0,\"unwinding_calls\":0,\"wall_ns\":0}},{\"collector_stage\":\"read_active\",\"complete_cpu_ns\":null,\"complete_wall_ns\":null,\"counter_saturated\":false,\"known_cpu_ns_subtotal\":null,\"per_outcome_counts\":null,\"role\":\"active_tail_validation\",\"totals\":{\"calls\":0,\"cpu_known_calls\":0,\"cpu_ns\":0,\"cpu_unknown_calls\":0,\"unwinding_calls\":0,\"wall_ns\":0}}],\"schema\":\"pon-native-legacy-reorg-observation-v1\",\"scope\":\"explicit owner-local cumulative diagnostics; fresh staging validation and active-tail validation in original reorg transactions, including intent, detach/attach and publication; no State, SQL or validation result is reused\",\"sql_commit\":{\"cpu_scope\":\"calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU\",\"has_consensus_authority\":false,\"observation_failed\":false,\"pre_commit_refusals\":\"remain in the original caller outcomes; zero entered SQL calls does not count or classify cancellations\",\"schema\":\"pon-native-legacy-reorg-sql-commit-call-observation-v1\",\"scope\":\"explicitly enabled Legacy owner only; actual Transaction::commit API intervals at reorg_step and reorg_termination; reorg_step includes intent, detach/attach and final publication; admission_persistence and atomic are not enabled by this mode; errors may include existing rollback-on-drop; not isolated SQL statement time or physical fsync\",\"sites\":[{\"calls_in_flight\":0,\"site\":\"admission_persistence\",\"totals\":{\"calls_abandoned\":0,\"calls_failed\":0,\"calls_returned\":0,\"calls_started\":0,\"calls_succeeded\":0,\"calls_unwinding\":0,\"cpu_known_calls\":0,\"cpu_ns\":null,\"cpu_ns_known_sum\":0,\"cpu_unknown_calls\":0,\"wall_ns\":null,\"wall_unknown_calls\":0}},{\"calls_in_flight\":0,\"site\":\"atomic\",\"totals\":{\"calls_abandoned\":0,\"calls_failed\":0,\"calls_returned\":0,\"calls_started\":0,\"calls_succeeded\":0,\"calls_unwinding\":0,\"cpu_known_calls\":0,\"cpu_ns\":null,\"cpu_ns_known_sum\":0,\"cpu_unknown_calls\":0,\"wall_ns\":null,\"wall_unknown_calls\":0}},{\"calls_in_flight\":0,\"site\":\"reorg_step\",\"totals\":{\"calls_abandoned\":0,\"calls_failed\":0,\"calls_returned\":0,\"calls_started\":0,\"calls_succeeded\":0,\"calls_unwinding\":0,\"cpu_known_calls\":0,\"cpu_ns\":null,\"cpu_ns_known_sum\":0,\"cpu_unknown_calls\":0,\"wall_ns\":null,\"wall_unknown_calls\":0}},{\"calls_in_flight\":0,\"site\":\"reorg_termination\",\"totals\":{\"calls_abandoned\":0,\"calls_failed\":0,\"calls_returned\":0,\"calls_started\":0,\"calls_succeeded\":0,\"calls_unwinding\":0,\"cpu_known_calls\":0,\"cpu_ns\":null,\"cpu_ns_known_sum\":0,\"cpu_unknown_calls\":0,\"wall_ns\":null,\"wall_unknown_calls\":0}}]},\"stage_observation_failed\":false,\"stage_outcomes\":\"calls include ordinary errors, cancellation and unwind; there are no per-role success, failure or cancellation counters\"},\"before\":{\"backend\":\"legacy\",\"counter_scope\":\"raw zero counters mean unentered; saturated or failed measurements are unavailable; compare only the same owner's monotone snapshots without reset\",\"cpu_scope\":\"calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU\",\"enabled\":true,\"has_consensus_authority\":false,\"interval_scope\":\"component intervals are not complete importer time; nested observations are not generally additive\",\"roles\":[{\"collector_stage\":\"verify_state\",\"complete_cpu_ns\":null,\"complete_wall_ns\":null,\"counter_saturated\":false,\"known_cpu_ns_subtotal\":null,\"per_outcome_counts\":null,\"role\":\"staging_validation\",\"totals\":{\"calls\":0,\"cpu_known_calls\":0,\"cpu_ns\":0,\"cpu_unknown_calls\":0,\"unwinding_calls\":0,\"wall_ns\":0}},{\"collector_stage\":\"read_active\",\"complete_cpu_ns\":null,\"complete_wall_ns\":null,\"counter_saturated\":false,\"known_cpu_ns_subtotal\":null,\"per_outcome_counts\":null,\"role\":\"active_tail_validation\",\"totals\":{\"calls\":0,\"cpu_known_calls\":0,\"cpu_ns\":0,\"cpu_unknown_calls\":0,\"unwinding_calls\":0,\"wall_ns\":0}}],\"schema\":\"pon-native-legacy-reorg-observation-v1\",\"scope\":\"explicit owner-local cumulative diagnostics; fresh staging validation and active-tail validation in original reorg transactions, including intent, detach/attach and publication; no State, SQL or validation result is reused\",\"sql_commit\":{\"cpu_scope\":\"calling thread only; unknown or unentered complete CPU remains null; known subtotal is not complete CPU\",\"has_consensus_authority\":false,\"observation_failed\":false,\"pre_commit_refusals\":\"remain in the original caller outcomes; zero entered SQL calls does not count or classify cancellations\",\"schema\":\"pon-native-legacy-reorg-sql-commit-call-observation-v1\",\"scope\":\"explicitly enabled Legacy owner only; actual Transaction::commit API intervals at reorg_step and reorg_termination; reorg_step includes intent, detach/attach and final publication; admission_persistence and atomic are not enabled by this mode; errors may include existing rollback-on-drop; not isolated SQL statement time or physical fsync\",\"sites\":[{\"calls_in_flight\":0,\"site\":\"admission_persistence\",\"totals\":{\"calls_abandoned\":0,\"calls_failed\":0,\"calls_returned\":0,\"calls_started\":0,\"calls_succeeded\":0,\"calls_unwinding\":0,\"cpu_known_calls\":0,\"cpu_ns\":null,\"cpu_ns_known_sum\":0,\"cpu_unknown_calls\":0,\"wall_ns\":null,\"wall_unknown_calls\":0}},{\"calls_in_flight\":0,\"site\":\"atomic\",\"totals\":{\"calls_abandoned\":0,\"calls_failed\":0,\"calls_returned\":0,\"calls_started\":0,\"calls_succeeded\":0,\"calls_unwinding\":0,\"cpu_known_calls\":0,\"cpu_ns\":null,\"cpu_ns_known_sum\":0,\"cpu_unknown_calls\":0,\"wall_ns\":null,\"wall_unknown_calls\":0}},{\"calls_in_flight\":0,\"site\":\"reorg_step\",\"totals\":{\"calls_abandoned\":0,\"calls_failed\":0,\"calls_returned\":0,\"calls_started\":0,\"calls_succeeded\":0,\"calls_unwinding\":0,\"cpu_known_calls\":0,\"cpu_ns\":null,\"cpu_ns_known_sum\":0,\"cpu_unknown_calls\":0,\"wall_ns\":null,\"wall_unknown_calls\":0}},{\"calls_in_flight\":0,\"site\":\"reorg_termination\",\"totals\":{\"calls_abandoned\":0,\"calls_failed\":0,\"calls_returned\":0,\"calls_started\":0,\"calls_succeeded\":0,\"calls_unwinding\":0,\"cpu_known_calls\":0,\"cpu_ns\":null,\"cpu_ns_known_sum\":0,\"cpu_unknown_calls\":0,\"wall_ns\":null,\"wall_unknown_calls\":0}}]},\"stage_observation_failed\":false,\"stage_outcomes\":\"calls include ordinary errors, cancellation and unwind; there are no per-role success, failure or cancellation counters\"},\"delta_computed\":false,\"enabled\":true,\"production_activation\":false,\"schema\":\"native-ancestry-legacy-reorg-observation-pair-v1\",\"scope\":\"Two cumulative snapshots of the same confirmer after its first open and after the original replay Result returns, before its first close. Cold reopen and Node drop are outside this pair. No reset or per-call history is retained; native errors and unreturned observations are not replaced.\"},\"production_activation\":false,\"schema\":\"native-ancestry-independent-sync-exit-evidence-v1\",\"scope\":\"observed signed full-history replay, not a qualification verdict\",\"sync_error\":\"IO: Connection refused (os error 111)\"}\n{\"error\":\"IO: Connection refused (os error 111)\",\"hardness_accepted\":false,\"independent_accepted\":false,\"passed\":false,\"production_activation\":false,\"public_network_ready\":false,\"schema\":\"native-ancestry-long-sync-observation-v1\"}\n\nthread 'actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal' (4868) panicked at crates/trnm-pon-node/tests/ancestry_long_sync.rs:474:12:\ncalled `Result::unwrap()` on an `Err` value: Error { code: None, kind: Transport, message: \"IO: Connection refused (os error 111)\", source: Some(Os { code: 111, kind: ConnectionRefused, message: \"Connection refused\" }), request_history_budget: false }\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\n\nfailures:\n    actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2812.31s\n\n",
+  "job_id": 128660701637,
+  "manifest": {
+    "binary_after": {
+      "ctime_ns": 1794122497069005970,
+      "device": 66305,
+      "inode": 9706427,
+      "mtime_ns": 1794122497067005934,
+      "path": "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-08bb9944f2e51e3e",
+      "sha256": "a56f516f7a327e77d06db4d09d9f8bb502fe30a55b0507c31a42830fb585c370",
+      "size_bytes": 9844688
+    },
+    "binary_before": {
+      "ctime_ns": 1794122497069005970,
+      "device": 66305,
+      "inode": 9706427,
+      "mtime_ns": 1794122497067005934,
+      "path": "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-08bb9944f2e51e3e",
+      "sha256": "a56f516f7a327e77d06db4d09d9f8bb502fe30a55b0507c31a42830fb585c370",
+      "size_bytes": 9844688
+    },
+    "compilation_in_native_measurement": false,
+    "failures": [
+      "ValueError:HISTORY_NATIVE_PROCESS_REQUIRED",
+      "ValueError:required-native-test: expected one passed, zero failed/ignored/measured",
+      "ValueError:HISTORY_NATIVE_COMPLETION_REQUIRED"
+    ],
+    "hardness_accepted": false,
+    "independent_accepted": false,
+    "job": {
+      "GITHUB_JOB": "native-priorities",
+      "GITHUB_RUN_ATTEMPT": "1",
+      "GITHUB_RUN_ID": "42457886555"
+    },
+    "log": {
+      "ctime_ns": 1794125327241044589,
+      "device": 66305,
+      "inode": 9706432,
+      "mtime_ns": 1794125327241044589,
+      "path": "/home/runner/work/_temp/priority-observations/history-native/history.log",
+      "sha256": "6438873a592b07368fae7ba96b907c6c5c2e79b80e1899bde094829dac83bc1d",
+      "size_bytes": 11359
+    },
+    "named_execution": null,
+    "native_execution_authenticated": false,
+    "passed": false,
+    "preparation_sha256": "40a7a8e9b12dfffa6f61d091e6d7e764584f367a6f18a19478aee58dbbf8ec81",
+    "process": {
+      "cleanup_errors": [],
+      "command": [
+        "/usr/bin/time",
+        "-v",
+        "-o",
+        "/home/runner/work/_temp/priority-observations/history-native/history-resources.txt",
+        "/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-08bb9944f2e51e3e",
+        "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+        "--exact",
+        "--ignored",
+        "--show-output"
+      ],
+      "exit_code": 101,
+      "failure": null,
+      "pid": 4866,
+      "started": true
+    },
+    "production_activation": false,
+    "public_network_ready": false,
+    "resources": {
+      "ctime_ns": 1794125327242044606,
+      "device": 66305,
+      "inode": 9706433,
+      "mtime_ns": 1794125327242044606,
+      "path": "/home/runner/work/_temp/priority-observations/history-native/history-resources.txt",
+      "sha256": "32a7d438f0fc60c911de440c9ed3af339c581091e637da448e4efe08fe5c41ae",
+      "size_bytes": 971
+    },
+    "schema": "trnm-ci-history-native-execution-v1",
+    "selector": "actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal",
+    "source_after": {
+      "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "test_sha256": "1a27418789d4c97d2a12aeda7f525b2327627e901f5416dc5c6f9b18110777c3",
+      "tracked_source_identity": {
+        "base": null,
+        "candidate": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "tested_tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1683087594,
+        "tracked_entries": 15386,
+        "tracked_worktree_verified": true
+      },
+      "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+    },
+    "source_before": {
+      "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "test_sha256": "1a27418789d4c97d2a12aeda7f525b2327627e901f5416dc5c6f9b18110777c3",
+      "tracked_source_identity": {
+        "base": null,
+        "candidate": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "tested_tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 1683087594,
+        "tracked_entries": 15386,
+        "tracked_worktree_verified": true
+      },
+      "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+    },
+    "summary": {
+      "error": "IO: Connection refused (os error 111)",
+      "hardness_accepted": false,
+      "independent_accepted": false,
+      "passed": false,
+      "production_activation": false,
+      "public_network_ready": false,
+      "schema": "native-ancestry-long-sync-observation-v1"
+    },
+    "summary_file": {
+      "ctime_ns": 1794125327241044589,
+      "device": 66305,
+      "inode": 9706442,
+      "mtime_ns": 1794125327241044589,
+      "path": "/home/runner/work/_temp/priority-observations/history-native/long-history/summary.json",
+      "sha256": "8dc451e058b8b3b2de85a1294f8b9e004befd330471c6387e31d5c0f037dff17",
+      "size_bytes": 259
+    },
+    "target": "ancestry_long_sync",
+    "whole_test_command_preserved": true
+  },
+  "resources": "Command exited with non-zero status 101\n\tCommand being timed: \"/home/runner/work/_temp/target-priority/release/deps/ancestry_long_sync-08bb9944f2e51e3e actual_v3_long_chain_public_full_sync_reopen_and_corrupt_index_refusal --exact --ignored --show-output\"\n\tUser time (seconds): 253.23\n\tSystem time (seconds): 449.72\n\tPercent of CPU this job got: 24%\n\tElapsed (wall clock) time (h:mm:ss or m:ss): 46:52.30\n\tAverage shared text size (kbytes): 0\n\tAverage unshared data size (kbytes): 0\n\tAverage stack size (kbytes): 0\n\tAverage total size (kbytes): 0\n\tMaximum resident set size (kbytes): 18572\n\tAverage resident set size (kbytes): 0\n\tMajor (requiring I/O) page faults: 0\n\tMinor (reclaiming a frame) page faults: 524626\n\tVoluntary context switches: 5283439\n\tInvoluntary context switches: 73923\n\tSwaps: 0\n\tFile system inputs: 0\n\tFile system outputs: 3874312\n\tSocket messages sent: 0\n\tSocket messages received: 0\n\tSignals delivered: 0\n\tPage size (bytes): 4096\n\tExit status: 101\n",
+  "summary": {
+    "error": "IO: Connection refused (os error 111)",
+    "hardness_accepted": false,
+    "independent_accepted": false,
+    "passed": false,
+    "production_activation": false,
+    "public_network_ready": false,
+    "schema": "native-ancestry-long-sync-observation-v1"
+  }
+}

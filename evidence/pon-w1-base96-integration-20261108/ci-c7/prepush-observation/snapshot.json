@@ -1,0 +1,492 @@
+{
+  "API_base_matches_actual_target_ref": false,
+  "C6_checks": {
+    "all_ci_passed_claimed": false,
+    "all_observed_checks_terminal": false,
+    "completed_conclusion_counts": {
+      "failure": 58,
+      "skipped": 3,
+      "success": 42
+    },
+    "completed_count": 103,
+    "count": 105,
+    "enumeration_complete": true,
+    "failure_count": 58,
+    "failure_groups": {
+      "42457886506": [
+        {
+          "id": 128660701119,
+          "name": "CodeQL local SARIF (rust, prospective-merge)"
+        },
+        {
+          "id": 128660701102,
+          "name": "CodeQL local SARIF (actions, prospective-merge)"
+        },
+        {
+          "id": 128660701001,
+          "name": "CodeQL local SARIF (python, prospective-merge)"
+        }
+      ],
+      "42457886518": [
+        {
+          "id": 128660702010,
+          "name": "W1 factorial legal strategies v3 (x64, prospective-merge)"
+        },
+        {
+          "id": 128660702000,
+          "name": "W1 false trace reuse (arm64, prospective-merge)"
+        },
+        {
+          "id": 128660701997,
+          "name": "W1 complete legal strategies (v2, arm64, prospective-merge)"
+        },
+        {
+          "id": 128660701995,
+          "name": "W1 complete legal strategies (v2, x64, prospective-merge)"
+        },
+        {
+          "id": 128660701957,
+          "name": "W1 paid rank and batch v5 (x64, prospective-merge)"
+        },
+        {
+          "id": 128660701948,
+          "name": "W1 fresh challenge service (x64, head)"
+        },
+        {
+          "id": 128660701943,
+          "name": "W1 complete legal strategies (v1, x64, prospective-merge)"
+        },
+        {
+          "id": 128660701933,
+          "name": "W1 fresh challenge service (x64, prospective-merge)"
+        },
+        {
+          "id": 128660701927,
+          "name": "W1 complete legal strategies (v1, arm64, prospective-merge)"
+        },
+        {
+          "id": 128660701909,
+          "name": "W1 factorial legal strategies v3 (arm64, prospective-merge)"
+        },
+        {
+          "id": 128660701885,
+          "name": "W1 paid rank and batch v5 (arm64, prospective-merge)"
+        },
+        {
+          "id": 128660701856,
+          "name": "W1 false trace reuse (x64, prospective-merge)"
+        }
+      ],
+      "42457886519": [
+        {
+          "id": 128660701244,
+          "name": "PQ network and witness (ubuntu-24.04, prospective-merge)"
+        },
+        {
+          "id": 128660701090,
+          "name": "PQ network and witness (ubuntu-24.04-arm, prospective-merge)"
+        }
+      ],
+      "42457886520": [
+        {
+          "id": 128660701347,
+          "name": "original workspace test CPU (ubuntu-24.04-arm, prospective-merge)"
+        },
+        {
+          "id": 128660701285,
+          "name": "original workspace test CPU (ubuntu-24.04, prospective-merge)"
+        }
+      ],
+      "42457886523": [
+        {
+          "id": 128660701243,
+          "name": "cleanup (ubuntu-24.04, prospective-merge)"
+        },
+        {
+          "id": 128660701236,
+          "name": "aggregate-owner-controls (prospective-merge)"
+        },
+        {
+          "id": 128660701207,
+          "name": "cleanup (macos-15, prospective-merge)"
+        },
+        {
+          "id": 128660701190,
+          "name": "cleanup (ubuntu-24.04-arm, prospective-merge)"
+        }
+      ],
+      "42457886526": [
+        {
+          "id": 128660701319,
+          "name": "recent batch (ubuntu-24.04, prospective-merge)"
+        },
+        {
+          "id": 128660701166,
+          "name": "recent batch (ubuntu-24.04-arm, prospective-merge)"
+        }
+      ],
+      "42457886532": [
+        {
+          "id": 128660701100,
+          "name": "W1 transparent candidate (prospective-merge, x64)"
+        }
+      ],
+      "42457886533": [
+        {
+          "id": 128660701306,
+          "name": "parent evidence (ubuntu-24.04, prospective-merge)"
+        },
+        {
+          "id": 128660701271,
+          "name": "parent evidence (ubuntu-24.04-arm, prospective-merge)"
+        }
+      ],
+      "42457886542": [
+        {
+          "id": 128660701162,
+          "name": "export"
+        }
+      ],
+      "42457886543": [
+        {
+          "id": 128662532819,
+          "name": "prospective-merge (rust-baseline)"
+        },
+        {
+          "id": 128662229998,
+          "name": "prospective-merge (external-evidence-contract)"
+        },
+        {
+          "id": 128662229957,
+          "name": "prospective-merge (fuzz-smoke)"
+        },
+        {
+          "id": 128662229947,
+          "name": "prospective-merge (protocol-contract)"
+        },
+        {
+          "id": 128662229937,
+          "name": "W1 actual reuse V3 (arm64, prospective-merge)"
+        },
+        {
+          "id": 128662229935,
+          "name": "prospective Rust shard (quality)"
+        },
+        {
+          "id": 128662229865,
+          "name": "cross-arch-cost (x64)"
+        },
+        {
+          "id": 128662229854,
+          "name": "prospective-merge (repository-truth)"
+        },
+        {
+          "id": 128662229829,
+          "name": "W1 actual reuse V3 (x64, prospective-merge)"
+        },
+        {
+          "id": 128662229758,
+          "name": "cross-arch-cost (arm64)"
+        },
+        {
+          "id": 128662229746,
+          "name": "prospective Rust shard (runtime)"
+        },
+        {
+          "id": 128662229491,
+          "name": "protocol-contract"
+        }
+      ],
+      "42457886547": [
+        {
+          "id": 128660701441,
+          "name": "native boundary (ubuntu-24.04-arm, prospective-merge)"
+        },
+        {
+          "id": 128660701420,
+          "name": "native boundary (ubuntu-24.04, prospective-merge)"
+        }
+      ],
+      "42457886555": [
+        {
+          "id": 128660701711,
+          "name": "native priorities (ubuntu-24.04-arm, head, service-model)"
+        },
+        {
+          "id": 128660701637,
+          "name": "native priorities (ubuntu-24.04, head, history)"
+        },
+        {
+          "id": 128660701632,
+          "name": "native priorities (ubuntu-24.04-arm, prospective-merge, history)"
+        },
+        {
+          "id": 128660701606,
+          "name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)"
+        },
+        {
+          "id": 128660701605,
+          "name": "native priorities (ubuntu-24.04, head, service-model)"
+        },
+        {
+          "id": 128660701603,
+          "name": "native priorities (ubuntu-24.04-arm, prospective-merge, state)"
+        },
+        {
+          "id": 128660701599,
+          "name": "native priorities (ubuntu-24.04, prospective-merge, state)"
+        },
+        {
+          "id": 128660701592,
+          "name": "native priorities (ubuntu-24.04, prospective-merge, history)"
+        },
+        {
+          "id": 128660701543,
+          "name": "native priorities (ubuntu-24.04, prospective-merge, service-model)"
+        },
+        {
+          "id": 128660701340,
+          "name": "retained-pressure-failure"
+        }
+      ],
+      "42457886578": [
+        {
+          "id": 128660701377,
+          "name": "original native campaign (x64, head, release)"
+        }
+      ],
+      "42457886583": [
+        {
+          "id": 128660701601,
+          "name": "original state and exit (ubuntu-24.04, prospective-merge)"
+        },
+        {
+          "id": 128660701409,
+          "name": "original state and exit (ubuntu-24.04-arm, prospective-merge)"
+        }
+      ],
+      "42457886584": [
+        {
+          "id": 128660701788,
+          "name": "reference (ubuntu-24.04, prospective-merge)"
+        },
+        {
+          "id": 128660701752,
+          "name": "reference (ubuntu-24.04-arm, prospective-merge)"
+        }
+      ]
+    },
+    "failure_metadata_complete_within_enumeration": true,
+    "foreign_head_check_ids": [],
+    "job_step_or_log_collection_performed": false,
+    "observed_nonterminal_count": 2,
+    "page_counts": [
+      {
+        "declared_total_count": 105,
+        "finished_unix_ns": 1794125438450112726,
+        "page": 1,
+        "returned_count": 100,
+        "started_unix_ns": 1794125435226194758
+      },
+      {
+        "declared_total_count": 105,
+        "finished_unix_ns": 1794125446540659911,
+        "page": 2,
+        "returned_count": 5,
+        "started_unix_ns": 1794125438457001981
+      }
+    ],
+    "pagination_errors": [],
+    "query_commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "query_filter": "all",
+    "status_counts": {
+      "completed:failure": 58,
+      "completed:skipped": 3,
+      "completed:success": 42,
+      "in_progress:None": 2
+    },
+    "unique_ids": true
+  },
+  "PR_API": {
+    "base_ref": "fix/chain-six-axis-performance-20261103",
+    "base_repo": "TrillionniumFoundation/Trillionnium-Chain",
+    "base_sha": "62d2d90c9e1f4c8450c89843f1e08360a24283ce",
+    "draft": true,
+    "head_ref": "fix/chain-w1-runtime-integrated-20261107",
+    "head_sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "merge_commit_sha": "7b4a63b6f08687e93270407772951aa71087ca3d",
+    "mergeable": true,
+    "mergeable_state": "unstable",
+    "number": 782,
+    "state": "open",
+    "updated_at": "2026-11-08T08:03:45Z"
+  },
+  "activity": {
+    "API_or_Git_read_retries": 0,
+    "CI_reruns": 0,
+    "Cargo_commands": 0,
+    "D4_writes": 0,
+    "artifacts_downloaded": 0,
+    "branch_or_ref_writes": 0,
+    "guard_patches": 0,
+    "job_logs_downloaded": 0,
+    "operations_created": 0,
+    "snapshots_attempted": 1,
+    "source_edits": 0,
+    "workflow_dispatches": 0
+  },
+  "actual_PR_head_is_C6": true,
+  "actual_PR_head_is_C7": false,
+  "actual_git_refs": {
+    "refs/heads/fix/chain-six-axis-performance-20261103": "91c1b7da0f0b1f41c088d9ac0b2ee160b550b80c",
+    "refs/heads/fix/chain-w1-runtime-integrated-20261107": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "refs/pull/782/head": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "refs/pull/782/merge": "7b4a63b6f08687e93270407772951aa71087ca3d"
+  },
+  "actual_pr_merge_object": {
+    "commit": "7b4a63b6f08687e93270407772951aa71087ca3d",
+    "parents": [
+      "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+      "2bdd252aa6c300b7431b9ee897b254b7953cf562"
+    ],
+    "source": "local Git object named by current ls-remote merge ref",
+    "tree": "d73e57c9e7a5764a1ab33540c97af587bb6e4a69"
+  },
+  "actual_target_base_is_base96": false,
+  "atomic_snapshot": false,
+  "comparison_to_prior_C6_snapshot": {
+    "current_query_filter": "all; every returned current check ID retained",
+    "new_check_ids": [
+      128663880604,
+      128662532819,
+      128662229998,
+      128662229957,
+      128662229947,
+      128662229937,
+      128662229935,
+      128662229897,
+      128662229865,
+      128662229854,
+      128662229836,
+      128662229829,
+      128662229821,
+      128662229782,
+      128662229773,
+      128662229758,
+      128662229746,
+      128662229712,
+      128662229651,
+      128662229491
+    ],
+    "new_failure_ids_relative_to_prior": [
+      128662532819,
+      128662229998,
+      128662229957,
+      128662229947,
+      128662229937,
+      128662229935,
+      128662229865,
+      128662229854,
+      128662229829,
+      128662229758,
+      128662229746,
+      128662229491,
+      128660702010,
+      128660701948,
+      128660701711,
+      128660701637,
+      128660701605,
+      128660701377
+    ],
+    "no_old_snapshot_overwritten": true,
+    "old_checks_not_returned": [],
+    "old_failure_ids_still_failure": [
+      128660702000,
+      128660701997,
+      128660701995,
+      128660701957,
+      128660701943,
+      128660701933,
+      128660701927,
+      128660701909,
+      128660701885,
+      128660701856,
+      128660701788,
+      128660701752,
+      128660701632,
+      128660701606,
+      128660701603,
+      128660701601,
+      128660701599,
+      128660701592,
+      128660701543,
+      128660701441,
+      128660701420,
+      128660701409,
+      128660701347,
+      128660701340,
+      128660701319,
+      128660701306,
+      128660701285,
+      128660701271,
+      128660701244,
+      128660701243,
+      128660701236,
+      128660701207,
+      128660701190,
+      128660701166,
+      128660701162,
+      128660701119,
+      128660701102,
+      128660701100,
+      128660701090,
+      128660701001
+    ],
+    "prior_observed_unix_ns": 1794122390975428297,
+    "prior_query_filter": "GitHub API default latest; original source command retained elsewhere",
+    "prior_sha256": "ee0709dc5cd1b353e2561e24b45eb4ede9f80a007c209ee9aad5968a864d7307",
+    "transitions_file": "C6-check-transitions.json"
+  },
+  "existing_base96_history_workflow": {
+    "new_execution_dispatched": false,
+    "per_job_or_business_outcome_not_inferred": true,
+    "query_head": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+    "request_exit": 0,
+    "total_count": 1,
+    "workflow_runs": [
+      {
+        "conclusion": "failure",
+        "created_at": "2026-11-08T06:49:46Z",
+        "event": "push",
+        "head_branch": "fix/chain-six-axis-performance-20261103",
+        "head_sha": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+        "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42456320219",
+        "id": 42456320219,
+        "jobs_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42456320219/jobs",
+        "name": "PoN independent History stage diagnostic",
+        "path": ".github/workflows/pon-history-stage-diagnostic.yml",
+        "run_attempt": 1,
+        "run_number": 1,
+        "status": "completed",
+        "updated_at": "2026-11-08T07:48:32Z"
+      }
+    ]
+  },
+  "fetch_failures": [],
+  "local_C7_expected": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+  "local_C7_git_object": {
+    "commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "parents": [
+      "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75"
+    ],
+    "tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe"
+  },
+  "observation_finished_utc": "2026-11-08T08:10:46.546382+00:00",
+  "observation_started_utc": "2026-11-08T08:10:27.088242+00:00",
+  "observation_window_finished_unix_ns": 1794125446546381965,
+  "observation_window_started_unix_ns": 1794125427088241959,
+  "operator": "ProfHepta",
+  "schema": "TRNM-W1-C7-PREPUSH-REMOTE-OBSERVATION1",
+  "scope": "single bounded read-only observation; independent API/Git responses have their own recorded times"
+}

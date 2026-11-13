@@ -1,0 +1,108 @@
+{
+  "source_commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "source_tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c",
+  "root_preparation_sha256": "47a11d3d905665aabd2a7eb8ff8e4983bef5fc0d668e9e154cff4ff62468858c",
+  "owner_target_origin": "copied_c7_owner_and_history_cache",
+  "fresh_cargo_target": false,
+  "cleanroom": false,
+  "expected_owner_attempt": "exact-owner-02",
+  "cargo_started": false,
+  "test_execution_started": false,
+  "operation_created": false,
+  "gate_written": false,
+  "execution_authorized_condition": "actual owner02 success + strict import success + explicit same-target handoff; then historical before History",
+  "stage_bounds": {
+    "historical": {
+      "outer_seconds": 1800,
+      "test_inner_seconds": 900
+    },
+    "history": {
+      "outer_seconds": 2400,
+      "compile_inner_seconds": 1800,
+      "list_command_inner_seconds": 120
+    }
+  },
+  "pins": {
+    "/home/qian-qi/work/chain-w1-c8-root-tools-20261108-ec265b/historical-regressions-plan.json": {
+      "bytes": 852,
+      "sha256": "cb6381162e1ad22bb12a5476cafeb9abfd84213e75900c88d05722dcc7f6adb9"
+    },
+    "/home/qian-qi/work/chain-w1-c8-root-tools-20261108-ec265b/history-local-plan.json": {
+      "bytes": 1292,
+      "sha256": "a89a9d74df0d974b4831851ab1ac8f1b3a34e166dcd9564d56762894fc72f2ad"
+    },
+    "/home/qian-qi/work/chain-w1-c8-root-tools-20261108-ec265b/qualify_source.py": {
+      "bytes": 5715,
+      "sha256": "d3c6953430a8efce70396eac88c891aa91501633013c09d5018f0b00e9fb7d1f"
+    },
+    "/home/qian-qi/work/chain-w1-c8-root-tools-20261108-ec265b/history_compile_list.py": {
+      "bytes": 2907,
+      "sha256": "434fddeea24ccb11a5975755eef092458c54b526673ef829756e1c727376a563"
+    }
+  },
+  "preparation_commands": [
+    {
+      "label": "00-preflight",
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "started_monotonic_ns": 1207972374027242,
+      "finished_monotonic_ns": 1207972472987771,
+      "stdout_sha256": "65586326e5793b95834cbef1dbae480b2b3425a5d1585881b4b33954001542c2",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "01-head",
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "started_monotonic_ns": 1207972473060254,
+      "finished_monotonic_ns": 1207972477410766,
+      "stdout_sha256": "39cd30bde48e955f1af683c5c957d690db77697b1bbde5cffd8b845d8711809d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "02-tree",
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "started_monotonic_ns": 1207972477434669,
+      "finished_monotonic_ns": 1207972481575517,
+      "stdout_sha256": "ddf3ac3928890eca54b7939a9b8b8ee2401a5be363245986d54164d325f6b674",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "03-clean",
+      "argv": [
+        "git",
+        "--no-optional-locks",
+        "status",
+        "--porcelain"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+      "exit": 0,
+      "started_monotonic_ns": 1207972481594733,
+      "finished_monotonic_ns": 1207972546785342,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "launcher_sha256": "57e05da966e4806648d02ad6acdcab4f053e13c55eff8c6f06f8c630d85c6b03",
+  "launcher_bytes": 17484,
+  "ast_parse_success": true,
+  "prepared_monotonic_ns": 1207972561053998
+}

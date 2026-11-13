@@ -1,0 +1,40 @@
+{
+  "atomic_snapshot": false,
+  "encoding": "utf-8",
+  "files": [
+    {
+      "eof": true,
+      "path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b9bc6a15-12894-1677/child.json",
+      "sha256": "e81e94a21f7c05772edea8928ae97ca6cebe2652fd6bd7e1ace5baeaeb2495d9",
+      "size": 118,
+      "text": "{\"identity\": {\"kind\": \"proc_start_ticks\", \"value\": \"14f92beb-43c6-4786-839e-b57307ae8048:119516265\"}, \"pid\": 3365799}\n",
+      "version": "2050:10504518:118:1794117496662876984:1794117496692511867"
+    },
+    {
+      "eof": true,
+      "path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b9bc6a15-12894-1677/started.json",
+      "sha256": "453b349a45530d7aaad9f58a48aa76873e7d488600983add868d9dcd5211ee1d",
+      "size": 333,
+      "text": "{\"at_unix_ms\": 1794117496642, \"invocation_id\": \"9adec4722f0d43caa1d86a2905491c5f\", \"job_id\": \"1a1b9bc6a15-12894-1677\", \"launch_nonce\": \"6b855b1efaa252bad5a52a5f58982231\", \"supervisor_identity\": {\"kind\": \"proc_start_ticks\", \"value\": \"14f92beb-43c6-4786-839e-b57307ae8048:119516255\"}, \"supervisor_pid\": 3365781, \"supervisor_uid\": 1000}",
+      "version": "2050:10504515:333:1794117496652083643:1794117496652083643"
+    },
+    {
+      "eof": true,
+      "path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b9bc6a15-12894-1677/exit.witness.json",
+      "sha256": "bae62e2e2f277733684db40ed249a70568a5c9e96e3fa9ad897a29547e17d7e3",
+      "size": 208,
+      "text": "{\"exit_sha256\": \"60fe177b8b6df55d880e8dd2be0ef4b20bf1b36598bc0d417c4a2a48944cb122\", \"job_id\": \"1a1b9bc6a15-12894-1677\", \"launch_nonce\": \"6b855b1efaa252bad5a52a5f58982231\", \"terminal_publication_protocol\": 1}\n",
+      "version": "2050:10504791:208:1794117799043206382:1794117800358946600"
+    },
+    {
+      "eof": true,
+      "path": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b9bc6a15-12894-1677/exit.json",
+      "sha256": "60fe177b8b6df55d880e8dd2be0ef4b20bf1b36598bc0d417c4a2a48944cb122",
+      "size": 496,
+      "text": "{\"at_unix_ms\": 1794117797460, \"cancelled\": false, \"exit_code\": 124, \"job_id\": \"1a1b9bc6a15-12894-1677\", \"launch_nonce\": \"6b855b1efaa252bad5a52a5f58982231\", \"log_bytes\": {\"stderr\": {\"seen\": 0, \"stored\": 0}, \"stdout\": {\"seen\": 0, \"stored\": 0}}, \"log_errors\": {\"stderr\": null, \"stdout\": null}, \"log_synced\": {\"stderr\": true, \"stdout\": true}, \"log_truncated\": {\"stderr\": false, \"stdout\": false}, \"output_complete\": true, \"output_durable\": true, \"terminal_publication_protocol\": 1, \"timed_out\": true}\n",
+      "version": "2050:10504790:496:1794117797461062510:1794117798699989269"
+    }
+  ],
+  "snapshot_scope": "independent_file",
+  "truncated": false
+}

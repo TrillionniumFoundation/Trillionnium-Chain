@@ -1,0 +1,2789 @@
+{
+  "attempts": [
+    {
+      "failure": {
+        "error": "finite experiment criteria failed; full counterexample retained at /home/runner/work/_temp/pon-native-campaign-42457886578-1/run-1-raw",
+        "production_candidate": false,
+        "release_ready": false,
+        "scope": "actual finite experiment failure; independently retained stage and child files remain evidence",
+        "state_backend": "authenticated-v1"
+      },
+      "number": 1,
+      "phases": [
+        {
+          "nested": {
+            "attack_calls_overlapping_each_signed_round": {
+              "length": 2
+            },
+            "budget_samples": {
+              "length": 502
+            },
+            "children": {
+              "length": 0
+            },
+            "children_os_usage_after": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "children_os_usage_before": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "client_native_history_arithmetic_after": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "client_native_history_arithmetic_before": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "completion_work_observation": [
+              "epoch_scope",
+              "evicts_live_epoch_identities",
+              "full_capacity_disables_ordinary_verification",
+              "full_capacity_skips",
+              "identity_capacity",
+              "identity_domain",
+              "identity_storage_bytes",
+              "live_completions",
+              "repeated_identity_skips",
+              "retained_identities",
+              "schema",
+              "survives_process_restart"
+            ],
+            "confirmations": {
+              "length": 2
+            },
+            "external_controller_observation": [
+              "actual_attack_process_contexts",
+              "children_os_usage_scope",
+              "controller_cgroup",
+              "host_launcher_process_exit",
+              "host_qualification_is_not_service_success",
+              "launched",
+              "pid",
+              "reaped",
+              "schema",
+              "whole_placement_wall_ns"
+            ],
+            "final_actual_flow": [
+              "balance_identity_verified",
+              "booked_reservation_ns",
+              "credited_refill_ns",
+              "discarded_refill_ns",
+              "initial_credit_ns",
+              "live_debited_cpu_ns",
+              "live_owners",
+              "paid_cpu_debit_ns",
+              "remaining_paid_credit_ns",
+              "schema",
+              "settled_full_cpu_ns",
+              "settlement_discard_ns",
+              "settlement_residual_cpu_ns",
+              "stored_credit_ns",
+              "unsettled_known_live_cpu_ns"
+            ],
+            "final_meter": [
+              "accounting_unavailable",
+              "burst_ns",
+              "in_flight",
+              "refill_ns_per_second",
+              "schema",
+              "start_reserve_ns",
+              "stored_credit_ns",
+              "worker_limit"
+            ],
+            "history": {
+              "length": 14
+            },
+            "initial_meter": [
+              "accounting_unavailable",
+              "burst_ns",
+              "in_flight",
+              "refill_ns_per_second",
+              "schema",
+              "start_reserve_ns",
+              "stored_credit_ns",
+              "worker_limit"
+            ],
+            "native_history_arithmetic_after": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "native_history_arithmetic_before": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "phase_process_context": [
+              "attackers_launched_by_external_controller",
+              "controller_cgroup",
+              "host_after",
+              "host_before",
+              "independent_administration",
+              "phase_cgroup",
+              "phase_pid",
+              "runtime_business_deadline_changed",
+              "same_original_receiver_and_verifier_owners",
+              "scalar_policy_changed",
+              "schema",
+              "wan_qualified"
+            ],
+            "public_phase_children_os_usage_after": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "public_phase_children_os_usage_before": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "public_resource_policy": [
+              "lifetime_ms",
+              "policy_id",
+              "schema",
+              "ticket_bits",
+              "transport_profile"
+            ],
+            "receiver_observation": [
+              "accepted_connections_seen",
+              "capacity",
+              "counter_overflow",
+              "cpu_includes_reactor_authentication",
+              "cpu_includes_reactor_authentication_or_response_signing",
+              "cpu_intervals_are_nested_not_additive",
+              "cpu_wait_is_outside_dispatch",
+              "dispatch_cpu_includes_paid_body_decode",
+              "dispatch_cpu_includes_response_signing",
+              "measurement_failures",
+              "monotonic_epoch_is_observer_local",
+              "observation_has_consensus_authority",
+              "phase_parent_links_are_inclusive",
+              "records",
+              "records_not_retained",
+              "schema",
+              "stream_bytes_are_physical_network_bytes",
+              "submit_phase_cpu_excludes_scoped_workers"
+            ],
+            "rss": [
+              "kernel_rusage_self_peak_rss_bytes",
+              "lifetime_peak_rss_bytes",
+              "rss_bytes",
+              "scope"
+            ],
+            "service_outcome": [
+              "Ok"
+            ],
+            "submissions": {
+              "length": 14
+            },
+            "verifier_errors": {
+              "length": 1
+            }
+          },
+          "scalars": {
+            "actor_reports_successful_without_cap_or_kill": true,
+            "address": "127.0.0.1:42551",
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 0,
+            "attacker_processes_requested": 0,
+            "business_started_ns": 1000962637,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "depletion_at_ns": null,
+            "depletion_meter": null,
+            "duration_seconds": 30,
+            "final_client_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+            "final_receiver_tip": "62affbac7ab5e11197ab993e7485b9ba923d403ca8c2bf7f993bee08435e8400",
+            "finite_phase_criteria_met": false,
+            "full_work_accepted": 14,
+            "full_work_failed": 0,
+            "genuine_budget_depletion_observed": false,
+            "initial_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+            "mode": "baseline",
+            "observer_complete": true,
+            "receiver_and_verifier_setup_cpu_ns": 1106138348,
+            "receiver_and_verifier_setup_wall_ns": 4484928730,
+            "receiver_client_state_equal": false,
+            "state_backend": "authenticated-v1",
+            "whole_parent_phase_cpu_ns": 8410224436,
+            "whole_parent_phase_wall_ns": 34787927599
+          }
+        },
+        {
+          "nested": {
+            "attack_calls_overlapping_each_signed_round": {
+              "length": 1
+            },
+            "budget_samples": {
+              "length": 398
+            },
+            "children": {
+              "length": 24
+            },
+            "children_os_usage_after": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "children_os_usage_before": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "client_native_history_arithmetic_after": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "client_native_history_arithmetic_before": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "completion_work_observation": [
+              "epoch_scope",
+              "evicts_live_epoch_identities",
+              "full_capacity_disables_ordinary_verification",
+              "full_capacity_skips",
+              "identity_capacity",
+              "identity_domain",
+              "identity_storage_bytes",
+              "live_completions",
+              "repeated_identity_skips",
+              "retained_identities",
+              "schema",
+              "survives_process_restart"
+            ],
+            "confirmations": {
+              "length": 1
+            },
+            "external_controller_observation": [
+              "actual_attack_process_contexts",
+              "children_os_usage_scope",
+              "controller_cgroup",
+              "host_launcher_process_exit",
+              "host_qualification_is_not_service_success",
+              "launched",
+              "pid",
+              "reaped",
+              "schema",
+              "whole_placement_wall_ns"
+            ],
+            "final_actual_flow": [
+              "balance_identity_verified",
+              "booked_reservation_ns",
+              "credited_refill_ns",
+              "discarded_refill_ns",
+              "initial_credit_ns",
+              "live_debited_cpu_ns",
+              "live_owners",
+              "paid_cpu_debit_ns",
+              "remaining_paid_credit_ns",
+              "schema",
+              "settled_full_cpu_ns",
+              "settlement_discard_ns",
+              "settlement_residual_cpu_ns",
+              "stored_credit_ns",
+              "unsettled_known_live_cpu_ns"
+            ],
+            "final_meter": [
+              "accounting_unavailable",
+              "burst_ns",
+              "in_flight",
+              "refill_ns_per_second",
+              "schema",
+              "start_reserve_ns",
+              "stored_credit_ns",
+              "worker_limit"
+            ],
+            "history": {
+              "length": 7
+            },
+            "initial_meter": [
+              "accounting_unavailable",
+              "burst_ns",
+              "in_flight",
+              "refill_ns_per_second",
+              "schema",
+              "start_reserve_ns",
+              "stored_credit_ns",
+              "worker_limit"
+            ],
+            "native_history_arithmetic_after": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "native_history_arithmetic_before": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "phase_process_context": [
+              "attackers_launched_by_external_controller",
+              "controller_cgroup",
+              "host_after",
+              "host_before",
+              "independent_administration",
+              "phase_cgroup",
+              "phase_pid",
+              "runtime_business_deadline_changed",
+              "same_original_receiver_and_verifier_owners",
+              "scalar_policy_changed",
+              "schema",
+              "wan_qualified"
+            ],
+            "public_phase_children_os_usage_after": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "public_phase_children_os_usage_before": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "public_resource_policy": [
+              "lifetime_ms",
+              "policy_id",
+              "schema",
+              "ticket_bits",
+              "transport_profile"
+            ],
+            "receiver_observation": [
+              "accepted_connections_seen",
+              "capacity",
+              "counter_overflow",
+              "cpu_includes_reactor_authentication",
+              "cpu_includes_reactor_authentication_or_response_signing",
+              "cpu_intervals_are_nested_not_additive",
+              "cpu_wait_is_outside_dispatch",
+              "dispatch_cpu_includes_paid_body_decode",
+              "dispatch_cpu_includes_response_signing",
+              "measurement_failures",
+              "monotonic_epoch_is_observer_local",
+              "observation_has_consensus_authority",
+              "phase_parent_links_are_inclusive",
+              "records",
+              "records_not_retained",
+              "schema",
+              "stream_bytes_are_physical_network_bytes",
+              "submit_phase_cpu_excludes_scoped_workers"
+            ],
+            "rss": [
+              "kernel_rusage_self_peak_rss_bytes",
+              "lifetime_peak_rss_bytes",
+              "rss_bytes",
+              "scope"
+            ],
+            "service_outcome": [
+              "Ok"
+            ],
+            "submissions": {
+              "length": 7
+            },
+            "verifier_errors": {
+              "length": 1
+            }
+          },
+          "scalars": {
+            "actor_reports_successful_without_cap_or_kill": true,
+            "address": "127.0.0.1:33059",
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "business_started_ns": 1072447809,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "depletion_at_ns": null,
+            "depletion_meter": null,
+            "duration_seconds": 30,
+            "final_client_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+            "final_receiver_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+            "finite_phase_criteria_met": false,
+            "full_work_accepted": 7,
+            "full_work_failed": 2167,
+            "genuine_budget_depletion_observed": false,
+            "initial_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+            "mode": "from-zero",
+            "observer_complete": true,
+            "receiver_and_verifier_setup_cpu_ns": 1114121642,
+            "receiver_and_verifier_setup_wall_ns": 4494322165,
+            "receiver_client_state_equal": false,
+            "state_backend": "authenticated-v1",
+            "whole_parent_phase_cpu_ns": 8847001834,
+            "whole_parent_phase_wall_ns": 35588656044
+          }
+        },
+        {
+          "nested": {
+            "attack_calls_overlapping_each_signed_round": {
+              "length": 1
+            },
+            "budget_samples": {
+              "length": 402
+            },
+            "children": {
+              "length": 24
+            },
+            "children_os_usage_after": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "children_os_usage_before": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "client_native_history_arithmetic_after": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "client_native_history_arithmetic_before": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "completion_work_observation": [
+              "epoch_scope",
+              "evicts_live_epoch_identities",
+              "full_capacity_disables_ordinary_verification",
+              "full_capacity_skips",
+              "identity_capacity",
+              "identity_domain",
+              "identity_storage_bytes",
+              "live_completions",
+              "repeated_identity_skips",
+              "retained_identities",
+              "schema",
+              "survives_process_restart"
+            ],
+            "confirmations": {
+              "length": 1
+            },
+            "external_controller_observation": [
+              "actual_attack_process_contexts",
+              "children_os_usage_scope",
+              "controller_cgroup",
+              "host_launcher_process_exit",
+              "host_qualification_is_not_service_success",
+              "launched",
+              "pid",
+              "reaped",
+              "schema",
+              "whole_placement_wall_ns"
+            ],
+            "final_actual_flow": [
+              "balance_identity_verified",
+              "booked_reservation_ns",
+              "credited_refill_ns",
+              "discarded_refill_ns",
+              "initial_credit_ns",
+              "live_debited_cpu_ns",
+              "live_owners",
+              "paid_cpu_debit_ns",
+              "remaining_paid_credit_ns",
+              "schema",
+              "settled_full_cpu_ns",
+              "settlement_discard_ns",
+              "settlement_residual_cpu_ns",
+              "stored_credit_ns",
+              "unsettled_known_live_cpu_ns"
+            ],
+            "final_meter": [
+              "accounting_unavailable",
+              "burst_ns",
+              "in_flight",
+              "refill_ns_per_second",
+              "schema",
+              "start_reserve_ns",
+              "stored_credit_ns",
+              "worker_limit"
+            ],
+            "history": {
+              "length": 7
+            },
+            "initial_meter": [
+              "accounting_unavailable",
+              "burst_ns",
+              "in_flight",
+              "refill_ns_per_second",
+              "schema",
+              "start_reserve_ns",
+              "stored_credit_ns",
+              "worker_limit"
+            ],
+            "native_history_arithmetic_after": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "native_history_arithmetic_before": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "phase_process_context": [
+              "attackers_launched_by_external_controller",
+              "controller_cgroup",
+              "host_after",
+              "host_before",
+              "independent_administration",
+              "phase_cgroup",
+              "phase_pid",
+              "runtime_business_deadline_changed",
+              "same_original_receiver_and_verifier_owners",
+              "scalar_policy_changed",
+              "schema",
+              "wan_qualified"
+            ],
+            "public_phase_children_os_usage_after": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "public_phase_children_os_usage_before": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "public_resource_policy": [
+              "lifetime_ms",
+              "policy_id",
+              "schema",
+              "ticket_bits",
+              "transport_profile"
+            ],
+            "receiver_observation": [
+              "accepted_connections_seen",
+              "capacity",
+              "counter_overflow",
+              "cpu_includes_reactor_authentication",
+              "cpu_includes_reactor_authentication_or_response_signing",
+              "cpu_intervals_are_nested_not_additive",
+              "cpu_wait_is_outside_dispatch",
+              "dispatch_cpu_includes_paid_body_decode",
+              "dispatch_cpu_includes_response_signing",
+              "measurement_failures",
+              "monotonic_epoch_is_observer_local",
+              "observation_has_consensus_authority",
+              "phase_parent_links_are_inclusive",
+              "records",
+              "records_not_retained",
+              "schema",
+              "stream_bytes_are_physical_network_bytes",
+              "submit_phase_cpu_excludes_scoped_workers"
+            ],
+            "rss": [
+              "kernel_rusage_self_peak_rss_bytes",
+              "lifetime_peak_rss_bytes",
+              "rss_bytes",
+              "scope"
+            ],
+            "service_outcome": [
+              "Ok"
+            ],
+            "submissions": {
+              "length": 7
+            },
+            "verifier_errors": {
+              "length": 1
+            }
+          },
+          "scalars": {
+            "actor_reports_successful_without_cap_or_kill": true,
+            "address": "127.0.0.1:33095",
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "business_started_ns": 1000336355,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "depletion_at_ns": null,
+            "depletion_meter": null,
+            "duration_seconds": 30,
+            "final_client_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+            "final_receiver_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+            "finite_phase_criteria_met": false,
+            "full_work_accepted": 7,
+            "full_work_failed": 2169,
+            "genuine_budget_depletion_observed": false,
+            "initial_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+            "mode": "late-product",
+            "observer_complete": false,
+            "receiver_and_verifier_setup_cpu_ns": 1089105261,
+            "receiver_and_verifier_setup_wall_ns": 4393343238,
+            "receiver_client_state_equal": false,
+            "state_backend": "authenticated-v1",
+            "whole_parent_phase_cpu_ns": 8767803509,
+            "whole_parent_phase_wall_ns": 35295762650
+          }
+        }
+      ],
+      "report_shape": {
+        "nested": {
+          "economics": {
+            "length": 8
+          },
+          "phases": {
+            "length": 3
+          },
+          "preparation": [
+            "actual_signed_seed_transfers",
+            "business",
+            "business_blocks",
+            "cpu_ns",
+            "rss",
+            "seed",
+            "seed_blocks",
+            "state_backend",
+            "wall_ns"
+          ],
+          "public_resource_policy": [
+            "lifetime_ms",
+            "policy_id",
+            "schema",
+            "ticket_bits",
+            "transport_profile"
+          ],
+          "selection_candidates_cpu_ns": {
+            "length": 8
+          }
+        },
+        "scalars": {
+          "best_observed_cold_legal_method": "maintenance-limb",
+          "cryptographic_hardness_qualified": false,
+          "economics_complete": true,
+          "finite_experiment_criteria_met": false,
+          "independent_operators": false,
+          "production_candidate": false,
+          "release_ready": false,
+          "schema": "native-public-v3-separate-process-campaign-v2",
+          "scope": "finite controlled TCP loopback; separate attacker OS processes, one host and controller; original two input modes/caps and service/client policy; fixed honest schedule; actual optional paid-credit flow, no WAN/independent operator claim",
+          "settings_profile": "native-public-evaluation-dev-v1 + continuity_v1 explicit maintenance",
+          "state_backend": "authenticated-v1",
+          "wan_qualified": false,
+          "work_profile_qualified": false
+        }
+      },
+      "stderr": "    Finished `release` profile [optimized] target(s) in 0.07s\n     Running tests/public_v3_multiprocess.rs (/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-7f61597ebed162d6)\nP0 native campaign: honest 1024 signed transfers and 21 business blocks\nP0 native campaign: observed producer prepared-generic\nP0 native campaign: observed producer tiled-classical\nP0 native campaign: observed producer tiled-strassen-one-level\nP0 native campaign: observed producer paired-product\nP0 native campaign: observed producer maintenance-periodic\nP0 native campaign: observed producer maintenance-integer-paired\nP0 native campaign: observed producer maintenance-prefix\nP0 native campaign: observed producer maintenance-limb\nP0 native campaign: phase baseline 30s / 0 attacker processes\nP0 native campaign: phase from-zero 30s / 24 attacker processes\nP0 native campaign: phase late-product 30s / 24 attacker processes\n\nthread 'separate_process_work_and_signed_confirmation_campaign' (4716) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1765:5:\nfinite experiment criteria failed; full counterexample retained at /home/runner/work/_temp/pon-native-campaign-42457886578-1/run-1-raw\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\nthread 'separate_process_work_and_signed_confirmation_campaign' (4716) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1541:9:\ncampaign failed; retained /home/runner/work/_temp/pon-native-campaign-42457886578-1/run-1-raw\nerror: test failed, to rerun pass `-p trnm-pon-node --test public_v3_multiprocess`\n",
+      "stdout": "\nrunning 1 test\ntest separate_process_work_and_signed_confirmation_campaign ... FAILED\n\nfailures:\n\nfailures:\n    separate_process_work_and_signed_confirmation_campaign\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 24 filtered out; finished in 113.02s\n\n"
+    },
+    {
+      "failure": {
+        "error": "finite experiment criteria failed; full counterexample retained at /home/runner/work/_temp/pon-native-campaign-42457886578-1/run-2-raw",
+        "production_candidate": false,
+        "release_ready": false,
+        "scope": "actual finite experiment failure; independently retained stage and child files remain evidence",
+        "state_backend": "authenticated-v1"
+      },
+      "number": 2,
+      "phases": [
+        {
+          "nested": {
+            "attack_calls_overlapping_each_signed_round": {
+              "length": 2
+            },
+            "budget_samples": {
+              "length": 477
+            },
+            "children": {
+              "length": 0
+            },
+            "children_os_usage_after": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "children_os_usage_before": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "client_native_history_arithmetic_after": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "client_native_history_arithmetic_before": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "completion_work_observation": [
+              "epoch_scope",
+              "evicts_live_epoch_identities",
+              "full_capacity_disables_ordinary_verification",
+              "full_capacity_skips",
+              "identity_capacity",
+              "identity_domain",
+              "identity_storage_bytes",
+              "live_completions",
+              "repeated_identity_skips",
+              "retained_identities",
+              "schema",
+              "survives_process_restart"
+            ],
+            "confirmations": {
+              "length": 2
+            },
+            "external_controller_observation": [
+              "actual_attack_process_contexts",
+              "children_os_usage_scope",
+              "controller_cgroup",
+              "host_launcher_process_exit",
+              "host_qualification_is_not_service_success",
+              "launched",
+              "pid",
+              "reaped",
+              "schema",
+              "whole_placement_wall_ns"
+            ],
+            "final_actual_flow": [
+              "balance_identity_verified",
+              "booked_reservation_ns",
+              "credited_refill_ns",
+              "discarded_refill_ns",
+              "initial_credit_ns",
+              "live_debited_cpu_ns",
+              "live_owners",
+              "paid_cpu_debit_ns",
+              "remaining_paid_credit_ns",
+              "schema",
+              "settled_full_cpu_ns",
+              "settlement_discard_ns",
+              "settlement_residual_cpu_ns",
+              "stored_credit_ns",
+              "unsettled_known_live_cpu_ns"
+            ],
+            "final_meter": [
+              "accounting_unavailable",
+              "burst_ns",
+              "in_flight",
+              "refill_ns_per_second",
+              "schema",
+              "start_reserve_ns",
+              "stored_credit_ns",
+              "worker_limit"
+            ],
+            "history": {
+              "length": 14
+            },
+            "initial_meter": [
+              "accounting_unavailable",
+              "burst_ns",
+              "in_flight",
+              "refill_ns_per_second",
+              "schema",
+              "start_reserve_ns",
+              "stored_credit_ns",
+              "worker_limit"
+            ],
+            "native_history_arithmetic_after": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "native_history_arithmetic_before": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "phase_process_context": [
+              "attackers_launched_by_external_controller",
+              "controller_cgroup",
+              "host_after",
+              "host_before",
+              "independent_administration",
+              "phase_cgroup",
+              "phase_pid",
+              "runtime_business_deadline_changed",
+              "same_original_receiver_and_verifier_owners",
+              "scalar_policy_changed",
+              "schema",
+              "wan_qualified"
+            ],
+            "public_phase_children_os_usage_after": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "public_phase_children_os_usage_before": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "public_resource_policy": [
+              "lifetime_ms",
+              "policy_id",
+              "schema",
+              "ticket_bits",
+              "transport_profile"
+            ],
+            "receiver_observation": [
+              "accepted_connections_seen",
+              "capacity",
+              "counter_overflow",
+              "cpu_includes_reactor_authentication",
+              "cpu_includes_reactor_authentication_or_response_signing",
+              "cpu_intervals_are_nested_not_additive",
+              "cpu_wait_is_outside_dispatch",
+              "dispatch_cpu_includes_paid_body_decode",
+              "dispatch_cpu_includes_response_signing",
+              "measurement_failures",
+              "monotonic_epoch_is_observer_local",
+              "observation_has_consensus_authority",
+              "phase_parent_links_are_inclusive",
+              "records",
+              "records_not_retained",
+              "schema",
+              "stream_bytes_are_physical_network_bytes",
+              "submit_phase_cpu_excludes_scoped_workers"
+            ],
+            "rss": [
+              "kernel_rusage_self_peak_rss_bytes",
+              "lifetime_peak_rss_bytes",
+              "rss_bytes",
+              "scope"
+            ],
+            "service_outcome": [
+              "Ok"
+            ],
+            "submissions": {
+              "length": 14
+            },
+            "verifier_errors": {
+              "length": 1
+            }
+          },
+          "scalars": {
+            "actor_reports_successful_without_cap_or_kill": true,
+            "address": "127.0.0.1:44411",
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 0,
+            "attacker_processes_requested": 0,
+            "business_started_ns": 1000836427,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "depletion_at_ns": null,
+            "depletion_meter": null,
+            "duration_seconds": 30,
+            "final_client_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+            "final_receiver_tip": "62affbac7ab5e11197ab993e7485b9ba923d403ca8c2bf7f993bee08435e8400",
+            "finite_phase_criteria_met": false,
+            "full_work_accepted": 14,
+            "full_work_failed": 0,
+            "genuine_budget_depletion_observed": false,
+            "initial_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+            "mode": "baseline",
+            "observer_complete": true,
+            "receiver_and_verifier_setup_cpu_ns": 1114793544,
+            "receiver_and_verifier_setup_wall_ns": 4494837519,
+            "receiver_client_state_equal": false,
+            "state_backend": "authenticated-v1",
+            "whole_parent_phase_cpu_ns": 8423484661,
+            "whole_parent_phase_wall_ns": 34800843271
+          }
+        },
+        {
+          "nested": {
+            "attack_calls_overlapping_each_signed_round": {
+              "length": 1
+            },
+            "budget_samples": {
+              "length": 393
+            },
+            "children": {
+              "length": 24
+            },
+            "children_os_usage_after": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "children_os_usage_before": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "client_native_history_arithmetic_after": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "client_native_history_arithmetic_before": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "completion_work_observation": [
+              "epoch_scope",
+              "evicts_live_epoch_identities",
+              "full_capacity_disables_ordinary_verification",
+              "full_capacity_skips",
+              "identity_capacity",
+              "identity_domain",
+              "identity_storage_bytes",
+              "live_completions",
+              "repeated_identity_skips",
+              "retained_identities",
+              "schema",
+              "survives_process_restart"
+            ],
+            "confirmations": {
+              "length": 1
+            },
+            "external_controller_observation": [
+              "actual_attack_process_contexts",
+              "children_os_usage_scope",
+              "controller_cgroup",
+              "host_launcher_process_exit",
+              "host_qualification_is_not_service_success",
+              "launched",
+              "pid",
+              "reaped",
+              "schema",
+              "whole_placement_wall_ns"
+            ],
+            "final_actual_flow": [
+              "balance_identity_verified",
+              "booked_reservation_ns",
+              "credited_refill_ns",
+              "discarded_refill_ns",
+              "initial_credit_ns",
+              "live_debited_cpu_ns",
+              "live_owners",
+              "paid_cpu_debit_ns",
+              "remaining_paid_credit_ns",
+              "schema",
+              "settled_full_cpu_ns",
+              "settlement_discard_ns",
+              "settlement_residual_cpu_ns",
+              "stored_credit_ns",
+              "unsettled_known_live_cpu_ns"
+            ],
+            "final_meter": [
+              "accounting_unavailable",
+              "burst_ns",
+              "in_flight",
+              "refill_ns_per_second",
+              "schema",
+              "start_reserve_ns",
+              "stored_credit_ns",
+              "worker_limit"
+            ],
+            "history": {
+              "length": 7
+            },
+            "initial_meter": [
+              "accounting_unavailable",
+              "burst_ns",
+              "in_flight",
+              "refill_ns_per_second",
+              "schema",
+              "start_reserve_ns",
+              "stored_credit_ns",
+              "worker_limit"
+            ],
+            "native_history_arithmetic_after": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "native_history_arithmetic_before": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "phase_process_context": [
+              "attackers_launched_by_external_controller",
+              "controller_cgroup",
+              "host_after",
+              "host_before",
+              "independent_administration",
+              "phase_cgroup",
+              "phase_pid",
+              "runtime_business_deadline_changed",
+              "same_original_receiver_and_verifier_owners",
+              "scalar_policy_changed",
+              "schema",
+              "wan_qualified"
+            ],
+            "public_phase_children_os_usage_after": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "public_phase_children_os_usage_before": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "public_resource_policy": [
+              "lifetime_ms",
+              "policy_id",
+              "schema",
+              "ticket_bits",
+              "transport_profile"
+            ],
+            "receiver_observation": [
+              "accepted_connections_seen",
+              "capacity",
+              "counter_overflow",
+              "cpu_includes_reactor_authentication",
+              "cpu_includes_reactor_authentication_or_response_signing",
+              "cpu_intervals_are_nested_not_additive",
+              "cpu_wait_is_outside_dispatch",
+              "dispatch_cpu_includes_paid_body_decode",
+              "dispatch_cpu_includes_response_signing",
+              "measurement_failures",
+              "monotonic_epoch_is_observer_local",
+              "observation_has_consensus_authority",
+              "phase_parent_links_are_inclusive",
+              "records",
+              "records_not_retained",
+              "schema",
+              "stream_bytes_are_physical_network_bytes",
+              "submit_phase_cpu_excludes_scoped_workers"
+            ],
+            "rss": [
+              "kernel_rusage_self_peak_rss_bytes",
+              "lifetime_peak_rss_bytes",
+              "rss_bytes",
+              "scope"
+            ],
+            "service_outcome": [
+              "Ok"
+            ],
+            "submissions": {
+              "length": 7
+            },
+            "verifier_errors": {
+              "length": 1
+            }
+          },
+          "scalars": {
+            "actor_reports_successful_without_cap_or_kill": true,
+            "address": "127.0.0.1:45765",
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "business_started_ns": 1000075791,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "depletion_at_ns": null,
+            "depletion_meter": null,
+            "duration_seconds": 30,
+            "final_client_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+            "final_receiver_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+            "finite_phase_criteria_met": false,
+            "full_work_accepted": 7,
+            "full_work_failed": 2215,
+            "genuine_budget_depletion_observed": false,
+            "initial_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+            "mode": "from-zero",
+            "observer_complete": true,
+            "receiver_and_verifier_setup_cpu_ns": 1111365562,
+            "receiver_and_verifier_setup_wall_ns": 4489431886,
+            "receiver_client_state_equal": false,
+            "state_backend": "authenticated-v1",
+            "whole_parent_phase_cpu_ns": 8836075281,
+            "whole_parent_phase_wall_ns": 35588328644
+          }
+        },
+        {
+          "nested": {
+            "attack_calls_overlapping_each_signed_round": {
+              "length": 1
+            },
+            "budget_samples": {
+              "length": 390
+            },
+            "children": {
+              "length": 24
+            },
+            "children_os_usage_after": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "children_os_usage_before": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "client_native_history_arithmetic_after": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "client_native_history_arithmetic_before": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "completion_work_observation": [
+              "epoch_scope",
+              "evicts_live_epoch_identities",
+              "full_capacity_disables_ordinary_verification",
+              "full_capacity_skips",
+              "identity_capacity",
+              "identity_domain",
+              "identity_storage_bytes",
+              "live_completions",
+              "repeated_identity_skips",
+              "retained_identities",
+              "schema",
+              "survives_process_restart"
+            ],
+            "confirmations": {
+              "length": 1
+            },
+            "external_controller_observation": [
+              "actual_attack_process_contexts",
+              "children_os_usage_scope",
+              "controller_cgroup",
+              "host_launcher_process_exit",
+              "host_qualification_is_not_service_success",
+              "launched",
+              "pid",
+              "reaped",
+              "schema",
+              "whole_placement_wall_ns"
+            ],
+            "final_actual_flow": [
+              "balance_identity_verified",
+              "booked_reservation_ns",
+              "credited_refill_ns",
+              "discarded_refill_ns",
+              "initial_credit_ns",
+              "live_debited_cpu_ns",
+              "live_owners",
+              "paid_cpu_debit_ns",
+              "remaining_paid_credit_ns",
+              "schema",
+              "settled_full_cpu_ns",
+              "settlement_discard_ns",
+              "settlement_residual_cpu_ns",
+              "stored_credit_ns",
+              "unsettled_known_live_cpu_ns"
+            ],
+            "final_meter": [
+              "accounting_unavailable",
+              "burst_ns",
+              "in_flight",
+              "refill_ns_per_second",
+              "schema",
+              "start_reserve_ns",
+              "stored_credit_ns",
+              "worker_limit"
+            ],
+            "history": {
+              "length": 7
+            },
+            "initial_meter": [
+              "accounting_unavailable",
+              "burst_ns",
+              "in_flight",
+              "refill_ns_per_second",
+              "schema",
+              "start_reserve_ns",
+              "stored_credit_ns",
+              "worker_limit"
+            ],
+            "native_history_arithmetic_after": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "native_history_arithmetic_before": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "phase_process_context": [
+              "attackers_launched_by_external_controller",
+              "controller_cgroup",
+              "host_after",
+              "host_before",
+              "independent_administration",
+              "phase_cgroup",
+              "phase_pid",
+              "runtime_business_deadline_changed",
+              "same_original_receiver_and_verifier_owners",
+              "scalar_policy_changed",
+              "schema",
+              "wan_qualified"
+            ],
+            "public_phase_children_os_usage_after": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "public_phase_children_os_usage_before": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "public_resource_policy": [
+              "lifetime_ms",
+              "policy_id",
+              "schema",
+              "ticket_bits",
+              "transport_profile"
+            ],
+            "receiver_observation": [
+              "accepted_connections_seen",
+              "capacity",
+              "counter_overflow",
+              "cpu_includes_reactor_authentication",
+              "cpu_includes_reactor_authentication_or_response_signing",
+              "cpu_intervals_are_nested_not_additive",
+              "cpu_wait_is_outside_dispatch",
+              "dispatch_cpu_includes_paid_body_decode",
+              "dispatch_cpu_includes_response_signing",
+              "measurement_failures",
+              "monotonic_epoch_is_observer_local",
+              "observation_has_consensus_authority",
+              "phase_parent_links_are_inclusive",
+              "records",
+              "records_not_retained",
+              "schema",
+              "stream_bytes_are_physical_network_bytes",
+              "submit_phase_cpu_excludes_scoped_workers"
+            ],
+            "rss": [
+              "kernel_rusage_self_peak_rss_bytes",
+              "lifetime_peak_rss_bytes",
+              "rss_bytes",
+              "scope"
+            ],
+            "service_outcome": [
+              "Ok"
+            ],
+            "submissions": {
+              "length": 7
+            },
+            "verifier_errors": {
+              "length": 1
+            }
+          },
+          "scalars": {
+            "actor_reports_successful_without_cap_or_kill": true,
+            "address": "127.0.0.1:33559",
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "business_started_ns": 1001026217,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "depletion_at_ns": null,
+            "depletion_meter": null,
+            "duration_seconds": 30,
+            "final_client_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+            "final_receiver_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+            "finite_phase_criteria_met": false,
+            "full_work_accepted": 7,
+            "full_work_failed": 2237,
+            "genuine_budget_depletion_observed": false,
+            "initial_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+            "mode": "late-product",
+            "observer_complete": true,
+            "receiver_and_verifier_setup_cpu_ns": 1098036565,
+            "receiver_and_verifier_setup_wall_ns": 4402384052,
+            "receiver_client_state_equal": false,
+            "state_backend": "authenticated-v1",
+            "whole_parent_phase_cpu_ns": 8792295709,
+            "whole_parent_phase_wall_ns": 35379477307
+          }
+        }
+      ],
+      "report_shape": {
+        "nested": {
+          "economics": {
+            "length": 8
+          },
+          "phases": {
+            "length": 3
+          },
+          "preparation": [
+            "actual_signed_seed_transfers",
+            "business",
+            "business_blocks",
+            "cpu_ns",
+            "rss",
+            "seed",
+            "seed_blocks",
+            "state_backend",
+            "wall_ns"
+          ],
+          "public_resource_policy": [
+            "lifetime_ms",
+            "policy_id",
+            "schema",
+            "ticket_bits",
+            "transport_profile"
+          ],
+          "selection_candidates_cpu_ns": {
+            "length": 8
+          }
+        },
+        "scalars": {
+          "best_observed_cold_legal_method": "maintenance-limb",
+          "cryptographic_hardness_qualified": false,
+          "economics_complete": true,
+          "finite_experiment_criteria_met": false,
+          "independent_operators": false,
+          "production_candidate": false,
+          "release_ready": false,
+          "schema": "native-public-v3-separate-process-campaign-v2",
+          "scope": "finite controlled TCP loopback; separate attacker OS processes, one host and controller; original two input modes/caps and service/client policy; fixed honest schedule; actual optional paid-credit flow, no WAN/independent operator claim",
+          "settings_profile": "native-public-evaluation-dev-v1 + continuity_v1 explicit maintenance",
+          "state_backend": "authenticated-v1",
+          "wan_qualified": false,
+          "work_profile_qualified": false
+        }
+      },
+      "stderr": "    Finished `release` profile [optimized] target(s) in 0.07s\n     Running tests/public_v3_multiprocess.rs (/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-7f61597ebed162d6)\nP0 native campaign: honest 1024 signed transfers and 21 business blocks\nP0 native campaign: observed producer prepared-generic\nP0 native campaign: observed producer tiled-classical\nP0 native campaign: observed producer tiled-strassen-one-level\nP0 native campaign: observed producer paired-product\nP0 native campaign: observed producer maintenance-periodic\nP0 native campaign: observed producer maintenance-integer-paired\nP0 native campaign: observed producer maintenance-prefix\nP0 native campaign: observed producer maintenance-limb\nP0 native campaign: phase baseline 30s / 0 attacker processes\nP0 native campaign: phase from-zero 30s / 24 attacker processes\nP0 native campaign: phase late-product 30s / 24 attacker processes\n\nthread 'separate_process_work_and_signed_confirmation_campaign' (5053) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1765:5:\nfinite experiment criteria failed; full counterexample retained at /home/runner/work/_temp/pon-native-campaign-42457886578-1/run-2-raw\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\nthread 'separate_process_work_and_signed_confirmation_campaign' (5053) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1541:9:\ncampaign failed; retained /home/runner/work/_temp/pon-native-campaign-42457886578-1/run-2-raw\nerror: test failed, to rerun pass `-p trnm-pon-node --test public_v3_multiprocess`\n",
+      "stdout": "\nrunning 1 test\ntest separate_process_work_and_signed_confirmation_campaign ... FAILED\n\nfailures:\n\nfailures:\n    separate_process_work_and_signed_confirmation_campaign\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 24 filtered out; finished in 112.80s\n\n"
+    },
+    {
+      "failure": {
+        "error": "finite experiment criteria failed; full counterexample retained at /home/runner/work/_temp/pon-native-campaign-42457886578-1/run-3-raw",
+        "production_candidate": false,
+        "release_ready": false,
+        "scope": "actual finite experiment failure; independently retained stage and child files remain evidence",
+        "state_backend": "authenticated-v1"
+      },
+      "number": 3,
+      "phases": [
+        {
+          "nested": {
+            "attack_calls_overlapping_each_signed_round": {
+              "length": 2
+            },
+            "budget_samples": {
+              "length": 538
+            },
+            "children": {
+              "length": 0
+            },
+            "children_os_usage_after": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "children_os_usage_before": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "client_native_history_arithmetic_after": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "client_native_history_arithmetic_before": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "completion_work_observation": [
+              "epoch_scope",
+              "evicts_live_epoch_identities",
+              "full_capacity_disables_ordinary_verification",
+              "full_capacity_skips",
+              "identity_capacity",
+              "identity_domain",
+              "identity_storage_bytes",
+              "live_completions",
+              "repeated_identity_skips",
+              "retained_identities",
+              "schema",
+              "survives_process_restart"
+            ],
+            "confirmations": {
+              "length": 2
+            },
+            "external_controller_observation": [
+              "actual_attack_process_contexts",
+              "children_os_usage_scope",
+              "controller_cgroup",
+              "host_launcher_process_exit",
+              "host_qualification_is_not_service_success",
+              "launched",
+              "pid",
+              "reaped",
+              "schema",
+              "whole_placement_wall_ns"
+            ],
+            "final_actual_flow": [
+              "balance_identity_verified",
+              "booked_reservation_ns",
+              "credited_refill_ns",
+              "discarded_refill_ns",
+              "initial_credit_ns",
+              "live_debited_cpu_ns",
+              "live_owners",
+              "paid_cpu_debit_ns",
+              "remaining_paid_credit_ns",
+              "schema",
+              "settled_full_cpu_ns",
+              "settlement_discard_ns",
+              "settlement_residual_cpu_ns",
+              "stored_credit_ns",
+              "unsettled_known_live_cpu_ns"
+            ],
+            "final_meter": [
+              "accounting_unavailable",
+              "burst_ns",
+              "in_flight",
+              "refill_ns_per_second",
+              "schema",
+              "start_reserve_ns",
+              "stored_credit_ns",
+              "worker_limit"
+            ],
+            "history": {
+              "length": 14
+            },
+            "initial_meter": [
+              "accounting_unavailable",
+              "burst_ns",
+              "in_flight",
+              "refill_ns_per_second",
+              "schema",
+              "start_reserve_ns",
+              "stored_credit_ns",
+              "worker_limit"
+            ],
+            "native_history_arithmetic_after": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "native_history_arithmetic_before": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "phase_process_context": [
+              "attackers_launched_by_external_controller",
+              "controller_cgroup",
+              "host_after",
+              "host_before",
+              "independent_administration",
+              "phase_cgroup",
+              "phase_pid",
+              "runtime_business_deadline_changed",
+              "same_original_receiver_and_verifier_owners",
+              "scalar_policy_changed",
+              "schema",
+              "wan_qualified"
+            ],
+            "public_phase_children_os_usage_after": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "public_phase_children_os_usage_before": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "public_resource_policy": [
+              "lifetime_ms",
+              "policy_id",
+              "schema",
+              "ticket_bits",
+              "transport_profile"
+            ],
+            "receiver_observation": [
+              "accepted_connections_seen",
+              "capacity",
+              "counter_overflow",
+              "cpu_includes_reactor_authentication",
+              "cpu_includes_reactor_authentication_or_response_signing",
+              "cpu_intervals_are_nested_not_additive",
+              "cpu_wait_is_outside_dispatch",
+              "dispatch_cpu_includes_paid_body_decode",
+              "dispatch_cpu_includes_response_signing",
+              "measurement_failures",
+              "monotonic_epoch_is_observer_local",
+              "observation_has_consensus_authority",
+              "phase_parent_links_are_inclusive",
+              "records",
+              "records_not_retained",
+              "schema",
+              "stream_bytes_are_physical_network_bytes",
+              "submit_phase_cpu_excludes_scoped_workers"
+            ],
+            "rss": [
+              "kernel_rusage_self_peak_rss_bytes",
+              "lifetime_peak_rss_bytes",
+              "rss_bytes",
+              "scope"
+            ],
+            "service_outcome": [
+              "Ok"
+            ],
+            "submissions": {
+              "length": 14
+            },
+            "verifier_errors": {
+              "length": 1
+            }
+          },
+          "scalars": {
+            "actor_reports_successful_without_cap_or_kill": true,
+            "address": "127.0.0.1:45423",
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 0,
+            "attacker_processes_requested": 0,
+            "business_started_ns": 1000807182,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "depletion_at_ns": null,
+            "depletion_meter": null,
+            "duration_seconds": 30,
+            "final_client_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+            "final_receiver_tip": "62affbac7ab5e11197ab993e7485b9ba923d403ca8c2bf7f993bee08435e8400",
+            "finite_phase_criteria_met": false,
+            "full_work_accepted": 14,
+            "full_work_failed": 0,
+            "genuine_budget_depletion_observed": false,
+            "initial_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+            "mode": "baseline",
+            "observer_complete": true,
+            "receiver_and_verifier_setup_cpu_ns": 1105403207,
+            "receiver_and_verifier_setup_wall_ns": 4483645421,
+            "receiver_client_state_equal": false,
+            "state_backend": "authenticated-v1",
+            "whole_parent_phase_cpu_ns": 8411002151,
+            "whole_parent_phase_wall_ns": 34786541846
+          }
+        },
+        {
+          "nested": {
+            "attack_calls_overlapping_each_signed_round": {
+              "length": 1
+            },
+            "budget_samples": {
+              "length": 400
+            },
+            "children": {
+              "length": 24
+            },
+            "children_os_usage_after": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "children_os_usage_before": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "client_native_history_arithmetic_after": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "client_native_history_arithmetic_before": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "completion_work_observation": [
+              "epoch_scope",
+              "evicts_live_epoch_identities",
+              "full_capacity_disables_ordinary_verification",
+              "full_capacity_skips",
+              "identity_capacity",
+              "identity_domain",
+              "identity_storage_bytes",
+              "live_completions",
+              "repeated_identity_skips",
+              "retained_identities",
+              "schema",
+              "survives_process_restart"
+            ],
+            "confirmations": {
+              "length": 1
+            },
+            "external_controller_observation": [
+              "actual_attack_process_contexts",
+              "children_os_usage_scope",
+              "controller_cgroup",
+              "host_launcher_process_exit",
+              "host_qualification_is_not_service_success",
+              "launched",
+              "pid",
+              "reaped",
+              "schema",
+              "whole_placement_wall_ns"
+            ],
+            "final_actual_flow": [
+              "balance_identity_verified",
+              "booked_reservation_ns",
+              "credited_refill_ns",
+              "discarded_refill_ns",
+              "initial_credit_ns",
+              "live_debited_cpu_ns",
+              "live_owners",
+              "paid_cpu_debit_ns",
+              "remaining_paid_credit_ns",
+              "schema",
+              "settled_full_cpu_ns",
+              "settlement_discard_ns",
+              "settlement_residual_cpu_ns",
+              "stored_credit_ns",
+              "unsettled_known_live_cpu_ns"
+            ],
+            "final_meter": [
+              "accounting_unavailable",
+              "burst_ns",
+              "in_flight",
+              "refill_ns_per_second",
+              "schema",
+              "start_reserve_ns",
+              "stored_credit_ns",
+              "worker_limit"
+            ],
+            "history": {
+              "length": 7
+            },
+            "initial_meter": [
+              "accounting_unavailable",
+              "burst_ns",
+              "in_flight",
+              "refill_ns_per_second",
+              "schema",
+              "start_reserve_ns",
+              "stored_credit_ns",
+              "worker_limit"
+            ],
+            "native_history_arithmetic_after": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "native_history_arithmetic_before": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "phase_process_context": [
+              "attackers_launched_by_external_controller",
+              "controller_cgroup",
+              "host_after",
+              "host_before",
+              "independent_administration",
+              "phase_cgroup",
+              "phase_pid",
+              "runtime_business_deadline_changed",
+              "same_original_receiver_and_verifier_owners",
+              "scalar_policy_changed",
+              "schema",
+              "wan_qualified"
+            ],
+            "public_phase_children_os_usage_after": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "public_phase_children_os_usage_before": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "public_resource_policy": [
+              "lifetime_ms",
+              "policy_id",
+              "schema",
+              "ticket_bits",
+              "transport_profile"
+            ],
+            "receiver_observation": [
+              "accepted_connections_seen",
+              "capacity",
+              "counter_overflow",
+              "cpu_includes_reactor_authentication",
+              "cpu_includes_reactor_authentication_or_response_signing",
+              "cpu_intervals_are_nested_not_additive",
+              "cpu_wait_is_outside_dispatch",
+              "dispatch_cpu_includes_paid_body_decode",
+              "dispatch_cpu_includes_response_signing",
+              "measurement_failures",
+              "monotonic_epoch_is_observer_local",
+              "observation_has_consensus_authority",
+              "phase_parent_links_are_inclusive",
+              "records",
+              "records_not_retained",
+              "schema",
+              "stream_bytes_are_physical_network_bytes",
+              "submit_phase_cpu_excludes_scoped_workers"
+            ],
+            "rss": [
+              "kernel_rusage_self_peak_rss_bytes",
+              "lifetime_peak_rss_bytes",
+              "rss_bytes",
+              "scope"
+            ],
+            "service_outcome": [
+              "Ok"
+            ],
+            "submissions": {
+              "length": 7
+            },
+            "verifier_errors": {
+              "length": 1
+            }
+          },
+          "scalars": {
+            "actor_reports_successful_without_cap_or_kill": true,
+            "address": "127.0.0.1:40795",
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "business_started_ns": 1001575528,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "depletion_at_ns": null,
+            "depletion_meter": null,
+            "duration_seconds": 30,
+            "final_client_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+            "final_receiver_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+            "finite_phase_criteria_met": false,
+            "full_work_accepted": 7,
+            "full_work_failed": 2300,
+            "genuine_budget_depletion_observed": false,
+            "initial_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+            "mode": "from-zero",
+            "observer_complete": true,
+            "receiver_and_verifier_setup_cpu_ns": 1099647293,
+            "receiver_and_verifier_setup_wall_ns": 4405211690,
+            "receiver_client_state_equal": false,
+            "state_backend": "authenticated-v1",
+            "whole_parent_phase_cpu_ns": 8812518889,
+            "whole_parent_phase_wall_ns": 35488798505
+          }
+        },
+        {
+          "nested": {
+            "attack_calls_overlapping_each_signed_round": {
+              "length": 1
+            },
+            "budget_samples": {
+              "length": 394
+            },
+            "children": {
+              "length": 24
+            },
+            "children_os_usage_after": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "children_os_usage_before": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "client_native_history_arithmetic_after": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "client_native_history_arithmetic_before": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "completion_work_observation": [
+              "epoch_scope",
+              "evicts_live_epoch_identities",
+              "full_capacity_disables_ordinary_verification",
+              "full_capacity_skips",
+              "identity_capacity",
+              "identity_domain",
+              "identity_storage_bytes",
+              "live_completions",
+              "repeated_identity_skips",
+              "retained_identities",
+              "schema",
+              "survives_process_restart"
+            ],
+            "confirmations": {
+              "length": 1
+            },
+            "external_controller_observation": [
+              "actual_attack_process_contexts",
+              "children_os_usage_scope",
+              "controller_cgroup",
+              "host_launcher_process_exit",
+              "host_qualification_is_not_service_success",
+              "launched",
+              "pid",
+              "reaped",
+              "schema",
+              "whole_placement_wall_ns"
+            ],
+            "final_actual_flow": [
+              "balance_identity_verified",
+              "booked_reservation_ns",
+              "credited_refill_ns",
+              "discarded_refill_ns",
+              "initial_credit_ns",
+              "live_debited_cpu_ns",
+              "live_owners",
+              "paid_cpu_debit_ns",
+              "remaining_paid_credit_ns",
+              "schema",
+              "settled_full_cpu_ns",
+              "settlement_discard_ns",
+              "settlement_residual_cpu_ns",
+              "stored_credit_ns",
+              "unsettled_known_live_cpu_ns"
+            ],
+            "final_meter": [
+              "accounting_unavailable",
+              "burst_ns",
+              "in_flight",
+              "refill_ns_per_second",
+              "schema",
+              "start_reserve_ns",
+              "stored_credit_ns",
+              "worker_limit"
+            ],
+            "history": {
+              "length": 7
+            },
+            "initial_meter": [
+              "accounting_unavailable",
+              "burst_ns",
+              "in_flight",
+              "refill_ns_per_second",
+              "schema",
+              "start_reserve_ns",
+              "stored_credit_ns",
+              "worker_limit"
+            ],
+            "native_history_arithmetic_after": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "native_history_arithmetic_before": [
+              "account_node_decode_arithmetic",
+              "cache_policy",
+              "charge_is_process_rss_bound",
+              "complete_root_arithmetic",
+              "counters",
+              "deltas",
+              "has_consensus_authority",
+              "history_sql_traversal",
+              "packets",
+              "records",
+              "retained_software_charge_limit_bytes",
+              "schema",
+              "scope",
+              "sql_commit",
+              "stage_observation_failed",
+              "stages"
+            ],
+            "phase_process_context": [
+              "attackers_launched_by_external_controller",
+              "controller_cgroup",
+              "host_after",
+              "host_before",
+              "independent_administration",
+              "phase_cgroup",
+              "phase_pid",
+              "runtime_business_deadline_changed",
+              "same_original_receiver_and_verifier_owners",
+              "scalar_policy_changed",
+              "schema",
+              "wan_qualified"
+            ],
+            "public_phase_children_os_usage_after": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "public_phase_children_os_usage_before": [
+              "max_reaped_child_rss_bytes",
+              "scope",
+              "system_cpu_ns",
+              "user_cpu_ns"
+            ],
+            "public_resource_policy": [
+              "lifetime_ms",
+              "policy_id",
+              "schema",
+              "ticket_bits",
+              "transport_profile"
+            ],
+            "receiver_observation": [
+              "accepted_connections_seen",
+              "capacity",
+              "counter_overflow",
+              "cpu_includes_reactor_authentication",
+              "cpu_includes_reactor_authentication_or_response_signing",
+              "cpu_intervals_are_nested_not_additive",
+              "cpu_wait_is_outside_dispatch",
+              "dispatch_cpu_includes_paid_body_decode",
+              "dispatch_cpu_includes_response_signing",
+              "measurement_failures",
+              "monotonic_epoch_is_observer_local",
+              "observation_has_consensus_authority",
+              "phase_parent_links_are_inclusive",
+              "records",
+              "records_not_retained",
+              "schema",
+              "stream_bytes_are_physical_network_bytes",
+              "submit_phase_cpu_excludes_scoped_workers"
+            ],
+            "rss": [
+              "kernel_rusage_self_peak_rss_bytes",
+              "lifetime_peak_rss_bytes",
+              "rss_bytes",
+              "scope"
+            ],
+            "service_outcome": [
+              "Ok"
+            ],
+            "submissions": {
+              "length": 7
+            },
+            "verifier_errors": {
+              "length": 1
+            }
+          },
+          "scalars": {
+            "actor_reports_successful_without_cap_or_kill": true,
+            "address": "127.0.0.1:40949",
+            "all_signed_rounds_confirmed_in_window": false,
+            "attacker_processes_ready": 24,
+            "attacker_processes_requested": 24,
+            "business_started_ns": 1018082720,
+            "client_observation_scope": "bounded by the original 64 history calls; import includes complete-page activation, confirmation is separate; native snapshots exclude setup and final read_active; nested costs are not additive",
+            "depletion_at_ns": null,
+            "depletion_meter": null,
+            "duration_seconds": 30,
+            "final_client_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+            "final_receiver_tip": "d8ab3f3b54ca5ba37e04fe9d7efbd508982474eeea86b37db8fe77181c6eca96",
+            "finite_phase_criteria_met": false,
+            "full_work_accepted": 7,
+            "full_work_failed": 2200,
+            "genuine_budget_depletion_observed": false,
+            "initial_tip": "db3d66fde13f226ad36e72f8624924be1044c372d1e144b9a8756ad652f28369",
+            "mode": "late-product",
+            "observer_complete": true,
+            "receiver_and_verifier_setup_cpu_ns": 1075458033,
+            "receiver_and_verifier_setup_wall_ns": 4304491946,
+            "receiver_client_state_equal": false,
+            "state_backend": "authenticated-v1",
+            "whole_parent_phase_cpu_ns": 8769817730,
+            "whole_parent_phase_wall_ns": 35305584457
+          }
+        }
+      ],
+      "report_shape": {
+        "nested": {
+          "economics": {
+            "length": 8
+          },
+          "phases": {
+            "length": 3
+          },
+          "preparation": [
+            "actual_signed_seed_transfers",
+            "business",
+            "business_blocks",
+            "cpu_ns",
+            "rss",
+            "seed",
+            "seed_blocks",
+            "state_backend",
+            "wall_ns"
+          ],
+          "public_resource_policy": [
+            "lifetime_ms",
+            "policy_id",
+            "schema",
+            "ticket_bits",
+            "transport_profile"
+          ],
+          "selection_candidates_cpu_ns": {
+            "length": 8
+          }
+        },
+        "scalars": {
+          "best_observed_cold_legal_method": "maintenance-limb",
+          "cryptographic_hardness_qualified": false,
+          "economics_complete": true,
+          "finite_experiment_criteria_met": false,
+          "independent_operators": false,
+          "production_candidate": false,
+          "release_ready": false,
+          "schema": "native-public-v3-separate-process-campaign-v2",
+          "scope": "finite controlled TCP loopback; separate attacker OS processes, one host and controller; original two input modes/caps and service/client policy; fixed honest schedule; actual optional paid-credit flow, no WAN/independent operator claim",
+          "settings_profile": "native-public-evaluation-dev-v1 + continuity_v1 explicit maintenance",
+          "state_backend": "authenticated-v1",
+          "wan_qualified": false,
+          "work_profile_qualified": false
+        }
+      },
+      "stderr": "    Finished `release` profile [optimized] target(s) in 0.07s\n     Running tests/public_v3_multiprocess.rs (/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-7f61597ebed162d6)\nP0 native campaign: honest 1024 signed transfers and 21 business blocks\nP0 native campaign: observed producer prepared-generic\nP0 native campaign: observed producer tiled-classical\nP0 native campaign: observed producer tiled-strassen-one-level\nP0 native campaign: observed producer paired-product\nP0 native campaign: observed producer maintenance-periodic\nP0 native campaign: observed producer maintenance-integer-paired\nP0 native campaign: observed producer maintenance-prefix\nP0 native campaign: observed producer maintenance-limb\nP0 native campaign: phase baseline 30s / 0 attacker processes\nP0 native campaign: phase from-zero 30s / 24 attacker processes\nP0 native campaign: phase late-product 30s / 24 attacker processes\n\nthread 'separate_process_work_and_signed_confirmation_campaign' (5291) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1765:5:\nfinite experiment criteria failed; full counterexample retained at /home/runner/work/_temp/pon-native-campaign-42457886578-1/run-3-raw\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\nthread 'separate_process_work_and_signed_confirmation_campaign' (5291) panicked at crates/trnm-pon-node/tests/public_v3_multiprocess.rs:1541:9:\ncampaign failed; retained /home/runner/work/_temp/pon-native-campaign-42457886578-1/run-3-raw\nerror: test failed, to rerun pass `-p trnm-pon-node --test public_v3_multiprocess`\n",
+      "stdout": "\nrunning 1 test\ntest separate_process_work_and_signed_confirmation_campaign ... FAILED\n\nfailures:\n\nfailures:\n    separate_process_work_and_signed_confirmation_campaign\n\ntest result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 24 filtered out; finished in 112.60s\n\n"
+    }
+  ],
+  "job_id": 128660701377,
+  "results": {
+    "attempts": [
+      {
+        "complete_success": false,
+        "number": 1,
+        "original_criteria_met": false,
+        "phase_startup_errors": [],
+        "report_directory": "run-1-raw",
+        "report_sha256": "4367841015c2973ba746ffd9e68c74ab10f26f72bc79f91fe131ce2574c35ee6",
+        "report_validation_failure": null,
+        "step": {
+          "command": [
+            "/home/runner/.cargo/bin/cargo",
+            "+1.95.0",
+            "test",
+            "--locked",
+            "--offline",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_multiprocess",
+            "separate_process_work_and_signed_confirmation_campaign",
+            "--",
+            "--exact",
+            "--ignored",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "complete_success": false,
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 113106867917,
+          "elapsed_seconds": 113.106867917,
+          "error": null,
+          "name": "run-1",
+          "outer_stage_timeout_seconds": 600,
+          "returncode": 101,
+          "stderr": "run-1.stderr.log",
+          "stderr_bytes": 1615,
+          "stderr_sha256": "c81d4d4ae66279c5f7dbbcadaf67e0dc0dc44664a4ec354740aebe3d6ff49c16",
+          "stderr_truncated": false,
+          "stdout": "run-1.stdout.log",
+          "stdout_bytes": 271,
+          "stdout_sha256": "62063cae61acb2416f581aa1468e657eb399244c217713e0afcc93fc9bce511b",
+          "stdout_truncated": false
+        }
+      },
+      {
+        "complete_success": false,
+        "number": 2,
+        "original_criteria_met": false,
+        "phase_startup_errors": [],
+        "report_directory": "run-2-raw",
+        "report_sha256": "cac04b6a2b7d70345ae65850998e7ff0fd50ded6870caa5ebccd2c253a39b339",
+        "report_validation_failure": null,
+        "step": {
+          "command": [
+            "/home/runner/.cargo/bin/cargo",
+            "+1.95.0",
+            "test",
+            "--locked",
+            "--offline",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_multiprocess",
+            "separate_process_work_and_signed_confirmation_campaign",
+            "--",
+            "--exact",
+            "--ignored",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "complete_success": false,
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 112896625855,
+          "elapsed_seconds": 112.896625855,
+          "error": null,
+          "name": "run-2",
+          "outer_stage_timeout_seconds": 600,
+          "returncode": 101,
+          "stderr": "run-2.stderr.log",
+          "stderr_bytes": 1615,
+          "stderr_sha256": "8ceb6ec0c64e5862b8ba4b68c8d821b9420e880816d3d530b8020728ca70fdc5",
+          "stderr_truncated": false,
+          "stdout": "run-2.stdout.log",
+          "stdout_bytes": 271,
+          "stdout_sha256": "2572f2bfad05dcc883956a0cbc4bc41c37e66e53a21e62d7792cec29680efcf3",
+          "stdout_truncated": false
+        }
+      },
+      {
+        "complete_success": false,
+        "number": 3,
+        "original_criteria_met": false,
+        "phase_startup_errors": [],
+        "report_directory": "run-3-raw",
+        "report_sha256": "16dc131849ecb70cd8f614b70ed967f97825b835ea9abd212226a20293952de0",
+        "report_validation_failure": null,
+        "step": {
+          "command": [
+            "/home/runner/.cargo/bin/cargo",
+            "+1.95.0",
+            "test",
+            "--locked",
+            "--offline",
+            "--release",
+            "--manifest-path",
+            "trillionnium/Cargo.toml",
+            "-p",
+            "trnm-pon-node",
+            "--test",
+            "public_v3_multiprocess",
+            "separate_process_work_and_signed_confirmation_campaign",
+            "--",
+            "--exact",
+            "--ignored",
+            "--nocapture",
+            "--test-threads=1"
+          ],
+          "complete_success": false,
+          "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+          "elapsed_ns": 112692097277,
+          "elapsed_seconds": 112.692097277,
+          "error": null,
+          "name": "run-3",
+          "outer_stage_timeout_seconds": 600,
+          "returncode": 101,
+          "stderr": "run-3.stderr.log",
+          "stderr_bytes": 1615,
+          "stderr_sha256": "1ff4cd4cbdb1725add81ced8ca31474fba560cdbdebbd354a7c895523321f355",
+          "stderr_truncated": false,
+          "stdout": "run-3.stdout.log",
+          "stdout_bytes": 271,
+          "stdout_sha256": "7d539f7fca2ba5a5de108c64c8272848812cd278055f9b0af17a607848cfefd8",
+          "stdout_truncated": false
+        }
+      }
+    ],
+    "binary": {
+      "actual_compiler_artifact_profile": {
+        "debug_assertions": false,
+        "debuginfo": 0,
+        "opt_level": "3",
+        "overflow_checks": false,
+        "test": true
+      },
+      "build_artifact": "/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-7f61597ebed162d6",
+      "build_separate_from_measured_campaign": true,
+      "bytes": 11765248,
+      "execution": "original cargo test command using the checked build artifact",
+      "retained": "public_v3_multiprocess.bin",
+      "sha256_after": "949b246e4e75858ac6ffa3179903cf992f8675d362964214d7daf74b31111a5f",
+      "sha256_before": "949b246e4e75858ac6ffa3179903cf992f8675d362964214d7daf74b31111a5f"
+    },
+    "build": {
+      "command": [
+        "/home/runner/.cargo/bin/cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--offline",
+        "--release",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--test",
+        "public_v3_multiprocess",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "complete_success": true,
+      "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+      "elapsed_ns": 192132797305,
+      "elapsed_seconds": 192.132797305,
+      "error": null,
+      "name": "build",
+      "outer_stage_timeout_seconds": 1800,
+      "returncode": 0,
+      "stderr": "build.stderr.log",
+      "stderr_bytes": 4021,
+      "stderr_sha256": "1cd698c6a4c495b2d0a153b5906cacb39065467f99f5600d11ec8b159144f938",
+      "stderr_truncated": false,
+      "stdout": "build.stdout.log",
+      "stdout_bytes": 111546,
+      "stdout_sha256": "b1f17ed40428494414f6c4b42a316c3a96cddebc49e488fda0ee09d70eacb9ac",
+      "stdout_truncated": false
+    },
+    "build_timeout_seconds": 1800,
+    "complete_success": false,
+    "completed_utc": "2026-11-08T07:25:03.769166+00:00",
+    "expected_head": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "expected_public_policy_id": "6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f",
+    "expected_resources": {
+      "cpu_max": "400000 100000",
+      "memory_max": "17179869184",
+      "nice": 10
+    },
+    "expected_tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81",
+    "failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+    "finalization_failures": [],
+    "original_campaign_outer_timeout_seconds": 600,
+    "original_inputs": {
+      "attacker_processes": [
+        0,
+        24,
+        24
+      ],
+      "business_blocks": 21,
+      "modes": [
+        "baseline",
+        "from-zero",
+        "late-product"
+      ],
+      "phase_seconds": 30,
+      "seed_blocks": 4,
+      "seed_transfers": 1024
+    },
+    "planned_complete_runs": 3,
+    "profile": "release",
+    "public_phase_placement": {
+      "attacker_processes_remain_in_original_controller_domain": true,
+      "fixed_parent": "/sys/fs/cgroup/trnmponpublic.slice",
+      "original_3x3_workload_and_depletion_predicates_changed": false,
+      "profile": "fixed-public-phase-external-actors-v1",
+      "receiver_and_verifier_cpu_max": "25000 100000",
+      "receiver_and_verifier_memory_max": "2147483648"
+    },
+    "runner_sha256": "c1dfb715aaf8c0c86d66c9ebee6cf64c4a829b89fdf93767e2ce9f847b8534c0",
+    "schema": "pon-original-native-campaign-ci-v1",
+    "scope": "same-host controlled loopback; no independent-operator, WAN, hardness, model-efficacy or activation qualification",
+    "source_after": {
+      "base": null,
+      "candidate": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+      "tested_tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 1683087594,
+      "tracked_entries": 15386,
+      "tracked_worktree_verified": true
+    },
+    "source_kind": "head",
+    "started_utc": "2026-11-08T07:15:53.361444+00:00",
+    "state_backend": "authenticated-v1",
+    "toolchain": "1.95.0"
+  }
+}

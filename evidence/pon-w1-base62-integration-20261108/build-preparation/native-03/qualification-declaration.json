@@ -1,0 +1,39 @@
+{
+  "driver": {
+    "bytes": 7375,
+    "path": "/home/qian-qi/work/chain-w1-base62-m12-tools-20261108-ec265b/native-qualify-empty-v3.py",
+    "sha256": "4c81e224be6eb028b9c142ddb31fc634b30127fff875b368c1ff679b182c9de6"
+  },
+  "environment": {
+    "CARGO_BUILD_JOBS": "2",
+    "CARGO_NET_OFFLINE": "true",
+    "CARGO_TARGET_DIR": "/home/qian-qi/work/chain-w1-base62-native-empty-target-20261108-ec265b-03",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "RAYON_NUM_THREADS": "2",
+    "RUSTC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+    "RUSTDOC": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustdoc",
+    "RUSTFMT": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustfmt",
+    "RUSTUP_AUTO_INSTALL": "0",
+    "RUSTUP_TOOLCHAIN": "1.95.0"
+  },
+  "expensive_proof_started": false,
+  "fresh_cargo_target": true,
+  "guest_compilation_performed": false,
+  "independent_cleanroom_build": false,
+  "registry_cache_reused": true,
+  "repo": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+  "schema": "TRNM-W1-NATIVE-QUALIFICATION-DECLARATION1",
+  "source": {
+    "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+  },
+  "target": "/home/qian-qi/work/chain-w1-base62-native-empty-target-20261108-ec265b-03",
+  "target_origin": "empty-directory",
+  "target_preparation": {
+    "bytes": 1859,
+    "path": "/home/qian-qi/work/chain-w1-base62-m12-tools-20261108-ec265b/native-empty-preparation-03.json",
+    "sha256": "cd46981ec210ae6da8fbd8ca19c92118716e0e4cd500d0f42c88b22906f21b4a"
+  },
+  "test_scope": "native winner example2 and verifier2; historical native243 not rerun",
+  "toolchain_reused": true
+}

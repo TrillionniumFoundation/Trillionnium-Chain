@@ -1,0 +1,176 @@
+{
+  "downloads": [
+    {
+      "artifact_id": 13605192116,
+      "expected_sha256_from_job_upload_log": "eb4c31ee2652cb62364fd2d3d41e84b254b98e69fa9e7246745986af7185f917",
+      "inventory": {
+        "bytes": 319257,
+        "path": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/ci-c5/business/original-native-campaign-artifact-inventory.json",
+        "sha256": "a9daab1f2665d4dcbc87cfec2503412d11a020e68f23f318fcea0b8589972513"
+      },
+      "key": "original-native-campaign",
+      "matches_upload_log_sha256": true,
+      "metadata_fetch": {
+        "argv": [
+          "/usr/bin/gh",
+          "api",
+          "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13605192116"
+        ],
+        "complete": true,
+        "exception": null,
+        "finished_utc": "2026-11-08T05:28:27.411673+00:00",
+        "returncode": 0,
+        "started_utc": "2026-11-08T05:28:25.890884+00:00",
+        "stderr": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/ci-c5/business/raw/original-native-campaign-artifact-13605192116.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 827,
+          "path": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/ci-c5/business/raw/original-native-campaign-artifact-13605192116.json",
+          "sha256": "95d0ef817d7d40dab437b3e522b8bf044e2db7491884cde6ac931a79aed0c1d0"
+        }
+      },
+      "zip_fetch": {
+        "argv": [
+          "/usr/bin/gh",
+          "api",
+          "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13605192116/zip"
+        ],
+        "complete": true,
+        "exception": null,
+        "finished_utc": "2026-11-08T05:29:00.318014+00:00",
+        "returncode": 0,
+        "started_utc": "2026-11-08T05:28:27.412328+00:00",
+        "stderr": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/ci-c5/business/raw/original-native-campaign-artifact-13605192116-zip.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 75651683,
+          "path": "/tmp/w1-c5-business-artifacts-ec265-7knkm16x/original-native-campaign-13605192116.zip",
+          "sha256": "eb4c31ee2652cb62364fd2d3d41e84b254b98e69fa9e7246745986af7185f917"
+        }
+      },
+      "zip_staged_outside_publication_subdirectory": true
+    },
+    {
+      "artifact_id": 13604969104,
+      "expected_sha256_from_job_upload_log": "e990e58f09aa8e6de43054c0d86c4b39074ec846dcbb2304a933ce21a9ef57a5",
+      "inventory": {
+        "bytes": 9999,
+        "path": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/ci-c5/business/w1-fresh-head-artifact-inventory.json",
+        "sha256": "4c8a535bcfb4942c6701f307c2e178eb531c3e34d67fc317aa7cde665dfb6e74"
+      },
+      "key": "w1-fresh-head",
+      "matches_upload_log_sha256": true,
+      "metadata_fetch": {
+        "argv": [
+          "/usr/bin/gh",
+          "api",
+          "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13604969104"
+        ],
+        "complete": true,
+        "exception": null,
+        "finished_utc": "2026-11-08T05:28:28.063604+00:00",
+        "returncode": 0,
+        "started_utc": "2026-11-08T05:28:25.891328+00:00",
+        "stderr": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/ci-c5/business/raw/w1-fresh-head-artifact-13604969104.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 811,
+          "path": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/ci-c5/business/raw/w1-fresh-head-artifact-13604969104.json",
+          "sha256": "6d3f0461f012077c8b83227bf12e458ce6eb99446c570a1cc17b1332f27e0fb7"
+        }
+      },
+      "zip_fetch": {
+        "argv": [
+          "/usr/bin/gh",
+          "api",
+          "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13604969104/zip"
+        ],
+        "complete": true,
+        "exception": null,
+        "finished_utc": "2026-11-08T05:28:52.942328+00:00",
+        "returncode": 0,
+        "started_utc": "2026-11-08T05:28:28.064065+00:00",
+        "stderr": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/ci-c5/business/raw/w1-fresh-head-artifact-13604969104-zip.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 5534353,
+          "path": "/tmp/w1-c5-business-artifacts-ec265-7knkm16x/w1-fresh-head-13604969104.zip",
+          "sha256": "e990e58f09aa8e6de43054c0d86c4b39074ec846dcbb2304a933ce21a9ef57a5"
+        }
+      },
+      "zip_staged_outside_publication_subdirectory": true
+    },
+    {
+      "artifact_id": 13605267370,
+      "expected_sha256_from_job_upload_log": "d8bcb23684377b403c7e40c00cd8353b4f554cbab74952a6061cd7b7b1673569",
+      "inventory": {
+        "bytes": 10000,
+        "path": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/ci-c5/business/w1-fresh-prospective-merge-artifact-inventory.json",
+        "sha256": "4858291230284bd9ea6485a761a0f167d78b044dfc1dbcf80b2268ce6704f137"
+      },
+      "key": "w1-fresh-prospective-merge",
+      "matches_upload_log_sha256": true,
+      "metadata_fetch": {
+        "argv": [
+          "/usr/bin/gh",
+          "api",
+          "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13605267370"
+        ],
+        "complete": true,
+        "exception": null,
+        "finished_utc": "2026-11-08T05:28:28.113640+00:00",
+        "returncode": 0,
+        "started_utc": "2026-11-08T05:28:25.891908+00:00",
+        "stderr": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/ci-c5/business/raw/w1-fresh-prospective-merge-artifact-13605267370.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 824,
+          "path": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/ci-c5/business/raw/w1-fresh-prospective-merge-artifact-13605267370.json",
+          "sha256": "abbb2fd5faf76357702ab3db6c05164d4a7375b4de24896f48b4421508c0bdb9"
+        }
+      },
+      "zip_fetch": {
+        "argv": [
+          "/usr/bin/gh",
+          "api",
+          "repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13605267370/zip"
+        ],
+        "complete": true,
+        "exception": null,
+        "finished_utc": "2026-11-08T05:28:57.004861+00:00",
+        "returncode": 0,
+        "started_utc": "2026-11-08T05:28:28.114095+00:00",
+        "stderr": {
+          "bytes": 0,
+          "path": "/home/qian-qi/work/chain-w1-four-gates-attestation-20261108-ec265b/evidence/pon-w1-four-gates-20261108/ci-c5/business/raw/w1-fresh-prospective-merge-artifact-13605267370-zip.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 5533748,
+          "path": "/tmp/w1-c5-business-artifacts-ec265-7knkm16x/w1-fresh-prospective-merge-13605267370.zip",
+          "sha256": "d8bcb23684377b403c7e40c00cd8353b4f554cbab74952a6061cd7b7b1673569"
+        }
+      },
+      "zip_staged_outside_publication_subdirectory": true
+    }
+  ],
+  "repo": "TrillionniumFoundation/Trillionnium-Chain",
+  "rerun_requested": false,
+  "schema": "TRNM-W1-C5-BUSINESS-GH-ARTIFACT-FETCH1",
+  "temporary_directory": "/tmp/w1-c5-business-artifacts-ec265-7knkm16x"
+}

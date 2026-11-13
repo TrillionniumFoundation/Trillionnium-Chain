@@ -1,0 +1,109 @@
+{
+  "all_historical_child_births_captured": false,
+  "all_historical_descendants_wait_reaped": null,
+  "cancel_before_equals_restore_equals_final_equals_cold": true,
+  "cold_result": {
+    "bytes": 7592,
+    "path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/independent-cold-reconcile/result.json",
+    "sha256": "93d94e99e5ee81bcdd1fa1393a1310a9b142da57f4808847a460a9d6e3983c6e"
+  },
+  "consumed": null,
+  "current_child_cgroup_present": false,
+  "current_original_process_identity_observations": [
+    {
+      "expected_start_ticks": 119922032,
+      "original_identity_present": false,
+      "pid": 3666406,
+      "present": false
+    },
+    {
+      "expected_start_ticks": 119922076,
+      "original_identity_present": false,
+      "pid": 3666427,
+      "present": false
+    },
+    {
+      "expected_start_ticks": 119923218,
+      "original_identity_present": false,
+      "pid": 3666955,
+      "present": false
+    },
+    {
+      "expected_start_ticks": 119923351,
+      "original_identity_present": false,
+      "pid": 3666984,
+      "present": false
+    },
+    {
+      "expected_start_ticks": 119925002,
+      "original_identity_present": false,
+      "pid": 3668215,
+      "present": false
+    },
+    {
+      "expected_start_ticks": 119925536,
+      "original_identity_present": false,
+      "pid": 3668546,
+      "present": false
+    }
+  ],
+  "current_parent_cgroup_present": false,
+  "databases_opened_by_this_readback": false,
+  "deadline_to_target_terminal_ns": 390722375,
+  "failure_record": {
+    "bytes": 590,
+    "path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/m12-terminal-failure-observed.json",
+    "sha256": "03d6c1ec7ebd4352f1c326eecac8093addd81c729cfa34fb27b778f635e54517"
+  },
+  "failure_recorded_monotonic_ns": 1199345481705597,
+  "fixture_scope": "new independent research Node directory and fresh provider/M12 operation; deterministic NativeTask cancel ID/wire/packet equal prior C5 fixture; not new global-chain funds and refunds must not be added across fixtures",
+  "fresh_generation_attempts": 1,
+  "hot_target_equals_cold_target": true,
+  "m12_dispatch_lifecycle": "Done",
+  "m12_resource_cap_retained": true,
+  "main_result": {
+    "bytes": 59770,
+    "path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/funded-owner-cancellation-result.json",
+    "sha256": "929c953f4a1be2e60240226b4b348b82413a9394533745884cc0374edfa5689b"
+  },
+  "native_transactions_submitted_by_this_readback": 0,
+  "new_complete_proofs": 0,
+  "new_generation_dispatches_by_this_readback": 0,
+  "operation": "8058cfa81675504da3f0593b8df7c51cb0b1f3fd6db1daa4d3f83172a6d4eacc",
+  "original_boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+  "original_deadline_ns": 1199343004629858,
+  "owner_veto_requested_monotonic_ns": 1199345486900409,
+  "principal_refund_units": 1000,
+  "provider_payment": false,
+  "readback_script": {
+    "bytes": 7853,
+    "path": "/home/qian-qi/work/chain-w1-base62-m12-tools-20261108-ec265b/final-lifecycle-readonly-v1.py",
+    "sha256": "16950e2b5ad2a3564cb7de28e25f4161f1645183418cba03a432bfc9731e717f"
+  },
+  "removed_cancel_equals_actual_cold_reopen": true,
+  "reorg_result": {
+    "bytes": 4630,
+    "path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/run/owner-timeout-reorg-result.json",
+    "sha256": "061cf17ce68db066205e8776cc67f93b0e983c556251ec4c485a4a1c40b696f9"
+  },
+  "resources": "UNKNOWN",
+  "schema": "TRNM-W1-C6-LIFECYCLE-FINAL-READONLY1",
+  "signals_sent": 0,
+  "source": {
+    "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+  },
+  "source_after": {
+    "bytes": 423,
+    "path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/runtime-source-after.json",
+    "sha256": "2edd14596053103164150807856703c7fac8d4fd5ade634f8acc7203a35025e4"
+  },
+  "source_check_command": {
+    "bytes": 956,
+    "path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/runtime-source-after.command.json",
+    "sha256": "6a95f8c4b618a6f55d47d25a78ff81ef94612ee7a47acaa530b2fbf88466bffc"
+  },
+  "statement": "52a53b4c6264f99141cda3d84ee5793dbd9a21778693848435809fbcd3fd4ca6",
+  "target_finished_monotonic_ns": 1199343395352233,
+  "typed_failure_precedes_owner_veto": true
+}

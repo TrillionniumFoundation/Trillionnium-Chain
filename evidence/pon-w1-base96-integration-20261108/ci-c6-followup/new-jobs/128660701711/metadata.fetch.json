@@ -1,0 +1,17 @@
+{
+  "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128660701711",
+  "exit_code": 0,
+  "finished_unix_ns": 1794125710107944229,
+  "label": "new-jobs/128660701711/metadata",
+  "started_unix_ns": 1794125707845330744,
+  "stderr": {
+    "bytes": 0,
+    "path": "new-jobs/128660701711/metadata.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 6102,
+    "path": "new-jobs/128660701711/metadata.raw.json",
+    "sha256": "655bcdae5056bc362d065bbbcee8ed7e9e9cddbf09231e2d01959c589a4deb8f"
+  }
+}

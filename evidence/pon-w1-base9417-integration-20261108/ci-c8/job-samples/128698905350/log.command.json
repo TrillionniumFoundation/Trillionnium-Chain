@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "/usr/bin/gh",
+    "api",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128698905350/logs"
+  ],
+  "cwd": null,
+  "error": null,
+  "exit_code": 0,
+  "finished_unix_ns": 1794133446445107488,
+  "label": "job-samples/128698905350/log",
+  "started_unix_ns": 1794133439058018096,
+  "stderr": {
+    "bytes": 0,
+    "path": "job-samples/128698905350/log.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 161265,
+    "path": "job-samples/128698905350/log.stdout",
+    "sha256": "df398ac0e499f413b8cbde5c3af15960ba340b26d155bda5ed97501f058dbbc6"
+  },
+  "timed_out": false
+}

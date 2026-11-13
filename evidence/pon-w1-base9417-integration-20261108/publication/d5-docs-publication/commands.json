@@ -1,0 +1,291 @@
+[
+  {
+    "label": "00-head",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit": 0,
+    "stdout_sha256": "a9129bedba62325b589ca724c38ec359dfc5075d3e94c69370cccae61c4bd888",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "01-merge",
+    "argv": [
+      "git",
+      "rev-parse",
+      "MERGE_HEAD"
+    ],
+    "exit": 0,
+    "stdout_sha256": "0b5f64bc70d4fd3a1c0a858ff3b60be41d822f8bed6c39d82d57e2259e432860",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "02-branch",
+    "argv": [
+      "git",
+      "branch",
+      "--show-current"
+    ],
+    "exit": 0,
+    "stdout_sha256": "bb67d080efaed5d3405d71c2468f7e8d729420c7573355959a7b08c295094131",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "03-preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--dev"
+    ],
+    "exit": 0,
+    "stdout_sha256": "4e7060f9ee7fa64b71c2afa9051a09ad8a4481f2b2e8e4a831ba362a2f6c24d3",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "04-actor",
+    "argv": [
+      "gh",
+      "api",
+      "user",
+      "--jq",
+      ".login"
+    ],
+    "exit": 0,
+    "stdout_sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "05-no-unstaged",
+    "argv": [
+      "git",
+      "diff",
+      "--exit-code"
+    ],
+    "exit": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "06-no-untracked",
+    "argv": [
+      "git",
+      "ls-files",
+      "--others",
+      "--exclude-standard"
+    ],
+    "exit": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "07-remote-before",
+    "argv": [
+      "git",
+      "ls-remote",
+      "origin",
+      "refs/heads/docs/chain-w1-base96-qualification-20261108-ec265b"
+    ],
+    "exit": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "08-commit",
+    "argv": [
+      "git",
+      "commit",
+      "-m",
+      "docs(w1): publish C7 qualification, Unknown launch and complete retained logs"
+    ],
+    "exit": 0,
+    "stdout_sha256": "d8a725878ce1129d4e282de7777b6c54a5e2e45dca412b3ebf0db5eb400abc29",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "09-head",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit": 0,
+    "stdout_sha256": "5eabc826c47aa9f326e01c1fbcea7ba0bd03344bed103f3b9d1946ff29518a7c",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "10-parents",
+    "argv": [
+      "git",
+      "show",
+      "-s",
+      "--format=%P",
+      "HEAD"
+    ],
+    "exit": 0,
+    "stdout_sha256": "2afff485d6a5b53c82254fe4bcd5751e675d1e62b8dc043cf7315aeb19dd428c",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "11-tree",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "exit": 0,
+    "stdout_sha256": "799f12a0954f5c3177d6e6b980637868ebcfebfd08b9865ee3deb07fd0144763",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "12-clean",
+    "argv": [
+      "git",
+      "status",
+      "--porcelain"
+    ],
+    "exit": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "13-verify-committed-bytes",
+    "argv": [
+      "python3",
+      "/home/qian-qi/work/chain-w1-c7-attestation-20261108-ec265b/evidence/pon-w1-base96-integration-20261108/verify_git_publication.py",
+      "--rev",
+      "41d717cc9608153dec0daa26ad68ebf8129ed215",
+      "--expected-new-inventory-sha256",
+      "9c0c06ea019853aededd8e24475b34480ec05b45f7cc101a3e54d7a27f0b982a",
+      "--output",
+      "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/docs-publication-01/git-commit-verification.json"
+    ],
+    "exit": 0,
+    "stdout_sha256": "fb298b4b62209e5bb6cc261f8b1bad4bb4fca876936fb1a6748ca73342d25563",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "14-pre-push-preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--dev"
+    ],
+    "exit": 0,
+    "stdout_sha256": "4e7060f9ee7fa64b71c2afa9051a09ad8a4481f2b2e8e4a831ba362a2f6c24d3",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "15-push",
+    "argv": [
+      "git",
+      "push",
+      "origin",
+      "HEAD:refs/heads/docs/chain-w1-base96-qualification-20261108-ec265b"
+    ],
+    "exit": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "7dafc78800646b8c5933a902c0a09c72d35b52db8c52886dd9c8ccc5524db5fa"
+  },
+  {
+    "label": "16-remote-after",
+    "argv": [
+      "git",
+      "ls-remote",
+      "origin",
+      "refs/heads/docs/chain-w1-base96-qualification-20261108-ec265b"
+    ],
+    "exit": 0,
+    "stdout_sha256": "d0180be499e86c84786cbef4e972f5d079b472f30d05740e5a6e5991d54d609c",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "17-remote-commit",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/git/commits/41d717cc9608153dec0daa26ad68ebf8129ed215"
+    ],
+    "exit": 0,
+    "stdout_sha256": "7882924634945fd9f68b241defb502855f4a1eccd76e84a3366214ccd6d38c6d",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "18-subtree-1",
+    "argv": [
+      "git",
+      "rev-parse",
+      "41d717cc9608153dec0daa26ad68ebf8129ed215:evidence/pon-w1-four-gates-20261108"
+    ],
+    "exit": 0,
+    "stdout_sha256": "96a530c40234f9cd761548550d4f41d7ac2993c55ad9edddf23e59a0ccda2880",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "19-remote-tree-1",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/8989aece12e381da0845b71a41ebe31ea44b6180?recursive=1"
+    ],
+    "exit": 0,
+    "stdout_sha256": "0a04c70c366a5634fe38ef23c66416c042255687e1c3b19849d2058932a64176",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "18-subtree-2",
+    "argv": [
+      "git",
+      "rev-parse",
+      "41d717cc9608153dec0daa26ad68ebf8129ed215:evidence/pon-w1-base62-integration-20261108"
+    ],
+    "exit": 0,
+    "stdout_sha256": "9e2742dc02d9a2df31a213505c3a7aeca08c5cc0604626daa4ee81db5b8119ae",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "19-remote-tree-2",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/fff4ae81437b369be93aa0b9aee7d968b67dbb40?recursive=1"
+    ],
+    "exit": 0,
+    "stdout_sha256": "e3ee47fca2b0160c3c1c22504526fb5ffd646f31e63c7297d02c9280a85acf94",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "18-subtree-3",
+    "argv": [
+      "git",
+      "rev-parse",
+      "41d717cc9608153dec0daa26ad68ebf8129ed215:evidence/pon-w1-base96-integration-20261108"
+    ],
+    "exit": 0,
+    "stdout_sha256": "05527ea0efd00bcf44bf2bf231fd3b9f7d109607647e908b93681448b6507595",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "19-remote-tree-3",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/git/trees/d796e9b82f421aa97ab1ef846b6d0abe2ee3ee23?recursive=1"
+    ],
+    "exit": 0,
+    "stdout_sha256": "79a58d577c108b8fd9f1413c74b70b5315a78936d197589035e575e4104d7925",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "20-readme",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/contents/evidence/pon-w1-base96-integration-20261108/README.md?ref=41d717cc9608153dec0daa26ad68ebf8129ed215"
+    ],
+    "exit": 0,
+    "stdout_sha256": "d5456104abb1bfec5ee95b6be67f5a729c8dd82d3ede924f42008ca476eea5b2",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

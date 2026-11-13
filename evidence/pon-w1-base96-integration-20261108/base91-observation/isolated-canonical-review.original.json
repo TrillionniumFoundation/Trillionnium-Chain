@@ -1,0 +1,55 @@
+{
+  "actual_merge_performed": false,
+  "all_other_corpus_fields_and_required_order_preserved": true,
+  "base91": "91c1b7da0f0b1f41c088d9ac0b2ee160b550b80c",
+  "c7_generated_inventory_pin_preserved": true,
+  "helper_sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946",
+  "isolated_canonical_merge_tree": "e8550e15374ce6a0cc60f435ccd4a0c401741930",
+  "matches_prior_raw_merge_tree": true,
+  "new_operations": 0,
+  "only_changed_pins": {
+    "scripts/ci/test_history_stage_diagnostic.py": {
+      "new": "9fa491dd407ae0188142a0699791d620f14ac3f0",
+      "old": "748b8417dbbbcc08ed3fd5b0cdb3b69c44bfd4c2"
+    },
+    "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs": {
+      "new": "0ad34d092863dd32c5e9793daa618a91cd6c15f8",
+      "old": "d6650671ccc93462623351d05fdf434d52669ce1"
+    }
+  },
+  "pin_count": 650,
+  "reader_source_context": {
+    "scripts/ci/run_history_diagnostic.py": {
+      "lines": [
+        "30:SOURCE = 'trillionnium/crates/trnm-pon-node/tests/' + TARGET + '.rs'",
+        "106:    receipt, _ = load_object(Path(os.environ['TRNM_CI_RECEIPT_DIR']) / 'source.json')",
+        "241:def validate_preparation(out: Path, current_source: dict | None = None) -> dict:",
+        "315:def validate_summary(summary: dict) -> None:",
+        "344:        prepared = validate_preparation(out, result['source_before'])",
+        "384:            validate_summary(result['summary'])",
+        "395:    require(validate_preparation(out) == prepared, 'HISTORY_PREPARATION_CHANGED')",
+        "418:    validate_summary(summary)"
+      ],
+      "sha256": "2ec0a8c0a6a574bdf4c5d41f69933c44a9ca83679b19ad705615c110b5af592c"
+    },
+    "scripts/ci/run_history_native.py": {
+      "lines": [
+        "29:TARGET = 'ancestry_long_sync'",
+        "30:SOURCE = 'trillionnium/crates/trnm-pon-node/tests/' + TARGET + '.rs'",
+        "106:    receipt, _ = load_object(Path(os.environ['TRNM_CI_RECEIPT_DIR']) / 'source.json')",
+        "241:def validate_preparation(out: Path, current_source: dict | None = None) -> dict:",
+        "269:def validate_summary(summary: dict) -> None:",
+        "297:        prepared = validate_preparation(out, result['source_before'])",
+        "336:            validate_summary(result['summary'])",
+        "347:    require(validate_preparation(out) == prepared, 'HISTORY_PREPARATION_CHANGED')",
+        "370:    validate_summary(summary)"
+      ],
+      "sha256": "35ca32bbf23d33242b88a2edf994739ff804fbd7b33b5b7ac2e090b4ffce4797"
+    }
+  },
+  "required_count": 558,
+  "schema": "TRNM-W1-C7-BASE91-ISOLATED-CANONICAL-REVIEW1",
+  "source_commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+  "source_worktree_clean_unchanged": true,
+  "tests_executed": 0
+}

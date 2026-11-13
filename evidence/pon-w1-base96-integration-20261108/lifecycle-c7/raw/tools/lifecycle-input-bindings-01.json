@@ -1,0 +1,148 @@
+{
+  "schema": "TRNM-W1-C7-LIFECYCLE-INPUT-BINDINGS1",
+  "source": {
+    "commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe"
+  },
+  "proposal": {
+    "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/lifecycle-research-proposal-01.json",
+    "bytes": 5967,
+    "sha256": "86f5e411490a6c35326628155a3be526f0dd742cd8cc8828de375886ab628c74"
+  },
+  "strict_owner_import": {
+    "manifest": {
+      "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/owner-import-c7-01/manifest.json",
+      "bytes": 48835,
+      "sha256": "f4e880fa93b7e87412aa76d1e2534acbb8c04e7115e41650db766469f747ae55"
+    },
+    "extracted_binding": {
+      "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/owner-import-c7-01/extracted-owner-artifact.json",
+      "bytes": 2999,
+      "sha256": "79bb1357e284dbab706886d4420fd7c549b59a06ccb773cb52f191dd2a28cf46"
+    },
+    "owner_binary": {
+      "path": "/home/qian-qi/work/chain-w1-c7-owner-empty-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+      "bytes": 467950280,
+      "sha256": "ae9ebf85ec7b76ea38c0ca1649d5a5e16f0015c915653eeea486c5090c3ce3c7"
+    },
+    "adapter": {
+      "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/import-owner-c7-v1.py",
+      "bytes": 11539,
+      "sha256": "c9a76e5e9c86a7ce2f94c006bf130940a30f250008d96ab06392aa83dfd3853e"
+    },
+    "job_id": "1a1ba426182-12894-1950",
+    "terminal": {
+      "at_unix_ms": 1794126284695,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1ba426182-12894-1950",
+      "launch_nonce": "d5fb38daf58055764e9d132527c3a2f7",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 1234,
+          "stored": 1234
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    },
+    "actual_commands": 19,
+    "raw_logs_verified": 38,
+    "raw_logs_copied": 38,
+    "original_tests": {
+      "passed": 37,
+      "failed": 0,
+      "ignored": 4
+    },
+    "new_tests_executed_by_import": 0,
+    "Cargo_or_Node_executed_by_import": false
+  },
+  "completed_manifest_bindings": [
+    {
+      "role": "backend",
+      "manifest": {
+        "path": "/home/qian-qi/work/chain-w1-c7-backend-qualification-20261108-ec265b-01/manifest.json",
+        "bytes": 11958,
+        "sha256": "7f9368578b4cb5d12f5e4f50e8a1fbfa320545ebd901a489ca4984ca6e657d9b"
+      },
+      "actual_commands": 7,
+      "source_probe_expected_exit": 1
+    },
+    {
+      "role": "native",
+      "manifest": {
+        "path": "/home/qian-qi/work/chain-w1-c7-native-qualification-20261108-ec265b-01/manifest.json",
+        "bytes": 16997,
+        "sha256": "3870f4ff23cc1d9591b92fe5751536b104a6fb5a0db8576f0e5ad09b8cc87681"
+      },
+      "actual_commands": 10,
+      "actual_tests": 4
+    },
+    {
+      "role": "core",
+      "manifest": {
+        "path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-ci-core-01/manifest.json",
+        "bytes": 21320,
+        "sha256": "d74f30544e9a41d00b209e4016085d33a0ef678cd33a4e64532ab25b20bf3e1d"
+      },
+      "actual_commands": 20,
+      "reported_python_test_methods": 571
+    },
+    {
+      "role": "receiver",
+      "manifest": {
+        "path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-receiver-01/manifest.json",
+        "bytes": 6591,
+        "sha256": "9f7eb12ae0f01eb79946fbff4cf9e69330f642cf5dec08ff50cf71c1ec904a1c"
+      },
+      "actual_commands": 4,
+      "reported_python_test_methods": 11
+    }
+  ],
+  "manifest_readback_scope": "Core and receiver manifest content, exact source, command exits and reported totals verified here; their separate raw-log review and durable-job final records remain root-owned.",
+  "pending_required_before_runtime_prepare": [
+    "History release compile/list complete terminal and its exact source result",
+    "all owned build processes terminal",
+    "one isolated staged32 control attempt complete and passed",
+    "parent actual-operation instruction and full gate artifact binding"
+  ],
+  "source_prefix_guard": {
+    "base": "abab79dac0cb89eb2753d3f579119ac135650eb5",
+    "changed_paths": [],
+    "verified_by": {
+      "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/owner-import-c7-01/manifest.json",
+      "bytes": 48835,
+      "sha256": "f4e880fa93b7e87412aa76d1e2534acbb8c04e7115e41650db766469f747ae55"
+    }
+  },
+  "operation_created": false,
+  "provider_operation": null,
+  "deadline_selected": false,
+  "original_deadline_ns": null,
+  "Node_or_NativeTask_started": false,
+  "resource_cap_settlement": "Unknown remains unknown; no payment or cap release is authorized by source/build qualification or this schema import.",
+  "research_fixture_boundary": "Future fresh provider operation and isolated Node can produce byte-identical deterministic NativeCancel fixture transactions; do not sum refunds across C5/C6/C7 or claim new global funds.",
+  "old_c5_c6_operations_and_deadlines_modified": false
+}

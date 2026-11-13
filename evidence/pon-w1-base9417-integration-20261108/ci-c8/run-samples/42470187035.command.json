@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "/usr/bin/gh",
+    "api",
+    "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42470187035"
+  ],
+  "cwd": null,
+  "error": null,
+  "exit_code": 0,
+  "finished_unix_ns": 1794133476473650618,
+  "label": "run-samples/42470187035",
+  "started_unix_ns": 1794133474603786907,
+  "stderr": {
+    "bytes": 0,
+    "path": "run-samples/42470187035.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 15389,
+    "path": "run-samples/42470187035.stdout",
+    "sha256": "84d9b5512abb492439053f7ff7d8bff9d463438de76cbb58607736fe88ba6c51"
+  },
+  "timed_out": false
+}

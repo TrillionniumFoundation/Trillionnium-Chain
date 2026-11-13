@@ -1,0 +1,217 @@
+{
+  "branch": "fix/chain-w1-base96-integration-20261108-ec265b",
+  "changed_paths": [
+    ".github/workflows/pon-history-stage-diagnostic.yml",
+    "config/pon/pq-cross-branch-corpus-v1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "scripts/ci/run_from_zero_host.py",
+    "scripts/ci/run_history_diagnostic.py",
+    "scripts/ci/test_history_stage_diagnostic.py",
+    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs"
+  ],
+  "ci_reruns": 0,
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit_code": 0,
+      "name": "00-preflight-dev",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 178,
+      "stdout_sha256": "fc3911c320a46305c42bab476b1e4b06c720633e46046a460f2afec14cdeb4a1"
+    },
+    {
+      "argv": [
+        "git",
+        "add",
+        "--",
+        ".github/workflows/pon-history-stage-diagnostic.yml",
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "scripts/ci/run_from_zero_host.py",
+        "scripts/ci/run_history_diagnostic.py",
+        "scripts/ci/test_history_stage_diagnostic.py",
+        "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+        "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit_code": 0,
+      "name": "01-stage-exact-paths",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--staged"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit_code": 0,
+      "name": "02-preflight-staged",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 181,
+      "stdout_sha256": "4f11ac4ce445e7b2ab810404315363ac98299cc72e1fba85df7076c178d665a8"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit_code": 0,
+      "name": "03-staged-whitespace",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "commit",
+        "--file",
+        "/home/qian-qi/work/chain-w1-base96-adversarial-integration-20261108-ec265b-02/freeze-01/commit-message.txt"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit_code": 0,
+      "name": "04-local-merge-commit",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 117,
+      "stdout_sha256": "3ba26b0f9bd38a6c480f01b0d8514c7e26e0242397e7191c941ae0a065a361d0"
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b",
+      "exit_code": 0,
+      "name": "05-postcommit-preflight",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 178,
+      "stdout_sha256": "fc3911c320a46305c42bab476b1e4b06c720633e46046a460f2afec14cdeb4a1"
+    }
+  ],
+  "complete": true,
+  "exact_repair": {
+    "added_inventory_files": [
+      "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs"
+    ],
+    "additional_existing_pin_mirrors": 0,
+    "all_other_corpus_fields_unchanged": true,
+    "corpus_after_sha256": "8026562eb0d7c2c7cf749b34b748439608750e23d4cbe631e77c2299c29f9f12",
+    "corpus_before_sha256": "e415a8c7806ff884eee1b33a1e303f13c41c1c76ae3e2b32309fe136d93b36aa",
+    "existing_pin_updates": {
+      "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": {
+        "new": "c4fd4e40d80c2a2d0387c23432c56c57ca3fe135",
+        "old": "5076e6953e98868fae50d95e9e47db14b65929ea"
+      }
+    },
+    "final_plan_appended_paragraphs": 1,
+    "guard_or_event_context_changed": false,
+    "inventory_after_blob": "c4fd4e40d80c2a2d0387c23432c56c57ca3fe135",
+    "inventory_after_sha256": "d44dc342ab665b9abfeaf85bafcdb3a115069f45c80ad0fe09a8d6fe3d747b92",
+    "inventory_before_blob": "5076e6953e98868fae50d95e9e47db14b65929ea",
+    "inventory_before_sha256": "0f81413fb5938e9e304689ad908cf626d22e7a38f9b0364cdbfd87aac17626a2",
+    "inventory_path": "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs",
+    "pin_count": 650,
+    "plan_prior_c6_bytes_preserved": true,
+    "removed_inventory_files": [],
+    "required_count": 558,
+    "schema": "TRNM-W1-C7-INVENTORY-EXACT-PIN-REPAIR1"
+  },
+  "first_precommit_methods": 134,
+  "full_proof_generations": 0,
+  "new_c7_worktree_clean": true,
+  "new_operations": 0,
+  "new_pr_event_tuple_verified": false,
+  "original_c6_head_unchanged": true,
+  "original_c6_worktree_clean": true,
+  "original_setup_and_inventory_failures_retained": true,
+  "parents": [
+    "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75"
+  ],
+  "postcommit_exact_source_qualification": false,
+  "precommit_repair_manifest_sha256": "51bc2f09b8045f0ec2eae4b53d78cb31e5afbd3c2936cd1195ff5a777e2e499b",
+  "precommit_suites": [
+    {
+      "attempt": "precommit-checks-01",
+      "failed": 0,
+      "methods": 6,
+      "name": "05-history-diagnostic-controls",
+      "passed": 6,
+      "skipped": 0,
+      "stderr_sha256": "99c2aeda2d9d3a20aff1039bd49531953828afc472e786a777c472eb3a4ea62e"
+    },
+    {
+      "attempt": "precommit-checks-01",
+      "failed": 0,
+      "methods": 79,
+      "name": "06-host-routing-controls",
+      "passed": 79,
+      "skipped": 0,
+      "stderr_sha256": "b7e8a586fd99121aa3cb389b298f1e1016811bc36946221da75894f6c077fa07"
+    },
+    {
+      "attempt": "precommit-checks-01",
+      "failed": 0,
+      "methods": 39,
+      "name": "07-pq-rejection-controls",
+      "passed": 39,
+      "skipped": 0,
+      "stderr_sha256": "9db3ecf6f8970346a01d42b3e40b8fc29768477fe364e58ecd196f59f022b8bb"
+    },
+    {
+      "attempt": "precommit-checks-01",
+      "failed": 0,
+      "methods": 10,
+      "name": "08-w1-ci-contract-controls",
+      "passed": 10,
+      "skipped": 0,
+      "stderr_sha256": "24043603273e3920b93d50481ffa0b89b613211fa08561b234891b3158b6a355"
+    },
+    {
+      "attempt": "precommit-repair-01",
+      "failed": 0,
+      "methods": 39,
+      "name": "06-pq-rejection-controls",
+      "passed": 39,
+      "skipped": 0,
+      "stderr_sha256": "c7ed07ee35d8f3efbca2b91578648f4bef24021c1f333e5610a422629d77c931"
+    },
+    {
+      "attempt": "precommit-repair-01",
+      "failed": 0,
+      "methods": 10,
+      "name": "07-w1-ci-contract-controls",
+      "passed": 10,
+      "skipped": 0,
+      "stderr_sha256": "f1cf7677127411b9238e3d85ff8fe4111e0c5bc2a26d5852ce9f666598dadcf6"
+    }
+  ],
+  "preplan_merge_tree": "d73e57c9e7a5764a1ab33540c97af587bb6e4a69",
+  "preplan_tree_is_final_source_tree": false,
+  "pushed": false,
+  "repair_repeat_methods": 49,
+  "schema": "TRNM-W1-C7-LOCAL-SOURCE-FREEZE1",
+  "source_commit": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+  "source_diff_sha256": "511a8c21cf92b15451e43a8aa44f66dcf6f548f5a5b469ef8f39ef7848ffa9fa",
+  "source_tree": "4b25e3194a0682adff40bb476f2e7c0a395639fe",
+  "worktree": "/home/qian-qi/work/chain-w1-base96-integration-20261108-ec265b"
+}

@@ -1,0 +1,66 @@
+{
+  "binary_sha256": "949b246e4e75858ac6ffa3179903cf992f8675d362964214d7daf74b31111a5f",
+  "cleanup": "already-collected",
+  "consensus_or_model_authority": false,
+  "controller_after": {
+    "actual_thread_cgroup": "0::/system.slice/trnm-native-campaign-42457886578-1.service",
+    "limits": {
+      "cpu.max": "400000 100000",
+      "memory.max": "17179869184"
+    }
+  },
+  "controller_before": {
+    "actual_thread_cgroup": "0::/system.slice/trnm-native-campaign-42457886578-1.service",
+    "limits": {
+      "cpu.max": "400000 100000",
+      "memory.max": "17179869184"
+    }
+  },
+  "failure": null,
+  "final_host_errors": [],
+  "host_readiness_only": true,
+  "job_sha256": "832e994cc8fe6d5d7f8607e24eb38984bf1290d8863596adf1f011006b0ed622",
+  "parent_preexisting": false,
+  "passed": true,
+  "schema": "fixed-public-phase-external-actors-v1",
+  "service": "trnm-phase-42457886578-1-original-campaign-4734.service",
+  "service_or_depletion_criteria_met": false,
+  "systemd_argv": [
+    "sudo",
+    "-n",
+    "systemd-run",
+    "--unit=trnm-phase-42457886578-1-original-campaign-4734.service",
+    "--wait",
+    "--pipe",
+    "--collect",
+    "--service-type=exec",
+    "--expand-environment=no",
+    "--slice=trnmponpublic.slice",
+    "--uid=1001",
+    "--gid=1001",
+    "--working-directory=/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+    "--property=KillMode=control-group",
+    "--property=TimeoutStopSec=20s",
+    "--property=RuntimeMaxSec=300s",
+    "--property=Nice=10",
+    "--property=Delegate=no",
+    "--property=NoNewPrivileges=yes",
+    "--property=CapabilityBoundingSet=",
+    "--setenv=PATH=/home/runner/work/_temp/cargo-native-campaign/bin:/snap/bin:/home/runner/.local/bin:/opt/pipx_bin:/home/runner/.cargo/bin:/home/runner/.config/composer/vendor/bin:/usr/local/.ghcup/bin:/home/runner/.dotnet/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+    "--setenv=PYTHONDONTWRITEBYTECODE=1",
+    "/usr/bin/python3",
+    "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/scripts/ci/run_native_phase_host.py",
+    "--inside",
+    "--job",
+    "/home/runner/work/_temp/pon-native-campaign-42457886578-1/run-1-raw/baseline-host-control/phase-job.json",
+    "--binary",
+    "/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-7f61597ebed162d6",
+    "--service",
+    "trnm-phase-42457886578-1-original-campaign-4734.service",
+    "--uid",
+    "1001",
+    "--gid",
+    "1001"
+  ],
+  "systemd_run_exit": 0
+}

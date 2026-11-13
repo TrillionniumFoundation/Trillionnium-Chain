@@ -1,0 +1,1814 @@
+{
+  "schema": "TRNM-W1-C8-CI-RETAINED-SAMPLES1",
+  "new_API_calls": 0,
+  "samples": [
+    {
+      "job_id": 128698905076,
+      "name": "W1 fresh challenge service (x64, prospective-merge)",
+      "metadata_conclusion": "failure",
+      "first_failed_step": {
+        "completed_at": "2026-11-08T10:13:29Z",
+        "conclusion": "failure",
+        "name": "Execute original and fresh service with original Host resources",
+        "number": 7,
+        "started_at": "2026-11-08T10:10:12Z",
+        "status": "completed"
+      },
+      "precondition_steps": [
+        {
+          "name": "Checkout exact observed source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-08T10:09:13Z",
+          "completed_at": "2026-11-08T10:09:47Z"
+        },
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 3,
+          "started_at": "2026-11-08T10:09:47Z",
+          "completed_at": "2026-11-08T10:09:47Z"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-08T10:09:47Z",
+          "completed_at": "2026-11-08T10:09:49Z"
+        },
+        {
+          "name": "Run refusal controls for original Host and fresh successor",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-08T10:09:57Z",
+          "completed_at": "2026-11-08T10:10:12Z"
+        },
+        {
+          "name": "Execute original and fresh service with original Host resources",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 7,
+          "started_at": "2026-11-08T10:10:12Z",
+          "completed_at": "2026-11-08T10:13:29Z"
+        },
+        {
+          "name": "Verify observed source after execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-08T10:13:29Z",
+          "completed_at": "2026-11-08T10:13:30Z"
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-11-08T10:13:30Z",
+          "completed_at": "2026-11-08T10:13:30Z"
+        },
+        {
+          "name": "Retain both service outcomes and original Host evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-08T10:13:30Z",
+          "completed_at": "2026-11-08T10:13:32Z"
+        },
+        {
+          "name": "Post Checkout exact observed source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-11-08T10:13:32Z",
+          "completed_at": "2026-11-08T10:13:32Z"
+        }
+      ],
+      "log": {
+        "path": "job-samples/128698905076/log.stdout",
+        "bytes": 187125,
+        "sha256": "03c429f3a37b5cc70edfaf80b9199145697798cff619d07de24c4912e9daef94"
+      },
+      "event_expected_values": {
+        "EXPECTED_BASE": "9417e495165865ef6c1288b39084856e31020634",
+        "EXPECTED_HEAD": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+        "EXPECTED_KIND": null,
+        "EXPECTED_MERGE": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+      },
+      "error_line_count": 1,
+      "relevant_lines": [],
+      "valid_json_log_records": [
+        {
+          "line": 1049,
+          "keys": [
+            "result",
+            "mode",
+            "project",
+            "packages",
+            "branch",
+            "remote_policy_mutated"
+          ]
+        },
+        {
+          "line": 1286,
+          "keys": [
+            "cleanup",
+            "command_argv",
+            "consensus_or_model_authority",
+            "cwd",
+            "failure",
+            "final_host_errors",
+            "final_parent_lease",
+            "gid",
+            "host_readiness_only",
+            "parent_lease",
+            "parent_reused",
+            "passed",
+            "preparation",
+            "schema",
+            "service",
+            "systemd_run_exit",
+            "uid"
+          ],
+          "schema": "trnm-ci-original-public-host-controller-v2",
+          "failure": null
+        }
+      ],
+      "tail_before_last_error": [
+        {
+          "line": 1242,
+          "text": "test_host_and_packet_times_cannot_escape_known_native_parent (__main__.HistoryImportObservationTests.test_host_and_packet_times_cannot_escape_known_native_parent) ... ok"
+        },
+        {
+          "line": 1243,
+          "text": "test_new_shapes_counts_unknowns_and_nonfinite_samples_are_rejected (__main__.HistoryImportObservationTests.test_new_shapes_counts_unknowns_and_nonfinite_samples_are_rejected) ... ok"
+        },
+        {
+          "line": 1244,
+          "text": "test_unknown_clocks_remain_unknown_and_partial_capture_is_explicit (__main__.HistoryImportObservationTests.test_unknown_clocks_remain_unknown_and_partial_capture_is_explicit) ... ok"
+        },
+        {
+          "line": 1245,
+          "text": "test_duplicate_receiver_identity_or_malformed_digest_cannot_supply_coverage (__main__.ReceiveClockObservationTests.test_duplicate_receiver_identity_or_malformed_digest_cannot_supply_coverage) ... ok"
+        },
+        {
+          "line": 1246,
+          "text": "test_earliest_matching_failed_retry_is_included_in_correlated_receive_latency (__main__.ReceiveClockObservationTests.test_earliest_matching_failed_retry_is_included_in_correlated_receive_latency) ... ok"
+        },
+        {
+          "line": 1247,
+          "text": "test_failed_receive_clock_retains_unknown_instead_of_zero (__main__.ReceiveClockObservationTests.test_failed_receive_clock_retains_unknown_instead_of_zero) ... ok"
+        },
+        {
+          "line": 1248,
+          "text": "test_lifecycle_owner_clocks_are_ordered_only_after_receive_not_each_other (__main__.ReceiveClockObservationTests.test_lifecycle_owner_clocks_are_ordered_only_after_receive_not_each_other) ... ok"
+        },
+        {
+          "line": 1249,
+          "text": "test_live_matching_task_keeps_receive_diagnostic_without_claiming_complete_coverage (__main__.ReceiveClockObservationTests.test_live_matching_task_keeps_receive_diagnostic_without_claiming_complete_coverage) ... ok"
+        },
+        {
+          "line": 1250,
+          "text": "test_matching_payload_with_wrong_operation_is_not_a_business_receive (__main__.ReceiveClockObservationTests.test_matching_payload_with_wrong_operation_is_not_a_business_receive) ... ok"
+        },
+        {
+          "line": 1251,
+          "text": "test_missing_confirmation_and_overflow_never_become_a_measured_zero (__main__.ReceiveClockObservationTests.test_missing_confirmation_and_overflow_never_become_a_measured_zero) ... ok"
+        },
+        {
+          "line": 1252,
+          "text": "test_ok_final_observation_and_late_confirmation_do_not_become_successful_latency (__main__.ReceiveClockObservationTests.test_ok_final_observation_and_late_confirmation_do_not_become_successful_latency) ... ok"
+        },
+        {
+          "line": 1253,
+          "text": "test_unknown_prehello_or_dropped_record_prevents_shorter_exact_claim_latency (__main__.ReceiveClockObservationTests.test_unknown_prehello_or_dropped_record_prevents_shorter_exact_claim_latency) ... ok"
+        },
+        {
+          "line": 1254,
+          "text": "test_wrong_body_digest_offset_or_promoted_clock_scope_is_rejected (__main__.ReceiveClockObservationTests.test_wrong_body_digest_offset_or_promoted_clock_scope_is_rejected) ... ok"
+        },
+        {
+          "line": 1255,
+          "text": ""
+        },
+        {
+          "line": 1256,
+          "text": "----------------------------------------------------------------------"
+        },
+        {
+          "line": 1257,
+          "text": "Ran 149 tests in 11.247s"
+        },
+        {
+          "line": 1258,
+          "text": ""
+        },
+        {
+          "line": 1259,
+          "text": "OK"
+        },
+        {
+          "line": 1260,
+          "text": "............................."
+        },
+        {
+          "line": 1261,
+          "text": "----------------------------------------------------------------------"
+        },
+        {
+          "line": 1262,
+          "text": "Ran 29 tests in 2.149s"
+        },
+        {
+          "line": 1263,
+          "text": ""
+        },
+        {
+          "line": 1264,
+          "text": "OK"
+        },
+        {
+          "line": 1265,
+          "text": "##[group]Run python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_w1_fresh_service_v1.py --out \"$OUT/fresh-service\""
+        },
+        {
+          "line": 1266,
+          "text": "python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_w1_fresh_service_v1.py --out \"$OUT/fresh-service\""
+        },
+        {
+          "line": 1267,
+          "text": "shell: /usr/bin/bash -e {0}"
+        },
+        {
+          "line": 1268,
+          "text": "env:"
+        },
+        {
+          "line": 1269,
+          "text": "CI: true"
+        },
+        {
+          "line": 1270,
+          "text": "CARGO_INCREMENTAL: 0"
+        },
+        {
+          "line": 1271,
+          "text": "CARGO_BUILD_JOBS: 2"
+        },
+        {
+          "line": 1272,
+          "text": "RUST_TEST_THREADS: 1"
+        },
+        {
+          "line": 1273,
+          "text": "CARGO_TERM_COLOR: never"
+        },
+        {
+          "line": 1274,
+          "text": "PYTHONDONTWRITEBYTECODE: 1"
+        },
+        {
+          "line": 1275,
+          "text": "SOURCE_KIND: prospective-merge"
+        },
+        {
+          "line": 1276,
+          "text": "EXPECTED_SOURCE: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "line": 1277,
+          "text": "TRNM_EXPECTED_SOURCE_SHA: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "line": 1278,
+          "text": "EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1279,
+          "text": "EXPECTED_BASE: 9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "line": 1280,
+          "text": "EXPECTED_MERGE: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "line": 1281,
+          "text": "OUT: /home/runner/work/_temp/w1-fresh-service-prospective-merge-42470186930-1"
+        },
+        {
+          "line": 1282,
+          "text": "TRNM_CI_RECEIPT_DIR: /home/runner/work/_temp/w1-fresh-service-prospective-merge-42470186930-1"
+        },
+        {
+          "line": 1283,
+          "text": "CARGO_HOME: /home/runner/work/_temp/cargo-w1-fresh"
+        },
+        {
+          "line": 1284,
+          "text": "CARGO_TARGET_DIR: /home/runner/work/_temp/target-w1-fresh"
+        },
+        {
+          "line": 1285,
+          "text": "##[endgroup]"
+        },
+        {
+          "line": 1286,
+          "text": "{\"cleanup\": \"already-collected\", \"command_argv\": [\"python3\", \"scripts/ci/run_w1_fresh_service_v1.py\", \"--out\", \"/home/runner/work/_temp/w1-fresh-service-prospective-merge-42470186930-1/fresh-service\"], \"consensus_or_model_authority\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"failure\": null, \"final_host_errors\": [], \"final_parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-42470186930-1-fresh-challenge-service-2420.service\", \"current_service\": \"trnm-from-zero-42470186930-1-fresh-challenge-service-2420.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"e13fedc5-3a79-4388-a0cc-2f67a1d57fb5\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 7004, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794132742418355835, \"device\": 29, \"inode\": 1466, \"mtime_ns\": 1794132742418355835, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1794132743923280316, \"device\": 29, \"inode\": 1512, \"mtime_ns\": 1794132743923280316, \"path\": \"/run/trnm-public-fixture-42470186930-1-fresh-challenge-service/parent.json\", \"sha256\": \"f4ad58efa88c74f2faf11e8e7b841da9b56a75633252b78fdff97637afd2edf6\", \"size_bytes\": 3460}, \"seal_sha256\": \"f4ad58efa88c74f2faf11e8e7b841da9b56a75633252b78fdff97637afd2edf6\"}, \"gid\": 1001, \"host_readiness_only\": true, \"parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-42470186930-1-fresh-challenge-service-2420.service\", \"current_service\": \"trnm-from-zero-42470186930-1-fresh-challenge-service-2420.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"e13fedc5-3a79-4388-a0cc-2f67a1d57fb5\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 7004, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794132742418355835, \"device\": 29, \"inode\": 1466, \"mtime_ns\": 1794132742418355835, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1794132743923280316, \"device\": 29, \"inode\": 1512, \"mtime_ns\": 1794132743923280316, \"path\": \"/run/trnm-public-fixture-42470186930-1-fresh-challenge-service/parent.json\", \"sha256\": \"f4ad58efa88c74f2faf11e8e7b841da9b56a75633252b78fdff97637afd2edf6\", \"size_bytes\": 3460}, \"seal_sha256\": \"f4ad58efa88c74f2faf11e8e7b841da9b56a75633252b78fdff97637afd2edf6\"}, \"parent_reused\": false, \"passed\": false, \"preparation\": {\"binary_path\": \"/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-ff17be0917ddd87e\", \"binary_sha256\": \"697ef4adf77a5bb708dd81d6cf8b655308dc4689711d85c0d84ba4a6c66c0533\", \"build_env\": {\"CARGO_BUILD_JOBS\": \"2\", \"CARGO_ENCODED_RUSTFLAGS\": null, \"CARGO_HOME\": \"/home/runner/work/_temp/cargo-w1-fresh\", \"CARGO_INCREMENTAL\": \"0\", \"CARGO_TARGET_DIR\": \"/home/runner/work/_temp/target-w1-fresh\", \"OPENSSL_CONF\": null, \"OPENSSL_DIR\": null, \"OPENSSL_MODULES\": null, \"OPENSSL_STATIC\": null, \"RUSTFLAGS\": null, \"RUSTUP_TOOLCHAIN\": null, \"TRNM_PQ_OPENSSL\": null, \"TRNM_PQ_OPENSSL_SHA256\": null, \"TRNM_PQ_OPENSSL_VERSION\": null}, \"completed\": true, \"consensus_or_model_authority\": false, \"failure_type\": null, \"native_tests_executed\": false, \"process\": {\"command\": [\"cargo\", \"test\", \"--locked\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_from_zero\", \"--no-run\", \"--message-format=json\"], \"cpu_ns\": 239208719000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 2735, \"major_faults\": 2093, \"max_rss_kib\": 1504984, \"minor_faults\": 3897747, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"f521621d436da7022072f929f66991a97fdcc3fe1e8c393a0e3fbe8f2c46294a\", \"stdout_sha256\": \"1800a130d22e4cf7a4719318d26faa2194b5ce24bd7dcb449d4918c1e8738f8d\", \"system_cpu_ns\": 9493762000, \"timed_out\": false, \"user_cpu_ns\": 229714957000, \"voluntary_switches\": 15798, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 126108671744}, \"schema\": \"trnm-ci-original-native-build-preparation-v1\", \"service_resource_observation\": false, \"source_after\": {\"commit\": \"a3b427a9f39e90176c9bfb48d85f9353fb2bd99b\", \"test_sha256\": \"51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"a3b427a9f39e90176c9bfb48d85f9353fb2bd99b\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"a3b427a9f39e90176c9bfb48d85f9353fb2bd99b\", \"tested_tree\": \"19a4f1a6e1cec5c27e595fa555b97cddc4717a3c\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 1683157041, \"tracked_entries\": 15390, \"tracked_worktree_verified\": true}, \"tree\": \"19a4f1a6e1cec5c27e595fa555b97cddc4717a3c\"}, \"source_before\": {\"commit\": \"a3b427a9f39e90176c9bfb48d85f9353fb2bd99b\", \"test_sha256\": \"51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"a3b427a9f39e90176c9bfb48d85f9353fb2bd99b\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"a3b427a9f39e90176c9bfb48d85f9353fb2bd99b\", \"t"
+        },
+        {
+          "line": 1287,
+          "text": "##[error]Process completed with exit code 1."
+        },
+        {
+          "line": 1288,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 1289,
+          "text": "set -euo pipefail"
+        }
+      ]
+    },
+    {
+      "job_id": 128698904380,
+      "name": "CodeQL local SARIF (python, prospective-merge)",
+      "metadata_conclusion": "success",
+      "first_failed_step": null,
+      "precondition_steps": [
+        {
+          "name": "Checkout exact event source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-08T10:09:13Z",
+          "completed_at": "2026-11-08T10:09:55Z"
+        },
+        {
+          "name": "Refuse any other source identity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-08T10:09:55Z",
+          "completed_at": "2026-11-08T10:09:57Z"
+        },
+        {
+          "name": "Generate local exact-source SARIF for exact source SHA",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-08T10:11:22Z",
+          "completed_at": "2026-11-08T10:14:36Z"
+        },
+        {
+          "name": "Verify analyzed source stayed unchanged",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-08T10:14:37Z",
+          "completed_at": "2026-11-08T10:14:39Z"
+        },
+        {
+          "name": "Retain exact-source local SARIF for independent review",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-08T10:14:39Z",
+          "completed_at": "2026-11-08T10:14:40Z"
+        },
+        {
+          "name": "Post Generate local exact-source SARIF for exact source SHA",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-11-08T10:14:40Z",
+          "completed_at": "2026-11-08T10:14:40Z"
+        },
+        {
+          "name": "Post Checkout exact event source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-11-08T10:14:41Z",
+          "completed_at": "2026-11-08T10:14:41Z"
+        }
+      ],
+      "log": {
+        "path": "job-samples/128698904380/log.stdout",
+        "bytes": 485301,
+        "sha256": "03e438a7492cca7025cfbca707152cc2218d21ba1c226f649b168d576489dba8"
+      },
+      "event_expected_values": {
+        "EXPECTED_BASE": "9417e495165865ef6c1288b39084856e31020634",
+        "EXPECTED_HEAD": null,
+        "EXPECTED_KIND": null,
+        "EXPECTED_MERGE": null
+      },
+      "error_line_count": 0,
+      "relevant_lines": [
+        {
+          "line": 1071,
+          "text": "##[warning]Failed to download and extract CodeQL bundle using streaming with error: Failed to download CodeQL bundle from https://github.com/github/codeql-action/releases/download/codeql-bundle-v2.27.4/codeql-bundle-python-linux64.tar.zst. HTTP status code: 504."
+        },
+        {
+          "line": 1273,
+          "text": "expect-error: false"
+        }
+      ],
+      "valid_json_log_records": [
+        {
+          "line": 1248,
+          "keys": []
+        }
+      ],
+      "tail_before_last_error": []
+    },
+    {
+      "job_id": 128698904884,
+      "name": "W1 fresh challenge service (x64, head)",
+      "metadata_conclusion": "failure",
+      "first_failed_step": {
+        "completed_at": "2026-11-08T10:14:09Z",
+        "conclusion": "failure",
+        "name": "Execute original and fresh service with original Host resources",
+        "number": 7,
+        "started_at": "2026-11-08T10:10:20Z",
+        "status": "completed"
+      },
+      "precondition_steps": [
+        {
+          "name": "Checkout exact observed source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-08T10:09:14Z",
+          "completed_at": "2026-11-08T10:09:53Z"
+        },
+        {
+          "name": "Reproduce the frozen integration-push source",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 3,
+          "started_at": "2026-11-08T10:09:53Z",
+          "completed_at": "2026-11-08T10:09:53Z"
+        },
+        {
+          "name": "Reserve observations and verify ordered source identity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-08T10:09:53Z",
+          "completed_at": "2026-11-08T10:09:55Z"
+        },
+        {
+          "name": "Run refusal controls for original Host and fresh successor",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-08T10:10:03Z",
+          "completed_at": "2026-11-08T10:10:20Z"
+        },
+        {
+          "name": "Execute original and fresh service with original Host resources",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 7,
+          "started_at": "2026-11-08T10:10:20Z",
+          "completed_at": "2026-11-08T10:14:09Z"
+        },
+        {
+          "name": "Verify observed source after execution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-08T10:14:09Z",
+          "completed_at": "2026-11-08T10:14:11Z"
+        },
+        {
+          "name": "Preserve this lane's actual push source context",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-11-08T10:14:11Z",
+          "completed_at": "2026-11-08T10:14:11Z"
+        },
+        {
+          "name": "Retain both service outcomes and original Host evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-08T10:14:11Z",
+          "completed_at": "2026-11-08T10:14:13Z"
+        },
+        {
+          "name": "Post Checkout exact observed source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-11-08T10:14:13Z",
+          "completed_at": "2026-11-08T10:14:13Z"
+        }
+      ],
+      "log": {
+        "path": "job-samples/128698904884/log.stdout",
+        "bytes": 186865,
+        "sha256": "2fbf1f8d347d7d0a3a755516ea4ee9a5e4f0e9a27554f2784eedf0e343cfdd6e"
+      },
+      "event_expected_values": {
+        "EXPECTED_BASE": "9417e495165865ef6c1288b39084856e31020634",
+        "EXPECTED_HEAD": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+        "EXPECTED_KIND": null,
+        "EXPECTED_MERGE": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+      },
+      "error_line_count": 1,
+      "relevant_lines": [],
+      "valid_json_log_records": [
+        {
+          "line": 1056,
+          "keys": [
+            "result",
+            "mode",
+            "project",
+            "packages",
+            "branch",
+            "remote_policy_mutated"
+          ]
+        },
+        {
+          "line": 1293,
+          "keys": [
+            "cleanup",
+            "command_argv",
+            "consensus_or_model_authority",
+            "cwd",
+            "failure",
+            "final_host_errors",
+            "final_parent_lease",
+            "gid",
+            "host_readiness_only",
+            "parent_lease",
+            "parent_reused",
+            "passed",
+            "preparation",
+            "schema",
+            "service",
+            "systemd_run_exit",
+            "uid"
+          ],
+          "schema": "trnm-ci-original-public-host-controller-v2",
+          "failure": null
+        }
+      ],
+      "tail_before_last_error": [
+        {
+          "line": 1249,
+          "text": "test_host_and_packet_times_cannot_escape_known_native_parent (__main__.HistoryImportObservationTests.test_host_and_packet_times_cannot_escape_known_native_parent) ... ok"
+        },
+        {
+          "line": 1250,
+          "text": "test_new_shapes_counts_unknowns_and_nonfinite_samples_are_rejected (__main__.HistoryImportObservationTests.test_new_shapes_counts_unknowns_and_nonfinite_samples_are_rejected) ... ok"
+        },
+        {
+          "line": 1251,
+          "text": "test_unknown_clocks_remain_unknown_and_partial_capture_is_explicit (__main__.HistoryImportObservationTests.test_unknown_clocks_remain_unknown_and_partial_capture_is_explicit) ... ok"
+        },
+        {
+          "line": 1252,
+          "text": "test_duplicate_receiver_identity_or_malformed_digest_cannot_supply_coverage (__main__.ReceiveClockObservationTests.test_duplicate_receiver_identity_or_malformed_digest_cannot_supply_coverage) ... ok"
+        },
+        {
+          "line": 1253,
+          "text": "test_earliest_matching_failed_retry_is_included_in_correlated_receive_latency (__main__.ReceiveClockObservationTests.test_earliest_matching_failed_retry_is_included_in_correlated_receive_latency) ... ok"
+        },
+        {
+          "line": 1254,
+          "text": "test_failed_receive_clock_retains_unknown_instead_of_zero (__main__.ReceiveClockObservationTests.test_failed_receive_clock_retains_unknown_instead_of_zero) ... ok"
+        },
+        {
+          "line": 1255,
+          "text": "test_lifecycle_owner_clocks_are_ordered_only_after_receive_not_each_other (__main__.ReceiveClockObservationTests.test_lifecycle_owner_clocks_are_ordered_only_after_receive_not_each_other) ... ok"
+        },
+        {
+          "line": 1256,
+          "text": "test_live_matching_task_keeps_receive_diagnostic_without_claiming_complete_coverage (__main__.ReceiveClockObservationTests.test_live_matching_task_keeps_receive_diagnostic_without_claiming_complete_coverage) ... ok"
+        },
+        {
+          "line": 1257,
+          "text": "test_matching_payload_with_wrong_operation_is_not_a_business_receive (__main__.ReceiveClockObservationTests.test_matching_payload_with_wrong_operation_is_not_a_business_receive) ... ok"
+        },
+        {
+          "line": 1258,
+          "text": "test_missing_confirmation_and_overflow_never_become_a_measured_zero (__main__.ReceiveClockObservationTests.test_missing_confirmation_and_overflow_never_become_a_measured_zero) ... ok"
+        },
+        {
+          "line": 1259,
+          "text": "test_ok_final_observation_and_late_confirmation_do_not_become_successful_latency (__main__.ReceiveClockObservationTests.test_ok_final_observation_and_late_confirmation_do_not_become_successful_latency) ... ok"
+        },
+        {
+          "line": 1260,
+          "text": "test_unknown_prehello_or_dropped_record_prevents_shorter_exact_claim_latency (__main__.ReceiveClockObservationTests.test_unknown_prehello_or_dropped_record_prevents_shorter_exact_claim_latency) ... ok"
+        },
+        {
+          "line": 1261,
+          "text": "test_wrong_body_digest_offset_or_promoted_clock_scope_is_rejected (__main__.ReceiveClockObservationTests.test_wrong_body_digest_offset_or_promoted_clock_scope_is_rejected) ... ok"
+        },
+        {
+          "line": 1262,
+          "text": ""
+        },
+        {
+          "line": 1263,
+          "text": "----------------------------------------------------------------------"
+        },
+        {
+          "line": 1264,
+          "text": "Ran 149 tests in 12.435s"
+        },
+        {
+          "line": 1265,
+          "text": ""
+        },
+        {
+          "line": 1266,
+          "text": "OK"
+        },
+        {
+          "line": 1267,
+          "text": "............................."
+        },
+        {
+          "line": 1268,
+          "text": "----------------------------------------------------------------------"
+        },
+        {
+          "line": 1269,
+          "text": "Ran 29 tests in 2.525s"
+        },
+        {
+          "line": 1270,
+          "text": ""
+        },
+        {
+          "line": 1271,
+          "text": "OK"
+        },
+        {
+          "line": 1272,
+          "text": "##[group]Run python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_w1_fresh_service_v1.py --out \"$OUT/fresh-service\""
+        },
+        {
+          "line": 1273,
+          "text": "python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_w1_fresh_service_v1.py --out \"$OUT/fresh-service\""
+        },
+        {
+          "line": 1274,
+          "text": "shell: /usr/bin/bash -e {0}"
+        },
+        {
+          "line": 1275,
+          "text": "env:"
+        },
+        {
+          "line": 1276,
+          "text": "CI: true"
+        },
+        {
+          "line": 1277,
+          "text": "CARGO_INCREMENTAL: 0"
+        },
+        {
+          "line": 1278,
+          "text": "CARGO_BUILD_JOBS: 2"
+        },
+        {
+          "line": 1279,
+          "text": "RUST_TEST_THREADS: 1"
+        },
+        {
+          "line": 1280,
+          "text": "CARGO_TERM_COLOR: never"
+        },
+        {
+          "line": 1281,
+          "text": "PYTHONDONTWRITEBYTECODE: 1"
+        },
+        {
+          "line": 1282,
+          "text": "SOURCE_KIND: head"
+        },
+        {
+          "line": 1283,
+          "text": "EXPECTED_SOURCE: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1284,
+          "text": "TRNM_EXPECTED_SOURCE_SHA: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1285,
+          "text": "EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1286,
+          "text": "EXPECTED_BASE: 9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "line": 1287,
+          "text": "EXPECTED_MERGE: a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "line": 1288,
+          "text": "OUT: /home/runner/work/_temp/w1-fresh-service-head-42470186930-1"
+        },
+        {
+          "line": 1289,
+          "text": "TRNM_CI_RECEIPT_DIR: /home/runner/work/_temp/w1-fresh-service-head-42470186930-1"
+        },
+        {
+          "line": 1290,
+          "text": "CARGO_HOME: /home/runner/work/_temp/cargo-w1-fresh"
+        },
+        {
+          "line": 1291,
+          "text": "CARGO_TARGET_DIR: /home/runner/work/_temp/target-w1-fresh"
+        },
+        {
+          "line": 1292,
+          "text": "##[endgroup]"
+        },
+        {
+          "line": 1293,
+          "text": "{\"cleanup\": \"already-collected\", \"command_argv\": [\"python3\", \"scripts/ci/run_w1_fresh_service_v1.py\", \"--out\", \"/home/runner/work/_temp/w1-fresh-service-head-42470186930-1/fresh-service\"], \"consensus_or_model_authority\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"failure\": null, \"final_host_errors\": [], \"final_parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-42470186930-1-fresh-challenge-service-2365.service\", \"current_service\": \"trnm-from-zero-42470186930-1-fresh-challenge-service-2365.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"247a7353-15de-451e-a931-d692c1f949e7\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 7004, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794132779098212805, \"device\": 29, \"inode\": 1467, \"mtime_ns\": 1794132779098212805, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1794132780680640088, \"device\": 29, \"inode\": 1513, \"mtime_ns\": 1794132780680640088, \"path\": \"/run/trnm-public-fixture-42470186930-1-fresh-challenge-service/parent.json\", \"sha256\": \"04f716f1f608bba75a0ded295d3279f62e63b8742ea727b7501969bc8b8189a0\", \"size_bytes\": 3306}, \"seal_sha256\": \"04f716f1f608bba75a0ded295d3279f62e63b8742ea727b7501969bc8b8189a0\"}, \"gid\": 1001, \"host_readiness_only\": true, \"parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-42470186930-1-fresh-challenge-service-2365.service\", \"current_service\": \"trnm-from-zero-42470186930-1-fresh-challenge-service-2365.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"247a7353-15de-451e-a931-d692c1f949e7\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 7004, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794132779098212805, \"device\": 29, \"inode\": 1467, \"mtime_ns\": 1794132779098212805, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1794132780680640088, \"device\": 29, \"inode\": 1513, \"mtime_ns\": 1794132780680640088, \"path\": \"/run/trnm-public-fixture-42470186930-1-fresh-challenge-service/parent.json\", \"sha256\": \"04f716f1f608bba75a0ded295d3279f62e63b8742ea727b7501969bc8b8189a0\", \"size_bytes\": 3306}, \"seal_sha256\": \"04f716f1f608bba75a0ded295d3279f62e63b8742ea727b7501969bc8b8189a0\"}, \"parent_reused\": false, \"passed\": false, \"preparation\": {\"binary_path\": \"/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-ff17be0917ddd87e\", \"binary_sha256\": \"697ef4adf77a5bb708dd81d6cf8b655308dc4689711d85c0d84ba4a6c66c0533\", \"build_env\": {\"CARGO_BUILD_JOBS\": \"2\", \"CARGO_ENCODED_RUSTFLAGS\": null, \"CARGO_HOME\": \"/home/runner/work/_temp/cargo-w1-fresh\", \"CARGO_INCREMENTAL\": \"0\", \"CARGO_TARGET_DIR\": \"/home/runner/work/_temp/target-w1-fresh\", \"OPENSSL_CONF\": null, \"OPENSSL_DIR\": null, \"OPENSSL_MODULES\": null, \"OPENSSL_STATIC\": null, \"RUSTFLAGS\": null, \"RUSTUP_TOOLCHAIN\": null, \"TRNM_PQ_OPENSSL\": null, \"TRNM_PQ_OPENSSL_SHA256\": null, \"TRNM_PQ_OPENSSL_VERSION\": null}, \"completed\": true, \"consensus_or_model_authority\": false, \"failure_type\": null, \"native_tests_executed\": false, \"process\": {\"command\": [\"cargo\", \"test\", \"--locked\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_from_zero\", \"--no-run\", \"--message-format=json\"], \"cpu_ns\": 282206601000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 2702, \"major_faults\": 2103, \"max_rss_kib\": 1506924, \"minor_faults\": 3951077, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"14ebea2dbabccd0e2bc9d781bf5378180ebb413797ee179f67ae6b4bf51bca7a\", \"stdout_sha256\": \"e991d4fa365d144267027197f184d008a0cd426941b5172da81b2383d5827b72\", \"system_cpu_ns\": 8745602000, \"timed_out\": false, \"user_cpu_ns\": 273460999000, \"voluntary_switches\": 16279, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 154150575482}, \"schema\": \"trnm-ci-original-native-build-preparation-v1\", \"service_resource_observation\": false, \"source_after\": {\"commit\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"test_sha256\": \"51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"tested_tree\": \"19a4f1a6e1cec5c27e595fa555b97cddc4717a3c\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 1683157041, \"tracked_entries\": 15390, \"tracked_worktree_verified\": true}, \"tree\": \"19a4f1a6e1cec5c27e595fa555b97cddc4717a3c\"}, \"source_before\": {\"commit\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"test_sha256\": \"51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"tested_tree\": "
+        },
+        {
+          "line": 1294,
+          "text": "##[error]Process completed with exit code 1."
+        },
+        {
+          "line": 1295,
+          "text": "##[group]Run set -euo pipefail"
+        },
+        {
+          "line": 1296,
+          "text": "set -euo pipefail"
+        }
+      ]
+    },
+    {
+      "job_id": 128698905350,
+      "name": "cross-arch-cost (arm64)",
+      "metadata_conclusion": "failure",
+      "first_failed_step": {
+        "completed_at": "2026-11-08T10:16:11Z",
+        "conclusion": "failure",
+        "name": "Execute exact native from-zero service controls",
+        "number": 12,
+        "started_at": "2026-11-08T10:11:35Z",
+        "status": "completed"
+      },
+      "precondition_steps": [
+        {
+          "name": "Checkout exact candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-08T10:09:16Z",
+          "completed_at": "2026-11-08T10:09:56Z"
+        },
+        {
+          "name": "Verify immutable source identity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-08T10:09:56Z",
+          "completed_at": "2026-11-08T10:09:58Z"
+        },
+        {
+          "name": "Verify source remained unchanged",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-08T10:16:11Z",
+          "completed_at": "2026-11-08T10:16:13Z"
+        },
+        {
+          "name": "Post Checkout exact candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28,
+          "started_at": "2026-11-08T10:16:14Z",
+          "completed_at": "2026-11-08T10:16:15Z"
+        }
+      ],
+      "log": {
+        "path": "job-samples/128698905350/log.stdout",
+        "bytes": 161265,
+        "sha256": "df398ac0e499f413b8cbde5c3af15960ba340b26d155bda5ed97501f058dbbc6"
+      },
+      "event_expected_values": {
+        "EXPECTED_BASE": null,
+        "EXPECTED_HEAD": null,
+        "EXPECTED_KIND": null,
+        "EXPECTED_MERGE": null
+      },
+      "error_line_count": 1,
+      "relevant_lines": [],
+      "valid_json_log_records": [
+        {
+          "line": 1107,
+          "keys": [
+            "receipt",
+            "result"
+          ]
+        },
+        {
+          "line": 1124,
+          "keys": [
+            "receipt",
+            "result"
+          ]
+        },
+        {
+          "line": 1141,
+          "keys": [
+            "receipt",
+            "result"
+          ]
+        },
+        {
+          "line": 1158,
+          "keys": [
+            "receipt",
+            "result"
+          ]
+        },
+        {
+          "line": 1209,
+          "keys": [
+            "cleanup",
+            "command_argv",
+            "consensus_or_model_authority",
+            "cwd",
+            "failure",
+            "final_host_errors",
+            "final_parent_lease",
+            "gid",
+            "host_readiness_only",
+            "parent_lease",
+            "parent_reused",
+            "passed",
+            "preparation",
+            "schema",
+            "service",
+            "systemd_run_exit",
+            "uid"
+          ],
+          "schema": "trnm-ci-original-public-host-controller-v2",
+          "failure": null
+        }
+      ],
+      "tail_before_last_error": [
+        {
+          "line": 1165,
+          "text": "CARGO_BUILD_JOBS: 2"
+        },
+        {
+          "line": 1166,
+          "text": "RUST_TEST_THREADS: 1"
+        },
+        {
+          "line": 1167,
+          "text": "CARGO_TERM_COLOR: never"
+        },
+        {
+          "line": 1168,
+          "text": "PYTHONDONTWRITEBYTECODE: 1"
+        },
+        {
+          "line": 1169,
+          "text": "TRNM_EXPECTED_SOURCE_SHA: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1170,
+          "text": "TRNM_COST_RUNNER_LABEL: ubuntu-24.04-arm"
+        },
+        {
+          "line": 1171,
+          "text": "CARGO_HOME: /home/runner/work/_temp/cargo-cross-arch-cost"
+        },
+        {
+          "line": 1172,
+          "text": "CARGO_TARGET_DIR: /home/runner/work/_temp/target-cross-arch-cost"
+        },
+        {
+          "line": 1173,
+          "text": "TRNM_CI_RECEIPT_DIR: /home/runner/work/_temp/ci-observations"
+        },
+        {
+          "line": 1174,
+          "text": "##[endgroup]"
+        },
+        {
+          "line": 1175,
+          "text": "{"
+        },
+        {
+          "line": 1176,
+          "text": "\"architecture\": \"arm64\","
+        },
+        {
+          "line": 1177,
+          "text": "\"binary_sha256\": \"68ff89b7231ff5455b878747f72fbffc799f57dfcb227819ce83d815d7aa7104\","
+        },
+        {
+          "line": 1178,
+          "text": "\"receipt\": \"/home/runner/work/_temp/ci-observations/work-rejection\","
+        },
+        {
+          "line": 1179,
+          "text": "\"result\": \"PASS\","
+        },
+        {
+          "line": 1180,
+          "text": "\"source\": {"
+        },
+        {
+          "line": 1181,
+          "text": "\"commit\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\","
+        },
+        {
+          "line": 1182,
+          "text": "\"source_state\": \"committed-clean\","
+        },
+        {
+          "line": 1183,
+          "text": "\"tracked_bytes\": 1683157041,"
+        },
+        {
+          "line": 1184,
+          "text": "\"tracked_entries\": 15390,"
+        },
+        {
+          "line": 1185,
+          "text": "\"tracked_worktree_verified\": true,"
+        },
+        {
+          "line": 1186,
+          "text": "\"tree\": \"19a4f1a6e1cec5c27e595fa555b97cddc4717a3c\""
+        },
+        {
+          "line": 1187,
+          "text": "},"
+        },
+        {
+          "line": 1188,
+          "text": "\"summary\": {"
+        },
+        {
+          "line": 1189,
+          "text": "\"cohorts\": 96,"
+        },
+        {
+          "line": 1190,
+          "text": "\"timed_verifications\": 1152"
+        },
+        {
+          "line": 1191,
+          "text": "}"
+        },
+        {
+          "line": 1192,
+          "text": "}"
+        },
+        {
+          "line": 1193,
+          "text": "##[group]Run python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\""
+        },
+        {
+          "line": 1194,
+          "text": "python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\""
+        },
+        {
+          "line": 1195,
+          "text": "shell: /usr/bin/bash -e {0}"
+        },
+        {
+          "line": 1196,
+          "text": "env:"
+        },
+        {
+          "line": 1197,
+          "text": "CI: true"
+        },
+        {
+          "line": 1198,
+          "text": "CARGO_INCREMENTAL: 0"
+        },
+        {
+          "line": 1199,
+          "text": "CARGO_BUILD_JOBS: 2"
+        },
+        {
+          "line": 1200,
+          "text": "RUST_TEST_THREADS: 1"
+        },
+        {
+          "line": 1201,
+          "text": "CARGO_TERM_COLOR: never"
+        },
+        {
+          "line": 1202,
+          "text": "PYTHONDONTWRITEBYTECODE: 1"
+        },
+        {
+          "line": 1203,
+          "text": "TRNM_EXPECTED_SOURCE_SHA: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1204,
+          "text": "TRNM_COST_RUNNER_LABEL: ubuntu-24.04-arm"
+        },
+        {
+          "line": 1205,
+          "text": "CARGO_HOME: /home/runner/work/_temp/cargo-cross-arch-cost"
+        },
+        {
+          "line": 1206,
+          "text": "CARGO_TARGET_DIR: /home/runner/work/_temp/target-cross-arch-cost"
+        },
+        {
+          "line": 1207,
+          "text": "TRNM_CI_RECEIPT_DIR: /home/runner/work/_temp/ci-observations"
+        },
+        {
+          "line": 1208,
+          "text": "##[endgroup]"
+        },
+        {
+          "line": 1209,
+          "text": "{\"cleanup\": \"already-collected\", \"command_argv\": [\"python3\", \"scripts/ci/run_from_zero_native.py\", \"--out\", \"/home/runner/work/_temp/ci-observations/from-zero-native\"], \"consensus_or_model_authority\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"failure\": null, \"final_host_errors\": [], \"final_parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-42470186982-1-cross-arch-cost-4251.service\", \"current_service\": \"trnm-from-zero-42470186982-1-cross-arch-cost-4251.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"2e100378-d9b2-4cc2-97f4-adab18ba3e03\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 33, \"directory\": true, \"gid\": 0, \"inode\": 7219, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794132888755436996, \"device\": 31, \"inode\": 1468, \"mtime_ns\": 1794132888755436996, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1794132890501610733, \"device\": 31, \"inode\": 1514, \"mtime_ns\": 1794132890501610733, \"path\": \"/run/trnm-public-fixture-42470186982-1-cross-arch-cost/parent.json\", \"sha256\": \"9ba25534ea38d5fb3e86e04de7c23934c13d4daa86060e5419198f971241d617\", \"size_bytes\": 3197}, \"seal_sha256\": \"9ba25534ea38d5fb3e86e04de7c23934c13d4daa86060e5419198f971241d617\"}, \"gid\": 1001, \"host_readiness_only\": true, \"parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-42470186982-1-cross-arch-cost-4251.service\", \"current_service\": \"trnm-from-zero-42470186982-1-cross-arch-cost-4251.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"2e100378-d9b2-4cc2-97f4-adab18ba3e03\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 33, \"directory\": true, \"gid\": 0, \"inode\": 7219, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794132888755436996, \"device\": 31, \"inode\": 1468, \"mtime_ns\": 1794132888755436996, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1794132890501610733, \"device\": 31, \"inode\": 1514, \"mtime_ns\": 1794132890501610733, \"path\": \"/run/trnm-public-fixture-42470186982-1-cross-arch-cost/parent.json\", \"sha256\": \"9ba25534ea38d5fb3e86e04de7c23934c13d4daa86060e5419198f971241d617\", \"size_bytes\": 3197}, \"seal_sha256\": \"9ba25534ea38d5fb3e86e04de7c23934c13d4daa86060e5419198f971241d617\"}, \"parent_reused\": false, \"passed\": false, \"preparation\": {\"binary_path\": \"/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-6b1ef8169f26aa09\", \"binary_sha256\": \"cfe586cc46a4a6d728ee628cd5eefb1cb2a4d613a15b60f52ff7ed71c35de210\", \"build_env\": {\"CARGO_BUILD_JOBS\": \"2\", \"CARGO_ENCODED_RUSTFLAGS\": null, \"CARGO_HOME\": \"/home/runner/work/_temp/cargo-cross-arch-cost\", \"CARGO_INCREMENTAL\": \"0\", \"CARGO_TARGET_DIR\": \"/home/runner/work/_temp/target-cross-arch-cost\", \"OPENSSL_CONF\": null, \"OPENSSL_DIR\": null, \"OPENSSL_MODULES\": null, \"OPENSSL_STATIC\": null, \"RUSTFLAGS\": null, \"RUSTUP_TOOLCHAIN\": null, \"TRNM_PQ_OPENSSL\": null, \"TRNM_PQ_OPENSSL_SHA256\": null, \"TRNM_PQ_OPENSSL_VERSION\": null}, \"completed\": true, \"consensus_or_model_authority\": false, \"failure_type\": null, \"native_tests_executed\": false, \"process\": {\"command\": [\"cargo\", \"test\", \"--locked\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_from_zero\", \"--no-run\", \"--message-format=json\"], \"cpu_ns\": 357977277000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 2919, \"major_faults\": 178, \"max_rss_kib\": 1493880, \"minor_faults\": 4505098, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"c6678dbeb953177e9ab292d39360e2d418856e706971ed458f5849d2f33c17c9\", \"stdout_sha256\": \"d4d615b46f0e55f76d64fa080326b8fa6043c9aba84903d5f6b433d0ad38a486\", \"system_cpu_ns\": 13041377000, \"timed_out\": false, \"user_cpu_ns\": 344935900000, \"voluntary_switches\": 6597, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 188810409343}, \"schema\": \"trnm-ci-original-native-build-preparation-v1\", \"service_resource_observation\": false, \"source_after\": {\"commit\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"test_sha256\": \"51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"tested_tree\": \"19a4f1a6e1cec5c27e595fa555b97cddc4717a3c\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 1683157041, \"tracked_entries\": 15390, \"tracked_worktree_verified\": true}, \"tree\": \"19a4f1a6e1cec5c27e595fa555b97cddc4717a3c\"}, \"source_before\": {\"commit\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"test_sha256\": \"51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"tested_tree\": \"19a4f1a6e1cec5c27e595fa555b97cddc4717a3c\", \"tes"
+        },
+        {
+          "line": 1210,
+          "text": "##[error]Process completed with exit code 1."
+        },
+        {
+          "line": 1211,
+          "text": "##[group]Run python3 scripts/ci/verify_ci_source.py --kind head --expected-head \"$TRNM_EXPECTED_SOURCE_SHA\""
+        },
+        {
+          "line": 1212,
+          "text": "python3 scripts/ci/verify_ci_source.py --kind head --expected-head \"$TRNM_EXPECTED_SOURCE_SHA\""
+        }
+      ]
+    },
+    {
+      "job_id": 128698905140,
+      "name": "cross-arch-cost (x64)",
+      "metadata_conclusion": "failure",
+      "first_failed_step": {
+        "completed_at": "2026-11-08T10:14:33Z",
+        "conclusion": "failure",
+        "name": "Execute exact native from-zero service controls",
+        "number": 12,
+        "started_at": "2026-11-08T10:11:01Z",
+        "status": "completed"
+      },
+      "precondition_steps": [
+        {
+          "name": "Checkout exact candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-08T10:09:13Z",
+          "completed_at": "2026-11-08T10:09:47Z"
+        },
+        {
+          "name": "Verify immutable source identity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-08T10:09:47Z",
+          "completed_at": "2026-11-08T10:09:49Z"
+        },
+        {
+          "name": "Verify source remained unchanged",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-08T10:14:33Z",
+          "completed_at": "2026-11-08T10:14:34Z"
+        },
+        {
+          "name": "Post Checkout exact candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28,
+          "started_at": "2026-11-08T10:14:36Z",
+          "completed_at": "2026-11-08T10:14:36Z"
+        }
+      ],
+      "log": {
+        "path": "job-samples/128698905140/log.stdout",
+        "bytes": 160661,
+        "sha256": "e77c97fb0bfcd896646f1e832be8cba93599e8d9cd3c002dffceacfe7f8f92b0"
+      },
+      "event_expected_values": {
+        "EXPECTED_BASE": null,
+        "EXPECTED_HEAD": null,
+        "EXPECTED_KIND": null,
+        "EXPECTED_MERGE": null
+      },
+      "error_line_count": 1,
+      "relevant_lines": [],
+      "valid_json_log_records": [
+        {
+          "line": 1099,
+          "keys": [
+            "receipt",
+            "result"
+          ]
+        },
+        {
+          "line": 1116,
+          "keys": [
+            "receipt",
+            "result"
+          ]
+        },
+        {
+          "line": 1133,
+          "keys": [
+            "receipt",
+            "result"
+          ]
+        },
+        {
+          "line": 1150,
+          "keys": [
+            "receipt",
+            "result"
+          ]
+        },
+        {
+          "line": 1201,
+          "keys": [
+            "cleanup",
+            "command_argv",
+            "consensus_or_model_authority",
+            "cwd",
+            "failure",
+            "final_host_errors",
+            "final_parent_lease",
+            "gid",
+            "host_readiness_only",
+            "parent_lease",
+            "parent_reused",
+            "passed",
+            "preparation",
+            "schema",
+            "service",
+            "systemd_run_exit",
+            "uid"
+          ],
+          "schema": "trnm-ci-original-public-host-controller-v2",
+          "failure": null
+        }
+      ],
+      "tail_before_last_error": [
+        {
+          "line": 1157,
+          "text": "CARGO_BUILD_JOBS: 2"
+        },
+        {
+          "line": 1158,
+          "text": "RUST_TEST_THREADS: 1"
+        },
+        {
+          "line": 1159,
+          "text": "CARGO_TERM_COLOR: never"
+        },
+        {
+          "line": 1160,
+          "text": "PYTHONDONTWRITEBYTECODE: 1"
+        },
+        {
+          "line": 1161,
+          "text": "TRNM_EXPECTED_SOURCE_SHA: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1162,
+          "text": "TRNM_COST_RUNNER_LABEL: ubuntu-24.04"
+        },
+        {
+          "line": 1163,
+          "text": "CARGO_HOME: /home/runner/work/_temp/cargo-cross-arch-cost"
+        },
+        {
+          "line": 1164,
+          "text": "CARGO_TARGET_DIR: /home/runner/work/_temp/target-cross-arch-cost"
+        },
+        {
+          "line": 1165,
+          "text": "TRNM_CI_RECEIPT_DIR: /home/runner/work/_temp/ci-observations"
+        },
+        {
+          "line": 1166,
+          "text": "##[endgroup]"
+        },
+        {
+          "line": 1167,
+          "text": "{"
+        },
+        {
+          "line": 1168,
+          "text": "\"architecture\": \"x64\","
+        },
+        {
+          "line": 1169,
+          "text": "\"binary_sha256\": \"1c440ee88e37d5bfd9cbd1f5392f708cc99c74bc9e75cee8c1cee5c247dc9051\","
+        },
+        {
+          "line": 1170,
+          "text": "\"receipt\": \"/home/runner/work/_temp/ci-observations/work-rejection\","
+        },
+        {
+          "line": 1171,
+          "text": "\"result\": \"PASS\","
+        },
+        {
+          "line": 1172,
+          "text": "\"source\": {"
+        },
+        {
+          "line": 1173,
+          "text": "\"commit\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\","
+        },
+        {
+          "line": 1174,
+          "text": "\"source_state\": \"committed-clean\","
+        },
+        {
+          "line": 1175,
+          "text": "\"tracked_bytes\": 1683157041,"
+        },
+        {
+          "line": 1176,
+          "text": "\"tracked_entries\": 15390,"
+        },
+        {
+          "line": 1177,
+          "text": "\"tracked_worktree_verified\": true,"
+        },
+        {
+          "line": 1178,
+          "text": "\"tree\": \"19a4f1a6e1cec5c27e595fa555b97cddc4717a3c\""
+        },
+        {
+          "line": 1179,
+          "text": "},"
+        },
+        {
+          "line": 1180,
+          "text": "\"summary\": {"
+        },
+        {
+          "line": 1181,
+          "text": "\"cohorts\": 96,"
+        },
+        {
+          "line": 1182,
+          "text": "\"timed_verifications\": 1152"
+        },
+        {
+          "line": 1183,
+          "text": "}"
+        },
+        {
+          "line": 1184,
+          "text": "}"
+        },
+        {
+          "line": 1185,
+          "text": "##[group]Run python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\""
+        },
+        {
+          "line": 1186,
+          "text": "python3 scripts/ci/run_from_zero_host.py -- python3 scripts/ci/run_from_zero_native.py --out \"$TRNM_CI_RECEIPT_DIR/from-zero-native\""
+        },
+        {
+          "line": 1187,
+          "text": "shell: /usr/bin/bash -e {0}"
+        },
+        {
+          "line": 1188,
+          "text": "env:"
+        },
+        {
+          "line": 1189,
+          "text": "CI: true"
+        },
+        {
+          "line": 1190,
+          "text": "CARGO_INCREMENTAL: 0"
+        },
+        {
+          "line": 1191,
+          "text": "CARGO_BUILD_JOBS: 2"
+        },
+        {
+          "line": 1192,
+          "text": "RUST_TEST_THREADS: 1"
+        },
+        {
+          "line": 1193,
+          "text": "CARGO_TERM_COLOR: never"
+        },
+        {
+          "line": 1194,
+          "text": "PYTHONDONTWRITEBYTECODE: 1"
+        },
+        {
+          "line": 1195,
+          "text": "TRNM_EXPECTED_SOURCE_SHA: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1196,
+          "text": "TRNM_COST_RUNNER_LABEL: ubuntu-24.04"
+        },
+        {
+          "line": 1197,
+          "text": "CARGO_HOME: /home/runner/work/_temp/cargo-cross-arch-cost"
+        },
+        {
+          "line": 1198,
+          "text": "CARGO_TARGET_DIR: /home/runner/work/_temp/target-cross-arch-cost"
+        },
+        {
+          "line": 1199,
+          "text": "TRNM_CI_RECEIPT_DIR: /home/runner/work/_temp/ci-observations"
+        },
+        {
+          "line": 1200,
+          "text": "##[endgroup]"
+        },
+        {
+          "line": 1201,
+          "text": "{\"cleanup\": \"already-collected\", \"command_argv\": [\"python3\", \"scripts/ci/run_from_zero_native.py\", \"--out\", \"/home/runner/work/_temp/ci-observations/from-zero-native\"], \"consensus_or_model_authority\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"failure\": null, \"final_host_errors\": [], \"final_parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-42470186982-1-cross-arch-cost-4251.service\", \"current_service\": \"trnm-from-zero-42470186982-1-cross-arch-cost-4251.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"5d525be3-6512-4204-a4c1-13ec9e979178\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 7128, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794132804281776346, \"device\": 29, \"inode\": 1475, \"mtime_ns\": 1794132804281776346, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1794132805907083734, \"device\": 29, \"inode\": 1524, \"mtime_ns\": 1794132805907083734, \"path\": \"/run/trnm-public-fixture-42470186982-1-cross-arch-cost/parent.json\", \"sha256\": \"e4ebd2f650e177c884a606e821fe23e36d0dc68ba5d05c3153a2fe67808da9e0\", \"size_bytes\": 3199}, \"seal_sha256\": \"e4ebd2f650e177c884a606e821fe23e36d0dc68ba5d05c3153a2fe67808da9e0\"}, \"gid\": 1001, \"host_readiness_only\": true, \"parent_lease\": {\"consensus_or_model_authority\": false, \"creator_service\": \"trnm-from-zero-42470186982-1-cross-arch-cost-4251.service\", \"current_service\": \"trnm-from-zero-42470186982-1-cross-arch-cost-4251.service\", \"host_readiness_only\": true, \"parent_identity\": {\"boot_id\": \"5d525be3-6512-4204-a4c1-13ec9e979178\", \"installed_unit_sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"limits\": {\"cpu.max\": \"25000 100000\", \"cpu.max.burst\": \"0\", \"memory.max\": \"2147483648\", \"memory.swap.max\": \"0\", \"pids.max\": \"256\"}, \"parent\": {\"canonical_path\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"device\": 31, \"directory\": true, \"gid\": 0, \"inode\": 7128, \"mode\": 493, \"symlink\": false, \"uid\": 0}, \"unit_file\": {\"ctime_ns\": 1794132804281776346, \"device\": 29, \"inode\": 1475, \"mtime_ns\": 1794132804281776346, \"path\": \"/run/systemd/system/trnmponpublic.slice\", \"sha256\": \"74eb36a63559bf8603c15ddd3753a1db143684a2cefd84cce5aff10a76bbd622\", \"size_bytes\": 325}}, \"schema\": \"trnm-ci-public-fixture-parent-binding-v1\", \"seal_file\": {\"ctime_ns\": 1794132805907083734, \"device\": 29, \"inode\": 1524, \"mtime_ns\": 1794132805907083734, \"path\": \"/run/trnm-public-fixture-42470186982-1-cross-arch-cost/parent.json\", \"sha256\": \"e4ebd2f650e177c884a606e821fe23e36d0dc68ba5d05c3153a2fe67808da9e0\", \"size_bytes\": 3199}, \"seal_sha256\": \"e4ebd2f650e177c884a606e821fe23e36d0dc68ba5d05c3153a2fe67808da9e0\"}, \"parent_reused\": false, \"passed\": false, \"preparation\": {\"binary_path\": \"/home/runner/work/_temp/target-cross-arch-cost/release/deps/public_v3_from_zero-ff17be0917ddd87e\", \"binary_sha256\": \"a49daad3d2afea43499bd6b5c1ff4d684783b716cfb7d335344a0455d0df98f7\", \"build_env\": {\"CARGO_BUILD_JOBS\": \"2\", \"CARGO_ENCODED_RUSTFLAGS\": null, \"CARGO_HOME\": \"/home/runner/work/_temp/cargo-cross-arch-cost\", \"CARGO_INCREMENTAL\": \"0\", \"CARGO_TARGET_DIR\": \"/home/runner/work/_temp/target-cross-arch-cost\", \"OPENSSL_CONF\": null, \"OPENSSL_DIR\": null, \"OPENSSL_MODULES\": null, \"OPENSSL_STATIC\": null, \"RUSTFLAGS\": null, \"RUSTUP_TOOLCHAIN\": null, \"TRNM_PQ_OPENSSL\": null, \"TRNM_PQ_OPENSSL_SHA256\": null, \"TRNM_PQ_OPENSSL_VERSION\": null}, \"completed\": true, \"consensus_or_model_authority\": false, \"failure_type\": null, \"native_tests_executed\": false, \"process\": {\"command\": [\"cargo\", \"test\", \"--locked\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_from_zero\", \"--no-run\", \"--message-format=json\"], \"cpu_ns\": 263288072000, \"cpu_scope\": \"entire child, not apportioned to nested wall intervals\", \"exit_code\": 0, \"involuntary_switches\": 2671, \"major_faults\": 367, \"max_rss_kib\": 1501376, \"minor_faults\": 3662768, \"rss_scope\": \"whole waited child including pre-exec image; no Rust-only RSS attribution\", \"stderr_sha256\": \"95b8fc82e7acbbe08cb2318601e8d344ec9d6e81022aa2ba67f101f02593f9e9\", \"stdout_sha256\": \"eea62cb00cc5b2dbe7fe911778c9b8fd933f37338e1d80e557aa43ba6e2aad77\", \"system_cpu_ns\": 8981198000, \"timed_out\": false, \"user_cpu_ns\": 254306874000, \"voluntary_switches\": 11518, \"wait4_cpu_resolution_ns\": 1000, \"wall_ns\": 138956646296}, \"schema\": \"trnm-ci-original-native-build-preparation-v1\", \"service_resource_observation\": false, \"source_after\": {\"commit\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"test_sha256\": \"51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"tested_tree\": \"19a4f1a6e1cec5c27e595fa555b97cddc4717a3c\", \"tests_executed_by_identity_check\": false, \"tracked_bytes\": 1683157041, \"tracked_entries\": 15390, \"tracked_worktree_verified\": true}, \"tree\": \"19a4f1a6e1cec5c27e595fa555b97cddc4717a3c\"}, \"source_before\": {\"commit\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"test_sha256\": \"51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a\", \"tracked_source_identity\": {\"base\": null, \"candidate\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"kind\": \"head\", \"prospective_merge\": null, \"schema\": \"trnm-ci-source-v1\", \"tested_commit\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"tested_tree\": \"19a4f1a6e1cec5c27e595fa555b97cddc4717a3c\", \"tes"
+        },
+        {
+          "line": 1202,
+          "text": "##[error]Process completed with exit code 1."
+        },
+        {
+          "line": 1203,
+          "text": "##[group]Run python3 scripts/ci/verify_ci_source.py --kind head --expected-head \"$TRNM_EXPECTED_SOURCE_SHA\""
+        },
+        {
+          "line": 1204,
+          "text": "python3 scripts/ci/verify_ci_source.py --kind head --expected-head \"$TRNM_EXPECTED_SOURCE_SHA\""
+        }
+      ]
+    },
+    {
+      "job_id": 128698905948,
+      "name": "original native campaign (x64, head, release)",
+      "metadata_conclusion": "failure",
+      "first_failed_step": {
+        "completed_at": "2026-11-08T10:19:17Z",
+        "conclusion": "failure",
+        "name": "Run three original campaigns under verified actual limits",
+        "number": 7,
+        "started_at": "2026-11-08T10:10:08Z",
+        "status": "completed"
+      },
+      "precondition_steps": [
+        {
+          "name": "Checkout the immutable candidate head",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-08T10:09:14Z",
+          "completed_at": "2026-11-08T10:09:56Z"
+        },
+        {
+          "name": "Verify actual tracked bytes and original source boundary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-08T10:09:56Z",
+          "completed_at": "2026-11-08T10:09:59Z"
+        },
+        {
+          "name": "Install the source-pinned compiler and fetch locked dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-08T10:09:59Z",
+          "completed_at": "2026-11-08T10:10:08Z"
+        },
+        {
+          "name": "Prepare the exact original test runner without changing source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-08T10:10:08Z",
+          "completed_at": "2026-11-08T10:10:08Z"
+        },
+        {
+          "name": "Run three original campaigns under verified actual limits",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 7,
+          "started_at": "2026-11-08T10:10:08Z",
+          "completed_at": "2026-11-08T10:19:17Z"
+        },
+        {
+          "name": "Preserve final source verification and all partial artifact hashes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-08T10:19:17Z",
+          "completed_at": "2026-11-08T10:19:19Z"
+        },
+        {
+          "name": "Post Checkout the immutable candidate head",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-11-08T10:19:29Z",
+          "completed_at": "2026-11-08T10:19:29Z"
+        }
+      ],
+      "log": {
+        "path": "job-samples/128698905948/log.stdout",
+        "bytes": 203038,
+        "sha256": "5423fad65772ef40a560614aa1f35ba4bb028cba22f099ccd8af4c64268874aa"
+      },
+      "event_expected_values": {
+        "EXPECTED_BASE": null,
+        "EXPECTED_HEAD": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+        "EXPECTED_KIND": null,
+        "EXPECTED_MERGE": null
+      },
+      "error_line_count": 1,
+      "relevant_lines": [
+        {
+          "line": 1377,
+          "text": "bounds.require(build['complete_success'], 'RELEASE_TEST_BUILD_FAILED')"
+        },
+        {
+          "line": 1442,
+          "text": "'ORIGINAL_NATIVE_PHASE_STARTUP_FAILED')"
+        },
+        {
+          "line": 1466,
+          "text": "except (OSError, ValueError, KeyError, TypeError) as error:"
+        },
+        {
+          "line": 1478,
+          "text": "result['failure'] = 'ORIGINAL_THREE_RUN_CAMPAIGN_FAILED'"
+        },
+        {
+          "line": 1479,
+          "text": "except (OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError) as error:"
+        },
+        {
+          "line": 1490,
+          "text": "except (OSError, ValueError, subprocess.SubprocessError) as error:"
+        },
+        {
+          "line": 1498,
+          "text": "except (OSError, ValueError) as error:"
+        }
+      ],
+      "valid_json_log_records": [
+        {
+          "line": 1066,
+          "keys": [
+            "result",
+            "mode",
+            "project",
+            "packages",
+            "branch",
+            "remote_policy_mutated"
+          ]
+        },
+        {
+          "line": 1576,
+          "keys": [
+            "attempts",
+            "binary",
+            "build",
+            "build_timeout_seconds",
+            "complete_success",
+            "completed_utc",
+            "expected_head",
+            "expected_public_policy_id",
+            "expected_resources",
+            "expected_tree",
+            "failure",
+            "finalization_failures",
+            "original_campaign_outer_timeout_seconds",
+            "original_inputs",
+            "planned_complete_runs",
+            "profile",
+            "public_phase_placement",
+            "runner_sha256",
+            "schema",
+            "scope",
+            "source_after",
+            "source_kind",
+            "started_utc",
+            "state_backend",
+            "toolchain"
+          ],
+          "schema": "pon-original-native-campaign-ci-v1",
+          "failure": "ORIGINAL_THREE_RUN_CAMPAIGN_FAILED",
+          "complete_success": false,
+          "expected_head": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+          "expected_tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c",
+          "source_kind": "head",
+          "profile": "release",
+          "original_inputs": {
+            "attacker_processes": [
+              0,
+              24,
+              24
+            ],
+            "business_blocks": 21,
+            "modes": [
+              "baseline",
+              "from-zero",
+              "late-product"
+            ],
+            "phase_seconds": 30,
+            "seed_blocks": 4,
+            "seed_transfers": 1024
+          },
+          "original_campaign_outer_timeout_seconds": 600,
+          "expected_resources": {
+            "cpu_max": "400000 100000",
+            "memory_max": "17179869184",
+            "nice": 10
+          },
+          "public_phase_placement": {
+            "attacker_processes_remain_in_original_controller_domain": true,
+            "fixed_parent": "/sys/fs/cgroup/trnmponpublic.slice",
+            "original_3x3_workload_and_depletion_predicates_changed": false,
+            "profile": "fixed-public-phase-external-actors-v1",
+            "receiver_and_verifier_cpu_max": "25000 100000",
+            "receiver_and_verifier_memory_max": "2147483648"
+          },
+          "attempts": [
+            {
+              "number": 1,
+              "complete_success": false,
+              "original_criteria_met": false,
+              "report_sha256": "5c25a4fc22a86c4e679c9ca2c895054469dca648e664a90910559d4daf745099",
+              "phase_startup_errors": [],
+              "report_validation_failure": null,
+              "step": {
+                "returncode": 101,
+                "elapsed_seconds": 113.622614721,
+                "outer_stage_timeout_seconds": 600,
+                "complete_success": false,
+                "stdout_truncated": false,
+                "stderr_truncated": false
+              }
+            },
+            {
+              "number": 2,
+              "complete_success": false,
+              "original_criteria_met": false,
+              "report_sha256": "51be97be0199d67ee65ead3f05c7f41e933b14a0a9a053908535b27d633bec70",
+              "phase_startup_errors": [],
+              "report_validation_failure": null,
+              "step": {
+                "returncode": 101,
+                "elapsed_seconds": 113.402969263,
+                "outer_stage_timeout_seconds": 600,
+                "complete_success": false,
+                "stdout_truncated": false,
+                "stderr_truncated": false
+              }
+            },
+            {
+              "number": 3,
+              "complete_success": false,
+              "original_criteria_met": false,
+              "report_sha256": "83aa2757ec311953640500eaa7c8e8d4f623d8df97bedd140b467394848dcc03",
+              "phase_startup_errors": [],
+              "report_validation_failure": null,
+              "step": {
+                "returncode": 101,
+                "elapsed_seconds": 113.315760288,
+                "outer_stage_timeout_seconds": 600,
+                "complete_success": false,
+                "stdout_truncated": false,
+                "stderr_truncated": false
+              }
+            }
+          ]
+        }
+      ],
+      "tail_before_last_error": [
+        {
+          "line": 1538,
+          "text": "}"
+        },
+        {
+          "line": 1539,
+          "text": "trap cleanup EXIT"
+        },
+        {
+          "line": 1540,
+          "text": "trap 'exit 130' INT"
+        },
+        {
+          "line": 1541,
+          "text": "trap 'exit 143' TERM"
+        },
+        {
+          "line": 1542,
+          "text": "# No scope/fallback path: a service establishes its own actual cgroup,"
+        },
+        {
+          "line": 1543,
+          "text": "# carries all native children, and must pass the inherited-limit reader."
+        },
+        {
+          "line": 1544,
+          "text": "sudo -n systemd-run --unit=\"$unit\" --wait --pipe --collect \\"
+        },
+        {
+          "line": 1545,
+          "text": "--service-type=exec --expand-environment=no \\"
+        },
+        {
+          "line": 1546,
+          "text": "--uid=\"$(id -u)\" --gid=\"$(id -g)\" \\"
+        },
+        {
+          "line": 1547,
+          "text": "--working-directory=\"$GITHUB_WORKSPACE\" \\"
+        },
+        {
+          "line": 1548,
+          "text": "--property=CPUAccounting=yes --property=MemoryAccounting=yes \\"
+        },
+        {
+          "line": 1549,
+          "text": "--property=CPUQuota=400% --property=CPUQuotaPeriodSec=100ms \\"
+        },
+        {
+          "line": 1550,
+          "text": "--property=MemoryMax=17179869184 --property=Nice=10 \\"
+        },
+        {
+          "line": 1551,
+          "text": "--property=KillMode=control-group --property=TimeoutStopSec=20s \\"
+        },
+        {
+          "line": 1552,
+          "text": "--property=RuntimeMaxSec=4200s \\"
+        },
+        {
+          "line": 1553,
+          "text": "--setenv=\"PATH=$PATH\" --setenv=\"CARGO_HOME=$CARGO_HOME\" \\"
+        },
+        {
+          "line": 1554,
+          "text": "--setenv=\"RUSTUP_HOME=$rustup_home\" --setenv=PYTHONDONTWRITEBYTECODE=1 \\"
+        },
+        {
+          "line": 1555,
+          "text": "--setenv=CI=true --setenv=GITHUB_ACTIONS=true \\"
+        },
+        {
+          "line": 1556,
+          "text": "--setenv=\"GITHUB_WORKSPACE=$GITHUB_WORKSPACE\" \\"
+        },
+        {
+          "line": 1557,
+          "text": "--setenv=\"GITHUB_RUN_ID=$GITHUB_RUN_ID\" --setenv=\"GITHUB_RUN_ATTEMPT=$GITHUB_RUN_ATTEMPT\" \\"
+        },
+        {
+          "line": 1558,
+          "text": "--setenv=\"GITHUB_JOB=$GITHUB_JOB\" \\"
+        },
+        {
+          "line": 1559,
+          "text": "/usr/bin/python3 \"$OUT/run-native-campaign.py\" \\"
+        },
+        {
+          "line": 1560,
+          "text": "\"$GITHUB_WORKSPACE\" \"$OUT\" \"$CARGO_TARGET_DIR\" \"$cargo_path\" \\"
+        },
+        {
+          "line": 1561,
+          "text": "\"$EXPECTED_HEAD\" \"$EXPECTED_TREE\" 2>&1 | tee \"$OUT/systemd-run.log\""
+        },
+        {
+          "line": 1562,
+          "text": "shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}"
+        },
+        {
+          "line": 1563,
+          "text": "env:"
+        },
+        {
+          "line": 1564,
+          "text": "CI: true"
+        },
+        {
+          "line": 1565,
+          "text": "CARGO_INCREMENTAL: 0"
+        },
+        {
+          "line": 1566,
+          "text": "CARGO_BUILD_JOBS: 2"
+        },
+        {
+          "line": 1567,
+          "text": "RUST_TEST_THREADS: 1"
+        },
+        {
+          "line": 1568,
+          "text": "PYTHONDONTWRITEBYTECODE: 1"
+        },
+        {
+          "line": 1569,
+          "text": "EXPECTED_HEAD: 4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "line": 1570,
+          "text": "OUT: /home/runner/work/_temp/pon-native-campaign-42470187035-1"
+        },
+        {
+          "line": 1571,
+          "text": "CARGO_HOME: /home/runner/work/_temp/cargo-native-campaign"
+        },
+        {
+          "line": 1572,
+          "text": "CARGO_TARGET_DIR: /home/runner/work/_temp/target-native-campaign"
+        },
+        {
+          "line": 1573,
+          "text": "EXPECTED_TREE: 19a4f1a6e1cec5c27e595fa555b97cddc4717a3c"
+        },
+        {
+          "line": 1574,
+          "text": "##[endgroup]"
+        },
+        {
+          "line": 1575,
+          "text": "Running as unit: trnm-native-campaign-42470187035-1.service"
+        },
+        {
+          "line": 1576,
+          "text": "{\"attempts\": [{\"complete_success\": false, \"number\": 1, \"original_criteria_met\": false, \"phase_startup_errors\": [], \"report_directory\": \"run-1-raw\", \"report_sha256\": \"5c25a4fc22a86c4e679c9ca2c895054469dca648e664a90910559d4daf745099\", \"report_validation_failure\": null, \"step\": {\"command\": [\"/home/runner/.cargo/bin/cargo\", \"+1.95.0\", \"test\", \"--locked\", \"--offline\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_multiprocess\", \"separate_process_work_and_signed_confirmation_campaign\", \"--\", \"--exact\", \"--ignored\", \"--nocapture\", \"--test-threads=1\"], \"complete_success\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"elapsed_ns\": 113622614721, \"elapsed_seconds\": 113.622614721, \"error\": null, \"name\": \"run-1\", \"outer_stage_timeout_seconds\": 600, \"returncode\": 101, \"stderr\": \"run-1.stderr.log\", \"stderr_bytes\": 1615, \"stderr_sha256\": \"c5dc1f81d1da731bad92559a4005c22906eedce92d2663955d78f6270548bbba\", \"stderr_truncated\": false, \"stdout\": \"run-1.stdout.log\", \"stdout_bytes\": 271, \"stdout_sha256\": \"6d94802c6de8e5ced2f426c52e6d524d82e086e00c2a27de17afc9435e12f85f\", \"stdout_truncated\": false}}, {\"complete_success\": false, \"number\": 2, \"original_criteria_met\": false, \"phase_startup_errors\": [], \"report_directory\": \"run-2-raw\", \"report_sha256\": \"51be97be0199d67ee65ead3f05c7f41e933b14a0a9a053908535b27d633bec70\", \"report_validation_failure\": null, \"step\": {\"command\": [\"/home/runner/.cargo/bin/cargo\", \"+1.95.0\", \"test\", \"--locked\", \"--offline\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_multiprocess\", \"separate_process_work_and_signed_confirmation_campaign\", \"--\", \"--exact\", \"--ignored\", \"--nocapture\", \"--test-threads=1\"], \"complete_success\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"elapsed_ns\": 113402969263, \"elapsed_seconds\": 113.402969263, \"error\": null, \"name\": \"run-2\", \"outer_stage_timeout_seconds\": 600, \"returncode\": 101, \"stderr\": \"run-2.stderr.log\", \"stderr_bytes\": 1615, \"stderr_sha256\": \"7fdb8350adc7ba9e354c1f677cf64fe4337ca38318bbf69f87dca345d2fe4519\", \"stderr_truncated\": false, \"stdout\": \"run-2.stdout.log\", \"stdout_bytes\": 271, \"stdout_sha256\": \"86c9c89d103c2a69abaf0cec13da95a544f52e846469c9681575d3300f856a6f\", \"stdout_truncated\": false}}, {\"complete_success\": false, \"number\": 3, \"original_criteria_met\": false, \"phase_startup_errors\": [], \"report_directory\": \"run-3-raw\", \"report_sha256\": \"83aa2757ec311953640500eaa7c8e8d4f623d8df97bedd140b467394848dcc03\", \"report_validation_failure\": null, \"step\": {\"command\": [\"/home/runner/.cargo/bin/cargo\", \"+1.95.0\", \"test\", \"--locked\", \"--offline\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_multiprocess\", \"separate_process_work_and_signed_confirmation_campaign\", \"--\", \"--exact\", \"--ignored\", \"--nocapture\", \"--test-threads=1\"], \"complete_success\": false, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"elapsed_ns\": 113315760288, \"elapsed_seconds\": 113.315760288, \"error\": null, \"name\": \"run-3\", \"outer_stage_timeout_seconds\": 600, \"returncode\": 101, \"stderr\": \"run-3.stderr.log\", \"stderr_bytes\": 1615, \"stderr_sha256\": \"d2f9fa4c64305825f9056ae8d40a01c996cb19cb476c567ae03949a597b82455\", \"stderr_truncated\": false, \"stdout\": \"run-3.stdout.log\", \"stdout_bytes\": 271, \"stdout_sha256\": \"e9874239f1a60e85321f47d2171a6d140505d7ecdd2fda365bd8e59597af942a\", \"stdout_truncated\": false}}], \"binary\": {\"actual_compiler_artifact_profile\": {\"debug_assertions\": false, \"debuginfo\": 0, \"opt_level\": \"3\", \"overflow_checks\": false, \"test\": true}, \"build_artifact\": \"/home/runner/work/_temp/target-native-campaign/release/deps/public_v3_multiprocess-7f61597ebed162d6\", \"build_separate_from_measured_campaign\": true, \"bytes\": 11767928, \"execution\": \"original cargo test command using the checked build artifact\", \"retained\": \"public_v3_multiprocess.bin\", \"sha256_after\": \"f06df19ac5c2c1b683dd807604ca50b296979f0f277f121945ededef85ac6a75\", \"sha256_before\": \"f06df19ac5c2c1b683dd807604ca50b296979f0f277f121945ededef85ac6a75\"}, \"build\": {\"command\": [\"/home/runner/.cargo/bin/cargo\", \"+1.95.0\", \"test\", \"--locked\", \"--offline\", \"--release\", \"--manifest-path\", \"trillionnium/Cargo.toml\", \"-p\", \"trnm-pon-node\", \"--test\", \"public_v3_multiprocess\", \"--no-run\", \"--message-format=json\"], \"complete_success\": true, \"cwd\": \"/home/runner/work/Trillionnium-Chain/Trillionnium-Chain\", \"elapsed_ns\": 186309800318, \"elapsed_seconds\": 186.309800318, \"error\": null, \"name\": \"build\", \"outer_stage_timeout_seconds\": 1800, \"returncode\": 0, \"stderr\": \"build.stderr.log\", \"stderr_bytes\": 4021, \"stderr_sha256\": \"3b4600545ed702c32134be8e79e15e64e8cc2e037a08ea9d49ed4f64e3c53966\", \"stderr_truncated\": false, \"stdout\": \"build.stdout.log\", \"stdout_bytes\": 111546, \"stdout_sha256\": \"e7c28c2299e2c7186f9894e209d91ee53186755eb4f704ef2b4ad67e4b7a5b6a\", \"stdout_truncated\": false}, \"build_timeout_seconds\": 1800, \"complete_success\": false, \"completed_utc\": \"2026-11-08T10:19:17.010586+00:00\", \"expected_head\": \"4e007a87ceecbec8d265f6a70cfd71d512a514b5\", \"expected_public_policy_id\": \"6d04725d8e7a84560baf69440b1becd79f47c9f1fb5e63b85f1447400c85d43f\", \"expected_resources\": {\"cpu_max\": \"400000 100000\", \"memory_max\": \"17179869184\", \"nice\": 10}, \"expected_tree\": \"19a4f1a6e1cec5c27e595fa555b97cddc4717a3c\", \"failure\": \"ORIGINAL_THREE_RUN_CAMPAIGN_FAILED\", \"finalization_failures\": [], \"original_campaign_outer_timeout_seconds\": 600, \"original_inputs\": {\"attacker_processes\": [0, 24, 24], \"business_blocks\": 21, \"modes\": [\"baseline\", \"from-zero\", \"late-product\"], \"phase_seconds\": 30, \"seed_blocks\": 4, \"seed_transfers\": 1024}, \"planned_complete_runs\": 3, \"profile\": \"release\", \"public_phase_placement\": {\"attacker_processes_remain_in_original_controller_domain\": true, \"fixed_parent\": \"/sys/fs/cgroup/trnmponpublic.slice\", \"original_3x3_workload_and_depletion_predicates_changed\": false, \"profile\": \"fixed-public-phase-ext"
+        },
+        {
+          "line": 1577,
+          "text": "Finished with result: exit-code"
+        },
+        {
+          "line": 1578,
+          "text": "Main processes terminated with: code=exited/status=1"
+        },
+        {
+          "line": 1579,
+          "text": "Service runtime: 9min 8.099s"
+        },
+        {
+          "line": 1580,
+          "text": "CPU time consumed: 7min 16.651s"
+        },
+        {
+          "line": 1581,
+          "text": "Memory peak: 1.6G"
+        },
+        {
+          "line": 1582,
+          "text": "Memory swap peak: 0B"
+        },
+        {
+          "line": 1583,
+          "text": "##[error]Process completed with exit code 1."
+        },
+        {
+          "line": 1584,
+          "text": "##[group]Run set -uo pipefail"
+        },
+        {
+          "line": 1585,
+          "text": "set -uo pipefail"
+        }
+      ]
+    }
+  ]
+}

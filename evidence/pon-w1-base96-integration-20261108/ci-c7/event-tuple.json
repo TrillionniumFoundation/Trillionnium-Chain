@@ -1,0 +1,119 @@
+{
+  "EXPECTED_BASE_SHA": null,
+  "EXPECTED_HEAD_SHA": null,
+  "EXPECTED_MERGE_SHA": null,
+  "compare_projection": {
+    "ahead_by": 13,
+    "base_commit": "9417e495165865ef6c1288b39084856e31020634",
+    "behind_by": 2,
+    "commits": [
+      {
+        "parents": [
+          "adebe0bd78e6e1bdb55a599179ffe2313997170e"
+        ],
+        "sha": "f83700b1d1096b4d4058631bd4736a56c0081623"
+      },
+      {
+        "parents": [
+          "f83700b1d1096b4d4058631bd4736a56c0081623"
+        ],
+        "sha": "b6c730c2a81b932266c9a8b93858e2641aafd9f7"
+      },
+      {
+        "parents": [
+          "b6c730c2a81b932266c9a8b93858e2641aafd9f7"
+        ],
+        "sha": "d3037ca5dfb6f301757c159b7888dca9b0317be0"
+      },
+      {
+        "parents": [
+          "819309fd312298e099642e1253b1d4ba07113e98",
+          "d3037ca5dfb6f301757c159b7888dca9b0317be0"
+        ],
+        "sha": "c2988ed56ba475888d93428add7db27700c14e8c"
+      },
+      {
+        "parents": [
+          "c2988ed56ba475888d93428add7db27700c14e8c"
+        ],
+        "sha": "cb557c5e59b00ba7c6b1d40f78fbe51031a26f11"
+      },
+      {
+        "parents": [
+          "cb557c5e59b00ba7c6b1d40f78fbe51031a26f11"
+        ],
+        "sha": "0f18f93f2d35b62c6ca6d63faf4f336d55cbf4bf"
+      },
+      {
+        "parents": [
+          "0f18f93f2d35b62c6ca6d63faf4f336d55cbf4bf"
+        ],
+        "sha": "cc4dd8bdd89309c635831db30b508af2f89419d7"
+      },
+      {
+        "parents": [
+          "cc4dd8bdd89309c635831db30b508af2f89419d7",
+          "cb314bb4656e5da4844325cd83994ab4764fe8e9"
+        ],
+        "sha": "abab79dac0cb89eb2753d3f579119ac135650eb5"
+      },
+      {
+        "parents": [
+          "abab79dac0cb89eb2753d3f579119ac135650eb5"
+        ],
+        "sha": "a5ec1ba30916400c345cb47679602cfb1b30a65f"
+      },
+      {
+        "parents": [
+          "a5ec1ba30916400c345cb47679602cfb1b30a65f"
+        ],
+        "sha": "5c489cc2064c3edfc6641f21fea4b46cb0c8e24e"
+      },
+      {
+        "parents": [
+          "5c489cc2064c3edfc6641f21fea4b46cb0c8e24e"
+        ],
+        "sha": "034aa74358e0a5fa33f33e83cb63669e9738da4b"
+      },
+      {
+        "parents": [
+          "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+          "62d2d90c9e1f4c8450c89843f1e08360a24283ce"
+        ],
+        "sha": "2bdd252aa6c300b7431b9ee897b254b7953cf562"
+      },
+      {
+        "parents": [
+          "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+          "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75"
+        ],
+        "sha": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe"
+      }
+    ],
+    "merge_base_commit": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+    "status": "diverged",
+    "total_commits": 13
+  },
+  "observed_PR_API_base": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+  "observed_PR_API_head": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+  "observed_PR_API_merge": null,
+  "observed_actual_git_refs": {
+    "refs/heads/fix/chain-six-axis-performance-20261103": "9417e495165865ef6c1288b39084856e31020634",
+    "refs/heads/fix/chain-w1-runtime-integrated-20261107": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "refs/pull/782/head": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "refs/pull/782/merge": "7b4a63b6f08687e93270407772951aa71087ca3d"
+  },
+  "reason": "No exact-C7 check runs or workflow runs were present in the successful bounded reads; no job/event declaration was observed.",
+  "retained_merge_object": {
+    "message": "Merge 2bdd252aa6c300b7431b9ee897b254b7953cf562 into 96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+    "parents": [
+      "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+      "2bdd252aa6c300b7431b9ee897b254b7953cf562"
+    ],
+    "sha": "7b4a63b6f08687e93270407772951aa71087ca3d",
+    "tree": "d73e57c9e7a5764a1ab33540c97af587bb6e4a69"
+  },
+  "schema": "TRNM-W1-C7-UNOBSERVED-EVENT-TUPLE1",
+  "source_guard_changed": false,
+  "values_inferred_from_API_or_merge": false
+}

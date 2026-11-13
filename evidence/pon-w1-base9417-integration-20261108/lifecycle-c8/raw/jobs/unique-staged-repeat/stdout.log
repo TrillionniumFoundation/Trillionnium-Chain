@@ -1,0 +1,6 @@
+{"schema": "TRNM-W1-C8-STAGED-DECLARED-REPEAT-LAUNCH1", "known_components_terminal_and_currently_inactive": 7, "pre_staged_methods": 633, "new_operation_not_created": true}
+{"label": "00-preflight", "exit": 0, "python_test_counts": [], "rust_test_outcomes": []}
+{"label": "01-source-before", "exit": 0, "python_test_counts": [], "rust_test_outcomes": []}
+{"label": "02-w1-retained-staged-tests", "exit": 0, "python_test_counts": [32], "rust_test_outcomes": []}
+{"label": "99-source-after", "exit": 0, "python_test_counts": [], "rust_test_outcomes": []}
+{"qualification_complete": true, "actual_command_count": 4, "python_test_methods_reported": 32, "rust_test_outcomes": {"passed": 0, "failed": 0, "ignored": 0}}

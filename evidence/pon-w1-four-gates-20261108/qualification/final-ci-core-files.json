@@ -1,0 +1,272 @@
+[
+  {
+    "path": "00-preflight.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "00-preflight.stdout",
+    "bytes": 170,
+    "sha256": "7885d1d19800193c6a37881d4781e5a84dfe2bfb0082d5f3d12df4cdfce9ca04"
+  },
+  {
+    "path": "01-source-before.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "01-source-before.stdout",
+    "bytes": 423,
+    "sha256": "6fb5a9059bd227ff8abbd70e2ee1c16c5da40508121b7f239c1615fce712a362"
+  },
+  {
+    "path": "02-ci-contract.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "02-ci-contract.stdout",
+    "bytes": 180,
+    "sha256": "1811739ab56176be2d74cfd1b12a86ba05919a96769d5479faca6db12f37dd54"
+  },
+  {
+    "path": "03-pq-integration.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "03-pq-integration.stdout",
+    "bytes": 557,
+    "sha256": "8acbcab9e45540255e8e577cbc51776debef5005f06e49757cf9bbc6f9dc7f0c"
+  },
+  {
+    "path": "04-distributed-inventory.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "04-distributed-inventory.stdout",
+    "bytes": 35,
+    "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+  },
+  {
+    "path": "05-current-implementation.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "05-current-implementation.stdout",
+    "bytes": 71,
+    "sha256": "431e373353829a7aa76abab6c3a606519c90290e2dc0909202c9a9f4cab92be3"
+  },
+  {
+    "path": "06-repository-and-markdown-links.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "06-repository-and-markdown-links.stdout",
+    "bytes": 307,
+    "sha256": "813677295013724cc654d1bba662d532b02f9a3f35bd04218e79542f3fdaaa0e"
+  },
+  {
+    "path": "07-ci-contract-tests.stderr",
+    "bytes": 19171,
+    "sha256": "f02f19e7b47f3c64a44e29cc9617d919686a5f1dc6bbad8ad4931a50604d25b9"
+  },
+  {
+    "path": "07-ci-contract-tests.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "08-pq-source-negative-tests.stderr",
+    "bytes": 5643,
+    "sha256": "1379c7c3996fa24a8da44982afadfcba6be7021aa8b65931f0b27ee53c22559d"
+  },
+  {
+    "path": "08-pq-source-negative-tests.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "09-ci-execution-source-integrity-tests.stderr",
+    "bytes": 12414,
+    "sha256": "d715c363c43b8513cac82131821174b69243abef1150dec8d0e604db4972949b"
+  },
+  {
+    "path": "09-ci-execution-source-integrity-tests.stdout",
+    "bytes": 484,
+    "sha256": "e38bfd95f7db22479b9919df4a541dce6d028503a3b95072caa67af03805898d"
+  },
+  {
+    "path": "10-project-boundary-tests.stderr",
+    "bytes": 2425,
+    "sha256": "576a149c1592da226a967f1976fa9e0a0e1ce17a292b74d2a36076047ef64061"
+  },
+  {
+    "path": "10-project-boundary-tests.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "11-integration-legacy-reorg-reader-tests.stderr",
+    "bytes": 101,
+    "sha256": "edaea244b13bb4717b5b983ad9b89832b6e95a6eedf4961aefae3124c6d3892e"
+  },
+  {
+    "path": "11-integration-legacy-reorg-reader-tests.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "12-integration-push-source-tests.stderr",
+    "bytes": 112,
+    "sha256": "41d8f89af1a001609835df188371e8ed3cf520793c3f41641d613f9e95c8b3a9"
+  },
+  {
+    "path": "12-integration-push-source-tests.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "13-w1-current-command-block.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "13-w1-current-command-block.stdout",
+    "bytes": 29078,
+    "sha256": "c4706b4591b972f8ff2763c8d67c361cd5c5425f2a121d590dcb6c765874c579"
+  },
+  {
+    "path": "14-w1-retained-staged-tests.stderr",
+    "bytes": 5752,
+    "sha256": "c3a2a7c27340cd76647e44714c998a24b1f413fdf75cb233074f2e3140ffc34e"
+  },
+  {
+    "path": "14-w1-retained-staged-tests.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "15-w1-historical-readback-tests.stderr",
+    "bytes": 1842,
+    "sha256": "11866782d114a54b430627aa15db30d5cd0b9419764bfa7ab8c2575e229827db"
+  },
+  {
+    "path": "15-w1-historical-readback-tests.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "16-w1-full-v2-disposition-tests.stderr",
+    "bytes": 1874,
+    "sha256": "5e6d802f6276085b70526c303af8767b282a1846a7d9b7274dab420558d5bc75"
+  },
+  {
+    "path": "16-w1-full-v2-disposition-tests.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "17-repository-negatives.stderr",
+    "bytes": 5345,
+    "sha256": "b6b5bd3a6453850a8295842fc020cf3161423c0b8e6e2b608bb2dd9c30b91fe2"
+  },
+  {
+    "path": "17-repository-negatives.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "99-source-after.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "99-source-after.stdout",
+    "bytes": 423,
+    "sha256": "6fb5a9059bd227ff8abbd70e2ee1c16c5da40508121b7f239c1615fce712a362"
+  },
+  {
+    "path": "ci-receipts/w1-postwin-contracts/cancellation-handoff.log",
+    "bytes": 4352,
+    "sha256": "4a991ebda2e3c9f90e725faee73393532276e283cfece3c946bece1f9b7124fa"
+  },
+  {
+    "path": "ci-receipts/w1-postwin-contracts/coordinator-contract.log",
+    "bytes": 3833,
+    "sha256": "be24628bfd7a8ec3e93cd4f0429762c7682ca25c704d40de34413479092fedc6"
+  },
+  {
+    "path": "ci-receipts/w1-postwin-contracts/deployment-comparison-audit.log",
+    "bytes": 3505,
+    "sha256": "a86b720866a77b22fcd277b1c4e1bb7f16d88f9d50a1b192b00c1069b86c5b60"
+  },
+  {
+    "path": "ci-receipts/w1-postwin-contracts/deployment-evidence-binding.log",
+    "bytes": 2465,
+    "sha256": "f150e91bc3f2f8c9e3219eb45de3104ea4d30e7cf7cdb1863091807b1fa45eaa"
+  },
+  {
+    "path": "ci-receipts/w1-postwin-contracts/generation-target.log",
+    "bytes": 2457,
+    "sha256": "922a4e5380b8890563a8bf92022da32790c6ba534f868003bed47a444156fb27"
+  },
+  {
+    "path": "ci-receipts/w1-postwin-contracts/kaggle-worker-contract.log",
+    "bytes": 2195,
+    "sha256": "f2b92b2dc9ea311ec41d4ad5fdc2e603d68b65d15103424a0c82c42b080ea3b5"
+  },
+  {
+    "path": "ci-receipts/w1-postwin-contracts/owned-process-collector.log",
+    "bytes": 2459,
+    "sha256": "7c203dc299f8829f4cec6f3060a9f73a458886ba9842963a4f67d60d359825a5"
+  },
+  {
+    "path": "ci-receipts/w1-postwin-contracts/owned-runtime-reader.log",
+    "bytes": 1555,
+    "sha256": "67cc63580df1f8c37a8b4f6ccc6951bbb7446c63c40e70da48332d85ce8a8b1b"
+  },
+  {
+    "path": "ci-receipts/w1-postwin-contracts/owner-cancellation.log",
+    "bytes": 1642,
+    "sha256": "e5758aa42f1ccfb99d3c7561db55505c52c646f874d17d2ea0888e9248334aa5"
+  },
+  {
+    "path": "ci-receipts/w1-postwin-contracts/provider-contract.log",
+    "bytes": 2099,
+    "sha256": "22abdbd6a751d4a6789ce34b15e0467139cca3908cbbcd808454da25f682a35f"
+  },
+  {
+    "path": "ci-receipts/w1-postwin-contracts/source-builder.log",
+    "bytes": 1662,
+    "sha256": "8b51881bf04a97b24d132111f4dbe80d35865db02bdf844f59e1cc491b0f6f63"
+  },
+  {
+    "path": "ci-receipts/w1-postwin-contracts/winner-identity.log",
+    "bytes": 854,
+    "sha256": "4ae13dbc34e6eeabe1aba0f9952475cbeef08844d3676e9effca0f295f890f52"
+  },
+  {
+    "path": "manifest.json",
+    "bytes": 20678,
+    "sha256": "5d12af80e48036c7a9a5549a2910f1c41da5c106460ed9fda7e7727c3e6ab702"
+  },
+  {
+    "path": "source-after.json",
+    "bytes": 423,
+    "sha256": "6fb5a9059bd227ff8abbd70e2ee1c16c5da40508121b7f239c1615fce712a362"
+  },
+  {
+    "path": "source-before.json",
+    "bytes": 423,
+    "sha256": "6fb5a9059bd227ff8abbd70e2ee1c16c5da40508121b7f239c1615fce712a362"
+  },
+  {
+    "path": "w1-current-command-block.sh",
+    "bytes": 3040,
+    "sha256": "834bdd9e3b21373e527917eeab8f0c44b065390b8303b301a71592675a2973e5"
+  }
+]

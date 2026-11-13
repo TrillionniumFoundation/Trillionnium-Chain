@@ -1,0 +1,31 @@
+{
+  "all_assertions_passed": true,
+  "new_experiments": 0,
+  "new_node_submissions": 0,
+  "typed_terminal_digest_recomputed": "b310ec2a11efe9edfd35a5df2a0c19734f7bd775e26557adc46a0e695b03a2a6",
+  "runtime_evidence_digest_recomputed": "87e685ab5d04ba782256300c33bc4dbfa72f5ef559fe3799a216348857ac7ba8",
+  "hot_and_independent_cold_target_readback_identical": true,
+  "original_native_cancel_observation_identical_before_after_reorg_and_cold": true,
+  "operation": "3c722d76b352db7450c53321368b305782f25612b9ed1fb806c49c5ec7fb5c77",
+  "statement": "5592f86e015fe11571eecdb9594d3b35b7eeb074a1b9488cb4a50acfeb89ef7b",
+  "provider_job": {
+    "identity": {
+      "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+      "pid": 3171715,
+      "start_ticks": 119168803
+    },
+    "job_id": "aefb71d1b45928150c939192ce58360f34ca7f91d37ea0ce46eea83a06a8869f",
+    "operation": "3c722d76b352db7450c53321368b305782f25612b9ed1fb806c49c5ec7fb5c77",
+    "provider_namespace": "e4856b8754b0717e2e4bc9c3b0a74ec0f509e83fafa67ad3c3a7aa8ece598d3a",
+    "request_sha256": "175e1e5209a4c53b0000c0d52ff41706f0e3d5515561926f1060a71c021342d0"
+  },
+  "original_deadline_ns": 1191795668407846,
+  "resource_cap": {
+    "cpu_ns": 960000000000,
+    "gpu_ns": 240000000000,
+    "memory_peak_upper_bound_bytes": 8589934592,
+    "receipt_bytes": 16777216
+  },
+  "owner_balance_branch_difference": 709,
+  "no_complete_proof_or_resource_qualification": true
+}

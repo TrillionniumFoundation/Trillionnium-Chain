@@ -1,0 +1,23 @@
+{
+  "CI_reruns": 0,
+  "cold_terminal_job": "1a1baac4fa2-12894-1c66",
+  "dispatches": 0,
+  "fixed_integrated_base": "9417e495165865ef6c1288b39084856e31020634",
+  "full_history_wait": false,
+  "heavy_terminal_job": "1a1baa770fd-12894-1c3b",
+  "maximum_check_pages": 10,
+  "maximum_completed_job_samples": 6,
+  "maximum_pr_reads": 2,
+  "maximum_workflow_run_pages": 10,
+  "new_base_integration_or_qualification": 0,
+  "outer_timeout_seconds": 600,
+  "page_size": 100,
+  "pull_request": 782,
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "root_execution_authorization": "\u73b0\u5728\u6b63\u5f0f\u5141\u8bb8\u542f\u52a8C8\u6709\u754cCI observer\uff1am12 heavy1c3b+independent cold1c66\u90fdactual success0 complete/durable\uff0cquiet\u5df2\u7ed3\u675f\u3002",
+  "root_push_job": "1a1baa13bb5-12894-1c09",
+  "schema": "TRNM-W1-C8-CI-OBSERVER-DECLARATION1",
+  "source_changes": 0,
+  "source_commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "transport_command_timeout_seconds": 60
+}

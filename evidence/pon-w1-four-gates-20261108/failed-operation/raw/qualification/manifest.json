@@ -1,0 +1,239 @@
+{
+  "cargo_artifact": {
+    "executable": "/home/qian-qi/work/chain-w1-m12-terminal-target-20261108-ec265b/debug/deps/trnm_pon_node-fc27c767cf2f262e",
+    "features": [
+      "default"
+    ],
+    "filenames": [
+      "/home/qian-qi/work/chain-w1-m12-terminal-target-20261108-ec265b/debug/deps/trnm_pon_node-fc27c767cf2f262e"
+    ],
+    "fresh": true,
+    "manifest_path": "/home/qian-qi/work/chain-w1-m12-terminal-20261108-ec265b/trillionnium/crates/trnm-pon-node/Cargo.toml",
+    "package_id": "path+file:///home/qian-qi/work/chain-w1-m12-terminal-20261108-ec265b/trillionnium/crates/trnm-pon-node#0.1.0",
+    "profile": {
+      "debug_assertions": true,
+      "debuginfo": 2,
+      "opt_level": "3",
+      "overflow_checks": true,
+      "test": true
+    },
+    "reason": "compiler-artifact",
+    "target": {
+      "crate_types": [
+        "lib"
+      ],
+      "doc": true,
+      "doctest": true,
+      "edition": "2021",
+      "kind": [
+        "lib"
+      ],
+      "name": "trnm_pon_node",
+      "src_path": "/home/qian-qi/work/chain-w1-m12-terminal-20261108-ec265b/trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "test": true
+    }
+  },
+  "cargo_target": "/home/qian-qi/work/chain-w1-m12-terminal-target-20261108-ec265b",
+  "commands": [
+    {
+      "argv": [
+        "cargo",
+        "metadata",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--format-version=1"
+      ],
+      "exit": 0,
+      "label": "metadata",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/qualification/metadata.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 825875,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/qualification/metadata.stdout",
+        "sha256": "99b95928bbfb2357c975b31ff49485f5f2577b2bb0e7f91a6265af536b035733"
+      }
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "async_w1_generation_v2::tests",
+        "--",
+        "--nocapture"
+      ],
+      "exit": 0,
+      "label": "owner",
+      "stderr": {
+        "bytes": 215,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/qualification/owner.stderr",
+        "sha256": "53dd9b19b866b492c024ea4e8cd89103a9c6109d8a90c48eace4e1d8c5daf578"
+      },
+      "stdout": {
+        "bytes": 3696,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/qualification/owner.stdout",
+        "sha256": "1db976e7b529238d75789858736082dcb0b0a8750e6ce87b4eda74055da4cbcf"
+      }
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-service-settlement",
+        "--lib",
+        "native_generation_budget_v2",
+        "--",
+        "--nocapture"
+      ],
+      "exit": 0,
+      "label": "m12",
+      "stderr": {
+        "bytes": 225,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/qualification/m12.stderr",
+        "sha256": "39c8283531bc1c5b087f700110ca84c760260488560239511ab9307f057e4e15"
+      },
+      "stdout": {
+        "bytes": 1428,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/qualification/m12.stdout",
+        "sha256": "5be65e597a413995cbf697b83445ddd63a2768a0ea96a3e5e68cf0bec4f6b2bb"
+      }
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "--lib",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "exit": 0,
+      "label": "artifact",
+      "stderr": {
+        "bytes": 73,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/qualification/artifact.stderr",
+        "sha256": "99042cf5e7b4cee4afcff3f41854b35318c1399135a3531d1f6f511446369ce3"
+      },
+      "stdout": {
+        "bytes": 105715,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/qualification/artifact.stdout",
+        "sha256": "b54febef0087137cfc8d29f7c0c6a5f4f5157e2107f2dc9316b05e012441d5d9"
+      }
+    },
+    {
+      "argv": [
+        "cargo",
+        "clippy",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "-p",
+        "trnm-pon-node",
+        "-p",
+        "trnm-service-settlement",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "label": "clippy",
+      "stderr": {
+        "bytes": 72,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/qualification/clippy.stderr",
+        "sha256": "5604fc8f0c276397a55db4bd7008236712075c0ad37d3b3a0f1fe362b1b85a36"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/qualification/clippy.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "label": "fmt",
+      "stderr": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/qualification/fmt.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/qualification/fmt.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3.12",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_w1_owner_cancellation_v1.py",
+        "-v"
+      ],
+      "exit": 0,
+      "label": "python",
+      "stderr": {
+        "bytes": 1642,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/qualification/python.stderr",
+        "sha256": "58a2cc703ab07187b444ab3f2e17e773a85d3715d82112054d851358b0c75ce1"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/home/qian-qi/work/chain-w1-m12-timeout-20261108-ec265b/qualification/python.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "fixed_guest_compilation_performed": false,
+  "fresh_cargo_target": false,
+  "independent_reproducible_build_established": false,
+  "owner_binary": {
+    "bytes": 473692640,
+    "path": "/home/qian-qi/work/chain-w1-m12-terminal-target-20261108-ec265b/debug/deps/trnm_pon_node-fc27c767cf2f262e",
+    "sha256": "d75d92ff804ce4a62bdddec2ef35823b21c294c7f97a96e5be55eb85341fde3f"
+  },
+  "schema": "TRNM-W1-TIMEOUT-OWNER-QUALIFICATION1",
+  "source": {
+    "commit": "a5ec1ba30916400c345cb47679602cfb1b30a65f",
+    "tree": "51afe5a040116ada3b15a2891bbbcf2a64e15132"
+  },
+  "source_clean_after": true,
+  "source_clean_before": true
+}

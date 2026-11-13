@@ -1,0 +1,166 @@
+{
+  "can_authorize_payment": false,
+  "cancellation": "057b1bf9d039851243581ea51aaca287c4f15c54ab3fe955f44c886b7ea213ac",
+  "deadline_renewed": false,
+  "m12_begin": "Done",
+  "native_task": {
+    "canonical_cancel_observed": true,
+    "canonical_inclusion": "9106aa00fd98086ceba112c228c487398311b407bf81dd886378c2b0587f06fd",
+    "funding_row": {
+      "deadline": 20,
+      "output": null,
+      "owner": "79d3023128759656479a24a9743351ec40ee968259f1ca85f3baf7d2d6b012e9",
+      "provider": "9149a2c9e8a11696f5aefd686c851c27d3311e685640a66f2c1ff1cc13f1a7dc",
+      "remaining": 0,
+      "status": "cancelled"
+    },
+    "gross_owner_refund_units": 1000,
+    "native_cancel_attempt_retained": true,
+    "net_account_delta_not_claimed": true,
+    "new_transaction_submitted": false,
+    "original_operation": "dba9793565d7ae83790eaba3abb255fad2643d9b2d5696196a426ae289c7d83f",
+    "refund_basis": "actual original owner-signed tag 3 in canonical ancestry; not provider status or resource accounting",
+    "refund_claim": true
+  },
+  "native_transactions_submitted": 0,
+  "new_generation_dispatches": 0,
+  "original_deadline_ns": 1210689011653932,
+  "original_operation": "a35153e046b91421e3d8d67c0d5f053b88a87f4f8ac8213f8e3ee09f5f1be1e9",
+  "original_resource_cap_retained": true,
+  "original_statement": "a2dd4830465ce6192ef48b53be74582feb886b526a93fb4f8e8f52b1c7cb80e2",
+  "production_qualified": false,
+  "schema": "TRNM-W1-OWNER-TIMEOUT-COLD-READBACK1",
+  "target_cancel_requests_sent": 0,
+  "target_observation": {
+    "actual_command": {
+      "all_descendants_reaped": null,
+      "argv": [
+        "/usr/bin/python3.12",
+        "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/scripts/w1_generation_target_v2.py",
+        "reconcile",
+        "--root",
+        "/home/qian-qi/work/chain-w1-c8-timeout-reorg-20261108-ec265b-01/target-state",
+        "--target",
+        "w1-timeout-chain-w1-c8-timeout-reorg-20261108-ec265b-01",
+        "--operation",
+        "a35153e046b91421e3d8d67c0d5f053b88a87f4f8ac8213f8e3ee09f5f1be1e9"
+      ],
+      "can_authorize_payment": false,
+      "completed_monotonic_ns": 1210889405028558,
+      "completion_clock_scope": "actual Rust caller observed helper exit; not helper pre-handoff timestamp",
+      "completion_observed_before_original_proof_deadline": false,
+      "direct_child_waited": true,
+      "original_proof_deadline_ns": 1210689011653932,
+      "pid": 16680,
+      "proof_deadline_renewed": false,
+      "returncode": 0,
+      "schema": "TRNM-W1-OWNER-CANCEL-COMMAND1",
+      "signal": null,
+      "started_monotonic_ns": 1210889302209290,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "14f27210b356b10f25eb468482aae3b04a6245bf4ccede165a071c366b9958ec",
+      "timed_out": false
+    },
+    "fresh_recursive_process_scope_qualification": false,
+    "retained_target_readback": {
+      "can_authorize_payment": false,
+      "may_dispatch_again": false,
+      "operation": "a35153e046b91421e3d8d67c0d5f053b88a87f4f8ac8213f8e3ee09f5f1be1e9",
+      "original_deadline_monotonic_ns": 1210689011653932,
+      "request_sha256": "4384036a001f06211515f94386629dc7082d4b9d8438543e77cf18683ffc0023",
+      "result": {
+        "all_descendants_reaped": null,
+        "all_owned_processes_terminal": true,
+        "can_authorize_payment": false,
+        "cause": "original-deadline",
+        "cgroup_members_after_cleanup": [],
+        "child_cgroup_observation": {
+          "all_descendants_reaped": null,
+          "events": {
+            "frozen": 0,
+            "populated": 0
+          },
+          "groups": {
+            "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1baa770fd-12894-1c3b.service/trnm-w1-generation-a35153e046b91421e3d8d67c0d5f053b88a87f4f8ac8213f8e3ee09f5f1be1e9": {
+              "device": 30,
+              "inode": 65617392
+            }
+          },
+          "identity": {
+            "device": 30,
+            "inode": 65617392
+          },
+          "members": [],
+          "observation_complete": true,
+          "path": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1baa770fd-12894-1c3b.service/trnm-w1-generation-a35153e046b91421e3d8d67c0d5f053b88a87f4f8ac8213f8e3ee09f5f1be1e9",
+          "recursive_empty": true,
+          "schema": "TRNM-W1-OWNED-CGROUP-OBSERVATION1"
+        },
+        "child_identity": {
+          "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+          "pid": 6070,
+          "start_ticks": 121058338
+        },
+        "clock_domain": "1207d3120dc710b3f202bfa303a68c72826c81fe093d762cdb841995caeb56ab",
+        "command_success": false,
+        "direct_child_reaped": true,
+        "error": null,
+        "exit_code": -9,
+        "finished_monotonic_ns": 1210689304224509,
+        "generation_qualification": "requires-full-independent-verifier-and-fresh-pipeline-closure",
+        "may_dispatch_again": false,
+        "operation": "a35153e046b91421e3d8d67c0d5f053b88a87f4f8ac8213f8e3ee09f5f1be1e9",
+        "original_deadline_monotonic_ns": 1210689011653932,
+        "process_containment": "cgroup-v2",
+        "provider_job": {
+          "identity": {
+            "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+            "pid": 5939,
+            "start_ticks": 121058198
+          },
+          "job_id": "24c4bd774e2b87a33d86a2378e8be124f14295883bca3ecbee4a6da088cf06fc",
+          "operation": "a35153e046b91421e3d8d67c0d5f053b88a87f4f8ac8213f8e3ee09f5f1be1e9",
+          "provider_namespace": "23046670378197b0b2f636b5dc33fc2fc33457294d829e4a31385c2f46ee7b58",
+          "request_sha256": "4384036a001f06211515f94386629dc7082d4b9d8438543e77cf18683ffc0023"
+        },
+        "request_sha256": "4384036a001f06211515f94386629dc7082d4b9d8438543e77cf18683ffc0023",
+        "resource_qualification": "unknown",
+        "resources": {
+          "cpu_stat": {
+            "core_sched.force_idle_usec": "0",
+            "nice_usec": "0",
+            "system_usec": "11076048",
+            "usage_usec": "661436410",
+            "user_usec": "650360362"
+          },
+          "gpu_ns": null,
+          "memory_peak_bytes": null
+        },
+        "schema": "trnm-w1-generation-posix-target-v2/result",
+        "started_monotonic_ns": 1210582067687184,
+        "sticky_cancel": false
+      },
+      "schema": "trnm-w1-generation-posix-target-v2/readback",
+      "state": "terminal",
+      "statement": "a2dd4830465ce6192ef48b53be74582feb886b526a93fb4f8e8f52b1c7cb80e2",
+      "sticky_cancel": false,
+      "target_instance": "w1-timeout-chain-w1-c8-timeout-reorg-20261108-ec265b-01",
+      "task_scope": "ba49e7f9655b522793039c6a71c9fc83761e1807fded36ef08563cc1b288aad7",
+      "worker": {
+        "identity": {
+          "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+          "pid": 5939,
+          "start_ticks": 121058198
+        },
+        "job_id": "24c4bd774e2b87a33d86a2378e8be124f14295883bca3ecbee4a6da088cf06fc",
+        "operation": "a35153e046b91421e3d8d67c0d5f053b88a87f4f8ac8213f8e3ee09f5f1be1e9",
+        "provider_namespace": "23046670378197b0b2f636b5dc33fc2fc33457294d829e4a31385c2f46ee7b58",
+        "request_sha256": "4384036a001f06211515f94386629dc7082d4b9d8438543e77cf18683ffc0023"
+      },
+      "worker_alive_same_identity": false
+    },
+    "state": "OBSERVED"
+  },
+  "target_process_scope_reconciled_by_this_reader": false,
+  "target_scope_qualification": "retained worker result plus current worker identity only; never infer full recursive scope from M12"
+}

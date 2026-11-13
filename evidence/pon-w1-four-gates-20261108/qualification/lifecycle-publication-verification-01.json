@@ -1,0 +1,21 @@
+{
+  "reports": [
+    {
+      "all_json_parsed": true,
+      "branch": "lifecycle-c5",
+      "exact_set_and_bytes": true,
+      "manifest_sha256": "3e4b348552400a35eff9bcfeb2b3c3984ffae932b589f3280aac0698a9552d2e",
+      "no_database_or_environment_files": true,
+      "raw_files_and_archive_members_verified": 71
+    },
+    {
+      "all_json_parsed": true,
+      "branch": "failed-operation",
+      "exact_set_and_bytes": true,
+      "manifest_sha256": "87558e2ff0663a5eeafd45c1588340ffec6f465714dfd2a245bd3ef66e1c4bfd",
+      "no_database_or_environment_files": true,
+      "raw_files_and_archive_members_verified": 25
+    }
+  ],
+  "schema": "TRNM-W1-LIFECYCLE-PUBLICATION-VERIFICATION1"
+}

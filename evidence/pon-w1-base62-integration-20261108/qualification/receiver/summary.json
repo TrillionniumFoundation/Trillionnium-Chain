@@ -1,0 +1,130 @@
+{
+  "actual_command_count": 4,
+  "actual_nonzero_commands": [],
+  "all_bound_outputs_match": true,
+  "audit_reran_tests": false,
+  "audit_reran_whole_source_guard": false,
+  "audit_started_operation": false,
+  "command_reviews": [
+    {
+      "argv": [
+        "bash",
+        "scripts/project-preflight.sh",
+        "--dev"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "00-preflight",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "--output",
+        "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-receiver-01/source-before.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "01-source-before",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "scripts/ci/test_w1_receiver_real.py",
+        "--verifier",
+        "/home/qian-qi/work/chain-w1-base62-native-empty-target-20261108-ec265b-03/release/w1-verify-v2",
+        "--verifier-sha256",
+        "f9de534d894e4d0e012d31055fdc4a626addd5efd12ad19d61ff9d7d9867e7a1",
+        "--receipt",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo/evidence/pon-w1-full-v2-20261105/succinct.bin",
+        "--input",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo/evidence/pon-w1-full-v2-20261105/input.bin",
+        "--header",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo/evidence/pon-w1-full-v2-20261105/header.bin",
+        "--expected-artifacts",
+        "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/integration-repo/evidence/pon-w1-full-v2-20261105/expected-artifacts.bin",
+        "--out",
+        "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-receiver-01/real-receiver-controls"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "02-real-receiver-controls",
+      "outcomes": {
+        "named_rust": [],
+        "python": [
+          {
+            "errors": 0,
+            "failed": 0,
+            "passed": 11,
+            "reported_duration": "11.733s",
+            "reported_methods": 11,
+            "skipped": 0,
+            "terminal": "OK"
+          }
+        ],
+        "rust": []
+      }
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/ci/verify_ci_source.py",
+        "--kind",
+        "head",
+        "--expected-head",
+        "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+        "--output",
+        "/home/qian-qi/work/chain-w1-base62-validation-20261108-ec265b/exact-receiver-01/source-after.json"
+      ],
+      "cwd": "/home/qian-qi/work/chain-w1-base62-integration-20261108-ec265b",
+      "exit": 0,
+      "label": "99-source-after",
+      "outcomes": {
+        "named_rust": [],
+        "python": [],
+        "rust": []
+      }
+    }
+  ],
+  "component": "receiver",
+  "durable_exit": 0,
+  "durable_job_id": "1a1b9e7a8dc-12894-178e",
+  "new_complete_proofs": 0,
+  "original_manifest_sha256": "e0109e80fbc0eb48f44fd5d91197d1b68c5476622a1408e8f9c9da8b9b820cdc",
+  "overall_c6_qualification_complete": false,
+  "provenance": {
+    "actual_original_receipt_used": true,
+    "native_build_binding_matches": true,
+    "new_receipts_generated": 0,
+    "winning_node_admission_established": false
+  },
+  "python": {
+    "errors": 0,
+    "failed": 0,
+    "passed": 11,
+    "reported_methods": 11,
+    "skipped": 0
+  },
+  "qualifier_claimed_complete": true,
+  "rust": {},
+  "schema": "TRNM-W1-C6-INDEPENDENT-COMPONENT-REVIEW1",
+  "source": {
+    "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+  },
+  "source_guards_before_after_exact_equal": true
+}

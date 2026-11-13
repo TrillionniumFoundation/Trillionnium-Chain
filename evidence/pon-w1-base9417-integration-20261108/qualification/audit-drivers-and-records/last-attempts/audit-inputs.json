@@ -1,0 +1,146 @@
+{
+  "source": {
+    "commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c"
+  },
+  "manifests": [
+    {
+      "component": "history-local",
+      "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-history-local-01/manifest.json",
+      "bytes": 7457,
+      "sha256": "b39888daf3d2223c6600a693f663ca213698dffd6d9854ee887afd36af741738",
+      "job_id": "1a1ba8a832f-12894-1b7a",
+      "expected_qualification_complete": true,
+      "expected_python": {
+        "methods": 0,
+        "passed": 0,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "component": "staged-original",
+      "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-staged-01/manifest.json",
+      "bytes": 5697,
+      "sha256": "a6e8363bfa6a157fc1b414b64e4af59bb11211166fe06f1b0962460253e89e25",
+      "job_id": "1a1ba8f182e-12894-1b97",
+      "expected_qualification_complete": false,
+      "expected_python": {
+        "methods": 32,
+        "passed": 31,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 0
+      },
+      "provenance_files": [
+        {
+          "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/staged-launch-binding.json",
+          "sha256": "e0f03a4bbb83f0d10e08e18b4d9210263172017a9333db985b0752c9da75d5f4",
+          "bytes": 12251,
+          "leaf": "staged-launch-binding.json"
+        },
+        {
+          "path": "/home/qian-qi/work/chain-w1-c8-root-tools-20261108-ec265b/staged-launch-input.json",
+          "sha256": "10d7e0f459ed7ec6b400e8e141c4d59f8b4889c9fcd127bbebaf60c9b6c9ec9f",
+          "leaf": "staged-launch-input.json"
+        },
+        {
+          "path": "/home/qian-qi/work/chain-w1-c8-root-tools-20261108-ec265b/launch_staged_v2.py",
+          "sha256": "a82122b691c7fa287e33dbd1fc70b527e020e9d6afde2236169cefe093b3f253",
+          "bytes": 6122,
+          "leaf": "launch_staged_v2.py"
+        },
+        {
+          "path": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/scripts/ci/test_w1_staged_observer.py",
+          "sha256": "826b4348d8af00f03c5c3ec1fa1e15ebd30067b9e0fe0fb73f0179d78db5e25d",
+          "bytes": 34560,
+          "leaf": "test_w1_staged_observer.py"
+        },
+        {
+          "path": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/formal/pon-nakamoto-v1/experiments/w1_stage_measure.py",
+          "sha256": "a3c80e25ec202749225ddd1a4fc45f3f22ab753f5e9e6941e694a3aa4a547df9",
+          "bytes": 35951,
+          "leaf": "w1_stage_measure.py"
+        },
+        {
+          "path": "/home/qian-qi/work/chain-w1-c8-staged-attempt-01-source-review-20261108-ec265b.json",
+          "sha256": "167846874873a896697294b8a429235895f8460cae6ee913b62863497e913307",
+          "bytes": 3619,
+          "leaf": "staged-attempt-01-source-review.json"
+        }
+      ]
+    },
+    {
+      "component": "staged-repeat",
+      "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/exact-staged-02/manifest.json",
+      "bytes": 5696,
+      "sha256": "f7c7527fb00f542021f0c7ab0469b2c0f2905e0f71b9b55f5e577b8f94c3104f",
+      "job_id": "1a1ba97e353-12894-1bcf",
+      "expected_qualification_complete": true,
+      "expected_python": {
+        "methods": 32,
+        "passed": 32,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "provenance_files": [
+        {
+          "path": "/home/qian-qi/work/chain-w1-c8-root-tools-20261108-ec265b/launch_staged_repeat_once.py",
+          "sha256": "1480535874c5f1f5c8c3101fcff743623a982f5b0e01f7e0068a708953c89674",
+          "bytes": 10101,
+          "leaf": "launch_staged_repeat_once.py"
+        },
+        {
+          "path": "/home/qian-qi/work/chain-w1-c8-root-validation-20261108-ec265b/staged-repeat-launch-binding.json",
+          "sha256": "b7c84d58435d0962bf661855ddca229b6df75fff5bae767f86a0f99dd1329ee5",
+          "bytes": 14108,
+          "leaf": "staged-repeat-launch-binding.json"
+        },
+        {
+          "path": "/home/qian-qi/work/chain-w1-c8-root-tools-20261108-ec265b/staged-repeat-wrapper.diff",
+          "sha256": "97f0b4621096296db4bb320c621d0d7e039189618fcffb446f8dad24ae1f9d7d",
+          "bytes": 7184,
+          "leaf": "staged-repeat-wrapper.diff"
+        },
+        {
+          "path": "/home/qian-qi/work/chain-w1-c8-root-tools-20261108-ec265b/staged-repeat-wrapper-preparation.json",
+          "sha256": "591d556e6bd2591c6d31f5402c887250913461ad4e2573aaa5286d2feae2735c",
+          "bytes": 502,
+          "leaf": "staged-repeat-wrapper-preparation.json"
+        },
+        {
+          "path": "/home/qian-qi/work/chain-w1-c8-root-tools-20261108-ec265b/prepare_staged_repeat_once.py",
+          "sha256": "fbc32118b9db1669792cdadcb5dd0dd067d3655a2d94bf21c7f631eeb0889d2b",
+          "bytes": 5930,
+          "leaf": "prepare_staged_repeat_once.py"
+        },
+        {
+          "path": "/home/qian-qi/work/chain-w1-c8-root-tools-20261108-ec265b/staged-one-repeat-declaration.json",
+          "sha256": "7b51a7dee784b9375eb1c1dcc9b8f54869538810c763ee1514208ba42912ce95",
+          "bytes": 3557,
+          "leaf": "staged-one-repeat-declaration.json"
+        },
+        {
+          "path": "/home/qian-qi/work/chain-w1-c8-root-tools-20261108-ec265b/staged-launch-input.json",
+          "sha256": "10d7e0f459ed7ec6b400e8e141c4d59f8b4889c9fcd127bbebaf60c9b6c9ec9f",
+          "leaf": "staged-launch-input.json"
+        }
+      ]
+    }
+  ],
+  "terminals": {
+    "history-local": "{\n  \"at_unix_ms\": 1794131108939,\n  \"audit_recorded\": true,\n  \"automatic_retry\": false,\n  \"cancelled\": false,\n  \"exit_code\": 0,\n  \"job_id\": \"1a1ba8a832f-12894-1b7a\",\n  \"launch_nonce\": \"5ad46ff4312efc1bc2988598c22ceb03\",\n  \"log_bytes\": {\n    \"stderr\": {\n      \"seen\": 0,\n      \"stored\": 0\n    },\n    \"stdout\": {\n      \"seen\": 1823,\n      \"stored\": 1823\n    }\n  },\n  \"log_errors\": {\n    \"stderr\": null,\n    \"stdout\": null\n  },\n  \"log_synced\": {\n    \"stderr\": true,\n    \"stdout\": true\n  },\n  \"log_truncated\": {\n    \"stderr\": false,\n    \"stdout\": false\n  },\n  \"output_complete\": true,\n  \"output_durable\": true,\n  \"state\": \"succeeded\",\n  \"terminal_publication_confirmed\": true,\n  \"terminal_publication_protocol\": 1,\n  \"timed_out\": false\n}",
+    "staged-original": "{\n  \"at_unix_ms\": 1794131331747,\n  \"audit_recorded\": true,\n  \"automatic_retry\": false,\n  \"cancelled\": false,\n  \"exit_code\": 1,\n  \"job_id\": \"1a1ba8f182e-12894-1b97\",\n  \"launch_nonce\": \"e494833d0238ebc4c3108685f56ebb4e\",\n  \"log_bytes\": {\n    \"stderr\": {\n      \"seen\": 0,\n      \"stored\": 0\n    },\n    \"stdout\": {\n      \"seen\": 706,\n      \"stored\": 706\n    }\n  },\n  \"log_errors\": {\n    \"stderr\": null,\n    \"stdout\": null\n  },\n  \"log_synced\": {\n    \"stderr\": true,\n    \"stdout\": true\n  },\n  \"log_truncated\": {\n    \"stderr\": false,\n    \"stdout\": false\n  },\n  \"output_complete\": true,\n  \"output_durable\": true,\n  \"state\": \"failed\",\n  \"terminal_publication_confirmed\": true,\n  \"terminal_publication_protocol\": 1,\n  \"timed_out\": false\n}",
+    "staged-repeat": "{\n  \"at_unix_ms\": 1794131907483,\n  \"audit_recorded\": true,\n  \"automatic_retry\": false,\n  \"cancelled\": false,\n  \"exit_code\": 0,\n  \"job_id\": \"1a1ba97e353-12894-1bcf\",\n  \"launch_nonce\": \"8e5d787c0253d127e6b16873ad4cfd8d\",\n  \"log_bytes\": {\n    \"stderr\": {\n      \"seen\": 0,\n      \"stored\": 0\n    },\n    \"stdout\": {\n      \"seen\": 713,\n      \"stored\": 713\n    }\n  },\n  \"log_errors\": {\n    \"stderr\": null,\n    \"stdout\": null\n  },\n  \"log_synced\": {\n    \"stderr\": true,\n    \"stdout\": true\n  },\n  \"log_truncated\": {\n    \"stderr\": false,\n    \"stdout\": false\n  },\n  \"output_complete\": true,\n  \"output_durable\": true,\n  \"state\": \"succeeded\",\n  \"terminal_publication_confirmed\": true,\n  \"terminal_publication_protocol\": 1,\n  \"timed_out\": false\n}"
+  },
+  "expected_totals": {
+    "commands": 13,
+    "python_methods": 64,
+    "python_passed": 63,
+    "python_failed": 1,
+    "rust_passed": 0,
+    "rust_ignored": 0
+  }
+}

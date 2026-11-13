@@ -1,0 +1,290 @@
+[
+  {
+    "archive_member": "manifest.json",
+    "bytes": 23342,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/manifest.json",
+    "sha256": "6aeb6311539926f0e4f96c9fc2469953fbb879ba5897e7e3e0d16f1399d26261"
+  },
+  {
+    "archive_member": "source-before.json",
+    "bytes": 423,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/source-before.json",
+    "sha256": "538a1a4fc74182b322eb823d908898acee7041fedc122ea4f441e7cb21303835"
+  },
+  {
+    "archive_member": "source-after.json",
+    "bytes": 423,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/source-after.json",
+    "sha256": "538a1a4fc74182b322eb823d908898acee7041fedc122ea4f441e7cb21303835"
+  },
+  {
+    "archive_member": "provenance/plan.json",
+    "bytes": 6364,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-tools-20261108-ec265b/owner-plan.json",
+    "sha256": "211cbe1ab1b6b9525134f91f36f93ee5fc1d81b34e3c1a3bf894b72c01ba806c"
+  },
+  {
+    "archive_member": "provenance/qualify_source.py",
+    "bytes": 5715,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-tools-20261108-ec265b/qualify_source.py",
+    "sha256": "d3c6953430a8efce70396eac88c891aa91501633013c09d5018f0b00e9fb7d1f"
+  },
+  {
+    "archive_member": "00-preflight.stdout",
+    "bytes": 178,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/00-preflight.stdout",
+    "sha256": "fc3911c320a46305c42bab476b1e4b06c720633e46046a460f2afec14cdeb4a1"
+  },
+  {
+    "archive_member": "00-preflight.stderr",
+    "bytes": 0,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/00-preflight.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "archive_member": "01-source-before.stdout",
+    "bytes": 423,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/01-source-before.stdout",
+    "sha256": "538a1a4fc74182b322eb823d908898acee7041fedc122ea4f441e7cb21303835"
+  },
+  {
+    "archive_member": "01-source-before.stderr",
+    "bytes": 0,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/01-source-before.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "archive_member": "02-cargo-version.stdout",
+    "bytes": 336,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/02-cargo-version.stdout",
+    "sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e"
+  },
+  {
+    "archive_member": "02-cargo-version.stderr",
+    "bytes": 0,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/02-cargo-version.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "archive_member": "03-rustc-version.stdout",
+    "bytes": 196,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/03-rustc-version.stdout",
+    "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+  },
+  {
+    "archive_member": "03-rustc-version.stderr",
+    "bytes": 0,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/03-rustc-version.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "archive_member": "04-owned-fmt.stdout",
+    "bytes": 0,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/04-owned-fmt.stdout",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "archive_member": "04-owned-fmt.stderr",
+    "bytes": 0,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/04-owned-fmt.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "archive_member": "05-locked-graph-default.stdout",
+    "bytes": 829760,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/05-locked-graph-default.stdout",
+    "sha256": "42cd3ff49c5c1b05de9cf870caf20065f2b376fd97b80da8bcafc443fbbfb8e3"
+  },
+  {
+    "archive_member": "05-locked-graph-default.stderr",
+    "bytes": 0,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/05-locked-graph-default.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "archive_member": "06-locked-graph-all-features.stdout",
+    "bytes": 844559,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/06-locked-graph-all-features.stdout",
+    "sha256": "2ed75ae7d734343cfd28fb70d27a0dbb9946a43482c0622e9706fa7e33387f48"
+  },
+  {
+    "archive_member": "06-locked-graph-all-features.stderr",
+    "bytes": 0,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/06-locked-graph-all-features.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "archive_member": "07-m12-strict-clippy.stdout",
+    "bytes": 0,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/07-m12-strict-clippy.stdout",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "archive_member": "07-m12-strict-clippy.stderr",
+    "bytes": 2205,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/07-m12-strict-clippy.stderr",
+    "sha256": "de2ae03eb7e2ffc886209945cf354d83f9c6bb48207f4dce040d766622fbed29"
+  },
+  {
+    "archive_member": "08-node-strict-clippy.stdout",
+    "bytes": 0,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/08-node-strict-clippy.stdout",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "archive_member": "08-node-strict-clippy.stderr",
+    "bytes": 2858,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/08-node-strict-clippy.stderr",
+    "sha256": "fd8470bed751bfc650a704e7e5b22177b57aa58a2586efb4fb656d4d2acd2b49"
+  },
+  {
+    "archive_member": "09-m12-tests.stdout",
+    "bytes": 1428,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/09-m12-tests.stdout",
+    "sha256": "7891c870447c87ff607065bbaf32e8d972003fcd30a8519c25823b89c9dc4d57"
+  },
+  {
+    "archive_member": "09-m12-tests.stderr",
+    "bytes": 1631,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/09-m12-tests.stderr",
+    "sha256": "a295d1ab999ae81e5c20429c8bee5ac5d674428046e3f0be2a4960b9415ab9c1"
+  },
+  {
+    "archive_member": "10-node-short-tests.stdout",
+    "bytes": 3697,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/10-node-short-tests.stdout",
+    "sha256": "44906282a37f251057d846f30b07592cbf352829e85e33cf3dc77f5f76c2124a"
+  },
+  {
+    "archive_member": "10-node-short-tests.stderr",
+    "bytes": 2844,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/10-node-short-tests.stderr",
+    "sha256": "098d6d08684074d2a7b46552c1c6e4a21b6e531fbcf00bb02f14b9cbb60e0a15"
+  },
+  {
+    "archive_member": "11-legacy-admission-root-tests.stdout",
+    "bytes": 231,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/11-legacy-admission-root-tests.stdout",
+    "sha256": "84d8ceb0611d0011b1ab3e464465b9564630162253f3134ef8f0f8b8b437e965"
+  },
+  {
+    "archive_member": "11-legacy-admission-root-tests.stderr",
+    "bytes": 217,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/11-legacy-admission-root-tests.stderr",
+    "sha256": "e896cd6d0a0214d6591354a35e8423e2d1c7f9eade7078b61eb326b3985c1a5e"
+  },
+  {
+    "archive_member": "12-legacy-reorg-root-tests.stdout",
+    "bytes": 675,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/12-legacy-reorg-root-tests.stdout",
+    "sha256": "41f344d46a259ffe2fd561b00295809fe5daeadb8ac52c0c968992a6bebe3179"
+  },
+  {
+    "archive_member": "12-legacy-reorg-root-tests.stderr",
+    "bytes": 217,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/12-legacy-reorg-root-tests.stderr",
+    "sha256": "3ebc70269e7fda4a81fcbee35326927da252c3aaf87d50d54142018de7ac3be3"
+  },
+  {
+    "archive_member": "13-owner-no-run-json.stdout",
+    "bytes": 106401,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/13-owner-no-run-json.stdout",
+    "sha256": "20edcf717c1e355df1c1f8fd9b7732d3adf732ef212a726c7db2a5ade8ea60d8"
+  },
+  {
+    "archive_member": "13-owner-no-run-json.stderr",
+    "bytes": 73,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/13-owner-no-run-json.stderr",
+    "sha256": "f998b36cde88d3eafe6c4c7446b77487d2cc7771780272ff473c471c507ca5d1"
+  },
+  {
+    "archive_member": "14-backend-metadata-default.stdout",
+    "bytes": 1429388,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/14-backend-metadata-default.stdout",
+    "sha256": "a75403c564db45405820e8cc26b9d6bf7a4bddf0f7718b02c667874ed7bc46f6"
+  },
+  {
+    "archive_member": "14-backend-metadata-default.stderr",
+    "bytes": 0,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/14-backend-metadata-default.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "archive_member": "15-backend-metadata-all.stdout",
+    "bytes": 1429427,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/15-backend-metadata-all.stdout",
+    "sha256": "6cdf696388350905246ae3d979ba857b34ad796bcef7ce5a85a2a307d8d68e16"
+  },
+  {
+    "archive_member": "15-backend-metadata-all.stderr",
+    "bytes": 0,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/15-backend-metadata-all.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "archive_member": "16-verifier-metadata-default.stdout",
+    "bytes": 899759,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/16-verifier-metadata-default.stdout",
+    "sha256": "5a692a771c8e13347b81effd0ca9baba6a8aac8b35356a2250f9485892f9b31a"
+  },
+  {
+    "archive_member": "16-verifier-metadata-default.stderr",
+    "bytes": 0,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/16-verifier-metadata-default.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "archive_member": "17-verifier-metadata-all.stdout",
+    "bytes": 899759,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/17-verifier-metadata-all.stdout",
+    "sha256": "5a692a771c8e13347b81effd0ca9baba6a8aac8b35356a2250f9485892f9b31a"
+  },
+  {
+    "archive_member": "17-verifier-metadata-all.stderr",
+    "bytes": 0,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/17-verifier-metadata-all.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "archive_member": "99-source-after.stdout",
+    "bytes": 423,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/99-source-after.stdout",
+    "sha256": "538a1a4fc74182b322eb823d908898acee7041fedc122ea4f441e7cb21303835"
+  },
+  {
+    "archive_member": "99-source-after.stderr",
+    "bytes": 0,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-owner-01/99-source-after.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "archive_member": "provenance/owner-empty-preparation.json",
+    "bytes": 455,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/preparation-01/owner-empty-preparation.json",
+    "sha256": "d9e66a4ee1cb9cdbe0a1399b7e347f53866f6a5c0b8739711bbebfb0a6fe49a1"
+  },
+  {
+    "archive_member": "provenance/owner-launch-binding.json",
+    "bytes": 1290,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/owner-launch-binding.json",
+    "sha256": "157a0124359a37e8278a118da11ac0dd6581e3fdc75560e05cfbf2dee98b0df3"
+  },
+  {
+    "archive_member": "provenance/launch_owner.py",
+    "bytes": 1782,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-tools-20261108-ec265b/launch_owner.py",
+    "sha256": "8631bd49109c0b0d0f3562751946d0d229836e0cc532e67b52fe0467877d789b"
+  },
+  {
+    "archive_member": "provenance/extracted-owner-artifact.json",
+    "bytes": 2999,
+    "original_path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/owner-import-c7-01/extracted-owner-artifact.json",
+    "sha256": "79bb1357e284dbab706886d4420fd7c549b59a06ccb773cb52f191dd2a28cf46"
+  },
+  {
+    "archive_member": "durable-job-terminal.json",
+    "bytes": 732,
+    "original_path": "hepta-runtime authoritative process_status",
+    "sha256": "f2573a1d761e039aff3973ff4552848f777bc48fa8dcf40594340cad70a3125a"
+  }
+]

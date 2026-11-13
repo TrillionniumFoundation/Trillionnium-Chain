@@ -1,0 +1,13 @@
+   Compiling trnm-protocol v0.1.0 (/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium/crates/trnm-protocol)
+   Compiling trnm-task-kernel v0.1.0 (/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium/crates/trnm-task-kernel)
+   Compiling trnm-sqlite-io-boundary v0.1.0 (/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium/crates/trnm-sqlite-io-boundary)
+   Compiling trnm-verification-profiles v0.1.0 (/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium/crates/trnm-verification-profiles)
+   Compiling trnm-transport v0.1.0 (/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium/crates/trnm-transport)
+   Compiling trnm-mempool v0.1.0 (/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium/crates/trnm-mempool)
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-service-settlement v0.1.0 (/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium/crates/trnm-service-settlement)
+   Compiling trnm-data-availability v0.1.0 (/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium/crates/trnm-data-availability)
+   Compiling trnm-mvcc-fee v0.1.0 (/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium/crates/trnm-mvcc-fee)
+   Compiling trnm-pon-node v0.1.0 (/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b/trillionnium/crates/trnm-pon-node)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4m 20s
+     Running unittests src/lib.rs (/home/qian-qi/work/chain-w1-base9417-owner-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8)

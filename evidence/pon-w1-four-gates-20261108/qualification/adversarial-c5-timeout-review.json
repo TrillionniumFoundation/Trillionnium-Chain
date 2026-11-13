@@ -1,0 +1,483 @@
+{
+  "schema": "TRNM-W1-C5-TIMEOUT-REORG-INDEPENDENT-READONLY-REVIEW1",
+  "scope": "Read-only independent review of existing C5 operation artifacts, driver, prior-reviewed source bindings and original durable job observations. No experiments, Node submissions, source edits or original evidence edits.",
+  "original_root": "/home/qian-qi/work/chain-w1-c5-timeout-reorg-20261108-ec265b-01",
+  "source": {
+    "commit": "034aa74358e0a5fa33f33e83cb63669e9738da4b",
+    "tree": "8dd452c376452224602fb202940ae84fc1f84d2e",
+    "worktree_clean_when_read": true
+  },
+  "review_result": "Bounded lifecycle evidence is internally consistent; no critical counterevidence found in reviewed artifacts.",
+  "operation": "3c722d76b352db7450c53321368b305782f25612b9ed1fb806c49c5ec7fb5c77",
+  "statement": "5592f86e015fe11571eecdb9594d3b35b7eeb074a1b9488cb4a50acfeb89ef7b",
+  "provider_job": {
+    "identity": {
+      "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+      "pid": 3171715,
+      "start_ticks": 119168803
+    },
+    "job_id": "aefb71d1b45928150c939192ce58360f34ca7f91d37ea0ce46eea83a06a8869f",
+    "operation": "3c722d76b352db7450c53321368b305782f25612b9ed1fb806c49c5ec7fb5c77",
+    "provider_namespace": "e4856b8754b0717e2e4bc9c3b0a74ec0f509e83fafa67ad3c3a7aa8ece598d3a",
+    "request_sha256": "175e1e5209a4c53b0000c0d52ff41706f0e3d5515561926f1060a71c021342d0"
+  },
+  "original_deadline_ns": 1191795668407846,
+  "declared_budget_ns": 120000000000,
+  "timeline": [
+    {
+      "event": "deadline selected",
+      "monotonic_ns": 1191675668407846,
+      "seconds_after_selection": 0.0
+    },
+    {
+      "event": "native winner recorded",
+      "monotonic_ns": 1191679278254360,
+      "seconds_after_selection": 3.609846514
+    },
+    {
+      "event": "live r0vm proving observed",
+      "monotonic_ns": 1191714889146900,
+      "seconds_after_selection": 39.220739054
+    },
+    {
+      "event": "original deadline",
+      "monotonic_ns": 1191795668407846,
+      "seconds_after_selection": 120.0
+    },
+    {
+      "event": "original deadline observed",
+      "monotonic_ns": 1191795669108546,
+      "seconds_after_selection": 120.0007007
+    },
+    {
+      "event": "target terminal snapshot",
+      "monotonic_ns": 1191796086929474,
+      "seconds_after_selection": 120.418521628
+    },
+    {
+      "event": "reconcile helper completed",
+      "monotonic_ns": 1191797931613806,
+      "seconds_after_selection": 122.26320596
+    },
+    {
+      "event": "parent observed reconcile exit",
+      "monotonic_ns": 1191797979283967,
+      "seconds_after_selection": 122.310876121
+    },
+    {
+      "event": "M12 Unknown Failure recorded",
+      "monotonic_ns": 1191798112448497,
+      "seconds_after_selection": 122.444040651
+    },
+    {
+      "event": "owner Cancel request",
+      "monotonic_ns": 1191798146309993,
+      "seconds_after_selection": 122.477902147
+    },
+    {
+      "event": "independent cold parent observed exit",
+      "monotonic_ns": 1191876513937149,
+      "seconds_after_selection": 200.845529303
+    }
+  ],
+  "independent_consistency_checks": {
+    "all_assertions_passed": true,
+    "new_experiments": 0,
+    "new_node_submissions": 0,
+    "typed_terminal_digest_recomputed": "b310ec2a11efe9edfd35a5df2a0c19734f7bd775e26557adc46a0e695b03a2a6",
+    "runtime_evidence_digest_recomputed": "87e685ab5d04ba782256300c33bc4dbfa72f5ef559fe3799a216348857ac7ba8",
+    "hot_and_independent_cold_target_readback_identical": true,
+    "original_native_cancel_observation_identical_before_after_reorg_and_cold": true,
+    "operation": "3c722d76b352db7450c53321368b305782f25612b9ed1fb806c49c5ec7fb5c77",
+    "statement": "5592f86e015fe11571eecdb9594d3b35b7eeb074a1b9488cb4a50acfeb89ef7b",
+    "provider_job": {
+      "identity": {
+        "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+        "pid": 3171715,
+        "start_ticks": 119168803
+      },
+      "job_id": "aefb71d1b45928150c939192ce58360f34ca7f91d37ea0ce46eea83a06a8869f",
+      "operation": "3c722d76b352db7450c53321368b305782f25612b9ed1fb806c49c5ec7fb5c77",
+      "provider_namespace": "e4856b8754b0717e2e4bc9c3b0a74ec0f509e83fafa67ad3c3a7aa8ece598d3a",
+      "request_sha256": "175e1e5209a4c53b0000c0d52ff41706f0e3d5515561926f1060a71c021342d0"
+    },
+    "original_deadline_ns": 1191795668407846,
+    "resource_cap": {
+      "cpu_ns": 960000000000,
+      "gpu_ns": 240000000000,
+      "memory_peak_upper_bound_bytes": 8589934592,
+      "receipt_bytes": 16777216
+    },
+    "owner_balance_branch_difference": 709,
+    "no_complete_proof_or_resource_qualification": true
+  },
+  "original_jobs": [
+    {
+      "job": "1a1b9872cfc-12894-14e6",
+      "status": {
+        "at_unix_ms": 1794114132962,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1b9872cfc-12894-14e6",
+        "launch_nonce": "5c9989338dbd7def2a6ce5491c6105dd",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 510,
+            "stored": 510
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "stdout_sha256": "9e5b5b9d0f1f57da8b7581b845b7e7fe9ec35537e88444825c1ed51b2efa8dd7",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "{\"launch_intent_recorded\": true, \"operation\": \"3c722d76b352db7450c53321368b305782f25612b9ed1fb806c49c5ec7fb5c77\", \"original_deadline_ns\": 1191795668407846, \"source\": {\"commit\": \"034aa74358e0a5fa33f33e83cb63669e9738da4b\", \"tree\": \"8dd452c376452224602fb202940ae84fc1f84d2e\"}}\n\nrunning 1 test\ntest store::async_w1_generation_v2::tests::heavy::funded_fresh_full_w1_generation_timeout_then_refund_and_reorg ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1210 filtered out; finished in 123.23s\n\n"
+    },
+    {
+      "job": "1a1b98a26b8-12894-14f7",
+      "status": {
+        "at_unix_ms": 1794114210602,
+        "audit_recorded": true,
+        "automatic_retry": false,
+        "cancelled": false,
+        "exit_code": 0,
+        "job_id": "1a1b98a26b8-12894-14f7",
+        "launch_nonce": "2810423fa3c3f93c3a41223a208544fe",
+        "log_bytes": {
+          "stderr": {
+            "seen": 0,
+            "stored": 0
+          },
+          "stdout": {
+            "seen": 216,
+            "stored": 216
+          }
+        },
+        "log_errors": {
+          "stderr": null,
+          "stdout": null
+        },
+        "log_synced": {
+          "stderr": true,
+          "stdout": true
+        },
+        "log_truncated": {
+          "stderr": false,
+          "stdout": false
+        },
+        "output_complete": true,
+        "output_durable": true,
+        "state": "succeeded",
+        "terminal_publication_confirmed": true,
+        "terminal_publication_protocol": 1,
+        "timed_out": false
+      },
+      "stdout_sha256": "c1702f39561c072f040a7fb454fb9ca868cf0bd3216581355a8fb9df8df8c8c7",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "\nrunning 1 test\ntest store::async_w1_generation_v2::tests::heavy::funded_w1_owner_cancellation_cold_reconcile ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1210 filtered out; finished in 0.45s\n\n"
+    }
+  ],
+  "findings": [
+    {
+      "subject": "Natural timeout precedes owner cancellation",
+      "evidence": "Target result cause original-deadline, sticky_cancel false, error null, exit -9; target finished before parent reconciliation exit, typed Failure and owner Cancel request. No target cancel request was sent.",
+      "paths": [
+        "run/owner-cancel-reconcile/result.json",
+        "run/owner-cancel-reconcile-command/result.json",
+        "run/m12-terminal-failure-observed.json",
+        "run/owner-cancel-requested.json"
+      ]
+    },
+    {
+      "subject": "Typed Failure is bound to original raw evidence and identity",
+      "evidence": "Independently recomputed runtime evidence digest and outer TRNM-W1-OWNED-TERMINAL-3 binding including statement, original job/operation/normalized request, config source pin, controller timestamp, timeout reason and None resource tag; matches retained Failure digest.",
+      "digest": "b310ec2a11efe9edfd35a5df2a0c19734f7bd775e26557adc46a0e695b03a2a6"
+    },
+    {
+      "subject": "Original deadline was not renewed",
+      "evidence": "Plan without clock equals final config after removing only the four launch clock fields. Launch config SHA matches final actual bytes. Request, proof intent, target, helper, reorg and cold records all retain the same original deadline. Stage wall allowances 180/600 seconds are both bounded by effective_deadline_monotonic 1191795.668407846.",
+      "paths": [
+        "plan.json",
+        "config.json",
+        "launch-declaration.json",
+        "run/proof/intent.json",
+        "run/proof/controller/prepare-full-execution/result.json",
+        "run/proof/controller/prove-batch-0000/declaration.json"
+      ]
+    },
+    {
+      "subject": "Unknown resource cost retains original cap",
+      "evidence": "Failure kind Unknown, consumed null, cancellation_at_failure null, whole original resource charge retained. End, reorg and independent cold retain cap; no complete accounting inference from empty cgroup.",
+      "resource_cap": {
+        "cpu_ns": 960000000000,
+        "gpu_ns": 240000000000,
+        "memory_peak_upper_bound_bytes": 8589934592,
+        "receipt_bytes": 16777216
+      }
+    },
+    {
+      "subject": "Same original native Cancel survives reorg and cold recovery",
+      "evidence": "Original canonical observation equals restored observation, final observation and independent cold observation. Removed-branch observation equals actual cold-reopen observation. Wire and packet hashes independently match retained binaries.",
+      "cancel_operation": "dba9793565d7ae83790eaba3abb255fad2643d9b2d5696196a426ae289c7d83f",
+      "original_inclusion": "9106aa00fd98086ceba112c228c487398311b407bf81dd886378c2b0587f06fd",
+      "wire_sha256": "f73e5433dc740e181426a3e50fc5f4e54d19cd9a84a1c96043257f0bfcfeb17d",
+      "packet_sha256": "6a6125eceb7916ccf4afb673e9abeaa54d4c66ea6a21de5b0a45956dc4805295",
+      "removed_status": "reserved",
+      "removed_remaining": 1000,
+      "restored_status": "cancelled",
+      "restored_remaining": 0,
+      "owner_balance_after_cancel": 9999290,
+      "owner_balance_while_cancel_removed": 9998581,
+      "owner_restoration_is_checked_by_exact_source": "timeout.rs::Reorg.run asserts restored owner balance equals owner_after_cancel; this review did not execute the ledger again."
+    },
+    {
+      "subject": "No redispatch, provider payment or Positive",
+      "evidence": "M12 begin Done; final/cold retain original statement and operation; no new generation/target cancel/native cancel during reorg/cold. provider_payment_observed false, provider balance unchanged in exact-source assertions, Node Positive false. Hot and independent cold target readback objects are exactly equal.",
+      "new_complete_proofs": 0
+    },
+    {
+      "subject": "Actual expensive proving began on C5",
+      "evidence": "Live r0vm identity observed at prove-batch-0000; retained stdout contains REAL_SEGMENT_PROVING_STARTED for indices 0 and 1 and exact C5 RAW_COMMITTED_SOURCE_VERIFIED. Eleven previously reviewed M12 source file hashes equal actual config source pins.",
+      "paths": [
+        "run/owner-cancel-start/result.json",
+        "run/proof/controller/prove-batch-0000/stdout.log"
+      ]
+    }
+  ],
+  "limits": [
+    "This reviews one new research operation only; it does not settle the original two full-proof operations or change their independent evidence.",
+    "One fresh generation attempt, zero new complete proofs, no positive provider payment and no completed resource settlement.",
+    "GPU time, memory peak and all historical descendants wait/reap remain unknown. The 8CPU/8GiB allocation and observed empty child cgroup do not establish complete task-exclusive historical resource ownership.",
+    "The target terminal snapshot is 0.418521628 seconds after the original deadline, and later reconciliation/refund/reorg work occurs after it. These are terminal/cleanup observations, not an in-budget successful proof.",
+    "This review recomputed artifact and typed-evidence bindings; it did not reopen Node or independently rerun the account state machine. Provider balance equality and final owner balance equality rely on the pinned exact-source successful owner assertions; raw JSON publishes the former as a boolean.",
+    "The ordinary research NativeTask maintenance/Cancel blocks are not admission of the standalone winning W1 statement. WAN and full cryptographic/protocol security remain unqualified.",
+    "driver-v4.py is externally located orchestration whose exact SHA is pinned in plan/launch; it is not itself a member of the C5 Git tree."
+  ],
+  "qualification": {
+    "source_evidence_consistent": true,
+    "lifecycle_observed": true,
+    "new_experiments_performed_by_reviewer": 0,
+    "new_node_submissions_by_reviewer": 0,
+    "new_source_changes_by_reviewer": 0,
+    "resource_settlement_complete": false,
+    "provider_payment_qualified": false,
+    "winner_node_admission_qualified": false,
+    "full_protocol_security_qualified": false,
+    "production_qualified": false
+  },
+  "source_artifact_pins": [
+    {
+      "path": "plan.json",
+      "bytes": 50024,
+      "sha256": "c833c0ff591cc4f5bcfbe49afac243c5f40b67e510dbe07c4021b2e65a637703"
+    },
+    {
+      "path": "config.json",
+      "bytes": 49077,
+      "sha256": "e02653e72d102696d1a08d99671b9c76884faf338e9d3835d5714bc41dafcac3"
+    },
+    {
+      "path": "launch-declaration.json",
+      "bytes": 2665,
+      "sha256": "2c7b7b7978d76d7ac12e9ba26a1128de4265dae370d326da712dd4452ff0d008"
+    },
+    {
+      "path": "cold-launch-intent.json",
+      "bytes": 1389,
+      "sha256": "bc36eacb3ad01fab554c7bb2ab859de18be98c691495b6c58e74c19113358761"
+    },
+    {
+      "path": "runner-source-probe.json",
+      "bytes": 3510,
+      "sha256": "c066b572fffee0eaf51af49ccd958f583264bccbdd03b38ea103401595ef8edc"
+    },
+    {
+      "path": "runner-source-probe.stdout",
+      "bytes": 888,
+      "sha256": "894f2e8af199effab0a37f27afaf5972820d124e45c29d2fbe43ee6823683520"
+    },
+    {
+      "path": "runner-source-probe.stderr",
+      "bytes": 21,
+      "sha256": "3f3f0f1e2ceea949f6c2329349c6e89854042da7956a58ff2744bcd409b608ae"
+    },
+    {
+      "path": "run/owner-declaration.json",
+      "bytes": 1175,
+      "sha256": "f06ac3948ded65a8bf09c0d201b61dd874d7cc68a176ca63cac8de0c66b31de1"
+    },
+    {
+      "path": "run/target-request.json",
+      "bytes": 62292,
+      "sha256": "9378be3530623d6d5f28bfdc242289e6b1b59de707fac9d136f2e43b65333165"
+    },
+    {
+      "path": "run/native-funded-intent.json",
+      "bytes": 1227,
+      "sha256": "194e81b6d3bc6d8b84e31f6d15140e7e081922bef1858a3a2d30f1f060681fba"
+    },
+    {
+      "path": "run/owner-cancel-start/result.json",
+      "bytes": 43827,
+      "sha256": "9132aecccd6d82e9eb14a087324dd8428a359a6f705e8560e1a8899a9a4e8387"
+    },
+    {
+      "path": "run/owner-cancel-start-command/result.json",
+      "bytes": 1212,
+      "sha256": "7ad56dbf3af78e9c43320e42aec0f0ee6055ec8c48cd0b8cf14ce8d66eb5ad04"
+    },
+    {
+      "path": "run/owner-cancel-reconcile/result.json",
+      "bytes": 46455,
+      "sha256": "d74be711a57db4b655af0cc3f97032fac24efb55473f4a4937d00318d02a3fee"
+    },
+    {
+      "path": "run/owner-cancel-reconcile-command/result.json",
+      "bytes": 1369,
+      "sha256": "5585e40c2f1003c60342be908291b27e90f74a8e5bf727d406834b6b72bd19f9"
+    },
+    {
+      "path": "run/m12-terminal-failure-observed.json",
+      "bytes": 590,
+      "sha256": "db738f328dde16e2e8f24d1e18e1f109ed368c75cede1859a21579ea76a4b415"
+    },
+    {
+      "path": "run/owner-cancel-requested.json",
+      "bytes": 1329,
+      "sha256": "67eb963c698cc546cd8ce09db81fe3a469257a724407e79b80b88086a47bf881"
+    },
+    {
+      "path": "run/owner-cancel-m12-outcome.json",
+      "bytes": 293,
+      "sha256": "278b127443950359b6b2aa88b7ef39ac9d86d9d180b9c74f38331586fcf9736b"
+    },
+    {
+      "path": "run/owner-timeout-wait-intent.json",
+      "bytes": 441,
+      "sha256": "dae0805770bb05bb1aa9624cf8c0e95d0a49a34c7d2022d4ba687b046ccac772"
+    },
+    {
+      "path": "run/owner-timeout-deadline-observed.json",
+      "bytes": 253,
+      "sha256": "d86a643ad3a97087abb2bf3f182f9a86dbcbe87d0a8def324cec2e4e51921f42"
+    },
+    {
+      "path": "run/native-cancel-dispatch-intent.json",
+      "bytes": 966,
+      "sha256": "bc213788af5530e5f0c8a0f90796f5c50bdb55537d41c99e8d9da356f55d0632"
+    },
+    {
+      "path": "run/native-cancel-submission-observed.json",
+      "bytes": 265,
+      "sha256": "bea0b20c4feb3d825a124814826fdf94e30ff8c36569c49fc431790c7dd79254"
+    },
+    {
+      "path": "run/owner-timeout-reorg-result.json",
+      "bytes": 4630,
+      "sha256": "508c5dd62bd008819ab646d82403a7d07ae77a8cab4977703eac2d1adddc28eb"
+    },
+    {
+      "path": "run/funded-owner-cancellation-result.json",
+      "bytes": 59770,
+      "sha256": "9ad1c657b82d02e886493bf0d4f330dca5f3a321b2987c05a3571e7b360e1793"
+    },
+    {
+      "path": "cold-readback-01/result.json",
+      "bytes": 7584,
+      "sha256": "16d484e8ae7575e34c073e505c7c6ba6d935723c99a8f7a4270699a61a4ffa4f"
+    },
+    {
+      "path": "cold-readback-01/target-reconcile/intent.json",
+      "bytes": 660,
+      "sha256": "0a3885f312ea3909a082333f869ac1bbfb220556bfaf86b33f034ebb5c82a197"
+    },
+    {
+      "path": "cold-readback-01/target-reconcile/result.json",
+      "bytes": 1166,
+      "sha256": "2a865a96551c3214489f9cc3c124677202ec008f5a7046f8d5ab2f5d4c5d69b2"
+    },
+    {
+      "path": "cold-readback-01/target-reconcile/stdout.log",
+      "bytes": 3564,
+      "sha256": "6242d48d9c845e21d0981233aef11ee880171189bd89d426ef338797f58e31da"
+    },
+    {
+      "path": "cold-readback-01/target-reconcile/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "run/proof/intent.json",
+      "bytes": 3220,
+      "sha256": "84182280a61f6a44db594469130fee5e2c7fa7f75968887fbfe8c038deeae8c1"
+    },
+    {
+      "path": "run/proof/controller/prepare-full-execution/result.json",
+      "bytes": 5620,
+      "sha256": "7aedc90d2de831469c4c4a775ae83f41cc0c0f2b613ad190857d3a4dc9df3d94"
+    },
+    {
+      "path": "run/proof/controller/prove-batch-0000/declaration.json",
+      "bytes": 1495,
+      "sha256": "05c7bd8534c5df53414aa7e4297ec9c66818059bf1bdefaee392ecae819747a5"
+    },
+    {
+      "path": "run/proof/controller/prove-batch-0000/stdout.log",
+      "bytes": 2581,
+      "sha256": "cd5f66a40f38fe2a635e94d2996bbcb2635a728067e6359afac406b5c79202ad"
+    },
+    {
+      "path": "run/proof/controller/prove-batch-0000/stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target-state/3c722d76b352db7450c53321368b305782f25612b9ed1fb806c49c5ec7fb5c77/supervisor.stdout",
+      "bytes": 2438,
+      "sha256": "9c228533b0a1148fa331e91f26bcd99bdab5c024a482cc52e4b9b24d08e0d9f3"
+    },
+    {
+      "path": "target-state/3c722d76b352db7450c53321368b305782f25612b9ed1fb806c49c5ec7fb5c77/supervisor.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "driver-v4.py",
+      "original_path": "/home/qian-qi/work/chain-w1-m12-timeout-tools-20261108-ec265b/driver-v4.py",
+      "bytes": 20830,
+      "sha256": "b66019d2f47c225174de4f69c508e2b163d69f915b1e9eada59eef9368317464"
+    },
+    {
+      "path": "run/native-cancel-wire.bin",
+      "bytes": 191,
+      "sha256": "f73e5433dc740e181426a3e50fc5f4e54d19cd9a84a1c96043257f0bfcfeb17d"
+    },
+    {
+      "path": "run/native-cancel-packet.bin",
+      "bytes": 49953,
+      "sha256": "6a6125eceb7916ccf4afb673e9abeaa54d4c66ea6a21de5b0a45956dc4805295"
+    }
+  ]
+}

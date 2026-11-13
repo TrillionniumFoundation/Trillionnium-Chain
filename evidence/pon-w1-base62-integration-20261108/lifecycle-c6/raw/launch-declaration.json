@@ -1,0 +1,68 @@
+{
+  "all_historical_wait_reap_qualified": false,
+  "argv": [
+    "/home/qian-qi/work/chain-w1-base62-owner-empty-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+    "store::async_w1_generation_v2::tests::heavy::funded_fresh_full_w1_generation_timeout_then_refund_and_reorg",
+    "--exact",
+    "--ignored",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "config": {
+    "bytes": 49117,
+    "path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/config.json",
+    "sha256": "20750c225e152c99ac19e05bb891b87bca01b8e451a752f405340be03128a7ea"
+  },
+  "driver": {
+    "bytes": 20830,
+    "path": "/home/qian-qi/work/chain-w1-base62-m12-tools-20261108-ec265b/driver-v4.py",
+    "sha256": "b66019d2f47c225174de4f69c508e2b163d69f915b1e9eada59eef9368317464"
+  },
+  "env": {
+    "LANG": "C",
+    "LC_ALL": "C",
+    "PATH": "/usr/bin:/bin",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "RAYON_NUM_THREADS": "4",
+    "TRNM_W1_FUNDED_CONFIG": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/config.json"
+  },
+  "gpu_accounting": "UNKNOWN",
+  "original_deadline_ns": 1199343004629858,
+  "original_identity": {
+    "affinity": [
+      8,
+      9,
+      10,
+      11,
+      20,
+      21,
+      22,
+      23
+    ],
+    "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+    "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1b9fa4d54-12894-17e1.service",
+    "cpu_max": "800000 100000",
+    "memory_max_bytes": 8589934592,
+    "observed_monotonic_ns": 1199223004626607,
+    "pid": 3666427,
+    "proc_stat": "3666427 (python3.12) R 3666406 3666427 3666427 0 -1 4194304 3421 1814 0 0 166 22 4 7 30 10 1 0 119922076 32907264 4706 18446744073709551615 4325376 7352253 140734579980800 0 0 0 0 16781312 2 0 0 0 17 11 0 0 0 0 0 10653128 12216448 333844480 140734579987526 140734579988441 140734579988441 140734579990500 0\n"
+  },
+  "owner_binary": {
+    "bytes": 467878704,
+    "path": "/home/qian-qi/work/chain-w1-base62-owner-empty-target-20261108-ec265b/debug/deps/trnm_pon_node-2c98293081e75af8",
+    "sha256": "66190e5b704edc538b42d18ef12750d134f85ae6da4eb42122681f814cd4efa6"
+  },
+  "plan": {
+    "bytes": 50070,
+    "path": "/home/qian-qi/work/chain-w1-c6-timeout-reorg-20261108-ec265b-01/plan.json",
+    "sha256": "c38c7d6105d8658e5eb2403c9e990b902902a0073d19e9d499b33f28ccee044d"
+  },
+  "proof_deadline_can_be_extended": false,
+  "public_chain_transactions_sent": false,
+  "schema": "TRNM-W1-OWNER-TIMEOUT-LAUNCH1",
+  "selected_monotonic_ns": 1199223004629858,
+  "source": {
+    "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+  }
+}

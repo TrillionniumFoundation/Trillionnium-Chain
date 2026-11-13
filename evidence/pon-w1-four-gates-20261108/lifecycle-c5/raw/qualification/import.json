@@ -1,0 +1,16 @@
+{
+  "copy_is_original_bytes": true,
+  "new_qualification_run_performed_by_import": false,
+  "original_owner_artifact": {
+    "bytes": 2104,
+    "path": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b-validation/exact-final-owner-01/owner-artifact.json",
+    "sha256": "f677bf899632ca343f8b7f8f60d512dbf3c2f5a1c4ad0613bb12d0899d7d4cb4"
+  },
+  "original_qualification_manifest": {
+    "bytes": 23342,
+    "path": "/home/qian-qi/work/chain-w1-four-gates-20261108-ec265b-validation/exact-final-owner-01/manifest.json",
+    "sha256": "182b317b9d90962a2595be2421d7813fda627b5654404305edf9f4124833a466"
+  },
+  "schema": "TRNM-W1-OWNER-QUALIFICATION-IMPORT1",
+  "sqlite_io_runtime_domain_qualified": false
+}

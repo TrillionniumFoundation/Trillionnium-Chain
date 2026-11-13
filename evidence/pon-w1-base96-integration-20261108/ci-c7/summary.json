@@ -1,0 +1,46 @@
+{
+  "CI_checks_observed": 0,
+  "CI_dispatches": 0,
+  "CI_pass_claim": false,
+  "CI_reruns": 0,
+  "PR_API": {
+    "base_sha": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+    "draft": true,
+    "head_sha": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "merge_commit_sha": null,
+    "mergeable": false,
+    "mergeable_state": "dirty",
+    "state": "open",
+    "updated_at": "2026-11-08T08:34:02Z"
+  },
+  "PR_API_reads": 2,
+  "actual_git_refs": {
+    "refs/heads/fix/chain-six-axis-performance-20261103": "9417e495165865ef6c1288b39084856e31020634",
+    "refs/heads/fix/chain-w1-runtime-integrated-20261107": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "refs/pull/782/head": "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "refs/pull/782/merge": "7b4a63b6f08687e93270407772951aa71087ca3d"
+  },
+  "expected_event_tuple_observed": false,
+  "merge_base": "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+  "new_experiments": 0,
+  "new_source_edits": 0,
+  "previous_snapshot_copied_byte_identical": true,
+  "prior_manifest_sha256": "e5b132d1cbea80a109be2261b74adb51b18cfeba8dca959b5220e67de975d5a1",
+  "prior_snapshot_sha256": "1e65f320701a9f1e948a8b4930f97835ee9c02d926446e081ecd07d9ca028f3e",
+  "read_failures": [],
+  "retained_merge_parents": [
+    "96a241bf43f6a46d35dfb3d4ced9594ed8ceca75",
+    "2bdd252aa6c300b7431b9ee897b254b7953cf562"
+  ],
+  "schema": "TRNM-W1-C7-POSTPUSH-CI-SUMMARY1",
+  "snapshot_sha256": "a586ff22133fdb0185751db38cfc21ba430fa04fed628ccc5593e998bef39dc5",
+  "window_utc": [
+    "2026-11-08T08:47:55.246932+00:00",
+    "2026-11-08T08:48:24.796465+00:00"
+  ],
+  "workflow_run_read_window_utc": [
+    "2026-11-08T08:50:31.072958+00:00",
+    "2026-11-08T08:50:34.051728+00:00"
+  ],
+  "workflow_runs_observed": 0
+}

@@ -1,0 +1,34 @@
+{
+  "actual_commands": 7,
+  "actual_exit": 0,
+  "actual_exit0_commands": 6,
+  "actual_terminal": "succeeded",
+  "all_bound_outputs_and_per_command_records_match": true,
+  "cache_origin": "failed-c6-build-cache-reuse",
+  "cargo_artifact_fresh": false,
+  "expected_exit1_source_probe_commands": 1,
+  "fresh_cargo_target": false,
+  "job_id": "1a1b9ed804c-12894-17aa",
+  "new_complete_proofs": 0,
+  "new_outer_qualification_budget_seconds": 1800,
+  "operation_budget_seconds_distinct_from_build": 120,
+  "operation_research_deadline_changed": false,
+  "original_failed_attempt_outer_budget_seconds": 900,
+  "original_failed_attempt_remains_failed": true,
+  "retained_guest_sdk_checked_not_recompiled": true,
+  "runner": {
+    "bytes": 47812232,
+    "copied": false,
+    "independently_rehashed": true,
+    "path": "/home/qian-qi/work/chain-w1-base62-backend-target-20261108-ec265b/release/w1-staged-prover-v2",
+    "sha256": "9ff491a702f6833a73c10129d688ad77a905fc7ebaedfbc8784c7f8c485b77ac"
+  },
+  "schema": "TRNM-W1-C6-BACKEND-SECOND-ATTEMPT-REVIEW1",
+  "source": {
+    "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+  },
+  "source_before_after_and_actual_probe_equal": true,
+  "source_probe_is_not_a_proof": true,
+  "tests_run_by_audit": 0
+}

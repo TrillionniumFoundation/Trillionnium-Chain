@@ -1,0 +1,432 @@
+{
+  "head_lane_note": "SOURCE_KIND=head; EXPECTED_MERGE presence alone does not mean the head lane executed the merge checkout.",
+  "inferred_from_API_or_merge": false,
+  "literal_missing_or_conflicting_fields": null,
+  "samples": [
+    {
+      "declarations": [
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 61,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 62,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 63,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1032,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1033,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 1034,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1063,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1064,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 1065,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1093,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1094,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 1095,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1278,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1279,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 1280,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1306,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1307,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 1308,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1346,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1347,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 1348,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        }
+      ],
+      "expected": {
+        "EXPECTED_BASE": "9417e495165865ef6c1288b39084856e31020634",
+        "EXPECTED_HEAD": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+        "EXPECTED_KIND": null,
+        "EXPECTED_MERGE": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+      },
+      "head_sha": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+      "job_id": 128698905076,
+      "log": {
+        "bytes": 187125,
+        "path": "job-samples/128698905076/log.stdout",
+        "sha256": "03c429f3a37b5cc70edfaf80b9199145697798cff619d07de24c4912e9daef94"
+      },
+      "name": "W1 fresh challenge service (x64, prospective-merge)",
+      "raw_values": {
+        "EXPECTED_BASE": [
+          "9417e495165865ef6c1288b39084856e31020634"
+        ],
+        "EXPECTED_HEAD": [
+          "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        ],
+        "EXPECTED_KIND": [],
+        "EXPECTED_MERGE": [
+          "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        ]
+      },
+      "run_id": 42470186930
+    },
+    {
+      "declarations": [
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1022,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 2944,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        }
+      ],
+      "expected": {
+        "EXPECTED_BASE": "9417e495165865ef6c1288b39084856e31020634",
+        "EXPECTED_HEAD": null,
+        "EXPECTED_KIND": null,
+        "EXPECTED_MERGE": null
+      },
+      "head_sha": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+      "job_id": 128698904380,
+      "log": {
+        "bytes": 485301,
+        "path": "job-samples/128698904380/log.stdout",
+        "sha256": "03e438a7492cca7025cfbca707152cc2218d21ba1c226f649b168d576489dba8"
+      },
+      "name": "CodeQL local SARIF (python, prospective-merge)",
+      "raw_values": {
+        "EXPECTED_BASE": [
+          "9417e495165865ef6c1288b39084856e31020634"
+        ],
+        "EXPECTED_HEAD": [],
+        "EXPECTED_KIND": [],
+        "EXPECTED_MERGE": []
+      },
+      "run_id": 42470186921
+    },
+    {
+      "declarations": [
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 61,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 62,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 63,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1039,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1040,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 1041,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1070,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1071,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 1072,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1100,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1101,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 1102,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1285,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1286,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 1287,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1313,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1314,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 1315,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1353,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_BASE",
+          "line": 1354,
+          "raw_value": "9417e495165865ef6c1288b39084856e31020634"
+        },
+        {
+          "field": "EXPECTED_MERGE",
+          "line": 1355,
+          "raw_value": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        }
+      ],
+      "expected": {
+        "EXPECTED_BASE": "9417e495165865ef6c1288b39084856e31020634",
+        "EXPECTED_HEAD": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+        "EXPECTED_KIND": null,
+        "EXPECTED_MERGE": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+      },
+      "head_sha": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+      "job_id": 128698904884,
+      "log": {
+        "bytes": 186865,
+        "path": "job-samples/128698904884/log.stdout",
+        "sha256": "2fbf1f8d347d7d0a3a755516ea4ee9a5e4f0e9a27554f2784eedf0e343cfdd6e"
+      },
+      "name": "W1 fresh challenge service (x64, head)",
+      "raw_values": {
+        "EXPECTED_BASE": [
+          "9417e495165865ef6c1288b39084856e31020634"
+        ],
+        "EXPECTED_HEAD": [
+          "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        ],
+        "EXPECTED_KIND": [],
+        "EXPECTED_MERGE": [
+          "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+        ]
+      },
+      "run_id": 42470186930
+    },
+    {
+      "declarations": [],
+      "expected": {
+        "EXPECTED_BASE": null,
+        "EXPECTED_HEAD": null,
+        "EXPECTED_KIND": null,
+        "EXPECTED_MERGE": null
+      },
+      "head_sha": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+      "job_id": 128698905350,
+      "log": {
+        "bytes": 161265,
+        "path": "job-samples/128698905350/log.stdout",
+        "sha256": "df398ac0e499f413b8cbde5c3af15960ba340b26d155bda5ed97501f058dbbc6"
+      },
+      "name": "cross-arch-cost (arm64)",
+      "raw_values": {
+        "EXPECTED_BASE": [],
+        "EXPECTED_HEAD": [],
+        "EXPECTED_KIND": [],
+        "EXPECTED_MERGE": []
+      },
+      "run_id": 42470186982
+    },
+    {
+      "declarations": [],
+      "expected": {
+        "EXPECTED_BASE": null,
+        "EXPECTED_HEAD": null,
+        "EXPECTED_KIND": null,
+        "EXPECTED_MERGE": null
+      },
+      "head_sha": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+      "job_id": 128698905140,
+      "log": {
+        "bytes": 160661,
+        "path": "job-samples/128698905140/log.stdout",
+        "sha256": "e77c97fb0bfcd896646f1e832be8cba93599e8d9cd3c002dffceacfe7f8f92b0"
+      },
+      "name": "cross-arch-cost (x64)",
+      "raw_values": {
+        "EXPECTED_BASE": [],
+        "EXPECTED_HEAD": [],
+        "EXPECTED_KIND": [],
+        "EXPECTED_MERGE": []
+      },
+      "run_id": 42470186982
+    },
+    {
+      "declarations": [
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 49,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 74,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1048,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1148,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1514,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1569,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1618,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        },
+        {
+          "field": "EXPECTED_HEAD",
+          "line": 1639,
+          "raw_value": "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        }
+      ],
+      "expected": {
+        "EXPECTED_BASE": null,
+        "EXPECTED_HEAD": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+        "EXPECTED_KIND": null,
+        "EXPECTED_MERGE": null
+      },
+      "head_sha": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+      "job_id": 128698905948,
+      "log": {
+        "bytes": 203038,
+        "path": "job-samples/128698905948/log.stdout",
+        "sha256": "5423fad65772ef40a560614aa1f35ba4bb028cba22f099ccd8af4c64268874aa"
+      },
+      "name": "original native campaign (x64, head, release)",
+      "raw_values": {
+        "EXPECTED_BASE": [],
+        "EXPECTED_HEAD": [
+          "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+        ],
+        "EXPECTED_KIND": [],
+        "EXPECTED_MERGE": []
+      },
+      "run_id": 42470187035
+    }
+  ],
+  "schema": "TRNM-W1-C8-OBSERVED-EVENT-TUPLES1"
+}

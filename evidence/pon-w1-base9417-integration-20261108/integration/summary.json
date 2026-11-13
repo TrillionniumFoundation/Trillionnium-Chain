@@ -1,0 +1,121 @@
+{
+  "added_required_from_c7": [
+    "trillionnium/crates/trnm-pon-node/src/store/historical_commitment.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/historical_commitment_tests.rs"
+  ],
+  "candidate_and_committed_diff_sha256": "5d115e88325dcfb963e12c87591285a05d9c2323324301ee06b5da21edf6bd52",
+  "changed_paths": 8,
+  "commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "deletions": 16,
+  "external_records": "/home/qian-qi/work/chain-w1-base9417-adversarial-integration-20261108-ec265b-01",
+  "freeze": {
+    "commands": 19,
+    "complete": true,
+    "durable": true,
+    "exit": 0,
+    "job": "1a1ba6758d7-12894-1a63",
+    "manifest_sha256": "422f8e4d6937081954f8290507ae499385590d2ee7011dde719573fd0529ab72"
+  },
+  "historical_tests": {
+    "argv": [
+      "/home/qian-qi/.cargo/bin/cargo",
+      "+1.95.0",
+      "test",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "store::historical_commitment_tests::",
+      "--",
+      "--show-output",
+      "--test-threads=1"
+    ],
+    "executed_by_this_integration": false,
+    "ignored": 0,
+    "method_selector_overlap_with_legacy_admission_or_reorg": false,
+    "modified_existing_methods": 2,
+    "scope": "Count method executions. Shared runtime behavior is not a global unique-test claim.",
+    "source_methods": 10
+  },
+  "immutable_originals_and_all_command_streams_rehashed": true,
+  "independent_review_source_commit": "9417e495165865ef6c1288b39084856e31020634",
+  "input_original_manifest_hashes": {
+    "freeze": "422f8e4d6937081954f8290507ae499385590d2ee7011dde719573fd0529ab72",
+    "peer": "e37402e40d0220ce45edf3fef8e6d00a46cf66da9e6f74f661bc524e39c9e2e5",
+    "precommit": "2b1659a56353c8096646e72b7447921ba3d79501424a11c35a38b31c91e1e57d",
+    "preparation": "7b113ecea582340e346ae708985fccda69ef951d10ddd3f491fbfa650bcfd852",
+    "resolution": "dba9702d8d541aa57548b2ef098a99f5eb65ff8fd64f0c9aedd423eea84dab3f"
+  },
+  "insertions": 208,
+  "inventory_blob": "c4fd4e40d80c2a2d0387c23432c56c57ca3fe135",
+  "inventory_changed": false,
+  "new_operations": 0,
+  "new_proofs": 0,
+  "no_postcommit_tests_executed_by_packaging": true,
+  "old_C7_clean_before_after": true,
+  "parents": [
+    "40a3a45d6b8afc5c4706c5235fec47634f4aabbe",
+    "9417e495165865ef6c1288b39084856e31020634"
+  ],
+  "pin_changes_from_c7": {
+    ".github/workflows/pon-recent-batch-acceptance.yml": {
+      "new": "82d88759a4ec452dd8befa4de62368876e3120d2",
+      "old": "724e561ebc89e5f1d85399e01a447ce1f4baa673"
+    },
+    "scripts/ci/test_history_stage_diagnostic.py": {
+      "new": "9fa491dd407ae0188142a0699791d620f14ac3f0",
+      "old": "748b8417dbbbcc08ed3fd5b0cdb3b69c44bfd4c2"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store.rs": {
+      "new": "b9faf7d0a0e0630efb62cf96dee29a3a46acc8ac",
+      "old": "7dd40f051e68cc72853217c31f0d025275114829"
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/historical_commitment.rs": {
+      "new": "dfd95d2618b5e8f3066d904ff632cd26f9925c5c",
+      "old": null
+    },
+    "trillionnium/crates/trnm-pon-node/src/store/historical_commitment_tests.rs": {
+      "new": "57f74076e6fd7ec3a856fb384977b68841ca1887",
+      "old": null
+    },
+    "trillionnium/crates/trnm-pon-node/tests/history_stage_diagnostic.rs": {
+      "new": "0ad34d092863dd32c5e9793daa618a91cd6c15f8",
+      "old": "d6650671ccc93462623351d05fdf434d52669ce1"
+    }
+  },
+  "pin_count": 652,
+  "postcommit_full_qualification": false,
+  "precommit": {
+    "commands": 9,
+    "complete": true,
+    "durable": true,
+    "exit": 0,
+    "failed": 0,
+    "groups": [
+      115,
+      39,
+      6
+    ],
+    "ignored": 0,
+    "job": "1a1ba620da1-12894-1a3f",
+    "manifest_sha256": "2b1659a56353c8096646e72b7447921ba3d79501424a11c35a38b31c91e1e57d",
+    "python_method_executions": 160,
+    "rust_method_executions": 0
+  },
+  "preparation_expected_merge_conflict_exit": 1,
+  "pushed": false,
+  "raw_archive_bytes": 256686,
+  "raw_archive_sha256": "a2bd51249aa3a4c0f9b67bdb684f7e39c059a1061331551b32591f862fd0390f",
+  "raw_member_count": 142,
+  "repo": "/home/qian-qi/work/chain-w1-base9417-integration-20261108-ec265b",
+  "required_count": 560,
+  "schema": "TRNM-W1-C8-INTEGRATION-PUBLICATION1",
+  "scope": "C8 integration and precommit evidence only; exact committed C8 qualification remains separate.",
+  "source_guard_or_deadline_semantics_changed": false,
+  "source_review_result": "No concrete new correctness defect found in the reviewed cache authority, state/root validation, rollback, fork and cancellation boundaries.",
+  "tar_members_byte_exact": true,
+  "tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c"
+}

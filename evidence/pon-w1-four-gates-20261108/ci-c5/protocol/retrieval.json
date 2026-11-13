@@ -1,0 +1,180 @@
+{
+  "schema": "TRNM-W1-C5-REMOTE-PROTOCOL-RETRIEVAL1",
+  "requested_run": 42449729551,
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "readonly": true,
+  "reruns_requested": 0,
+  "requests": [
+    {
+      "label": "run-metadata",
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42449729551",
+      "argv": [
+        "gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42449729551"
+      ],
+      "started_unix_ns": 1794115403640796491,
+      "finished_unix_ns": 1794115406362468525,
+      "returncode": 0,
+      "error": null,
+      "stdout_path": "run-metadata.raw",
+      "stdout_bytes": 15147,
+      "stdout_sha256": "34cd3d2ab5209826333f5646008cc3dd889a0243a68c43fb628df6d28b1b89d8",
+      "stderr_path": "run-metadata.fetch.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "protocol-contract",
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128636161832",
+      "argv": [
+        "gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128636161832"
+      ],
+      "started_unix_ns": 1794115406364074553,
+      "finished_unix_ns": 1794115408634857117,
+      "returncode": 0,
+      "error": null,
+      "stdout_path": "protocol-contract/job-metadata.raw",
+      "stdout_bytes": 3135,
+      "stdout_sha256": "019c5bc62b7633d8049f19611c20005a2a193612012a627b36b90972e4665a40",
+      "stderr_path": "protocol-contract/job-metadata.fetch.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "protocol-contract",
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128636161832/logs",
+      "argv": [
+        "gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128636161832/logs"
+      ],
+      "started_unix_ns": 1794115408635857806,
+      "finished_unix_ns": 1794115416721849689,
+      "returncode": 0,
+      "error": null,
+      "stdout_path": "protocol-contract/job-log.raw",
+      "stdout_bytes": 157374,
+      "stdout_sha256": "5c7027776e711995eb0209c2702a661858f9bc5c875c452cf04f3466ed667cce",
+      "stderr_path": "protocol-contract/job-log.fetch.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "prospective-merge-protocol-contract",
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128636161885",
+      "argv": [
+        "gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128636161885"
+      ],
+      "started_unix_ns": 1794115416724315841,
+      "finished_unix_ns": 1794115420398890904,
+      "returncode": 0,
+      "error": null,
+      "stdout_path": "prospective-merge-protocol-contract/job-metadata.raw",
+      "stdout_bytes": 3759,
+      "stdout_sha256": "1b9458543c74c6cd567d796d880fed96b7d562ea5c42ee47ce71e943dbd56980",
+      "stderr_path": "prospective-merge-protocol-contract/job-metadata.fetch.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "prospective-merge-protocol-contract",
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128636161885/logs",
+      "argv": [
+        "gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128636161885/logs"
+      ],
+      "started_unix_ns": 1794115420400411555,
+      "finished_unix_ns": 1794115430042299700,
+      "returncode": 0,
+      "error": null,
+      "stdout_path": "prospective-merge-protocol-contract/job-log.raw",
+      "stdout_bytes": 160084,
+      "stdout_sha256": "13c88f4e3137e7dcc34e6c6839e3ea7c6ece49b7c19b95503469e635a3a4ee10",
+      "stderr_path": "prospective-merge-protocol-contract/job-log.fetch.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "cross-arch-cost-x64",
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128636161945",
+      "argv": [
+        "gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128636161945"
+      ],
+      "started_unix_ns": 1794115430045413699,
+      "finished_unix_ns": 1794115438330930541,
+      "returncode": 0,
+      "error": null,
+      "stdout_path": "cross-arch-cost-x64/job-metadata.raw",
+      "stdout_bytes": 3899,
+      "stdout_sha256": "61acaef5d801c2a50206d6449c89e8260c0bc655aa0a2068e4443d5b444de43f",
+      "stderr_path": "cross-arch-cost-x64/job-metadata.fetch.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "cross-arch-cost-x64",
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128636161945/logs",
+      "argv": [
+        "gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128636161945/logs"
+      ],
+      "started_unix_ns": 1794115438332495235,
+      "finished_unix_ns": 1794115443661505085,
+      "returncode": 0,
+      "error": null,
+      "stdout_path": "cross-arch-cost-x64/job-log.raw",
+      "stdout_bytes": 159161,
+      "stdout_sha256": "d4bbd8bf893ad3645130295dbaca19a63e4282b53a1f417d3f959fb67b1c4523",
+      "stderr_path": "cross-arch-cost-x64/job-log.fetch.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "cross-arch-cost-arm64",
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128636161957",
+      "argv": [
+        "gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128636161957"
+      ],
+      "started_unix_ns": 1794115443664519905,
+      "finished_unix_ns": 1794115445885056440,
+      "returncode": 0,
+      "error": null,
+      "stdout_path": "cross-arch-cost-arm64/job-metadata.raw",
+      "stdout_bytes": 3905,
+      "stdout_sha256": "dc48600c73228fb61f6cca1dec250e0a0c3cde56c49fa6a72bda642c6d9b4344",
+      "stderr_path": "cross-arch-cost-arm64/job-metadata.fetch.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "cross-arch-cost-arm64",
+      "endpoint": "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128636161957/logs",
+      "argv": [
+        "gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128636161957/logs"
+      ],
+      "started_unix_ns": 1794115445886655038,
+      "finished_unix_ns": 1794115457782896530,
+      "returncode": 0,
+      "error": null,
+      "stdout_path": "cross-arch-cost-arm64/job-log.raw",
+      "stdout_bytes": 159201,
+      "stdout_sha256": "8fa67d91a85114a8a7eb0757a4090a5a3ef19d99a06ff5e1d0c9f0a8f99a07a9",
+      "stderr_path": "cross-arch-cost-arm64/job-log.fetch.stderr",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

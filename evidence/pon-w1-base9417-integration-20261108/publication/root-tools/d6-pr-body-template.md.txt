@@ -1,0 +1,54 @@
+## 当前结论：C8 已发布；四项工程门继续 HOLD
+
+当前执行源码为 [C8 `4e007a87ceecbec8d265f6a70cfd71d512a514b5`](https://github.com/TrillionniumFoundation/Trillionnium-Chain/commit/4e007a87ceecbec8d265f6a70cfd71d512a514b5)，tree `19a4f1a6e1cec5c27e595fa555b97cddc4717a3c`，父提交为 C7 `40a3a45d6b8afc5c4706c5235fec47634f4aabbe` 与基线 `9417e495165865ef6c1288b39084856e31020634`。它整合实际 store / historical commitment 缓存变更，解决两处实际 merge 冲突，保留源码保护、expected event 绑定、原业务 deadline 和验收条件。
+
+[D6 完整证据与统计口径](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/{{D6_COMMIT}}/evidence/pon-w1-base9417-integration-20261108/README.md) 的父提交是 D5 与 C8；该文档 merge 不冒充被执行的源码。源码和证据均以普通 push 发布，PR 保持 Draft。
+
+## 冻结后全部资格尝试
+
+- **77 条命令，697 次普通测试方法执行：696 PASS / 1 FAIL，另 4 ignored。** Python 645 PASS / 1 FAIL，Rust 51 PASS。154 份原始 stdout/stderr 流独立重核。
+- 命令终态为 75 个 exit 0、1 个预声明 source-probe exit 1、1 个真实 staged 失败 exit 1。
+- 首轮 73 条命令为 **664 PASS / 1 FAIL**。原 0.2 秒 staged 控制在 spawn 前耗尽 deadline；失败和未进入的后续子段均保留。
+- 唯一预声明、源码/argv/参数不变的 staged 复核为 4 命令 / 32 PASS，补足控制分支覆盖。选定成功覆盖集的 73 命令 / 665 PASS 不替代上述全部尝试；没有证明首轮全绿、短时限稳定性或失败的宿主原因。
+- 预提交 160 PASS、导入/审计/文档检查及真实生命周期研究 2 PASS 均不混入 697 分母。History 本地只完成 release 编译和 exact ignored list，完整 4105 未执行。
+- backend / native / owner target 都是 C7 已完成缓存的独立复制，**fresh target=false**。指定 ELF 与实际 Cargo/source 身份保留，不声称空 target 或全缓存字节重验。
+
+## 实际 C8 NativeTask / M12 生命周期
+
+独立 operation `a35153e046b91421e3d8d67c0d5f053b88a87f4f8ac8213f8e3ee09f5f1be1e9` 已实际进入昂贵 r0vm。原研究窗口为 120 秒、8 CPU / 8 GiB、固定 affinity；没有续期 deadline。
+
+- 主路径 job `1a1baa770fd-12894-1c3b`：exit 0 / complete / durable，Rust **1 PASS / 122.68s**。目标记录 `original-deadline / exit -9 / sticky_cancel=false`；finished 观察比原 deadline 晚 **0.292570577s**，此差值不是 proof 完成时间或尾延迟。
+- typed Unknown 比显式 owner request 早 **0.001995728s**。随后真实 Cancel、合法分叉移除、实际 cold reopen 的 Reserved / remaining 1000、恢复同一 Cancel 的 Cancelled / remaining 0 均保留；未另签 Cancel。
+- 独立 cold job `1a1baac4fa2-12894-1c66`：exit 0 / complete / durable，Rust **1 PASS / 0.32s**；同一 config / operation / 原 deadline / retained target，**0 新派发、0 Native 交易、0 target cancel 请求**。
+- 新 operation 的 M12 调度为 **Done**；`consumed=null`、完整 cap 保留、GPU 计费 Unknown。没有正向 provider 付款或完整资源结算证据。研究本金 1000 不作为净账户增量或跨隔离 fixture 累计退款。
+- accepted outcome 没有独立时间戳，`new_event_proven=false`；独立审查没有重开数据库或重验签名。末次五个已记录进程出生身份及两个精确 cgroup 缺失，只支持该时点的有界观察，完整历史树所有权/wait/reap/计费仍未知。
+
+旧两个相关 operation 的 Pending/cap 状态未改写。C7 原 launch Unknown `1a1ba4cf251-12894-1994` 及 same-key reconciliation 原件冻结；有限缺失观察不等于证明从未执行，C8 不是其重放。
+
+## 有界 CI 历史观察
+
+**时窗：2026-11-08 10:22:55.303–10:24:36.474 UTC，非原子快照。**
+
+| 集合 | 总计 | 成功 | 失败 | 未完成 | 跳过 |
+|---|---:|---:|---:|---:|---:|
+| Checks | 104 | 52 | 25 | 24 | 3 |
+| Workflow runs | 15 | 4 | 5 | 6 | 0 |
+
+当时实际 head=C8、base=9417、merge=`a3b427a9f39e90176c9bfb48d85f9353fb2bd99b`。merge parents=[9417,C8]，tree 与 C8 相同；不据此替代 merge 的远端执行资格。同一原始响应经补充 scope audit 核实全部 check/run 来源和六个样本身份，未重复查询。
+
+六个已完成样本为两项 W1 prospective、两项 cross-architecture prospective、一项 CodeQL prospective 和一项原 native campaign。W1 两样本源码前后步骤通过，并实际打印 expected [9417,C8,a3b427]，服务步骤仍失败；cross-architecture 服务步骤失败，未见完整 expected 声明；CodeQL 成功。原 native campaign 三轮均 **return 101 / original_criteria_met=false**，耗时 **113.6226 / 113.4030 / 113.3158s**，原 30 秒及 0/24/24 条件保留。仅 campaign HEAD 原声明可见，其 BASE/MERGE 保留 null。
+
+六样本包含五个失败 check；其余 **20 个失败 check** 的首失败原因未采样。没有取得内层服务报告，不推断 confirmation/finite 根因，不套用 C6 失败解释。尚有 24 checks / 6 runs 未完成；该快照不代表当前全部 CI 终态或通过。
+
+## 四项工程门
+
+| 门 | 实际进展 | 保留的缺口 |
+|---|---|---|
+| 实际 winner / receiver | 两份历史完整 proof 严格独立接收；C8 verifier/source/raw 绑定与有界进程终检 | 部署 WAN、同一真实 W1 winner 的合法 Node admission、完整历史树所有权/回收/计费 |
+| 完整后端同资源实验 | 两份 fresh proof 各 43 segment / 43 lift / 42 join；80 行 ABBA 为验证成本数据 | 全生成每方案 n=1、配置差异、无尾延迟/因果加速资格；原业务预算未通过 |
+| 异步 NativeTask / M12 | C8 真实原 deadline 超时、显式取消、分叉移除/恢复、独立冷恢复；新 operation 调度 Done | 旧 Pending/cap、consumed null、正向 provider 付款、完整资源结算 |
+| 部署收益与安全 | 精确源码与 expected-artifacts/raw/type 绑定、真实失败和完整发布核验 | 验证/传输收益、原预算、完整密码学/协议/部署安全资格 |
+
+D5 已恢复此前因 `*.log` 忽略规则漏入提交的 **104 份原日志**（C5 75、C6 29），按原 SHA256 保留，旧提交和 inventory 未改写。D6 保留全部 **2138 个旧已跟踪文件路径**，并对四个证据包的新旧 inventory、Git index/commit 字节、远端不可变子树的精确路径与 blob OID、README 原字节完成发布校验。D6 自身发布回执在 inventory 冻结后生成，不虚构循环自引用。
+
+**四门均 HOLD。** 指定功能路径的成功不清除预算、业务或 CI 失败历史，本 PR 不主张生产激活、正向付款、性能加速或完整安全资格。

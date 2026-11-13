@@ -1,0 +1,92 @@
+[
+  {
+    "archive_member": "manifest.json",
+    "bytes": 5686,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-staged-01/manifest.json",
+    "sha256": "4311dac940b8c5e46100f4c555999684de483665fdad90d2cee546ca99dccc5c"
+  },
+  {
+    "archive_member": "source-before.json",
+    "bytes": 423,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-staged-01/source-before.json",
+    "sha256": "538a1a4fc74182b322eb823d908898acee7041fedc122ea4f441e7cb21303835"
+  },
+  {
+    "archive_member": "source-after.json",
+    "bytes": 423,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-staged-01/source-after.json",
+    "sha256": "538a1a4fc74182b322eb823d908898acee7041fedc122ea4f441e7cb21303835"
+  },
+  {
+    "archive_member": "provenance/plan.json",
+    "bytes": 637,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-tools-20261108-ec265b/staged-plan.json",
+    "sha256": "852763cb52a6bde4447d56abaa72af3e9c3494ae329d283ef09faafee134a542"
+  },
+  {
+    "archive_member": "provenance/qualify_source.py",
+    "bytes": 5715,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-tools-20261108-ec265b/qualify_source.py",
+    "sha256": "d3c6953430a8efce70396eac88c891aa91501633013c09d5018f0b00e9fb7d1f"
+  },
+  {
+    "archive_member": "00-preflight.stdout",
+    "bytes": 178,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-staged-01/00-preflight.stdout",
+    "sha256": "fc3911c320a46305c42bab476b1e4b06c720633e46046a460f2afec14cdeb4a1"
+  },
+  {
+    "archive_member": "00-preflight.stderr",
+    "bytes": 0,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-staged-01/00-preflight.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "archive_member": "01-source-before.stdout",
+    "bytes": 423,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-staged-01/01-source-before.stdout",
+    "sha256": "538a1a4fc74182b322eb823d908898acee7041fedc122ea4f441e7cb21303835"
+  },
+  {
+    "archive_member": "01-source-before.stderr",
+    "bytes": 0,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-staged-01/01-source-before.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "archive_member": "02-w1-retained-staged-tests.stdout",
+    "bytes": 0,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-staged-01/02-w1-retained-staged-tests.stdout",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "archive_member": "02-w1-retained-staged-tests.stderr",
+    "bytes": 5752,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-staged-01/02-w1-retained-staged-tests.stderr",
+    "sha256": "1cc994f503cf1ba7c9f73696d3b45bc7df77dd42deb94c3e6c50c1f5c4661ae7"
+  },
+  {
+    "archive_member": "99-source-after.stdout",
+    "bytes": 423,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-staged-01/99-source-after.stdout",
+    "sha256": "538a1a4fc74182b322eb823d908898acee7041fedc122ea4f441e7cb21303835"
+  },
+  {
+    "archive_member": "99-source-after.stderr",
+    "bytes": 0,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/exact-staged-01/99-source-after.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "archive_member": "provenance/staged-launch-binding.json",
+    "bytes": 5398,
+    "original_path": "/home/qian-qi/work/chain-w1-c7-root-validation-20261108-ec265b/staged-launch-binding.json",
+    "sha256": "17d8b2a18aa78e6bdc95339ee3223bc28dc04c37a1963623a4720b5e06e85bcd"
+  },
+  {
+    "archive_member": "durable-job-terminal.json",
+    "bytes": 730,
+    "original_path": "hepta-runtime authoritative process_status",
+    "sha256": "929b1232bf323d171d66cd6019987d294288a4bdc3d51e6facefbaec70122648"
+  }
+]

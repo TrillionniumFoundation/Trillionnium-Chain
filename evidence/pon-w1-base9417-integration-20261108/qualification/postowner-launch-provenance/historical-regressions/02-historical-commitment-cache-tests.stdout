@@ -1,0 +1,29 @@
+
+running 10 tests
+test store::historical_commitment_tests::actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures ... ok
+test store::historical_commitment_tests::cached_historical_material_cannot_hide_final_writer_damage_or_publish_failed_block ... ok
+test store::historical_commitment_tests::historical_cancel_and_cpu_budget_keep_original_progress_and_error_identity ... ok
+test store::historical_commitment_tests::historical_material_reuses_arithmetic_after_complete_replay_and_reopens ... ok
+test store::historical_commitment_tests::independent_entry_payload_and_retention_bounds_discard_without_ledger_rejection ... ok
+test store::historical_commitment_tests::legacy_inactive_execution_reuses_only_checked_arithmetic_and_keeps_cancellation ... ok
+test store::historical_commitment_tests::legacy_prepared_history_reads_observe_current_rows_writes_and_rollback ... ok
+test store::historical_commitment_tests::legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes ... ok
+test store::historical_commitment_tests::original_context_parent_header_and_work_checks_keep_their_positions ... ok
+test store::historical_commitment_tests::wrong_block_material_is_only_an_index_miss_and_original_invalidation_clears_all ... ok
+
+successes:
+
+successes:
+    store::historical_commitment_tests::actual_foreign_snapshot_delta_and_root_damage_preserve_original_failures
+    store::historical_commitment_tests::cached_historical_material_cannot_hide_final_writer_damage_or_publish_failed_block
+    store::historical_commitment_tests::historical_cancel_and_cpu_budget_keep_original_progress_and_error_identity
+    store::historical_commitment_tests::historical_material_reuses_arithmetic_after_complete_replay_and_reopens
+    store::historical_commitment_tests::independent_entry_payload_and_retention_bounds_discard_without_ledger_rejection
+    store::historical_commitment_tests::legacy_inactive_execution_reuses_only_checked_arithmetic_and_keeps_cancellation
+    store::historical_commitment_tests::legacy_prepared_history_reads_observe_current_rows_writes_and_rollback
+    store::historical_commitment_tests::legacy_prepared_history_reads_reprepare_after_schema_and_authorizer_changes
+    store::historical_commitment_tests::original_context_parent_header_and_work_checks_keep_their_positions
+    store::historical_commitment_tests::wrong_block_material_is_only_an_index_miss_and_original_invalidation_clears_all
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 1201 filtered out; finished in 23.01s
+

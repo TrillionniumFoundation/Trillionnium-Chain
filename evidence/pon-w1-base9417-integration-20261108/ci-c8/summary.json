@@ -1,0 +1,150 @@
+{
+  "CI_all_passed": false,
+  "CI_reruns": 0,
+  "GH_API_read_commands": 24,
+  "Git_ls_remote_commands": 1,
+  "PR_API_final": {
+    "base_sha": "9417e495165865ef6c1288b39084856e31020634",
+    "draft": true,
+    "head_sha": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "merge_commit_sha": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b",
+    "mergeable": true,
+    "mergeable_state": "unstable",
+    "state": "open",
+    "updated_at": "2026-11-08T10:09:03Z"
+  },
+  "PR_API_reads": 2,
+  "actual_Git_refs": {
+    "refs/heads/fix/chain-six-axis-performance-20261103": "9417e495165865ef6c1288b39084856e31020634",
+    "refs/heads/fix/chain-w1-runtime-integrated-20261107": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "refs/pull/782/head": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+    "refs/pull/782/merge": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b"
+  },
+  "all_CI_terminal": false,
+  "all_read_commands_exit_zero": true,
+  "all_sample_identities_verified": true,
+  "authoritative_observer_and_audit_terminal": "succeeded/exit0/output_complete/output_durable",
+  "base_C8_compare_projection": {
+    "ahead_by": 14,
+    "base_commit": "9417e495165865ef6c1288b39084856e31020634",
+    "behind_by": 0,
+    "merge_base_commit": "9417e495165865ef6c1288b39084856e31020634",
+    "status": "ahead",
+    "total_commits": 14
+  },
+  "checks": {
+    "count": 104,
+    "declared_total": 104,
+    "enumeration_complete": true,
+    "foreign_source_check_ids": [],
+    "page_counts": [
+      {
+        "declared_total": 104,
+        "page": 1,
+        "returned": 100
+      },
+      {
+        "declared_total": 104,
+        "page": 2,
+        "returned": 4
+      }
+    ],
+    "pagination_errors": [],
+    "status_counts": {
+      "completed:failure": 25,
+      "completed:skipped": 3,
+      "completed:success": 52,
+      "in_progress:None": 24
+    },
+    "unique_ids": true
+  },
+  "exact_check_enumeration_complete": true,
+  "exact_workflow_enumeration_complete": true,
+  "failure_roster": {
+    "bytes": 7336,
+    "path": "failure-check-roster.json",
+    "sha256": "b50817fa9ffd759e41db07d98fd76c38437f82c7c1c38832ab8b2bc8f9d73ff2"
+  },
+  "fixed_integrated_base": "9417e495165865ef6c1288b39084856e31020634",
+  "guard_changes": 0,
+  "host_controller_scope": {
+    "bytes": 37559,
+    "path": "host-controller-scope.json",
+    "sha256": "dc8cf432eb163a59a09f4af896432e688c39a83531ca8d25207f1c0b49804e17"
+  },
+  "merge_objects": {
+    "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b": {
+      "message": "Merge 4e007a87ceecbec8d265f6a70cfd71d512a514b5 into 9417e495165865ef6c1288b39084856e31020634",
+      "parents": [
+        "9417e495165865ef6c1288b39084856e31020634",
+        "4e007a87ceecbec8d265f6a70cfd71d512a514b5"
+      ],
+      "sha": "a3b427a9f39e90176c9bfb48d85f9353fb2bd99b",
+      "tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c"
+    }
+  },
+  "new_API_calls_during_scope_audit_and_publication": 0,
+  "new_base_integration": false,
+  "new_operations": 0,
+  "observed_event_tuples": {
+    "bytes": 12973,
+    "path": "observed-event-tuples.json",
+    "sha256": "d305983325ae19e263808048262890a1a1ea76bcd4a0f2008084402705af7dc0"
+  },
+  "observer_job": "1a1baae8b12-12894-1c7c",
+  "original_campaign_log_record": {
+    "bytes": 10015,
+    "path": "original-campaign-log-record.json",
+    "sha256": "df250d026be238c0e535f0e9a056de2f305944b633eb471830fb9c9566536776"
+  },
+  "qualified_merge_claim": false,
+  "sample_count": 6,
+  "sample_evidence_readback": {
+    "bytes": 88176,
+    "path": "sample-evidence-readback.json",
+    "sha256": "4fece9ec8e9e6e1682d9fe23031400a157e95a1f52a2f3688b4b8000bd9ca45e"
+  },
+  "sampled_failure_count": 5,
+  "schema": "TRNM-W1-C8-CI-PUBLIC-SUMMARY1",
+  "scope_audit": {
+    "bytes": 5011,
+    "path": "scope-audit.json",
+    "sha256": "5980096ddb4792e176b77fe3a36303b51ae27129fd55eb59f6b2d74dc55837f1"
+  },
+  "scope_audit_job": "1a1bab67341-12894-1cc3",
+  "snapshot": {
+    "bytes": 53724,
+    "path": "snapshot.json",
+    "sha256": "572738750c14057ed436ef4602085692810bd7c88b0a8c576f09ebb1b16bd5b0"
+  },
+  "snapshot_atomic": false,
+  "source_changes": 0,
+  "source_commit": "4e007a87ceecbec8d265f6a70cfd71d512a514b5",
+  "tree": "19a4f1a6e1cec5c27e595fa555b97cddc4717a3c",
+  "unfinished_status_observed": "in_progress only; no queued entries",
+  "unsampled_failure_causes": null,
+  "unsampled_failure_count": 20,
+  "window_finished_utc": "2026-11-08 10:24:36.474930938 UTC",
+  "window_started_utc": "2026-11-08 10:22:55.303838857 UTC",
+  "workflow_dispatches": 0,
+  "workflow_runs": {
+    "count": 15,
+    "declared_total": 15,
+    "enumeration_complete": true,
+    "foreign_source_run_ids": [],
+    "page_counts": [
+      {
+        "declared_total": 15,
+        "page": 1,
+        "returned": 15
+      }
+    ],
+    "pagination_errors": [],
+    "status_counts": {
+      "completed:failure": 5,
+      "completed:success": 4,
+      "in_progress:None": 6
+    },
+    "unique_ids": true
+  }
+}

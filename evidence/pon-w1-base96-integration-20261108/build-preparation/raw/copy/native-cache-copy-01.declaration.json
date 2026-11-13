@@ -1,0 +1,79 @@
+{
+  "cargo_started": false,
+  "copy_argv": [
+    "/usr/bin/cp",
+    "-a",
+    "--reflink=auto",
+    "--no-preserve=links",
+    "--",
+    "/home/qian-qi/work/chain-w1-base62-native-empty-target-20261108-ec265b-03",
+    "/home/qian-qi/work/chain-w1-base96-native-target-20261108-ec265b"
+  ],
+  "deadline_extension_allowed": false,
+  "destination": "/home/qian-qi/work/chain-w1-base96-native-target-20261108-ec265b",
+  "destination_binaries_qualified_for_c7": false,
+  "disk_free_bytes_before": 89550131200,
+  "hardlinks_to_source_allowed": false,
+  "operation_created": false,
+  "outer_hepta_timeout_seconds": 1800,
+  "owner_cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/hepta-runtime-job-1a1ba265585-12894-18a5.service",
+  "owner_identity": {
+    "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+    "pid": 3828296,
+    "start_ticks": 120212619,
+    "state": "R"
+  },
+  "reflink_auto_may_share_copy_on_write_extents": true,
+  "role": "native",
+  "schema": "TRNM-W1-C7-CACHE-COPY-DECLARATION1",
+  "scope": "this independent preparation attempt only",
+  "source": {
+    "commit": "2bdd252aa6c300b7431b9ee897b254b7953cf562",
+    "tree": "ac3cb7171c429fa5e12e29ee16839fa6f49f1b81"
+  },
+  "source_binaries_before": {
+    "release/examples/pon_w1_native_winner_v2": {
+      "bytes": 752472,
+      "device": 2050,
+      "inode": 56678377,
+      "nlink": 2,
+      "path": "/home/qian-qi/work/chain-w1-base62-native-empty-target-20261108-ec265b-03/release/examples/pon_w1_native_winner_v2",
+      "sha256": "753c8c3610dcf0687e2d54f19e5c5b307dd54683bedabc7fe3d39eed57ee4b03"
+    },
+    "release/w1-verify-v2": {
+      "bytes": 19353192,
+      "device": 2050,
+      "inode": 56678386,
+      "nlink": 2,
+      "path": "/home/qian-qi/work/chain-w1-base62-native-empty-target-20261108-ec265b-03/release/w1-verify-v2",
+      "sha256": "f9de534d894e4d0e012d31055fdc4a626addd5efd12ad19d61ff9d7d9867e7a1"
+    }
+  },
+  "source_inventory": {
+    "bytes": 4524,
+    "device": 2050,
+    "inode": 57672536,
+    "nlink": 1,
+    "path": "/home/qian-qi/work/chain-w1-base96-m12-tools-20261108-ec265b/cache-source-inventory-01.json",
+    "sha256": "b3b13acdf4a273201b97424e34fcf999665b7b6bf37526d72821e17e08de2f10"
+  },
+  "source_qualification": {
+    "bytes": 15260,
+    "device": 2050,
+    "inode": 56678541,
+    "nlink": 1,
+    "path": "/home/qian-qi/work/chain-w1-c6-native-qualification-20261108-ec265b-01/manifest.json",
+    "sha256": "1a7bec56da77f9d0fc0fc647adb618f705c42f03e7e40c2728773cc55844e352"
+  },
+  "source_regular_file_count": 1974,
+  "source_regular_logical_bytes": 864041323,
+  "source_stat_inventory_sha256": "de9f0d616402b85f0573d4072750e01de9336c79b7b62549e40bf9cdd9604beb",
+  "source_target": "/home/qian-qi/work/chain-w1-base62-native-empty-target-20261108-ec265b-03",
+  "started_monotonic_ns": 1202126583427042,
+  "supervisor_identity": {
+    "boot_id": "14f92beb-43c6-4786-839e-b57307ae8048",
+    "pid": 3828289,
+    "start_ticks": 120212609,
+    "state": "S"
+  }
+}

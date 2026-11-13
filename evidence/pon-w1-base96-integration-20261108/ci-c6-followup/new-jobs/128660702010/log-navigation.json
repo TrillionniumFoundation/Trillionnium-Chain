@@ -1,0 +1,183 @@
+{
+  "candidate_count": 9,
+  "complete_download": true,
+  "first_candidates": [
+    {
+      "line": 116,
+      "text": "2026-11-08T07:19:39.5398985Z  * [new branch]          archive/chain-state-json-failed-d55daefd-20261103 -> origin/archive/chain-state-json-failed-d55daefd-20261103"
+    },
+    {
+      "line": 147,
+      "text": "2026-11-08T07:19:39.5484666Z  * [new branch]          audit/pq-pcp2-verify-deadline-checkpoints-20261030 -> origin/audit/pq-pcp2-verify-deadline-checkpoints-20261030"
+    },
+    {
+      "line": 672,
+      "text": "2026-11-08T07:19:39.6009865Z  * [new branch]          fix/pq-pcp2-publish-deadline-result-20261030 -> origin/fix/pq-pcp2-publish-deadline-result-20261030"
+    },
+    {
+      "line": 752,
+      "text": "2026-11-08T07:19:39.6098259Z  * [new branch]          research/pon-daa-bounded-summary-20261025 -> origin/research/pon-daa-bounded-summary-20261025"
+    },
+    {
+      "line": 1043,
+      "text": "2026-11-08T07:19:45.6381369Z Traceback (most recent call last):"
+    },
+    {
+      "line": 1050,
+      "text": "2026-11-08T07:19:45.6395661Z     raise ValueError('merge parents differ from the event base and candidate')"
+    },
+    {
+      "line": 1051,
+      "text": "2026-11-08T07:19:45.6396317Z ValueError: merge parents differ from the event base and candidate"
+    },
+    {
+      "line": 1052,
+      "text": "2026-11-08T07:19:45.6528735Z ##[error]Process completed with exit code 1."
+    },
+    {
+      "line": 1083,
+      "text": "2026-11-08T07:19:45.8708214Z ##[error]No files were found with the provided path: /home/runner/work/_temp/w1-legal-factorial-prospective-merge-x64-42457886518-1/. No artifacts will be uploaded."
+    }
+  ],
+  "job_id": 128660702010,
+  "kind": "source-guard-sample",
+  "last_candidates": [
+    {
+      "line": 116,
+      "text": "2026-11-08T07:19:39.5398985Z  * [new branch]          archive/chain-state-json-failed-d55daefd-20261103 -> origin/archive/chain-state-json-failed-d55daefd-20261103"
+    },
+    {
+      "line": 147,
+      "text": "2026-11-08T07:19:39.5484666Z  * [new branch]          audit/pq-pcp2-verify-deadline-checkpoints-20261030 -> origin/audit/pq-pcp2-verify-deadline-checkpoints-20261030"
+    },
+    {
+      "line": 672,
+      "text": "2026-11-08T07:19:39.6009865Z  * [new branch]          fix/pq-pcp2-publish-deadline-result-20261030 -> origin/fix/pq-pcp2-publish-deadline-result-20261030"
+    },
+    {
+      "line": 752,
+      "text": "2026-11-08T07:19:39.6098259Z  * [new branch]          research/pon-daa-bounded-summary-20261025 -> origin/research/pon-daa-bounded-summary-20261025"
+    },
+    {
+      "line": 1043,
+      "text": "2026-11-08T07:19:45.6381369Z Traceback (most recent call last):"
+    },
+    {
+      "line": 1050,
+      "text": "2026-11-08T07:19:45.6395661Z     raise ValueError('merge parents differ from the event base and candidate')"
+    },
+    {
+      "line": 1051,
+      "text": "2026-11-08T07:19:45.6396317Z ValueError: merge parents differ from the event base and candidate"
+    },
+    {
+      "line": 1052,
+      "text": "2026-11-08T07:19:45.6528735Z ##[error]Process completed with exit code 1."
+    },
+    {
+      "line": 1083,
+      "text": "2026-11-08T07:19:45.8708214Z ##[error]No files were found with the provided path: /home/runner/work/_temp/w1-legal-factorial-prospective-merge-x64-42457886518-1/. No artifacts will be uploaded."
+    }
+  ],
+  "log_lines": 1097,
+  "log_sha256": "6bda45642aae012b4eb75d8abf9ffb8ca4b992aa1b6b7b9d7396047b68584e1f",
+  "note": "Pattern hits are navigation only; expected refusal controls can match; not inferred failure causes.",
+  "tail": [
+    {
+      "line": 1074,
+      "text": "2026-11-08T07:19:45.6726003Z   EXPECTED_BASE: 62d2d90c9e1f4c8450c89843f1e08360a24283ce"
+    },
+    {
+      "line": 1075,
+      "text": "2026-11-08T07:19:45.6726351Z   EXPECTED_MERGE: 7b4a63b6f08687e93270407772951aa71087ca3d"
+    },
+    {
+      "line": 1076,
+      "text": "2026-11-08T07:19:45.6726815Z   OUT: /home/runner/work/_temp/w1-legal-factorial-prospective-merge-x64-42457886518-1"
+    },
+    {
+      "line": 1077,
+      "text": "2026-11-08T07:19:45.6727446Z   TRNM_CI_RECEIPT_DIR: /home/runner/work/_temp/w1-legal-factorial-prospective-merge-x64-42457886518-1"
+    },
+    {
+      "line": 1078,
+      "text": "2026-11-08T07:19:45.6727987Z   CARGO_HOME: /home/runner/work/_temp/cargo-w1-legal-factorial"
+    },
+    {
+      "line": 1079,
+      "text": "2026-11-08T07:19:45.6728405Z   CARGO_TARGET_DIR: /home/runner/work/_temp/target-w1-legal-factorial"
+    },
+    {
+      "line": 1080,
+      "text": "2026-11-08T07:19:45.6728746Z ##[endgroup]"
+    },
+    {
+      "line": 1081,
+      "text": "2026-11-08T07:19:45.8641860Z (node:2701) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead."
+    },
+    {
+      "line": 1082,
+      "text": "2026-11-08T07:19:45.8643533Z (Use `node --trace-deprecation ...` to show where the warning was created)"
+    },
+    {
+      "line": 1083,
+      "text": "2026-11-08T07:19:45.8708214Z ##[error]No files were found with the provided path: /home/runner/work/_temp/w1-legal-factorial-prospective-merge-x64-42457886518-1/. No artifacts will be uploaded."
+    },
+    {
+      "line": 1084,
+      "text": "2026-11-08T07:19:45.8988602Z Post job cleanup."
+    },
+    {
+      "line": 1085,
+      "text": "2026-11-08T07:19:45.9935061Z [command]/usr/bin/git version"
+    },
+    {
+      "line": 1086,
+      "text": "2026-11-08T07:19:45.9979647Z git version 2.56.0"
+    },
+    {
+      "line": 1087,
+      "text": "2026-11-08T07:19:46.0053443Z Temporarily overriding HOME='/home/runner/work/_temp/9f04c1bb-9324-43bf-8e45-b22e5248466b' before making global git config changes"
+    },
+    {
+      "line": 1088,
+      "text": "2026-11-08T07:19:46.0057322Z Adding repository directory to the temporary git global config as a safe directory"
+    },
+    {
+      "line": 1089,
+      "text": "2026-11-08T07:19:46.0060355Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Trillionnium-Chain/Trillionnium-Chain"
+    },
+    {
+      "line": 1090,
+      "text": "2026-11-08T07:19:46.0107298Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand"
+    },
+    {
+      "line": 1091,
+      "text": "2026-11-08T07:19:46.0151320Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+    },
+    {
+      "line": 1092,
+      "text": "2026-11-08T07:19:46.0450564Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader"
+    },
+    {
+      "line": 1093,
+      "text": "2026-11-08T07:19:46.0494065Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+    },
+    {
+      "line": 1094,
+      "text": "2026-11-08T07:19:46.0804867Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:"
+    },
+    {
+      "line": 1095,
+      "text": "2026-11-08T07:19:46.0863201Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url"
+    },
+    {
+      "line": 1096,
+      "text": "2026-11-08T07:19:46.1337620Z Cleaning up orphan processes"
+    },
+    {
+      "line": 1097,
+      "text": "2026-11-08T07:19:46.1692884Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+    }
+  ]
+}
