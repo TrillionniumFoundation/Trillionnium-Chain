@@ -1,0 +1,460 @@
+{
+  "archival_conversion": {
+    "change": "archive paths refer to checkpoint root; full job logs stored as reversible gzip with decoded-byte hashes; evidence values unchanged",
+    "original_readback_json_bytes": 13795,
+    "original_readback_json_sha256": "fec2115c67870a370b0e7fcd716bdaa2c3ea11008ce102269f6433fa516fed18"
+  },
+  "arm_head_failure_remains_blocking": true,
+  "checkpoint_path_base": "evidence/nextuse-final-9d4-20261111",
+  "head": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+  "rows": [
+    {
+      "all_52_output_bytes_verified": true,
+      "archive": "artifacts/pq-system-controls-arm-head-9d4.zip",
+      "artifact_id": 13823694514,
+      "artifact_sha256": "191db73c44e8b28102a62734921f45d29d04c93836693522920193faa9b43697",
+      "command_exit_nonzero": 1,
+      "command_exit_zero": 51,
+      "native_41_exit_code": 101,
+      "native_41_phase_totals": [
+        {
+          "last_failure": {
+            "error": {
+              "code": null,
+              "io_kind": "broken_pipe",
+              "origin": "io",
+              "raw_os_error": 32,
+              "sqlite_extended_code": null
+            },
+            "id": 13,
+            "kind": "witness_connection",
+            "marks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "phase": "witness_write",
+            "thread_cpu_ns": 26998848,
+            "wall_ns": 458379070
+          },
+          "phases": [
+            {
+              "phase": "service_commit",
+              "samples": {
+                "completed": 3,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 3,
+                "thread_cpu_ns": 1642984,
+                "unfinished": 0,
+                "wall_ns": 418600929,
+                "wall_unknown": 0
+              }
+            }
+          ],
+          "pid": 23045,
+          "records_overwritten": 6
+        },
+        {
+          "last_failure": {
+            "error": {
+              "code": "PQ_WITNESS_UNAVAILABLE",
+              "io_kind": null,
+              "origin": "exact_diagnostic_string_or_unknown",
+              "raw_os_error": null,
+              "sqlite_extended_code": null
+            },
+            "id": 19,
+            "kind": "tcp_request",
+            "marks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "phase": "tcp_read_request",
+            "thread_cpu_ns": 229664,
+            "wall_ns": 230665
+          },
+          "phases": [
+            {
+              "phase": "transport",
+              "samples": {
+                "completed": 7,
+                "cpu_unknown": 0,
+                "failed": 1,
+                "last_error": {
+                  "code": "PQ_WITNESS_DEADLINE",
+                  "io_kind": null,
+                  "origin": "exact_diagnostic_string_or_unknown",
+                  "raw_os_error": null,
+                  "sqlite_extended_code": null
+                },
+                "started": 7,
+                "thread_cpu_ns": 1680600,
+                "unfinished": 0,
+                "wall_ns": 415460301,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "advance_cas",
+              "samples": {
+                "completed": 3,
+                "cpu_unknown": 0,
+                "failed": 1,
+                "last_error": {
+                  "code": "PQ_WITNESS_DEADLINE",
+                  "io_kind": null,
+                  "origin": "exact_diagnostic_string_or_unknown",
+                  "raw_os_error": null,
+                  "sqlite_extended_code": null
+                },
+                "started": 3,
+                "thread_cpu_ns": 51818768,
+                "unfinished": 0,
+                "wall_ns": 360295293,
+                "wall_unknown": 0
+              }
+            }
+          ],
+          "pid": 23042,
+          "records_overwritten": 12
+        }
+      ],
+      "native_41_raw_log_sha256": "ec6e3ed466f237c32c0890d7b80e9cc97c4b92111a70eb26d8e88a7a2a14f644",
+      "native_41_source": {
+        "base": null,
+        "candidate": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+        "tested_tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2552886421,
+        "tracked_entries": 27994,
+        "tracked_worktree_verified": true
+      }
+    },
+    {
+      "all_52_output_bytes_verified": true,
+      "archive": "artifacts/pq-system-controls-arm-merge-9d4.zip",
+      "artifact_id": 13825100627,
+      "artifact_sha256": "9f7d8469db47ca631110e85eaa23d19933ff1db351ac4a0a95e2e4fd6f88c332",
+      "command_exit_nonzero": 0,
+      "command_exit_zero": 52,
+      "native_41_exit_code": 0,
+      "native_41_phase_totals": [
+        {
+          "last_failure": {
+            "error": {
+              "code": "PQ_WITNESS_EOF",
+              "io_kind": null,
+              "origin": "exact_diagnostic_string_or_unknown",
+              "raw_os_error": null,
+              "sqlite_extended_code": null
+            },
+            "id": 52,
+            "kind": "witness_connection",
+            "marks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "phase": "witness_read",
+            "thread_cpu_ns": 24344,
+            "wall_ns": 3184634
+          },
+          "phases": [
+            {
+              "phase": "service_commit",
+              "samples": {
+                "completed": 11,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 11,
+                "thread_cpu_ns": 2209264,
+                "unfinished": 0,
+                "wall_ns": 9648210,
+                "wall_unknown": 0
+              }
+            }
+          ],
+          "pid": 23414,
+          "records_overwritten": 44
+        },
+        {
+          "last_failure": {
+            "error": {
+              "code": "PQ_WITNESS_EOF",
+              "io_kind": null,
+              "origin": "exact_diagnostic_string_or_unknown",
+              "raw_os_error": null,
+              "sqlite_extended_code": null
+            },
+            "id": 3,
+            "kind": "witness_connection",
+            "marks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "phase": "witness_read",
+            "thread_cpu_ns": 135184,
+            "wall_ns": 35940649
+          },
+          "phases": [],
+          "pid": 23419,
+          "records_overwritten": 0
+        },
+        {
+          "last_failure": {
+            "error": {
+              "code": null,
+              "io_kind": null,
+              "origin": "exact_diagnostic_string_or_unknown",
+              "raw_os_error": null,
+              "sqlite_extended_code": null
+            },
+            "id": 3,
+            "kind": "tcp_request",
+            "marks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "phase": "tcp_handle",
+            "thread_cpu_ns": 116306952,
+            "wall_ns": 279231295
+          },
+          "phases": [
+            {
+              "phase": "transport",
+              "samples": {
+                "completed": 26,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 26,
+                "thread_cpu_ns": 2610624,
+                "unfinished": 0,
+                "wall_ns": 561786828,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "advance_cas",
+              "samples": {
+                "completed": 11,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 11,
+                "thread_cpu_ns": 161575096,
+                "unfinished": 0,
+                "wall_ns": 426966811,
+                "wall_unknown": 0
+              }
+            }
+          ],
+          "pid": 23411,
+          "records_overwritten": 57
+        }
+      ],
+      "native_41_raw_log_sha256": "56fd125a7a8ff9e2945fb7d091c1e451810692646311bee06fc7a9b16459bc34",
+      "native_41_source": {
+        "base": "df927b6ffaecff293b9e9428e3ba516f47cd101a",
+        "candidate": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+        "kind": "prospective-merge",
+        "prospective_merge": "a8a3bd2dd15d4ec06917ba3a0d1acd4681800cd6",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "a8a3bd2dd15d4ec06917ba3a0d1acd4681800cd6",
+        "tested_tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2552886421,
+        "tracked_entries": 27994,
+        "tracked_worktree_verified": true
+      }
+    },
+    {
+      "all_52_output_bytes_verified": true,
+      "archive": "artifacts/pq-system-controls-x64-head-9d4.zip",
+      "artifact_id": 13823943268,
+      "artifact_sha256": "93fbe4441db1877ea134654eaf25a9666d75f49df10782d169abd048d134d6a4",
+      "command_exit_nonzero": 0,
+      "command_exit_zero": 52,
+      "native_41_exit_code": 0,
+      "native_41_phase_totals": [
+        {
+          "last_failure": {
+            "error": {
+              "code": "PQ_WITNESS_EOF",
+              "io_kind": null,
+              "origin": "exact_diagnostic_string_or_unknown",
+              "raw_os_error": null,
+              "sqlite_extended_code": null
+            },
+            "id": 52,
+            "kind": "witness_connection",
+            "marks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "phase": "witness_read",
+            "thread_cpu_ns": 37369,
+            "wall_ns": 2156928
+          },
+          "phases": [
+            {
+              "phase": "service_commit",
+              "samples": {
+                "completed": 11,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 11,
+                "thread_cpu_ns": 2235157,
+                "unfinished": 0,
+                "wall_ns": 9717108,
+                "wall_unknown": 0
+              }
+            }
+          ],
+          "pid": 23409,
+          "records_overwritten": 44
+        },
+        {
+          "last_failure": {
+            "error": {
+              "code": "PQ_WITNESS_EOF",
+              "io_kind": null,
+              "origin": "exact_diagnostic_string_or_unknown",
+              "raw_os_error": null,
+              "sqlite_extended_code": null
+            },
+            "id": 3,
+            "kind": "witness_connection",
+            "marks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "phase": "witness_read",
+            "thread_cpu_ns": 733058,
+            "wall_ns": 48436335
+          },
+          "phases": [],
+          "pid": 23414,
+          "records_overwritten": 0
+        },
+        {
+          "last_failure": {
+            "error": {
+              "code": null,
+              "io_kind": null,
+              "origin": "exact_diagnostic_string_or_unknown",
+              "raw_os_error": null,
+              "sqlite_extended_code": null
+            },
+            "id": 3,
+            "kind": "tcp_request",
+            "marks": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "phase": "tcp_handle",
+            "thread_cpu_ns": 78631264,
+            "wall_ns": 203048448
+          },
+          "phases": [
+            {
+              "phase": "transport",
+              "samples": {
+                "completed": 26,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 26,
+                "thread_cpu_ns": 4521902,
+                "unfinished": 0,
+                "wall_ns": 408598758,
+                "wall_unknown": 0
+              }
+            },
+            {
+              "phase": "advance_cas",
+              "samples": {
+                "completed": 11,
+                "cpu_unknown": 0,
+                "failed": 0,
+                "last_error": null,
+                "started": 11,
+                "thread_cpu_ns": 162273577,
+                "unfinished": 0,
+                "wall_ns": 345231776,
+                "wall_unknown": 0
+              }
+            }
+          ],
+          "pid": 23406,
+          "records_overwritten": 57
+        }
+      ],
+      "native_41_raw_log_sha256": "71b75a3a55b524326d6882a92be5ac662afaea698f31f692afcfcc03e13c7ef9",
+      "native_41_source": {
+        "base": null,
+        "candidate": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+        "tested_tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 2552886421,
+        "tracked_entries": 27994,
+        "tracked_worktree_verified": true
+      }
+    }
+  ],
+  "schema": "trnm-pr892-pq-native-41-existing-matrix-comparison-v1",
+  "scope": "read-only comparison of already-existing hosted artifacts; no rerun",
+  "successful_siblings_do_not_replace_failed_sample": true,
+  "tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0",
+  "underlying_latency_cause_not_identified": true
+}

@@ -1,0 +1,128 @@
+[
+  {
+    "label": "bundle-create",
+    "argv": [
+      "git",
+      "bundle",
+      "create",
+      "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-subject/before-subject-e6342756.bundle",
+      "refs/heads/fix/chain-pon-five-claims-before-20261111-d6cb",
+      "^11e242dbaaae14a9d16282fe8deaf36827e98395"
+    ],
+    "started_unix": 1794394363.7915053,
+    "finished_unix": 1794394363.8562381,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "bundle-verify",
+    "argv": [
+      "git",
+      "bundle",
+      "verify",
+      "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-subject/before-subject-e6342756.bundle"
+    ],
+    "started_unix": 1794394363.8568022,
+    "finished_unix": 1794394363.8648598,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 260,
+      "sha256": "9ae82667a991d0b7accaf5e7678f58ca8c476a1d968d69ed6b5847a3a5ee9569"
+    },
+    "stderr": {
+      "bytes": 109,
+      "sha256": "5ffba6e7933461089c0a7a00210a7e733ae3db0b2d7c9f8754fa0c92a8382241"
+    }
+  },
+  {
+    "label": "bundle-heads",
+    "argv": [
+      "git",
+      "bundle",
+      "list-heads",
+      "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/before-subject/before-subject-e6342756.bundle"
+    ],
+    "started_unix": 1794394363.865371,
+    "finished_unix": 1794394363.869395,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 99,
+      "sha256": "cdd32536263c7d5256ebda6c0a5f40b09e9b63d423d7c12d2667b0b519f88446"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "format-patch",
+    "argv": [
+      "git",
+      "format-patch",
+      "-1",
+      "--stdout",
+      "--full-index",
+      "--binary",
+      "e63427560885b65c57db6bdc478df023111b4733"
+    ],
+    "started_unix": 1794394363.8698418,
+    "finished_unix": 1794394363.8859234,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 6762,
+      "sha256": "26939e9978ff72689279a384ff7391466ee14d653cc61591da9e3ca79271bbe0"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "commit-raw",
+    "argv": [
+      "git",
+      "cat-file",
+      "commit",
+      "e63427560885b65c57db6bdc478df023111b4733"
+    ],
+    "started_unix": 1794394363.8865843,
+    "finished_unix": 1794394363.8949738,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 293,
+      "sha256": "6625066c5323ba420514e6203fb7c3b4d8634645afb440e3568a083fd3727d0c"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "commit-metadata",
+    "argv": [
+      "git",
+      "show",
+      "--no-patch",
+      "--format=fuller",
+      "e63427560885b65c57db6bdc478df023111b4733"
+    ],
+    "started_unix": 1794394363.8955767,
+    "finished_unix": 1794394363.903833,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 318,
+      "sha256": "9a9f3b32cb2349f4fad5bd107cef58b7b4a7b7170b4e8304b32406af229f3018"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+]

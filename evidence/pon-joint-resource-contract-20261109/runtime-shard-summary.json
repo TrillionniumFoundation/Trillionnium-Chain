@@ -1,0 +1,123 @@
+{
+  "schema": "pon-runtime-shard-readback-v1",
+  "recorded_at_utc": "2026-11-09T04:12:11.655797+00:00",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "run_id": 42553751938,
+  "job_id": 128954796921,
+  "job_name": "prospective Rust shard (runtime)",
+  "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42553751938/job/128954796921",
+  "job_conclusion": "failure",
+  "started_at": "2026-11-09T02:57:57Z",
+  "completed_at": "2026-11-09T03:50:15Z",
+  "failed_steps": [
+    {
+      "name": "Run retained Rust shard",
+      "status": "completed",
+      "conclusion": "failure",
+      "number": 9,
+      "started_at": "2026-11-09T03:01:56Z",
+      "completed_at": "2026-11-09T03:50:04Z"
+    }
+  ],
+  "scope": "Only newly completed seventh required-baseline failure; existing six-failure report and totals remain unchanged; other jobs are not re-polled or awaited",
+  "source": {
+    "base": "e798d7125724d4b9f98c24d00cc80031f2eab4a9",
+    "candidate": "11791e2da79b69322271be2cffe03725165151d1",
+    "tested_commit": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+    "tested_tree": "162552848110fda532504b78865a16930bc6d9bb",
+    "all_four_recorded_source_identities_equal": true,
+    "tracked_entries": 26124,
+    "tracked_bytes": 2485379627,
+    "identity_checks_are_native_tests": false
+  },
+  "execution": {
+    "retained_recipe": "retained-rust-shard.sh",
+    "recipe_sha256": "c2369d386856e03a4e6566b4232ccdfb43f2672ca49d2a7070ebd2bfe7d0e9ae",
+    "failing_command": "cargo test --locked --manifest-path trillionnium/Cargo.toml --workspace --all-targets --all-features",
+    "profile": "debug; no --release flag",
+    "RUST_TEST_THREADS": 1,
+    "CARGO_BUILD_JOBS": 2,
+    "pinned_rust_toolchain": "1.95.0",
+    "prepared_pinned_openssl": "3.5.9",
+    "shard_status": "failed",
+    "exit_code": 101,
+    "subsequent_reader_oracle_commands_executed": false
+  },
+  "observed_failure": {
+    "target": "trnm-pon-node / tests/pq_application_local_cli.rs",
+    "test": "ordinary_npq6_configuration_rejects_missing_null_extra_and_mixed_bindings",
+    "source_panic_line": 144,
+    "fault": 1,
+    "input_change": "owner_profile = JSON null",
+    "expected_stderr_substring": "invalid type: null",
+    "actual_stderr": "JSON: expected value at line 1 column 16580",
+    "nonzero_cli_rejection_assertion_before_the_failed_diagnostic_assertion": "passed, inferred from the subsequent assertion panic position",
+    "diagnostic_assertion": "failed",
+    "iteration_scope": "fault 0 completed; fault 1 reached rejection then failed diagnostic check; fault 1 subsequent stdout/database checks, faults 2..11, and post-loop pin/positive checks not reached",
+    "integration_target_named": 5,
+    "integration_target_executed": 4,
+    "integration_target_passed": 3,
+    "integration_target_failed": 1,
+    "integration_target_ignored": 1,
+    "actual_libtest_before_this_failure": {
+      "target": "trnm_pon_node src/lib.rs",
+      "named": 1379,
+      "passed": 1340,
+      "failed": 0,
+      "ignored": 39,
+      "log_result_line": 6821
+    },
+    "whole_workspace_success": false
+  },
+  "attribution": {
+    "classification": "Existing configuration-rejection diagnostic assertion mismatch observed in the real hosted native integration target",
+    "unchanged_full_blobs_base_to_candidate": true,
+    "compared_file_count": 8,
+    "direct_call_order": "pq_application_local::run calls config::load at line 38; config::load deserializes at config.rs line 72 before returning material; packet input, owner open, admit and activate follow only after successful load. owner_profile is a required deserialized enum.",
+    "new_test_failure": false,
+    "new_V4_History_Growth_code_directly_named_as_failure": false,
+    "precise_reason_the_JSON_diagnostic_is_expected_value_instead_of_invalid_type": "unknown; not reproduced or investigated beyond the retained failing test, unchanged parser/entry/fixture/lock blobs, and call order",
+    "no_claims": [
+      "No assertion that the old base was executed here",
+      "No blanket exclusion of all indirect effects",
+      "No use of local release 106-pass subset as proof about this all-feature integration target",
+      "No claim that fault 1 database/output invariants passed after the panic",
+      "No downgrade of this genuine job FAIL to PASS",
+      "No claim that this failed workspace invocation completed all targets or follow-up oracles"
+    ]
+  },
+  "retained_full_log": {
+    "path": "job-128954796921.log",
+    "bytes": 864895,
+    "sha256": "e2c7242a73bbdeb494168960b12c0106e839ad3c08fd3c745cc15ef0d222b791"
+  },
+  "retained_archives": [
+    {
+      "archive": {
+        "path": "runtime-shard-proof-13647628991.zip",
+        "bytes": 2143,
+        "sha256": "4efcb4f689c1d8f07808391bc49f04a8fcdb28e96a4ee01cba42a4569871d22c"
+      },
+      "non_directory_files": 2,
+      "uncompressed_bytes": 8296
+    },
+    {
+      "archive": {
+        "path": "runtime-observations-13648102770.zip",
+        "bytes": 9188196,
+        "sha256": "283d652af921cffd9ff5ae17325db1cc607b9282cffac183fa6ca41ef7e1fd0a"
+      },
+      "non_directory_files": 697,
+      "uncompressed_bytes": 90427037
+    }
+  ],
+  "sensitive_review": "sensitive-pattern-review.json",
+  "actions_not_taken": [
+    "source or gate modification",
+    "CI rerun",
+    "CI cancel",
+    "native test or campaign execution",
+    "old six-item report modification"
+  ],
+  "fetch_note": "Full decoded job log obtained by GitHub job-log connector. Existing complete job snapshot supplies metadata. A separate direct actions/jobs URL request was rejected as unsupported by the generic read-only fetch connector; it did not alter the job. Both original artifact ZIP sizes/digests match their successful upload entries in the full job log."
+}

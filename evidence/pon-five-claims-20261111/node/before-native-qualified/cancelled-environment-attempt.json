@@ -1,0 +1,51 @@
+{
+  "schema": "trnm-submit-ancestry-cancelled-environment-attempt-v1",
+  "job_id": "1a1ca29ba5b-2564-4ba",
+  "terminal": {
+    "at_unix_ms": 1794393306115,
+    "cancelled": true,
+    "exit_code": -15,
+    "job_id": "1a1ca29ba5b-2564-4ba",
+    "launch_nonce": "7ba81ccdee22544383df8b98ef0412db",
+    "log_bytes": {
+      "stderr": {
+        "seen": 0,
+        "stored": 0
+      },
+      "stdout": {
+        "seen": 1739,
+        "stored": 1739
+      }
+    },
+    "log_errors": {
+      "stderr": null,
+      "stdout": null
+    },
+    "log_synced": {
+      "stderr": true,
+      "stdout": true
+    },
+    "log_truncated": {
+      "stderr": false,
+      "stdout": false
+    },
+    "output_complete": true,
+    "output_durable": true,
+    "terminal_publication_protocol": 1,
+    "timed_out": false
+  },
+  "qualification": "UNQUALIFIED: natural Cargo loader set lacked toolchain/lib",
+  "native_invoked": false,
+  "native_result": null,
+  "source_expected": "e63427560885b65c57db6bdc478df023111b4733",
+  "streams": {
+    "build.stdout.log": {
+      "bytes": 109658,
+      "sha256": "e4224fed886e398b6b66519e9be7cbc845c4761881361f5849f5d1aa70fc4f04"
+    },
+    "build.stderr.log": {
+      "bytes": 1034,
+      "sha256": "9b8360ba8f7caa15d88642f50d5b2572c9f3b19a511b89bdc9345c11e2f71bff"
+    }
+  }
+}

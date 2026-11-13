@@ -1,0 +1,1 @@
+/home/runner/.rustup/toolchains/1.95.0-aarch64-unknown-linux-gnu/bin/rustc

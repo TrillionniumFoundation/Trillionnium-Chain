@@ -1,0 +1,168 @@
+{
+  "binary": "/home/qian-qi/work/chain-next-architecture-security-20261108-8720-target/release/examples/cell_rs46_cost_v1",
+  "binary_sha256_after": "ee90cb0927b6f8a1912980d19734061c1178c1072111fda5064b4eecc8039b17",
+  "binary_sha256_before": "ee90cb0927b6f8a1912980d19734061c1178c1072111fda5064b4eecc8039b17",
+  "command": [
+    "/usr/bin/time",
+    "-o",
+    "/home/qian-qi/work/chain-next-architecture-security-20261108-8720-validation/cell-cost-observation/cell_rs46_cost_v1.gnu-time.txt",
+    "-f",
+    "wall_seconds=%e\nuser_cpu_seconds=%U\nsystem_cpu_seconds=%S\npeak_rss_kib=%M\nexit_code=%x",
+    "--",
+    "/usr/bin/timeout",
+    "--signal=TERM",
+    "--kill-after=5s",
+    "600",
+    "/home/qian-qi/work/chain-next-architecture-security-20261108-8720-target/release/examples/cell_rs46_cost_v1"
+  ],
+  "command_invocations_planned": 1,
+  "command_invocations_started": 1,
+  "cpu_rss_complete_for_example": true,
+  "errors": [],
+  "example": "cell_rs46_cost_v1",
+  "exit_class": "success",
+  "exit_code": 0,
+  "gnu_time_enabled": true,
+  "raw_json_sha256": "c878853ef9fe7d5092a9724a48b3acbf54a9f7ef85ec63b4773552e5ba2ae3ed",
+  "source_hashes": {
+    "example_source_sha256": "4016f977622858c514564c75a25a7101b3de1053382b857b125723516dd7ccc2",
+    "implementation_source_sha256": "c207330ec8cf1b0c07a824c5d66d28c24708166ce5f9714c0a57b7c4116695d9"
+  },
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "timeout_exit_reported": false,
+  "validation": {
+    "all_payload_and_chunk_checks_verified": true,
+    "expected_workloads": 12,
+    "statistical_unit": "one complete workload repeat; chunk metrics are SUMS over every chunk before three-repeat statistics",
+    "workload_summaries": [
+      {
+        "chunk_bytes": 16384,
+        "chunks_per_repeat": 1,
+        "payload_bytes": 16384,
+        "phase_wall": {
+          "encode_all_chunks": {
+            "max_ns": 475807,
+            "median_ns": 340242,
+            "min_ns": 263232,
+            "n": 3,
+            "repeat_0_1_2_ns": [
+              340242,
+              475807,
+              263232
+            ]
+          },
+          "recover_all_chunks": {
+            "max_ns": 727881,
+            "median_ns": 639209,
+            "min_ns": 458650,
+            "n": 3,
+            "repeat_0_1_2_ns": [
+              639209,
+              727881,
+              458650
+            ]
+          }
+        }
+      },
+      {
+        "chunk_bytes": 16384,
+        "chunks_per_repeat": 2,
+        "payload_bytes": 16385,
+        "phase_wall": {
+          "encode_all_chunks": {
+            "max_ns": 435779,
+            "median_ns": 417805,
+            "min_ns": 412152,
+            "n": 3,
+            "repeat_0_1_2_ns": [
+              435779,
+              417805,
+              412152
+            ]
+          },
+          "recover_all_chunks": {
+            "max_ns": 836548,
+            "median_ns": 786345,
+            "min_ns": 784460,
+            "n": 3,
+            "repeat_0_1_2_ns": [
+              836548,
+              786345,
+              784460
+            ]
+          }
+        }
+      },
+      {
+        "chunk_bytes": 16384,
+        "chunks_per_repeat": 65,
+        "payload_bytes": 1048577,
+        "phase_wall": {
+          "encode_all_chunks": {
+            "max_ns": 22853000,
+            "median_ns": 22689528,
+            "min_ns": 21403966,
+            "n": 3,
+            "repeat_0_1_2_ns": [
+              21403966,
+              22853000,
+              22689528
+            ]
+          },
+          "recover_all_chunks": {
+            "max_ns": 38745314,
+            "median_ns": 37886124,
+            "min_ns": 36460750,
+            "n": 3,
+            "repeat_0_1_2_ns": [
+              36460750,
+              37886124,
+              38745314
+            ]
+          }
+        }
+      },
+      {
+        "chunk_bytes": 4194304,
+        "chunks_per_repeat": 1,
+        "payload_bytes": 1048577,
+        "phase_wall": {
+          "encode_all_chunks": {
+            "max_ns": 19134849,
+            "median_ns": 18647170,
+            "min_ns": 13094782,
+            "n": 3,
+            "repeat_0_1_2_ns": [
+              18647170,
+              19134849,
+              13094782
+            ]
+          },
+          "recover_all_chunks": {
+            "max_ns": 29521698,
+            "median_ns": 28496681,
+            "min_ns": 13250397,
+            "n": 3,
+            "repeat_0_1_2_ns": [
+              28496681,
+              29521698,
+              13250397
+            ]
+          }
+        }
+      }
+    ],
+    "workloads_verified": 12
+  },
+  "validation_passed": true,
+  "whole_run": {
+    "includes_supervisor_overhead": true,
+    "peak_rss_kib": 19508,
+    "rss_scope": "largest process in reaped child tree, not simultaneous summed RSS",
+    "rss_unit_bytes": 1024,
+    "system_cpu_seconds": 0.443911,
+    "usage_method": "Linux wait4 on this invocation's child; no global resource counter subtraction",
+    "user_cpu_seconds": 1.4948869999999999,
+    "wall_ns": 33270224815
+  }
+}

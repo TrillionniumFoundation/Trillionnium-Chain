@@ -1,0 +1,374 @@
+{
+  "schema": "w1-fresh-service-compact-readback-v1",
+  "run_id": 41293327123,
+  "service_acceptance": false,
+  "binary_sha256": "8e862696158f8bbc4a6c8fab2c6506b08fefb91008d809288a09cea1d418f2a9",
+  "cases": [
+    {
+      "label": "head",
+      "scenario": "original",
+      "source_commit": "c041564b8a6bb0b98ca9c30e7871878427e5d9a4",
+      "baseline_confirmation_ended_ns": 2581386168,
+      "baseline_independent_replay_cpu_ns": 455314627,
+      "pressure_confirmed_transactions": 0,
+      "pressure_submits_ok": 7,
+      "pressure_final_submit_ended_ns": 1474685974,
+      "pressure_independent_replay_cpu_ns": 168232771,
+      "pressure_independent_replay_wall_ns": 2581118951,
+      "pressure_attacker_thread_cpu_ns": 230731206,
+      "pressure_mutation_cpu_ns": 499962499,
+      "pressure_history": [
+        {
+          "status": "ok",
+          "error": null,
+          "started_ns": 1474789871,
+          "ended_ns": 1558621810,
+          "elapsed_wall_ns": 83832600,
+          "client_thread_cpu_ns": 602966,
+          "deadline_ms": 2000,
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "request": {
+            "after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+            "op": "history",
+            "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          },
+          "packet_count": 1,
+          "page_complete": false,
+          "page_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+          "page_next": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "started_ns": 2559498186,
+          "ended_ns": 2755177466,
+          "elapsed_wall_ns": 195680181,
+          "client_thread_cpu_ns": 579212,
+          "deadline_ms": 2000,
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "request": {
+            "after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+            "op": "history",
+            "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          },
+          "packet_count": 1,
+          "page_complete": false,
+          "page_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+          "page_next": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "started_ns": 3555072452,
+          "ended_ns": 3567733392,
+          "elapsed_wall_ns": 12662292,
+          "client_thread_cpu_ns": 465855,
+          "deadline_ms": 2000,
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "request": {
+            "after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+            "op": "history",
+            "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          },
+          "packet_count": 1,
+          "page_complete": false,
+          "page_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+          "page_next": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70"
+        }
+      ],
+      "pressure_verification_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "pressure_transcript_replies": 297,
+      "fresh_construction_coverage": null,
+      "database_result": [
+        3,
+        0,
+        2
+      ],
+      "database_sha256": "3640293ab8d4addfd0d67546a593c45a3b986fc1afaa22f3ca9e4a2440d2fcb4"
+    },
+    {
+      "label": "head",
+      "scenario": "fresh",
+      "source_commit": "c041564b8a6bb0b98ca9c30e7871878427e5d9a4",
+      "baseline_confirmation_ended_ns": 2698647338,
+      "baseline_independent_replay_cpu_ns": 477623427,
+      "pressure_confirmed_transactions": 0,
+      "pressure_submits_ok": 7,
+      "pressure_final_submit_ended_ns": 1679082615,
+      "pressure_independent_replay_cpu_ns": 138658890,
+      "pressure_independent_replay_wall_ns": 2321842071,
+      "pressure_attacker_thread_cpu_ns": 295111411,
+      "pressure_mutation_cpu_ns": 462855414,
+      "pressure_history": [
+        {
+          "status": "ok",
+          "error": null,
+          "started_ns": 1679201975,
+          "ended_ns": 1868918543,
+          "elapsed_wall_ns": 189717249,
+          "client_thread_cpu_ns": 505964,
+          "deadline_ms": 2000,
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "request": {
+            "after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+            "op": "history",
+            "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          },
+          "packet_count": 1,
+          "page_complete": false,
+          "page_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+          "page_next": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "started_ns": 3072799274,
+          "ended_ns": 3268410044,
+          "elapsed_wall_ns": 195611801,
+          "client_thread_cpu_ns": 607135,
+          "deadline_ms": 2000,
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "request": {
+            "after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+            "op": "history",
+            "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          },
+          "packet_count": 1,
+          "page_complete": false,
+          "page_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+          "page_next": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+        },
+        {
+          "status": "error",
+          "error": "IO: Resource temporarily unavailable (os error 11)",
+          "started_ns": 3976555034,
+          "ended_ns": 4001027842,
+          "elapsed_wall_ns": 24473810,
+          "client_thread_cpu_ns": 146006,
+          "deadline_ms": 2000,
+          "returned_after_deadline": false,
+          "returned_after_window": true,
+          "request": {
+            "after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+            "op": "history",
+            "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          },
+          "packet_count": 0,
+          "page_complete": null,
+          "page_after": null,
+          "page_next": null
+        }
+      ],
+      "pressure_verification_errors": [],
+      "pressure_transcript_replies": 255,
+      "fresh_construction_coverage": {
+        "accounting_scope": "construction intervals are nested in joined attacker worker CPU; never add them twice; shared public material setup is separate",
+        "all_context_bindings_and_challenges_unique": true,
+        "all_nested_cpu_measurements_known": true,
+        "constructed": 271,
+        "exhausted": 0,
+        "full_transcript_rejections": 255,
+        "nested_from_zero_construction_cpu_ns": 78698743,
+        "submitted": 271,
+        "unique_challenges": 271,
+        "unique_packet_indices": 271
+      },
+      "database_result": [
+        3,
+        0,
+        2
+      ],
+      "database_sha256": "3640293ab8d4addfd0d67546a593c45a3b986fc1afaa22f3ca9e4a2440d2fcb4"
+    },
+    {
+      "label": "merge",
+      "scenario": "original",
+      "source_commit": "b824293d71a346a3461705b5eb129e7b83ce2920",
+      "baseline_confirmation_ended_ns": 2682026893,
+      "baseline_independent_replay_cpu_ns": 478010451,
+      "pressure_confirmed_transactions": 0,
+      "pressure_submits_ok": 7,
+      "pressure_final_submit_ended_ns": 1555484817,
+      "pressure_independent_replay_cpu_ns": 153579349,
+      "pressure_independent_replay_wall_ns": 2500545697,
+      "pressure_attacker_thread_cpu_ns": 226489431,
+      "pressure_mutation_cpu_ns": 515018819,
+      "pressure_history": [
+        {
+          "status": "ok",
+          "error": null,
+          "started_ns": 1555606999,
+          "ended_ns": 1659647185,
+          "elapsed_wall_ns": 104040887,
+          "client_thread_cpu_ns": 554639,
+          "deadline_ms": 2000,
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "request": {
+            "after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+            "op": "history",
+            "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          },
+          "packet_count": 1,
+          "page_complete": false,
+          "page_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+          "page_next": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "started_ns": 2758293099,
+          "ended_ns": 2865216589,
+          "elapsed_wall_ns": 106924541,
+          "client_thread_cpu_ns": 461789,
+          "deadline_ms": 2000,
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "request": {
+            "after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+            "op": "history",
+            "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          },
+          "packet_count": 1,
+          "page_complete": false,
+          "page_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+          "page_next": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "started_ns": 3656071054,
+          "ended_ns": 3761482328,
+          "elapsed_wall_ns": 105412155,
+          "client_thread_cpu_ns": 517303,
+          "deadline_ms": 2000,
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "request": {
+            "after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+            "op": "history",
+            "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          },
+          "packet_count": 1,
+          "page_complete": false,
+          "page_after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+          "page_next": "e65c5760e666d5b77787e70eb32ef89584fb92253abee2761a3b76506183cb70"
+        }
+      ],
+      "pressure_verification_errors": [
+        "PUBLIC_REQUEST_DEADLINE"
+      ],
+      "pressure_transcript_replies": 300,
+      "fresh_construction_coverage": null,
+      "database_result": [
+        3,
+        0,
+        2
+      ],
+      "database_sha256": "3640293ab8d4addfd0d67546a593c45a3b986fc1afaa22f3ca9e4a2440d2fcb4"
+    },
+    {
+      "label": "merge",
+      "scenario": "fresh",
+      "source_commit": "b824293d71a346a3461705b5eb129e7b83ce2920",
+      "baseline_confirmation_ended_ns": 2581118886,
+      "baseline_independent_replay_cpu_ns": 462346666,
+      "pressure_confirmed_transactions": 0,
+      "pressure_submits_ok": 7,
+      "pressure_final_submit_ended_ns": 1652630965,
+      "pressure_independent_replay_cpu_ns": 135839662,
+      "pressure_independent_replay_wall_ns": 2401789915,
+      "pressure_attacker_thread_cpu_ns": 293732730,
+      "pressure_mutation_cpu_ns": 463665231,
+      "pressure_history": [
+        {
+          "status": "ok",
+          "error": null,
+          "started_ns": 1652766928,
+          "ended_ns": 1758017936,
+          "elapsed_wall_ns": 105251689,
+          "client_thread_cpu_ns": 617612,
+          "deadline_ms": 2000,
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "request": {
+            "after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+            "op": "history",
+            "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          },
+          "packet_count": 1,
+          "page_complete": false,
+          "page_after": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+          "page_next": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "started_ns": 2956258415,
+          "ended_ns": 3152747414,
+          "elapsed_wall_ns": 196490331,
+          "client_thread_cpu_ns": 578414,
+          "deadline_ms": 2000,
+          "returned_after_deadline": false,
+          "returned_after_window": false,
+          "request": {
+            "after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+            "op": "history",
+            "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          },
+          "packet_count": 1,
+          "page_complete": false,
+          "page_after": "cae9c08cedc08440e01aa9445cde53a874b9e91814abb1c7bc3449a4a5c0a754",
+          "page_next": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165"
+        },
+        {
+          "status": "error",
+          "error": "FRAME_DEADLINE",
+          "started_ns": 3954962861,
+          "ended_ns": 4054548170,
+          "elapsed_wall_ns": 99586511,
+          "client_thread_cpu_ns": 204284,
+          "deadline_ms": 2000,
+          "returned_after_deadline": false,
+          "returned_after_window": true,
+          "request": {
+            "after": "4829c6cf3c714972aa1fbea09bb8336bb909e06424c306bbbe3895d16a154165",
+            "op": "history",
+            "tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14"
+          },
+          "packet_count": 0,
+          "page_complete": null,
+          "page_after": null,
+          "page_next": null
+        }
+      ],
+      "pressure_verification_errors": [],
+      "pressure_transcript_replies": 265,
+      "fresh_construction_coverage": {
+        "accounting_scope": "construction intervals are nested in joined attacker worker CPU; never add them twice; shared public material setup is separate",
+        "all_context_bindings_and_challenges_unique": true,
+        "all_nested_cpu_measurements_known": true,
+        "constructed": 281,
+        "exhausted": 0,
+        "full_transcript_rejections": 265,
+        "nested_from_zero_construction_cpu_ns": 74869637,
+        "submitted": 281,
+        "unique_challenges": 281,
+        "unique_packet_indices": 281
+      },
+      "database_result": [
+        3,
+        0,
+        2
+      ],
+      "database_sha256": "3640293ab8d4addfd0d67546a593c45a3b986fc1afaa22f3ca9e4a2440d2fcb4"
+    }
+  ]
+}

@@ -1,0 +1,222 @@
+{
+  "backend": {
+    "raw": {
+      "bytes": 731,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C2-build-qualification-01/aggregate-run-01/terminal-backend.json",
+      "sha256": "197b4d5b3d79d12519a8e82426873655c8899fb8fe286048cb9dab10ec8d930a"
+    },
+    "status": {
+      "at_unix_ms": 1794090888510,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b825b5db-12894-d58",
+      "launch_nonce": "3f728c1aca87feba79462bef732d2df1",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 8968,
+          "stored": 8968
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    }
+  },
+  "ci": {
+    "raw": {
+      "bytes": 733,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C2-build-qualification-01/aggregate-run-01/terminal-ci.json",
+      "sha256": "262a67fcb777dd72b8f13a60b19b423ebe9b18e177fae96fcc2b7ef36e65e1e3"
+    },
+    "status": {
+      "at_unix_ms": 1794091517045,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b8270a65-12894-d5e",
+      "launch_nonce": "a6267e4acc762ca80dcfeb2ba4d7f851",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 14695,
+          "stored": 14695
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    }
+  },
+  "native": {
+    "raw": {
+      "bytes": 733,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C2-build-qualification-01/aggregate-run-01/terminal-native.json",
+      "sha256": "109ced613bd6a65920ff9cb29d747001baab9a81d8c0e2f3c9cc7c2e137d1d70"
+    },
+    "status": {
+      "at_unix_ms": 1794090910502,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b825ef8d-12894-d59",
+      "launch_nonce": "b0cb1c4079998d75af541c95d2dcbd14",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 21711,
+          "stored": 21711
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    }
+  },
+  "owner": {
+    "raw": {
+      "bytes": 731,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C2-build-qualification-01/aggregate-run-01/terminal-owner.json",
+      "sha256": "cdd325a140d251255700e8c83aaa20070ab63285974901052ce206624739962f"
+    },
+    "status": {
+      "at_unix_ms": 1794091431894,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b826369f-12894-d5a",
+      "launch_nonce": "0e4767c5800251b3c0c3eb28e277ed20",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 3873,
+          "stored": 3873
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    }
+  },
+  "publication_map": {
+    "raw": {
+      "bytes": 729,
+      "path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/clean-C2-build-qualification-01/aggregate-run-01/terminal-publication_map.json",
+      "sha256": "99243476c9c856a7247d4be5d7b80829159f34503557ce2b939f63eefc4fc027"
+    },
+    "status": {
+      "at_unix_ms": 1794090887147,
+      "audit_recorded": true,
+      "automatic_retry": false,
+      "cancelled": false,
+      "exit_code": 0,
+      "job_id": "1a1b82643b7-12894-d5b",
+      "launch_nonce": "2745445c2f7ddcfa73f332d798fb91c7",
+      "log_bytes": {
+        "stderr": {
+          "seen": 0,
+          "stored": 0
+        },
+        "stdout": {
+          "seen": 578,
+          "stored": 578
+        }
+      },
+      "log_errors": {
+        "stderr": null,
+        "stdout": null
+      },
+      "log_synced": {
+        "stderr": true,
+        "stdout": true
+      },
+      "log_truncated": {
+        "stderr": false,
+        "stdout": false
+      },
+      "output_complete": true,
+      "output_durable": true,
+      "state": "succeeded",
+      "terminal_publication_confirmed": true,
+      "terminal_publication_protocol": 1,
+      "timed_out": false
+    }
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "scope": "original hosted artifact text validated with frozen M parser; no new native execution or whole-business/TPS/production qualification",
+  "frozen_reader_files": [
+    {
+      "source_path": "scripts/ci/run_pon_budget_controls.py",
+      "source_commit": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "git_blob": "531707e853b1b298bafd8ba6c248e8a4ed15c037",
+      "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/frozen-component-reader-11e/scripts/ci/run_pon_budget_controls.py",
+      "bytes": 45114,
+      "sha256": "c7604dcf0bb9f533902e368a44b170c927d98c46080570673f268391fd9dc479"
+    },
+    {
+      "source_path": "scripts/ci/check_required_native_test.py",
+      "source_commit": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "git_blob": "277137b9e6ced74e9ec81061040ebfbb3949ffaf",
+      "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/frozen-component-reader-11e/scripts/ci/check_required_native_test.py",
+      "bytes": 2928,
+      "sha256": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28"
+    },
+    {
+      "source_path": "scripts/ci/replay_pinned_native.py",
+      "source_commit": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "git_blob": "2e633556e2b6f5cc4278491d5c4c8edf437fab81",
+      "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/frozen-component-reader-11e/scripts/ci/replay_pinned_native.py",
+      "bytes": 18571,
+      "sha256": "d14d2f61ab98bb30b5932530437064dce5d3a330c05a9530988fe776cefea44a"
+    },
+    {
+      "source_path": "scripts/ci/verify_ci_source.py",
+      "source_commit": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "git_blob": "c775290c138c3b41a32e654f56ed5cbe9acec3ee",
+      "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/frozen-component-reader-11e/scripts/ci/verify_ci_source.py",
+      "bytes": 11231,
+      "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
+    }
+  ],
+  "artifact": {
+    "id": 13832876006,
+    "name": "pon-budget-controls-fixed-11e242dbaaae14a9d16282fe8deaf36827e98395-1",
+    "bytes": 42529271,
+    "sha256": "fc0d092bd47b222c95b42412512019df3817b660b08e2e73bed98f2c2391b72c",
+    "mode": "fixed"
+  },
+  "result": "PASS",
+  "mode": "fixed",
+  "driver": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+  "subject": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+  "subject_tree": "1f42f41923d7761c02fc68b478df5b019c7d83e8",
+  "source_before_equals_after": true,
+  "source_before": {
+    "driver": {
+      "base": null,
+      "candidate": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "tested_tree": "1f42f41923d7761c02fc68b478df5b019c7d83e8",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2592587811,
+      "tracked_entries": 28058,
+      "tracked_worktree_verified": true
+    },
+    "subject": {
+      "base": null,
+      "candidate": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "tested_tree": "1f42f41923d7761c02fc68b478df5b019c7d83e8",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2592587811,
+      "tracked_entries": 28058,
+      "tracked_worktree_verified": true
+    }
+  },
+  "matched_pass_controls": 21,
+  "matched_failure_controls": 0,
+  "native_control_processes_started": 21,
+  "integration_passes": 10,
+  "identical_group_inputs_verified": true,
+  "binary_profiles_and_hashes": [
+    {
+      "role": "cli",
+      "zip_member": "native/trnm-pon-node-cli",
+      "bytes": 17186928,
+      "sha256": "9db0905fcddadb92c82b340dc26a158671c9d08a59a1f212bb746247318035df",
+      "profile": {
+        "debug_assertions": false,
+        "debuginfo": 0,
+        "opt_level": "3",
+        "overflow_checks": false,
+        "test": false
+      },
+      "source_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/subject/trillionnium/crates/trnm-pon-node/src/main.rs",
+      "binary_before_equals_after": true
+    },
+    {
+      "role": "libtest",
+      "zip_member": "native/trnm-pon-node-libtest",
+      "bytes": 102338920,
+      "sha256": "51da2ad0393bde92fe68c2d2dd0577632a0af555d22629d497fa1f89e3f2373f",
+      "profile": {
+        "debug_assertions": false,
+        "debuginfo": 0,
+        "opt_level": "3",
+        "overflow_checks": false,
+        "test": true
+      },
+      "source_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/subject/trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "binary_before_equals_after": true
+    },
+    {
+      "role": "pool-integration",
+      "zip_member": "native/trnm-pon-node-pool-integration",
+      "bytes": 10150200,
+      "sha256": "72388736cac7fd68ede545b6e8a7ecd0a24b5c4a5b4c02e2683e681d3902ddac",
+      "profile": {
+        "debug_assertions": false,
+        "debuginfo": 0,
+        "opt_level": "3",
+        "overflow_checks": false,
+        "test": true
+      },
+      "source_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/subject/trillionnium/crates/trnm-pon-node/tests/pool_mining.rs",
+      "binary_before_equals_after": true
+    }
+  ],
+  "original_report": {
+    "zip_member": "native/report.json",
+    "bytes": 145458,
+    "sha256": "d0923d9371a3395fca583b81d3d31bd8abe11c988d405f17e6983aac12c369a3"
+  },
+  "roster": {
+    "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832876006-component/execution-roster.json",
+    "bytes": 10608,
+    "sha256": "c49320eb87d9fc62b992b4ff30cbf13ceefc24cef8542b1acdac7dc707c812bf"
+  },
+  "original_text_manifest": {
+    "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832876006-component/original-text-manifest.json",
+    "bytes": 38069,
+    "sha256": "64d9fbf70c85c26e094ebce286e1a0422ab48812ec7205c8e4c8db3cc107aa44"
+  },
+  "original_text_archive": {
+    "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832876006-component/original-text.tar.gz",
+    "bytes": 137368,
+    "sha256": "65e736a35431252b48b404e0c59e047c597226f0ff47554cde5cbe1c3b8d4fa6"
+  },
+  "native_campaign_executed": false,
+  "whole_business_liveness_qualified": false,
+  "throughput_measured": false,
+  "production_activation": false
+}

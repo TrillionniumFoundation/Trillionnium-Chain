@@ -1,0 +1,1279 @@
+{
+  "schema": "pon-final-cutoff-ci-snapshot-v1",
+  "observed_utc": "2026-11-01T17:54:12.851272+00:00",
+  "run_id": 41332206071,
+  "run_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41332206071",
+  "candidate": "9cd91ed69a0c69df42f8d7812d32d271df6e1998",
+  "prospective_merge": "a70f0165379156da436d1c0be403e1effd3912c0",
+  "tested_tree": "60a521c7299febfe26a8c7d38d3420d490d07cd8",
+  "job_counts": {
+    "total": 14,
+    "success": 8,
+    "cancelled": 4,
+    "failure": 2
+  },
+  "artifact_count": 10,
+  "old_cost_jobs": [
+    {
+      "id": 124924488822,
+      "name": "W1 false trace reuse (x64, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 41332206071,
+      "head_sha": "9cd91ed69a0c69df42f8d7812d32d271df6e1998",
+      "started_at": "2026-11-01T17:35:03Z",
+      "completed_at": "2026-11-01T17:43:03Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41332206071/job/124924488822"
+    },
+    {
+      "id": 124924488829,
+      "name": "W1 false trace reuse (arm64, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 41332206071,
+      "head_sha": "9cd91ed69a0c69df42f8d7812d32d271df6e1998",
+      "started_at": "2026-11-01T17:35:06Z",
+      "completed_at": "2026-11-01T17:42:37Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41332206071/job/124924488829"
+    },
+    {
+      "id": 124924488834,
+      "name": "W1 complete legal strategies (v1, arm64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 41332206071,
+      "head_sha": "9cd91ed69a0c69df42f8d7812d32d271df6e1998",
+      "started_at": "2026-11-01T17:35:05Z",
+      "completed_at": "2026-11-01T17:43:19Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41332206071/job/124924488834"
+    },
+    {
+      "id": 124924488919,
+      "name": "W1 false trace reuse (arm64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 41332206071,
+      "head_sha": "9cd91ed69a0c69df42f8d7812d32d271df6e1998",
+      "started_at": "2026-11-01T17:35:06Z",
+      "completed_at": "2026-11-01T17:43:07Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41332206071/job/124924488919"
+    },
+    {
+      "id": 124924488921,
+      "name": "W1 false trace reuse (x64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 41332206071,
+      "head_sha": "9cd91ed69a0c69df42f8d7812d32d271df6e1998",
+      "started_at": "2026-11-01T17:35:03Z",
+      "completed_at": "2026-11-01T17:42:48Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41332206071/job/124924488921"
+    },
+    {
+      "id": 124924488946,
+      "name": "W1 complete legal strategies (v1, x64, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 41332206071,
+      "head_sha": "9cd91ed69a0c69df42f8d7812d32d271df6e1998",
+      "started_at": "2026-11-01T17:35:03Z",
+      "completed_at": "2026-11-01T17:43:29Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41332206071/job/124924488946"
+    },
+    {
+      "id": 124924488976,
+      "name": "W1 complete legal strategies (v1, arm64, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 41332206071,
+      "head_sha": "9cd91ed69a0c69df42f8d7812d32d271df6e1998",
+      "started_at": "2026-11-01T17:35:06Z",
+      "completed_at": "2026-11-01T17:43:43Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41332206071/job/124924488976"
+    },
+    {
+      "id": 124924489022,
+      "name": "W1 complete legal strategies (v1, x64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 41332206071,
+      "head_sha": "9cd91ed69a0c69df42f8d7812d32d271df6e1998",
+      "started_at": "2026-11-01T17:35:03Z",
+      "completed_at": "2026-11-01T17:42:16Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41332206071/job/124924489022"
+    }
+  ],
+  "old_cost_artifacts_downloaded_in_this_snapshot": false,
+  "v2_jobs": [
+    {
+      "id": 124924488792,
+      "name": "W1 complete legal strategies (v2, x64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 41332206071,
+      "head_sha": "9cd91ed69a0c69df42f8d7812d32d271df6e1998",
+      "started_at": "2026-11-01T17:35:03Z",
+      "completed_at": "2026-11-01T17:43:49Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41332206071/job/124924488792",
+      "log_available": true,
+      "log_file": "job-124924488792.log",
+      "log_bytes": 138378,
+      "log_sha256": "3c37183fa55c94b85763176884601336354d6fc97d4e21aa3c371eba31b1051b",
+      "artifact_available": false,
+      "retained_cost_samples_not_established": true,
+      "shutdown_lines": [
+        "2026-11-01T17:43:52.0311396Z ##[error]The runner has received a shutdown signal. This can happen when the runner service is stopped, or a manually started runner is canceled.",
+        "2026-11-01T17:43:52.0779736Z ##[error]The operation was canceled."
+      ]
+    },
+    {
+      "id": 124924488812,
+      "name": "W1 complete legal strategies (v2, x64, head)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 41332206071,
+      "head_sha": "9cd91ed69a0c69df42f8d7812d32d271df6e1998",
+      "started_at": "2026-11-01T17:35:03Z",
+      "completed_at": "2026-11-01T17:43:49Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41332206071/job/124924488812",
+      "log_available": true,
+      "log_file": "job-124924488812.log",
+      "log_bytes": 137805,
+      "log_sha256": "d300667c4d6292dc1cdbea1d66ca5acf6b8a13904bc349582f18b6205448c267",
+      "artifact_available": false,
+      "retained_cost_samples_not_established": true,
+      "shutdown_lines": [
+        "2026-11-01T17:43:52.1925158Z ##[error]The runner has received a shutdown signal. This can happen when the runner service is stopped, or a manually started runner is canceled.",
+        "2026-11-01T17:43:52.2763565Z ##[error]Process completed with exit code 143."
+      ]
+    },
+    {
+      "id": 124924488958,
+      "name": "W1 complete legal strategies (v2, arm64, head)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 41332206071,
+      "head_sha": "9cd91ed69a0c69df42f8d7812d32d271df6e1998",
+      "started_at": "2026-11-01T17:35:05Z",
+      "completed_at": "2026-11-01T17:43:49Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41332206071/job/124924488958",
+      "log_available": true,
+      "log_file": "job-124924488958.log",
+      "log_bytes": 136586,
+      "log_sha256": "60c8e4c7c8f0561e64f6d0da5abc60cdec43d3bb399105358e9fb9dae1053b3b",
+      "artifact_available": false,
+      "retained_cost_samples_not_established": true,
+      "shutdown_lines": [
+        "2026-11-01T17:43:52.0577281Z ##[error]The runner has received a shutdown signal. This can happen when the runner service is stopped, or a manually started runner is canceled.",
+        "2026-11-01T17:43:52.0738352Z ##[error]The operation was canceled."
+      ]
+    },
+    {
+      "id": 124924488974,
+      "name": "W1 complete legal strategies (v2, arm64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 41332206071,
+      "head_sha": "9cd91ed69a0c69df42f8d7812d32d271df6e1998",
+      "started_at": "2026-11-01T17:35:06Z",
+      "completed_at": "2026-11-01T17:43:49Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41332206071/job/124924488974",
+      "log_available": true,
+      "log_file": "job-124924488974.log",
+      "log_bytes": 137194,
+      "log_sha256": "b40fbf417fe1196262b20a132de38d4626e064637bb41d6d936efcfbd75a0b6a",
+      "artifact_available": false,
+      "retained_cost_samples_not_established": true,
+      "shutdown_lines": [
+        "2026-11-01T17:43:52.5724092Z ##[error]The runner has received a shutdown signal. This can happen when the runner service is stopped, or a manually started runner is canceled.",
+        "2026-11-01T17:43:52.5746687Z ##[error]Process completed with exit code 143."
+      ]
+    }
+  ],
+  "v2_artifacts_available": false,
+  "v2_cost_evidence_complete_for_this_source": false,
+  "service_jobs": [
+    {
+      "id": 124924488499,
+      "name": "W1 fresh challenge service (x64, head)",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_id": 41332206071,
+      "head_sha": "9cd91ed69a0c69df42f8d7812d32d271df6e1998",
+      "started_at": "2026-11-01T17:35:03Z",
+      "completed_at": "2026-11-01T17:39:38Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41332206071/job/124924488499",
+      "log_file": "job-124924488499.log",
+      "log_sha256": "45b005afe39dc485d081d0d30f62df8de16b2824eb1cd4ea2219a3c891831e06"
+    },
+    {
+      "id": 124924488901,
+      "name": "W1 fresh challenge service (x64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_id": 41332206071,
+      "head_sha": "9cd91ed69a0c69df42f8d7812d32d271df6e1998",
+      "started_at": "2026-11-01T17:35:03Z",
+      "completed_at": "2026-11-01T17:39:42Z",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41332206071/job/124924488901",
+      "log_file": "job-124924488901.log",
+      "log_sha256": "c16d4ea298703bfbfbe793511aefe917780c101ce5fa71dcea6744ebc84e6e6c"
+    }
+  ],
+  "services": [
+    {
+      "artifact_id": 13093703941,
+      "lane": "head",
+      "source_before_and_after": {
+        "base": null,
+        "candidate": "9cd91ed69a0c69df42f8d7812d32d271df6e1998",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "9cd91ed69a0c69df42f8d7812d32d271df6e1998",
+        "tested_tree": "60a521c7299febfe26a8c7d38d3420d490d07cd8",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 792506816,
+        "tracked_entries": 6856,
+        "tracked_worktree_verified": true
+      },
+      "zip": {
+        "artifact_id": 13093703941,
+        "artifact_name": "w1-fresh-service-head-9cd91ed69a0c69df42f8d7812d32d271df6e1998-1",
+        "retrieved_utc": "2026-11-01T17:51:06.757506+00:00",
+        "path": "13093703941.zip",
+        "size": 5059107,
+        "sha256": "30d1fd368587a080b3ac18828b232f3ddc3eed1a7bd0e762289c75ab1b4688d3",
+        "saved_api_metadata_matches": true,
+        "members": [
+          {
+            "path": "fresh-service/build.log",
+            "size": 106130,
+            "crc32": 4290766232
+          },
+          {
+            "path": "fresh-service/fresh/baseline/independent-client/native.sqlite",
+            "size": 499712,
+            "crc32": 1581979833
+          },
+          {
+            "path": "fresh-service/fresh/baseline/independent-client/owner.lock",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service/fresh/baseline/receiver/native.sqlite",
+            "size": 499712,
+            "crc32": 3752630567
+          },
+          {
+            "path": "fresh-service/fresh/baseline/receiver/owner.lock",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service/fresh/pressure/independent-client/native.sqlite",
+            "size": 196608,
+            "crc32": 994842766
+          },
+          {
+            "path": "fresh-service/fresh/pressure/independent-client/owner.lock",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service/fresh/pressure/receiver/native.sqlite",
+            "size": 499712,
+            "crc32": 3752630567
+          },
+          {
+            "path": "fresh-service/fresh/pressure/receiver/owner.lock",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service/fresh/producer/native.sqlite",
+            "size": 499712,
+            "crc32": 3407097486
+          },
+          {
+            "path": "fresh-service/fresh/producer/owner.lock",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service/fresh/report.json",
+            "size": 4236701,
+            "crc32": 3614234011
+          },
+          {
+            "path": "fresh-service/fresh.log",
+            "size": 914,
+            "crc32": 3436568801
+          },
+          {
+            "path": "fresh-service/manifest.json",
+            "size": 8092,
+            "crc32": 1479493427
+          },
+          {
+            "path": "fresh-service/original/baseline/independent-client/native.sqlite",
+            "size": 499712,
+            "crc32": 1581979833
+          },
+          {
+            "path": "fresh-service/original/baseline/independent-client/owner.lock",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service/original/baseline/receiver/native.sqlite",
+            "size": 499712,
+            "crc32": 3752630567
+          },
+          {
+            "path": "fresh-service/original/baseline/receiver/owner.lock",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service/original/pressure/independent-client/native.sqlite",
+            "size": 245760,
+            "crc32": 3643880431
+          },
+          {
+            "path": "fresh-service/original/pressure/independent-client/owner.lock",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service/original/pressure/receiver/native.sqlite",
+            "size": 499712,
+            "crc32": 3752630567
+          },
+          {
+            "path": "fresh-service/original/pressure/receiver/owner.lock",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service/original/producer/native.sqlite",
+            "size": 499712,
+            "crc32": 3407097486
+          },
+          {
+            "path": "fresh-service/original/producer/owner.lock",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service/original.log",
+            "size": 420,
+            "crc32": 1689249269
+          },
+          {
+            "path": "fresh-service/original/report.json",
+            "size": 5597537,
+            "crc32": 52671896
+          },
+          {
+            "path": "fresh-service/public_v3_from_zero",
+            "size": 10566784,
+            "crc32": 1733054578
+          },
+          {
+            "path": "fresh-service-controls.log",
+            "size": 111,
+            "crc32": 500107112
+          },
+          {
+            "path": "fresh-service-host/actual-systemd-parent.log",
+            "size": 200,
+            "crc32": 3011331718
+          },
+          {
+            "path": "fresh-service-host/after-provision.json",
+            "size": 1634,
+            "crc32": 1156871484
+          },
+          {
+            "path": "fresh-service-host/before-provision.json",
+            "size": 2801,
+            "crc32": 3900282882
+          },
+          {
+            "path": "fresh-service-host/child-load-state.log",
+            "size": 10,
+            "crc32": 321726484
+          },
+          {
+            "path": "fresh-service-host/child-result.json",
+            "size": 353,
+            "crc32": 1412000494
+          },
+          {
+            "path": "fresh-service-host/child-final-load-state.log",
+            "size": 10,
+            "crc32": 321726484
+          },
+          {
+            "path": "fresh-service-host/controller-result.json",
+            "size": 4222,
+            "crc32": 1814875255
+          },
+          {
+            "path": "fresh-service-host/inside-after.json",
+            "size": 1711,
+            "crc32": 2565456701
+          },
+          {
+            "path": "fresh-service-host/inside-before.json",
+            "size": 1697,
+            "crc32": 3227746142
+          },
+          {
+            "path": "fresh-service-host/install-reviewed-unit.log",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service-host/outside-after.json",
+            "size": 1667,
+            "crc32": 2786695123
+          },
+          {
+            "path": "fresh-service-host/parent-properties.log",
+            "size": 146,
+            "crc32": 4046598973
+          },
+          {
+            "path": "fresh-service-host/prepare-build/process.json",
+            "size": 920,
+            "crc32": 3855735674
+          },
+          {
+            "path": "fresh-service-host/prepare-build/stderr",
+            "size": 7011,
+            "crc32": 3276781667
+          },
+          {
+            "path": "fresh-service-host/prepare-build/stdout",
+            "size": 106186,
+            "crc32": 2257412996
+          },
+          {
+            "path": "fresh-service-host/prepare-build.json",
+            "size": 3401,
+            "crc32": 694682302
+          },
+          {
+            "path": "fresh-service-host/start-fixed-parent.log",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service-host/systemd-reload.log",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service-host/systemd-run.log",
+            "size": 537,
+            "crc32": 2880963976
+          },
+          {
+            "path": "fresh-service-host/unprovisioned-parent.json",
+            "size": 229,
+            "crc32": 2035026314
+          },
+          {
+            "path": "original-host-controls.log",
+            "size": 119,
+            "crc32": 1825305164
+          },
+          {
+            "path": "original-native-controls.log",
+            "size": 12948,
+            "crc32": 1479740083
+          },
+          {
+            "path": "preflight.log",
+            "size": 133,
+            "crc32": 1692302564
+          },
+          {
+            "path": "source-after.json",
+            "size": 421,
+            "crc32": 263638882
+          },
+          {
+            "path": "source-before.json",
+            "size": 421,
+            "crc32": 263638882
+          }
+        ],
+        "payload_crc_check_scope": "Deferred to targeted service snapshot read; this download receipt checks exact original ZIP bytes and central metadata."
+      },
+      "manifest_failures": [
+        "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+        "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED"
+      ],
+      "manifest_execution_finished": true,
+      "manifest_passed": false,
+      "runs": [
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "process": {
+            "command": [
+              "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-6c91a9a89111eddb",
+              "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+              "--exact",
+              "--nocapture",
+              "--test-threads=1"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "exit_code": 0,
+            "timed_out": false,
+            "elapsed_ns": 15399837790,
+            "log": "original.log",
+            "executed": true,
+            "process_exit_code": 0,
+            "expected_source": "9cd91ed69a0c69df42f8d7812d32d271df6e1998",
+            "source_before_verified": true,
+            "source_after_verified": true,
+            "source_verified": true
+          },
+          "passed": false,
+          "log_sha256": "136ae01108934b223f7682ee3a9d30dba980d5ecb906ff819d937695dc4d4625",
+          "report_path": "original/report.json",
+          "failure": "CONFIRMATION_TARGET"
+        },
+        {
+          "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+          "process": {
+            "command": [
+              "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-6c91a9a89111eddb",
+              "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+              "--exact",
+              "--nocapture",
+              "--test-threads=1",
+              "--ignored"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "exit_code": 101,
+            "timed_out": false,
+            "elapsed_ns": 14898519391,
+            "log": "fresh.log",
+            "executed": true,
+            "process_exit_code": 101,
+            "expected_source": "9cd91ed69a0c69df42f8d7812d32d271df6e1998",
+            "source_before_verified": true,
+            "source_after_verified": true,
+            "source_verified": true
+          },
+          "passed": false,
+          "log_sha256": "8f55c05e7e49c64a4a96831cb729673f8a9e19c322481c59bf4bb1cc875f5e79",
+          "report_path": "fresh/report.json",
+          "failure": "FRESH_NATIVE_PROCESS_REQUIRED"
+        }
+      ],
+      "scenarios": [
+        {
+          "scenario": "original",
+          "phase": "baseline",
+          "mode": "attack-free-baseline",
+          "requested_window_ns": 4000000000,
+          "client_confirmation_latency_ns": 1893324759,
+          "client_confirmed_transactions": 1,
+          "client_confirmed_before_original_window_end": true,
+          "finite_business_target_met": true,
+          "invariant_target_met": true,
+          "verification_errors": [],
+          "successful_honest_submissions": 7,
+          "history_pages": 7,
+          "no_attack_accepted": true,
+          "accounting_closed": true,
+          "database_readback": {
+            "independent-client": {
+              "member": "fresh-service/original/baseline/independent-client/native.sqlite",
+              "bytes": 499712,
+              "sha256": "ae00dc9c8e4a10957f92915866830e2723ad1338e15d892891ce43a6f951f769",
+              "active_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              "active_height": 7,
+              "active_generation": 1,
+              "state_slot": 1,
+              "stored_non_genesis_blocks": 7,
+              "max_stored_height": 7
+            },
+            "receiver": {
+              "member": "fresh-service/original/baseline/receiver/native.sqlite",
+              "bytes": 499712,
+              "sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+              "active_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              "active_height": 7,
+              "active_generation": 7,
+              "state_slot": 0,
+              "stored_non_genesis_blocks": 7,
+              "max_stored_height": 7
+            }
+          }
+        },
+        {
+          "scenario": "original",
+          "phase": "pressure",
+          "mode": "from-zero-pressure",
+          "requested_window_ns": 4000000000,
+          "client_confirmation_latency_ns": null,
+          "client_confirmed_transactions": 0,
+          "client_confirmed_before_original_window_end": false,
+          "finite_business_target_met": false,
+          "invariant_target_met": true,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "successful_honest_submissions": 7,
+          "history_pages": 3,
+          "no_attack_accepted": true,
+          "accounting_closed": true,
+          "database_readback": {
+            "independent-client": {
+              "member": "fresh-service/original/pressure/independent-client/native.sqlite",
+              "bytes": 245760,
+              "sha256": "3640293ab8d4addfd0d67546a593c45a3b986fc1afaa22f3ca9e4a2440d2fcb4",
+              "active_tip": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "active_height": 0,
+              "active_generation": 0,
+              "state_slot": 0,
+              "stored_non_genesis_blocks": 2,
+              "max_stored_height": 2
+            },
+            "receiver": {
+              "member": "fresh-service/original/pressure/receiver/native.sqlite",
+              "bytes": 499712,
+              "sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+              "active_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              "active_height": 7,
+              "active_generation": 7,
+              "state_slot": 0,
+              "stored_non_genesis_blocks": 7,
+              "max_stored_height": 7
+            }
+          }
+        },
+        {
+          "scenario": "fresh",
+          "phase": "baseline",
+          "mode": "attack-free-baseline",
+          "requested_window_ns": 4000000000,
+          "client_confirmation_latency_ns": 1819485570,
+          "client_confirmed_transactions": 1,
+          "client_confirmed_before_original_window_end": true,
+          "finite_business_target_met": true,
+          "invariant_target_met": true,
+          "verification_errors": [],
+          "successful_honest_submissions": 7,
+          "history_pages": 7,
+          "no_attack_accepted": true,
+          "accounting_closed": true,
+          "database_readback": {
+            "independent-client": {
+              "member": "fresh-service/fresh/baseline/independent-client/native.sqlite",
+              "bytes": 499712,
+              "sha256": "ae00dc9c8e4a10957f92915866830e2723ad1338e15d892891ce43a6f951f769",
+              "active_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              "active_height": 7,
+              "active_generation": 1,
+              "state_slot": 1,
+              "stored_non_genesis_blocks": 7,
+              "max_stored_height": 7
+            },
+            "receiver": {
+              "member": "fresh-service/fresh/baseline/receiver/native.sqlite",
+              "bytes": 499712,
+              "sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+              "active_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              "active_height": 7,
+              "active_generation": 7,
+              "state_slot": 0,
+              "stored_non_genesis_blocks": 7,
+              "max_stored_height": 7
+            }
+          }
+        },
+        {
+          "scenario": "fresh",
+          "phase": "pressure",
+          "mode": "from-zero-pressure",
+          "requested_window_ns": 4000000000,
+          "client_confirmation_latency_ns": null,
+          "client_confirmed_transactions": 0,
+          "client_confirmed_before_original_window_end": false,
+          "finite_business_target_met": false,
+          "invariant_target_met": true,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "successful_honest_submissions": 7,
+          "history_pages": 2,
+          "no_attack_accepted": true,
+          "accounting_closed": true,
+          "database_readback": {
+            "independent-client": {
+              "member": "fresh-service/fresh/pressure/independent-client/native.sqlite",
+              "bytes": 196608,
+              "sha256": "48d7f579d04e0c857d74e489afd1597ab1704cde428f55c026ad25243dd208e6",
+              "active_tip": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "active_height": 0,
+              "active_generation": 0,
+              "state_slot": 0,
+              "stored_non_genesis_blocks": 1,
+              "max_stored_height": 1
+            },
+            "receiver": {
+              "member": "fresh-service/fresh/pressure/receiver/native.sqlite",
+              "bytes": 499712,
+              "sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+              "active_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              "active_height": 7,
+              "active_generation": 7,
+              "state_slot": 0,
+              "stored_non_genesis_blocks": 7,
+              "max_stored_height": 7
+            }
+          }
+        }
+      ]
+    },
+    {
+      "artifact_id": 13093384540,
+      "lane": "prospective-merge",
+      "source_before_and_after": {
+        "base": "0e9eac5d2a8cdb0a6f0cc7920f84e290e0d5d0d0",
+        "candidate": "9cd91ed69a0c69df42f8d7812d32d271df6e1998",
+        "kind": "prospective-merge",
+        "prospective_merge": "a70f0165379156da436d1c0be403e1effd3912c0",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "a70f0165379156da436d1c0be403e1effd3912c0",
+        "tested_tree": "60a521c7299febfe26a8c7d38d3420d490d07cd8",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 792506816,
+        "tracked_entries": 6856,
+        "tracked_worktree_verified": true
+      },
+      "zip": {
+        "artifact_id": 13093384540,
+        "artifact_name": "w1-fresh-service-prospective-merge-a70f0165379156da436d1c0be403e1effd3912c0-1",
+        "retrieved_utc": "2026-11-01T17:51:07.029520+00:00",
+        "path": "13093384540.zip",
+        "size": 5041073,
+        "sha256": "30ef36b763327960552482e8a05b8c168f27200282879cf93fe760d2e0c69ec1",
+        "saved_api_metadata_matches": true,
+        "members": [
+          {
+            "path": "fresh-service/build.log",
+            "size": 106130,
+            "crc32": 4071393297
+          },
+          {
+            "path": "fresh-service/fresh/baseline/independent-client/owner.lock",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service/fresh/baseline/independent-client/native.sqlite",
+            "size": 499712,
+            "crc32": 1581979833
+          },
+          {
+            "path": "fresh-service/fresh/baseline/receiver/native.sqlite",
+            "size": 499712,
+            "crc32": 3752630567
+          },
+          {
+            "path": "fresh-service/fresh/baseline/receiver/owner.lock",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service/fresh/pressure/independent-client/native.sqlite",
+            "size": 196608,
+            "crc32": 994842766
+          },
+          {
+            "path": "fresh-service/fresh/pressure/independent-client/owner.lock",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service/fresh/pressure/receiver/native.sqlite",
+            "size": 499712,
+            "crc32": 3752630567
+          },
+          {
+            "path": "fresh-service/fresh/pressure/receiver/owner.lock",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service/fresh/producer/native.sqlite",
+            "size": 499712,
+            "crc32": 3407097486
+          },
+          {
+            "path": "fresh-service/fresh/producer/owner.lock",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service/fresh/report.json",
+            "size": 4176735,
+            "crc32": 2707767289
+          },
+          {
+            "path": "fresh-service/fresh.log",
+            "size": 927,
+            "crc32": 637804668
+          },
+          {
+            "path": "fresh-service/manifest.json",
+            "size": 8092,
+            "crc32": 2976866168
+          },
+          {
+            "path": "fresh-service/original/baseline/independent-client/native.sqlite",
+            "size": 499712,
+            "crc32": 1581979833
+          },
+          {
+            "path": "fresh-service/original/baseline/independent-client/owner.lock",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service/original/baseline/receiver/native.sqlite",
+            "size": 499712,
+            "crc32": 3752630567
+          },
+          {
+            "path": "fresh-service/original/baseline/receiver/owner.lock",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service/original/pressure/independent-client/native.sqlite",
+            "size": 196608,
+            "crc32": 994842766
+          },
+          {
+            "path": "fresh-service/original/pressure/independent-client/owner.lock",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service/original/pressure/receiver/native.sqlite",
+            "size": 499712,
+            "crc32": 3752630567
+          },
+          {
+            "path": "fresh-service/original/pressure/receiver/owner.lock",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service/original/producer/native.sqlite",
+            "size": 499712,
+            "crc32": 3407097486
+          },
+          {
+            "path": "fresh-service/original/producer/owner.lock",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service/original/report.json",
+            "size": 5371451,
+            "crc32": 3786149960
+          },
+          {
+            "path": "fresh-service/original.log",
+            "size": 433,
+            "crc32": 56718807
+          },
+          {
+            "path": "fresh-service/public_v3_from_zero",
+            "size": 10566784,
+            "crc32": 1733054578
+          },
+          {
+            "path": "fresh-service-controls.log",
+            "size": 111,
+            "crc32": 4221198171
+          },
+          {
+            "path": "fresh-service-host/actual-systemd-parent.log",
+            "size": 200,
+            "crc32": 3011331718
+          },
+          {
+            "path": "fresh-service-host/after-provision.json",
+            "size": 1634,
+            "crc32": 646300394
+          },
+          {
+            "path": "fresh-service-host/before-provision.json",
+            "size": 2801,
+            "crc32": 2134175675
+          },
+          {
+            "path": "fresh-service-host/child-final-load-state.log",
+            "size": 10,
+            "crc32": 321726484
+          },
+          {
+            "path": "fresh-service-host/child-load-state.log",
+            "size": 10,
+            "crc32": 321726484
+          },
+          {
+            "path": "fresh-service-host/child-result.json",
+            "size": 366,
+            "crc32": 198680577
+          },
+          {
+            "path": "fresh-service-host/controller-result.json",
+            "size": 4235,
+            "crc32": 1382471335
+          },
+          {
+            "path": "fresh-service-host/inside-after.json",
+            "size": 1711,
+            "crc32": 1437941339
+          },
+          {
+            "path": "fresh-service-host/inside-before.json",
+            "size": 1699,
+            "crc32": 3018133448
+          },
+          {
+            "path": "fresh-service-host/install-reviewed-unit.log",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service-host/outside-after.json",
+            "size": 1667,
+            "crc32": 2269497405
+          },
+          {
+            "path": "fresh-service-host/parent-properties.log",
+            "size": 146,
+            "crc32": 4046598973
+          },
+          {
+            "path": "fresh-service-host/prepare-build/process.json",
+            "size": 920,
+            "crc32": 1949869021
+          },
+          {
+            "path": "fresh-service-host/prepare-build/stderr",
+            "size": 7011,
+            "crc32": 3498762221
+          },
+          {
+            "path": "fresh-service-host/prepare-build/stdout",
+            "size": 106186,
+            "crc32": 1444719698
+          },
+          {
+            "path": "fresh-service-host/prepare-build.json",
+            "size": 3401,
+            "crc32": 1671535673
+          },
+          {
+            "path": "fresh-service-host/start-fixed-parent.log",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service-host/systemd-reload.log",
+            "size": 0,
+            "crc32": 0
+          },
+          {
+            "path": "fresh-service-host/systemd-run.log",
+            "size": 537,
+            "crc32": 31021456
+          },
+          {
+            "path": "fresh-service-host/unprovisioned-parent.json",
+            "size": 229,
+            "crc32": 2035026314
+          },
+          {
+            "path": "original-host-controls.log",
+            "size": 119,
+            "crc32": 3401382392
+          },
+          {
+            "path": "original-native-controls.log",
+            "size": 12948,
+            "crc32": 1122708336
+          },
+          {
+            "path": "preflight.log",
+            "size": 133,
+            "crc32": 1692302564
+          },
+          {
+            "path": "source-after.json",
+            "size": 510,
+            "crc32": 1400736941
+          },
+          {
+            "path": "source-before.json",
+            "size": 510,
+            "crc32": 1400736941
+          }
+        ],
+        "payload_crc_check_scope": "Deferred to targeted service snapshot read; this download receipt checks exact original ZIP bytes and central metadata."
+      },
+      "manifest_failures": [
+        "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+        "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED"
+      ],
+      "manifest_execution_finished": true,
+      "manifest_passed": false,
+      "runs": [
+        {
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "process": {
+            "command": [
+              "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-6c91a9a89111eddb",
+              "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+              "--exact",
+              "--nocapture",
+              "--test-threads=1"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "exit_code": 0,
+            "timed_out": false,
+            "elapsed_ns": 15695687314,
+            "log": "original.log",
+            "executed": true,
+            "process_exit_code": 0,
+            "expected_source": "a70f0165379156da436d1c0be403e1effd3912c0",
+            "source_before_verified": true,
+            "source_after_verified": true,
+            "source_verified": true
+          },
+          "passed": false,
+          "log_sha256": "fd19e9d9f051ea482e137b387d0644596e447b740f0f24472fad7a0805f95103",
+          "report_path": "original/report.json",
+          "failure": "CONFIRMATION_TARGET"
+        },
+        {
+          "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+          "process": {
+            "command": [
+              "/home/runner/work/_temp/target-w1-fresh/release/deps/public_v3_from_zero-6c91a9a89111eddb",
+              "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+              "--exact",
+              "--nocapture",
+              "--test-threads=1",
+              "--ignored"
+            ],
+            "cwd": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain",
+            "exit_code": 101,
+            "timed_out": false,
+            "elapsed_ns": 15001904449,
+            "log": "fresh.log",
+            "executed": true,
+            "process_exit_code": 101,
+            "expected_source": "a70f0165379156da436d1c0be403e1effd3912c0",
+            "source_before_verified": true,
+            "source_after_verified": true,
+            "source_verified": true
+          },
+          "passed": false,
+          "log_sha256": "557cc0b360c1c49436b276d43b867667cde8214745a2cef31cb32c91fb957139",
+          "report_path": "fresh/report.json",
+          "failure": "FRESH_NATIVE_PROCESS_REQUIRED"
+        }
+      ],
+      "scenarios": [
+        {
+          "scenario": "original",
+          "phase": "baseline",
+          "mode": "attack-free-baseline",
+          "requested_window_ns": 4000000000,
+          "client_confirmation_latency_ns": 1985205149,
+          "client_confirmed_transactions": 1,
+          "client_confirmed_before_original_window_end": true,
+          "finite_business_target_met": true,
+          "invariant_target_met": true,
+          "verification_errors": [],
+          "successful_honest_submissions": 7,
+          "history_pages": 7,
+          "no_attack_accepted": true,
+          "accounting_closed": true,
+          "database_readback": {
+            "independent-client": {
+              "member": "fresh-service/original/baseline/independent-client/native.sqlite",
+              "bytes": 499712,
+              "sha256": "ae00dc9c8e4a10957f92915866830e2723ad1338e15d892891ce43a6f951f769",
+              "active_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              "active_height": 7,
+              "active_generation": 1,
+              "state_slot": 1,
+              "stored_non_genesis_blocks": 7,
+              "max_stored_height": 7
+            },
+            "receiver": {
+              "member": "fresh-service/original/baseline/receiver/native.sqlite",
+              "bytes": 499712,
+              "sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+              "active_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              "active_height": 7,
+              "active_generation": 7,
+              "state_slot": 0,
+              "stored_non_genesis_blocks": 7,
+              "max_stored_height": 7
+            }
+          }
+        },
+        {
+          "scenario": "original",
+          "phase": "pressure",
+          "mode": "from-zero-pressure",
+          "requested_window_ns": 4000000000,
+          "client_confirmation_latency_ns": null,
+          "client_confirmed_transactions": 0,
+          "client_confirmed_before_original_window_end": false,
+          "finite_business_target_met": false,
+          "invariant_target_met": true,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "successful_honest_submissions": 7,
+          "history_pages": 2,
+          "no_attack_accepted": true,
+          "accounting_closed": true,
+          "database_readback": {
+            "independent-client": {
+              "member": "fresh-service/original/pressure/independent-client/native.sqlite",
+              "bytes": 196608,
+              "sha256": "48d7f579d04e0c857d74e489afd1597ab1704cde428f55c026ad25243dd208e6",
+              "active_tip": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "active_height": 0,
+              "active_generation": 0,
+              "state_slot": 0,
+              "stored_non_genesis_blocks": 1,
+              "max_stored_height": 1
+            },
+            "receiver": {
+              "member": "fresh-service/original/pressure/receiver/native.sqlite",
+              "bytes": 499712,
+              "sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+              "active_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              "active_height": 7,
+              "active_generation": 7,
+              "state_slot": 0,
+              "stored_non_genesis_blocks": 7,
+              "max_stored_height": 7
+            }
+          }
+        },
+        {
+          "scenario": "fresh",
+          "phase": "baseline",
+          "mode": "attack-free-baseline",
+          "requested_window_ns": 4000000000,
+          "client_confirmation_latency_ns": 1983003985,
+          "client_confirmed_transactions": 1,
+          "client_confirmed_before_original_window_end": true,
+          "finite_business_target_met": true,
+          "invariant_target_met": true,
+          "verification_errors": [],
+          "successful_honest_submissions": 7,
+          "history_pages": 7,
+          "no_attack_accepted": true,
+          "accounting_closed": true,
+          "database_readback": {
+            "independent-client": {
+              "member": "fresh-service/fresh/baseline/independent-client/native.sqlite",
+              "bytes": 499712,
+              "sha256": "ae00dc9c8e4a10957f92915866830e2723ad1338e15d892891ce43a6f951f769",
+              "active_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              "active_height": 7,
+              "active_generation": 1,
+              "state_slot": 1,
+              "stored_non_genesis_blocks": 7,
+              "max_stored_height": 7
+            },
+            "receiver": {
+              "member": "fresh-service/fresh/baseline/receiver/native.sqlite",
+              "bytes": 499712,
+              "sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+              "active_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              "active_height": 7,
+              "active_generation": 7,
+              "state_slot": 0,
+              "stored_non_genesis_blocks": 7,
+              "max_stored_height": 7
+            }
+          }
+        },
+        {
+          "scenario": "fresh",
+          "phase": "pressure",
+          "mode": "from-zero-pressure",
+          "requested_window_ns": 4000000000,
+          "client_confirmation_latency_ns": null,
+          "client_confirmed_transactions": 0,
+          "client_confirmed_before_original_window_end": false,
+          "finite_business_target_met": false,
+          "invariant_target_met": true,
+          "verification_errors": [
+            "PUBLIC_REQUEST_DEADLINE"
+          ],
+          "successful_honest_submissions": 7,
+          "history_pages": 2,
+          "no_attack_accepted": true,
+          "accounting_closed": true,
+          "database_readback": {
+            "independent-client": {
+              "member": "fresh-service/fresh/pressure/independent-client/native.sqlite",
+              "bytes": 196608,
+              "sha256": "48d7f579d04e0c857d74e489afd1597ab1704cde428f55c026ad25243dd208e6",
+              "active_tip": "f9c79ade09c69ab83c02c49e21cae0855b73998cd5bb781acda5ee5b55ed5516",
+              "active_height": 0,
+              "active_generation": 0,
+              "state_slot": 0,
+              "stored_non_genesis_blocks": 1,
+              "max_stored_height": 1
+            },
+            "receiver": {
+              "member": "fresh-service/fresh/pressure/receiver/native.sqlite",
+              "bytes": 499712,
+              "sha256": "bc314e01dd564e9484dabad41ba06c3bf2cd6a7893bcbbd2e5f8f3bddbb2cc14",
+              "active_tip": "3c02ec6cd94c4ae907693493e202aadb802b67ca8ce606abece2b70453a60c14",
+              "active_height": 7,
+              "active_generation": 7,
+              "state_slot": 0,
+              "stored_non_genesis_blocks": 7,
+              "max_stored_height": 7
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "scope": [
+    "Final observed API and retained job logs for this 9cd workflow run, with only the two original service ZIP archives downloaded.",
+    "Service source identity and targeted report/SQLite bytes checked against retained manifests; active-tip readback uses read-only SQLite connections.",
+    "No fresh native execution and no complete ticket, transcript, signature or State revalidation was performed by this snapshot.",
+    "Cancellation and missing V2 artifacts are incomplete observations, not PASS and not work invalidity.",
+    "The complete 3bbc V2 evidence retains its original commit/run labels; this later 9cd snapshot neither replaces nor relabels it.",
+    "Baseline timing across different runs is not a paired performance comparison."
+  ]
+}

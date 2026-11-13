@@ -1,0 +1,142 @@
+{
+  "observed_at": "2026-11-08T01:15:36.827850+00:00",
+  "source_snapshot": "final-pr-readback-05",
+  "head": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+  "reviews": [
+    {
+      "id": 128580281671,
+      "name": "native priorities (ubuntu-24.04-arm, head, service-model)",
+      "head_sha": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42431209882/job/128580281671",
+      "failed_steps": [
+        {
+          "name": "Execute original release from-zero controls",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 7,
+          "started_at": "2026-11-08T00:46:32Z",
+          "completed_at": "2026-11-08T00:51:06Z"
+        }
+      ],
+      "log_exit": 0,
+      "log_bytes": 1856644,
+      "log_sha256": "72d83715be3071125d22d865f4d863a5a2e7871300cbd217d2cf808200d082d2",
+      "error_excerpt_lines": 129
+    },
+    {
+      "id": 128580281610,
+      "name": "native priorities (ubuntu-24.04-arm, prospective-merge, service-model)",
+      "head_sha": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42431209882/job/128580281610",
+      "failed_steps": [
+        {
+          "name": "Execute original release from-zero controls",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 7,
+          "started_at": "2026-11-08T00:46:33Z",
+          "completed_at": "2026-11-08T00:51:05Z"
+        }
+      ],
+      "log_exit": 0,
+      "log_bytes": 1857405,
+      "log_sha256": "9ad05cf1d47c8931dbadebff36b27c5abad2e3a6ef60445b226714f6fc8bb1b1",
+      "error_excerpt_lines": 129
+    },
+    {
+      "id": 128580281601,
+      "name": "native priorities (ubuntu-24.04, prospective-merge, service-model)",
+      "head_sha": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42431209882/job/128580281601",
+      "failed_steps": [
+        {
+          "name": "Execute original release from-zero controls",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 7,
+          "started_at": "2026-11-08T00:46:38Z",
+          "completed_at": "2026-11-08T00:50:43Z"
+        }
+      ],
+      "log_exit": 0,
+      "log_bytes": 1857167,
+      "log_sha256": "b80f30edde45d6e5c8b7fefa0044cb360733bc7a627c98449645fccd211f4541",
+      "error_excerpt_lines": 129
+    },
+    {
+      "id": 128580281600,
+      "name": "native priorities (ubuntu-24.04, head, service-model)",
+      "head_sha": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42431209882/job/128580281600",
+      "failed_steps": [
+        {
+          "name": "Execute original release from-zero controls",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 7,
+          "started_at": "2026-11-08T00:46:38Z",
+          "completed_at": "2026-11-08T00:51:24Z"
+        }
+      ],
+      "log_exit": 0,
+      "log_bytes": 1856665,
+      "log_sha256": "2805c22d4292fd691d2dc6f62c3c72f0dddc05f3b03dd03656fd9fb279e76105",
+      "error_excerpt_lines": 129
+    },
+    {
+      "id": 128580281083,
+      "name": "original native campaign (x64, head, release)",
+      "head_sha": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42431209910/job/128580281083",
+      "failed_steps": [
+        {
+          "name": "Run three original campaigns under verified actual limits",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 7,
+          "started_at": "2026-11-08T00:46:23Z",
+          "completed_at": "2026-11-08T00:54:51Z"
+        }
+      ],
+      "log_exit": 0,
+      "log_bytes": 200726,
+      "log_sha256": "69a2307b029d46ca3cc141defcc0035d23a014c84fd6649b4208185e0e1056bd",
+      "error_excerpt_lines": 44
+    },
+    {
+      "id": 128580281067,
+      "name": "export",
+      "head_sha": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42431209867/job/128580281067",
+      "failed_steps": [
+        {
+          "name": "Export exact PR analyses with the existing read-only token",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 5,
+          "started_at": "2026-11-08T00:46:31Z",
+          "completed_at": "2026-11-08T01:06:17Z"
+        }
+      ],
+      "log_exit": 0,
+      "log_bytes": 148351,
+      "log_sha256": "efa9f567190718508d42b1114176b906e207bae7f8b73a5f4b7b6e41266a4af9",
+      "error_excerpt_lines": 9
+    }
+  ],
+  "failure_results_not_reclassified": true,
+  "causal_attribution_not_inferred_from_names": true,
+  "source_or_ci_mutations_performed": false
+}

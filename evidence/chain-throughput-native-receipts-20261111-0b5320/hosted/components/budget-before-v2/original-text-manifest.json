@@ -1,0 +1,406 @@
+{
+  "artifact": {
+    "id": 13833530665,
+    "name": "pon-budget-controls-budget-before-v2-89fb2269b0dd306fbd32c36f464842c3d7daee2b-1",
+    "bytes": 30719516,
+    "sha256": "15dbf077d85cb878162e2ed85547c1766343df89886485f4babdc15f69d45414",
+    "mode": "budget-before-v2"
+  },
+  "files": [
+    {
+      "zip_member": "native/build.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 904,
+      "sha256": "414456866c9782aca7b70a8eb0e3bf144e74d72dad8a0bc7a30af024ec22bee1",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/build.process.json"
+    },
+    {
+      "zip_member": "native/build.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 4343,
+      "sha256": "31f1126e8fdb50827a27b32f51afac38e7d5bd5180774bcd3c6ee07899a8aa22",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/build.stderr"
+    },
+    {
+      "zip_member": "native/build.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 121800,
+      "sha256": "2e847859936c848c26c8db1cd85ced723a7a19a5dc4feefae3af85fb507683f2",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/build.stdout"
+    },
+    {
+      "zip_member": "native/cargo-graph.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 845,
+      "sha256": "39ed79a26c711ee49805849cf6d453b9347896fce5dde811e7e60cbede424caa",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/cargo-graph.process.json"
+    },
+    {
+      "zip_member": "native/cargo-graph.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 4876,
+      "sha256": "bb158054805d628272d22b665ca5eeec2d8e140edf07e4ffb520ad69b90f2f84",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/cargo-graph.stderr"
+    },
+    {
+      "zip_member": "native/cargo-version.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 733,
+      "sha256": "1545d5794ef51734363ac93bae74b4b53c86842407f1f9b6cb9014f05830d47f",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/cargo-version.process.json"
+    },
+    {
+      "zip_member": "native/cargo-graph.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 893261,
+      "sha256": "7bacf944829b01bed70745e4cf40c5d3224034b631a53cee25a179746d6ab1ec",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/cargo-graph.stdout"
+    },
+    {
+      "zip_member": "native/cargo-version.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/cargo-version.stderr"
+    },
+    {
+      "zip_member": "native/cargo-version.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 336,
+      "sha256": "bfd735e736b354adabe72cea24bc1b393488223889b6ab95e974fd8fb963552e",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/cargo-version.stdout"
+    },
+    {
+      "zip_member": "native/compiler-artifacts.json",
+      "role": "original hosted artifact text",
+      "bytes": 1168,
+      "sha256": "619e8ab5667dcbbb5e0ccdbf34406364ae2c2e286e5da2f12d4164913c2f3a5f",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/compiler-artifacts.json"
+    },
+    {
+      "zip_member": "native/driver-preflight.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 762,
+      "sha256": "ba96dd55d5156f4c4c0e9210c859fbac3e1b043c9582ae88b930b8e47ecd6f58",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/driver-preflight.process.json"
+    },
+    {
+      "zip_member": "native/driver-preflight.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/driver-preflight.stderr"
+    },
+    {
+      "zip_member": "native/driver-preflight.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 133,
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/driver-preflight.stdout"
+    },
+    {
+      "zip_member": "native/driver-source-after.json",
+      "role": "original hosted artifact text",
+      "bytes": 423,
+      "sha256": "03bd6956b3711c85ef2505ab09ec990ac1ab8ccbeffe4fcf3cecc8173601e731",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/driver-source-after.json"
+    },
+    {
+      "zip_member": "native/driver-source-before.json",
+      "role": "original hosted artifact text",
+      "bytes": 423,
+      "sha256": "03bd6956b3711c85ef2505ab09ec990ac1ab8ccbeffe4fcf3cecc8173601e731",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/driver-source-before.json"
+    },
+    {
+      "zip_member": "native/libtest-list.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 842,
+      "sha256": "f059198e312e963071cf01a650c4b7db3437fb00b28564c22c52537803e3f169",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/libtest-list.process.json"
+    },
+    {
+      "zip_member": "native/libtest-list.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/libtest-list.stderr"
+    },
+    {
+      "zip_member": "native/libtest-list.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 152049,
+      "sha256": "19ef917980c66c5900e198c4bf0f6c6e3cd732057a9197bc5508afb981b069b0",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/libtest-list.stdout"
+    },
+    {
+      "zip_member": "native/report.json",
+      "role": "original hosted artifact text",
+      "bytes": 112464,
+      "sha256": "c3f8bb65804899ea9404d2281bb89dfd8c49293dca3af4a73bc74573fc61351f",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/report.json"
+    },
+    {
+      "zip_member": "native/rustc-path.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 759,
+      "sha256": "1b632addec417b69af16f7775b27bd6f2d5ae6315937a1101864537e68c6999c",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/rustc-path.process.json"
+    },
+    {
+      "zip_member": "native/rustc-path.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/rustc-path.stderr"
+    },
+    {
+      "zip_member": "native/rustc-path.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 74,
+      "sha256": "d0193700af7f567877ce9dbc20f915552972e146926733da26ae3fe0e363efcc",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/rustc-path.stdout"
+    },
+    {
+      "zip_member": "native/rustc-version.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 785,
+      "sha256": "e69da817b5ed068e97b44d4c00093f68650d3af6dde226422b2aa1d33beb7c3d",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/rustc-version.process.json"
+    },
+    {
+      "zip_member": "native/rustc-version.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/rustc-version.stderr"
+    },
+    {
+      "zip_member": "native/rustc-version.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 196,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/rustc-version.stdout"
+    },
+    {
+      "zip_member": "native/subject-preflight.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 765,
+      "sha256": "753025980fdadd219b09a98c547e9493cd5c47e6066a949b1f7874208253a8bb",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/subject-preflight.process.json"
+    },
+    {
+      "zip_member": "native/subject-preflight.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/subject-preflight.stderr"
+    },
+    {
+      "zip_member": "native/subject-preflight.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 133,
+      "sha256": "a47133fd7030ccda88d70f7e8f0c9df1ffb0fc5fd3257ed034439bbe6fc6e2e0",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/subject-preflight.stdout"
+    },
+    {
+      "zip_member": "native/subject-source-after.json",
+      "role": "original hosted artifact text",
+      "bytes": 423,
+      "sha256": "cdde4e168f085b1da6d6a39ab0a4ed50058b4929c6f98c2f46052c9306a5f2ce",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/subject-source-after.json"
+    },
+    {
+      "zip_member": "native/subject-source-before.json",
+      "role": "original hosted artifact text",
+      "bytes": 423,
+      "sha256": "cdde4e168f085b1da6d6a39ab0a4ed50058b4929c6f98c2f46052c9306a5f2ce",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/subject-source-before.json"
+    },
+    {
+      "zip_member": "native/test-01.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 994,
+      "sha256": "5bb82880612546df5e203ef31a1cc280e39880d6357e587f94d2236e7d63ba13",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/test-01.process.json"
+    },
+    {
+      "zip_member": "native/test-01.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 565,
+      "sha256": "40bd8b862a3e970faaf2099d10330bf70aed5a26c6e66762be76666bc32ba560",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/test-01.stderr"
+    },
+    {
+      "zip_member": "native/test-01.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 14192,
+      "sha256": "d19a8f2a953d6d3e1462e7ca3d50c98306e529912429b49eac03b7524bf08911",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/test-01.stdout"
+    },
+    {
+      "zip_member": "native/test-02.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 991,
+      "sha256": "bd68d9507cb3858e5f717112937142e2950cc7f547f2017be06f24cf0651ccb5",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/test-02.process.json"
+    },
+    {
+      "zip_member": "native/test-02.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 562,
+      "sha256": "138851bb7716709bc9131ce85a01ade3d7255f5cf15893362de3814c2f366a8d",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/test-02.stderr"
+    },
+    {
+      "zip_member": "native/test-02.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 14184,
+      "sha256": "62f01f33807f4242cbccda92f3c5392f76bb8154e5479e57b262b24a16d7991c",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/test-02.stdout"
+    },
+    {
+      "zip_member": "native/test-03.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 985,
+      "sha256": "5a54909ed00779d1fcb7d06ecb29b36ccc1a0ac61538878479c82a1c9fe5efd0",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/test-03.process.json"
+    },
+    {
+      "zip_member": "native/test-03.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 556,
+      "sha256": "e15e00bd1f954f6ae3fbd7667de55e4dddd4f8802139b3cdfdeb56bfcf95977b",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/test-03.stderr"
+    },
+    {
+      "zip_member": "native/test-03.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 14201,
+      "sha256": "c3fa50317bd71eea5244653500bd66b0397adcf7ae0718ceacc97b207ec2acea",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/test-03.stdout"
+    },
+    {
+      "zip_member": "native/test-04.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 964,
+      "sha256": "d7022da94ef60ede491b70c36f307bd6585db0c25a951b2c88f3f348bf63cfdf",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/test-04.process.json"
+    },
+    {
+      "zip_member": "native/test-04.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 306,
+      "sha256": "9233caf83b2243178fac4e82ad66fb0522609c56ff62a639dc07c0b5c5aa5b37",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/test-04.stderr"
+    },
+    {
+      "zip_member": "native/test-04.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 365,
+      "sha256": "12ab0aa6110582257bf5909dd2f267580dbca652f3fa1db77c3dcd0d172facd0",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/test-04.stdout"
+    },
+    {
+      "zip_member": "native/test-05.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 961,
+      "sha256": "9a4f6c84b57eff0a977028e3dd4d57acc4096ec8810ca1b8d1f13232d7363693",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/test-05.process.json"
+    },
+    {
+      "zip_member": "native/test-05.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 356,
+      "sha256": "22c7306c776b5ee9be583f1b9c7aff503928c0b8f32ec5b36436c31c64ee8a36",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/test-05.stderr"
+    },
+    {
+      "zip_member": "native/test-05.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 357,
+      "sha256": "ea92c2fc4f75e2ddcb52af23718aee3edd93119af59c3fb4386df9381923a8b1",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/test-05.stdout"
+    },
+    {
+      "zip_member": "native/test-06.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 962,
+      "sha256": "cfbe18690f5bc10a74fdc0c9c21b1695ff3a50f3698338e9173588db4ded82fc",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/test-06.process.json"
+    },
+    {
+      "zip_member": "native/test-06.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 357,
+      "sha256": "7ca294274213f3d6e21a6d4fa0a9c727527e5e5bc4f9763774f3779a7c4f883a",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/test-06.stderr"
+    },
+    {
+      "zip_member": "native/test-06.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 361,
+      "sha256": "d1feb078ae30e00f6c64bd47c22b381ecab75b47fcab9c142f8dd9ba8751d5a5",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/test-06.stdout"
+    },
+    {
+      "zip_member": "native/test-07.process.json",
+      "role": "original hosted artifact text",
+      "bytes": 958,
+      "sha256": "952605ca854e9604503dc87c4a4f0fedfb42720d986b1862cd5ceecabb499715",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/test-07.process.json"
+    },
+    {
+      "zip_member": "native/test-07.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/test-07.stderr"
+    },
+    {
+      "zip_member": "native/test-07.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 226,
+      "sha256": "be8709e41f874d25e25679933861cea76e73152190e4a09314401bb11e7f8a17",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/native/test-07.stdout"
+    },
+    {
+      "zip_member": "request.txt",
+      "role": "original hosted artifact text",
+      "bytes": 149,
+      "sha256": "489cd8aed28411cd2a10894a8ba15b364e540ce1e1bd8f61f622d43c38d3fded",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/request.txt"
+    },
+    {
+      "zip_member": "runner-controls.stderr",
+      "role": "original hosted artifact text",
+      "bytes": 6697,
+      "sha256": "519c7e9cdf2b4ebe025c7083bf20fdda5fa04b522322434ef1316def68b9238e",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/runner-controls.stderr"
+    },
+    {
+      "zip_member": "runner-controls.stdout",
+      "role": "original hosted artifact text",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "retained_path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text/runner-controls.stdout"
+    }
+  ],
+  "binary_members_validated_but_not_reextracted": [
+    {
+      "role": "libtest",
+      "zip_member": "native/trnm-pon-node-libtest",
+      "bytes": 101875696,
+      "sha256": "d3700461162c24ad48f2424cce725f93be6cc58d51ff3c8b574c86f28853a8a0",
+      "profile": {
+        "debug_assertions": false,
+        "debuginfo": 0,
+        "opt_level": "3",
+        "overflow_checks": false,
+        "test": true
+      },
+      "source_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/subject/trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "binary_before_equals_after": true
+    }
+  ]
+}

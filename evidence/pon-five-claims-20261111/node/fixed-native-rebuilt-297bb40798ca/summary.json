@@ -1,0 +1,130 @@
+{
+  "schema": "trnm-submit-ancestry-fixed-native-rebuilt-observation-v1",
+  "local_compilation_origin_verified": true,
+  "local_unit_count": 14,
+  "cache_recovery_directory": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-cache-recovery-297bb40798ca",
+  "rustup_entry": "rustup run 1.95.0 /usr/bin/python3",
+  "absolute_rustc": "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+  "sqlite_precheck_witness_cfg_observed": true,
+  "sqlite_layout_witness_cfg_observed": true,
+  "base": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+  "source": {
+    "head": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+    "tracked_entries_verified": 28807,
+    "tracked_bytes_verified": 2615077043,
+    "full_git_blob_equality": true
+  },
+  "binary": {
+    "path": "/home/qian-qi/work/chain-pon-submit-target-d6cb/release/deps/trnm_pon_node-b9510f5893fe9b62",
+    "sha256_before": "3342d7ba7a71afa02dab5af4bcfa66910630d2a0d6354d18d94a4f57ed425159",
+    "sha256_after": "3342d7ba7a71afa02dab5af4bcfa66910630d2a0d6354d18d94a4f57ed425159"
+  },
+  "native_results": [
+    {
+      "selector": "ingress::submit_activation_history_tests::submit_future_ancestor_is_checked_after_full_work_before_m06",
+      "exit_code": 0,
+      "exactly_one_named_native_test_passed": true,
+      "command_label": "native-01"
+    },
+    {
+      "selector": "ingress::submit_activation_history_tests::submit_bad_product_keeps_full_work_refusal_before_ancestry",
+      "exit_code": 0,
+      "exactly_one_named_native_test_passed": true,
+      "command_label": "native-02"
+    },
+    {
+      "selector": "ingress::submit_activation_history_tests::submit_nonmonotone_but_currently_eligible_ancestry_still_activates",
+      "exit_code": 0,
+      "exactly_one_named_native_test_passed": true,
+      "command_label": "native-03"
+    },
+    {
+      "selector": "ingress::submit_activation_history_tests::submit_existing_future_ancestor_keeps_exact_packet_without_replaying_work",
+      "exit_code": 0,
+      "exactly_one_named_native_test_passed": true,
+      "command_label": "native-04"
+    },
+    {
+      "selector": "ingress::submit_activation_history_tests::submit_detached_commit_rechecks_ancestry_under_reacquired_clock",
+      "exit_code": 0,
+      "exactly_one_named_native_test_passed": true,
+      "command_label": "native-05"
+    },
+    {
+      "selector": "ingress::submit_activation_history_tests::submit_ancestry_scan_keeps_original_cancellation_and_releases_slot",
+      "exit_code": 0,
+      "exactly_one_named_native_test_passed": true,
+      "command_label": "native-06"
+    },
+    {
+      "selector": "ingress::submit_activation_history_tests::historical_admission_without_activation_parent_keeps_its_original_contract",
+      "exit_code": 0,
+      "exactly_one_named_native_test_passed": true,
+      "command_label": "native-07"
+    },
+    {
+      "selector": "ingress::tests::proof_statement_precheck_rejects_before_parent_state_or_work_and_preserves_retry",
+      "exit_code": 0,
+      "exactly_one_named_native_test_passed": true,
+      "command_label": "native-08"
+    },
+    {
+      "selector": "ingress::tests::work_replay_does_not_hold_the_durable_owner_lock",
+      "exit_code": 0,
+      "exactly_one_named_native_test_passed": true,
+      "command_label": "native-09"
+    },
+    {
+      "selector": "ingress::tests::cancellation_after_actual_work_verification_has_no_commit",
+      "exit_code": 0,
+      "exactly_one_named_native_test_passed": true,
+      "command_label": "native-10"
+    },
+    {
+      "selector": "ingress::tests::cancellation_inside_last_work_tile_or_final_boundary_has_no_durable_packet",
+      "exit_code": 0,
+      "exactly_one_named_native_test_passed": true,
+      "command_label": "native-11"
+    },
+    {
+      "selector": "ingress::tests::cancellation_after_admission_preserves_fact_and_exact_retry_controls_activation",
+      "exit_code": 0,
+      "exactly_one_named_native_test_passed": true,
+      "command_label": "native-12"
+    },
+    {
+      "selector": "ingress::tests::context_reject_and_exact_duplicate_do_not_replay_work",
+      "exit_code": 0,
+      "exactly_one_named_native_test_passed": true,
+      "command_label": "native-13"
+    },
+    {
+      "selector": "ingress::tests::verified_work_cannot_bypass_destination_context_or_clock",
+      "exit_code": 0,
+      "exactly_one_named_native_test_passed": true,
+      "command_label": "native-14"
+    }
+  ],
+  "requested_native_count": 14,
+  "executed_native_count": 14,
+  "native_tests_passed": true,
+  "source_after": {
+    "head": "297bb40798ca1b4e4a987ef00582067282cda4e9",
+    "tree": "129267332b2ef87d3d66d014fddeb894faa9379f",
+    "tracked_entries_verified": 28807,
+    "tracked_bytes_verified": 2615077043,
+    "full_git_blob_equality": true
+  },
+  "production_qualification": false,
+  "build_scope": "release default-feature trnm-pon-node library tests",
+  "artifacts_directory": "/home/qian-qi/work/pon-five-claims-w1-artifacts-d6cb/fixed-native-rebuilt-297bb40798ca",
+  "before_control_source": {
+    "head": "e63427560885b65c57db6bdc478df023111b4733",
+    "tree": "10a70f10bf5c64fe4b1d8df42c6463ff17aeba88",
+    "tracked_entries_verified": 28059,
+    "tracked_bytes_verified": 2592592885,
+    "full_git_blob_equality": true
+  },
+  "before_control_native_exit_code": 101
+}

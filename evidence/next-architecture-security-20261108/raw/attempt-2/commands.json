@@ -1,0 +1,329 @@
+[
+  {
+    "args": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "bced22f712552302848e3e04f7acf24068af2048",
+      "--output",
+      "/home/qian-qi/work/chain-next-architecture-security-20261108-8720-validation/attempt-2/source-before.json"
+    ],
+    "elapsed_wall_ns": 5027904718,
+    "exit_code": 0,
+    "name": "source-before",
+    "source_commit": "bced22f712552302848e3e04f7acf24068af2048",
+    "started_utc": "2026-11-08T05:41:18.945305+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "source-before.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 423,
+      "path": "source-before.stdout",
+      "sha256": "d38259889219afab60a384e61d7817b98d6d536d2ca921e2d1e2f9516e99093b"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "bash",
+      "scripts/project-preflight.sh",
+      "--audit"
+    ],
+    "elapsed_wall_ns": 115032117,
+    "exit_code": 0,
+    "name": "preflight",
+    "source_commit": "bced22f712552302848e3e04f7acf24068af2048",
+    "started_utc": "2026-11-08T05:41:23.973993+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "preflight.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 182,
+      "path": "preflight.stdout",
+      "sha256": "514b844999c0da279411dc1474f0f55aa23b09253a2c5b29f95e524f2a568f4e"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "metadata",
+      "--offline",
+      "--locked",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--format-version",
+      "1"
+    ],
+    "elapsed_wall_ns": 265603817,
+    "exit_code": 0,
+    "name": "cargo-graph",
+    "source_commit": "bced22f712552302848e3e04f7acf24068af2048",
+    "started_utc": "2026-11-08T05:41:24.089800+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "cargo-graph.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 833513,
+      "path": "cargo-graph.stdout",
+      "sha256": "f8670b60fc81bffe4fcc44f76cfc95c06e588d7a46955415eb9f90f60bae260e"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "fmt",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "elapsed_wall_ns": 19365387784,
+    "exit_code": 0,
+    "name": "format",
+    "source_commit": "bced22f712552302848e3e04f7acf24068af2048",
+    "started_utc": "2026-11-08T05:41:24.362088+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "format.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 0,
+      "path": "format.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-pon-node",
+      "--test",
+      "native_packet_observer",
+      "--",
+      "--test-threads=1"
+    ],
+    "elapsed_wall_ns": 159698435958,
+    "exit_code": 0,
+    "name": "native-packet-observer",
+    "source_commit": "bced22f712552302848e3e04f7acf24068af2048",
+    "started_utc": "2026-11-08T05:41:43.728594+00:00",
+    "stderr": {
+      "bytes": 372,
+      "path": "native-packet-observer.stderr",
+      "sha256": "2ddb4c2a43cfe3ef1408445d82c943ef032304d56460acd74bd816ca87a51d98"
+    },
+    "stdout": {
+      "bytes": 847,
+      "path": "native-packet-observer.stdout",
+      "sha256": "93e4352716e17cd1d30fa9a812532645f3c4dde62ed86d8be44607fb7cff437d"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "python3",
+      "-B",
+      "scripts/ci/check_repository.py"
+    ],
+    "elapsed_wall_ns": 103847755346,
+    "exit_code": 0,
+    "name": "repository",
+    "source_commit": "bced22f712552302848e3e04f7acf24068af2048",
+    "started_utc": "2026-11-08T05:44:23.428218+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "repository.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 307,
+      "path": "repository.stdout",
+      "sha256": "b68b666c024fd7b6835dcf126d2800460ca2dab3b4f372461ac2ee4cb83ba877"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "python3",
+      "-B",
+      "scripts/ci/test_ci_source_integrity.py"
+    ],
+    "elapsed_wall_ns": 8338427919,
+    "exit_code": 0,
+    "name": "source-negative-controls",
+    "source_commit": "bced22f712552302848e3e04f7acf24068af2048",
+    "started_utc": "2026-11-08T05:46:07.277349+00:00",
+    "stderr": {
+      "bytes": 6414,
+      "path": "source-negative-controls.stderr",
+      "sha256": "3b087f2d451236d64bef782604b83e44c23c729076316e307ed6102e8a610d4b"
+    },
+    "stdout": {
+      "bytes": 484,
+      "path": "source-negative-controls.stdout",
+      "sha256": "4ac82d29707a585af68a56ccf8531ee7047a7ff3fefc93241cc16d527697a63c"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "python3",
+      "-B",
+      "scripts/ci/check_pq_research_integration.py"
+    ],
+    "elapsed_wall_ns": 415777009,
+    "exit_code": 0,
+    "name": "pq-source-composition",
+    "source_commit": "bced22f712552302848e3e04f7acf24068af2048",
+    "started_utc": "2026-11-08T05:46:15.616756+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "pq-source-composition.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 557,
+      "path": "pq-source-composition.stdout",
+      "sha256": "f65bc5ea91172760781cb6ab7539abbedd86aff238055be21d3e011ce4c1c49c"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "formal/next-architecture-security",
+      "-p",
+      "test_*.py",
+      "-v"
+    ],
+    "elapsed_wall_ns": 716828386,
+    "exit_code": 0,
+    "name": "python-controls",
+    "source_commit": "bced22f712552302848e3e04f7acf24068af2048",
+    "started_utc": "2026-11-08T05:46:16.033710+00:00",
+    "stderr": {
+      "bytes": 4997,
+      "path": "python-controls.stderr",
+      "sha256": "16e1e5d4694fea102d77cfec4e53ed5cc82e0b9eab6b9473a67530638b125f4e"
+    },
+    "stdout": {
+      "bytes": 0,
+      "path": "python-controls.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "python3",
+      "-B",
+      "formal/next-architecture-security/counterexamples.py",
+      "--check-fixture"
+    ],
+    "elapsed_wall_ns": 165675261,
+    "exit_code": 0,
+    "name": "exact-research-fixture",
+    "source_commit": "bced22f712552302848e3e04f7acf24068af2048",
+    "started_utc": "2026-11-08T05:46:16.751982+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "exact-research-fixture.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 110,
+      "path": "exact-research-fixture.stdout",
+      "sha256": "7a941affd4a8bb4da8185cda32a027ecf7b4c9df67933bcf80657874b6af5f71"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "cargo",
+      "+1.95.0",
+      "test",
+      "--offline",
+      "--locked",
+      "--release",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "-p",
+      "trnm-data-availability",
+      "--",
+      "--test-threads=1"
+    ],
+    "elapsed_wall_ns": 176241896920,
+    "exit_code": 101,
+    "name": "p2p-complete",
+    "source_commit": "bced22f712552302848e3e04f7acf24068af2048",
+    "started_utc": "2026-11-08T05:46:16.919114+00:00",
+    "stderr": {
+      "bytes": 292,
+      "path": "p2p-complete.stderr",
+      "sha256": "d89a65ca0d74330500d37b93667dba7d54462e0acf7e979c2781dc4891ef3cf3"
+    },
+    "stdout": {
+      "bytes": 41478,
+      "path": "p2p-complete.stdout",
+      "sha256": "27379d9e8d35abe72d17df95bd84c8afe21e9ef53db974e7ce7aa112677949c7"
+    },
+    "timeout": false
+  },
+  {
+    "args": [
+      "python3",
+      "-B",
+      "scripts/ci/verify_ci_source.py",
+      "--kind",
+      "head",
+      "--expected-head",
+      "bced22f712552302848e3e04f7acf24068af2048",
+      "--output",
+      "/home/qian-qi/work/chain-next-architecture-security-20261108-8720-validation/attempt-2/source-after.json"
+    ],
+    "elapsed_wall_ns": 33556508614,
+    "exit_code": 0,
+    "name": "source-after",
+    "source_commit": "bced22f712552302848e3e04f7acf24068af2048",
+    "started_utc": "2026-11-08T05:49:13.163639+00:00",
+    "stderr": {
+      "bytes": 0,
+      "path": "source-after.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 423,
+      "path": "source-after.stdout",
+      "sha256": "d38259889219afab60a384e61d7817b98d6d536d2ca921e2d1e2f9516e99093b"
+    },
+    "timeout": false
+  }
+]

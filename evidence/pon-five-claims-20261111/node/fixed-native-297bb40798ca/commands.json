@@ -1,0 +1,134 @@
+[
+  {
+    "label": "preflight-before-build",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "started_unix": 1794394330.8773081,
+    "finished_unix": 1794394330.992786,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 170,
+      "sha256": "00e765ca46856da074919e97be1c8f5fef4fd068cc69700ccafe6d01a3381278"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "rustc-version",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/rustc",
+      "--version"
+    ],
+    "started_unix": 1794394337.3673189,
+    "finished_unix": 1794394337.3834357,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 36,
+      "sha256": "f4d034f5660bb49f22bfcba3f3445be67e25b704c193ff421b53863b4faee148"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "cargo-version",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "--version"
+    ],
+    "started_unix": 1794394337.3840122,
+    "finished_unix": 1794394337.3919442,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 36,
+      "sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "metadata",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "metadata",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1"
+    ],
+    "started_unix": 1794394337.3924165,
+    "finished_unix": 1794394337.6574845,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 855004,
+      "sha256": "9c8d10bb0ff080d27d492cd74f4aca639b165e63100a148b1210532e96610e1f"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  {
+    "label": "sqlite-qualification-build",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "build",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--release",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-sqlite-io-boundary",
+      "--message-format=json"
+    ],
+    "started_unix": 1794394337.6646366,
+    "finished_unix": 1794394337.8799858,
+    "exit_code": 0,
+    "stdout": {
+      "bytes": 41370,
+      "sha256": "923cafcfffc668b44f79f0e45f0ba3a1a74d6b548628b63585cc8d48ab2e67b7"
+    },
+    "stderr": {
+      "bytes": 62,
+      "sha256": "a70da5408e7a6da7efe97b23011504833b16a7875bda14543f2504b5b8c7d97a"
+    }
+  },
+  {
+    "label": "build",
+    "argv": [
+      "/home/qian-qi/.rustup/toolchains/1.95.0-x86_64-unknown-linux-gnu/bin/cargo",
+      "test",
+      "--manifest-path",
+      "trillionnium/Cargo.toml",
+      "--release",
+      "--locked",
+      "--offline",
+      "-p",
+      "trnm-pon-node",
+      "--lib",
+      "--no-run",
+      "--message-format=json"
+    ],
+    "started_unix": 1794394337.8819206,
+    "finished_unix": 1794394416.5158637,
+    "exit_code": 101,
+    "stdout": {
+      "bytes": 132670,
+      "sha256": "32171eecfff85c32be7d34334f65793d97d210587036767397daea49511f1aa8"
+    },
+    "stderr": {
+      "bytes": 345,
+      "sha256": "11a4724e826f8618814f4a416d63260b2d7e5c1d61ff2e0966b7853b72fd6156"
+    }
+  }
+]

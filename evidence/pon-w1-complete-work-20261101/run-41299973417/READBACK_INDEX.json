@@ -1,0 +1,393 @@
+{
+  "schema": "pon-w1-complete-readback-bundles-v1",
+  "run_id": 41299973417,
+  "archives": [
+    {
+      "archive": "workflow-job-logs.tar.xz",
+      "bytes": 95836,
+      "sha256": "2bd48e2c17e464843a930cdf2efec949698dc34a277018eec2b5b3a7916477f8",
+      "members": [
+        {
+          "path": "ci-monitor/job-124828701347.log",
+          "bytes": 167928,
+          "sha256": "7bf36e77a61443cd1a62a23ee1c75ae92a7b4ee95b34744b72db279777861577"
+        },
+        {
+          "path": "ci-monitor/job-124828701655.log",
+          "bytes": 143087,
+          "sha256": "34abe6e771f24c0fdf3da40448a6dfdcd9c9ef71350a7e5d8c33c55618ce5ea2"
+        },
+        {
+          "path": "ci-monitor/job-124828701661.log",
+          "bytes": 143763,
+          "sha256": "655bf909813c65ff00d4219fefd677824b59905a3148b6e7d33329c42992b245"
+        },
+        {
+          "path": "ci-monitor/job-124828701681.log",
+          "bytes": 142298,
+          "sha256": "bbbcca3303d762ef98d7939d32da6bcc755651e33523b554a491b22dcfdd8c65"
+        },
+        {
+          "path": "ci-monitor/job-124828701688.log",
+          "bytes": 168852,
+          "sha256": "e4b354d13f13a20f7befc7921c0fd6cebd54a1dc3de1d7d82d213ec3b0bff6f5"
+        },
+        {
+          "path": "ci-monitor/job-124828701702.log",
+          "bytes": 138177,
+          "sha256": "e5a1f1694d9993fb3f2219ebc8ff030bac89f7dbfa74f99214917960e88153d5"
+        },
+        {
+          "path": "ci-monitor/job-124828701718.log",
+          "bytes": 142232,
+          "sha256": "5a42d05c4279d99893bf4fa621fd86439c834b011c634380f71f145489a7b3fb"
+        },
+        {
+          "path": "ci-monitor/job-124828701726.log",
+          "bytes": 168034,
+          "sha256": "777b45ee156d1c8dc139b83fb8a75896cc954c878b2e1b8c9cae1380f70ff627"
+        },
+        {
+          "path": "ci-monitor/job-124828701728.log",
+          "bytes": 166611,
+          "sha256": "fa71938d8a2233071683dc4901dc69b74567391bdef94e9bf5122d9928a23bb8"
+        },
+        {
+          "path": "ci-monitor/job-124828701972.log",
+          "bytes": 137384,
+          "sha256": "8c60f1e6d7a45bdab986f4d482fb250b342c4e4f75e1470058ebe2ca4eaab580"
+        }
+      ]
+    },
+    {
+      "archive": "performance-readback.tar.xz",
+      "bytes": 324564,
+      "sha256": "d6604e67e8cddb9ff55f1745a638c9d96f30c5f131ba4b27d65f9a23358f4518",
+      "members": [
+        {
+          "path": "perf-readback-41299973417/INDEX.json",
+          "bytes": 5256,
+          "sha256": "6691c06d4b14f11d2be95dec86dc24dba9df7462df85cbb4a2b9e9213faa1298"
+        },
+        {
+          "path": "perf-readback-41299973417/STATUS.json",
+          "bytes": 1441,
+          "sha256": "f5813efa3f0d5139ea09d25f8db2ad140b8914e5fb814451e5768024e32b00b1"
+        },
+        {
+          "path": "perf-readback-41299973417/analyze.py",
+          "bytes": 11905,
+          "sha256": "a1cedd7cf9298f563247653ed0daa3c2b9af7088c4cde414e1a8b5e11f14310c"
+        },
+        {
+          "path": "perf-readback-41299973417/default-production-rejection-ratios.json",
+          "bytes": 44181,
+          "sha256": "92fa69bed45cd7ca45e4a8b7b6ed4107117fac7af155aba91ab92f92f23fcb2c"
+        },
+        {
+          "path": "perf-readback-41299973417/extract_rejection_ratios.py",
+          "bytes": 7773,
+          "sha256": "afcf930f93815478b8025d9c74ed2d866623cb38704be2fd7456766bf4fac4a1"
+        },
+        {
+          "path": "perf-readback-41299973417/merge-commit.json",
+          "bytes": 412,
+          "sha256": "42f951c5f2af4523050fbb4a80adb295d7d3e5d02fc20c213c5ca98a27843936"
+        },
+        {
+          "path": "perf-readback-41299973417/performance-report.json",
+          "bytes": 3496790,
+          "sha256": "f42fe24d1c4f1809de922a2061ab541889c1625f0baac17f4673cf217b8ff16d"
+        },
+        {
+          "path": "perf-readback-41299973417/pinned-input-check.json",
+          "bytes": 3382,
+          "sha256": "b696bc72985b3f73d08f85a84ec8c956d63b9271a101e06ba51effcef3353875"
+        },
+        {
+          "path": "perf-readback-41299973417/provenance-report.json",
+          "bytes": 38535,
+          "sha256": "ba5ac4d4927c12430c811eac9a9c1ced2bccc63df9d6f170ca828a58a3ddbe33"
+        },
+        {
+          "path": "perf-readback-41299973417/provenance.log",
+          "bytes": 793,
+          "sha256": "3b30c9759aba4ec321efad917513d51f0310f5818fb4729d78ee4f8ce0d9d8d1"
+        },
+        {
+          "path": "perf-readback-41299973417/provenance.py",
+          "bytes": 10875,
+          "sha256": "6661139530884f1835548fa1ea5fd188a3ebdaca9bf4ac69b4862bc40fb98ab1"
+        },
+        {
+          "path": "perf-readback-41299973417/provenance.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "perf-readback-41299973417/readback.log",
+          "bytes": 9625,
+          "sha256": "5fd1530500cee795169ae00c7133aec519fdb5194279b3ee354da247494ccb35"
+        },
+        {
+          "path": "perf-readback-41299973417/readback.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "perf-readback-41299973417/reader-source/.github/workflows/pon-recent-batch-acceptance.yml",
+          "bytes": 29340,
+          "sha256": "3d5e70cc760c2c9e1e674341f9b6302a604f3ee4664f7cc93677cfa9c3c9124b"
+        },
+        {
+          "path": "perf-readback-41299973417/reader-source/.github/workflows/pon-w1-work-security.yml",
+          "bytes": 16415,
+          "sha256": "ff3e4892e9f3124a89b651cc63cd4a3e7c011b3bd15686289932fc089b0d3b8f"
+        },
+        {
+          "path": "perf-readback-41299973417/reader-source/SOURCE.json",
+          "bytes": 1079,
+          "sha256": "1744f909324a98fca9a709414714e69ea9f758cace97b4f1e0e2f8ae419274f3"
+        },
+        {
+          "path": "perf-readback-41299973417/reader-source/config/pon/work-security-acceptance-v1.json",
+          "bytes": 673,
+          "sha256": "4ca674c305112d51672efcab6c0f886e477a5397191addb806d209a08266165f"
+        },
+        {
+          "path": "perf-readback-41299973417/reader-source/scripts/pon_w1_cost_matrix_reader.py",
+          "bytes": 35800,
+          "sha256": "6a967274b93394494a2606c08173d4c755f255742bdca6cecd9665ce9f3686fa"
+        },
+        {
+          "path": "perf-readback-41299973417/reader-source/scripts/pon_w1_false_trace_reuse_reader_v1.py",
+          "bytes": 18163,
+          "sha256": "7455227a2acfec76505c480e4513acbbb9764b59cc1e6a3d8bdaf70d2f9f409c"
+        },
+        {
+          "path": "perf-readback-41299973417/reader-source/scripts/pon_w1_legal_strategy_reader_v1.py",
+          "bytes": 24339,
+          "sha256": "9864915b191d00d60ea89cc1651e07a5121878fd2965dddf037f0b1da1cfc2fa"
+        },
+        {
+          "path": "perf-readback-41299973417/reader-source/trillionnium/Cargo.lock",
+          "bytes": 39745,
+          "sha256": "fbe64b5b4662405980becd75c81c9ef699a78b56449d71ed33185531db851c69"
+        },
+        {
+          "path": "perf-readback-41299973417/reader-source/trillionnium/Cargo.toml",
+          "bytes": 2204,
+          "sha256": "48e0094090202b3b6d12331965be846a34c2a454ff3dc3717a532f228e4dd50b"
+        },
+        {
+          "path": "perf-readback-41299973417/rejection-ratios.log",
+          "bytes": 544,
+          "sha256": "f29c27bc0a53985c73a2cf53f72a6a5210f6049b52786ba77fbec33125d64605"
+        },
+        {
+          "path": "perf-readback-41299973417/rejection-ratios.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "perf-readback-41299973417/source-binding/DEFAULT_KERNEL.json",
+          "bytes": 525,
+          "sha256": "f69d78c42c6d18cb7cff79aea8c53ae068b3a1e94f1c5cc298e9ce290b795361"
+        },
+        {
+          "path": "perf-readback-41299973417/source-binding/trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+          "bytes": 92345,
+          "sha256": "4d2d858f0b156aac24d0c73ee4cccba06b85b2a4d927b5cf64bd0522dedeb17b"
+        },
+        {
+          "path": "perf-readback-41299973417/summarize.py",
+          "bytes": 10337,
+          "sha256": "766dcdd0ced85a20de70bbc2cc6874df6f5de1628466a3d8a1e198ceb573d452"
+        },
+        {
+          "path": "perf-readback-41299973417/summary.json",
+          "bytes": 57376,
+          "sha256": "85de6555fa2341dd80ef2259f218de8760f1cd449c525979266581c7585398d2"
+        },
+        {
+          "path": "perf-readback-41299973417/summary.log",
+          "bytes": 733,
+          "sha256": "57d451f35f34e799a3cef2bf27cd8cd708637dbd730da70b92177e93da90f4a3"
+        },
+        {
+          "path": "perf-readback-41299973417/summary.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "archive": "service-readback.tar.xz",
+      "bytes": 252180,
+      "sha256": "10c48c293316b6f6f230852204e8310ee67fcc64c22b8213e46bf9ad8c8d9127",
+      "members": [
+        {
+          "path": "service-readback-41299973417/analysis-result.log",
+          "bytes": 6520,
+          "sha256": "648d8bf492f494ae8d7349130f0ee83dfb46d6373d289b3e468c38ee449c4430"
+        },
+        {
+          "path": "service-readback-41299973417/analyze.py",
+          "bytes": 39274,
+          "sha256": "e6c3ba45b198bb824990aca4fb7feff52bc6cc2040d95b01c1c5a71a05a854b0"
+        },
+        {
+          "path": "service-readback-41299973417/comparison-to-8327.json",
+          "bytes": 15915,
+          "sha256": "6d345018155eaa9df77eb65439f7a2c250db6d1f4e677bd20e5b04951b2d4967"
+        },
+        {
+          "path": "service-readback-41299973417/conclusion.zh.txt",
+          "bytes": 3459,
+          "sha256": "fc3f289b018ea0b40b973c201e978a1655dcb74d86fff7b55edb542dadbf419f"
+        },
+        {
+          "path": "service-readback-41299973417/reader-source-identity.json",
+          "bytes": 5784,
+          "sha256": "b7efa9ec89223243f74438da4e6da357b1b9bb6a5f5b96bca8c2cbf4a3b07024"
+        },
+        {
+          "path": "service-readback-41299973417/service-artifact-metadata.json",
+          "bytes": 2154,
+          "sha256": "d70d6c8aa66c3ab58b70372e60762c2fa898b938df0cb7a7ba05bbf95a002ed9"
+        },
+        {
+          "path": "service-readback-41299973417/service-failure-report.json",
+          "bytes": 335506,
+          "sha256": "3aa17e6fc2a9beca0a163319363a6851e5273c36bd4947383db93beb27c0b18a"
+        },
+        {
+          "path": "service-readback-41299973417/source/config/pon/devnet-v1.json",
+          "bytes": 1964,
+          "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4"
+        },
+        {
+          "path": "service-readback-41299973417/source/config/pon/evaluation-round-v1.json",
+          "bytes": 890,
+          "sha256": "f65de29ae87bbcdb1cfb3a54bba22323e68d7decfd2976395468c1ba559f5d33"
+        },
+        {
+          "path": "service-readback-41299973417/source/config/pon/ledger-v1.json",
+          "bytes": 7793,
+          "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a"
+        },
+        {
+          "path": "service-readback-41299973417/source/config/pon/model-family-v1.json",
+          "bytes": 1383,
+          "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1"
+        },
+        {
+          "path": "service-readback-41299973417/source/config/pon/work-profile-v1.json",
+          "bytes": 1596,
+          "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880"
+        },
+        {
+          "path": "service-readback-41299973417/source/formal/pon-nakamoto-v1/bounded_process.py",
+          "bytes": 8627,
+          "sha256": "16fa98206e75db5e925a31508e889df9d1968c32f518554f52c2a0711047b356"
+        },
+        {
+          "path": "service-readback-41299973417/source/formal/pon-nakamoto-v1/contract_wire.py",
+          "bytes": 8924,
+          "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6"
+        },
+        {
+          "path": "service-readback-41299973417/source/scripts/ci/check_required_native_test.py",
+          "bytes": 2928,
+          "sha256": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28"
+        },
+        {
+          "path": "service-readback-41299973417/source/scripts/ci/ci_observation.py",
+          "bytes": 8837,
+          "sha256": "389154c792fd3c734621278fb4188e9863ff599efb0c9b863316f540a94eab4a"
+        },
+        {
+          "path": "service-readback-41299973417/source/scripts/ci/replay_pinned_native.py",
+          "bytes": 18571,
+          "sha256": "d14d2f61ab98bb30b5932530437064dce5d3a330c05a9530988fe776cefea44a"
+        },
+        {
+          "path": "service-readback-41299973417/source/scripts/ci/run_from_zero_host.py",
+          "bytes": 21689,
+          "sha256": "58d00d0559644e4a5bfdaf3a785c5be90e233a062d3ac6befec80df17f4fe5f3"
+        },
+        {
+          "path": "service-readback-41299973417/source/scripts/ci/run_from_zero_native.py",
+          "bytes": 53089,
+          "sha256": "0067168079a8876b548d32afd1f3b5d353868cc384d81d09ef0b051a343d424f"
+        },
+        {
+          "path": "service-readback-41299973417/source/scripts/ci/run_w1_fresh_service_v1.py",
+          "bytes": 18223,
+          "sha256": "98c33ede77445a4bbfb39703761d411963a02ff67e9d79e9e13b8ad12d745756"
+        },
+        {
+          "path": "service-readback-41299973417/source/scripts/ci/verify_ci_source.py",
+          "bytes": 7722,
+          "sha256": "07fb32c6b1d6a5c9bd6200a4ef4f5916b0f25caa3ba4ac887a3ba58a407b7ff6"
+        },
+        {
+          "path": "service-readback-41299973417/source/trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs",
+          "bytes": 92345,
+          "sha256": "4d2d858f0b156aac24d0c73ee4cccba06b85b2a4d927b5cf64bd0522dedeb17b"
+        },
+        {
+          "path": "service-readback-41299973417/source/trillionnium/crates/trnm-pon-node/src/host_kernel_parent.rs",
+          "bytes": 36152,
+          "sha256": "74f8d3cf3a5d301a51314dd5dfb18dedd54ed4919ba9ab2b1cda3889e185ff65"
+        },
+        {
+          "path": "service-readback-41299973417/source/trillionnium/crates/trnm-pon-node/src/ingress/history_import.rs",
+          "bytes": 16746,
+          "sha256": "fb8fedb376d60ce07ed33f81178de4f39aa3d0f7abc94a2e814b8cba46748bfc"
+        },
+        {
+          "path": "service-readback-41299973417/source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu.rs",
+          "bytes": 76934,
+          "sha256": "d1990f3312f2bd3b17aac1cc668c70bf513825314e3ec2a7fcb004ac0097c4aa"
+        },
+        {
+          "path": "service-readback-41299973417/source/trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+          "bytes": 314919,
+          "sha256": "d82dd2f3c1ff9caf910bfa80cd32287291054327a5f0ef7f8ab0ee1dafbd88d1"
+        },
+        {
+          "path": "service-readback-41299973417/source/trillionnium/crates/trnm-pon-node/src/ingress.rs",
+          "bytes": 207141,
+          "sha256": "775f1a26484934ba6fc1293abf347bd1c75a6921f84b385af1402b153a225374"
+        },
+        {
+          "path": "service-readback-41299973417/source/trillionnium/crates/trnm-pon-node/src/store/detached_admission.rs",
+          "bytes": 20128,
+          "sha256": "68c3f2786178facc457b26116c9e88312425fc77818fd409cd6e89e5f8e801e1"
+        },
+        {
+          "path": "service-readback-41299973417/source/trillionnium/crates/trnm-pon-node/src/store/operator_continuous_owner.rs",
+          "bytes": 119481,
+          "sha256": "0e52ceeeaf0b59a9677eeda4e920c4272828f9eb6fe035bc9fdfb342089bcc81"
+        },
+        {
+          "path": "service-readback-41299973417/source/trillionnium/crates/trnm-pon-node/src/store.rs",
+          "bytes": 318120,
+          "sha256": "1a5272401bf2dda41126aaab2c492433db0b2499737a4105722770409a62c130"
+        },
+        {
+          "path": "service-readback-41299973417/source/trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs",
+          "bytes": 10907,
+          "sha256": "c45c0b04d09ffe045883e3fdae245588dd21cb8a9f9c64c16b6fbe288b636a3f"
+        },
+        {
+          "path": "service-readback-41299973417/source/trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero.rs",
+          "bytes": 75282,
+          "sha256": "d538e0c2de65a11c0744d828b7f694e933427eacc3eff483a2b8d45a45804054"
+        }
+      ]
+    }
+  ],
+  "all_member_bytes_reopened_and_verified": true
+}

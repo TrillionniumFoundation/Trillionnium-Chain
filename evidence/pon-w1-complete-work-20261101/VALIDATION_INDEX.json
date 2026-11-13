@@ -1,0 +1,117 @@
+{
+  "archive": "validation.tar.xz",
+  "bytes": 16712,
+  "sha256": "1979d8d2c5a359163c0a6ec67f7d59e4408cdcaf02e0d32785ccfedd0d7090de",
+  "members": [
+    {
+      "path": "candidate-commit.json",
+      "bytes": 1813,
+      "sha256": "088adc353d606e311e15267f13b63e3579c20d568cc4b1e002725bfdf6541578"
+    },
+    {
+      "path": "ci-monitor/rustfmt-8d9a7015-patch-manifest.json",
+      "bytes": 1124,
+      "sha256": "6b16d6e2b4a77f5a194df4bb0ff827f97c91ba55e7009369a57c406c95d167ee"
+    },
+    {
+      "path": "ci-monitor/rustfmt-8d9a7015.patch",
+      "bytes": 31948,
+      "sha256": "a8b33da0e1500c02bd42ed066ae0de18f027dfb30df18f9e2dfa14db090691f2"
+    },
+    {
+      "path": "ci-monitor/rustfmt-exact-apply-124820030556.json",
+      "bytes": 2536,
+      "sha256": "ffc7bc31e439db4fb2e421473c3858ccbd0b2efee14ea18b4fad018074cfe211"
+    },
+    {
+      "path": "ci-pins-commit.json",
+      "bytes": 1451,
+      "sha256": "61f907015ef32c045b6f1d15bc3fb0640fad67de80fce3fe8bc61e6c3d7e6b2a"
+    },
+    {
+      "path": "default-switch-commit.json",
+      "bytes": 1452,
+      "sha256": "eb9559175719b92ff22f654c6514d3dcdc0abbbb80292888a0c11686defbf4d3"
+    },
+    {
+      "path": "followup-commit.json",
+      "bytes": 1703,
+      "sha256": "1120776b6dd02522fe3ae7216f789286d04c6bf3fcba3afd0efd28dd8475e728"
+    },
+    {
+      "path": "full_limb_arithmetic_check.json",
+      "bytes": 796,
+      "sha256": "1da02eb15ee4a6262c2ea980d687748f3b451bcb2c8790e06bcecee45bd0eebc"
+    },
+    {
+      "path": "full_limb_arithmetic_check.py",
+      "bytes": 2568,
+      "sha256": "ff9b6a7fbd0573506c56cc7f80d6fa7f058c2594799064fae15cb0e4f2d19cb5"
+    },
+    {
+      "path": "publication-ci-pins.json",
+      "bytes": 496,
+      "sha256": "1e79b239562b06cdebec8a48cdddd525c6271a1c0fee4fd262c96d1a81fb69f9"
+    },
+    {
+      "path": "publication-default-switch.json",
+      "bytes": 2434,
+      "sha256": "b808faa0fc77be87f9f51cb0118d4dcb3a7c56a38ef824142cae4e82c6ba1b6f"
+    },
+    {
+      "path": "publication-followup.json",
+      "bytes": 934,
+      "sha256": "cc0230cccc1c8a1b216e75b9dfb451b4802edc8e8896a8fcb0cd6783e3d01e42"
+    },
+    {
+      "path": "publication-manifest.json",
+      "bytes": 4855,
+      "sha256": "f61815716cbd6a3b398ce823e39cf989ff37cfb0e2eee5dfd3ef389c473e7d3c"
+    },
+    {
+      "path": "validation-default-switch/check_pq_research_integration.log",
+      "bytes": 557,
+      "sha256": "0c693e64e1f86fc235194f12f687db50ef83fafbdd1ccf58157887dee40555c1"
+    },
+    {
+      "path": "validation-default-switch/ci-pin-followup-integrity.json",
+      "bytes": 4262,
+      "sha256": "8f67e302b60422ed98161f2c132994f70424df47635f76e850c93e72175b534c"
+    },
+    {
+      "path": "validation-default-switch/refresh_distributed_source_inventory.log",
+      "bytes": 35,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "path": "validation-default-switch/test_ci_contract.log",
+      "bytes": 15864,
+      "sha256": "fb0e805ff7de11b8254bd7cb7c13379b8bab8e7f8a8e37ef1e3d04ed21c2b281"
+    },
+    {
+      "path": "validation-default-switch/test_pon_w1_false_trace_reuse_reader_v1.log",
+      "bytes": 118,
+      "sha256": "ec4ca50879451674cd5c1b831112ad029493a213c13927c94dc52b00b70f46d5"
+    },
+    {
+      "path": "validation-default-switch/test_pon_w1_legal_strategy_reader_v1.log",
+      "bytes": 111,
+      "sha256": "7bacfcf81550955924965af415f3b67dbcc7c379ae856d6764445836375d485d"
+    },
+    {
+      "path": "validation-default-switch/test_pq_research_integration.log",
+      "bytes": 134,
+      "sha256": "28a1ab4be2f3976c83410463016544e9c424c3d4655ed331d8f38fdc06d343d3"
+    },
+    {
+      "path": "validation-default-switch/test_run_w1_false_trace_reuse_v1.log",
+      "bytes": 140,
+      "sha256": "32845d1b56db33d202c2f62a13d1541268cb66b190334ddeb3479f5c9f1688e0"
+    },
+    {
+      "path": "validation-default-switch/test_work_rejection_report.log",
+      "bytes": 186,
+      "sha256": "6679447d43541ec175075c17be52b24f041939ab24c2ebe952459cf8281c681f"
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "schema": "pon-hepta-accounting-convergence-failure-register-v1",
+  "candidate_commit": "e8f81ca15634d0393e7bc6257193b4dbe88d9b2e",
+  "record_kind": "Observed outcome register; only explicitly indexed remote process records retain raw bytes here.",
+  "observations": [
+    {
+      "id": "local-shared-clone",
+      "outcome": "failed",
+      "detail": "Could not lock refs/remotes/origin/HEAD. Replaced by isolated gitdir/alternates and sparse checkout; source repository preserved."
+    },
+    {
+      "id": "sparse-add-option",
+      "outcome": "failed_then_corrected",
+      "detail": "git sparse-checkout add --no-cone unsupported. Existing non-cone setting used."
+    },
+    {
+      "id": "historical-evidence-reflink",
+      "outcome": "unsupported",
+      "detail": "Reflink probe returned Operation not supported. Immutable historical evidence was materialized with hardlinks for the original full-source verifier."
+    },
+    {
+      "id": "remote-prep-01",
+      "job_id": "1a1be781f37-5e21-f5",
+      "outcome": "launch_unknown",
+      "detail": "Job directory/status unavailable; read-only reconciliation job 1a1be79207d-5e21-f9 completed with exit 0 and showed candidate/results directories absent."
+    },
+    {
+      "id": "remote-prep-02",
+      "job_id": "1a1be7a3223-5e21-103",
+      "outcome": "failed",
+      "exit_code": 1,
+      "detail": "Preflight passed; local clone of a promisor repository could not fetch missing blob 45a43d40fcb87760835c0efd4c641a5466c2ab36. Replaced by independent GitHub clone plus exact bundle."
+    },
+    {
+      "id": "remote-prep-03",
+      "job_id": "1a1be7bb27b-5e21-110",
+      "outcome": "passed",
+      "exit_code": 0,
+      "detail": "Independent clone, exact bundle import, branch checkout, development preflight and toolchain listing completed."
+    },
+    {
+      "id": "remote-provider-probes",
+      "outcome": "unconfirmed",
+      "detail": "Read-only shell calls timed out or returned no usable result; one h_view returned SSH connection closed. No remote native tests launched."
+    },
+    {
+      "id": "local-final-gate-runner",
+      "session_id": 58416,
+      "outcome": "terminal_unobserved",
+      "detail": "Workspace became unavailable before final gate outputs could be read. Includes strict clippy; remains unpassed."
+    }
+  ],
+  "inherited_open_gates": [
+    {
+      "id": "public-readiness-reader",
+      "state": "HOLD",
+      "detail": "Checker expects growth_observation_only while current opener uses observation_only with broader observation-only store handling. Existing opener-body hash contract was not changed."
+    },
+    {
+      "id": "qrom-lifetime",
+      "state": "HOLD",
+      "detail": "Historical store.rs source pin mismatch retained."
+    },
+    {
+      "id": "qrom-implementation",
+      "state": "HOLD",
+      "detail": "Historical fixture bound 9233 versus current file 11172 retained."
+    },
+    {
+      "id": "resource-campaign",
+      "state": "HOLD",
+      "detail": "Existing failed or unconfirmed resource results were not rerun or repinned."
+    },
+    {
+      "id": "lifecycle-cost-and-activation",
+      "state": "HOLD_NO_GO",
+      "detail": "Cheapest legal classical/quantum lifecycle cost, joint time/difficulty/credit, independent learning/cost/retention, real funding/effects, WAN/public service and independent recovery qualification remain open."
+    }
+  ],
+  "constraints_preserved": {
+    "owner_fences": true,
+    "zero_credit": true,
+    "NoUpdate_base_fee": true,
+    "signed_domains_unchanged": true,
+    "historical_pins_unchanged_except_current_plan_blob": true
+  },
+  "overall": "DRAFT_HOLD_NO_GO"
+}

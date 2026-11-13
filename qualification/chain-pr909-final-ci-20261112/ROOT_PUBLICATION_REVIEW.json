@@ -1,0 +1,40 @@
+{
+  "schema": "chain-pr909-final-ci-evidence.root-publication-review.v1",
+  "status": "reviewed-for-separate-evidence-branch-and-body-only-update",
+  "parent": "e338c000f26e9357ed33213624da787a3a009ed9",
+  "parent_tree": "876aa62d1ab49458d29e9168f4c69e7b47b8884b",
+  "planned_branch": "codex/heplcp04-ci-evidence-20261112-af52",
+  "payload_index": [
+    "695b6fd88c9f8cebd02368574d6b094c545c789c",
+    168654,
+    "8004dfb0d8af39ed3f452e05bc6c95a1b11aabeb436f05e9c04bf268f5b983c4"
+  ],
+  "tree_entry_manifest": [
+    "aeaaf38307e5139661b2860ee02cdc475710e88b",
+    18043,
+    "d17d23eec22ccce279bfca5bdd1d9fbf7de6078dd912e83e9c2ab0f0b3d2f295"
+  ],
+  "independent_metadata_review": [
+    "b050da75f5d9c7bac3b92ef3f676290541752bea",
+    8960,
+    "938bc170d045efcf27e830dc4b5fcfd606dddc36a5a1e71db64330d0a9e7ad31"
+  ],
+  "payload_entries": 81,
+  "additional_evidence_entries": 8,
+  "total_tree_additions": 89,
+  "root_checks": [
+    "Read complete V2 README, independent metadata review, complete proposed PR body, exact body operation and source/unknown/qualification fields.",
+    "Recomputed Git identities, SHA256 and UTF-8 lengths of nine reviewed documents. Validated 81 unique confined regular-blob paths and exact INDEX correspondence; no raw .log payload.",
+    "Verified exact single-section forward/reverse replacement and unchanged first 5550 body bytes. No acceptance table or original source qualification changes.",
+    "Verified original nine-run API has nine completed, five success and four failure for the fixed PR head.",
+    "Full in-memory decoding and three container remote samples remain author verification. This Root review does not claim another decoding of all containers, another CI execution or independent archive parsing.",
+    "H/M identities, unavailable child detail, macOS cancellation/404 and repeated hash gate rejection retain their precise limits; no root cause is fabricated.",
+    "The separate evidence branch does not advance the PR code head. Body publication must re-read and match old body, open Draft state and exact head/base immediately before write."
+  ],
+  "body_template": "4b65843c22ecc9a0b970d1b972f27593d6762773",
+  "body_review": "21954c416d091b417e4d2691d918d6c407d91e0e",
+  "original_api": "3415f6684ebf01fc66583ad1f5cc964bfc4b350e",
+  "terminal_workflow_api": "2d40b381e7168ac6430023bfd0be0b8b31c1df8a",
+  "business_acceptance_added": false,
+  "main_merged": false
+}

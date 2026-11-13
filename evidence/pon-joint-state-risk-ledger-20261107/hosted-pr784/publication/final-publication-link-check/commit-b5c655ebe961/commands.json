@@ -1,0 +1,189 @@
+[
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+      "rev-parse",
+      "HEAD"
+    ],
+    "label": "head-before",
+    "returncode": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "57e20688f670e165e5ab6559ee3cc8cb46826ec9bfe5aa82347895f05540c886"
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+      "rev-parse",
+      "b5c655ebe9611b3d62cf739e61e6867decc053e3^{tree}"
+    ],
+    "label": "publication-tree",
+    "returncode": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "52e4c9983b0a6a7ced6b9c40c23548895eb37f6f6d47a42b21b3b782ffcaadd8"
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=all"
+    ],
+    "label": "status-before",
+    "returncode": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+      "show",
+      "-s",
+      "--format=%P",
+      "b5c655ebe9611b3d62cf739e61e6867decc053e3"
+    ],
+    "label": "publication-parents",
+    "returncode": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "aba230904d75221ae0db7755f6a7ba7addef25f0cb2cb4902de5260592991b27"
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+      "ls-tree",
+      "-r",
+      "-z",
+      "--full-tree",
+      "2d46d8682201bc0619f5b156af50e77fb399322e"
+    ],
+    "label": "tested-tree-index",
+    "returncode": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "2638b2e410d1be18eb389fada77b2f5d1c39fee4dc40fe0c73d669c737f78fcb"
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+      "ls-tree",
+      "-r",
+      "-z",
+      "--full-tree",
+      "b5c655ebe9611b3d62cf739e61e6867decc053e3"
+    ],
+    "label": "publication-tree-index",
+    "returncode": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "5e115009e0ff18fbedc850158f6df976983b12db70789779bc4ec810a677d748"
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+      "merge-base",
+      "--is-ancestor",
+      "b66e66d2465258d808c0f56ff851123306d4bdb4",
+      "b5c655ebe9611b3d62cf739e61e6867decc053e3"
+    ],
+    "label": "ancestor-1",
+    "returncode": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+      "merge-base",
+      "--is-ancestor",
+      "cb314bb4656e5da4844325cd83994ab4764fe8e9",
+      "b5c655ebe9611b3d62cf739e61e6867decc053e3"
+    ],
+    "label": "ancestor-2",
+    "returncode": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+      "merge-base",
+      "--is-ancestor",
+      "2d46d8682201bc0619f5b156af50e77fb399322e",
+      "b5c655ebe9611b3d62cf739e61e6867decc053e3"
+    ],
+    "label": "ancestor-3",
+    "returncode": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "argv": [
+      "python3",
+      "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/final-publication-link-check/commit-b5c655ebe961/tree_markdown_check.py",
+      "--repo",
+      "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+      "--commit",
+      "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+      "--output",
+      "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/final-publication-link-check/commit-b5c655ebe961/tree-links",
+      "--prefetch"
+    ],
+    "label": "markdown-tree-check",
+    "returncode": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "88436bbe3075ffe84a8a8af5d8af6af193ca02d988496a37143cb3d9d2d26758"
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+      "rev-parse",
+      "HEAD"
+    ],
+    "label": "head-after",
+    "returncode": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "57e20688f670e165e5ab6559ee3cc8cb46826ec9bfe5aa82347895f05540c886"
+  },
+  {
+    "argv": [
+      "git",
+      "--no-optional-locks",
+      "-C",
+      "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=all"
+    ],
+    "label": "status-after",
+    "returncode": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

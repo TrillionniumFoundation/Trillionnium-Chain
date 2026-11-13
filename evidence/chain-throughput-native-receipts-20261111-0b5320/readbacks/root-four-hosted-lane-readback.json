@@ -1,0 +1,137 @@
+{
+  "schema": "root-four-hosted-lane-readback-v1",
+  "result": "PASS",
+  "scope": "Copied original hosted text reports, process/source/input records and recorded ELF guards replayed with the frozen M reader; artifact metadata independently read from GitHub. No new native execution or independent ELF download.",
+  "run_id": 42960214402,
+  "driver": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+  "reader_sha256": "c7604dcf0bb9f533902e368a44b170c927d98c46080570673f268391fd9dc479",
+  "lanes": [
+    {
+      "mode": "fixed",
+      "source": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "driver": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "report_sha256": "d0923d9371a3395fca583b81d3d31bd8abe11c988d405f17e6983aac12c369a3",
+      "actual_control_count": 21,
+      "native_pass_controls": 21,
+      "native_expected_failures": 0,
+      "official_artifact": {
+        "id": 13832876006,
+        "name": "pon-budget-controls-fixed-11e242dbaaae14a9d16282fe8deaf36827e98395-1",
+        "size_in_bytes": 42529271,
+        "digest": "sha256:fc0d092bd47b222c95b42412512019df3817b660b08e2e73bed98f2c2391b72c",
+        "created_at": "2026-11-11T06:00:51Z",
+        "expired": false,
+        "workflow_run": {
+          "id": 42960214402,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-throughput-budget-20261110-065438",
+          "head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395"
+        }
+      },
+      "readback_file": "hosted-fixed-native-transcript-readback.json",
+      "readback_sha256": "6933ba0f8f7e8a942ef982f8e3c96d598f0d351386df7d78b58d00f68024ba46",
+      "pool_integration": {
+        "required_tests": [
+          "wall_clock_loop_executes_funding_dependencies_then_reopens_exact_queue_and_chain",
+          "reconciliation_failure_reports_the_already_activated_durable_block",
+          "next_block_uses_current_authenticated_statement_after_atomic_renewal",
+          "bounded_stop_runtime_and_invalid_material_do_not_mine_or_consume_pending_transactions",
+          "completed_sqlite_blocked_batch_observes_stop_before_revalidation_or_preparation",
+          "actual_cli_retains_signed_group_then_mines_with_wall_clock_and_refuses_logical_clock",
+          "failed_pool_batch_retains_elapsed_before_any_search_or_admission",
+          "failed_post_search_revalidation_retains_elapsed_without_admission",
+          "wall_clock_miner_extends_admissible_future_tip_without_advancing_its_clock",
+          "wall_clock_miner_waits_when_native_median_itself_is_still_in_the_future"
+        ],
+        "passed": 10,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "mode": "budget-before-v2",
+      "source": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+      "driver": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "report_sha256": "c3f8bb65804899ea9404d2281bb89dfd8c49293dca3af4a73bc74573fc61351f",
+      "actual_control_count": 7,
+      "native_pass_controls": 1,
+      "native_expected_failures": 6,
+      "official_artifact": {
+        "id": 13833530665,
+        "name": "pon-budget-controls-budget-before-v2-89fb2269b0dd306fbd32c36f464842c3d7daee2b-1",
+        "size_in_bytes": 30719516,
+        "digest": "sha256:15dbf077d85cb878162e2ed85547c1766343df89886485f4babdc15f69d45414",
+        "created_at": "2026-11-11T06:07:47Z",
+        "expired": false,
+        "workflow_run": {
+          "id": 42960214402,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-throughput-budget-20261110-065438",
+          "head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395"
+        }
+      },
+      "readback_file": "hosted-budget-before-v2-native-transcript-readback.json",
+      "readback_sha256": "f7917f21618157b8bc84fdd03a79ff802a6fd57e3b2ca26ad427cae2e25e3def"
+    },
+    {
+      "mode": "pool-before-v2",
+      "source": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+      "driver": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "report_sha256": "a4cd8d6e81a5420897dc5b3ebda0040290a9b13a6d03ba7e4881d11a2b80ffca",
+      "actual_control_count": 7,
+      "native_pass_controls": 2,
+      "native_expected_failures": 5,
+      "official_artifact": {
+        "id": 13832229500,
+        "name": "pon-budget-controls-pool-before-v2-84e68b4f7a9b2f48f9c47ed05c9a44229d186e30-1",
+        "size_in_bytes": 30700264,
+        "digest": "sha256:4fc83c261d2dbe98c8902e5cfe6a69805a9fc850a0727e7f36e4a42077d73fbc",
+        "created_at": "2026-11-11T06:04:31Z",
+        "expired": false,
+        "workflow_run": {
+          "id": 42960214402,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-throughput-budget-20261110-065438",
+          "head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395"
+        }
+      },
+      "readback_file": "hosted-pool-before-v2-native-transcript-readback.json",
+      "readback_sha256": "e7728d26f64feac40f57c853d380c1302ec73a302d0e40afc4d0da28b7a2437f"
+    },
+    {
+      "mode": "pool-scan-before",
+      "source": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+      "driver": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "report_sha256": "778753321749ea87a255cb6b2951a8c8ec3d12e5e80cf7367913de38326994b3",
+      "actual_control_count": 2,
+      "native_pass_controls": 0,
+      "native_expected_failures": 2,
+      "official_artifact": {
+        "id": 13833220372,
+        "name": "pon-budget-controls-pool-scan-before-ae657e262278ae4a058220f66a6a0495721eb9ad-1",
+        "size_in_bytes": 30872676,
+        "digest": "sha256:03e719c7682f06447ce87ff1cc09643007649523a9413b9bfe0c8f9e415a2a1f",
+        "created_at": "2026-11-11T06:00:44Z",
+        "expired": false,
+        "workflow_run": {
+          "id": 42960214402,
+          "repository_id": 1323087357,
+          "head_repository_id": 1323087357,
+          "head_branch": "fix/chain-throughput-budget-20261110-065438",
+          "head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395"
+        }
+      },
+      "readback_file": "hosted-pool-scan-before-native-transcript-readback.json",
+      "readback_sha256": "ab6cbfaad3dd71aecee19241ffee6f1ff1c3ac9576e57020c2c1a384a8cad5a4"
+    }
+  ],
+  "qualification": {
+    "complete_business_liveness": false,
+    "sustained_tps": false,
+    "wan_capacity": false,
+    "production_activation": false
+  }
+}

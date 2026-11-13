@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/cell_closure_cli-710e4425e4aaadbe",
+    "--list",
+    "--format",
+    "terse"
+  ],
+  "child_reaped": true,
+  "cwd": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-data-availability",
+  "elapsed_ns": 3067011,
+  "exit_code": 0,
+  "label": "02-cell_closure_cli-list",
+  "owned_pid": 91402,
+  "performance_measurement": false,
+  "started_unix_ns": 1794394508012390465,
+  "status": "command_succeeded",
+  "stderr": {
+    "bytes": 0,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/02-cell_closure_cli-list.stderr.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout": {
+    "bytes": 403,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/da/02-cell_closure_cli-list.stdout.log",
+    "sha256": "70d3da6829b2e73889943df5d801629f65aab452ab31276c9162a98e0ba09120"
+  }
+}

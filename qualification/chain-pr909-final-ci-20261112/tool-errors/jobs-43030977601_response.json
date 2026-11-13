@@ -1,0 +1,16 @@
+{
+  "status": "fulfilled",
+  "value": {
+    "content": [
+      {
+        "type": "text",
+        "text": "ReadTimeout: "
+      }
+    ],
+    "structuredContent": {
+      "error": "ReadTimeout: ",
+      "error_code": "UNKNOWN"
+    },
+    "isError": true
+  }
+}

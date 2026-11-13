@@ -1,0 +1,33 @@
+{
+  "all_planned_commands_completed": false,
+  "command_success": false,
+  "external_hepta_finaluse_executed": false,
+  "independent_wan_executed": false,
+  "observed_commands": 12,
+  "original_host_contract_executed": false,
+  "planned_commands": 28,
+  "pq128_qualified": false,
+  "qualification": "HOLD_NO_GO",
+  "schema": "trnm-next-component-execution-v1",
+  "source_before_after_identical": true,
+  "source_commit": "bced22f712552302848e3e04f7acf24068af2048",
+  "sustainable_rewards_qualified": false,
+  "unexecuted": [
+    "native-node-packet-status",
+    "test_every_reorg_process_cut_and_admission_gap_recovers_once",
+    "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+    "test_confirmed_transfer_is_removed_by_a_real_heavier_fork",
+    "native_growth_v2_exact_packet_observation",
+    "native_growth_v2_packet_observer",
+    "native_growth_v2_cold_observer",
+    "growth-cli-packet-cold",
+    "hepta-classical-receiver",
+    "hepta-pq-receiver",
+    "native-accepted-task",
+    "transport-replay",
+    "clippy-trnm-data-availability",
+    "clippy-trnm-pon-node",
+    "cell_bep52_cost_v1",
+    "cell_rs46_cost_v1"
+  ]
+}

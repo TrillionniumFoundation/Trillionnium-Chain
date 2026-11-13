@@ -1,0 +1,137 @@
+[
+  {
+    "name": "github-identity",
+    "argv": [
+      "gh",
+      "api",
+      "user",
+      "--jq",
+      ".login"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "candidate-before",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/fix/chain-pon-joint-state-risk-ledger-20261107",
+      "--jq",
+      ".object.sha"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "integration-before",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/fix/chain-six-axis-performance-20261103",
+      "--jq",
+      ".object.sha"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "source-head-before",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "source-clean-before",
+    "argv": [
+      "git",
+      "status",
+      "--porcelain"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "preflight-before-evidence",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "stage-evidence",
+    "argv": [
+      "git",
+      "add",
+      "-f",
+      "-A",
+      "--",
+      "evidence/pon-joint-state-risk-ledger-20261107"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "staged-paths",
+    "argv": [
+      "git",
+      "diff",
+      "--cached",
+      "--name-only"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "staged-tree",
+    "argv": [
+      "git",
+      "write-tree"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "pre-commit-preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "commit-evidence",
+    "argv": [
+      "git",
+      "commit",
+      "--quiet",
+      "-m",
+      "Retain exact merged-source certificate gates and explicit HOLD boundaries"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "final-local-head",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "final-local-tree",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD^{tree}"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "final-local-clean",
+    "argv": [
+      "git",
+      "status",
+      "--porcelain"
+    ],
+    "returncode": 0
+  }
+]

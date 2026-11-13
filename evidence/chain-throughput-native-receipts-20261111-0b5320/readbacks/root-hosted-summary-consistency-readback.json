@@ -1,0 +1,22 @@
+{
+  "schema": "root-hosted-summary-consistency-readback-v1",
+  "scope": "Local copied summaries, source-derived bytes, and independently read GitHub artifact metadata; no new ZIP download or native run.",
+  "result": "PASS",
+  "artifacts": [
+    {
+      "artifact_id": 13832340481,
+      "summary_sha256": "ea18ed70958190e0aabed6aae68df95da1df60091ca538acd6666a8cbc63f585",
+      "metadata_digest_and_source_match": true
+    },
+    {
+      "artifact_id": 13831493931,
+      "summary_sha256": "6d8a5272c81f50fa5c61d08cd4fcc5418ac197454314d3661795c92dd6fa18fe",
+      "metadata_digest_and_source_match": true
+    },
+    {
+      "artifact_id": 13831414961,
+      "summary_sha256": "2c28c18eae57f4a5ac8ed1036b24c89eb1d7eecd4111551fd2c4156e51f63078",
+      "metadata_digest_and_source_match": true
+    }
+  ]
+}

@@ -1,0 +1,573 @@
+[
+  {
+    "name": "canonical-before-head",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD",
+      "HEAD^{tree}"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+    "started_at": "2026-11-08T01:17:32.430763+00:00",
+    "ended_at": "2026-11-08T01:17:32.434886+00:00",
+    "exit_code": 0,
+    "stdout": "b5c655ebe9611b3d62cf739e61e6867decc053e3\n51ae39a63851cdbfbe5ad4ebc1fb039a9b95abff\n",
+    "stderr": "",
+    "stdout_bytes": 82,
+    "stderr_bytes": 0,
+    "stdout_sha256": "bc780a5d50951c43b3d46b9bf41d425aa56a09d62d5616db7e3d1df6635497e9",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "canonical-before-status",
+    "argv": [
+      "git",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=no"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+    "started_at": "2026-11-08T01:17:32.434999+00:00",
+    "ended_at": "2026-11-08T01:17:32.450829+00:00",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "stdout_bytes": 0,
+    "stderr_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "canonical-preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+    "started_at": "2026-11-08T01:17:32.462585+00:00",
+    "ended_at": "2026-11-08T01:17:32.543244+00:00",
+    "exit_code": 0,
+    "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"fix/chain-pon-joint-state-risk-ledger-20261107\", \"remote_policy_mutated\": false}\n",
+    "stderr": "",
+    "stdout_bytes": 177,
+    "stderr_bytes": 0,
+    "stdout_sha256": "390eaae41b4cea9817edf58dae3def992730ea1e0af10cf6403a7fd9e47bd304",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "canonical-origin",
+    "argv": [
+      "git",
+      "remote",
+      "get-url",
+      "origin"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+    "started_at": "2026-11-08T01:17:32.543467+00:00",
+    "ended_at": "2026-11-08T01:17:32.546032+00:00",
+    "exit_code": 0,
+    "stdout": "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git\n",
+    "stderr": "",
+    "stdout_bytes": 65,
+    "stderr_bytes": 0,
+    "stdout_sha256": "4381bbe444696febc4724724342b7c204fb1ddac075199545272db3c4a3cb1c7",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "canonical-branch",
+    "argv": [
+      "git",
+      "branch",
+      "--show-current"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+    "started_at": "2026-11-08T01:17:32.546106+00:00",
+    "ended_at": "2026-11-08T01:17:32.548666+00:00",
+    "exit_code": 0,
+    "stdout": "fix/chain-pon-joint-state-risk-ledger-20261107\n",
+    "stderr": "",
+    "stdout_bytes": 47,
+    "stderr_bytes": 0,
+    "stdout_sha256": "78fe7323f3fa4768dcdfde494eafd48143d7e2f3bd93d186d5ffb7de587c8bed",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "initialize-independent-archive",
+    "argv": [
+      "git",
+      "init",
+      "--initial-branch=archive/chain-pon-pr784-hosted-observations-20261108",
+      "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-archive-worktree"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+    "started_at": "2026-11-08T01:17:32.548739+00:00",
+    "ended_at": "2026-11-08T01:17:32.553957+00:00",
+    "exit_code": 0,
+    "stdout": "\u5728 /home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-archive-worktree/.git/ \u521d\u59cb\u5316\u7a7a\u7684 Git \u4ed3\u5e93\n",
+    "stderr": "",
+    "stdout_bytes": 126,
+    "stderr_bytes": 0,
+    "stdout_sha256": "d251bc7e85979ef6752305b57c93f47e28d328c9e8fd51707cb655cd0a0a352d",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "set-independent-origin",
+    "argv": [
+      "git",
+      "remote",
+      "add",
+      "origin",
+      "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-archive-worktree",
+    "started_at": "2026-11-08T01:17:32.554224+00:00",
+    "ended_at": "2026-11-08T01:17:32.557025+00:00",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "stdout_bytes": 0,
+    "stderr_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "configure-core.sparseCheckout",
+    "argv": [
+      "git",
+      "config",
+      "--local",
+      "core.sparseCheckout",
+      "true"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-archive-worktree",
+    "started_at": "2026-11-08T01:17:32.557072+00:00",
+    "ended_at": "2026-11-08T01:17:32.559265+00:00",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "stdout_bytes": 0,
+    "stderr_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "configure-core.sparseCheckoutCone",
+    "argv": [
+      "git",
+      "config",
+      "--local",
+      "core.sparseCheckoutCone",
+      "false"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-archive-worktree",
+    "started_at": "2026-11-08T01:17:32.559310+00:00",
+    "ended_at": "2026-11-08T01:17:32.561422+00:00",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "stdout_bytes": 0,
+    "stderr_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "configure-remote.origin.promisor",
+    "argv": [
+      "git",
+      "config",
+      "--local",
+      "remote.origin.promisor",
+      "true"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-archive-worktree",
+    "started_at": "2026-11-08T01:17:32.561468+00:00",
+    "ended_at": "2026-11-08T01:17:32.564026+00:00",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "stdout_bytes": 0,
+    "stderr_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "configure-remote.origin.partialclonefilter",
+    "argv": [
+      "git",
+      "config",
+      "--local",
+      "remote.origin.partialclonefilter",
+      "blob:none"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-archive-worktree",
+    "started_at": "2026-11-08T01:17:32.564071+00:00",
+    "ended_at": "2026-11-08T01:17:32.566468+00:00",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "stdout_bytes": 0,
+    "stderr_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "read-canonical-user.name",
+    "argv": [
+      "git",
+      "config",
+      "--get",
+      "user.name"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+    "started_at": "2026-11-08T01:17:32.566514+00:00",
+    "ended_at": "2026-11-08T01:17:32.570849+00:00",
+    "exit_code": 0,
+    "stdout": "Tomasrgbsf\n",
+    "stderr": "",
+    "stdout_bytes": 11,
+    "stderr_bytes": 0,
+    "stdout_sha256": "82b9e89cbb5af0acf9b96aa71cba783c58945a5cb3c1ed6eb802487aa4f85c37",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "copy-independent-user.name",
+    "argv": [
+      "git",
+      "config",
+      "--local",
+      "user.name",
+      "Tomasrgbsf"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-archive-worktree",
+    "started_at": "2026-11-08T01:17:32.570899+00:00",
+    "ended_at": "2026-11-08T01:17:32.573761+00:00",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "stdout_bytes": 0,
+    "stderr_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "read-canonical-user.email",
+    "argv": [
+      "git",
+      "config",
+      "--get",
+      "user.email"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+    "started_at": "2026-11-08T01:17:32.573845+00:00",
+    "ended_at": "2026-11-08T01:17:32.576328+00:00",
+    "exit_code": 0,
+    "stdout": "tomasbraynt@gmail.com\n",
+    "stderr": "",
+    "stdout_bytes": 22,
+    "stderr_bytes": 0,
+    "stdout_sha256": "eb2b6f1e4b64d16f1189d867ad8c54fd7c589bca1bf786de3698e1d3b9cfa1d8",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "copy-independent-user.email",
+    "argv": [
+      "git",
+      "config",
+      "--local",
+      "user.email",
+      "tomasbraynt@gmail.com"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-archive-worktree",
+    "started_at": "2026-11-08T01:17:32.576395+00:00",
+    "ended_at": "2026-11-08T01:17:32.578708+00:00",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "stdout_bytes": 0,
+    "stderr_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "read-canonical-core.hooksPath",
+    "argv": [
+      "git",
+      "config",
+      "--get",
+      "core.hooksPath"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+    "started_at": "2026-11-08T01:17:32.578760+00:00",
+    "ended_at": "2026-11-08T01:17:32.581307+00:00",
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "",
+    "stdout_bytes": 0,
+    "stderr_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "checkout-requested-archive-branch",
+    "argv": [
+      "git",
+      "reset",
+      "--hard",
+      "b5c655ebe9611b3d62cf739e61e6867decc053e3"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-archive-worktree",
+    "started_at": "2026-11-08T01:17:32.581590+00:00",
+    "ended_at": "2026-11-08T01:17:32.718831+00:00",
+    "exit_code": 0,
+    "stdout": "HEAD \u73b0\u5728\u4f4d\u4e8e b5c655e Retain exact merged-source certificate gates and explicit HOLD boundaries\n",
+    "stderr": "",
+    "stdout_bytes": 100,
+    "stderr_bytes": 0,
+    "stdout_sha256": "ce8af17e9a9d59d1a8c822708e8cfc19eb7c4d67209740ee0aa4325078fb9cb1",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "requested-archive-preflight-rejection",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-archive-worktree",
+    "started_at": "2026-11-08T01:17:32.719021+00:00",
+    "ended_at": "2026-11-08T01:17:32.801077+00:00",
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "project boundary failed: not an allowed development branch\n",
+    "stdout_bytes": 0,
+    "stderr_bytes": 59,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "1e85d4622435cd769c79fc3bdd3ac3cef3c643c135889988e8479a1ffc4e893e"
+  },
+  {
+    "name": "rename-to-allowed-chore-branch",
+    "argv": [
+      "git",
+      "branch",
+      "-m",
+      "chore/chain-pon-pr784-hosted-observations-20261108"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-archive-worktree",
+    "started_at": "2026-11-08T01:17:32.801199+00:00",
+    "ended_at": "2026-11-08T01:17:32.806058+00:00",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "stdout_bytes": 0,
+    "stderr_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "allowed-chore-preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-archive-worktree",
+    "started_at": "2026-11-08T01:17:32.806145+00:00",
+    "ended_at": "2026-11-08T01:17:32.898681+00:00",
+    "exit_code": 0,
+    "stdout": "{\"result\": \"PASS\", \"mode\": \"--dev\", \"project\": \"trillionnium-chain\", \"packages\": 26, \"branch\": \"chore/chain-pon-pr784-hosted-observations-20261108\", \"remote_policy_mutated\": false}\n",
+    "stderr": "",
+    "stdout_bytes": 181,
+    "stderr_bytes": 0,
+    "stdout_sha256": "a510bff034a43621d86dfe3b40a0432ef17ecd3ac65fdd723a54873e8012ef7e",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "archive-base-identity",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD",
+      "HEAD^{tree}"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-archive-worktree",
+    "started_at": "2026-11-08T01:17:32.898867+00:00",
+    "ended_at": "2026-11-08T01:17:32.902619+00:00",
+    "exit_code": 0,
+    "stdout": "b5c655ebe9611b3d62cf739e61e6867decc053e3\n51ae39a63851cdbfbe5ad4ebc1fb039a9b95abff\n",
+    "stderr": "",
+    "stdout_bytes": 82,
+    "stderr_bytes": 0,
+    "stdout_sha256": "bc780a5d50951c43b3d46b9bf41d425aa56a09d62d5616db7e3d1df6635497e9",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "archive-initial-status",
+    "argv": [
+      "git",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=all"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-archive-worktree",
+    "started_at": "2026-11-08T01:17:32.902736+00:00",
+    "ended_at": "2026-11-08T01:17:32.937143+00:00",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "stdout_bytes": 0,
+    "stderr_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "list-workflows",
+    "argv": [
+      "git",
+      "ls-tree",
+      "-r",
+      "--name-only",
+      "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+      ".github/workflows"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-archive-worktree",
+    "started_at": "2026-11-08T01:17:32.939261+00:00",
+    "ended_at": "2026-11-08T01:17:32.943428+00:00",
+    "exit_code": 0,
+    "stdout": ".github/workflows/codeql-analysis-export.yml\n.github/workflows/codeql-real-exact-source.yml\n.github/workflows/pon-baseline-diagnostic-readback.yml\n.github/workflows/pon-branch-encoding-acceptance.yml\n.github/workflows/pon-cloud-build-inputs.yml\n.github/workflows/pon-fixed-host-root-f0.yml\n.github/workflows/pon-legacy-reorg-cost-20261104.yml\n.github/workflows/pon-model-parent-acceptance.yml\n.github/workflows/pon-native-campaign-qualification.yml\n.github/workflows/pon-original-large-state-cpu.yml\n.github/workflows/pon-original-workspace-large-state-cpu.yml\n.github/workflows/pon-owned-process-cleanup.yml\n.github/workflows/pon-pq-system-continuation.yml\n.github/workflows/pon-priority-acceptance.yml\n.github/workflows/pon-recent-batch-acceptance.yml\n.github/workflows/pon-smollm-hosted-once.yml\n.github/workflows/pon-w1-transparent-profile.yml\n.github/workflows/pon-w1-work-security.yml\n.github/workflows/release-finality-reference.yml\n.github/workflows/trnm-required-baseline.yml\n",
+    "stderr": "",
+    "stdout_bytes": 985,
+    "stderr_bytes": 0,
+    "stdout_sha256": "39cbc74f726b09eb0c664e75fdee592e3a47bebff7a6683ea980bdcfd92dfa84",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "canonical-after-head",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD",
+      "HEAD^{tree}"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+    "started_at": "2026-11-08T01:17:33.845182+00:00",
+    "ended_at": "2026-11-08T01:17:33.849304+00:00",
+    "exit_code": 0,
+    "stdout": "b5c655ebe9611b3d62cf739e61e6867decc053e3\n51ae39a63851cdbfbe5ad4ebc1fb039a9b95abff\n",
+    "stderr": "",
+    "stdout_bytes": 82,
+    "stderr_bytes": 0,
+    "stdout_sha256": "bc780a5d50951c43b3d46b9bf41d425aa56a09d62d5616db7e3d1df6635497e9",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "canonical-after-status",
+    "argv": [
+      "git",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=no"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+    "started_at": "2026-11-08T01:17:33.849356+00:00",
+    "ended_at": "2026-11-08T01:17:33.865933+00:00",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "stdout_bytes": 0,
+    "stderr_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "archive-final-identity",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD",
+      "HEAD^{tree}"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-archive-worktree",
+    "started_at": "2026-11-08T01:17:33.877402+00:00",
+    "ended_at": "2026-11-08T01:17:33.881450+00:00",
+    "exit_code": 0,
+    "stdout": "b5c655ebe9611b3d62cf739e61e6867decc053e3\n51ae39a63851cdbfbe5ad4ebc1fb039a9b95abff\n",
+    "stderr": "",
+    "stdout_bytes": 82,
+    "stderr_bytes": 0,
+    "stdout_sha256": "bc780a5d50951c43b3d46b9bf41d425aa56a09d62d5616db7e3d1df6635497e9",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "archive-tracked-status",
+    "argv": [
+      "git",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=no"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-archive-worktree",
+    "started_at": "2026-11-08T01:17:33.881530+00:00",
+    "ended_at": "2026-11-08T01:17:33.914629+00:00",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "stdout_bytes": 0,
+    "stderr_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "archive-new-path-scope",
+    "argv": [
+      "git",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=all"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/hosted-pr784-archive-worktree",
+    "started_at": "2026-11-08T01:17:34.038423+00:00",
+    "ended_at": "2026-11-08T01:17:34.078673+00:00",
+    "exit_code": 0,
+    "stdout": "?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/README.md\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/manifest.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/physical-sha256.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/allowed-chore-preflight.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/allowed-chore-preflight.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/canonical-preflight.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/canonical-preflight.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/command-receipts.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/cross-arch-arm-copy-receipt.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/final-pr-readback-05-copy-receipt.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/repository-truth-copy-receipt.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/requested-archive-preflight-rejection.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/requested-archive-preflight-rejection.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/setup-attempt-01/status.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/setup-attempt-02/status.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/workflow-push-audit.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/workflow-sources/codeql-analysis-export.yml\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/workflow-sources/codeql-real-exact-source.yml\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/workflow-sources/pon-baseline-diagnostic-readback.yml\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/workflow-sources/pon-branch-encoding-acceptance.yml\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/workflow-sources/pon-cloud-build-inputs.yml\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/workflow-sources/pon-fixed-host-root-f0.yml\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/workflow-sources/pon-legacy-reorg-cost-20261104.yml\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/workflow-sources/pon-model-parent-acceptance.yml\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/workflow-sources/pon-native-campaign-qualification.yml\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/workflow-sources/pon-original-large-state-cpu.yml\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/workflow-sources/pon-original-workspace-large-state-cpu.yml\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/workflow-sources/pon-owned-process-cleanup.yml\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/workflow-sources/pon-pq-system-continuation.yml\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/workflow-sources/pon-priority-acceptance.yml\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/workflow-sources/pon-recent-batch-acceptance.yml\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/workflow-sources/pon-smollm-hosted-once.yml\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/workflow-sources/pon-w1-transparent-profile.yml\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/workflow-sources/pon-w1-work-security.yml\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/workflow-sources/release-finality-reference.yml\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/workflow-sources/trnm-required-baseline.yml\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/preparation/workspace-preparation.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/README.md\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/actor.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/actor.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/annotations.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/annotations.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/artifact-download-v2.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/artifact-result-v2.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/artifact-result.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/artifact.zip\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/base-diff.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/base-diff.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/check-run.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/check-run.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/commands.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/confirmation-diagnosis.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/confirmation-phases.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/failure-excerpt.txt\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/final-diagnosis.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/job-log.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/job-log.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/job.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/job.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/physical-sha256.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/result.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/run-artifacts.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/cross-arch-arm/run-artifacts.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/actor.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/actor.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/brief.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/checks-1.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/checks-1.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/checks-2.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/checks-2.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/commands.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/local-clean.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/local-clean.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/local-head.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/local-head.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/pr.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/pr.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/repository-truth-job-128580281254.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/repository-truth-job-128580281254.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/repository-truth-job-128580281590.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/repository-truth-job-128580281590.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/repository-truth-log-128580281254.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/repository-truth-log-128580281254.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/repository-truth-log-128580281590.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/repository-truth-log-128580281590.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/repository-truth-tail-128580281254.txt\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/repository-truth-tail-128580281590.txt\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/result.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/runs-1.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/runs-1.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/statuses-1.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/final-pr-readback-05/statuses-1.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/README.md\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005553Z/commands.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005553Z/job-summary.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005553Z/local-identity-after.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005553Z/local-identity-after.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005553Z/local-identity-before.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005553Z/local-identity-before.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005553Z/local-status-after.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005553Z/local-status-after.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005553Z/local-status-before.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005553Z/local-status-before.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005553Z/repository-truth-job-logs.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005553Z/repository-truth-job-logs.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005553Z/repository-truth-job.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005553Z/repository-truth-job.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005553Z/result.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005553Z/workflow-run.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005553Z/workflow-run.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005728Z/analysis.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005728Z/commands.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005728Z/job-summary.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005728Z/local-identity-after.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005728Z/local-identity-after.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005728Z/local-identity-before.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005728Z/local-identity-before.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005728Z/local-status-after.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005728Z/local-status-after.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005728Z/local-status-before.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005728Z/local-status-before.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005728Z/repository-truth-job-logs.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005728Z/repository-truth-job-logs.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005728Z/repository-truth-job.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005728Z/repository-truth-job.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005728Z/result.json\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005728Z/workflow-run.stderr\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/observation-20261108T005728Z/workflow-run.stdout\n?? evidence/pon-joint-state-risk-ledger-20261107/hosted-pr784/reviews/repository-truth/physical-sha256.json\n",
+    "stderr": "",
+    "stdout_bytes": 15289,
+    "stderr_bytes": 0,
+    "stdout_sha256": "6f81bbf4ff7cf0d8495ede9c6db64b19688758fe305425d87c00eeb78716f8a4",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "canonical-end-head",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+    "started_at": "2026-11-08T01:17:34.078919+00:00",
+    "ended_at": "2026-11-08T01:17:34.081764+00:00",
+    "exit_code": 0,
+    "stdout": "b5c655ebe9611b3d62cf739e61e6867decc053e3\n",
+    "stderr": "",
+    "stdout_bytes": 41,
+    "stderr_bytes": 0,
+    "stdout_sha256": "57e20688f670e165e5ab6559ee3cc8cb46826ec9bfe5aa82347895f05540c886",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "canonical-end-status",
+    "argv": [
+      "git",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=no"
+    ],
+    "cwd": "/home/qian-qi/work/chain-integration-ec1-filtered-5_39gnzl/repo",
+    "started_at": "2026-11-08T01:17:34.081823+00:00",
+    "ended_at": "2026-11-08T01:17:34.098914+00:00",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "stdout_bytes": 0,
+    "stderr_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

@@ -1,0 +1,65 @@
+{
+  "files": [
+    {
+      "bytes": 4607,
+      "path": "README.md",
+      "sha256": "9199b4bed094744592c9705c21ced11cacd94fdac2ddb77f5a10342eafdd8541"
+    },
+    {
+      "bytes": 4469,
+      "path": "aggregate-result.json",
+      "sha256": "a8994db5a68190731c94b64bfb7b53763e3c1cbee8cdc3faebd67d7f04a517b8"
+    },
+    {
+      "bytes": 1790,
+      "path": "archive-readback.json",
+      "sha256": "188b36708746f01c783291b74026f579fae4d28832d7458b5f191edefeef3963"
+    },
+    {
+      "bytes": 5920,
+      "path": "gate-job-statuses.json",
+      "sha256": "3df827d24c941c54ef6b116c9982b0a983c53d885c8ffb891e6b4f3e7aaae7d3"
+    },
+    {
+      "bytes": 3688,
+      "path": "publication-receipt.json",
+      "sha256": "79c065f0347dbb59b1ad483b2cd4bbac0f59289c25385bcbd4c26b0e2a2693be"
+    },
+    {
+      "bytes": 343720,
+      "path": "qualification-raw-index.json",
+      "sha256": "0cde93ffc1832e73ac4ef8070273128e7c8e2cc0ade43cf670f4ad850ead4b91"
+    },
+    {
+      "bytes": 3495706,
+      "path": "qualification-raw.tar.gz",
+      "sha256": "c0cbda739add31b6bc887887833990038bcf0414c4e6bf93dc79f0cfdb38113c"
+    },
+    {
+      "bytes": 226149,
+      "path": "qualification.json",
+      "sha256": "01947ed12ac65cd24dc4d9364f3e12af93a6539fb6abcfac26b7b43ed3587dbb"
+    },
+    {
+      "bytes": 348016,
+      "path": "raw-inventory.json",
+      "sha256": "b2b5acd38dd9a89931dd61f5cb8a7df1e70b149d430a15b1b2dbf831b00692ab"
+    },
+    {
+      "bytes": 731,
+      "path": "terminal-aggregate.raw.json",
+      "sha256": "33fbdab6aad50f1264434807d8fd8369cbf5d49b7630bc439447d49035fbbb2e"
+    },
+    {
+      "bytes": 729,
+      "path": "terminal-archive.raw.json",
+      "sha256": "5065ea6996a6d80ffdff7cefe163450bb2ed5fd2962b9b39f12bfb87ce6f5eca"
+    }
+  ],
+  "new_runtime_execution": false,
+  "private_database_pages_published": false,
+  "schema": "TRNM-W1-C2-PUBLICATION-ATTESTATION-INVENTORY1",
+  "self_excluded": true,
+  "tested_source_commit": "cc4dd8bdd89309c635831db30b508af2f89419d7",
+  "tested_source_tree": "161d3a4e8ab8c865869352339ec8c66f6609449a"
+}

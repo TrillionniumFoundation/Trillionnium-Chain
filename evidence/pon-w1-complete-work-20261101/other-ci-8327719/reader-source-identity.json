@@ -1,0 +1,92 @@
+[
+  {
+    "path": "scripts/pon_public_v3_phase_read.py",
+    "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+    "sha256": "26774427c956090510bcfe6fa871a62763d256c23b91f3dc9fa3ef9d0b37d66c",
+    "git_blob": "c056584a4d77e609693a4192fae6c2369621bc31"
+  },
+  {
+    "path": "scripts/pon_public_v3_policy_read.py",
+    "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+    "sha256": "c7e4bc5450ac1c721cdc9dc5975d2c102bcf4ab5c58fe3b2dc52bcd65b4e6a7b",
+    "git_blob": "6b2ea6dc2205e5cab740cef2f14b11df409e348a"
+  },
+  {
+    "path": "scripts/ci/run_from_zero_native.py",
+    "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+    "sha256": "0067168079a8876b548d32afd1f3b5d353868cc384d81d09ef0b051a343d424f",
+    "git_blob": "ffec7d876e8fbe548c3c1f451ea1479c84bffaa4"
+  },
+  {
+    "path": "scripts/ci/check_required_native_test.py",
+    "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+    "sha256": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28",
+    "git_blob": "277137b9e6ced74e9ec81061040ebfbb3949ffaf"
+  },
+  {
+    "path": "scripts/ci/replay_pinned_native.py",
+    "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+    "sha256": "d14d2f61ab98bb30b5932530437064dce5d3a330c05a9530988fe776cefea44a",
+    "git_blob": "2e633556e2b6f5cc4278491d5c4c8edf437fab81"
+  },
+  {
+    "path": "scripts/ci/verify_ci_source.py",
+    "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+    "sha256": "07fb32c6b1d6a5c9bd6200a4ef4f5916b0f25caa3ba4ac887a3ba58a407b7ff6",
+    "git_blob": "5d2c5857a78738c30f30c2b89839a9696e6a2fdc"
+  },
+  {
+    "path": "formal/pon-nakamoto-v1/contract_wire.py",
+    "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+    "sha256": "cbe45d72ad20ed5683d50dceaa97b93bc74cdafced7d0896386edf9cbe9f98f6",
+    "git_blob": "37f62b2f0913e372bc1c75fed2cd3a3e1267870b"
+  },
+  {
+    "path": "config/pon/public-resource-profile-vectors-v1.json",
+    "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+    "sha256": "807037076b2e2c39d044e07ed2bac231b0862355fe623d7975167ae5d7cfa1da",
+    "git_blob": "01079fab08ddd62a5080a9e33402aef6ac3652b4"
+  },
+  {
+    "path": "config/pon/ledger-v1.json",
+    "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+    "sha256": "6755e36aab0ab9f4743da331a8dcd3374d657ff80f027ecf28db922e6d5ea39a",
+    "git_blob": "f7d8dba05cd0267b716834d76774a7ce94a1276b"
+  },
+  {
+    "path": "config/pon/work-profile-v1.json",
+    "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+    "sha256": "03f7537b2fc3fa0c2f7036dd73d7088ba1ce50eafe6f2c907087d30385320880",
+    "git_blob": "54e43139d3691b62f76f9e8976e1d2a974e8524b"
+  },
+  {
+    "path": "config/pon/model-family-v1.json",
+    "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+    "sha256": "30b250db074e7fbb5776c1474371258a6110cc1742e0e9970232a799ab790ca1",
+    "git_blob": "9a931f21ca86563cf7e5c6415acd20a0ced7da68"
+  },
+  {
+    "path": ".github/workflows/pon-native-campaign-qualification.yml",
+    "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+    "sha256": "1b1b2ab8331b8bb53874a6e9a4845facfa9d9717473a7c3732fb068a8d96b14a",
+    "git_blob": "6a89ba8237158615bfeb02afc23da0ac3a6a01f7"
+  },
+  {
+    "path": ".github/workflows/pon-recent-batch-acceptance.yml",
+    "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+    "sha256": "611baefab215e6131bd2d6187655a581b42463f5df89ec5413040e5f52b53a02",
+    "git_blob": "96ef7b370deb0f1067adfdb47a77a958ac584952"
+  },
+  {
+    "path": "trillionnium/crates/trnm-pon-node/tests/public_v3_multiprocess.rs",
+    "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+    "sha256": "62f9ce660b72633cc01730a59e9b8d82b554cb2ce02be40e8968e562aff5dbe4",
+    "git_blob": "22fd5d81377022b73bbcc82bfa30fbf10c5502ff"
+  },
+  {
+    "path": "config/pon/devnet-v1.json",
+    "source_commit": "8327719ebd90ad08c1d66bc10f6c6fd79d7c0b47",
+    "sha256": "4491b96ead11a020e8d71f27713368b65e663eef5cfc6fd0800a166b0c2a20d4",
+    "git_blob": "a60f403b2f0e7343aed61170ca2aef875a787790"
+  }
+]

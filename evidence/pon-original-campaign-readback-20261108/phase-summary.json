@@ -1,0 +1,508 @@
+[
+  {
+    "lane": "loader",
+    "run": 1,
+    "mode": "baseline",
+    "confirmed_rounds": 1,
+    "observed_confirmation_rounds": 2,
+    "native_phase_criteria_met": false,
+    "receiver_client_state_equal": false,
+    "genuine_budget_depletion_observed": false,
+    "attacker_processes_ready": 0,
+    "actor_reports_successful_without_cap_or_kill": true,
+    "verifier_errors": [],
+    "observer_complete": true,
+    "submits_ack": 13,
+    "history_ack": 7,
+    "work_failed": 0,
+    "work_finished": 14,
+    "paid_cpu_ns": 1009901011,
+    "budget_refusals": 0,
+    "shutdown_credit_ns": 1995279297,
+    "shutdown_inflight": 0,
+    "accounting_unavailable": false,
+    "round_depletion": [
+      false,
+      false
+    ]
+  },
+  {
+    "lane": "loader",
+    "run": 1,
+    "mode": "from-zero",
+    "confirmed_rounds": 0,
+    "observed_confirmation_rounds": 1,
+    "native_phase_criteria_met": false,
+    "receiver_client_state_equal": false,
+    "genuine_budget_depletion_observed": false,
+    "attacker_processes_ready": 24,
+    "actor_reports_successful_without_cap_or_kill": true,
+    "verifier_errors": [
+      "PUBLIC_REQUEST_DEADLINE"
+    ],
+    "observer_complete": true,
+    "submits_ack": 7,
+    "history_ack": 4,
+    "work_failed": 1375,
+    "work_finished": 1382,
+    "paid_cpu_ns": 4052315627,
+    "budget_refusals": 0,
+    "shutdown_credit_ns": 1999158182,
+    "shutdown_inflight": 0,
+    "accounting_unavailable": false,
+    "round_depletion": [
+      false
+    ]
+  },
+  {
+    "lane": "loader",
+    "run": 1,
+    "mode": "late-product",
+    "confirmed_rounds": 0,
+    "observed_confirmation_rounds": 1,
+    "native_phase_criteria_met": false,
+    "receiver_client_state_equal": false,
+    "genuine_budget_depletion_observed": false,
+    "attacker_processes_ready": 24,
+    "actor_reports_successful_without_cap_or_kill": true,
+    "verifier_errors": [
+      "PUBLIC_REQUEST_DEADLINE"
+    ],
+    "observer_complete": true,
+    "submits_ack": 7,
+    "history_ack": 4,
+    "work_failed": 1300,
+    "work_finished": 1307,
+    "paid_cpu_ns": 4232089796,
+    "budget_refusals": 0,
+    "shutdown_credit_ns": 1999936079,
+    "shutdown_inflight": 0,
+    "accounting_unavailable": false,
+    "round_depletion": [
+      false
+    ]
+  },
+  {
+    "lane": "loader",
+    "run": 2,
+    "mode": "baseline",
+    "confirmed_rounds": 1,
+    "observed_confirmation_rounds": 2,
+    "native_phase_criteria_met": false,
+    "receiver_client_state_equal": false,
+    "genuine_budget_depletion_observed": false,
+    "attacker_processes_ready": 0,
+    "actor_reports_successful_without_cap_or_kill": true,
+    "verifier_errors": [],
+    "observer_complete": true,
+    "submits_ack": 13,
+    "history_ack": 7,
+    "work_failed": 0,
+    "work_finished": 14,
+    "paid_cpu_ns": 1016200181,
+    "budget_refusals": 0,
+    "shutdown_credit_ns": 1992757674,
+    "shutdown_inflight": 0,
+    "accounting_unavailable": false,
+    "round_depletion": [
+      false,
+      false
+    ]
+  },
+  {
+    "lane": "loader",
+    "run": 2,
+    "mode": "from-zero",
+    "confirmed_rounds": 0,
+    "observed_confirmation_rounds": 1,
+    "native_phase_criteria_met": false,
+    "receiver_client_state_equal": false,
+    "genuine_budget_depletion_observed": false,
+    "attacker_processes_ready": 24,
+    "actor_reports_successful_without_cap_or_kill": true,
+    "verifier_errors": [
+      "PUBLIC_REQUEST_DEADLINE"
+    ],
+    "observer_complete": true,
+    "submits_ack": 7,
+    "history_ack": 4,
+    "work_failed": 1436,
+    "work_finished": 1443,
+    "paid_cpu_ns": 4088577322,
+    "budget_refusals": 0,
+    "shutdown_credit_ns": 1999765047,
+    "shutdown_inflight": 0,
+    "accounting_unavailable": false,
+    "round_depletion": [
+      false
+    ]
+  },
+  {
+    "lane": "loader",
+    "run": 2,
+    "mode": "late-product",
+    "confirmed_rounds": 0,
+    "observed_confirmation_rounds": 1,
+    "native_phase_criteria_met": false,
+    "receiver_client_state_equal": false,
+    "genuine_budget_depletion_observed": false,
+    "attacker_processes_ready": 24,
+    "actor_reports_successful_without_cap_or_kill": true,
+    "verifier_errors": [
+      "PUBLIC_REQUEST_DEADLINE"
+    ],
+    "observer_complete": true,
+    "submits_ack": 7,
+    "history_ack": 4,
+    "work_failed": 1294,
+    "work_finished": 1301,
+    "paid_cpu_ns": 4219029942,
+    "budget_refusals": 0,
+    "shutdown_credit_ns": 1999970727,
+    "shutdown_inflight": 0,
+    "accounting_unavailable": false,
+    "round_depletion": [
+      false
+    ]
+  },
+  {
+    "lane": "loader",
+    "run": 3,
+    "mode": "baseline",
+    "confirmed_rounds": 1,
+    "observed_confirmation_rounds": 2,
+    "native_phase_criteria_met": false,
+    "receiver_client_state_equal": false,
+    "genuine_budget_depletion_observed": false,
+    "attacker_processes_ready": 0,
+    "actor_reports_successful_without_cap_or_kill": true,
+    "verifier_errors": [
+      "PUBLIC_REQUEST_DEADLINE"
+    ],
+    "observer_complete": true,
+    "submits_ack": 14,
+    "history_ack": 8,
+    "work_failed": 0,
+    "work_finished": 14,
+    "paid_cpu_ns": 1004079561,
+    "budget_refusals": 0,
+    "shutdown_credit_ns": 1996859911,
+    "shutdown_inflight": 0,
+    "accounting_unavailable": false,
+    "round_depletion": [
+      false,
+      false
+    ]
+  },
+  {
+    "lane": "loader",
+    "run": 3,
+    "mode": "from-zero",
+    "confirmed_rounds": 0,
+    "observed_confirmation_rounds": 1,
+    "native_phase_criteria_met": false,
+    "receiver_client_state_equal": false,
+    "genuine_budget_depletion_observed": false,
+    "attacker_processes_ready": 24,
+    "actor_reports_successful_without_cap_or_kill": true,
+    "verifier_errors": [
+      "PUBLIC_REQUEST_DEADLINE"
+    ],
+    "observer_complete": true,
+    "submits_ack": 7,
+    "history_ack": 4,
+    "work_failed": 1411,
+    "work_finished": 1418,
+    "paid_cpu_ns": 4066928165,
+    "budget_refusals": 0,
+    "shutdown_credit_ns": 1999730020,
+    "shutdown_inflight": 0,
+    "accounting_unavailable": false,
+    "round_depletion": [
+      false
+    ]
+  },
+  {
+    "lane": "loader",
+    "run": 3,
+    "mode": "late-product",
+    "confirmed_rounds": 0,
+    "observed_confirmation_rounds": 1,
+    "native_phase_criteria_met": false,
+    "receiver_client_state_equal": false,
+    "genuine_budget_depletion_observed": false,
+    "attacker_processes_ready": 24,
+    "actor_reports_successful_without_cap_or_kill": true,
+    "verifier_errors": [
+      "PUBLIC_REQUEST_DEADLINE"
+    ],
+    "observer_complete": true,
+    "submits_ack": 7,
+    "history_ack": 4,
+    "work_failed": 1295,
+    "work_finished": 1302,
+    "paid_cpu_ns": 4224521542,
+    "budget_refusals": 0,
+    "shutdown_credit_ns": 1999895313,
+    "shutdown_inflight": 0,
+    "accounting_unavailable": false,
+    "round_depletion": [
+      false
+    ]
+  },
+  {
+    "lane": "effects",
+    "run": 1,
+    "mode": "baseline",
+    "confirmed_rounds": 1,
+    "observed_confirmation_rounds": 2,
+    "native_phase_criteria_met": false,
+    "receiver_client_state_equal": false,
+    "genuine_budget_depletion_observed": false,
+    "attacker_processes_ready": 0,
+    "actor_reports_successful_without_cap_or_kill": true,
+    "verifier_errors": [
+      "PUBLIC_REQUEST_DEADLINE"
+    ],
+    "observer_complete": true,
+    "submits_ack": 14,
+    "history_ack": 10,
+    "work_failed": 0,
+    "work_finished": 14,
+    "paid_cpu_ns": 868536370,
+    "budget_refusals": 0,
+    "shutdown_credit_ns": 1986684017,
+    "shutdown_inflight": 0,
+    "accounting_unavailable": false,
+    "round_depletion": [
+      false,
+      false
+    ]
+  },
+  {
+    "lane": "effects",
+    "run": 1,
+    "mode": "from-zero",
+    "confirmed_rounds": 0,
+    "observed_confirmation_rounds": 1,
+    "native_phase_criteria_met": false,
+    "receiver_client_state_equal": false,
+    "genuine_budget_depletion_observed": false,
+    "attacker_processes_ready": 24,
+    "actor_reports_successful_without_cap_or_kill": true,
+    "verifier_errors": [
+      "PUBLIC_REQUEST_DEADLINE"
+    ],
+    "observer_complete": true,
+    "submits_ack": 7,
+    "history_ack": 6,
+    "work_failed": 2694,
+    "work_finished": 2701,
+    "paid_cpu_ns": 3027591413,
+    "budget_refusals": 0,
+    "shutdown_credit_ns": 1999628126,
+    "shutdown_inflight": 0,
+    "accounting_unavailable": false,
+    "round_depletion": [
+      false
+    ]
+  },
+  {
+    "lane": "effects",
+    "run": 1,
+    "mode": "late-product",
+    "confirmed_rounds": 0,
+    "observed_confirmation_rounds": 1,
+    "native_phase_criteria_met": false,
+    "receiver_client_state_equal": false,
+    "genuine_budget_depletion_observed": false,
+    "attacker_processes_ready": 24,
+    "actor_reports_successful_without_cap_or_kill": true,
+    "verifier_errors": [
+      "PUBLIC_REQUEST_DEADLINE"
+    ],
+    "observer_complete": true,
+    "submits_ack": 7,
+    "history_ack": 6,
+    "work_failed": 2648,
+    "work_finished": 2655,
+    "paid_cpu_ns": 3096342520,
+    "budget_refusals": 0,
+    "shutdown_credit_ns": 1999827268,
+    "shutdown_inflight": 0,
+    "accounting_unavailable": false,
+    "round_depletion": [
+      false
+    ]
+  },
+  {
+    "lane": "effects",
+    "run": 2,
+    "mode": "baseline",
+    "confirmed_rounds": 1,
+    "observed_confirmation_rounds": 2,
+    "native_phase_criteria_met": false,
+    "receiver_client_state_equal": false,
+    "genuine_budget_depletion_observed": false,
+    "attacker_processes_ready": 0,
+    "actor_reports_successful_without_cap_or_kill": true,
+    "verifier_errors": [
+      "PUBLIC_REQUEST_DEADLINE"
+    ],
+    "observer_complete": true,
+    "submits_ack": 14,
+    "history_ack": 9,
+    "work_failed": 0,
+    "work_finished": 14,
+    "paid_cpu_ns": 868703009,
+    "budget_refusals": 0,
+    "shutdown_credit_ns": 1999462158,
+    "shutdown_inflight": 0,
+    "accounting_unavailable": false,
+    "round_depletion": [
+      false,
+      false
+    ]
+  },
+  {
+    "lane": "effects",
+    "run": 2,
+    "mode": "from-zero",
+    "confirmed_rounds": 0,
+    "observed_confirmation_rounds": 1,
+    "native_phase_criteria_met": false,
+    "receiver_client_state_equal": false,
+    "genuine_budget_depletion_observed": false,
+    "attacker_processes_ready": 24,
+    "actor_reports_successful_without_cap_or_kill": true,
+    "verifier_errors": [
+      "PUBLIC_REQUEST_DEADLINE"
+    ],
+    "observer_complete": true,
+    "submits_ack": 7,
+    "history_ack": 6,
+    "work_failed": 2706,
+    "work_finished": 2713,
+    "paid_cpu_ns": 3026673124,
+    "budget_refusals": 0,
+    "shutdown_credit_ns": 1999336457,
+    "shutdown_inflight": 0,
+    "accounting_unavailable": false,
+    "round_depletion": [
+      false
+    ]
+  },
+  {
+    "lane": "effects",
+    "run": 2,
+    "mode": "late-product",
+    "confirmed_rounds": 0,
+    "observed_confirmation_rounds": 1,
+    "native_phase_criteria_met": false,
+    "receiver_client_state_equal": false,
+    "genuine_budget_depletion_observed": false,
+    "attacker_processes_ready": 24,
+    "actor_reports_successful_without_cap_or_kill": true,
+    "verifier_errors": [
+      "PUBLIC_REQUEST_DEADLINE"
+    ],
+    "observer_complete": true,
+    "submits_ack": 7,
+    "history_ack": 6,
+    "work_failed": 2642,
+    "work_finished": 2649,
+    "paid_cpu_ns": 3093397691,
+    "budget_refusals": 0,
+    "shutdown_credit_ns": 1999976657,
+    "shutdown_inflight": 0,
+    "accounting_unavailable": false,
+    "round_depletion": [
+      false
+    ]
+  },
+  {
+    "lane": "effects",
+    "run": 3,
+    "mode": "baseline",
+    "confirmed_rounds": 1,
+    "observed_confirmation_rounds": 2,
+    "native_phase_criteria_met": false,
+    "receiver_client_state_equal": false,
+    "genuine_budget_depletion_observed": false,
+    "attacker_processes_ready": 0,
+    "actor_reports_successful_without_cap_or_kill": true,
+    "verifier_errors": [
+      "PUBLIC_REQUEST_DEADLINE"
+    ],
+    "observer_complete": true,
+    "submits_ack": 14,
+    "history_ack": 10,
+    "work_failed": 0,
+    "work_finished": 14,
+    "paid_cpu_ns": 872047986,
+    "budget_refusals": 0,
+    "shutdown_credit_ns": 1998345526,
+    "shutdown_inflight": 0,
+    "accounting_unavailable": false,
+    "round_depletion": [
+      false,
+      false
+    ]
+  },
+  {
+    "lane": "effects",
+    "run": 3,
+    "mode": "from-zero",
+    "confirmed_rounds": 0,
+    "observed_confirmation_rounds": 1,
+    "native_phase_criteria_met": false,
+    "receiver_client_state_equal": false,
+    "genuine_budget_depletion_observed": false,
+    "attacker_processes_ready": 24,
+    "actor_reports_successful_without_cap_or_kill": true,
+    "verifier_errors": [
+      "PUBLIC_REQUEST_DEADLINE"
+    ],
+    "observer_complete": true,
+    "submits_ack": 7,
+    "history_ack": 6,
+    "work_failed": 2692,
+    "work_finished": 2699,
+    "paid_cpu_ns": 3020136546,
+    "budget_refusals": 0,
+    "shutdown_credit_ns": 1999710997,
+    "shutdown_inflight": 0,
+    "accounting_unavailable": false,
+    "round_depletion": [
+      false
+    ]
+  },
+  {
+    "lane": "effects",
+    "run": 3,
+    "mode": "late-product",
+    "confirmed_rounds": 0,
+    "observed_confirmation_rounds": 1,
+    "native_phase_criteria_met": false,
+    "receiver_client_state_equal": false,
+    "genuine_budget_depletion_observed": false,
+    "attacker_processes_ready": 24,
+    "actor_reports_successful_without_cap_or_kill": true,
+    "verifier_errors": [
+      "PUBLIC_REQUEST_DEADLINE"
+    ],
+    "observer_complete": true,
+    "submits_ack": 7,
+    "history_ack": 6,
+    "work_failed": 2664,
+    "work_finished": 2671,
+    "paid_cpu_ns": 3118335087,
+    "budget_refusals": 0,
+    "shutdown_credit_ns": 1994060872,
+    "shutdown_inflight": 0,
+    "accounting_unavailable": false,
+    "round_depletion": [
+      false
+    ]
+  }
+]

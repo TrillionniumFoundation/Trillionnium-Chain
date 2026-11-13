@@ -1,0 +1,2938 @@
+{
+  "schema": "chain-throughput-ci-readonly-snapshot-v1",
+  "observed_utc": "2026-11-11T07:03:00Z",
+  "candidate_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+  "candidate_tree": "1f42f41923d7761c02fc68b478df5b019c7d83e8",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "status_observation": "GitHub REST actions/runs/{run_id}/jobs?per_page=100&page=1",
+  "run_source_binding_observed_utc": "2026-11-11T07:03:00Z",
+  "atomic_snapshot": false,
+  "note": "Direct status/step observations; declared head/merge subject is not an executed-source claim.",
+  "runs": [
+    {
+      "id": 42960214402,
+      "name": "PoN original budget component controls",
+      "head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "run_attempt": 1,
+      "workflow": ".github/workflows/pon-budget-controls.yml",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214402",
+      "jobs": [
+        {
+          "id": 130324695801,
+          "name": "Original budget controls (fixed)",
+          "source_kind": "component-source",
+          "expected_subject_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "core_exact_head": false,
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-11T05:43:12Z",
+              "completed_at": "2026-11-11T05:43:13Z"
+            },
+            {
+              "name": "Reserve fresh component observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-11T05:43:13Z",
+              "completed_at": "2026-11-11T05:43:13Z"
+            },
+            {
+              "name": "Checkout exact current control driver",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-11T05:43:13Z",
+              "completed_at": "2026-11-11T05:44:02Z"
+            },
+            {
+              "name": "Checkout exact independently measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-11T05:44:02Z",
+              "completed_at": "2026-11-11T05:44:50Z"
+            },
+            {
+              "name": "Install the original pinned toolchain",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-11T05:44:50Z",
+              "completed_at": "2026-11-11T05:44:59Z"
+            },
+            {
+              "name": "Require runner refusal controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-11T05:44:59Z",
+              "completed_at": "2026-11-11T05:44:59Z"
+            },
+            {
+              "name": "Build once and execute the exact assigned controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-11T05:44:59Z",
+              "completed_at": "2026-11-11T06:00:48Z"
+            },
+            {
+              "name": "Preserve actual binaries, source receipts and all failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-11T06:00:48Z",
+              "completed_at": "2026-11-11T06:00:51Z"
+            },
+            {
+              "name": "Post Checkout exact independently measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15,
+              "started_at": "2026-11-11T06:00:51Z",
+              "completed_at": "2026-11-11T06:00:51Z"
+            },
+            {
+              "name": "Post Checkout exact current control driver",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16,
+              "started_at": "2026-11-11T06:00:51Z",
+              "completed_at": "2026-11-11T06:00:52Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17,
+              "started_at": "2026-11-11T06:00:52Z",
+              "completed_at": "2026-11-11T06:00:52Z"
+            }
+          ],
+          "reported_run_id": 42960214402,
+          "reported_head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "run_attempt": 1,
+          "started_at": "2026-11-11T05:43:12Z",
+          "completed_at": "2026-11-11T06:00:54Z",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214402/job/130324695801"
+        },
+        {
+          "id": 130324696034,
+          "name": "Original budget controls (pool-scan-before)",
+          "source_kind": "component-source",
+          "expected_subject_sha": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+          "core_exact_head": false,
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-11T05:45:56Z",
+              "completed_at": "2026-11-11T05:45:56Z"
+            },
+            {
+              "name": "Reserve fresh component observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-11T05:45:56Z",
+              "completed_at": "2026-11-11T05:45:56Z"
+            },
+            {
+              "name": "Checkout exact current control driver",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-11T05:45:56Z",
+              "completed_at": "2026-11-11T05:46:47Z"
+            },
+            {
+              "name": "Checkout exact independently measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-11T05:46:47Z",
+              "completed_at": "2026-11-11T05:48:16Z"
+            },
+            {
+              "name": "Install the original pinned toolchain",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-11T05:48:16Z",
+              "completed_at": "2026-11-11T05:48:25Z"
+            },
+            {
+              "name": "Require runner refusal controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-11T05:48:25Z",
+              "completed_at": "2026-11-11T05:48:25Z"
+            },
+            {
+              "name": "Build once and execute the exact assigned controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-11T05:48:25Z",
+              "completed_at": "2026-11-11T06:00:41Z"
+            },
+            {
+              "name": "Preserve actual binaries, source receipts and all failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-11T06:00:41Z",
+              "completed_at": "2026-11-11T06:00:44Z"
+            },
+            {
+              "name": "Post Checkout exact independently measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15,
+              "started_at": "2026-11-11T06:00:44Z",
+              "completed_at": "2026-11-11T06:00:44Z"
+            },
+            {
+              "name": "Post Checkout exact current control driver",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16,
+              "started_at": "2026-11-11T06:00:44Z",
+              "completed_at": "2026-11-11T06:00:44Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17,
+              "started_at": "2026-11-11T06:00:44Z",
+              "completed_at": "2026-11-11T06:00:44Z"
+            }
+          ],
+          "reported_run_id": 42960214402,
+          "reported_head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "run_attempt": 1,
+          "started_at": "2026-11-11T05:45:54Z",
+          "completed_at": "2026-11-11T06:00:47Z",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214402/job/130324696034"
+        },
+        {
+          "id": 130324696062,
+          "name": "Original budget controls (pool-before-v2)",
+          "source_kind": "component-source",
+          "expected_subject_sha": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+          "core_exact_head": false,
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-11T05:50:21Z",
+              "completed_at": "2026-11-11T05:50:22Z"
+            },
+            {
+              "name": "Reserve fresh component observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-11T05:50:22Z",
+              "completed_at": "2026-11-11T05:50:22Z"
+            },
+            {
+              "name": "Checkout exact current control driver",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-11T05:50:22Z",
+              "completed_at": "2026-11-11T05:51:34Z"
+            },
+            {
+              "name": "Checkout exact independently measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-11T05:51:34Z",
+              "completed_at": "2026-11-11T05:53:04Z"
+            },
+            {
+              "name": "Install the original pinned toolchain",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-11T05:53:04Z",
+              "completed_at": "2026-11-11T05:53:12Z"
+            },
+            {
+              "name": "Require runner refusal controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-11T05:53:12Z",
+              "completed_at": "2026-11-11T05:53:12Z"
+            },
+            {
+              "name": "Build once and execute the exact assigned controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-11T05:53:12Z",
+              "completed_at": "2026-11-11T06:04:28Z"
+            },
+            {
+              "name": "Preserve actual binaries, source receipts and all failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-11T06:04:28Z",
+              "completed_at": "2026-11-11T06:04:32Z"
+            },
+            {
+              "name": "Post Checkout exact independently measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15,
+              "started_at": "2026-11-11T06:04:32Z",
+              "completed_at": "2026-11-11T06:04:32Z"
+            },
+            {
+              "name": "Post Checkout exact current control driver",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16,
+              "started_at": "2026-11-11T06:04:32Z",
+              "completed_at": "2026-11-11T06:04:32Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17,
+              "started_at": "2026-11-11T06:04:32Z",
+              "completed_at": "2026-11-11T06:04:32Z"
+            }
+          ],
+          "reported_run_id": 42960214402,
+          "reported_head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "run_attempt": 1,
+          "started_at": "2026-11-11T05:50:20Z",
+          "completed_at": "2026-11-11T06:04:36Z",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214402/job/130324696062"
+        },
+        {
+          "id": 130324696147,
+          "name": "Original budget controls (budget-before-v2)",
+          "source_kind": "component-source",
+          "expected_subject_sha": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+          "core_exact_head": false,
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-11T05:50:21Z",
+              "completed_at": "2026-11-11T05:50:22Z"
+            },
+            {
+              "name": "Reserve fresh component observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-11T05:50:22Z",
+              "completed_at": "2026-11-11T05:50:22Z"
+            },
+            {
+              "name": "Checkout exact current control driver",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-11T05:50:22Z",
+              "completed_at": "2026-11-11T05:52:54Z"
+            },
+            {
+              "name": "Checkout exact independently measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-11T05:52:54Z",
+              "completed_at": "2026-11-11T05:54:36Z"
+            },
+            {
+              "name": "Install the original pinned toolchain",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-11T05:54:36Z",
+              "completed_at": "2026-11-11T05:54:44Z"
+            },
+            {
+              "name": "Require runner refusal controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-11T05:54:44Z",
+              "completed_at": "2026-11-11T05:54:45Z"
+            },
+            {
+              "name": "Build once and execute the exact assigned controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-11T05:54:45Z",
+              "completed_at": "2026-11-11T06:07:43Z"
+            },
+            {
+              "name": "Preserve actual binaries, source receipts and all failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-11T06:07:43Z",
+              "completed_at": "2026-11-11T06:07:47Z"
+            },
+            {
+              "name": "Post Checkout exact independently measured source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15,
+              "started_at": "2026-11-11T06:07:47Z",
+              "completed_at": "2026-11-11T06:07:47Z"
+            },
+            {
+              "name": "Post Checkout exact current control driver",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16,
+              "started_at": "2026-11-11T06:07:47Z",
+              "completed_at": "2026-11-11T06:07:47Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17,
+              "started_at": "2026-11-11T06:07:47Z",
+              "completed_at": "2026-11-11T06:07:48Z"
+            }
+          ],
+          "reported_run_id": 42960214402,
+          "reported_head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "run_attempt": 1,
+          "started_at": "2026-11-11T05:50:20Z",
+          "completed_at": "2026-11-11T06:07:51Z",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214402/job/130324696147"
+        }
+      ],
+      "status": "completed",
+      "conclusion": "success",
+      "updated_at": "2026-11-11T06:07:51Z",
+      "metadata_fresh_at_snapshot": true,
+      "jobs_fresh_at_snapshot": true
+    },
+    {
+      "id": 42960214803,
+      "name": "PoN original native campaign",
+      "head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "run_attempt": 1,
+      "workflow": ".github/workflows/pon-native-campaign-qualification.yml",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214803",
+      "jobs": [
+        {
+          "id": 130324697559,
+          "name": "original native campaign (x64, head, release)",
+          "source_kind": "head",
+          "expected_subject_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "core_exact_head": false,
+          "status": "completed",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-11T05:59:41Z",
+              "completed_at": "2026-11-11T05:59:42Z"
+            },
+            {
+              "name": "Reserve new output and isolated Cargo directories",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-11T05:59:42Z",
+              "completed_at": "2026-11-11T05:59:42Z"
+            },
+            {
+              "name": "Checkout the immutable candidate head",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-11T05:59:42Z",
+              "completed_at": "2026-11-11T06:00:26Z"
+            },
+            {
+              "name": "Verify actual tracked bytes and original source boundary",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-11T06:00:26Z",
+              "completed_at": "2026-11-11T06:00:31Z"
+            },
+            {
+              "name": "Install the source-pinned compiler and fetch locked dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-11T06:00:31Z",
+              "completed_at": "2026-11-11T06:00:40Z"
+            },
+            {
+              "name": "Prepare the exact original test runner without changing source",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-11T06:00:40Z",
+              "completed_at": "2026-11-11T06:00:40Z"
+            },
+            {
+              "name": "Run three original campaigns under verified actual limits",
+              "status": "completed",
+              "conclusion": "failure",
+              "number": 7,
+              "started_at": "2026-11-11T06:00:40Z",
+              "completed_at": "2026-11-11T06:09:14Z"
+            },
+            {
+              "name": "Preserve final source verification and all partial artifact hashes",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-11T06:09:14Z",
+              "completed_at": "2026-11-11T06:09:17Z"
+            },
+            {
+              "name": "Upload successful, failed and partial observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-11T06:09:17Z",
+              "completed_at": "2026-11-11T06:09:24Z"
+            },
+            {
+              "name": "Post Checkout the immutable candidate head",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 18,
+              "started_at": "2026-11-11T06:09:24Z",
+              "completed_at": "2026-11-11T06:09:24Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 19,
+              "started_at": "2026-11-11T06:09:24Z",
+              "completed_at": "2026-11-11T06:09:24Z"
+            }
+          ],
+          "reported_run_id": 42960214803,
+          "reported_head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "run_attempt": 1,
+          "started_at": "2026-11-11T05:59:41Z",
+          "completed_at": "2026-11-11T06:09:26Z",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214803/job/130324697559"
+        }
+      ],
+      "status": "completed",
+      "conclusion": "failure",
+      "updated_at": "2026-11-11T06:09:27Z",
+      "metadata_fresh_at_snapshot": true,
+      "jobs_fresh_at_snapshot": true
+    },
+    {
+      "id": 42960214277,
+      "name": "trnm-required-baseline",
+      "head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "run_attempt": 1,
+      "workflow": ".github/workflows/trnm-required-baseline.yml",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214277",
+      "jobs": [
+        {
+          "id": 130324695517,
+          "name": "repository-truth",
+          "source_kind": "head",
+          "expected_subject_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "core_exact_head": true,
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-11T05:39:18Z",
+              "completed_at": "2026-11-11T05:39:18Z"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-11T05:39:18Z",
+              "completed_at": "2026-11-11T05:39:57Z"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-11T05:39:57Z",
+              "completed_at": "2026-11-11T05:40:00Z"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-11T05:40:00Z",
+              "completed_at": "2026-11-11T05:40:00Z"
+            },
+            {
+              "name": "Check PQ provider CI wiring and failure controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-11T05:40:00Z",
+              "completed_at": "2026-11-11T05:40:00Z"
+            },
+            {
+              "name": "Check original public Host CI ownership and failure controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-11T05:40:00Z",
+              "completed_at": "2026-11-11T05:40:02Z"
+            },
+            {
+              "name": "Install isolated runtime material verifier dependency",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-11T05:40:02Z",
+              "completed_at": "2026-11-11T05:40:05Z"
+            },
+            {
+              "name": "Run actual repository-truth checks",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-11T05:40:05Z",
+              "completed_at": "2026-11-11T05:46:36Z"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-11T05:46:36Z",
+              "completed_at": "2026-11-11T05:46:38Z"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-11T05:46:38Z",
+              "completed_at": "2026-11-11T05:46:39Z"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 20,
+              "started_at": "2026-11-11T05:46:39Z",
+              "completed_at": "2026-11-11T05:46:39Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 21,
+              "started_at": "2026-11-11T05:46:39Z",
+              "completed_at": "2026-11-11T05:46:39Z"
+            }
+          ],
+          "reported_run_id": 42960214277,
+          "reported_head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "run_attempt": 1,
+          "started_at": "2026-11-11T05:39:17Z",
+          "completed_at": "2026-11-11T05:46:41Z",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214277/job/130324695517"
+        },
+        {
+          "id": 130324695675,
+          "name": "rust-baseline shard (runtime)",
+          "source_kind": "head",
+          "expected_subject_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "core_exact_head": true,
+          "status": "in_progress",
+          "conclusion": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-11T05:51:52Z",
+              "completed_at": "2026-11-11T05:51:52Z"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-11T05:51:52Z",
+              "completed_at": "2026-11-11T05:52:38Z"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-11T05:52:38Z",
+              "completed_at": "2026-11-11T05:52:41Z"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-11T05:52:41Z",
+              "completed_at": "2026-11-11T05:52:42Z"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-11T05:52:42Z",
+              "completed_at": "2026-11-11T05:52:51Z"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-11T05:52:51Z",
+              "completed_at": "2026-11-11T05:54:53Z"
+            },
+            {
+              "name": "Install isolated signed-state oracle Python environment",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-11T05:54:53Z",
+              "completed_at": "2026-11-11T05:54:58Z"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-11T05:54:58Z",
+              "completed_at": "2026-11-11T05:56:12Z"
+            },
+            {
+              "name": "Run retained Rust shard",
+              "status": "in_progress",
+              "conclusion": null,
+              "number": 9,
+              "started_at": "2026-11-11T05:56:12Z",
+              "completed_at": null
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "status": "pending",
+              "conclusion": null,
+              "number": 10,
+              "started_at": null,
+              "completed_at": null
+            },
+            {
+              "name": "Retain source and execution observations",
+              "status": "pending",
+              "conclusion": null,
+              "number": 11,
+              "started_at": null,
+              "completed_at": null
+            },
+            {
+              "name": "Retain lightweight exact Rust shard proof",
+              "status": "pending",
+              "conclusion": null,
+              "number": 12,
+              "started_at": null,
+              "completed_at": null
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "status": "pending",
+              "conclusion": null,
+              "number": 24,
+              "started_at": null,
+              "completed_at": null
+            }
+          ],
+          "reported_run_id": 42960214277,
+          "reported_head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "run_attempt": 1,
+          "started_at": "2026-11-11T05:51:51Z",
+          "completed_at": null,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214277/job/130324695675"
+        },
+        {
+          "id": 130324695703,
+          "name": "W1 actual reuse V3 (x64, prospective-merge)",
+          "source_kind": "prospective-merge",
+          "expected_subject_sha": null,
+          "core_exact_head": false,
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-11T05:39:43Z",
+              "completed_at": "2026-11-11T05:39:43Z"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-11T05:39:43Z",
+              "completed_at": "2026-11-11T05:40:34Z"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge before execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-11T05:40:34Z",
+              "completed_at": "2026-11-11T05:40:37Z"
+            },
+            {
+              "name": "Check original repository boundary before native V3 build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-11T05:40:37Z",
+              "completed_at": "2026-11-11T05:40:37Z"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-11T05:40:37Z",
+              "completed_at": "2026-11-11T05:40:37Z"
+            },
+            {
+              "name": "Install pinned native release compiler",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-11T05:40:37Z",
+              "completed_at": "2026-11-11T05:40:46Z"
+            },
+            {
+              "name": "Install matching native formatter",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-11T05:40:46Z",
+              "completed_at": "2026-11-11T05:40:48Z"
+            },
+            {
+              "name": "Execute the complete native W1 actual reuse V3 grid",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-11T05:40:48Z",
+              "completed_at": "2026-11-11T05:44:15Z"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-11T05:44:15Z",
+              "completed_at": "2026-11-11T05:44:18Z"
+            },
+            {
+              "name": "Retain V3 costs including all failed observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-11T05:44:18Z",
+              "completed_at": "2026-11-11T05:44:19Z"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 20,
+              "started_at": "2026-11-11T05:44:19Z",
+              "completed_at": "2026-11-11T05:44:19Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 21,
+              "started_at": "2026-11-11T05:44:19Z",
+              "completed_at": "2026-11-11T05:44:19Z"
+            }
+          ],
+          "reported_run_id": 42960214277,
+          "reported_head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "run_attempt": 1,
+          "started_at": "2026-11-11T05:39:42Z",
+          "completed_at": "2026-11-11T05:44:21Z",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214277/job/130324695703"
+        },
+        {
+          "id": 130324695713,
+          "name": "protocol-contract",
+          "source_kind": "head",
+          "expected_subject_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "core_exact_head": false,
+          "status": "completed",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-11T05:56:31Z",
+              "completed_at": "2026-11-11T05:56:32Z"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-11T05:56:32Z",
+              "completed_at": "2026-11-11T05:57:24Z"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-11T05:57:24Z",
+              "completed_at": "2026-11-11T05:57:28Z"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-11T05:57:28Z",
+              "completed_at": "2026-11-11T05:57:28Z"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-11T05:57:28Z",
+              "completed_at": "2026-11-11T05:57:38Z"
+            },
+            {
+              "name": "Install isolated conformance-only Python environment",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-11T05:57:38Z",
+              "completed_at": "2026-11-11T05:57:46Z"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-11T05:57:46Z",
+              "completed_at": "2026-11-11T05:59:38Z"
+            },
+            {
+              "name": "Run actual protocol-contract checks",
+              "status": "completed",
+              "conclusion": "failure",
+              "number": 8,
+              "started_at": "2026-11-11T05:59:38Z",
+              "completed_at": "2026-11-11T06:30:02Z"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-11T06:30:02Z",
+              "completed_at": "2026-11-11T06:30:05Z"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-11T06:30:05Z",
+              "completed_at": "2026-11-11T06:30:06Z"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 20,
+              "started_at": "2026-11-11T06:30:06Z",
+              "completed_at": "2026-11-11T06:30:06Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 21,
+              "started_at": "2026-11-11T06:30:06Z",
+              "completed_at": "2026-11-11T06:30:06Z"
+            }
+          ],
+          "reported_run_id": 42960214277,
+          "reported_head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "run_attempt": 1,
+          "started_at": "2026-11-11T05:56:30Z",
+          "completed_at": "2026-11-11T06:30:08Z",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214277/job/130324695713"
+        },
+        {
+          "id": 130324695720,
+          "name": "prospective Rust shard (quality)",
+          "source_kind": "prospective-merge",
+          "expected_subject_sha": null,
+          "core_exact_head": false,
+          "status": "in_progress",
+          "conclusion": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-11T05:39:35Z",
+              "completed_at": "2026-11-11T05:39:36Z"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-11T05:39:36Z",
+              "completed_at": "2026-11-11T05:41:50Z"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-11T05:41:50Z",
+              "completed_at": "2026-11-11T05:41:54Z"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-11T05:41:54Z",
+              "completed_at": "2026-11-11T05:41:54Z"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-11T05:41:54Z",
+              "completed_at": "2026-11-11T05:42:03Z"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-11T05:42:03Z",
+              "completed_at": "2026-11-11T05:44:20Z"
+            },
+            {
+              "name": "Install isolated signed-state oracle Python environment",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-11T05:44:20Z",
+              "completed_at": "2026-11-11T05:44:27Z"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-11T05:44:27Z",
+              "completed_at": "2026-11-11T05:46:14Z"
+            },
+            {
+              "name": "Run retained Rust shard",
+              "status": "in_progress",
+              "conclusion": null,
+              "number": 9,
+              "started_at": "2026-11-11T05:46:14Z",
+              "completed_at": null
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "status": "pending",
+              "conclusion": null,
+              "number": 10,
+              "started_at": null,
+              "completed_at": null
+            },
+            {
+              "name": "Retain source and execution observations",
+              "status": "pending",
+              "conclusion": null,
+              "number": 11,
+              "started_at": null,
+              "completed_at": null
+            },
+            {
+              "name": "Retain lightweight exact Rust shard proof",
+              "status": "pending",
+              "conclusion": null,
+              "number": 12,
+              "started_at": null,
+              "completed_at": null
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "status": "pending",
+              "conclusion": null,
+              "number": 24,
+              "started_at": null,
+              "completed_at": null
+            }
+          ],
+          "reported_run_id": 42960214277,
+          "reported_head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "run_attempt": 1,
+          "started_at": "2026-11-11T05:39:34Z",
+          "completed_at": null,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214277/job/130324695720"
+        },
+        {
+          "id": 130324695723,
+          "name": "cross-arch-cost (x64)",
+          "source_kind": "head",
+          "expected_subject_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "core_exact_head": false,
+          "status": "completed",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-11T05:43:10Z",
+              "completed_at": "2026-11-11T05:43:11Z"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-11T05:43:11Z",
+              "completed_at": "2026-11-11T05:43:57Z"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-11T05:43:57Z",
+              "completed_at": "2026-11-11T05:44:01Z"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-11T05:44:01Z",
+              "completed_at": "2026-11-11T05:44:01Z"
+            },
+            {
+              "name": "Install pinned native release compiler",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-11T05:44:01Z",
+              "completed_at": "2026-11-11T05:44:09Z"
+            },
+            {
+              "name": "Install matching native formatter",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-11T05:44:09Z",
+              "completed_at": "2026-11-11T05:44:09Z"
+            },
+            {
+              "name": "Execute native release setup and repeated-search costs",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-11T05:44:09Z",
+              "completed_at": "2026-11-11T05:44:54Z"
+            },
+            {
+              "name": "Execute native zero-matrix locality costs",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-11T05:44:54Z",
+              "completed_at": "2026-11-11T05:45:02Z"
+            },
+            {
+              "name": "Execute native one-zero rank-one locality costs",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-11T05:45:02Z",
+              "completed_at": "2026-11-11T05:45:11Z"
+            },
+            {
+              "name": "Execute native fixed maintenance producer and preparation costs",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-11T05:45:11Z",
+              "completed_at": "2026-11-11T05:45:21Z"
+            },
+            {
+              "name": "Execute native legal and late-rejection verifier costs",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-11T05:45:21Z",
+              "completed_at": "2026-11-11T05:45:38Z"
+            },
+            {
+              "name": "Execute exact native from-zero service controls",
+              "status": "completed",
+              "conclusion": "failure",
+              "number": 12,
+              "started_at": "2026-11-11T05:45:38Z",
+              "completed_at": "2026-11-11T05:50:22Z"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-11T05:50:22Z",
+              "completed_at": "2026-11-11T05:50:25Z"
+            },
+            {
+              "name": "Retain native cost successes and failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-11T05:50:25Z",
+              "completed_at": "2026-11-11T05:50:27Z"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28,
+              "started_at": "2026-11-11T05:50:27Z",
+              "completed_at": "2026-11-11T05:50:27Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29,
+              "started_at": "2026-11-11T05:50:27Z",
+              "completed_at": "2026-11-11T05:50:27Z"
+            }
+          ],
+          "reported_run_id": 42960214277,
+          "reported_head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "run_attempt": 1,
+          "started_at": "2026-11-11T05:43:09Z",
+          "completed_at": "2026-11-11T05:50:30Z",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214277/job/130324695723"
+        },
+        {
+          "id": 130324695740,
+          "name": "rust-baseline shard (quality)",
+          "source_kind": "head",
+          "expected_subject_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "core_exact_head": true,
+          "status": "in_progress",
+          "conclusion": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-11T05:57:36Z",
+              "completed_at": "2026-11-11T05:57:37Z"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-11T05:57:37Z",
+              "completed_at": "2026-11-11T05:58:16Z"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-11T05:58:16Z",
+              "completed_at": "2026-11-11T05:58:18Z"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-11T05:58:18Z",
+              "completed_at": "2026-11-11T05:58:18Z"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-11T05:58:18Z",
+              "completed_at": "2026-11-11T05:58:26Z"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-11T05:58:26Z",
+              "completed_at": "2026-11-11T05:59:59Z"
+            },
+            {
+              "name": "Install isolated signed-state oracle Python environment",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-11T05:59:59Z",
+              "completed_at": "2026-11-11T06:00:03Z"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-11T06:00:03Z",
+              "completed_at": "2026-11-11T06:01:06Z"
+            },
+            {
+              "name": "Run retained Rust shard",
+              "status": "in_progress",
+              "conclusion": null,
+              "number": 9,
+              "started_at": "2026-11-11T06:01:06Z",
+              "completed_at": null
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "status": "pending",
+              "conclusion": null,
+              "number": 10,
+              "started_at": null,
+              "completed_at": null
+            },
+            {
+              "name": "Retain source and execution observations",
+              "status": "pending",
+              "conclusion": null,
+              "number": 11,
+              "started_at": null,
+              "completed_at": null
+            },
+            {
+              "name": "Retain lightweight exact Rust shard proof",
+              "status": "pending",
+              "conclusion": null,
+              "number": 12,
+              "started_at": null,
+              "completed_at": null
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "status": "pending",
+              "conclusion": null,
+              "number": 24,
+              "started_at": null,
+              "completed_at": null
+            }
+          ],
+          "reported_run_id": 42960214277,
+          "reported_head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "run_attempt": 1,
+          "started_at": "2026-11-11T05:57:35Z",
+          "completed_at": null,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214277/job/130324695740"
+        },
+        {
+          "id": 130324695751,
+          "name": "prospective Rust shard (runtime)",
+          "source_kind": "prospective-merge",
+          "expected_subject_sha": null,
+          "core_exact_head": false,
+          "status": "in_progress",
+          "conclusion": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-11T05:48:30Z",
+              "completed_at": "2026-11-11T05:48:31Z"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-11T05:48:31Z",
+              "completed_at": "2026-11-11T05:49:12Z"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-11T05:49:12Z",
+              "completed_at": "2026-11-11T05:49:14Z"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-11T05:49:14Z",
+              "completed_at": "2026-11-11T05:49:14Z"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-11T05:49:14Z",
+              "completed_at": "2026-11-11T05:49:22Z"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-11T05:49:22Z",
+              "completed_at": "2026-11-11T05:50:59Z"
+            },
+            {
+              "name": "Install isolated signed-state oracle Python environment",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-11T05:50:59Z",
+              "completed_at": "2026-11-11T05:51:04Z"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-11T05:51:04Z",
+              "completed_at": "2026-11-11T05:52:13Z"
+            },
+            {
+              "name": "Run retained Rust shard",
+              "status": "in_progress",
+              "conclusion": null,
+              "number": 9,
+              "started_at": "2026-11-11T05:52:13Z",
+              "completed_at": null
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "status": "pending",
+              "conclusion": null,
+              "number": 10,
+              "started_at": null,
+              "completed_at": null
+            },
+            {
+              "name": "Retain source and execution observations",
+              "status": "pending",
+              "conclusion": null,
+              "number": 11,
+              "started_at": null,
+              "completed_at": null
+            },
+            {
+              "name": "Retain lightweight exact Rust shard proof",
+              "status": "pending",
+              "conclusion": null,
+              "number": 12,
+              "started_at": null,
+              "completed_at": null
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "status": "pending",
+              "conclusion": null,
+              "number": 24,
+              "started_at": null,
+              "completed_at": null
+            }
+          ],
+          "reported_run_id": 42960214277,
+          "reported_head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "run_attempt": 1,
+          "started_at": "2026-11-11T05:48:30Z",
+          "completed_at": null,
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214277/job/130324695751"
+        },
+        {
+          "id": 130324695762,
+          "name": "W1 actual reuse V3 (x64, head)",
+          "source_kind": "head",
+          "expected_subject_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "core_exact_head": false,
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-11T05:46:34Z",
+              "completed_at": "2026-11-11T05:46:35Z"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-11T05:46:35Z",
+              "completed_at": "2026-11-11T05:47:21Z"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge before execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-11T05:47:21Z",
+              "completed_at": "2026-11-11T05:47:24Z"
+            },
+            {
+              "name": "Check original repository boundary before native V3 build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-11T05:47:24Z",
+              "completed_at": "2026-11-11T05:47:24Z"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-11T05:47:24Z",
+              "completed_at": "2026-11-11T05:47:24Z"
+            },
+            {
+              "name": "Install pinned native release compiler",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-11T05:47:24Z",
+              "completed_at": "2026-11-11T05:47:32Z"
+            },
+            {
+              "name": "Install matching native formatter",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-11T05:47:32Z",
+              "completed_at": "2026-11-11T05:47:32Z"
+            },
+            {
+              "name": "Execute the complete native W1 actual reuse V3 grid",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-11T05:47:32Z",
+              "completed_at": "2026-11-11T05:50:11Z"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-11T05:50:11Z",
+              "completed_at": "2026-11-11T05:50:13Z"
+            },
+            {
+              "name": "Retain V3 costs including all failed observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-11T05:50:13Z",
+              "completed_at": "2026-11-11T05:50:15Z"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 20,
+              "started_at": "2026-11-11T05:50:15Z",
+              "completed_at": "2026-11-11T05:50:15Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 21,
+              "started_at": "2026-11-11T05:50:15Z",
+              "completed_at": "2026-11-11T05:50:15Z"
+            }
+          ],
+          "reported_run_id": 42960214277,
+          "reported_head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "run_attempt": 1,
+          "started_at": "2026-11-11T05:46:33Z",
+          "completed_at": "2026-11-11T05:50:18Z",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214277/job/130324695762"
+        },
+        {
+          "id": 130324695786,
+          "name": "W1 actual reuse V3 (arm64, head)",
+          "source_kind": "head",
+          "expected_subject_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "core_exact_head": false,
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-11T05:49:40Z",
+              "completed_at": "2026-11-11T05:49:41Z"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-11T05:49:41Z",
+              "completed_at": "2026-11-11T05:50:24Z"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge before execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-11T05:50:24Z",
+              "completed_at": "2026-11-11T05:50:27Z"
+            },
+            {
+              "name": "Check original repository boundary before native V3 build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-11T05:50:27Z",
+              "completed_at": "2026-11-11T05:50:27Z"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-11T05:50:27Z",
+              "completed_at": "2026-11-11T05:50:27Z"
+            },
+            {
+              "name": "Install pinned native release compiler",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-11T05:50:27Z",
+              "completed_at": "2026-11-11T05:50:33Z"
+            },
+            {
+              "name": "Install matching native formatter",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-11T05:50:33Z",
+              "completed_at": "2026-11-11T05:50:34Z"
+            },
+            {
+              "name": "Execute the complete native W1 actual reuse V3 grid",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-11T05:50:34Z",
+              "completed_at": "2026-11-11T05:54:33Z"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-11T05:54:33Z",
+              "completed_at": "2026-11-11T05:54:36Z"
+            },
+            {
+              "name": "Retain V3 costs including all failed observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-11T05:54:36Z",
+              "completed_at": "2026-11-11T05:54:38Z"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 20,
+              "started_at": "2026-11-11T05:54:38Z",
+              "completed_at": "2026-11-11T05:54:38Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 21,
+              "started_at": "2026-11-11T05:54:38Z",
+              "completed_at": "2026-11-11T05:54:38Z"
+            }
+          ],
+          "reported_run_id": 42960214277,
+          "reported_head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "run_attempt": 1,
+          "started_at": "2026-11-11T05:49:40Z",
+          "completed_at": "2026-11-11T05:54:40Z",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214277/job/130324695786"
+        },
+        {
+          "id": 130324695802,
+          "name": "cross-arch-cost (arm64)",
+          "source_kind": "head",
+          "expected_subject_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "core_exact_head": false,
+          "status": "completed",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-11T05:39:20Z",
+              "completed_at": "2026-11-11T05:39:20Z"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-11T05:39:20Z",
+              "completed_at": "2026-11-11T05:40:08Z"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-11T05:40:08Z",
+              "completed_at": "2026-11-11T05:40:11Z"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-11T05:40:11Z",
+              "completed_at": "2026-11-11T05:40:11Z"
+            },
+            {
+              "name": "Install pinned native release compiler",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-11T05:40:11Z",
+              "completed_at": "2026-11-11T05:40:16Z"
+            },
+            {
+              "name": "Install matching native formatter",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-11T05:40:16Z",
+              "completed_at": "2026-11-11T05:40:16Z"
+            },
+            {
+              "name": "Execute native release setup and repeated-search costs",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-11T05:40:16Z",
+              "completed_at": "2026-11-11T05:41:06Z"
+            },
+            {
+              "name": "Execute native zero-matrix locality costs",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-11T05:41:06Z",
+              "completed_at": "2026-11-11T05:41:14Z"
+            },
+            {
+              "name": "Execute native one-zero rank-one locality costs",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-11T05:41:14Z",
+              "completed_at": "2026-11-11T05:41:22Z"
+            },
+            {
+              "name": "Execute native fixed maintenance producer and preparation costs",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-11T05:41:22Z",
+              "completed_at": "2026-11-11T05:41:32Z"
+            },
+            {
+              "name": "Execute native legal and late-rejection verifier costs",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-11T05:41:32Z",
+              "completed_at": "2026-11-11T05:41:51Z"
+            },
+            {
+              "name": "Execute exact native from-zero service controls",
+              "status": "completed",
+              "conclusion": "failure",
+              "number": 12,
+              "started_at": "2026-11-11T05:41:51Z",
+              "completed_at": "2026-11-11T05:47:09Z"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-11T05:47:09Z",
+              "completed_at": "2026-11-11T05:47:12Z"
+            },
+            {
+              "name": "Retain native cost successes and failures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-11T05:47:12Z",
+              "completed_at": "2026-11-11T05:47:14Z"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28,
+              "started_at": "2026-11-11T05:47:14Z",
+              "completed_at": "2026-11-11T05:47:14Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29,
+              "started_at": "2026-11-11T05:47:14Z",
+              "completed_at": "2026-11-11T05:47:14Z"
+            }
+          ],
+          "reported_run_id": 42960214277,
+          "reported_head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "run_attempt": 1,
+          "started_at": "2026-11-11T05:39:19Z",
+          "completed_at": "2026-11-11T05:47:16Z",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214277/job/130324695802"
+        },
+        {
+          "id": 130324695822,
+          "name": "fuzz-smoke",
+          "source_kind": "head",
+          "expected_subject_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "core_exact_head": false,
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-11T05:57:05Z",
+              "completed_at": "2026-11-11T05:57:05Z"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-11T05:57:05Z",
+              "completed_at": "2026-11-11T05:57:55Z"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-11T05:57:55Z",
+              "completed_at": "2026-11-11T05:57:59Z"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-11T05:57:59Z",
+              "completed_at": "2026-11-11T05:57:59Z"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-11T05:57:59Z",
+              "completed_at": "2026-11-11T05:58:08Z"
+            },
+            {
+              "name": "Install pinned coverage-guided fuzz tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-11T05:58:08Z",
+              "completed_at": "2026-11-11T05:58:45Z"
+            },
+            {
+              "name": "Run actual fuzz-smoke checks",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-11T05:58:45Z",
+              "completed_at": "2026-11-11T06:14:59Z"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-11T06:14:59Z",
+              "completed_at": "2026-11-11T06:15:02Z"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-11T06:15:02Z",
+              "completed_at": "2026-11-11T06:15:04Z"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 18,
+              "started_at": "2026-11-11T06:15:04Z",
+              "completed_at": "2026-11-11T06:15:04Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 19,
+              "started_at": "2026-11-11T06:15:04Z",
+              "completed_at": "2026-11-11T06:15:04Z"
+            }
+          ],
+          "reported_run_id": 42960214277,
+          "reported_head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "run_attempt": 1,
+          "started_at": "2026-11-11T05:57:04Z",
+          "completed_at": "2026-11-11T06:15:06Z",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214277/job/130324695822"
+        },
+        {
+          "id": 130324695830,
+          "name": "prospective-merge (external-evidence-contract)",
+          "source_kind": "prospective-merge",
+          "expected_subject_sha": null,
+          "core_exact_head": false,
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-11T06:05:21Z",
+              "completed_at": "2026-11-11T06:05:22Z"
+            },
+            {
+              "name": "Checkout exact prospective merge",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-11T06:05:22Z",
+              "completed_at": "2026-11-11T06:06:11Z"
+            },
+            {
+              "name": "Verify merge identity and exact ordered parents",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-11T06:06:11Z",
+              "completed_at": "2026-11-11T06:06:15Z"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-11T06:06:15Z",
+              "completed_at": "2026-11-11T06:06:15Z"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 5,
+              "started_at": "2026-11-11T06:06:15Z",
+              "completed_at": "2026-11-11T06:06:15Z"
+            },
+            {
+              "name": "Install isolated conformance and evidence Python environment",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-11T06:06:15Z",
+              "completed_at": "2026-11-11T06:06:22Z"
+            },
+            {
+              "name": "Install pinned coverage-guided fuzz tools",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 7,
+              "started_at": "2026-11-11T06:06:22Z",
+              "completed_at": "2026-11-11T06:06:22Z"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 8,
+              "started_at": "2026-11-11T06:06:22Z",
+              "completed_at": "2026-11-11T06:06:22Z"
+            },
+            {
+              "name": "Check PQ provider CI wiring and failure controls",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 9,
+              "started_at": "2026-11-11T06:06:22Z",
+              "completed_at": "2026-11-11T06:06:22Z"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 10,
+              "started_at": "2026-11-11T06:06:22Z",
+              "completed_at": "2026-11-11T06:06:22Z"
+            },
+            {
+              "name": "Install isolated runtime material verifier dependency",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 11,
+              "started_at": "2026-11-11T06:06:22Z",
+              "completed_at": "2026-11-11T06:06:22Z"
+            },
+            {
+              "name": "Execute the same lane on the prospective merge",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-11-11T06:06:22Z",
+              "completed_at": "2026-11-11T06:13:20Z"
+            },
+            {
+              "name": "Verify merge source remained unchanged",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-11T06:13:20Z",
+              "completed_at": "2026-11-11T06:13:24Z"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-11T06:13:24Z",
+              "completed_at": "2026-11-11T06:13:24Z"
+            },
+            {
+              "name": "Post Checkout exact prospective merge",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28,
+              "started_at": "2026-11-11T06:13:24Z",
+              "completed_at": "2026-11-11T06:13:25Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29,
+              "started_at": "2026-11-11T06:13:25Z",
+              "completed_at": "2026-11-11T06:13:25Z"
+            }
+          ],
+          "reported_run_id": 42960214277,
+          "reported_head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "run_attempt": 1,
+          "started_at": "2026-11-11T06:05:21Z",
+          "completed_at": "2026-11-11T06:13:26Z",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214277/job/130324695830"
+        },
+        {
+          "id": 130324695850,
+          "name": "W1 actual reuse V3 (arm64, prospective-merge)",
+          "source_kind": "prospective-merge",
+          "expected_subject_sha": null,
+          "core_exact_head": false,
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-11T05:49:41Z",
+              "completed_at": "2026-11-11T05:49:41Z"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-11T05:49:41Z",
+              "completed_at": "2026-11-11T05:50:32Z"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge before execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-11T05:50:32Z",
+              "completed_at": "2026-11-11T05:50:34Z"
+            },
+            {
+              "name": "Check original repository boundary before native V3 build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-11T05:50:34Z",
+              "completed_at": "2026-11-11T05:50:34Z"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-11T05:50:34Z",
+              "completed_at": "2026-11-11T05:50:35Z"
+            },
+            {
+              "name": "Install pinned native release compiler",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-11T05:50:35Z",
+              "completed_at": "2026-11-11T05:50:41Z"
+            },
+            {
+              "name": "Install matching native formatter",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-11T05:50:41Z",
+              "completed_at": "2026-11-11T05:50:41Z"
+            },
+            {
+              "name": "Execute the complete native W1 actual reuse V3 grid",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-11T05:50:41Z",
+              "completed_at": "2026-11-11T05:54:56Z"
+            },
+            {
+              "name": "Verify V3 exact source and ordered merge after execution",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-11T05:54:56Z",
+              "completed_at": "2026-11-11T05:54:59Z"
+            },
+            {
+              "name": "Retain V3 costs including all failed observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-11T05:54:59Z",
+              "completed_at": "2026-11-11T05:55:01Z"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 20,
+              "started_at": "2026-11-11T05:55:01Z",
+              "completed_at": "2026-11-11T05:55:01Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 21,
+              "started_at": "2026-11-11T05:55:01Z",
+              "completed_at": "2026-11-11T05:55:01Z"
+            }
+          ],
+          "reported_run_id": 42960214277,
+          "reported_head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "run_attempt": 1,
+          "started_at": "2026-11-11T05:49:40Z",
+          "completed_at": "2026-11-11T05:55:03Z",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214277/job/130324695850"
+        },
+        {
+          "id": 130324695864,
+          "name": "prospective-merge (fuzz-smoke)",
+          "source_kind": "prospective-merge",
+          "expected_subject_sha": null,
+          "core_exact_head": false,
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-11T06:01:05Z",
+              "completed_at": "2026-11-11T06:01:06Z"
+            },
+            {
+              "name": "Checkout exact prospective merge",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-11T06:01:06Z",
+              "completed_at": "2026-11-11T06:01:56Z"
+            },
+            {
+              "name": "Verify merge identity and exact ordered parents",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-11T06:01:56Z",
+              "completed_at": "2026-11-11T06:02:00Z"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-11T06:02:00Z",
+              "completed_at": "2026-11-11T06:02:00Z"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-11T06:02:00Z",
+              "completed_at": "2026-11-11T06:02:09Z"
+            },
+            {
+              "name": "Install isolated conformance and evidence Python environment",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 6,
+              "started_at": "2026-11-11T06:02:09Z",
+              "completed_at": "2026-11-11T06:02:09Z"
+            },
+            {
+              "name": "Install pinned coverage-guided fuzz tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-11T06:02:09Z",
+              "completed_at": "2026-11-11T06:02:46Z"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 8,
+              "started_at": "2026-11-11T06:02:46Z",
+              "completed_at": "2026-11-11T06:02:46Z"
+            },
+            {
+              "name": "Check PQ provider CI wiring and failure controls",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 9,
+              "started_at": "2026-11-11T06:02:46Z",
+              "completed_at": "2026-11-11T06:02:46Z"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 10,
+              "started_at": "2026-11-11T06:02:46Z",
+              "completed_at": "2026-11-11T06:02:46Z"
+            },
+            {
+              "name": "Install isolated runtime material verifier dependency",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 11,
+              "started_at": "2026-11-11T06:02:46Z",
+              "completed_at": "2026-11-11T06:02:46Z"
+            },
+            {
+              "name": "Execute the same lane on the prospective merge",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-11-11T06:02:46Z",
+              "completed_at": "2026-11-11T06:19:07Z"
+            },
+            {
+              "name": "Verify merge source remained unchanged",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-11T06:19:07Z",
+              "completed_at": "2026-11-11T06:19:11Z"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-11T06:19:11Z",
+              "completed_at": "2026-11-11T06:19:12Z"
+            },
+            {
+              "name": "Post Checkout exact prospective merge",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28,
+              "started_at": "2026-11-11T06:19:12Z",
+              "completed_at": "2026-11-11T06:19:12Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29,
+              "started_at": "2026-11-11T06:19:12Z",
+              "completed_at": "2026-11-11T06:19:12Z"
+            }
+          ],
+          "reported_run_id": 42960214277,
+          "reported_head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "run_attempt": 1,
+          "started_at": "2026-11-11T06:01:04Z",
+          "completed_at": "2026-11-11T06:19:15Z",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214277/job/130324695864"
+        },
+        {
+          "id": 130324695906,
+          "name": "prospective-merge (repository-truth)",
+          "source_kind": "prospective-merge",
+          "expected_subject_sha": null,
+          "core_exact_head": false,
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-11T06:01:36Z",
+              "completed_at": "2026-11-11T06:01:37Z"
+            },
+            {
+              "name": "Checkout exact prospective merge",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-11T06:01:37Z",
+              "completed_at": "2026-11-11T06:02:17Z"
+            },
+            {
+              "name": "Verify merge identity and exact ordered parents",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-11T06:02:17Z",
+              "completed_at": "2026-11-11T06:02:20Z"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-11T06:02:20Z",
+              "completed_at": "2026-11-11T06:02:20Z"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 5,
+              "started_at": "2026-11-11T06:02:20Z",
+              "completed_at": "2026-11-11T06:02:20Z"
+            },
+            {
+              "name": "Install isolated conformance and evidence Python environment",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 6,
+              "started_at": "2026-11-11T06:02:20Z",
+              "completed_at": "2026-11-11T06:02:20Z"
+            },
+            {
+              "name": "Install pinned coverage-guided fuzz tools",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 7,
+              "started_at": "2026-11-11T06:02:20Z",
+              "completed_at": "2026-11-11T06:02:20Z"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 8,
+              "started_at": "2026-11-11T06:02:20Z",
+              "completed_at": "2026-11-11T06:02:20Z"
+            },
+            {
+              "name": "Check PQ provider CI wiring and failure controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-11T06:02:20Z",
+              "completed_at": "2026-11-11T06:02:20Z"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 10,
+              "started_at": "2026-11-11T06:02:20Z",
+              "completed_at": "2026-11-11T06:02:20Z"
+            },
+            {
+              "name": "Install isolated runtime material verifier dependency",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-11T06:02:20Z",
+              "completed_at": "2026-11-11T06:02:23Z"
+            },
+            {
+              "name": "Execute the same lane on the prospective merge",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-11-11T06:02:23Z",
+              "completed_at": "2026-11-11T06:09:01Z"
+            },
+            {
+              "name": "Verify merge source remained unchanged",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-11T06:09:01Z",
+              "completed_at": "2026-11-11T06:09:04Z"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-11T06:09:04Z",
+              "completed_at": "2026-11-11T06:09:05Z"
+            },
+            {
+              "name": "Post Checkout exact prospective merge",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28,
+              "started_at": "2026-11-11T06:09:05Z",
+              "completed_at": "2026-11-11T06:09:05Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29,
+              "started_at": "2026-11-11T06:09:05Z",
+              "completed_at": "2026-11-11T06:09:05Z"
+            }
+          ],
+          "reported_run_id": 42960214277,
+          "reported_head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "run_attempt": 1,
+          "started_at": "2026-11-11T06:01:35Z",
+          "completed_at": "2026-11-11T06:09:07Z",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214277/job/130324695906"
+        },
+        {
+          "id": 130324695976,
+          "name": "prospective-merge (protocol-contract)",
+          "source_kind": "prospective-merge",
+          "expected_subject_sha": null,
+          "core_exact_head": false,
+          "status": "completed",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-11T06:05:21Z",
+              "completed_at": "2026-11-11T06:05:21Z"
+            },
+            {
+              "name": "Checkout exact prospective merge",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-11T06:05:21Z",
+              "completed_at": "2026-11-11T06:06:12Z"
+            },
+            {
+              "name": "Verify merge identity and exact ordered parents",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-11T06:06:12Z",
+              "completed_at": "2026-11-11T06:06:16Z"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-11T06:06:16Z",
+              "completed_at": "2026-11-11T06:06:16Z"
+            },
+            {
+              "name": "Install pinned compiler and tools in isolated hosted runner",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-11T06:06:16Z",
+              "completed_at": "2026-11-11T06:06:25Z"
+            },
+            {
+              "name": "Install isolated conformance and evidence Python environment",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-11T06:06:25Z",
+              "completed_at": "2026-11-11T06:06:32Z"
+            },
+            {
+              "name": "Install pinned coverage-guided fuzz tools",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 7,
+              "started_at": "2026-11-11T06:06:32Z",
+              "completed_at": "2026-11-11T06:06:32Z"
+            },
+            {
+              "name": "Install pinned dependency auditor",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 8,
+              "started_at": "2026-11-11T06:06:32Z",
+              "completed_at": "2026-11-11T06:06:32Z"
+            },
+            {
+              "name": "Check PQ provider CI wiring and failure controls",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 9,
+              "started_at": "2026-11-11T06:06:32Z",
+              "completed_at": "2026-11-11T06:06:32Z"
+            },
+            {
+              "name": "Prepare pinned OpenSSL 3.5.9 PQ provider",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-11T06:06:32Z",
+              "completed_at": "2026-11-11T06:08:05Z"
+            },
+            {
+              "name": "Install isolated runtime material verifier dependency",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 11,
+              "started_at": "2026-11-11T06:08:05Z",
+              "completed_at": "2026-11-11T06:08:05Z"
+            },
+            {
+              "name": "Execute the same lane on the prospective merge",
+              "status": "completed",
+              "conclusion": "failure",
+              "number": 12,
+              "started_at": "2026-11-11T06:08:05Z",
+              "completed_at": "2026-11-11T06:33:59Z"
+            },
+            {
+              "name": "Verify merge source remained unchanged",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-11T06:33:59Z",
+              "completed_at": "2026-11-11T06:34:02Z"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-11T06:34:02Z",
+              "completed_at": "2026-11-11T06:34:05Z"
+            },
+            {
+              "name": "Post Checkout exact prospective merge",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28,
+              "started_at": "2026-11-11T06:34:05Z",
+              "completed_at": "2026-11-11T06:34:05Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29,
+              "started_at": "2026-11-11T06:34:05Z",
+              "completed_at": "2026-11-11T06:34:05Z"
+            }
+          ],
+          "reported_run_id": 42960214277,
+          "reported_head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "run_attempt": 1,
+          "started_at": "2026-11-11T06:05:20Z",
+          "completed_at": "2026-11-11T06:34:08Z",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214277/job/130324695976"
+        },
+        {
+          "id": 130324696012,
+          "name": "external-evidence-contract",
+          "source_kind": "head",
+          "expected_subject_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "core_exact_head": false,
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-11T06:06:02Z",
+              "completed_at": "2026-11-11T06:06:03Z"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-11T06:06:03Z",
+              "completed_at": "2026-11-11T06:06:55Z"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-11T06:06:55Z",
+              "completed_at": "2026-11-11T06:06:59Z"
+            },
+            {
+              "name": "Set isolated Cargo paths after runner allocation",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-11T06:06:59Z",
+              "completed_at": "2026-11-11T06:06:59Z"
+            },
+            {
+              "name": "Install isolated evidence-replay Python environment",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-11T06:06:59Z",
+              "completed_at": "2026-11-11T06:07:06Z"
+            },
+            {
+              "name": "Run actual external-evidence-contract checks",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-11T06:07:06Z",
+              "completed_at": "2026-11-11T06:14:03Z"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-11T06:14:03Z",
+              "completed_at": "2026-11-11T06:14:06Z"
+            },
+            {
+              "name": "Retain source and execution observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-11T06:14:06Z",
+              "completed_at": "2026-11-11T06:14:07Z"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16,
+              "started_at": "2026-11-11T06:14:07Z",
+              "completed_at": "2026-11-11T06:14:07Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17,
+              "started_at": "2026-11-11T06:14:07Z",
+              "completed_at": "2026-11-11T06:14:07Z"
+            }
+          ],
+          "reported_run_id": 42960214277,
+          "reported_head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "run_attempt": 1,
+          "started_at": "2026-11-11T06:06:01Z",
+          "completed_at": "2026-11-11T06:14:09Z",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214277/job/130324696012"
+        },
+        {
+          "id": 130350768054,
+          "name": "cross-arch-cost-consistency",
+          "source_kind": "artifact-consistency",
+          "expected_subject_sha": null,
+          "core_exact_head": false,
+          "status": "completed",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-11T06:50:41Z",
+              "completed_at": "2026-11-11T06:50:42Z"
+            },
+            {
+              "name": "Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-11T06:50:42Z",
+              "completed_at": "2026-11-11T06:51:34Z"
+            },
+            {
+              "name": "Verify immutable source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-11T06:51:34Z",
+              "completed_at": "2026-11-11T06:51:38Z"
+            },
+            {
+              "name": "Retrieve both actual cost observations from this run",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-11T06:51:38Z",
+              "completed_at": "2026-11-11T06:51:40Z"
+            },
+            {
+              "name": "Check actual streams and source identity without a speed threshold",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-11T06:51:40Z",
+              "completed_at": "2026-11-11T06:51:43Z"
+            },
+            {
+              "name": "Check zero-matrix streams and exact source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-11T06:51:43Z",
+              "completed_at": "2026-11-11T06:51:46Z"
+            },
+            {
+              "name": "Check one-zero rank-one streams and exact source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-11T06:51:46Z",
+              "completed_at": "2026-11-11T06:51:50Z"
+            },
+            {
+              "name": "Check fixed maintenance streams and exact source identity",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-11T06:51:50Z",
+              "completed_at": "2026-11-11T06:51:53Z"
+            },
+            {
+              "name": "Check actual rejection stages and paired native architectures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-11T06:51:53Z",
+              "completed_at": "2026-11-11T06:52:07Z"
+            },
+            {
+              "name": "Verify source remained unchanged",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-11T06:52:07Z",
+              "completed_at": "2026-11-11T06:52:10Z"
+            },
+            {
+              "name": "Retain comparison result including missing or failed architectures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-11T06:52:10Z",
+              "completed_at": "2026-11-11T06:52:11Z"
+            },
+            {
+              "name": "Post Checkout exact candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 22,
+              "started_at": "2026-11-11T06:52:11Z",
+              "completed_at": "2026-11-11T06:52:11Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 23,
+              "started_at": "2026-11-11T06:52:11Z",
+              "completed_at": "2026-11-11T06:52:12Z"
+            }
+          ],
+          "reported_run_id": 42960214277,
+          "reported_head_sha": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+          "run_attempt": 1,
+          "started_at": "2026-11-11T06:50:40Z",
+          "completed_at": "2026-11-11T06:52:13Z",
+          "html_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42960214277/job/130350768054"
+        }
+      ],
+      "status": "in_progress",
+      "conclusion": null,
+      "updated_at": "2026-11-11T06:50:41Z",
+      "metadata_fresh_at_snapshot": true,
+      "jobs_fresh_at_snapshot": true
+    }
+  ]
+}

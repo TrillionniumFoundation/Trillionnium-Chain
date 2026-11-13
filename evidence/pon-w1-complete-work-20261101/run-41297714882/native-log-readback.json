@@ -1,0 +1,413 @@
+{
+  "schema": "pon-w1-exact-source-ci-log-readback-v1",
+  "run_id": 41297714882,
+  "head": "e885a4a284d83019077c9b8f3420d39988a11eef",
+  "prospective_merge": "48b7a10a9950278815cfa002a3369a5763329944",
+  "tree": "92e722c38ad4daa206be3d4dfd57d6955c580551",
+  "overall_workflow_result": "failure",
+  "cost_jobs_success": 8,
+  "service_jobs_failure": 2,
+  "artifact_metadata_file": "run-41297714882-artifacts.json",
+  "jobs": [
+    {
+      "job_id": 124821986979,
+      "name": "W1 fresh challenge service (x64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "failure",
+      "log_file": "job-124821986979.log",
+      "log_bytes": 138181,
+      "log_sha256": "4087e7a200ca1e8d5b927dfbaa5a9de4830e5a511c4acdc9dfcac949ad58e975",
+      "native_test_results": [],
+      "clippy_commands": [],
+      "format_commands": [],
+      "receipts": [],
+      "native_error_lines": [],
+      "verified_scope": "actual original/fresh service job failure; no passing service or confirmation inferred"
+    },
+    {
+      "job_id": 124821987089,
+      "name": "W1 complete legal strategies (arm64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "log_file": "job-124821987089.log",
+      "log_bytes": 138993,
+      "log_sha256": "3d80dc0af8b1e1f29c262b06943c4bb114fbe997b461ee2489eed8a67ff16cfb",
+      "native_test_results": [
+        {
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "elapsed": "0.02s",
+          "raw_line": "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s"
+        }
+      ],
+      "clippy_commands": [
+        "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_legal_strategy_v1 -- -D warnings 2>&1 | tee \"$OUT/legal-clippy.log\""
+      ],
+      "format_commands": [
+        "cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\""
+      ],
+      "receipts": [
+        {
+          "receipt": "/home/runner/work/_temp/w1-legal-prospective-merge-arm64-41297714882-1/w1-legal-strategy-v1",
+          "result": "PASS"
+        }
+      ],
+      "native_error_lines": [],
+      "native_test_names": [
+        "tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments",
+        "tests::last_product_mutation_wraps_canonically_and_changes_only_that_word",
+        "tests::public_dispatch_keeps_complete_bytes_and_all_misses",
+        "tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity",
+        "w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks",
+        "w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values"
+      ],
+      "new_legal_strategy_tests": 4,
+      "shared_material_tests": 2,
+      "verified_scope": "6 example tests (4 new legal strategy plus 2 shared material); strict legal-example Clippy; full thirty-shard receipt"
+    },
+    {
+      "job_id": 124821987107,
+      "name": "W1 complete legal strategies (x64, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "log_file": "job-124821987107.log",
+      "log_bytes": 139370,
+      "log_sha256": "4db716647da8dd5ff1bfc32b4801f740ec2858bdd57281a631b653f4cb06010c",
+      "native_test_results": [
+        {
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "elapsed": "0.02s",
+          "raw_line": "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s"
+        }
+      ],
+      "clippy_commands": [
+        "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_legal_strategy_v1 -- -D warnings 2>&1 | tee \"$OUT/legal-clippy.log\""
+      ],
+      "format_commands": [
+        "cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\""
+      ],
+      "receipts": [
+        {
+          "receipt": "/home/runner/work/_temp/w1-legal-head-x64-41297714882-1/w1-legal-strategy-v1",
+          "result": "PASS"
+        }
+      ],
+      "native_error_lines": [],
+      "native_test_names": [
+        "tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments",
+        "tests::last_product_mutation_wraps_canonically_and_changes_only_that_word",
+        "tests::public_dispatch_keeps_complete_bytes_and_all_misses",
+        "tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity",
+        "w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks",
+        "w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values"
+      ],
+      "new_legal_strategy_tests": 4,
+      "shared_material_tests": 2,
+      "verified_scope": "6 example tests (4 new legal strategy plus 2 shared material); strict legal-example Clippy; full thirty-shard receipt"
+    },
+    {
+      "job_id": 124821987110,
+      "name": "W1 fresh challenge service (x64, head)",
+      "status": "completed",
+      "conclusion": "failure",
+      "log_file": "job-124821987110.log",
+      "log_bytes": 137377,
+      "log_sha256": "d56e17b7a98073c13a660a9aca413885ccfa6e65ce376d41fee66a09f8a700c8",
+      "native_test_results": [],
+      "clippy_commands": [],
+      "format_commands": [],
+      "receipts": [],
+      "native_error_lines": [],
+      "verified_scope": "actual original/fresh service job failure; no passing service or confirmation inferred"
+    },
+    {
+      "job_id": 124821987133,
+      "name": "W1 complete legal strategies (x64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "log_file": "job-124821987133.log",
+      "log_bytes": 140172,
+      "log_sha256": "456e3e6c2204191c83346c443fe2e9aabea422cc584894784ae06345d0ad4f93",
+      "native_test_results": [
+        {
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "elapsed": "0.02s",
+          "raw_line": "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s"
+        }
+      ],
+      "clippy_commands": [
+        "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_legal_strategy_v1 -- -D warnings 2>&1 | tee \"$OUT/legal-clippy.log\""
+      ],
+      "format_commands": [
+        "cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\""
+      ],
+      "receipts": [
+        {
+          "receipt": "/home/runner/work/_temp/w1-legal-prospective-merge-x64-41297714882-1/w1-legal-strategy-v1",
+          "result": "PASS"
+        }
+      ],
+      "native_error_lines": [],
+      "native_test_names": [
+        "tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments",
+        "tests::last_product_mutation_wraps_canonically_and_changes_only_that_word",
+        "tests::public_dispatch_keeps_complete_bytes_and_all_misses",
+        "tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity",
+        "w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks",
+        "w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values"
+      ],
+      "new_legal_strategy_tests": 4,
+      "shared_material_tests": 2,
+      "verified_scope": "6 example tests (4 new legal strategy plus 2 shared material); strict legal-example Clippy; full thirty-shard receipt"
+    },
+    {
+      "job_id": 124821987139,
+      "name": "W1 false trace reuse (x64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "log_file": "job-124821987139.log",
+      "log_bytes": 163160,
+      "log_sha256": "1f160420f012622fb050e6f710b79831dda28e1eb42626d05dba99a2ffb53211",
+      "native_test_results": [
+        {
+          "passed": 101,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 12,
+          "elapsed": "0.70s",
+          "raw_line": "test result: ok. 101 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.70s"
+        },
+        {
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "elapsed": "0.02s",
+          "raw_line": "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s"
+        }
+      ],
+      "clippy_commands": [
+        "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --lib --tests -- -D warnings 2>&1 | tee \"$OUT/w1-clippy.log\""
+      ],
+      "format_commands": [
+        "cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\""
+      ],
+      "receipts": [
+        {
+          "receipt": "/home/runner/work/_temp/w1-security-prospective-merge-x64-41297714882-1/w1-false-trace-reuse-v1",
+          "result": "PASS"
+        },
+        {
+          "receipt": "/home/runner/work/_temp/w1-security-prospective-merge-x64-41297714882-1/w1-full-limb-reuse-v1",
+          "result": "PASS"
+        }
+      ],
+      "native_error_lines": [],
+      "verified_scope": "101 selected W1 module tests; 6 native fuzz semantic tests; strict primitive lib/tests Clippy; original and explicit full-limb receipts"
+    },
+    {
+      "job_id": 124821987151,
+      "name": "W1 false trace reuse (x64, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "log_file": "job-124821987151.log",
+      "log_bytes": 165018,
+      "log_sha256": "46a6e5fca35cece9ee4509a77281c3732cd3451de86890a34508b854811c62e2",
+      "native_test_results": [
+        {
+          "passed": 101,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 12,
+          "elapsed": "1.15s",
+          "raw_line": "test result: ok. 101 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 1.15s"
+        },
+        {
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "elapsed": "0.03s",
+          "raw_line": "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s"
+        }
+      ],
+      "clippy_commands": [
+        "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --lib --tests -- -D warnings 2>&1 | tee \"$OUT/w1-clippy.log\""
+      ],
+      "format_commands": [
+        "cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\""
+      ],
+      "receipts": [
+        {
+          "receipt": "/home/runner/work/_temp/w1-security-head-x64-41297714882-1/w1-false-trace-reuse-v1",
+          "result": "PASS"
+        },
+        {
+          "receipt": "/home/runner/work/_temp/w1-security-head-x64-41297714882-1/w1-full-limb-reuse-v1",
+          "result": "PASS"
+        }
+      ],
+      "native_error_lines": [],
+      "verified_scope": "101 selected W1 module tests; 6 native fuzz semantic tests; strict primitive lib/tests Clippy; original and explicit full-limb receipts"
+    },
+    {
+      "job_id": 124821987171,
+      "name": "W1 false trace reuse (arm64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "log_file": "job-124821987171.log",
+      "log_bytes": 165076,
+      "log_sha256": "d55ba07734d4ee5f2ea72905ebee323bf2c2fd0ff7dcf8eb52de439c9e9bd39e",
+      "native_test_results": [
+        {
+          "passed": 101,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 12,
+          "elapsed": "1.80s",
+          "raw_line": "test result: ok. 101 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 1.80s"
+        },
+        {
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "elapsed": "0.05s",
+          "raw_line": "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s"
+        }
+      ],
+      "clippy_commands": [
+        "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --lib --tests -- -D warnings 2>&1 | tee \"$OUT/w1-clippy.log\""
+      ],
+      "format_commands": [
+        "cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\""
+      ],
+      "receipts": [
+        {
+          "receipt": "/home/runner/work/_temp/w1-security-prospective-merge-arm64-41297714882-1/w1-false-trace-reuse-v1",
+          "result": "PASS"
+        },
+        {
+          "receipt": "/home/runner/work/_temp/w1-security-prospective-merge-arm64-41297714882-1/w1-full-limb-reuse-v1",
+          "result": "PASS"
+        }
+      ],
+      "native_error_lines": [],
+      "verified_scope": "101 selected W1 module tests; 6 native fuzz semantic tests; strict primitive lib/tests Clippy; original and explicit full-limb receipts"
+    },
+    {
+      "job_id": 124821987207,
+      "name": "W1 false trace reuse (arm64, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "log_file": "job-124821987207.log",
+      "log_bytes": 163959,
+      "log_sha256": "a3d78dd432895459205725a9c7d8e3ac6a89d7425a020cdd2b0a944f7ead754c",
+      "native_test_results": [
+        {
+          "passed": 101,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 12,
+          "elapsed": "1.80s",
+          "raw_line": "test result: ok. 101 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 1.80s"
+        },
+        {
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "elapsed": "0.05s",
+          "raw_line": "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s"
+        }
+      ],
+      "clippy_commands": [
+        "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --lib --tests -- -D warnings 2>&1 | tee \"$OUT/w1-clippy.log\""
+      ],
+      "format_commands": [
+        "cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\""
+      ],
+      "receipts": [
+        {
+          "receipt": "/home/runner/work/_temp/w1-security-head-arm64-41297714882-1/w1-false-trace-reuse-v1",
+          "result": "PASS"
+        },
+        {
+          "receipt": "/home/runner/work/_temp/w1-security-head-arm64-41297714882-1/w1-full-limb-reuse-v1",
+          "result": "PASS"
+        }
+      ],
+      "native_error_lines": [],
+      "verified_scope": "101 selected W1 module tests; 6 native fuzz semantic tests; strict primitive lib/tests Clippy; original and explicit full-limb receipts"
+    },
+    {
+      "job_id": 124821987259,
+      "name": "W1 complete legal strategies (arm64, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "log_file": "job-124821987259.log",
+      "log_bytes": 138068,
+      "log_sha256": "e118cdde5545d5279bd244a8cd035ebd3e6a25931785b5dc2820ff434beb456e",
+      "native_test_results": [
+        {
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "elapsed": "0.02s",
+          "raw_line": "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s"
+        }
+      ],
+      "clippy_commands": [
+        "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_legal_strategy_v1 -- -D warnings 2>&1 | tee \"$OUT/legal-clippy.log\""
+      ],
+      "format_commands": [
+        "cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\""
+      ],
+      "receipts": [
+        {
+          "receipt": "/home/runner/work/_temp/w1-legal-head-arm64-41297714882-1/w1-legal-strategy-v1",
+          "result": "PASS"
+        }
+      ],
+      "native_error_lines": [],
+      "native_test_names": [
+        "tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments",
+        "tests::last_product_mutation_wraps_canonically_and_changes_only_that_word",
+        "tests::public_dispatch_keeps_complete_bytes_and_all_misses",
+        "tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity",
+        "w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks",
+        "w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values"
+      ],
+      "new_legal_strategy_tests": 4,
+      "shared_material_tests": 2,
+      "verified_scope": "6 example tests (4 new legal strategy plus 2 shared material); strict legal-example Clippy; full thirty-shard receipt"
+    }
+  ],
+  "scope": "readback of completed hosted job logs; native data and measured performance must be validated from retained artifacts separately",
+  "native_execution_performed_by_this_reader": false,
+  "full_workspace_accepted": false,
+  "work_hardness_accepted": false,
+  "public_service_accepted": false,
+  "production_activation": false
+}

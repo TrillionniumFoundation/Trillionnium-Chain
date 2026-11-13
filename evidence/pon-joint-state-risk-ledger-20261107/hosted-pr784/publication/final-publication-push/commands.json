@@ -1,0 +1,91 @@
+[
+  {
+    "name": "source-head-before",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "source-clean-before",
+    "argv": [
+      "git",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=normal"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "github-identity",
+    "argv": [
+      "gh",
+      "api",
+      "user",
+      "--jq",
+      ".login"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "remote-head-before",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/fix/chain-pon-joint-state-risk-ledger-20261107",
+      "--jq",
+      ".object.sha"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "preflight-before-push",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "push",
+    "argv": [
+      "git",
+      "push",
+      "origin",
+      "HEAD:refs/heads/fix/chain-pon-joint-state-risk-ledger-20261107"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "remote-head-after",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/fix/chain-pon-joint-state-risk-ledger-20261107",
+      "--jq",
+      ".object.sha"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "source-head-after",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "source-clean-after",
+    "argv": [
+      "git",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=normal"
+    ],
+    "returncode": 0
+  }
+]

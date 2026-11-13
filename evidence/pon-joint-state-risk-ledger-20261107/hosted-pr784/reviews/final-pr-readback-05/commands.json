@@ -1,0 +1,137 @@
+[
+  {
+    "name": "actor",
+    "argv": [
+      "gh",
+      "api",
+      "user",
+      "--jq",
+      ".login"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 10,
+    "stderr_bytes": 0
+  },
+  {
+    "name": "pr",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/pulls/784"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 25540,
+    "stderr_bytes": 0
+  },
+  {
+    "name": "checks-1",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/commits/b5c655ebe9611b3d62cf739e61e6867decc053e3/check-runs?per_page=100&page=1"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 377611,
+    "stderr_bytes": 0
+  },
+  {
+    "name": "checks-2",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/commits/b5c655ebe9611b3d62cf739e61e6867decc053e3/check-runs?per_page=100&page=2"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 15138,
+    "stderr_bytes": 0
+  },
+  {
+    "name": "runs-1",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs?head_sha=b5c655ebe9611b3d62cf739e61e6867decc053e3&per_page=100&page=1"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 228010,
+    "stderr_bytes": 0
+  },
+  {
+    "name": "statuses-1",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/commits/b5c655ebe9611b3d62cf739e61e6867decc053e3/status?per_page=100&page=1"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 5635,
+    "stderr_bytes": 0
+  },
+  {
+    "name": "repository-truth-job-128580281254",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128580281254"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 2954,
+    "stderr_bytes": 0
+  },
+  {
+    "name": "repository-truth-log-128580281254",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128580281254/logs"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 430785,
+    "stderr_bytes": 0
+  },
+  {
+    "name": "repository-truth-job-128580281590",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128580281590"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 3764,
+    "stderr_bytes": 0
+  },
+  {
+    "name": "repository-truth-log-128580281590",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128580281590/logs"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 431798,
+    "stderr_bytes": 0
+  },
+  {
+    "name": "local-head",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 41,
+    "stderr_bytes": 0
+  },
+  {
+    "name": "local-clean",
+    "argv": [
+      "git",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=normal"
+    ],
+    "returncode": 0,
+    "stdout_bytes": 0,
+    "stderr_bytes": 0
+  }
+]

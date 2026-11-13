@@ -1,0 +1,16 @@
+{
+  "binding": {
+    "binary_sha256": "c3957bf41cc342bd6202efced61e47e32cea9749c8ee62b91d0c030509f16d53",
+    "cli_binary_sha256": "903cd804ea09fadaecd4c5f1c5cde8872b1112b9c36f8e7412efffb3685648ac",
+    "manifest_sha256": "76e88a5e3b0217c9ae57b50f7ab5390e54020dcb788658369b7f67118d4d5c55",
+    "performance_acceptance": false,
+    "schema": "trnm-ci-public-fixture-current-elf-binding-v1",
+    "selector": "test_authenticated_cli_push_and_sync_share_one_durable_outbox_owner",
+    "source_commit": "9f54b05c643185a5041fc1f78cef77e95877f52a",
+    "target": "native_node"
+  },
+  "failures": [],
+  "host_exit": 0,
+  "passed": true,
+  "schema": "trnm-ci-public-fixture-host-launch-v1"
+}

@@ -1,0 +1,80 @@
+{
+  "schema": "root-four-native-lane-readback-v1",
+  "result": "PASS",
+  "scope": "Four official desktop component lanes, read from copied native process/source/input/recorded-binary evidence using the frozen M reader. Does not certify whole library, strict Clippy or business confirmation.",
+  "driver": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+  "reader_sha256": "c7604dcf0bb9f533902e368a44b170c927d98c46080570673f268391fd9dc479",
+  "lanes": [
+    {
+      "mode": "fixed",
+      "source": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "driver": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "report_sha256": "a9d8e655dd2a6c9b78c68bdbfa5fa25ca514d5a285a5242085c8ff83c31cc4cf",
+      "actual_control_count": 21,
+      "native_pass_controls": 21,
+      "native_expected_failures": 0,
+      "readback_file": "fixed-11e-native-transcript-readback.json",
+      "readback_sha256": "b7fc48d6d81484577a36227fc796b351168d60c038056b4acfd35e689bb1a7db",
+      "readback_bytes": 107654,
+      "pool_integration": {
+        "required_tests": [
+          "wall_clock_loop_executes_funding_dependencies_then_reopens_exact_queue_and_chain",
+          "reconciliation_failure_reports_the_already_activated_durable_block",
+          "next_block_uses_current_authenticated_statement_after_atomic_renewal",
+          "bounded_stop_runtime_and_invalid_material_do_not_mine_or_consume_pending_transactions",
+          "completed_sqlite_blocked_batch_observes_stop_before_revalidation_or_preparation",
+          "actual_cli_retains_signed_group_then_mines_with_wall_clock_and_refuses_logical_clock",
+          "failed_pool_batch_retains_elapsed_before_any_search_or_admission",
+          "failed_post_search_revalidation_retains_elapsed_without_admission",
+          "wall_clock_miner_extends_admissible_future_tip_without_advancing_its_clock",
+          "wall_clock_miner_waits_when_native_median_itself_is_still_in_the_future"
+        ],
+        "passed": 10,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    {
+      "mode": "budget-before-v2",
+      "source": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+      "driver": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "report_sha256": "1647e40cd80a33dabea2a823f15f9b236e2ba20dfefb1769cdda19afe35babf3",
+      "actual_control_count": 7,
+      "native_pass_controls": 1,
+      "native_expected_failures": 6,
+      "readback_file": "budget-before-v2-native-transcript-readback.json",
+      "readback_sha256": "963329f3025cfabc326734f2529bfe533bd4526102dec9989e2d28970ab4f389",
+      "readback_bytes": 93337
+    },
+    {
+      "mode": "pool-before-v2",
+      "source": "84e68b4f7a9b2f48f9c47ed05c9a44229d186e30",
+      "driver": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "report_sha256": "cca1169cf5fb6fec2b7bf5766d0e2b707295623a134ab39df05b0106acfba1ec",
+      "actual_control_count": 7,
+      "native_pass_controls": 2,
+      "native_expected_failures": 5,
+      "readback_file": "pool-before-v2-native-transcript-readback.json",
+      "readback_sha256": "7967dcc78ff7f4b607b9de7b063fb713144c6d2f1e060cc566e3ac3d2566bc76",
+      "readback_bytes": 9160
+    },
+    {
+      "mode": "pool-scan-before",
+      "source": "ae657e262278ae4a058220f66a6a0495721eb9ad",
+      "driver": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "report_sha256": "07bdf0b8f1898cce1e1c6a5e94550e12dc716a2aff47b03d3c1b29a81ed35b40",
+      "actual_control_count": 2,
+      "native_pass_controls": 0,
+      "native_expected_failures": 2,
+      "readback_file": "pool-scan-before-v2-native-transcript-readback.json",
+      "readback_sha256": "4a154b8bcfd5e6138f9f3fde7605515339d9f810fe23b8c60f296299226e0cc5",
+      "readback_bytes": 6698
+    }
+  ],
+  "qualification": {
+    "complete_business_liveness": false,
+    "sustained_tps": false,
+    "wan_capacity": false,
+    "production_activation": false
+  }
+}

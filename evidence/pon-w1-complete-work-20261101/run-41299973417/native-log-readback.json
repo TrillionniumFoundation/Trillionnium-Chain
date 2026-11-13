@@ -1,0 +1,511 @@
+{
+  "schema": "pon-w1-exact-source-ci-log-readback-v1",
+  "run_id": 41299973417,
+  "head": "7c5caf5bce1396976808a0f504c4163fbc1aed44",
+  "prospective_merge": "c2d5f9ad0ed9402a919e4c87be3825f9aa91837d",
+  "tree": "fef6125b338e5697896c0a32d0488458d8d93244",
+  "overall_workflow_result": "failure",
+  "cost_jobs_success": 8,
+  "service_jobs_failure": 2,
+  "artifact_metadata_file": "run-41299973417-artifacts.json",
+  "jobs": [
+    {
+      "job_id": 124828701347,
+      "name": "W1 false trace reuse (x64, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "log_file": "job-124828701347.log",
+      "log_bytes": 167928,
+      "log_sha256": "7bf36e77a61443cd1a62a23ee1c75ae92a7b4ee95b34744b72db279777861577",
+      "native_test_results": [
+        {
+          "passed": 101,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 12,
+          "elapsed": "1.16s",
+          "raw_line": "test result: ok. 101 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 1.16s",
+          "running_target": "Running unittests src/lib.rs (/home/runner/work/_temp/target-w1-security/release/deps/trnm_crypto_primitives-288e601b616b85ef)"
+        },
+        {
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "elapsed": "0.03s",
+          "raw_line": "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s",
+          "running_target": "Running tests/work_fuzz_semantics.rs (/home/runner/work/_temp/target-w1-security/release/deps/work_fuzz_semantics-1237c00ba507e290)"
+        },
+        {
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "elapsed": "0.02s",
+          "raw_line": "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s",
+          "running_target": "Running unittests examples/pon_rejection_cost.rs (/home/runner/work/_temp/target-w1-security/release/examples/pon_rejection_cost-997a9ea6f04642d2)"
+        }
+      ],
+      "clippy_commands": [
+        "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --lib --tests -- -D warnings 2>&1 | tee \"$OUT/w1-clippy.log\"",
+        "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --example pon_rejection_cost -- -D warnings 2>&1 | tee \"$OUT/retained-rejection-clippy.log\""
+      ],
+      "format_commands": [
+        "cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\""
+      ],
+      "cargo_metadata_commands": [
+        "cargo +1.95.0 metadata --locked --manifest-path trillionnium/Cargo.toml --format-version 1 > \"$OUT/cargo-graph.json\""
+      ],
+      "receipts": [
+        {
+          "receipt": "/home/runner/work/_temp/w1-security-head-x64-41299973417-1/w1-false-trace-reuse-v1",
+          "result": "PASS"
+        },
+        {
+          "receipt": "/home/runner/work/_temp/w1-security-head-x64-41299973417-1/w1-full-limb-reuse-v1",
+          "result": "PASS"
+        }
+      ],
+      "native_error_lines": [],
+      "verified_scope": "101 selected W1 module tests; 6 native fuzz semantic tests; 3 retained pon_rejection_cost example tests; strict primitive lib/tests and rejection-example Clippy; original and explicit full-limb receipts"
+    },
+    {
+      "job_id": 124828701655,
+      "name": "W1 complete legal strategies (arm64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "log_file": "job-124828701655.log",
+      "log_bytes": 143087,
+      "log_sha256": "34abe6e771f24c0fdf3da40448a6dfdcd9c9ef71350a7e5d8c33c55618ce5ea2",
+      "native_test_results": [
+        {
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "elapsed": "0.02s",
+          "raw_line": "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s",
+          "running_target": "Running unittests examples/pon_w1_legal_strategy_v1.rs (/home/runner/work/_temp/target-w1-legal/release/examples/pon_w1_legal_strategy_v1-95d0f4df5d452dc7)"
+        }
+      ],
+      "clippy_commands": [
+        "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_legal_strategy_v1 -- -D warnings 2>&1 | tee \"$OUT/legal-clippy.log\""
+      ],
+      "format_commands": [
+        "cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\""
+      ],
+      "cargo_metadata_commands": [
+        "cargo +1.95.0 metadata --locked --manifest-path trillionnium/Cargo.toml --format-version 1 > \"$OUT/cargo-graph.json\""
+      ],
+      "receipts": [
+        {
+          "receipt": "/home/runner/work/_temp/w1-legal-prospective-merge-arm64-41299973417-1/w1-legal-strategy-v1",
+          "result": "PASS"
+        }
+      ],
+      "native_error_lines": [],
+      "native_test_names": [
+        "test tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments ... ok",
+        "test tests::last_product_mutation_wraps_canonically_and_changes_only_that_word ... ok",
+        "test tests::public_dispatch_keeps_complete_bytes_and_all_misses ... ok",
+        "test tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity ... ok",
+        "test w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks ... ok",
+        "test w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values ... ok"
+      ],
+      "verified_scope": "6 legal example tests (4 legal strategy plus 2 shared material); strict example Clippy; 30-shard complete-grid receipt; successful step includes separate cargo-graph.json capture"
+    },
+    {
+      "job_id": 124828701661,
+      "name": "W1 complete legal strategies (x64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "log_file": "job-124828701661.log",
+      "log_bytes": 143763,
+      "log_sha256": "655bf909813c65ff00d4219fefd677824b59905a3148b6e7d33329c42992b245",
+      "native_test_results": [
+        {
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "elapsed": "0.01s",
+          "raw_line": "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+          "running_target": "Running unittests examples/pon_w1_legal_strategy_v1.rs (/home/runner/work/_temp/target-w1-legal/release/examples/pon_w1_legal_strategy_v1-029343bb15ea1ba1)"
+        }
+      ],
+      "clippy_commands": [
+        "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_legal_strategy_v1 -- -D warnings 2>&1 | tee \"$OUT/legal-clippy.log\""
+      ],
+      "format_commands": [
+        "cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\""
+      ],
+      "cargo_metadata_commands": [
+        "cargo +1.95.0 metadata --locked --manifest-path trillionnium/Cargo.toml --format-version 1 > \"$OUT/cargo-graph.json\""
+      ],
+      "receipts": [
+        {
+          "receipt": "/home/runner/work/_temp/w1-legal-prospective-merge-x64-41299973417-1/w1-legal-strategy-v1",
+          "result": "PASS"
+        }
+      ],
+      "native_error_lines": [],
+      "native_test_names": [
+        "test tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments ... ok",
+        "test tests::last_product_mutation_wraps_canonically_and_changes_only_that_word ... ok",
+        "test tests::public_dispatch_keeps_complete_bytes_and_all_misses ... ok",
+        "test tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity ... ok",
+        "test w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks ... ok",
+        "test w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values ... ok"
+      ],
+      "verified_scope": "6 legal example tests (4 legal strategy plus 2 shared material); strict example Clippy; 30-shard complete-grid receipt; successful step includes separate cargo-graph.json capture"
+    },
+    {
+      "job_id": 124828701681,
+      "name": "W1 complete legal strategies (arm64, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "log_file": "job-124828701681.log",
+      "log_bytes": 142298,
+      "log_sha256": "bbbcca3303d762ef98d7939d32da6bcc755651e33523b554a491b22dcfdd8c65",
+      "native_test_results": [
+        {
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "elapsed": "0.02s",
+          "raw_line": "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s",
+          "running_target": "Running unittests examples/pon_w1_legal_strategy_v1.rs (/home/runner/work/_temp/target-w1-legal/release/examples/pon_w1_legal_strategy_v1-95d0f4df5d452dc7)"
+        }
+      ],
+      "clippy_commands": [
+        "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_legal_strategy_v1 -- -D warnings 2>&1 | tee \"$OUT/legal-clippy.log\""
+      ],
+      "format_commands": [
+        "cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\""
+      ],
+      "cargo_metadata_commands": [
+        "cargo +1.95.0 metadata --locked --manifest-path trillionnium/Cargo.toml --format-version 1 > \"$OUT/cargo-graph.json\""
+      ],
+      "receipts": [
+        {
+          "receipt": "/home/runner/work/_temp/w1-legal-head-arm64-41299973417-1/w1-legal-strategy-v1",
+          "result": "PASS"
+        }
+      ],
+      "native_error_lines": [],
+      "native_test_names": [
+        "test tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments ... ok",
+        "test tests::last_product_mutation_wraps_canonically_and_changes_only_that_word ... ok",
+        "test tests::public_dispatch_keeps_complete_bytes_and_all_misses ... ok",
+        "test tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity ... ok",
+        "test w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks ... ok",
+        "test w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values ... ok"
+      ],
+      "verified_scope": "6 legal example tests (4 legal strategy plus 2 shared material); strict example Clippy; 30-shard complete-grid receipt; successful step includes separate cargo-graph.json capture"
+    },
+    {
+      "job_id": 124828701688,
+      "name": "W1 false trace reuse (x64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "log_file": "job-124828701688.log",
+      "log_bytes": 168852,
+      "log_sha256": "e4b354d13f13a20f7befc7921c0fd6cebd54a1dc3de1d7d82d213ec3b0bff6f5",
+      "native_test_results": [
+        {
+          "passed": 101,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 12,
+          "elapsed": "1.16s",
+          "raw_line": "test result: ok. 101 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 1.16s",
+          "running_target": "Running unittests src/lib.rs (/home/runner/work/_temp/target-w1-security/release/deps/trnm_crypto_primitives-288e601b616b85ef)"
+        },
+        {
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "elapsed": "0.03s",
+          "raw_line": "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s",
+          "running_target": "Running tests/work_fuzz_semantics.rs (/home/runner/work/_temp/target-w1-security/release/deps/work_fuzz_semantics-1237c00ba507e290)"
+        },
+        {
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "elapsed": "0.02s",
+          "raw_line": "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s",
+          "running_target": "Running unittests examples/pon_rejection_cost.rs (/home/runner/work/_temp/target-w1-security/release/examples/pon_rejection_cost-997a9ea6f04642d2)"
+        }
+      ],
+      "clippy_commands": [
+        "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --lib --tests -- -D warnings 2>&1 | tee \"$OUT/w1-clippy.log\"",
+        "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --example pon_rejection_cost -- -D warnings 2>&1 | tee \"$OUT/retained-rejection-clippy.log\""
+      ],
+      "format_commands": [
+        "cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\""
+      ],
+      "cargo_metadata_commands": [
+        "cargo +1.95.0 metadata --locked --manifest-path trillionnium/Cargo.toml --format-version 1 > \"$OUT/cargo-graph.json\""
+      ],
+      "receipts": [
+        {
+          "receipt": "/home/runner/work/_temp/w1-security-prospective-merge-x64-41299973417-1/w1-false-trace-reuse-v1",
+          "result": "PASS"
+        },
+        {
+          "receipt": "/home/runner/work/_temp/w1-security-prospective-merge-x64-41299973417-1/w1-full-limb-reuse-v1",
+          "result": "PASS"
+        }
+      ],
+      "native_error_lines": [],
+      "verified_scope": "101 selected W1 module tests; 6 native fuzz semantic tests; 3 retained pon_rejection_cost example tests; strict primitive lib/tests and rejection-example Clippy; original and explicit full-limb receipts"
+    },
+    {
+      "job_id": 124828701702,
+      "name": "W1 fresh challenge service (x64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "failure",
+      "log_file": "job-124828701702.log",
+      "log_bytes": 138177,
+      "log_sha256": "e5a1f1694d9993fb3f2219ebc8ff030bac89f7dbfa74f99214917960e88153d5",
+      "native_test_results": [],
+      "clippy_commands": [],
+      "format_commands": [],
+      "cargo_metadata_commands": [],
+      "receipts": [],
+      "native_error_lines": [
+        "##[error]Process completed with exit code 1."
+      ],
+      "host_report_summary": {
+        "passed": false,
+        "host_failure": null,
+        "native_build_exit_code": 0,
+        "native_build_timed_out": false,
+        "binary_sha256": "5c95269910f98cb10ec026070ac30a4f4c25d804707766c8950946e31af34529"
+      },
+      "failed_steps": [
+        "Execute original and fresh service with original Host resources"
+      ],
+      "verified_scope": "Executed Host service step failure retained; native build completed; exact per-case business results require artifact readback"
+    },
+    {
+      "job_id": 124828701718,
+      "name": "W1 complete legal strategies (x64, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "log_file": "job-124828701718.log",
+      "log_bytes": 142232,
+      "log_sha256": "5a42d05c4279d99893bf4fa621fd86439c834b011c634380f71f145489a7b3fb",
+      "native_test_results": [
+        {
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "elapsed": "0.01s",
+          "raw_line": "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+          "running_target": "Running unittests examples/pon_w1_legal_strategy_v1.rs (/home/runner/work/_temp/target-w1-legal/release/examples/pon_w1_legal_strategy_v1-029343bb15ea1ba1)"
+        }
+      ],
+      "clippy_commands": [
+        "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-pon-node --example pon_w1_legal_strategy_v1 -- -D warnings 2>&1 | tee \"$OUT/legal-clippy.log\""
+      ],
+      "format_commands": [
+        "cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\""
+      ],
+      "cargo_metadata_commands": [
+        "cargo +1.95.0 metadata --locked --manifest-path trillionnium/Cargo.toml --format-version 1 > \"$OUT/cargo-graph.json\""
+      ],
+      "receipts": [
+        {
+          "receipt": "/home/runner/work/_temp/w1-legal-head-x64-41299973417-1/w1-legal-strategy-v1",
+          "result": "PASS"
+        }
+      ],
+      "native_error_lines": [],
+      "native_test_names": [
+        "test tests::exact_shards_reject_unfrozen_targets_horizons_and_extra_arguments ... ok",
+        "test tests::last_product_mutation_wraps_canonically_and_changes_only_that_word ... ok",
+        "test tests::public_dispatch_keeps_complete_bytes_and_all_misses ... ok",
+        "test tests::valid_acquisition_and_late_product_refusal_keep_full_statement_identity ... ok",
+        "test w1_material::tests::default_materials_include_exact_continuity_fixture_and_reported_ranks ... ok",
+        "test w1_material::tests::material_bytes_require_exact_length_and_canonical_field_values ... ok"
+      ],
+      "verified_scope": "6 legal example tests (4 legal strategy plus 2 shared material); strict example Clippy; 30-shard complete-grid receipt; successful step includes separate cargo-graph.json capture"
+    },
+    {
+      "job_id": 124828701726,
+      "name": "W1 false trace reuse (arm64, prospective-merge)",
+      "status": "completed",
+      "conclusion": "success",
+      "log_file": "job-124828701726.log",
+      "log_bytes": 168034,
+      "log_sha256": "777b45ee156d1c8dc139b83fb8a75896cc954c878b2e1b8c9cae1380f70ff627",
+      "native_test_results": [
+        {
+          "passed": 101,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 12,
+          "elapsed": "1.84s",
+          "raw_line": "test result: ok. 101 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 1.84s",
+          "running_target": "Running unittests src/lib.rs (/home/runner/work/_temp/target-w1-security/release/deps/trnm_crypto_primitives-0e5a5f5c7a368b2c)"
+        },
+        {
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "elapsed": "0.05s",
+          "raw_line": "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s",
+          "running_target": "Running tests/work_fuzz_semantics.rs (/home/runner/work/_temp/target-w1-security/release/deps/work_fuzz_semantics-72c5378208ff6c09)"
+        },
+        {
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "elapsed": "0.03s",
+          "raw_line": "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s",
+          "running_target": "Running unittests examples/pon_rejection_cost.rs (/home/runner/work/_temp/target-w1-security/release/examples/pon_rejection_cost-541d4dea94419e7d)"
+        }
+      ],
+      "clippy_commands": [
+        "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --lib --tests -- -D warnings 2>&1 | tee \"$OUT/w1-clippy.log\"",
+        "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --example pon_rejection_cost -- -D warnings 2>&1 | tee \"$OUT/retained-rejection-clippy.log\""
+      ],
+      "format_commands": [
+        "cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\""
+      ],
+      "cargo_metadata_commands": [
+        "cargo +1.95.0 metadata --locked --manifest-path trillionnium/Cargo.toml --format-version 1 > \"$OUT/cargo-graph.json\""
+      ],
+      "receipts": [
+        {
+          "receipt": "/home/runner/work/_temp/w1-security-prospective-merge-arm64-41299973417-1/w1-false-trace-reuse-v1",
+          "result": "PASS"
+        },
+        {
+          "receipt": "/home/runner/work/_temp/w1-security-prospective-merge-arm64-41299973417-1/w1-full-limb-reuse-v1",
+          "result": "PASS"
+        }
+      ],
+      "native_error_lines": [],
+      "verified_scope": "101 selected W1 module tests; 6 native fuzz semantic tests; 3 retained pon_rejection_cost example tests; strict primitive lib/tests and rejection-example Clippy; original and explicit full-limb receipts"
+    },
+    {
+      "job_id": 124828701728,
+      "name": "W1 false trace reuse (arm64, head)",
+      "status": "completed",
+      "conclusion": "success",
+      "log_file": "job-124828701728.log",
+      "log_bytes": 166611,
+      "log_sha256": "fa71938d8a2233071683dc4901dc69b74567391bdef94e9bf5122d9928a23bb8",
+      "native_test_results": [
+        {
+          "passed": 101,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 12,
+          "elapsed": "1.83s",
+          "raw_line": "test result: ok. 101 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 1.83s",
+          "running_target": "Running unittests src/lib.rs (/home/runner/work/_temp/target-w1-security/release/deps/trnm_crypto_primitives-0e5a5f5c7a368b2c)"
+        },
+        {
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "elapsed": "0.05s",
+          "raw_line": "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s",
+          "running_target": "Running tests/work_fuzz_semantics.rs (/home/runner/work/_temp/target-w1-security/release/deps/work_fuzz_semantics-72c5378208ff6c09)"
+        },
+        {
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0,
+          "measured": 0,
+          "filtered_out": 0,
+          "elapsed": "0.03s",
+          "raw_line": "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s",
+          "running_target": "Running unittests examples/pon_rejection_cost.rs (/home/runner/work/_temp/target-w1-security/release/examples/pon_rejection_cost-541d4dea94419e7d)"
+        }
+      ],
+      "clippy_commands": [
+        "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --lib --tests -- -D warnings 2>&1 | tee \"$OUT/w1-clippy.log\"",
+        "cargo +1.95.0 clippy --locked --manifest-path trillionnium/Cargo.toml -p trnm-crypto-primitives --example pon_rejection_cost -- -D warnings 2>&1 | tee \"$OUT/retained-rejection-clippy.log\""
+      ],
+      "format_commands": [
+        "cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check 2>&1 | tee \"$OUT/format.log\""
+      ],
+      "cargo_metadata_commands": [
+        "cargo +1.95.0 metadata --locked --manifest-path trillionnium/Cargo.toml --format-version 1 > \"$OUT/cargo-graph.json\""
+      ],
+      "receipts": [
+        {
+          "receipt": "/home/runner/work/_temp/w1-security-head-arm64-41299973417-1/w1-false-trace-reuse-v1",
+          "result": "PASS"
+        },
+        {
+          "receipt": "/home/runner/work/_temp/w1-security-head-arm64-41299973417-1/w1-full-limb-reuse-v1",
+          "result": "PASS"
+        }
+      ],
+      "native_error_lines": [],
+      "verified_scope": "101 selected W1 module tests; 6 native fuzz semantic tests; 3 retained pon_rejection_cost example tests; strict primitive lib/tests and rejection-example Clippy; original and explicit full-limb receipts"
+    },
+    {
+      "job_id": 124828701972,
+      "name": "W1 fresh challenge service (x64, head)",
+      "status": "completed",
+      "conclusion": "failure",
+      "log_file": "job-124828701972.log",
+      "log_bytes": 137384,
+      "log_sha256": "8c60f1e6d7a45bdab986f4d482fb250b342c4e4f75e1470058ebe2ca4eaab580",
+      "native_test_results": [],
+      "clippy_commands": [],
+      "format_commands": [],
+      "cargo_metadata_commands": [],
+      "receipts": [],
+      "native_error_lines": [
+        "##[error]Process completed with exit code 1."
+      ],
+      "host_report_summary": {
+        "passed": false,
+        "host_failure": null,
+        "native_build_exit_code": 0,
+        "native_build_timed_out": false,
+        "binary_sha256": "5c95269910f98cb10ec026070ac30a4f4c25d804707766c8950946e31af34529"
+      },
+      "failed_steps": [
+        "Execute original and fresh service with original Host resources"
+      ],
+      "verified_scope": "Executed Host service step failure retained; native build completed; exact per-case business results require artifact readback"
+    }
+  ],
+  "scope": "Readback of completed hosted job logs; native captures and measured performance require retained-artifact validation separately. Only two workflow files changed against 8327; this log readback does not inherit previous execution results.",
+  "native_execution_performed_by_this_reader": false,
+  "full_workspace_accepted": false,
+  "work_hardness_accepted": false,
+  "public_service_accepted": false,
+  "production_activation": false
+}

@@ -1,0 +1,11 @@
+   Compiling trnm-pon-node v0.1.0 (/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/trillionnium/crates/trnm-pon-node)
+    Finished `release` profile [optimized] target(s) in 3m 47s
+     Running unittests src/lib.rs (/home/runner/work/_temp/target-next-architecture/release/deps/trnm_pon_node-55ae308ca29f5ac1)
+
+running 3 tests
+test store::task_observation::tests::configured_profiles_decode_transfers_acceptances_and_reject_foreign_or_malformed_bytes ... ok
+test store::task_observation::tests::every_native_profile_observes_real_settlement_with_its_exact_wire_id ... ok
+test store::task_observation::tests::legacy_selection_and_ambiguity_keep_the_original_codec_order ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 1184 filtered out; finished in 0.20s
+

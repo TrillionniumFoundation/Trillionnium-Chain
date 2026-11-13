@@ -1,0 +1,73 @@
+[
+  {
+    "name": "local-head",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "local-clean",
+    "argv": [
+      "git",
+      "status",
+      "--porcelain=v1",
+      "--untracked-files=normal"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "github-identity",
+    "argv": [
+      "gh",
+      "api",
+      "user",
+      "--jq",
+      ".login"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "candidate",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/fix/chain-pon-joint-state-risk-ledger-20261107",
+      "--jq",
+      ".object.sha"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "integration",
+    "argv": [
+      "gh",
+      "api",
+      "repos/TrillionniumFoundation/Trillionnium-Chain/git/ref/heads/fix/chain-six-axis-performance-20261103",
+      "--jq",
+      ".object.sha"
+    ],
+    "returncode": 0
+  },
+  {
+    "name": "existing-prs",
+    "argv": [
+      "gh",
+      "pr",
+      "list",
+      "--repo",
+      "TrillionniumFoundation/Trillionnium-Chain",
+      "--head",
+      "fix/chain-pon-joint-state-risk-ledger-20261107",
+      "--state",
+      "all",
+      "--json",
+      "number,url,state,isDraft,baseRefName,headRefName,headRefOid,title",
+      "--limit",
+      "100"
+    ],
+    "returncode": 0
+  }
+]

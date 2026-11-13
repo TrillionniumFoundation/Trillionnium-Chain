@@ -1,0 +1,85 @@
+{
+  "artifacts": [
+    {
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13608640265/zip",
+      "created_at": "2026-11-08T07:08:58Z",
+      "digest": "sha256:a1c190695dd0d2ecad1e32c574bb30523292e854f49c8de8f2478dc6ac806ffe",
+      "expired": false,
+      "expires_at": "2026-12-08T07:08:57Z",
+      "id": 13608640265,
+      "name": "next-architecture-ubuntu-24.04-arm-prospective-merge-bdf2fe11b63d04210bc3853613356928ac85369b-1",
+      "node_id": "MDg6QXJ0aWZhY3QxMzYwODY0MDI2NQ==",
+      "size_in_bytes": 144514,
+      "updated_at": "2026-11-08T07:08:58Z",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13608640265",
+      "workflow_run": {
+        "head_branch": "feature/chain-next-architecture-security-20261108",
+        "head_repository_id": 1323087357,
+        "head_sha": "9f54b05c643185a5041fc1f78cef77e95877f52a",
+        "id": 42456517352,
+        "repository_id": 1323087357
+      }
+    },
+    {
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13608490761/zip",
+      "created_at": "2026-11-08T07:03:50Z",
+      "digest": "sha256:b2bff2bf1bb8257574108bb90ee1c88cf4cd99045d35346d5e310d28b55836e4",
+      "expired": false,
+      "expires_at": "2026-12-08T07:03:49Z",
+      "id": 13608490761,
+      "name": "next-architecture-ubuntu-24.04-head-9f54b05c643185a5041fc1f78cef77e95877f52a-1",
+      "node_id": "MDg6QXJ0aWZhY3QxMzYwODQ5MDc2MQ==",
+      "size_in_bytes": 142693,
+      "updated_at": "2026-11-08T07:03:50Z",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13608490761",
+      "workflow_run": {
+        "head_branch": "feature/chain-next-architecture-security-20261108",
+        "head_repository_id": 1323087357,
+        "head_sha": "9f54b05c643185a5041fc1f78cef77e95877f52a",
+        "id": 42456517352,
+        "repository_id": 1323087357
+      }
+    },
+    {
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13608421107/zip",
+      "created_at": "2026-11-08T07:10:13Z",
+      "digest": "sha256:ecb4ddeae94e14067f9cfdfa6027d7dbec748f677e811e451693616472c82eb2",
+      "expired": false,
+      "expires_at": "2026-12-08T07:10:12Z",
+      "id": 13608421107,
+      "name": "next-architecture-ubuntu-24.04-arm-head-9f54b05c643185a5041fc1f78cef77e95877f52a-1",
+      "node_id": "MDg6QXJ0aWZhY3QxMzYwODQyMTEwNw==",
+      "size_in_bytes": 144107,
+      "updated_at": "2026-11-08T07:10:13Z",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13608421107",
+      "workflow_run": {
+        "head_branch": "feature/chain-next-architecture-security-20261108",
+        "head_repository_id": 1323087357,
+        "head_sha": "9f54b05c643185a5041fc1f78cef77e95877f52a",
+        "id": 42456517352,
+        "repository_id": 1323087357
+      }
+    },
+    {
+      "archive_download_url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13608263191/zip",
+      "created_at": "2026-11-08T07:11:44Z",
+      "digest": "sha256:e8b794720f11321a8e980c2a4c6bc604c174ee585f7ef90c6e96646f87ba8505",
+      "expired": false,
+      "expires_at": "2026-12-08T07:11:43Z",
+      "id": 13608263191,
+      "name": "next-architecture-ubuntu-24.04-prospective-merge-bdf2fe11b63d04210bc3853613356928ac85369b-1",
+      "node_id": "MDg6QXJ0aWZhY3QxMzYwODI2MzE5MQ==",
+      "size_in_bytes": 146352,
+      "updated_at": "2026-11-08T07:11:44Z",
+      "url": "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/13608263191",
+      "workflow_run": {
+        "head_branch": "feature/chain-next-architecture-security-20261108",
+        "head_repository_id": 1323087357,
+        "head_sha": "9f54b05c643185a5041fc1f78cef77e95877f52a",
+        "id": 42456517352,
+        "repository_id": 1323087357
+      }
+    }
+  ],
+  "total_count": 4
+}

@@ -1,0 +1,124 @@
+{
+  "scope": "original hosted artifact text validated with frozen M parser; no new native execution or whole-business/TPS/production qualification",
+  "frozen_reader_files": [
+    {
+      "source_path": "scripts/ci/run_pon_budget_controls.py",
+      "source_commit": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "git_blob": "531707e853b1b298bafd8ba6c248e8a4ed15c037",
+      "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/frozen-component-reader-11e/scripts/ci/run_pon_budget_controls.py",
+      "bytes": 45114,
+      "sha256": "c7604dcf0bb9f533902e368a44b170c927d98c46080570673f268391fd9dc479"
+    },
+    {
+      "source_path": "scripts/ci/check_required_native_test.py",
+      "source_commit": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "git_blob": "277137b9e6ced74e9ec81061040ebfbb3949ffaf",
+      "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/frozen-component-reader-11e/scripts/ci/check_required_native_test.py",
+      "bytes": 2928,
+      "sha256": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28"
+    },
+    {
+      "source_path": "scripts/ci/replay_pinned_native.py",
+      "source_commit": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "git_blob": "2e633556e2b6f5cc4278491d5c4c8edf437fab81",
+      "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/frozen-component-reader-11e/scripts/ci/replay_pinned_native.py",
+      "bytes": 18571,
+      "sha256": "d14d2f61ab98bb30b5932530437064dce5d3a330c05a9530988fe776cefea44a"
+    },
+    {
+      "source_path": "scripts/ci/verify_ci_source.py",
+      "source_commit": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "git_blob": "c775290c138c3b41a32e654f56ed5cbe9acec3ee",
+      "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/frozen-component-reader-11e/scripts/ci/verify_ci_source.py",
+      "bytes": 11231,
+      "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
+    }
+  ],
+  "artifact": {
+    "id": 13833530665,
+    "name": "pon-budget-controls-budget-before-v2-89fb2269b0dd306fbd32c36f464842c3d7daee2b-1",
+    "bytes": 30719516,
+    "sha256": "15dbf077d85cb878162e2ed85547c1766343df89886485f4babdc15f69d45414",
+    "mode": "budget-before-v2"
+  },
+  "result": "PASS",
+  "mode": "budget-before-v2",
+  "driver": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+  "subject": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+  "subject_tree": "c4cd82ed0004709192eff1563d90423bd5641e99",
+  "source_before_equals_after": true,
+  "source_before": {
+    "driver": {
+      "base": null,
+      "candidate": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+      "tested_tree": "1f42f41923d7761c02fc68b478df5b019c7d83e8",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2592587811,
+      "tracked_entries": 28058,
+      "tracked_worktree_verified": true
+    },
+    "subject": {
+      "base": null,
+      "candidate": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+      "kind": "head",
+      "prospective_merge": null,
+      "schema": "trnm-ci-source-v1",
+      "tested_commit": "89fb2269b0dd306fbd32c36f464842c3d7daee2b",
+      "tested_tree": "c4cd82ed0004709192eff1563d90423bd5641e99",
+      "tests_executed_by_identity_check": false,
+      "tracked_bytes": 2554978813,
+      "tracked_entries": 27985,
+      "tracked_worktree_verified": true
+    }
+  },
+  "matched_pass_controls": 1,
+  "matched_failure_controls": 6,
+  "native_control_processes_started": 7,
+  "integration_passes": 0,
+  "identical_group_inputs_verified": true,
+  "binary_profiles_and_hashes": [
+    {
+      "role": "libtest",
+      "zip_member": "native/trnm-pon-node-libtest",
+      "bytes": 101875696,
+      "sha256": "d3700461162c24ad48f2424cce725f93be6cc58d51ff3c8b574c86f28853a8a0",
+      "profile": {
+        "debug_assertions": false,
+        "debuginfo": 0,
+        "opt_level": "3",
+        "overflow_checks": false,
+        "test": true
+      },
+      "source_path": "/home/runner/work/Trillionnium-Chain/Trillionnium-Chain/subject/trillionnium/crates/trnm-pon-node/src/lib.rs",
+      "binary_before_equals_after": true
+    }
+  ],
+  "original_report": {
+    "zip_member": "native/report.json",
+    "bytes": 112464,
+    "sha256": "c3f8bb65804899ea9404d2281bb89dfd8c49293dca3af4a73bc74573fc61351f"
+  },
+  "roster": {
+    "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/execution-roster.json",
+    "bytes": 4701,
+    "sha256": "49a41d17b8fdcef69882988cc0ce395128cca3346431664f3bd2dae8ad10daf9"
+  },
+  "original_text_manifest": {
+    "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text-manifest.json",
+    "bytes": 20092,
+    "sha256": "f0c1347c15bd1c8fa19b9bf555fb01eefdb093f94a27235aab4647160e753ba6"
+  },
+  "original_text_archive": {
+    "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text.tar.gz",
+    "bytes": 131157,
+    "sha256": "7829b3eb42c2816e3297323d2ae4f3f605ac89a8bcfb20d5213f0999f2bb8b0b"
+  },
+  "native_campaign_executed": false,
+  "whole_business_liveness_qualified": false,
+  "throughput_measured": false,
+  "production_activation": false
+}

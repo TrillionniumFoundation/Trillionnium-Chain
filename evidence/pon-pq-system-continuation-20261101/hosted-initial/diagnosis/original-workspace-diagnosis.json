@@ -1,0 +1,599 @@
+{
+  "schema": "pq-system-ci-readonly-diagnosis-v1",
+  "candidate": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+  "tree": "b4d4cca6da8244cf9c7d479eca0974559f4a1005",
+  "large_state_workspace_decision": "HOLD: both unchanged original selectors fail in all four lanes; reactor controls pass",
+  "lanes": [
+    {
+      "lane": "original-x64-head",
+      "run_id": 41333398659,
+      "job_id": 124928046347,
+      "artifact_id": 13094562853,
+      "artifact_sha256": "c28dbd737439081d4048a5419f8ad381dfeba4f0bf983b26d16dcca45f4e2d1d",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41333398659/job/124928046347",
+      "source_before_and_after": {
+        "base": null,
+        "candidate": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+        "tested_tree": "b4d4cca6da8244cf9c7d479eca0974559f4a1005",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 781547101,
+        "tracked_entries": 6808,
+        "tracked_worktree_verified": true
+      },
+      "build_command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "build_success": true,
+      "build_profile_check": {
+        "binary_sha256": "a35f2397515c3dc61cd0a4bdf235c93914f92556720dfed2b54ed1aab843ca68",
+        "debug_assertions": true,
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "m06_opt_level": "1",
+        "node_opt_level": "3",
+        "overflow_checks": true,
+        "result": "PASS",
+        "scope": "build profiles, feature sets and ELF identity only"
+      },
+      "binary_sha256_before_and_after": "a35f2397515c3dc61cd0a4bdf235c93914f92556720dfed2b54ed1aab843ca68",
+      "binary_bytes_uploaded": false,
+      "scope": "Actual runner ELF/profile validation receipts and original selectors; ELF bytes not independently re-read locally; not complete Node runtime suite",
+      "tests": [
+        {
+          "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+          "native_exit": 101,
+          "log_exit": 0,
+          "reader_exit": 1,
+          "original_cpu_flow_after": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 672768300,
+            "discarded_refill_ns": 55478188,
+            "initial_credit_ns": 2000000000,
+            "live_debited_cpu_ns": 2911725685,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 2911730384,
+            "remaining_paid_credit_ns": -238962084,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 2911730384,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 4699,
+            "stored_credit_ns": -238962084,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "native_result": {
+            "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+          },
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 2911725685,
+            "live_refused": true,
+            "owner_cpu_ns": 2911362325,
+            "residual_cpu_ns": 4699,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 368059,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 2911730384
+          },
+          "complete_state_bytes": 8625548
+        },
+        {
+          "selector": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+          "native_exit": 101,
+          "log_exit": 0,
+          "reader_exit": 1,
+          "original_cpu_flow_after": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 656763215,
+            "discarded_refill_ns": 54892928,
+            "initial_credit_ns": 2000000000,
+            "live_debited_cpu_ns": 2845033119,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 2845037907,
+            "remaining_paid_credit_ns": -188274692,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 2845037907,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 4788,
+            "stored_credit_ns": -188274692,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "native_result": {
+            "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+          },
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 2845033119,
+            "live_refused": true,
+            "owner_cpu_ns": 2844686644,
+            "residual_cpu_ns": 4788,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 351263,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 2845037907
+          },
+          "complete_state_bytes": 8625548
+        },
+        {
+          "selector": "ingress::public_v2::tests::public_loop_exit_records_lifetime_before_internal_stop",
+          "native_exit": 0,
+          "log_exit": 0,
+          "reader_exit": 0
+        },
+        {
+          "selector": "ingress::public_v2::tests::public_loop_exit_records_external_stop_after_signed_read",
+          "native_exit": 0,
+          "log_exit": 0,
+          "reader_exit": 0
+        }
+      ]
+    },
+    {
+      "lane": "original-x64-merge",
+      "run_id": 41333398659,
+      "job_id": 124928046557,
+      "artifact_id": 13095300380,
+      "artifact_sha256": "e886ed92b8bdce6a43b2c910aef4555b38e60073d73faf1c2dd79107239913c4",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41333398659/job/124928046557",
+      "source_before_and_after": {
+        "base": "64cb26b53ed82be14049000387040ba119f00e1e",
+        "candidate": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+        "kind": "prospective-merge",
+        "prospective_merge": "66a0a0e9f7679bcbdef0aab5c111ef0bdde6a927",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "66a0a0e9f7679bcbdef0aab5c111ef0bdde6a927",
+        "tested_tree": "b4d4cca6da8244cf9c7d479eca0974559f4a1005",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 781547101,
+        "tracked_entries": 6808,
+        "tracked_worktree_verified": true
+      },
+      "build_command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "build_success": true,
+      "build_profile_check": {
+        "binary_sha256": "81496653ecd04e5949ebd68dacf5b3b8d9cd6252d00778819849d7bebab5eea3",
+        "debug_assertions": true,
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "m06_opt_level": "1",
+        "node_opt_level": "3",
+        "overflow_checks": true,
+        "result": "PASS",
+        "scope": "build profiles, feature sets and ELF identity only"
+      },
+      "binary_sha256_before_and_after": "81496653ecd04e5949ebd68dacf5b3b8d9cd6252d00778819849d7bebab5eea3",
+      "binary_bytes_uploaded": false,
+      "scope": "Actual runner ELF/profile validation receipts and original selectors; ELF bytes not independently re-read locally; not complete Node runtime suite",
+      "tests": [
+        {
+          "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+          "native_exit": 101,
+          "log_exit": 0,
+          "reader_exit": 1,
+          "original_cpu_flow_after": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 556217640,
+            "discarded_refill_ns": 84354360,
+            "initial_credit_ns": 2000000000,
+            "live_debited_cpu_ns": 2561007699,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 2561012338,
+            "remaining_paid_credit_ns": -4794698,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 2561012338,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 4639,
+            "stored_credit_ns": -4794698,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "native_result": {
+            "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+          },
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 2561007699,
+            "live_refused": true,
+            "owner_cpu_ns": 2560577137,
+            "residual_cpu_ns": 4639,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 435201,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 2561012338
+          },
+          "complete_state_bytes": 8625548
+        },
+        {
+          "selector": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+          "native_exit": 101,
+          "log_exit": 0,
+          "reader_exit": 1,
+          "original_cpu_flow_after": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 671996424,
+            "discarded_refill_ns": 85870712,
+            "initial_credit_ns": 2000000000,
+            "live_debited_cpu_ns": 3029930194,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 3029933751,
+            "remaining_paid_credit_ns": -357937327,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 3029933751,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 3557,
+            "stored_credit_ns": -357937327,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "native_result": {
+            "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+          },
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 3029930194,
+            "live_refused": true,
+            "owner_cpu_ns": 3029573269,
+            "residual_cpu_ns": 3557,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 360482,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 3029933751
+          },
+          "complete_state_bytes": 8625548
+        },
+        {
+          "selector": "ingress::public_v2::tests::public_loop_exit_records_lifetime_before_internal_stop",
+          "native_exit": 0,
+          "log_exit": 0,
+          "reader_exit": 0
+        },
+        {
+          "selector": "ingress::public_v2::tests::public_loop_exit_records_external_stop_after_signed_read",
+          "native_exit": 0,
+          "log_exit": 0,
+          "reader_exit": 0
+        }
+      ]
+    },
+    {
+      "lane": "original-arm-head",
+      "run_id": 41333398659,
+      "job_id": 124928046449,
+      "artifact_id": 13094293823,
+      "artifact_sha256": "c55e4ad0411788cac2dc603b4ce986dc67254c8808d4a951fcbd93b674f10071",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41333398659/job/124928046449",
+      "source_before_and_after": {
+        "base": null,
+        "candidate": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+        "kind": "head",
+        "prospective_merge": null,
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+        "tested_tree": "b4d4cca6da8244cf9c7d479eca0974559f4a1005",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 781547101,
+        "tracked_entries": 6808,
+        "tracked_worktree_verified": true
+      },
+      "build_command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "build_success": true,
+      "build_profile_check": {
+        "binary_sha256": "d191172a8b3118556c51809252feffe5a3516fef76d7b6d5b0bf7dd905dcf144",
+        "debug_assertions": true,
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "m06_opt_level": "1",
+        "node_opt_level": "3",
+        "overflow_checks": true,
+        "result": "PASS",
+        "scope": "build profiles, feature sets and ELF identity only"
+      },
+      "binary_sha256_before_and_after": "d191172a8b3118556c51809252feffe5a3516fef76d7b6d5b0bf7dd905dcf144",
+      "binary_bytes_uploaded": false,
+      "scope": "Actual runner ELF/profile validation receipts and original selectors; ELF bytes not independently re-read locally; not complete Node runtime suite",
+      "tests": [
+        {
+          "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+          "native_exit": 101,
+          "log_exit": 0,
+          "reader_exit": 1,
+          "original_cpu_flow_after": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 642123183,
+            "discarded_refill_ns": 85381127,
+            "initial_credit_ns": 2000000000,
+            "live_debited_cpu_ns": 2908855256,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 2908861528,
+            "remaining_paid_credit_ns": -266738345,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 2908861528,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 6272,
+            "stored_credit_ns": -266738345,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "native_result": {
+            "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+          },
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 2908855256,
+            "live_refused": true,
+            "owner_cpu_ns": 2908401776,
+            "residual_cpu_ns": 6272,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 459752,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 2908861528
+          },
+          "complete_state_bytes": 8625548
+        },
+        {
+          "selector": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+          "native_exit": 101,
+          "log_exit": 0,
+          "reader_exit": 1,
+          "original_cpu_flow_after": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 799503463,
+            "discarded_refill_ns": 83149455,
+            "initial_credit_ns": 2000000000,
+            "live_debited_cpu_ns": 3529297760,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 3529302552,
+            "remaining_paid_credit_ns": -729799089,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 3529302552,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 4792,
+            "stored_credit_ns": -729799089,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "native_result": {
+            "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+          },
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 3529297760,
+            "live_refused": true,
+            "owner_cpu_ns": 3528847200,
+            "residual_cpu_ns": 4792,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 455352,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 3529302552
+          },
+          "complete_state_bytes": 8625548
+        },
+        {
+          "selector": "ingress::public_v2::tests::public_loop_exit_records_lifetime_before_internal_stop",
+          "native_exit": 0,
+          "log_exit": 0,
+          "reader_exit": 0
+        },
+        {
+          "selector": "ingress::public_v2::tests::public_loop_exit_records_external_stop_after_signed_read",
+          "native_exit": 0,
+          "log_exit": 0,
+          "reader_exit": 0
+        }
+      ]
+    },
+    {
+      "lane": "original-arm-merge",
+      "run_id": 41333398659,
+      "job_id": 124928046066,
+      "artifact_id": 13094338843,
+      "artifact_sha256": "dc53bc92af9d24f7f3611909104fc2d83647164121a4e9499c959a493fddcee3",
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/41333398659/job/124928046066",
+      "source_before_and_after": {
+        "base": "64cb26b53ed82be14049000387040ba119f00e1e",
+        "candidate": "d2fabdd3757b89db84763d632aeedfe84f9fce4f",
+        "kind": "prospective-merge",
+        "prospective_merge": "66a0a0e9f7679bcbdef0aab5c111ef0bdde6a927",
+        "schema": "trnm-ci-source-v1",
+        "tested_commit": "66a0a0e9f7679bcbdef0aab5c111ef0bdde6a927",
+        "tested_tree": "b4d4cca6da8244cf9c7d479eca0974559f4a1005",
+        "tests_executed_by_identity_check": false,
+        "tracked_bytes": 781547101,
+        "tracked_entries": 6808,
+        "tracked_worktree_verified": true
+      },
+      "build_command": [
+        "cargo",
+        "+1.95.0",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "trillionnium/Cargo.toml",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--no-run",
+        "--message-format=json"
+      ],
+      "build_success": true,
+      "build_profile_check": {
+        "binary_sha256": "495212a4087bf52c6ca9d5aa1ed5cbe776f410efa1aed9ad4e4c927a7a33ecf9",
+        "debug_assertions": true,
+        "features": [
+          "default",
+          "pq-native-openssl"
+        ],
+        "m06_opt_level": "1",
+        "node_opt_level": "3",
+        "overflow_checks": true,
+        "result": "PASS",
+        "scope": "build profiles, feature sets and ELF identity only"
+      },
+      "binary_sha256_before_and_after": "495212a4087bf52c6ca9d5aa1ed5cbe776f410efa1aed9ad4e4c927a7a33ecf9",
+      "binary_bytes_uploaded": false,
+      "scope": "Actual runner ELF/profile validation receipts and original selectors; ELF bytes not independently re-read locally; not complete Node runtime suite",
+      "tests": [
+        {
+          "selector": "store::detached_admission::tests::admitted_custom_genesis_over_eight_mib_keeps_original_held_schedule_and_cpu_owner",
+          "native_exit": 101,
+          "log_exit": 0,
+          "reader_exit": 1,
+          "original_cpu_flow_after": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 636833353,
+            "discarded_refill_ns": 80293812,
+            "initial_credit_ns": 2000000000,
+            "live_debited_cpu_ns": 2867229200,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 2867237992,
+            "remaining_paid_credit_ns": -230404639,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 2867237992,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 8792,
+            "stored_credit_ns": -230404639,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "native_result": {
+            "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+          },
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 2867229200,
+            "live_refused": true,
+            "owner_cpu_ns": 2866748928,
+            "residual_cpu_ns": 8792,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 489064,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 2867237992
+          },
+          "complete_state_bytes": 8625548
+        },
+        {
+          "selector": "store::detached_admission::tests::authenticated_large_parent_original_schedule_supplementary_denominator",
+          "native_exit": 101,
+          "log_exit": 0,
+          "reader_exit": 1,
+          "original_cpu_flow_after": {
+            "balance_identity_verified": true,
+            "booked_reservation_ns": 0,
+            "credited_refill_ns": 795737369,
+            "discarded_refill_ns": 81826070,
+            "initial_credit_ns": 2000000000,
+            "live_debited_cpu_ns": 3508748248,
+            "live_owners": 0,
+            "paid_cpu_debit_ns": 3508753160,
+            "remaining_paid_credit_ns": -713015791,
+            "schema": "public-v3-local-actual-cpu-flow-v1",
+            "settled_full_cpu_ns": 3508753160,
+            "settlement_discard_ns": 0,
+            "settlement_residual_cpu_ns": 4912,
+            "stored_credit_ns": -713015791,
+            "unsettled_known_live_cpu_ns": 0
+          },
+          "native_result": {
+            "Err": "PUBLIC_MUTATION_CPU_BUDGET"
+          },
+          "original_cpu_receipt": {
+            "accounting_unavailable": false,
+            "finished_workers": 2,
+            "known_workers": 2,
+            "live_paid_cpu_ns": 3508748248,
+            "live_refused": true,
+            "owner_cpu_ns": 3508322536,
+            "residual_cpu_ns": 4912,
+            "schema": "service-owner-scoped-thread-cpu-settlement-v1",
+            "scoped_worker_cpu_ns": 430624,
+            "spawned_workers": 2,
+            "started_workers": 2,
+            "total_cpu_ns": 3508753160
+          },
+          "complete_state_bytes": 8625548
+        },
+        {
+          "selector": "ingress::public_v2::tests::public_loop_exit_records_lifetime_before_internal_stop",
+          "native_exit": 0,
+          "log_exit": 0,
+          "reader_exit": 0
+        },
+        {
+          "selector": "ingress::public_v2::tests::public_loop_exit_records_external_stop_after_signed_read",
+          "native_exit": 0,
+          "log_exit": 0,
+          "reader_exit": 0
+        }
+      ]
+    }
+  ],
+  "default_release_run_is_not_workspace_evidence": 41333398587,
+  "full_node_suite": "not yet accepted; merge baseline stopped in M06 after 91 pass / 1 fail / 6 ignored",
+  "history_w1_whole_pq": "HOLD"
+}

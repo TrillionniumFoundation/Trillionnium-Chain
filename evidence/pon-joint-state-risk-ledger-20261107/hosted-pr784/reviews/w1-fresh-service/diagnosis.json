@@ -1,0 +1,362 @@
+{
+  "base": "cb314bb4656e5da4844325cd83994ab4764fe8e9",
+  "head": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+  "interpretation": [
+    "Both jobs are observed failures of new native acceptance runs; they are separate from the missing pinned historical pressure artifact.",
+    "The original named Rust test exited 0 but retained finite_target_met=false; the Python acceptance owner rejected CONFIRMATION_TARGET.",
+    "The fresh named Rust test actually executed and panicked at fresh_challenge.rs:244, exit 101, finite_target_met=false; FRESH_NATIVE_PROCESS_REQUIRED rejects its nonzero exit, not a missing execution.",
+    "The fresh panic explicitly retains failure of the original four-second, six-depth business target; no post-window success credit is granted.",
+    "Both lane host error lists are empty and build/source preparation succeeded; the controller propagates child exit 1.",
+    "Identical relevant source bytes versus base establish source equality only, not a measured no-regression result or a full causal explanation.",
+    "No code was changed, no CI job was rerun or cancelled, no comment was posted; acceptance and qualification remain failed/false."
+  ],
+  "lanes": [
+    {
+      "all_named_tests_passed": false,
+      "archive_bytes": 5629079,
+      "archive_sha256": "f7ed4b59dc5c8f435fc475a43907f367766457ab92408d85179fc74cf2d3dfad",
+      "artifact_id": 13597676542,
+      "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42431209904/artifacts/13597676542",
+      "child": {
+        "host_errors": [],
+        "native_child_exit": 1
+      },
+      "controller": {
+        "failure": null,
+        "final_host_errors": [],
+        "passed": false,
+        "systemd_run_exit": 1
+      },
+      "extracted_files_byte_verified": 57,
+      "failures": [
+        "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+        "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED"
+      ],
+      "github_digest_verified": true,
+      "job_id": 128580281914,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42431209904/job/128580281914",
+      "manifest_passed": false,
+      "runs": [
+        {
+          "failure": "CONFIRMATION_TARGET",
+          "failure_diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 2,
+              "phase": "from-zero-pressure",
+              "replay_accepted": true,
+              "replay_error": null
+            },
+            "native_returncode": 0,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": false,
+          "phases": [
+            {
+              "client_confirmation_latency_ns": 2787424743,
+              "client_confirmed_before_original_window_end": true,
+              "client_confirmed_transactions": 1,
+              "confirmation_ended_ns": 2787539623,
+              "finite_business_target_met": true,
+              "full_native_state_equal": true,
+              "mode": "attack-free-baseline"
+            },
+            {
+              "client_confirmation_latency_ns": null,
+              "client_confirmed_before_original_window_end": false,
+              "client_confirmed_transactions": 0,
+              "confirmation_ended_ns": null,
+              "finite_business_target_met": false,
+              "full_native_state_equal": false,
+              "mode": "from-zero-pressure"
+            }
+          ],
+          "process": {
+            "elapsed_ns": 23193290537,
+            "executed": true,
+            "exit_code": 0,
+            "expected_source": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+            "log": "original.log",
+            "process_exit_code": 0,
+            "source_after_verified": true,
+            "source_before_verified": true,
+            "source_verified": true,
+            "timed_out": false
+          },
+          "report_finite_target_met": false
+        },
+        {
+          "failure": "FRESH_NATIVE_PROCESS_REQUIRED",
+          "failure_diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 1,
+              "phase": "from-zero-pressure",
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE"
+            },
+            "native_returncode": 101,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+          "passed": false,
+          "phases": [
+            {
+              "client_confirmation_latency_ns": 2785689493,
+              "client_confirmed_before_original_window_end": true,
+              "client_confirmed_transactions": 1,
+              "confirmation_ended_ns": 2785839544,
+              "finite_business_target_met": true,
+              "full_native_state_equal": true,
+              "mode": "attack-free-baseline"
+            },
+            {
+              "client_confirmation_latency_ns": null,
+              "client_confirmed_before_original_window_end": false,
+              "client_confirmed_transactions": 0,
+              "confirmation_ended_ns": null,
+              "finite_business_target_met": false,
+              "full_native_state_equal": false,
+              "mode": "from-zero-pressure"
+            }
+          ],
+          "process": {
+            "elapsed_ns": 23022226633,
+            "executed": true,
+            "exit_code": 101,
+            "expected_source": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+            "log": "fresh.log",
+            "process_exit_code": 101,
+            "source_after_verified": true,
+            "source_before_verified": true,
+            "source_verified": true,
+            "timed_out": false
+          },
+          "report_finite_target_met": false
+        }
+      ],
+      "source_after": {
+        "commit": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+          "tested_tree": "51ae39a63851cdbfbe5ad4ebc1fb039a9b95abff",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 1733895581,
+          "tracked_entries": 16739,
+          "tracked_worktree_verified": true
+        },
+        "tree": "51ae39a63851cdbfbe5ad4ebc1fb039a9b95abff"
+      },
+      "source_before": {
+        "commit": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+          "tested_tree": "51ae39a63851cdbfbe5ad4ebc1fb039a9b95abff",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 1733895581,
+          "tracked_entries": 16739,
+          "tracked_worktree_verified": true
+        },
+        "tree": "51ae39a63851cdbfbe5ad4ebc1fb039a9b95abff"
+      },
+      "source_expected": "b5c655ebe9611b3d62cf739e61e6867decc053e3",
+      "zip_crc_verified": true
+    },
+    {
+      "all_named_tests_passed": false,
+      "archive_bytes": 5643607,
+      "archive_sha256": "4b87ab491989d30ace5b06c6d6e719ae33415cc942630eaf5bad111ede37b6fd",
+      "artifact_id": 13597946101,
+      "artifact_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42431209904/artifacts/13597946101",
+      "child": {
+        "host_errors": [],
+        "native_child_exit": 1
+      },
+      "controller": {
+        "failure": null,
+        "final_host_errors": [],
+        "passed": false,
+        "systemd_run_exit": 1
+      },
+      "extracted_files_byte_verified": 57,
+      "failures": [
+        "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline: CONFIRMATION_TARGET",
+        "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget: FRESH_NATIVE_PROCESS_REQUIRED"
+      ],
+      "github_digest_verified": true,
+      "job_id": 128580282001,
+      "job_url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42431209904/job/128580282001",
+      "manifest_passed": false,
+      "runs": [
+        {
+          "failure": "CONFIRMATION_TARGET",
+          "failure_diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 4,
+              "phase": "from-zero-pressure",
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE"
+            },
+            "native_returncode": 0,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "name": "from_zero_signed_business_reports_confirmation_in_original_pressure_window_against_same_packet_baseline",
+          "passed": false,
+          "phases": [
+            {
+              "client_confirmation_latency_ns": 1872767694,
+              "client_confirmed_before_original_window_end": true,
+              "client_confirmed_transactions": 1,
+              "confirmation_ended_ns": 1872929201,
+              "finite_business_target_met": true,
+              "full_native_state_equal": true,
+              "mode": "attack-free-baseline"
+            },
+            {
+              "client_confirmation_latency_ns": null,
+              "client_confirmed_before_original_window_end": false,
+              "client_confirmed_transactions": 0,
+              "confirmation_ended_ns": null,
+              "finite_business_target_met": false,
+              "full_native_state_equal": false,
+              "mode": "from-zero-pressure"
+            }
+          ],
+          "process": {
+            "elapsed_ns": 23505427412,
+            "executed": true,
+            "exit_code": 0,
+            "expected_source": "b5adba8cfe5307675aac8482aa569312354bb3e4",
+            "log": "original.log",
+            "process_exit_code": 0,
+            "source_after_verified": true,
+            "source_before_verified": true,
+            "source_verified": true,
+            "timed_out": false
+          },
+          "report_finite_target_met": false
+        },
+        {
+          "failure": "FRESH_NATIVE_PROCESS_REQUIRED",
+          "failure_diagnostic": {
+            "acceptance_authority": false,
+            "finite_target_met": false,
+            "last_history_replay": {
+              "history_call_index": 1,
+              "phase": "from-zero-pressure",
+              "replay_accepted": false,
+              "replay_error": "PUBLIC_REQUEST_DEADLINE"
+            },
+            "native_returncode": 101,
+            "schema": "trnm-w1-fresh-failure-diagnostic-v1"
+          },
+          "name": "fresh_challenge::fresh_challenge_signed_confirmation_keeps_original_pressure_budget",
+          "passed": false,
+          "phases": [
+            {
+              "client_confirmation_latency_ns": 1793337997,
+              "client_confirmed_before_original_window_end": true,
+              "client_confirmed_transactions": 1,
+              "confirmation_ended_ns": 1793474784,
+              "finite_business_target_met": true,
+              "full_native_state_equal": true,
+              "mode": "attack-free-baseline"
+            },
+            {
+              "client_confirmation_latency_ns": null,
+              "client_confirmed_before_original_window_end": false,
+              "client_confirmed_transactions": 0,
+              "confirmation_ended_ns": null,
+              "finite_business_target_met": false,
+              "full_native_state_equal": false,
+              "mode": "from-zero-pressure"
+            }
+          ],
+          "process": {
+            "elapsed_ns": 23402472593,
+            "executed": true,
+            "exit_code": 101,
+            "expected_source": "b5adba8cfe5307675aac8482aa569312354bb3e4",
+            "log": "fresh.log",
+            "process_exit_code": 101,
+            "source_after_verified": true,
+            "source_before_verified": true,
+            "source_verified": true,
+            "timed_out": false
+          },
+          "report_finite_target_met": false
+        }
+      ],
+      "source_after": {
+        "commit": "b5adba8cfe5307675aac8482aa569312354bb3e4",
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "b5adba8cfe5307675aac8482aa569312354bb3e4",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "b5adba8cfe5307675aac8482aa569312354bb3e4",
+          "tested_tree": "51ae39a63851cdbfbe5ad4ebc1fb039a9b95abff",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 1733895581,
+          "tracked_entries": 16739,
+          "tracked_worktree_verified": true
+        },
+        "tree": "51ae39a63851cdbfbe5ad4ebc1fb039a9b95abff"
+      },
+      "source_before": {
+        "commit": "b5adba8cfe5307675aac8482aa569312354bb3e4",
+        "test_sha256": "51c6091335463b21bceb16eb8f9108f612fea85e95a6e076696e484e0a6ac41a",
+        "tracked_source_identity": {
+          "base": null,
+          "candidate": "b5adba8cfe5307675aac8482aa569312354bb3e4",
+          "kind": "head",
+          "prospective_merge": null,
+          "schema": "trnm-ci-source-v1",
+          "tested_commit": "b5adba8cfe5307675aac8482aa569312354bb3e4",
+          "tested_tree": "51ae39a63851cdbfbe5ad4ebc1fb039a9b95abff",
+          "tests_executed_by_identity_check": false,
+          "tracked_bytes": 1733895581,
+          "tracked_entries": 16739,
+          "tracked_worktree_verified": true
+        },
+        "tree": "51ae39a63851cdbfbe5ad4ebc1fb039a9b95abff"
+      },
+      "source_expected": "b5adba8cfe5307675aac8482aa569312354bb3e4",
+      "zip_crc_verified": true
+    }
+  ],
+  "minimal_followup": "Keep the four-second/six-depth acceptance predicate unchanged. A bounded follow-up may improve the FRESH_NATIVE_PROCESS_REQUIRED diagnostic to include native exit/panic and separately investigate why the honest confirmation misses its unchanged target. This review does not implement a fix or claim performance causality.",
+  "observed_at": "2026-11-08T01:23:09.277209+00:00",
+  "runtime_recovery": {
+    "prior_download_job_id_recovery": "in-memory identity unavailable after interruption; process_list refused a greater-than-1-MiB host inventory; existing archives and extracted bytes verified instead",
+    "prior_download_not_relaunched": true,
+    "summary_job": "1a1b8bee0e9-12894-10d6"
+  },
+  "schema": "pr784-w1-hosted-readonly-diagnosis-v1",
+  "source_differences_vs_base": {
+    "host": false,
+    "native-test": false,
+    "runner": false
+  },
+  "workflow_bytes_equal_base": true,
+  "workflow_path": ".github/workflows/pon-w1-work-security.yml"
+}

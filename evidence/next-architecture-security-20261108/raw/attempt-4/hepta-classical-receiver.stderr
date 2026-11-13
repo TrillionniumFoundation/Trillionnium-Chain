@@ -1,0 +1,13 @@
+   Compiling syn v2.0.117
+   Compiling thiserror-impl v1.0.69
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling serde_derive v1.0.228
+   Compiling thiserror v1.0.69
+   Compiling curve25519-dalek v4.1.3
+   Compiling serde v1.0.228
+   Compiling trnm-protocol v0.1.0 (/home/qian-qi/work/chain-next-architecture-security-20261108-8720/trillionnium/crates/trnm-protocol)
+   Compiling ed25519-dalek v2.2.0
+   Compiling trnm-crypto-primitives v0.1.0 (/home/qian-qi/work/chain-next-architecture-security-20261108-8720/trillionnium/crates/trnm-crypto-primitives)
+   Compiling trnm-research-protocol v0.1.0 (/home/qian-qi/work/chain-next-architecture-security-20261108-8720/trillionnium/crates/trnm-research-protocol)
+    Finished `release` profile [optimized] target(s) in 31.08s
+     Running tests/protocol_v1.rs (/home/qian-qi/work/chain-next-architecture-security-20261108-8720-target/release/deps/protocol_v1-7862790f19007acf)

@@ -1,0 +1,18 @@
+{
+  "exists": true,
+  "fd5_info": "pos:\t0\nflags:\t02504000\nmnt_id:\t27\nino:\t1598657\n",
+  "fd5_target": "/home/qian-qi/work/chain-next-architecture-security-20261108-8720/evidence/pon-business-gates-readback-20261107/ingress-205/native-205ae38-v3/test-12.json",
+  "io_pressure": "some avg10=50.16 avg60=45.72 avg300=35.81 total=51927034649\nfull avg10=47.05 avg60=42.42 avg300=32.83 total=48852328660\n",
+  "loadavg": "30.57 28.60 23.25 13/4533 3518896\n",
+  "memory": [
+    "MemTotal:       131760804 kB",
+    "MemAvailable:   84833200 kB",
+    "Cached:         54810228 kB",
+    "Dirty:           6732024 kB",
+    "Writeback:          1524 kB"
+  ],
+  "pid": 3497159,
+  "process_io": "rchar: 634238413\nwchar: 4284444\nsyscr: 12287\nsyscw: 1051\nread_bytes: 650633216\nwrite_bytes: 0\ncancelled_write_bytes: 0\n",
+  "utc": "2026-11-08T06:28:43.553549+00:00",
+  "wchan": "folio_wait_bit_common"
+}

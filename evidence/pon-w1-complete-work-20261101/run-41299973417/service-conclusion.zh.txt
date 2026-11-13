@@ -1,0 +1,30 @@
+最终 CI 源码 7c5caf5：服务产物独立读回
+
+run = 41299973417
+head = 7c5caf5bce1396976808a0f504c4163fbc1aed44
+merge = c2d5f9ad0ed9402a919e4c87be3825f9aa91837d
+tree = fef6125b338e5697896c0a32d0488458d8d93244
+
+本轮两个服务 job 仍是真实业务指标失败。按本轮原始文件重新复算，八个阶段均 ACK 7 个诚实区块；四个无攻击基线均在原 4 秒窗口内完成 1 次独立 depth=6 确认；四个压力阶段均 0 次确认。确认记录 finalized=false、execution_authority=false。
+
+实际数据（攻击调用含窗口后返回；Transcript 是客户端收到的 WORK:Transcript 拒绝）：
+lane / fixture | baseline 确认秒 | pressure 最后 ACK 秒 | pressure 总攻击调用 / Transcript | fetched / client stored / active | 压力确认
+head / original | 3.492119 | 2.351921 | 217 / 201 | 1 / 0 / 0 | 0
+head / fresh | 3.492283 | 2.647003 | 191 / 175 | 1 / 0 / 0 | 0
+prospective-merge / original | 3.575088 | 2.443031 | 208 / 192 | 1 / 0 / 0 | 0
+prospective-merge / fresh | 3.578850 | 2.653796 | 184 / 168 | 1 / 0 / 0 | 0
+
+本轮四个压力场景的 receiver active 高度均为 7，独立客户端只取到一个诚实区块页，持久和 active 高度都停留在 genesis 0。本轮四者全部记录 PUBLIC_REQUEST_DEADLINE，发生在本地完整 History 导入期间；未沿用上一轮 merge fresh 的网络 FRAME_DEADLINE 判断。
+
+两个 original 诊断原生进程退出 0，因为限定断言仅检查安全/计量不变量；严格阅读器均拒绝 CONFIRMATION_TARGET。两个 fresh 原生测试实际执行并以 101 退出，具体失败在四秒业务目标 assert；FRESH_NATIVE_PROCESS_REQUIRED 是包装器先检查非零进程退出的标签，并非缺少原生执行。直接读取 fresh 报告仍拒绝 FRESH_BUSINESS_TARGET。
+
+本轮未发现攻击被接受：全部攻击调用被拒绝或失败；完整 observer 与 SQLite 一致。所有非 genesis 存储数据均为预期诚实区块。本轮所有阶段 mutation_cpu_refusals=0、mutation_cpu_clock_failures=0，结尾 in_flight=0；服务没有证明接收方付费 credit 耗尽。初末 credit 不能证明中间从未下降。
+
+物理资源保持原值：cpu.max=25000 100000（共同 0.25 CPU）、cpu.max.burst=0、memory.max=2147483648、memory.swap.max=0、pids.max=256。这个共同 Host 包括 receiver、攻击客户端、独立验证客户端、reader 与 controller。Host CPU 统计覆盖整个包装器，不是逐场景或仅接收方 CPU；原生子阶段 CPU 也不得与包含它的总区间重复相加。
+
+7c5 相对 8327 只改两个 CI workflow。25 份精确 pinned 阅读器/源码快照逐字节与上轮相同，两个当前 native binaries 自行 SHA 验证，均为 5c95269910f98cb10ec026070ac30a4f4c25d804707766c8950946e31af34529，与 8327 两条 lane 原生二进制相同。默认 verifier 仍为 FullLimb。两轮硬件/Host 未做配对随机干预，数值起伏不能证明算法改善或退化；原语变快也没有使本轮服务业务目标通过。
+
+独立复核完成 9940 项检查；两个 ZIP 的 GitHub SHA/size 与 CRC 全匹配，全部解压文件与 ZIP 成员逐字节相同；52 项 manifest 成员 SHA 匹配。
+完整读取 106 个文件、47457610 字节。
+
+本次只读分析未修改源码、deadline、预算、成功条件或任何已冻结公开证据。service-failure-report.json 保留全部当前细节，comparison-to-8327.json 只做描述性比较。

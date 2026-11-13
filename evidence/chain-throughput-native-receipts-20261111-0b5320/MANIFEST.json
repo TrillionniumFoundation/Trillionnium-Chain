@@ -1,0 +1,2827 @@
+{
+  "evidence_prefix": "evidence/chain-throughput-native-receipts-20261111-0b5320",
+  "files": [
+    {
+      "bytes": 8036,
+      "git_blob_sha1": "59e57574d2bafdd3df7fcf8feb2710237fd5e8a2",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/NATIVE_FOLLOWUP.md",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/NATIVE_FOLLOWUP.md",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/NATIVE_FOLLOWUP.md",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/native_followup_findings.md",
+          "role": "earlier 7d source and accounting investigation, retained separately"
+        }
+      ],
+      "role": "earlier 7d source and accounting investigation, retained separately",
+      "sha256": "56e4ddb32a1c5c5f1896c7184094c21ef83d57ead9471dcfae402f6aa9c75d70"
+    },
+    {
+      "bytes": 20307,
+      "git_blob_sha1": "b620284d8b4c59ee6febf1a3c1028f3408f619bd",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/README.md",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/README.md",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/README.md",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/native_receipts_README.md",
+          "role": "approved final evidence README"
+        }
+      ],
+      "role": "approved final evidence README",
+      "sha256": "68e76fbbd53a053e9fe624bf76b7dfb996039771db6ff702d296e475cf621271"
+    },
+    {
+      "bytes": 5294,
+      "git_blob_sha1": "7e706ccf8c3892b0648b09ff08e5c38cd1982373",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/components/budget-before-v2/component-summary-frozen-reader-v2.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 5294,
+              "git_blob_sha1": "7e706ccf8c3892b0648b09ff08e5c38cd1982373",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/component-summary-frozen-reader-v2.json",
+              "sha256": "41a7c0cb0a83aa71e18809294ec4ff6af27745165983b2b04f77df7c3db37308"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/components/budget-before-v2/component-summary-frozen-reader-v2.json"
+        }
+      ],
+      "role": "derived frozen M parser readback; no new native execution",
+      "sha256": "41a7c0cb0a83aa71e18809294ec4ff6af27745165983b2b04f77df7c3db37308"
+    },
+    {
+      "bytes": 4701,
+      "git_blob_sha1": "bde6afd6f54e1dac70b77cd4064c16427fcd2e3a",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/components/budget-before-v2/execution-roster.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 4701,
+              "git_blob_sha1": "bde6afd6f54e1dac70b77cd4064c16427fcd2e3a",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/execution-roster.json",
+              "sha256": "49a41d17b8fdcef69882988cc0ce395128cca3346431664f3bd2dae8ad10daf9"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/components/budget-before-v2/execution-roster.json"
+        }
+      ],
+      "role": "derived frozen-reader execution roster",
+      "sha256": "49a41d17b8fdcef69882988cc0ce395128cca3346431664f3bd2dae8ad10daf9"
+    },
+    {
+      "bytes": 20092,
+      "git_blob_sha1": "69c46461e6d2f5a2cdb97cd09df133d593b497ed",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/components/budget-before-v2/original-text-manifest.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 20092,
+              "git_blob_sha1": "69c46461e6d2f5a2cdb97cd09df133d593b497ed",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text-manifest.json",
+              "sha256": "f0c1347c15bd1c8fa19b9bf555fb01eefdb093f94a27235aab4647160e753ba6"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/components/budget-before-v2/original-text-manifest.json"
+        }
+      ],
+      "role": "original member mapping with byte hashes",
+      "sha256": "f0c1347c15bd1c8fa19b9bf555fb01eefdb093f94a27235aab4647160e753ba6"
+    },
+    {
+      "bytes": 131157,
+      "git_blob_sha1": "79df0bf16cfb5e7f4aa34b4ce38e136b211ea72b",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/components/budget-before-v2/original-text.tar.gz",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 131157,
+              "git_blob_sha1": "79df0bf16cfb5e7f4aa34b4ce38e136b211ea72b",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833530665-component/original-text.tar.gz",
+              "sha256": "7829b3eb42c2816e3297323d2ae4f3f605ac89a8bcfb20d5213f0999f2bb8b0b"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/components/budget-before-v2/original-text.tar.gz"
+        }
+      ],
+      "role": "all selected original official artifact text; ELF excluded",
+      "sha256": "7829b3eb42c2816e3297323d2ae4f3f605ac89a8bcfb20d5213f0999f2bb8b0b"
+    },
+    {
+      "bytes": 6369,
+      "git_blob_sha1": "f0b3ad31f7083b7424d2af8fb823b8d0dddb00d5",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/components/fixed/component-summary-frozen-reader-v2.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 6369,
+              "git_blob_sha1": "f0b3ad31f7083b7424d2af8fb823b8d0dddb00d5",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832876006-component/component-summary-frozen-reader-v2.json",
+              "sha256": "428c9decba7bfcfe04e069618b359c5b92c03c0ad3427365d27b31d588b8d146"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/components/fixed/component-summary-frozen-reader-v2.json"
+        }
+      ],
+      "role": "derived frozen M parser readback; no new native execution",
+      "sha256": "428c9decba7bfcfe04e069618b359c5b92c03c0ad3427365d27b31d588b8d146"
+    },
+    {
+      "bytes": 10608,
+      "git_blob_sha1": "4a75bff5dc2ff541ac65b43849af96713825c7a7",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/components/fixed/execution-roster.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 10608,
+              "git_blob_sha1": "4a75bff5dc2ff541ac65b43849af96713825c7a7",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832876006-component/execution-roster.json",
+              "sha256": "c49320eb87d9fc62b992b4ff30cbf13ceefc24cef8542b1acdac7dc707c812bf"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/components/fixed/execution-roster.json"
+        }
+      ],
+      "role": "derived frozen-reader execution roster",
+      "sha256": "c49320eb87d9fc62b992b4ff30cbf13ceefc24cef8542b1acdac7dc707c812bf"
+    },
+    {
+      "bytes": 38069,
+      "git_blob_sha1": "84cd03846d0950509db05f898e2b44d06e08ff08",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/components/fixed/original-text-manifest.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 38069,
+              "git_blob_sha1": "84cd03846d0950509db05f898e2b44d06e08ff08",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832876006-component/original-text-manifest.json",
+              "sha256": "64d9fbf70c85c26e094ebce286e1a0422ab48812ec7205c8e4c8db3cc107aa44"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/components/fixed/original-text-manifest.json"
+        }
+      ],
+      "role": "original member mapping with byte hashes",
+      "sha256": "64d9fbf70c85c26e094ebce286e1a0422ab48812ec7205c8e4c8db3cc107aa44"
+    },
+    {
+      "bytes": 137368,
+      "git_blob_sha1": "7c695c38637df2a138b77d238526c538269ec75f",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/components/fixed/original-text.tar.gz",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 137368,
+              "git_blob_sha1": "7c695c38637df2a138b77d238526c538269ec75f",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832876006-component/original-text.tar.gz",
+              "sha256": "65e736a35431252b48b404e0c59e047c597226f0ff47554cde5cbe1c3b8d4fa6"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/components/fixed/original-text.tar.gz"
+        }
+      ],
+      "role": "all selected original official artifact text; ELF excluded",
+      "sha256": "65e736a35431252b48b404e0c59e047c597226f0ff47554cde5cbe1c3b8d4fa6"
+    },
+    {
+      "bytes": 5287,
+      "git_blob_sha1": "86ff38f0e16f9b0e59019a9195c02a5f01b1eae8",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/components/pool-before-v2/component-summary-frozen-reader-v2.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 5287,
+              "git_blob_sha1": "86ff38f0e16f9b0e59019a9195c02a5f01b1eae8",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/component-summary-frozen-reader-v2.json",
+              "sha256": "9a7e5944bf68efb572770db0b5911c3d5d269c89583316b7dc0472a0d12bf4ab"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/components/pool-before-v2/component-summary-frozen-reader-v2.json"
+        }
+      ],
+      "role": "derived frozen M parser readback; no new native execution",
+      "sha256": "9a7e5944bf68efb572770db0b5911c3d5d269c89583316b7dc0472a0d12bf4ab"
+    },
+    {
+      "bytes": 4068,
+      "git_blob_sha1": "a587a01d8dd0f6075f5782d84776cc0c024c563d",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/components/pool-before-v2/execution-roster.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 4068,
+              "git_blob_sha1": "a587a01d8dd0f6075f5782d84776cc0c024c563d",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/execution-roster.json",
+              "sha256": "a66e99d90c72234408c6a4c805987f30772d193f7b838668abb4f0fd6e118346"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/components/pool-before-v2/execution-roster.json"
+        }
+      ],
+      "role": "derived frozen-reader execution roster",
+      "sha256": "a66e99d90c72234408c6a4c805987f30772d193f7b838668abb4f0fd6e118346"
+    },
+    {
+      "bytes": 20079,
+      "git_blob_sha1": "42bfd79849222f28af03b44431537cf4ae280a2e",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/components/pool-before-v2/original-text-manifest.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 20079,
+              "git_blob_sha1": "42bfd79849222f28af03b44431537cf4ae280a2e",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text-manifest.json",
+              "sha256": "ca8a7b60ad4483c7b5dd0dc9e2892cd2ff70bff33fb4b20dc4969b129a484d9f"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/components/pool-before-v2/original-text-manifest.json"
+        }
+      ],
+      "role": "original member mapping with byte hashes",
+      "sha256": "ca8a7b60ad4483c7b5dd0dc9e2892cd2ff70bff33fb4b20dc4969b129a484d9f"
+    },
+    {
+      "bytes": 121225,
+      "git_blob_sha1": "e6982a3eb3aaf0641d5cb586641d4dde32150c6f",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/components/pool-before-v2/original-text.tar.gz",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 121225,
+              "git_blob_sha1": "e6982a3eb3aaf0641d5cb586641d4dde32150c6f",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832229500-component/original-text.tar.gz",
+              "sha256": "9e6174cceee7119c8ddb5b5bd9107389f2c799693e22b73d117793b3737d969e"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/components/pool-before-v2/original-text.tar.gz"
+        }
+      ],
+      "role": "all selected original official artifact text; ELF excluded",
+      "sha256": "9e6174cceee7119c8ddb5b5bd9107389f2c799693e22b73d117793b3737d969e"
+    },
+    {
+      "bytes": 5293,
+      "git_blob_sha1": "ee3eba03e8f73807780eb9875911787231ed9dc7",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/components/pool-scan-before/component-summary-frozen-reader-v2.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 5293,
+              "git_blob_sha1": "ee3eba03e8f73807780eb9875911787231ed9dc7",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833220372-component/component-summary-frozen-reader-v2.json",
+              "sha256": "5d3ee4e9614a234a00d37a904e8bb12092c1b2dc1c48ef89b24719aa5c8c3735"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/components/pool-scan-before/component-summary-frozen-reader-v2.json"
+        }
+      ],
+      "role": "derived frozen M parser readback; no new native execution",
+      "sha256": "5d3ee4e9614a234a00d37a904e8bb12092c1b2dc1c48ef89b24719aa5c8c3735"
+    },
+    {
+      "bytes": 1365,
+      "git_blob_sha1": "e1bd06f741d74816d3c6b9ae5b805d3b5de32485",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/components/pool-scan-before/execution-roster.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 1365,
+              "git_blob_sha1": "e1bd06f741d74816d3c6b9ae5b805d3b5de32485",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833220372-component/execution-roster.json",
+              "sha256": "0c23d53d1ed2eff24fa1fc56f6714519cbb06380d3d3ec229c0e0c9bc46dffac"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/components/pool-scan-before/execution-roster.json"
+        }
+      ],
+      "role": "derived frozen-reader execution roster",
+      "sha256": "0c23d53d1ed2eff24fa1fc56f6714519cbb06380d3d3ec229c0e0c9bc46dffac"
+    },
+    {
+      "bytes": 14837,
+      "git_blob_sha1": "3fd093234b0add1cf153c116a2305047c78b5f28",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/components/pool-scan-before/original-text-manifest.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 14837,
+              "git_blob_sha1": "3fd093234b0add1cf153c116a2305047c78b5f28",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833220372-component/original-text-manifest.json",
+              "sha256": "428c75f7c3cfbe9ebbf4cee5e1ac4f042f1f9467801f38584de16fba2756915f"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/components/pool-scan-before/original-text-manifest.json"
+        }
+      ],
+      "role": "original member mapping with byte hashes",
+      "sha256": "428c75f7c3cfbe9ebbf4cee5e1ac4f042f1f9467801f38584de16fba2756915f"
+    },
+    {
+      "bytes": 119637,
+      "git_blob_sha1": "6b13434c087eb27f7c2ccb4c6466071ca00e137c",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/components/pool-scan-before/original-text.tar.gz",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 119637,
+              "git_blob_sha1": "6b13434c087eb27f7c2ccb4c6466071ca00e137c",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833220372-component/original-text.tar.gz",
+              "sha256": "3e66e578838088f20f8642bb51cbda06e8d11812ad623a5052c8c734b67666c1"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/components/pool-scan-before/original-text.tar.gz"
+        }
+      ],
+      "role": "all selected original official artifact text; ELF excluded",
+      "sha256": "3e66e578838088f20f8642bb51cbda06e8d11812ad623a5052c8c734b67666c1"
+    },
+    {
+      "bytes": 5504,
+      "git_blob_sha1": "2506008cd5d8783763ebd2a934f0483b3f67a9d9",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/four-original-text-retention-v1.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 5504,
+              "git_blob_sha1": "2506008cd5d8783763ebd2a934f0483b3f67a9d9",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/four-original-text-retention-v1.json",
+              "sha256": "792657e4180c4d60764b154e090340638917155822a420392ad171a73458a9d3"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/four-original-text-retention-v1.json"
+        },
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/four-original-text-retention-v1.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/four-original-text-retention-v1.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/four-original-text-retention-v1.json",
+          "role": "original hosted UTF8 selections and member maps"
+        }
+      ],
+      "role": "original-text retention provenance",
+      "sha256": "792657e4180c4d60764b154e090340638917155822a420392ad171a73458a9d3"
+    },
+    {
+      "bytes": 90949,
+      "git_blob_sha1": "6ac8e4fe817eb5e0dff651ff7b50e98f0ce4d229",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/from-zero/arm64/original-text-manifest.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 90949,
+              "git_blob_sha1": "6ac8e4fe817eb5e0dff651ff7b50e98f0ce4d229",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13831414961-raw-text-package-v1/original-text-manifest.json",
+              "sha256": "1f76335f1748b68627dfa9a40a722e08e48d7e66f0e11eedd0f7552c17f651db"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/from-zero/arm64/original-text-manifest.json"
+        }
+      ],
+      "role": "original ZIP member selection mapping and hashes",
+      "sha256": "1f76335f1748b68627dfa9a40a722e08e48d7e66f0e11eedd0f7552c17f651db"
+    },
+    {
+      "bytes": 2750610,
+      "git_blob_sha1": "5b4697f229b5ec7b4ce768421ff3df60a8db53e3",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/from-zero/arm64/original-text.tar.gz",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 2750610,
+              "git_blob_sha1": "5b4697f229b5ec7b4ce768421ff3df60a8db53e3",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13831414961-raw-text-package-v1/original-text.tar.gz",
+              "sha256": "58a01276314407f31d8703ca44fdb4bc2554cb7735f6d889f6faa7fdb152927f"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/from-zero/arm64/original-text.tar.gz"
+        }
+      ],
+      "role": "every regular original UTF-8 artifact member; binary excluded",
+      "sha256": "58a01276314407f31d8703ca44fdb4bc2554cb7735f6d889f6faa7fdb152927f"
+    },
+    {
+      "bytes": 90946,
+      "git_blob_sha1": "843746034232051f64a00c42198f08501566f8ad",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/from-zero/x64/original-text-manifest.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 90946,
+              "git_blob_sha1": "843746034232051f64a00c42198f08501566f8ad",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13831493931-raw-text-package-v1/original-text-manifest.json",
+              "sha256": "9622f440f5fede504c9803349ce6c31fd9208becd04d66941e3b9e22e4060af7"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/from-zero/x64/original-text-manifest.json"
+        }
+      ],
+      "role": "original ZIP member selection mapping and hashes",
+      "sha256": "9622f440f5fede504c9803349ce6c31fd9208becd04d66941e3b9e22e4060af7"
+    },
+    {
+      "bytes": 2711142,
+      "git_blob_sha1": "b9b2b69b7b270fcd15dc7d7e4a8482fe8efb496f",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/from-zero/x64/original-text.tar.gz",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 2711142,
+              "git_blob_sha1": "b9b2b69b7b270fcd15dc7d7e4a8482fe8efb496f",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13831493931-raw-text-package-v1/original-text.tar.gz",
+              "sha256": "6c091ffa5bad85c0a753c7f7ff1ccbc989b6f418cb249d812b220b4509d13d72"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/from-zero/x64/original-text.tar.gz"
+        }
+      ],
+      "role": "every regular original UTF-8 artifact member; binary excluded",
+      "sha256": "6c091ffa5bad85c0a753c7f7ff1ccbc989b6f418cb249d812b220b4509d13d72"
+    },
+    {
+      "bytes": 1815,
+      "git_blob_sha1": "a285335fc9440d366b9bec36a52850e708b5ada7",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/original-campaign/independent-report-audit-v1.invocation.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 1815,
+              "git_blob_sha1": "a285335fc9440d366b9bec36a52850e708b5ada7",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833660378-campaign/independent-report-audit-v1.invocation.json",
+              "sha256": "f0175df40af2c534e596cbc27e7ef67ee2266754b023b36e62811eec499f6f64"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/original-campaign/independent-report-audit-v1.invocation.json"
+        }
+      ],
+      "role": "actual auditor argv/time/exit and file guards",
+      "sha256": "f0175df40af2c534e596cbc27e7ef67ee2266754b023b36e62811eec499f6f64"
+    },
+    {
+      "bytes": 86633,
+      "git_blob_sha1": "8d393f6aa633a29410aa4c2dd1b058aedee71099",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/original-campaign/independent-report-audit-v1.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 86633,
+              "git_blob_sha1": "8d393f6aa633a29410aa4c2dd1b058aedee71099",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833660378-campaign/independent-report-audit-v1.json",
+              "sha256": "9705f222f1841d3074e8468c4b70f1deccbfd28e77b9797a81f15cac673bcfb7"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/original-campaign/independent-report-audit-v1.json"
+        }
+      ],
+      "role": "derived raw-report audit; not a new native run",
+      "sha256": "9705f222f1841d3074e8468c4b70f1deccbfd28e77b9797a81f15cac673bcfb7"
+    },
+    {
+      "bytes": 0,
+      "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/original-campaign/independent-report-audit-v1.stderr",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 0,
+              "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833660378-campaign/independent-report-audit-v1.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/original-campaign/independent-report-audit-v1.stderr"
+        }
+      ],
+      "role": "actual auditor stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1648,
+      "git_blob_sha1": "7ad5e277f564adb873d59298a138572b8aa2fe19",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/original-campaign/independent-report-audit-v1.stdout",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 1648,
+              "git_blob_sha1": "7ad5e277f564adb873d59298a138572b8aa2fe19",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833660378-campaign/independent-report-audit-v1.stdout",
+              "sha256": "56f8a5a462379b04c87f0250a4c9b6b620c3c68f6974c03c66df772a480498a2"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/original-campaign/independent-report-audit-v1.stdout"
+        }
+      ],
+      "role": "actual auditor stdout",
+      "sha256": "56f8a5a462379b04c87f0250a4c9b6b620c3c68f6974c03c66df772a480498a2"
+    },
+    {
+      "bytes": 31280,
+      "git_blob_sha1": "066ee60f82fd42e5cb8d783ddb78ddfff83cdbd9",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/original-campaign/independent-report-auditor-v1.py",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 31280,
+              "git_blob_sha1": "066ee60f82fd42e5cb8d783ddb78ddfff83cdbd9",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833660378-campaign/independent-report-auditor-v1.py",
+              "sha256": "f6a7d8ede32d3cfb5c4420d069f8f505f913cc55f13078f688b73290ed13852c"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/original-campaign/independent-report-auditor-v1.py"
+        }
+      ],
+      "role": "independent raw-report auditor exact invoked code",
+      "sha256": "f6a7d8ede32d3cfb5c4420d069f8f505f913cc55f13078f688b73290ed13852c"
+    },
+    {
+      "bytes": 921390,
+      "git_blob_sha1": "4c0714f21cf72c0c7969d69085435445c6ea31ce",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/original-campaign/original-text-manifest.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 921390,
+              "git_blob_sha1": "4c0714f21cf72c0c7969d69085435445c6ea31ce",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833660378-campaign/original-text-manifest.json",
+              "sha256": "bda048160c169725984bf07326301114be96ce0468a5bb71c480a6a78b7f57e9"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/original-campaign/original-text-manifest.json"
+        }
+      ],
+      "role": "original ZIP member map",
+      "sha256": "bda048160c169725984bf07326301114be96ce0468a5bb71c480a6a78b7f57e9"
+    },
+    {
+      "bytes": 42958086,
+      "git_blob_sha1": "93b44f35fb75e8a979b94f744a751fb05292b708",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/original-campaign/original-text.tar.gz",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 42958086,
+              "git_blob_sha1": "93b44f35fb75e8a979b94f744a751fb05292b708",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833660378-campaign/original-text.tar.gz",
+              "sha256": "bc65c57bf9692fdfb4d5ec2470711562af3a23243b496aa0813ad30634b7d3fb"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/original-campaign/original-text.tar.gz"
+        }
+      ],
+      "role": "complete selected original three-campaign text",
+      "sha256": "bc65c57bf9692fdfb4d5ec2470711562af3a23243b496aa0813ad30634b7d3fb"
+    },
+    {
+      "bytes": 2091,
+      "git_blob_sha1": "b215b71a8a38e96f33f5ef7804a72d5c2379054a",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/original-campaign/retention-receipt.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 2091,
+              "git_blob_sha1": "b215b71a8a38e96f33f5ef7804a72d5c2379054a",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13833660378-campaign/retention-receipt.json",
+              "sha256": "7efd094afe906968e84b0b9f0c34bae43c76db78c3de61adb7215a6bfc384cc0"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/original-campaign/retention-receipt.json"
+        }
+      ],
+      "role": "original text retention receipt",
+      "sha256": "7efd094afe906968e84b0b9f0c34bae43c76db78c3de61adb7215a6bfc384cc0"
+    },
+    {
+      "bytes": 31655,
+      "git_blob_sha1": "e45a5ea4bfa7398c687ef284f24efebff3176734",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/protocol-contract-head/failure-readback.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 31655,
+              "git_blob_sha1": "e45a5ea4bfa7398c687ef284f24efebff3176734",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13834081764-protocol/failure-readback.json",
+              "sha256": "4e5d3ead061c13cd11112971cd922fc7ecd01830c6e69f4651df3b6312ff8ae9"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/protocol-contract-head/failure-readback.json"
+        }
+      ],
+      "role": "selected original member projection and derived failure classification",
+      "sha256": "4e5d3ead061c13cd11112971cd922fc7ecd01830c6e69f4651df3b6312ff8ae9"
+    },
+    {
+      "bytes": 32009,
+      "git_blob_sha1": "b07ce91108641a97c367e20c080666e687c76fd5",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/protocol-contract-head/original-text-manifest.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 32009,
+              "git_blob_sha1": "b07ce91108641a97c367e20c080666e687c76fd5",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13834081764-raw-text-package-v1/original-text-manifest.json",
+              "sha256": "9cda897aee461e0e71e665b214f29396052ac7eb4342b761168122dd433a859f"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/protocol-contract-head/original-text-manifest.json"
+        }
+      ],
+      "role": "original ZIP member selection mapping and hashes",
+      "sha256": "9cda897aee461e0e71e665b214f29396052ac7eb4342b761168122dd433a859f"
+    },
+    {
+      "bytes": 99369,
+      "git_blob_sha1": "ac055b96bb552eb9f0e7f2520af190d390c9f02a",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/protocol-contract-head/original-text.tar.gz",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 99369,
+              "git_blob_sha1": "ac055b96bb552eb9f0e7f2520af190d390c9f02a",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13834081764-raw-text-package-v1/original-text.tar.gz",
+              "sha256": "85df65356685f3d36972ead024b2218936ee0e490bc9f885c038215cdff0a0e1"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/protocol-contract-head/original-text.tar.gz"
+        }
+      ],
+      "role": "every regular original UTF-8 artifact member; binary excluded",
+      "sha256": "85df65356685f3d36972ead024b2218936ee0e490bc9f885c038215cdff0a0e1"
+    },
+    {
+      "bytes": 149472,
+      "git_blob_sha1": "65be6b65fbcd04b4bb6c3317ce87ed6a2d951de4",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/repository-truth/job.log.gz",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "gzip_mtime": 0,
+            "kind": "gzip of exact original file",
+            "source": {
+              "bytes": 801700,
+              "git_blob_sha1": "b35b6e848f8aafd72c665a5016679224e16399d8",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481-selected/job.log",
+              "sha256": "5e8f9c0fa75cba5a281556a77da79e5601b7352bcd96836df7b2c7fc8e64abf3"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/repository-truth/job.log.gz"
+        }
+      ],
+      "role": "gzip of complete original job log; source raw bytes pinned",
+      "sha256": "e00fb6e634d4735144500b5c496cbba1fc25b7626613f5953411d49618ceb141"
+    },
+    {
+      "bytes": 9251,
+      "git_blob_sha1": "1000868738696bbfac1cefb68b49e292d740b3d4",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/repository-truth/original-text-manifest.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 9251,
+              "git_blob_sha1": "1000868738696bbfac1cefb68b49e292d740b3d4",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481-raw-text-package-v1/original-text-manifest.json",
+              "sha256": "7cb3719b9f96eb4c3c28ad8f4a36ba71152ac1785eab9dba209d1f5c408824f1"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/repository-truth/original-text-manifest.json"
+        }
+      ],
+      "role": "original ZIP member selection mapping and hashes",
+      "sha256": "7cb3719b9f96eb4c3c28ad8f4a36ba71152ac1785eab9dba209d1f5c408824f1"
+    },
+    {
+      "bytes": 7435,
+      "git_blob_sha1": "97f9a08cfc84778281a1d324ef75d0aa72ceb53b",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/repository-truth/original-text.tar.gz",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 7435,
+              "git_blob_sha1": "97f9a08cfc84778281a1d324ef75d0aa72ceb53b",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481-raw-text-package-v1/original-text.tar.gz",
+              "sha256": "b5f54a924f339721be38246c05889ab7cf86ac253743930974cae8ef02d7f27a"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/repository-truth/original-text.tar.gz"
+        }
+      ],
+      "role": "every regular original UTF-8 artifact member; binary excluded",
+      "sha256": "b5f54a924f339721be38246c05889ab7cf86ac253743930974cae8ef02d7f27a"
+    },
+    {
+      "bytes": 800,
+      "git_blob_sha1": "c8967b67cd402707a056d603e5ca8a89f0fd14fe",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/repository-truth/source-after-job-excerpt.log",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 800,
+              "git_blob_sha1": "c8967b67cd402707a056d603e5ca8a89f0fd14fe",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481-selected/source-after-job-excerpt.log",
+              "sha256": "bf877895c9485a1f1dd6d7c7b345b66fe92ee371b1a854fb553dc9706d8e446c"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/repository-truth/source-after-job-excerpt.log"
+        }
+      ],
+      "role": "original source member or original job-log excerpt",
+      "sha256": "bf877895c9485a1f1dd6d7c7b345b66fe92ee371b1a854fb553dc9706d8e446c"
+    },
+    {
+      "bytes": 800,
+      "git_blob_sha1": "9caf457df28b5b5ce9b7e7f5bb818f80cb58f28b",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/repository-truth/source-before-job-excerpt.log",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 800,
+              "git_blob_sha1": "9caf457df28b5b5ce9b7e7f5bb818f80cb58f28b",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481-selected/source-before-job-excerpt.log",
+              "sha256": "a578ed196782396b0cc60a9b5c7d1d71da1b2461bb5653b7e3d1be05c3682971"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/repository-truth/source-before-job-excerpt.log"
+        }
+      ],
+      "role": "original source member or original job-log excerpt",
+      "sha256": "a578ed196782396b0cc60a9b5c7d1d71da1b2461bb5653b7e3d1be05c3682971"
+    },
+    {
+      "bytes": 423,
+      "git_blob_sha1": "f9131414cc6e0cd31af139ffb1cb8e4b517db595",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/repository-truth/source.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 423,
+              "git_blob_sha1": "f9131414cc6e0cd31af139ffb1cb8e4b517db595",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/13832340481-selected/source.json",
+              "sha256": "03bd6956b3711c85ef2505ab09ec990ac1ab8ccbeffe4fcf3cecc8173601e731"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/hosted/repository-truth/source.json"
+        }
+      ],
+      "role": "original source member or original job-log excerpt",
+      "sha256": "03bd6956b3711c85ef2505ab09ec990ac1ab8ccbeffe4fcf3cecc8173601e731"
+    },
+    {
+      "bytes": 111608,
+      "git_blob_sha1": "eed4616a1d246b9c7ed5ba466f2975f9959826eb",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/status-20261111T070300Z.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/status-20261111T070300Z.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/hosted/status-20261111T070300Z.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/ci11e-snapshot-20261111T070300Z.json",
+          "role": "dated hosted statuses, not a native pass inference"
+        }
+      ],
+      "role": "dated hosted statuses, not a native pass inference",
+      "sha256": "7be8ff9e9886d72bc84479bff4735c6755a8eae8fa6a777e6f33891bd53534d6"
+    },
+    {
+      "bytes": 5950,
+      "git_blob_sha1": "6086007204b9c420ab62be8e90ea7e0a9c052ada",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/native/desktop/native-m-validation-v1-final-text-member-manifest.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "archive_relative_path": "native/desktop/native-m-validation-v1-final-text.tar.gz",
+            "archive_sha256": "195c77615f45a15b1c547ccad35532bc9764d13f52255ecc1832d3d3b5dbc2bd",
+            "kind": "original tar member",
+            "member": "archive-manifest.json"
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/native/desktop/native-m-validation-v1-final-text-member-manifest.json"
+        }
+      ],
+      "role": "original archive member extracted byte-for-byte",
+      "sha256": "b2084abd299f25edc0d0095693ebd563ba5fcbc84b342ed5c1cdc32eb98af9b6"
+    },
+    {
+      "bytes": 821,
+      "git_blob_sha1": "28f43e9031e83522907f5ec14013aa38a95b5165",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/native/desktop/native-m-validation-v1-final-text-receipt.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 821,
+              "git_blob_sha1": "28f43e9031e83522907f5ec14013aa38a95b5165",
+              "path": "/dev/shm/chain-throughput-0b5320/native-m-validation-v1-final-text-receipt.json",
+              "sha256": "8ba996e387cef29c1b6fa51303708d9c5bd0ba9bf8b909b09ef6a011e7982303"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/native/desktop/native-m-validation-v1-final-text-receipt.json"
+        }
+      ],
+      "role": "original desktop native text archive or retained receipt; no new execution",
+      "sha256": "8ba996e387cef29c1b6fa51303708d9c5bd0ba9bf8b909b09ef6a011e7982303"
+    },
+    {
+      "bytes": 188684,
+      "git_blob_sha1": "b66998ce695fc3cefaf27a2cd06dae6f6793d83e",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/native/desktop/native-m-validation-v1-final-text.tar.gz",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 188684,
+              "git_blob_sha1": "b66998ce695fc3cefaf27a2cd06dae6f6793d83e",
+              "path": "/dev/shm/chain-throughput-0b5320/native-m-validation-v1-final-text.tar.gz",
+              "sha256": "195c77615f45a15b1c547ccad35532bc9764d13f52255ecc1832d3d3b5dbc2bd"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/native/desktop/native-m-validation-v1-final-text.tar.gz"
+        }
+      ],
+      "role": "original desktop native text archive or retained receipt; no new execution",
+      "sha256": "195c77615f45a15b1c547ccad35532bc9764d13f52255ecc1832d3d3b5dbc2bd"
+    },
+    {
+      "bytes": 8001,
+      "git_blob_sha1": "cf16daf90dcd0d14d4a51a71df8cd8161239ddc7",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/native/desktop/official-budget-before-v2-v1-text-member-manifest.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "archive_relative_path": "native/desktop/official-budget-before-v2-v1-text.tar.gz",
+            "archive_sha256": "1a3bf2cfdef2f56e3498e0dc2944e27e29d4200c89c026ce4e058b9e6bf53767",
+            "kind": "original tar member",
+            "member": "archive-manifest.json"
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/native/desktop/official-budget-before-v2-v1-text-member-manifest.json"
+        }
+      ],
+      "role": "original archive member extracted byte-for-byte",
+      "sha256": "dfc3c4b942c666a5180e99ef570238579ecacc509adbf6aea3c514a069113411"
+    },
+    {
+      "bytes": 131003,
+      "git_blob_sha1": "4c965db54093e9d0af31d8c807f8bdc53c3cde87",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/native/desktop/official-budget-before-v2-v1-text.tar.gz",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 131003,
+              "git_blob_sha1": "4c965db54093e9d0af31d8c807f8bdc53c3cde87",
+              "path": "/dev/shm/chain-throughput-0b5320/official-budget-before-v2-v1-text.tar.gz",
+              "sha256": "1a3bf2cfdef2f56e3498e0dc2944e27e29d4200c89c026ce4e058b9e6bf53767"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/native/desktop/official-budget-before-v2-v1-text.tar.gz"
+        }
+      ],
+      "role": "original desktop native text archive or retained receipt; no new execution",
+      "sha256": "1a3bf2cfdef2f56e3498e0dc2944e27e29d4200c89c026ce4e058b9e6bf53767"
+    },
+    {
+      "bytes": 15223,
+      "git_blob_sha1": "1bbaaa67245c050fad21baf79726745247b57c9b",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/native/desktop/official-m-fixed-v1-text-member-manifest.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "archive_relative_path": "native/desktop/official-m-fixed-v1-text.tar.gz",
+            "archive_sha256": "4b9b2b57a5c06fb4610de000ec45014418615201e5b45223e0bc39b7ef4f66b5",
+            "kind": "original tar member",
+            "member": "archive-manifest.json"
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/native/desktop/official-m-fixed-v1-text-member-manifest.json"
+        }
+      ],
+      "role": "original archive member extracted byte-for-byte",
+      "sha256": "00adfaf9e90574c7a6db74d1cabe63187cc70ad60191a8d11d920d0dcd6c0991"
+    },
+    {
+      "bytes": 143651,
+      "git_blob_sha1": "a3c0b91d883d82304a753485851a6d277acb1957",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/native/desktop/official-m-fixed-v1-text.tar.gz",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 143651,
+              "git_blob_sha1": "a3c0b91d883d82304a753485851a6d277acb1957",
+              "path": "/dev/shm/chain-throughput-0b5320/official-m-fixed-v1-text.tar.gz",
+              "sha256": "4b9b2b57a5c06fb4610de000ec45014418615201e5b45223e0bc39b7ef4f66b5"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/native/desktop/official-m-fixed-v1-text.tar.gz"
+        }
+      ],
+      "role": "original desktop native text archive or retained receipt; no new execution",
+      "sha256": "4b9b2b57a5c06fb4610de000ec45014418615201e5b45223e0bc39b7ef4f66b5"
+    },
+    {
+      "bytes": 7990,
+      "git_blob_sha1": "02ebe8ad0b79b826d482c30c0501f20d19e68d4d",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/native/desktop/official-pool-before-v2-v1-text-member-manifest.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "archive_relative_path": "native/desktop/official-pool-before-v2-v1-text.tar.gz",
+            "archive_sha256": "c2950e8bab9aff3f130690bfae1098ed46a0e5574bd47dbf30d06ddb78266d8a",
+            "kind": "original tar member",
+            "member": "archive-manifest.json"
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/native/desktop/official-pool-before-v2-v1-text-member-manifest.json"
+        }
+      ],
+      "role": "original archive member extracted byte-for-byte",
+      "sha256": "c1fbce3d2e7d999ede32d8ce93f9e27947c2662d166ae8c70694131ae360b968"
+    },
+    {
+      "bytes": 119984,
+      "git_blob_sha1": "6030b78eddf9cfa22ce16a3af8d9e6f5fd9ea021",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/native/desktop/official-pool-before-v2-v1-text.tar.gz",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 119984,
+              "git_blob_sha1": "6030b78eddf9cfa22ce16a3af8d9e6f5fd9ea021",
+              "path": "/dev/shm/chain-throughput-0b5320/official-pool-before-v2-v1-text.tar.gz",
+              "sha256": "c2950e8bab9aff3f130690bfae1098ed46a0e5574bd47dbf30d06ddb78266d8a"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/native/desktop/official-pool-before-v2-v1-text.tar.gz"
+        }
+      ],
+      "role": "original desktop native text archive or retained receipt; no new execution",
+      "sha256": "c2950e8bab9aff3f130690bfae1098ed46a0e5574bd47dbf30d06ddb78266d8a"
+    },
+    {
+      "bytes": 5746,
+      "git_blob_sha1": "402fc785a615f798e16212e6de3fdb2240961ae7",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/native/desktop/official-pool-scan-before-v2-text-member-manifest.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "archive_relative_path": "native/desktop/official-pool-scan-before-v2-text.tar.gz",
+            "archive_sha256": "c36f4aa2792d98a4e7ee2243b45f44b10b190a576986ee8c76edb88a75f0a7d3",
+            "kind": "original tar member",
+            "member": "archive-manifest.json"
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/native/desktop/official-pool-scan-before-v2-text-member-manifest.json"
+        }
+      ],
+      "role": "original archive member extracted byte-for-byte",
+      "sha256": "b62fc6a6ea1db356024b98b37e11a057762e3982351d66d41fbafad650762e2e"
+    },
+    {
+      "bytes": 117606,
+      "git_blob_sha1": "84b33c523b4b33cd8cf17b99f0ad539883c532ae",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/native/desktop/official-pool-scan-before-v2-text.tar.gz",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 117606,
+              "git_blob_sha1": "84b33c523b4b33cd8cf17b99f0ad539883c532ae",
+              "path": "/dev/shm/chain-throughput-0b5320/official-pool-scan-before-v2-text.tar.gz",
+              "sha256": "c36f4aa2792d98a4e7ee2243b45f44b10b190a576986ee8c76edb88a75f0a7d3"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/native/desktop/official-pool-scan-before-v2-text.tar.gz"
+        }
+      ],
+      "role": "original desktop native text archive or retained receipt; no new execution",
+      "sha256": "c36f4aa2792d98a4e7ee2243b45f44b10b190a576986ee8c76edb88a75f0a7d3"
+    },
+    {
+      "bytes": 9276,
+      "git_blob_sha1": "c1f19ccc7c7b807e3029aba10341714aae488121",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/native/preserved-failures/ae-ad-hoc-v1-original-text-manifest.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "generated selection manifest",
+            "original_directory": "/dev/shm/chain-throughput-0b5320/before-ae-v1"
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/native/preserved-failures/ae-ad-hoc-v1-original-text-manifest.json"
+        }
+      ],
+      "role": "original file member mapping for ad hoc wrapper failure archive",
+      "sha256": "c57c9f26e40b59d804226746e5a8852927f173d74d684b8481e612e090ba7d9f"
+    },
+    {
+      "bytes": 116673,
+      "git_blob_sha1": "d89b15834a13a4f5ae7393a461f70f415480ac7d",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/native/preserved-failures/ae-ad-hoc-v1-original-text.tar.gz",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "byte-preserving archive generation",
+            "member_manifest_sha256": "c57c9f26e40b59d804226746e5a8852927f173d74d684b8481e612e090ba7d9f",
+            "original_directory": "/dev/shm/chain-throughput-0b5320/before-ae-v1"
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/native/preserved-failures/ae-ad-hoc-v1-original-text.tar.gz"
+        }
+      ],
+      "role": "archive of original ad hoc source/process/log files; no new execution",
+      "sha256": "423007c6e01ecafed20b4c4b7e41413f7f438a0d36bb6daaf929d98899c1769f"
+    },
+    {
+      "bytes": 1969,
+      "git_blob_sha1": "2604fc4d7ca16bb404cd79a37840f4e84d99c5f1",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/native/preserved-failures/ae-v1-old-ae-index-guard-diagnosis.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 1969,
+              "git_blob_sha1": "2604fc4d7ca16bb404cd79a37840f4e84d99c5f1",
+              "path": "/dev/shm/chain-throughput-0b5320/old-ae-index-guard-diagnosis.json",
+              "sha256": "a6cd3f5eb7bfaa4a3bbf60885f9c23ed48de37b202435ae6afdad094bd388f1f"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/native/preserved-failures/ae-v1-old-ae-index-guard-diagnosis.json"
+        }
+      ],
+      "role": "original first official old-scan setup/source-index refusal observation",
+      "sha256": "a6cd3f5eb7bfaa4a3bbf60885f9c23ed48de37b202435ae6afdad094bd388f1f"
+    },
+    {
+      "bytes": 2880,
+      "git_blob_sha1": "50b1248a08fda0d10eeb8ac219f484afdfceaddc",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/native/preserved-failures/ae-v1-old-ae-index-metadata-v1.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 2880,
+              "git_blob_sha1": "50b1248a08fda0d10eeb8ac219f484afdfceaddc",
+              "path": "/dev/shm/chain-throughput-0b5320/old-ae-index-metadata-v1.json",
+              "sha256": "ca6bf5c930a349dd226333fc59110d13361e238a4e52e6f0a4618e40b117e5db"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/native/preserved-failures/ae-v1-old-ae-index-metadata-v1.json"
+        }
+      ],
+      "role": "original first official old-scan setup/source-index refusal observation",
+      "sha256": "ca6bf5c930a349dd226333fc59110d13361e238a4e52e6f0a4618e40b117e5db"
+    },
+    {
+      "bytes": 7780,
+      "git_blob_sha1": "14f10decff24e9a15448b0d9a4c7f1f5f8030191",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/native/preserved-failures/ae-v1-setup-summary.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 7780,
+              "git_blob_sha1": "14f10decff24e9a15448b0d9a4c7f1f5f8030191",
+              "path": "/dev/shm/chain-throughput-0b5320/setup-pool-scan-before-v1/summary.json",
+              "sha256": "edc7d92eac0c10e413c7cee69aef375513817331834a4e6303330abee55a1135"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/native/preserved-failures/ae-v1-setup-summary.json"
+        }
+      ],
+      "role": "original first official old-scan setup/source-index refusal observation",
+      "sha256": "edc7d92eac0c10e413c7cee69aef375513817331834a4e6303330abee55a1135"
+    },
+    {
+      "bytes": 4096,
+      "git_blob_sha1": "5298bfad483b8cbff5a6525ecf83a7a64a9154c5",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/native/preserved-failures/enospc-build-lib.stderr.log",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 4096,
+              "git_blob_sha1": "5298bfad483b8cbff5a6525ecf83a7a64a9154c5",
+              "path": "/tmp/chain-throughput-0b5320-evidence/native-5ec9-v2/build-lib.stderr.log",
+              "sha256": "e0022276452e5cf5e216237a0e4f59bb3cc76272941140add238fd1ecb1a2519"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/native/preserved-failures/enospc-build-lib.stderr.log"
+        }
+      ],
+      "role": "retained truncated original compiler stderr; no inferred terminal test outcome",
+      "sha256": "e0022276452e5cf5e216237a0e4f59bb3cc76272941140add238fd1ecb1a2519"
+    },
+    {
+      "bytes": 1456,
+      "git_blob_sha1": "4631779e08805b9624584d44e2a611c275e88109",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/native/preserved-failures/official-pool-scan-before-v1-text-member-manifest.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "archive_relative_path": "native/preserved-failures/official-pool-scan-before-v1-text.tar.gz",
+            "archive_sha256": "a1f75dd2b3510b826260abee9c1770e9d52b2f96d23ac008fdd3aca5c0945564",
+            "kind": "original tar member",
+            "member": "archive-manifest.json"
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/native/preserved-failures/official-pool-scan-before-v1-text-member-manifest.json"
+        }
+      ],
+      "role": "original archive member extracted byte-for-byte",
+      "sha256": "b21d838e392ad03d78ebd3b0cd4760402d3bc249103b5fcf6cc1c68fbc85f028"
+    },
+    {
+      "bytes": 1974,
+      "git_blob_sha1": "ce3c3c7b80bb1f9791c0ca69a1c1afedf6a95c35",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/native/preserved-failures/official-pool-scan-before-v1-text.tar.gz",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 1974,
+              "git_blob_sha1": "ce3c3c7b80bb1f9791c0ca69a1c1afedf6a95c35",
+              "path": "/dev/shm/chain-throughput-0b5320/official-pool-scan-before-v1-text.tar.gz",
+              "sha256": "a1f75dd2b3510b826260abee9c1770e9d52b2f96d23ac008fdd3aca5c0945564"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/native/preserved-failures/official-pool-scan-before-v1-text.tar.gz"
+        }
+      ],
+      "role": "original desktop native text archive or retained receipt; no new execution",
+      "sha256": "a1f75dd2b3510b826260abee9c1770e9d52b2f96d23ac008fdd3aca5c0945564"
+    },
+    {
+      "bytes": 10774,
+      "git_blob_sha1": "4c37f94aa959a5e315bc71c99baaeca7b6f6513e",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/native/preserved-failures/snapshot-5ec-final-partial-v1-member-manifest.json",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "archive_relative_path": "native/preserved-failures/snapshot-5ec-final-partial-v1.tar.gz",
+            "archive_sha256": "9d715ea8b9c158b030dffe1677a87ebafe547943c88d5114c42a7635960d7cc4",
+            "kind": "original tar member",
+            "member": "archive-manifest.json"
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/native/preserved-failures/snapshot-5ec-final-partial-v1-member-manifest.json"
+        }
+      ],
+      "role": "original archive member extracted byte-for-byte",
+      "sha256": "4e890ebcc83ce4c1ae274dc2efc0e02a9ac0dd8abaf6a475ca3fcaacc00ecf70"
+    },
+    {
+      "bytes": 257385,
+      "git_blob_sha1": "446e5d29a506d2937c72337fcdaec69dc15460ef",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/native/preserved-failures/snapshot-5ec-final-partial-v1.tar.gz",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 257385,
+              "git_blob_sha1": "446e5d29a506d2937c72337fcdaec69dc15460ef",
+              "path": "/dev/shm/chain-throughput-0b5320/snapshot-5ec-final-partial-v1.tar.gz",
+              "sha256": "9d715ea8b9c158b030dffe1677a87ebafe547943c88d5114c42a7635960d7cc4"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/native/preserved-failures/snapshot-5ec-final-partial-v1.tar.gz"
+        }
+      ],
+      "role": "original desktop native text archive or retained receipt; no new execution",
+      "sha256": "9d715ea8b9c158b030dffe1677a87ebafe547943c88d5114c42a7635960d7cc4"
+    },
+    {
+      "bytes": 16368,
+      "git_blob_sha1": "ca5efa2b90a94fe4da439488cb2af851963a932f",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/native/preserved-failures/source-and-enospc-observations.tar.gz",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/native/preserved-failures/source-and-enospc-observations.tar.gz",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/native/preserved-failures/source-and-enospc-observations.tar.gz",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/source-and-enospc-observations.tar.gz",
+          "role": "preserved source and first pre-test ENOSPC observations"
+        }
+      ],
+      "role": "preserved source and first pre-test ENOSPC observations",
+      "sha256": "d9b0c9ca36d1650489b92d3866ed867f87d380e0dc18aca6e1922ca0f82b18ce"
+    },
+    {
+      "bytes": 3404,
+      "git_blob_sha1": "f895b01fdaf0ae7c9ae94a97d58d51a49565afcf",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/before-ae-native-transcript-readback.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/before-ae-native-transcript-readback.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/before-ae-native-transcript-readback.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/before-ae-native-transcript-readback.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "f9ace4b03ff514e1d32e7fd407bec3a6daae6ba06bca0f2876455d6442762c93"
+    },
+    {
+      "bytes": 93337,
+      "git_blob_sha1": "ecd38adb45972d5090980f131ab873282dd35934",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/budget-before-v2-native-transcript-readback.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/budget-before-v2-native-transcript-readback.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/budget-before-v2-native-transcript-readback.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/budget-before-v2-native-transcript-readback.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "963329f3025cfabc326734f2529bfe533bd4526102dec9989e2d28970ab4f389"
+    },
+    {
+      "bytes": 107654,
+      "git_blob_sha1": "ff6313b57671de1d205a617935a95a3b801275a5",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/fixed-11e-native-transcript-readback.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/fixed-11e-native-transcript-readback.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/fixed-11e-native-transcript-readback.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/fixed-11e-native-transcript-readback.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "b7fc48d6d81484577a36227fc796b351168d60c038056b4acfd35e689bb1a7db"
+    },
+    {
+      "bytes": 103954,
+      "git_blob_sha1": "126d3498b14e8f2addee600374c62fd87908db88",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/fixed-5ec-native-transcript-readback.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/fixed-5ec-native-transcript-readback.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/fixed-5ec-native-transcript-readback.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/fixed-5ec-native-transcript-readback.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "7bc3eeb02ad5306beb2076dbdbd208d10006fbbd37dfd114be04c7003f236015"
+    },
+    {
+      "bytes": 4328,
+      "git_blob_sha1": "c80c681f1b8caaff72471ea65bfd53a521329644",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/followup-selected-source-comparison.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/followup-selected-source-comparison.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/followup-selected-source-comparison.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/followup-selected-source-comparison.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "a890ef866deb02878c715ed1cd5bc64bb4e40d8df99cd40ca86b1c77095d0a51"
+    },
+    {
+      "bytes": 93374,
+      "git_blob_sha1": "7385d7ae579e016b884f6e1df18bf068a05845f4",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/hosted-budget-before-v2-native-transcript-readback.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/hosted-budget-before-v2-native-transcript-readback.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/hosted-budget-before-v2-native-transcript-readback.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/hosted-budget-before-v2-native-transcript-readback.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "f7917f21618157b8bc84fdd03a79ff802a6fd57e3b2ca26ad427cae2e25e3def"
+    },
+    {
+      "bytes": 108156,
+      "git_blob_sha1": "ac218b89ac5bcd65b74a19761126730796c91321",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/hosted-fixed-native-transcript-readback.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/hosted-fixed-native-transcript-readback.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/hosted-fixed-native-transcript-readback.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/hosted-fixed-native-transcript-readback.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "6933ba0f8f7e8a942ef982f8e3c96d598f0d351386df7d78b58d00f68024ba46"
+    },
+    {
+      "bytes": 9254,
+      "git_blob_sha1": "b5900d01ed58a91ac4824f442b509f6123ab0878",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/hosted-pool-before-v2-native-transcript-readback.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/hosted-pool-before-v2-native-transcript-readback.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/hosted-pool-before-v2-native-transcript-readback.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/hosted-pool-before-v2-native-transcript-readback.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "e7728d26f64feac40f57c853d380c1302ec73a302d0e40afc4d0da28b7a2437f"
+    },
+    {
+      "bytes": 6786,
+      "git_blob_sha1": "8359be23b950aef67f5733acfe70163ee748fe87",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/hosted-pool-scan-before-native-transcript-readback.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/hosted-pool-scan-before-native-transcript-readback.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/hosted-pool-scan-before-native-transcript-readback.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/hosted-pool-scan-before-native-transcript-readback.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "ab6cbfaad3dd71aecee19241ffee6f1ff1c3ac9576e57020c2c1a384a8cad5a4"
+    },
+    {
+      "bytes": 86633,
+      "git_blob_sha1": "8d393f6aa633a29410aa4c2dd1b058aedee71099",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/independent-report-audit-v1.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/independent-report-audit-v1.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/independent-report-audit-v1.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/ci11e-original-campaign/independent-report-audit-v1.json",
+          "role": "independent original M report audit, not a new native execution"
+        }
+      ],
+      "role": "independent original M report audit, not a new native execution",
+      "sha256": "9705f222f1841d3074e8468c4b70f1deccbfd28e77b9797a81f15cac673bcfb7"
+    },
+    {
+      "bytes": 732,
+      "git_blob_sha1": "b4ed65e3cf551c8c2e97bb36ac19045aa45718d1",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/native-library-observer-final-status.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/native-library-observer-final-status.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/native-library-observer-final-status.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/native-library-observer-final-status.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "247f1183ca0271ea5edcace09de9e4c2d66e5d77e57f150d336ecca4e8583cf3"
+    },
+    {
+      "bytes": 732,
+      "git_blob_sha1": "3a221eb5a24836d30bec64a209053537723d277a",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/native-m-runtime-final-status.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/native-m-runtime-final-status.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/native-m-runtime-final-status.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/native-m-runtime-final-status.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "2fbba78231297f221fc8c76f47ec33b4e29ef1a7d5a99c3d0dec951357ad26d0"
+    },
+    {
+      "bytes": 734,
+      "git_blob_sha1": "e46cf24a14e85d31fab163af6a1fba803176bb71",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/native-resource-observer-final-status.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/native-resource-observer-final-status.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/native-resource-observer-final-status.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/native-resource-observer-final-status.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "e5ea00f417b920d2c5283374a84c9adc5b83e4b3999347b4327b71c36308e485"
+    },
+    {
+      "bytes": 9365,
+      "git_blob_sha1": "5c7034da8a74e998c42aed53190ecc3f14843c04",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/original-7d-depletion-sample-readback.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/original-7d-depletion-sample-readback.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/original-7d-depletion-sample-readback.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/original-7d-depletion-sample-readback.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "67d2b28137d6fc4605f56de8a1cd168b614667c32e029bd6975bd12edc3f285a"
+    },
+    {
+      "bytes": 9160,
+      "git_blob_sha1": "4e4298578b8fe9bfa8a4b037fb31820eb8cbf4f5",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/pool-before-v2-native-transcript-readback.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/pool-before-v2-native-transcript-readback.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/pool-before-v2-native-transcript-readback.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/pool-before-v2-native-transcript-readback.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "7967dcc78ff7f4b607b9de7b063fb713144c6d2f1e060cc566e3ac3d2566bc76"
+    },
+    {
+      "bytes": 6698,
+      "git_blob_sha1": "74c6c51f65a4dd98e20bc2708827ca0e10925a1b",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/pool-scan-before-v2-native-transcript-readback.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/pool-scan-before-v2-native-transcript-readback.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/pool-scan-before-v2-native-transcript-readback.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/pool-scan-before-v2-native-transcript-readback.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "4a154b8bcfd5e6138f9f3fde7605515339d9f810fe23b8c60f296299226e0cc5"
+    },
+    {
+      "bytes": 2394,
+      "git_blob_sha1": "777af29d45e4b5c38038d2bdae4947287bce388f",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-current-campaign-audit-output-review.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-current-campaign-audit-output-review.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-current-campaign-audit-output-review.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/root-current-campaign-audit-output-review.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "40a77191c30da4f635d14d33f55da3e02f7eadbc8cf4b88d283eace9e570d6b4"
+    },
+    {
+      "bytes": 2032,
+      "git_blob_sha1": "ef0fa9866b60d3170aa177ac7ddd0d9dd0783b0d",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-current-campaign-manifest-readback.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-current-campaign-manifest-readback.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-current-campaign-manifest-readback.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/root-current-campaign-manifest-readback.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "592a05885fdebe897b70d536a75e146394477aca23fd4ba33dbfa99578e734cd"
+    },
+    {
+      "bytes": 6370,
+      "git_blob_sha1": "a29ef20108218084894699f2341449111ec32bd6",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-four-hosted-lane-readback.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-four-hosted-lane-readback.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-four-hosted-lane-readback.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/root-four-hosted-lane-readback.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "2cba072be6382cf2c333d6d3c702c249e4d5bbb5dac74af11ace7696ee471707"
+    },
+    {
+      "bytes": 3844,
+      "git_blob_sha1": "e3e9940c5788b5907fd141ed246be9a78df274fb",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-four-native-lane-readback.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-four-native-lane-readback.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-four-native-lane-readback.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/root-four-native-lane-readback.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "c57a3ef23b35983041e63cb2aa1ffa16f473789c31cd5265b74a74bc30d5f066"
+    },
+    {
+      "bytes": 2990,
+      "git_blob_sha1": "22e8ba236f9928ac4d0744a0b6e16537a8261009",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-hosted-artifact-metadata-readback.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-hosted-artifact-metadata-readback.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-hosted-artifact-metadata-readback.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/root-hosted-artifact-metadata-readback.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "2dd5256b1ef5e111910d32d790848ff6b2bdb46abdc40ade331dc05105e5c7a1"
+    },
+    {
+      "bytes": 3608,
+      "git_blob_sha1": "da9960cbc55985d3f028fab8c32e94678456ddb6",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-hosted-budget-campaign-artifact-catalog.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-hosted-budget-campaign-artifact-catalog.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-hosted-budget-campaign-artifact-catalog.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/root-hosted-budget-campaign-artifact-catalog.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "77e3f9d3c2d59d95cb16e0235e1b781270223970175fa8537d0a131f5f9c4884"
+    },
+    {
+      "bytes": 805,
+      "git_blob_sha1": "753b32c6c003c6796e8e64360c21e542de1a1d14",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-hosted-summary-consistency-readback.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-hosted-summary-consistency-readback.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-hosted-summary-consistency-readback.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/root-hosted-summary-consistency-readback.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "069de064a79dea9b05a9cb0ef7ede5c7fa65060449c532947f3fa9d740429d69"
+    },
+    {
+      "bytes": 11249,
+      "git_blob_sha1": "ccbcaae2ded7c8cf4bf36c9e2534be29859abfe0",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-hosted-terminal-step-readback.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-hosted-terminal-step-readback.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-hosted-terminal-step-readback.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/root-hosted-terminal-step-readback.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "55b736e3f4018392f25f138f8b051bd9b4709e3635f74286748c3df8a6c3959b"
+    },
+    {
+      "bytes": 10716,
+      "git_blob_sha1": "a6db109b5808db5e6035818b9a556b9b23148142",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-native-M-final-evidence-readback.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-native-M-final-evidence-readback.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-native-M-final-evidence-readback.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/root-native-M-final-evidence-readback.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "5ec2b7f080897831bd1ce178d92518d3797610fffe79257338ae549a7baf4c29"
+    },
+    {
+      "bytes": 2818,
+      "git_blob_sha1": "67c63f218bdfce33ded19a76a926e2730ae5bdbe",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-protocol-M-failure-readback.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-protocol-M-failure-readback.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-protocol-M-failure-readback.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/root-protocol-M-failure-readback.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "987cd75a67527aae1015b77463b214f11406c9ed255e5635076cc3b8afa9ec27"
+    },
+    {
+      "bytes": 1779,
+      "git_blob_sha1": "d4eaa38e6f4c5b7cc920b1a192642827bb9d9984",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-protocol-artifact-metadata.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-protocol-artifact-metadata.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readbacks/root-protocol-artifact-metadata.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/root-protocol-artifact-metadata.json",
+          "role": "recorded original or derived readback; scope retained in JSON"
+        }
+      ],
+      "role": "recorded original or derived readback; scope retained in JSON",
+      "sha256": "16849400fcb5d1632d091b00297bd3d472d3b908bc3975b53a08783529e1a6c4"
+    },
+    {
+      "bytes": 31280,
+      "git_blob_sha1": "066ee60f82fd42e5cb8d783ddb78ddfff83cdbd9",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readers/audit_m_campaign_original_reports_v1.py",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readers/audit_m_campaign_original_reports_v1.py",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readers/audit_m_campaign_original_reports_v1.py",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/audit_m_campaign_original_reports_v1.py",
+          "role": "executed source/record reader; operator paths retained"
+        }
+      ],
+      "role": "executed source/record reader; operator paths retained",
+      "sha256": "f6a7d8ede32d3cfb5c4420d069f8f505f913cc55f13078f688b73290ed13852c"
+    },
+    {
+      "bytes": 3408,
+      "git_blob_sha1": "4a78c01ef6f70e38942a2248f105cebff7c37fba",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readers/check_clean_11e.py",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readers/check_clean_11e.py",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readers/check_clean_11e.py",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/check_clean_11e.py",
+          "role": "executed source/record reader; operator paths retained"
+        }
+      ],
+      "role": "executed source/record reader; operator paths retained",
+      "sha256": "749cbac35f422809c54563bcd5c26c3dd6d1e533550faef8faf2734cbf3b4cf8"
+    },
+    {
+      "bytes": 2928,
+      "git_blob_sha1": "277137b9e6ced74e9ec81061040ebfbb3949ffaf",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readers/frozen-M/scripts/ci/check_required_native_test.py",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 2928,
+              "git_blob_sha1": "277137b9e6ced74e9ec81061040ebfbb3949ffaf",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/frozen-component-reader-11e/scripts/ci/check_required_native_test.py",
+              "sha256": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/readers/frozen-M/scripts/ci/check_required_native_test.py"
+        }
+      ],
+      "role": "exact M Git blob retained for reproducible transcript parsing",
+      "sha256": "6f211d1a23521e9960df94ebd6de63c6c9733489d795eb7d2d4eaac1b790db28"
+    },
+    {
+      "bytes": 18571,
+      "git_blob_sha1": "2e633556e2b6f5cc4278491d5c4c8edf437fab81",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readers/frozen-M/scripts/ci/replay_pinned_native.py",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 18571,
+              "git_blob_sha1": "2e633556e2b6f5cc4278491d5c4c8edf437fab81",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/frozen-component-reader-11e/scripts/ci/replay_pinned_native.py",
+              "sha256": "d14d2f61ab98bb30b5932530437064dce5d3a330c05a9530988fe776cefea44a"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/readers/frozen-M/scripts/ci/replay_pinned_native.py"
+        }
+      ],
+      "role": "exact M Git blob retained for reproducible transcript parsing",
+      "sha256": "d14d2f61ab98bb30b5932530437064dce5d3a330c05a9530988fe776cefea44a"
+    },
+    {
+      "bytes": 45114,
+      "git_blob_sha1": "531707e853b1b298bafd8ba6c248e8a4ed15c037",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readers/frozen-M/scripts/ci/run_pon_budget_controls.py",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 45114,
+              "git_blob_sha1": "531707e853b1b298bafd8ba6c248e8a4ed15c037",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/frozen-component-reader-11e/scripts/ci/run_pon_budget_controls.py",
+              "sha256": "c7604dcf0bb9f533902e368a44b170c927d98c46080570673f268391fd9dc479"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/readers/frozen-M/scripts/ci/run_pon_budget_controls.py"
+        }
+      ],
+      "role": "exact M Git blob retained for reproducible transcript parsing",
+      "sha256": "c7604dcf0bb9f533902e368a44b170c927d98c46080570673f268391fd9dc479"
+    },
+    {
+      "bytes": 11231,
+      "git_blob_sha1": "c775290c138c3b41a32e654f56ed5cbe9acec3ee",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readers/frozen-M/scripts/ci/verify_ci_source.py",
+      "provenance": [
+        {
+          "kind": "pinned desktop staging report",
+          "original": {
+            "kind": "exact original-file copy",
+            "source": {
+              "bytes": 11231,
+              "git_blob_sha1": "c775290c138c3b41a32e654f56ed5cbe9acec3ee",
+              "path": "/tmp/chain-throughput-0b5320-publication/ci-artifacts/frozen-component-reader-11e/scripts/ci/verify_ci_source.py",
+              "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
+            }
+          },
+          "report_sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212",
+          "staged_path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/selected/readers/frozen-M/scripts/ci/verify_ci_source.py"
+        }
+      ],
+      "role": "exact M Git blob retained for reproducible transcript parsing",
+      "sha256": "0ddfd07719eae98913348c82b06d3e4522d721c353d9b01d6deac0dfda619946"
+    },
+    {
+      "bytes": 5692,
+      "git_blob_sha1": "a21fdf6ec211df8fa6e6b08a1d8b2e18b4701905",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readers/read_original_depletion_samples.py",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readers/read_original_depletion_samples.py",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readers/read_original_depletion_samples.py",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/read_original_depletion_samples.py",
+          "role": "executed source/record reader; operator paths retained"
+        }
+      ],
+      "role": "executed source/record reader; operator paths retained",
+      "sha256": "24a259d35dfebecdc3f8e5e7752b69350e1fb66a2c10f9179887bdb48f7a9e1c"
+    },
+    {
+      "bytes": 7373,
+      "git_blob_sha1": "4692baaf2504915343eb71bd4d4fac32f1d23a78",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readers/validate_native_lane_readback.py",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readers/validate_native_lane_readback.py",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readers/validate_native_lane_readback.py",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/validate_native_lane_readback.py",
+          "role": "executed source/record reader; operator paths retained"
+        }
+      ],
+      "role": "executed source/record reader; operator paths retained",
+      "sha256": "f5278c25ecdbf4c4143b42b9b42f2e276a7103ae45ee4aecdf1556fee8c9a694"
+    },
+    {
+      "bytes": 7457,
+      "git_blob_sha1": "bcba01c127def746fc303e673936096b1df0ca3d",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readers/verify_m_native_final_readback.py",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/readers/verify_m_native_final_readback.py",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/readers/verify_m_native_final_readback.py",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/verify_m_native_final_readback.py",
+          "role": "executed source/record reader; operator paths retained"
+        }
+      ],
+      "role": "executed source/record reader; operator paths retained",
+      "sha256": "40bb7ead14165b3c3cf3b84d4bcd2ac6c2f7c71ad942fd4e4557aab7db0d3493"
+    },
+    {
+      "bytes": 423,
+      "git_blob_sha1": "f9131414cc6e0cd31af139ffb1cb8e4b517db595",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/01-source-before.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/01-source-before.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/01-source-before.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/01-source-before.json",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "03bd6956b3711c85ef2505ab09ec990ac1ab8ccbeffe4fcf3cecc8173601e731"
+    },
+    {
+      "bytes": 0,
+      "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/01-source-before.stderr",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/01-source-before.stderr",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/01-source-before.stderr",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/01-source-before.stderr",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "git_blob_sha1": "f9131414cc6e0cd31af139ffb1cb8e4b517db595",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/01-source-before.stdout",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/01-source-before.stdout",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/01-source-before.stdout",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/01-source-before.stdout",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "03bd6956b3711c85ef2505ab09ec990ac1ab8ccbeffe4fcf3cecc8173601e731"
+    },
+    {
+      "bytes": 0,
+      "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/02-preflight.stderr",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/02-preflight.stderr",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/02-preflight.stderr",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/02-preflight.stderr",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 174,
+      "git_blob_sha1": "d3ac93e07e167eebf48eee7a26af4d68b497c61b",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/02-preflight.stdout",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/02-preflight.stdout",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/02-preflight.stdout",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/02-preflight.stdout",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "0dbfb4aefc5ad1026aad669ee69a880528b325ea26d9eb045f1bc13d5af78f1d"
+    },
+    {
+      "bytes": 6697,
+      "git_blob_sha1": "515f5864c69685a609dcb1cd299768be220c99d2",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/03-reader.stderr",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/03-reader.stderr",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/03-reader.stderr",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/03-reader.stderr",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "267d8ebaa035671d21829b4e82bd04fd8afb2518b1f0eb23f062f651d1a3ea70"
+    },
+    {
+      "bytes": 0,
+      "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/03-reader.stdout",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/03-reader.stdout",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/03-reader.stdout",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/03-reader.stdout",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 6414,
+      "git_blob_sha1": "7b91f4ebedd605101231bca111c71ecbc1f871e4",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/04-source-negative.stderr",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/04-source-negative.stderr",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/04-source-negative.stderr",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/04-source-negative.stderr",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "9ba08858e4c8a3be0f84a11eb46e6953f8e5580eb6a44a2e3040e9cad9c94419"
+    },
+    {
+      "bytes": 484,
+      "git_blob_sha1": "2acf3322cf7813a3c63531f308b77be7a48a272a",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/04-source-negative.stdout",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/04-source-negative.stdout",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/04-source-negative.stdout",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/04-source-negative.stdout",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "adc332d497b76627ec6282fd7f5c5358fc40a6f46dd82cac11ca62ff160489e9"
+    },
+    {
+      "bytes": 30670,
+      "git_blob_sha1": "1918f9e3bac9f72b63dc75a223775f84a03a6a47",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/05-ci-negative.stderr",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/05-ci-negative.stderr",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/05-ci-negative.stderr",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/05-ci-negative.stderr",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "cef21217b09879efda3901b1f62eeafd390047cf222e21b71c9eb5ecb43855fa"
+    },
+    {
+      "bytes": 0,
+      "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/05-ci-negative.stdout",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/05-ci-negative.stdout",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/05-ci-negative.stdout",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/05-ci-negative.stdout",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/06-lifetime.stderr",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/06-lifetime.stderr",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/06-lifetime.stderr",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/06-lifetime.stderr",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 12824,
+      "git_blob_sha1": "d6cf6371a03b79159168c785d4b2579cbb6637e0",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/06-lifetime.stdout",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/06-lifetime.stdout",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/06-lifetime.stdout",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/06-lifetime.stdout",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "c0d60c10194546e35e6b445ce5730dd0c9c32044ff97c5896ee9c4a37f00eb42"
+    },
+    {
+      "bytes": 0,
+      "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/07-authority.stderr",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/07-authority.stderr",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/07-authority.stderr",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/07-authority.stderr",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 13223,
+      "git_blob_sha1": "ad9468af3a85c2ce010b2f47fdb3bc3698b383f0",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/07-authority.stdout",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/07-authority.stdout",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/07-authority.stdout",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/07-authority.stdout",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "9dc82c85e7ccef76ee2efe33950faad413a35d0b1f964d49124087c4d9229d5a"
+    },
+    {
+      "bytes": 0,
+      "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/08-corpus.stderr",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/08-corpus.stderr",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/08-corpus.stderr",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/08-corpus.stderr",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 558,
+      "git_blob_sha1": "00399cea89839839c54d14d0ee9a3dbb24e22ead",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/08-corpus.stdout",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/08-corpus.stdout",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/08-corpus.stdout",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/08-corpus.stdout",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "bc58940a20930807bfbe747c7bdf3fb95858b8a002609c6c47856acef997c145"
+    },
+    {
+      "bytes": 0,
+      "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/09-inventory.stderr",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/09-inventory.stderr",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/09-inventory.stderr",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/09-inventory.stderr",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 35,
+      "git_blob_sha1": "377f4ef57d19f3b41daa3be227d631fbbb09ce0f",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/09-inventory.stdout",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/09-inventory.stdout",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/09-inventory.stdout",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/09-inventory.stdout",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "bytes": 0,
+      "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/10-ci-contract.stderr",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/10-ci-contract.stderr",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/10-ci-contract.stderr",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/10-ci-contract.stderr",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 431,
+      "git_blob_sha1": "da114fbdb01f0038426e9ce42e34e5daef5f2fd3",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/10-ci-contract.stdout",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/10-ci-contract.stdout",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/10-ci-contract.stdout",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/10-ci-contract.stdout",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "334cc2b26ed99ad5f867ee9b65f3047e23afcfae056d4ba9c852b0a201e2dbeb"
+    },
+    {
+      "bytes": 0,
+      "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/11-repository.stderr",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/11-repository.stderr",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/11-repository.stderr",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/11-repository.stderr",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 307,
+      "git_blob_sha1": "b72230d93de7c00fbd1a340ff994614452b1dbc3",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/11-repository.stdout",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/11-repository.stdout",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/11-repository.stdout",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/11-repository.stdout",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "9be05a0d0fbaf6c65c21c532bef67e57a75c858b3e2ef8da67f42a283a8585e7"
+    },
+    {
+      "bytes": 0,
+      "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/12-format.stderr",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/12-format.stderr",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/12-format.stderr",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/12-format.stderr",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/12-format.stdout",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/12-format.stdout",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/12-format.stdout",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/12-format.stdout",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/13-cargo-graph.stderr",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/13-cargo-graph.stderr",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/13-cargo-graph.stderr",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/13-cargo-graph.stderr",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 848761,
+      "git_blob_sha1": "cef13df9409226d0fa2db4b7a4b60e0fbca0646d",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/13-cargo-graph.stdout",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/13-cargo-graph.stdout",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/13-cargo-graph.stdout",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/13-cargo-graph.stdout",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "82b41ae9a765b88b5317b4f50709e75a7dd522bd485edbaf93d2f159bf424207"
+    },
+    {
+      "bytes": 423,
+      "git_blob_sha1": "f9131414cc6e0cd31af139ffb1cb8e4b517db595",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/14-source-after.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/14-source-after.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/14-source-after.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/14-source-after.json",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "03bd6956b3711c85ef2505ab09ec990ac1ab8ccbeffe4fcf3cecc8173601e731"
+    },
+    {
+      "bytes": 0,
+      "git_blob_sha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/14-source-after.stderr",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/14-source-after.stderr",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/14-source-after.stderr",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/14-source-after.stderr",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 423,
+      "git_blob_sha1": "f9131414cc6e0cd31af139ffb1cb8e4b517db595",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/14-source-after.stdout",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/14-source-after.stdout",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/14-source-after.stdout",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/14-source-after.stdout",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "03bd6956b3711c85ef2505ab09ec990ac1ab8ccbeffe4fcf3cecc8173601e731"
+    },
+    {
+      "bytes": 7359,
+      "git_blob_sha1": "e82ed96796c153c0eedd4352c920a8e156fef56d",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/results.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/results.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/results.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/results.json",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "f191daa132f4316cd90c6e2e0ad0b15924e927b920813436a5c024a1448e906b"
+    },
+    {
+      "bytes": 204,
+      "git_blob_sha1": "b5a1ddd65bfd7181c41f4c6375f045012a9f3265",
+      "mode": "100644",
+      "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/summary.json",
+      "provenance": [
+        {
+          "archive_path": "evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/summary.json",
+          "import_receipt_sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7",
+          "imported_path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/evidence/chain-throughput-native-receipts-20261111-0b5320/source-checks/clean-11e242/summary.json",
+          "kind": "pinned root-approved cloud supplement",
+          "manifest_sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f",
+          "original_source_path": "/workspace/scratch/0b53202edbbf/validation/clean-11e242/summary.json",
+          "role": "exact M clean source command and source guard record"
+        }
+      ],
+      "role": "exact M clean source command and source guard record",
+      "sha256": "a6f0ce77d6a378d33d6120266e95092e6c13e4905fe8d70cb1d029acd6120a64"
+    }
+  ],
+  "input_receipts": {
+    "body_template": {
+      "bytes": 12255,
+      "git_blob_sha1": "5a7986e1611c8c7690cea802ecb26f0d8694db5a",
+      "path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/delivery/pr895-body-native-template.md",
+      "sha256": "ccebd49981e98b6b9f8c004421bc6fb1449bd3776cbc5e99e1e4e79e65c9988e"
+    },
+    "copy_report": {
+      "bytes": 56218,
+      "git_blob_sha1": "318446d7ce50a5e73e3e85debfd27ede955b2895",
+      "path": "/tmp/chain-throughput-0b5320-publication/native-receipts-staging-v1/desktop-copy-report-v1.json",
+      "sha256": "ace4a4af902565fc2517dd1bc0bd3222e7d33af7ff6e581c851ff3c718031212"
+    },
+    "import_report": {
+      "bytes": 36537,
+      "git_blob_sha1": "7770889dbd3195a3e3c8fceb80c4485e5238a15a",
+      "path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/import-receipt.json",
+      "sha256": "2f090524dad5b714144395dc1be0a7e8f7ffc399600764a4acdaf4fe2bb53bf7"
+    },
+    "supplement_manifest": {
+      "bytes": 38963,
+      "git_blob_sha1": "e094a52ab5b4328690c49ee9edc24f9adac09e8d",
+      "path": "/tmp/chain-throughput-0b5320-publication/root-approved-cloud-inputs-v1/delivery/root-approved-evidence-cloud-supplement.json",
+      "sha256": "302f1647b21795434a700bcc7485ea0881d8a626af1e024d074b7eeb32d9fa4f"
+    }
+  },
+  "manifest_self": {
+    "hash_policy": "Excluded from its own file list to avoid self-reference. Its bytes, SHA256 and Git blob are included in the external complete manifest and final preparation receipt.",
+    "mode": "100644",
+    "path": "evidence/chain-throughput-native-receipts-20261111-0b5320/MANIFEST.json"
+  },
+  "measured_source": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+  "measured_tree": "1f42f41923d7761c02fc68b478df5b019c7d83e8",
+  "payload_bytes": 53699791,
+  "payload_file_count": 131,
+  "required_single_parent": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+  "schema": "chain-throughput-native-receipts-manifest-v1",
+  "scope": "Exact existing evidence bytes and original/derived roles are retained. This packaging performs no native execution and changes no measured source file."
+}

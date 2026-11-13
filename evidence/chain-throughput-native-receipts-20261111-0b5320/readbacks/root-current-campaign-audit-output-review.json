@@ -1,0 +1,65 @@
+{
+  "schema": "root-current-campaign-audit-output-review-v1",
+  "result": "PASS",
+  "scope": "Review hash-pinned output, executed auditor bytes and per-phase arithmetic/identity consistency; no new auditor/native execution or ZIP/ELF download.",
+  "source": "11e242dbaaae14a9d16282fe8deaf36827e98395",
+  "tree": "1f42f41923d7761c02fc68b478df5b019c7d83e8",
+  "audit_sha256": "9705f222f1841d3074e8468c4b70f1deccbfd28e77b9797a81f15cac673bcfb7",
+  "auditor_sha256": "f6a7d8ede32d3cfb5c4420d069f8f505f913cc55f13078f688b73290ed13852c",
+  "counts": {
+    "children_without_call_rows": 0,
+    "client_import_calls": 77,
+    "client_import_failures": 9,
+    "client_import_successes": 68,
+    "complete_campaigns": 0,
+    "complete_phases": 0,
+    "confirmed_rounds": 3,
+    "history_calls": 77,
+    "history_calls_on_time": 77,
+    "honest_ack_in_original_window": 84,
+    "honest_client_ok": 84,
+    "honest_digest_matched_receiver_records": 84,
+    "honest_receiver_dispatch_accepted": 84,
+    "honest_receiver_full_work_accepted": 84,
+    "honest_submit_attempts": 84,
+    "observed_rounds": 12,
+    "planned_campaigns": 3,
+    "planned_phases": 9,
+    "planned_rounds": 27,
+    "receiver_records": 18445,
+    "recorded_attack_client_calls": 18284,
+    "remaining_receiver_records": 18361,
+    "unexecuted_rounds": 15
+  },
+  "budget_counts": {
+    "computed_original_depleted_samples": 0,
+    "debit_above_original_threshold_samples": 790,
+    "flow_equation_mismatch_samples": 0,
+    "missing_actual_flow_samples": 0,
+    "predicate_would_change_with_independent_identity": 0,
+    "reported_depleted_samples": 0,
+    "reported_predicate_mismatch_samples": 0,
+    "samples": 4061,
+    "samples_with_accounting_unavailable": 0,
+    "samples_with_clock_failures": 0,
+    "separate_meter_flow_snapshots_differ": 33,
+    "unknown_meter_samples": 0,
+    "unverified_flow_identity_samples": 0
+  },
+  "page_owner_mode_counts": {
+    "exclusive": 77
+  },
+  "minimum_sampled_paid_credit_ns": 1972524106,
+  "remaining_receiver_scope": "Includes History and unknown records after honest Submit matching; not an individually attributed attacker population.",
+  "remaining_receiver_full_work_outcomes": {
+    "false": 18158,
+    "true": 0,
+    "unknown": 203
+  },
+  "current_business_acceptance_passed": false,
+  "qualified": {
+    "WAN": false,
+    "production_activation": false,
+    "throughput": false
+  }
+}

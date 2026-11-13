@@ -1,0 +1,52 @@
+{
+  "argv": [
+    "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_crypto_primitives-ec09512dfb6081aa",
+    "pon_work",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "child_reaped": true,
+  "cwd": "/home/qian-qi/work/chain-pon-five-claims-20261111-d6cb/trillionnium/crates/trnm-crypto-primitives",
+  "dispatch_object": {
+    "bytes": 6721592,
+    "device": 2050,
+    "inode": 52884167,
+    "sha256": "0f85c378e749c52306a90d27cc17250eb1a124617fabaa9042323ecb806a6b7d"
+  },
+  "dispatch_object_after_sha256": "0f85c378e749c52306a90d27cc17250eb1a124617fabaa9042323ecb806a6b7d",
+  "dispatch_object_stable": true,
+  "elapsed_ns": 6586456704,
+  "exit_code": 0,
+  "label": "00-trnm_crypto_primitives-native",
+  "native_observation": {
+    "bytes": 6721592,
+    "device": 2050,
+    "exe_link": "/home/qian-qi/work/chain-pon-five-claims-components-target-d6cb/release/deps/trnm_crypto_primitives-ec09512dfb6081aa",
+    "executable_opened_monotonic_ns": 1471907806738330,
+    "hash_finished_monotonic_ns": 1471907829826642,
+    "inode": 52884167,
+    "observation_started_monotonic_ns": 1471907806657217,
+    "process": {
+      "parent_pid": 68035,
+      "pid": 73666,
+      "start_ticks": 147190780
+    },
+    "process_binding_finished_monotonic_ns": 1471907806779360,
+    "sha256": "0f85c378e749c52306a90d27cc17250eb1a124617fabaa9042323ecb806a6b7d",
+    "status": "OBSERVED"
+  },
+  "owned_pid": 73666,
+  "performance_measurement": false,
+  "started_unix_ns": 1794394241789953633,
+  "status": "command_succeeded",
+  "stderr": {
+    "bytes": 688,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/00-trnm_crypto_primitives-native.stderr.log",
+    "sha256": "8d3bd95c1a7663e6d576d67d81aa316c2971167e0fdd210a5e45126d4d286845"
+  },
+  "stdout": {
+    "bytes": 15686,
+    "path": "/home/qian-qi/work/pon-five-claims-component-artifacts-d6cb/297bb40798ca1b4e4a987ef00582067282cda4e9-all/crypto/00-trnm_crypto_primitives-native.stdout.log",
+    "sha256": "712f4a0e0ab23ae1e5134991b86fa8575f71b8bca7ab2f19522910a84ef53612"
+  }
+}
