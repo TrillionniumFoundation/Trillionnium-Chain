@@ -15,6 +15,7 @@ import tomllib
 import unittest
 from pathlib import Path
 
+from check_ci_contract import RESEARCH_EVIDENCE_CONTROLS
 from check_ci_contract import (ROOT, validate, check_inline_source_pins, CONTINUITY_BUILD, CONTINUITY_TRANSITIONS,
                                MODEL_OBSERVATION_BLOCK, RUST_ALL_TARGETS, RUST_DOCS, SIGNED_STATE_PYTHON,
                                RUNTIME_RELEASE_PYTHON, MERGE_RUNTIME_RELEASE_PYTHON,
@@ -33,7 +34,7 @@ from check_ci_contract import (ROOT, validate, check_inline_source_pins, CONTINU
                                ORIGINAL_CAMPAIGN_READER,
                                NATIVE_RELEASE_BLOCK, NATIVE_GROWTH_RELEASE_BLOCK, NATIVE_GROWTH_V2_RELEASE_BLOCK,
                                GSC2_SYNTHETIC_ORACLE,
-                               NODE_EXAMPLE_BUILD, ACCOUNT_ARCHIVE_ORACLE, ACCOUNT_EXECUTION_ORACLE)
+                               NODE_EXAMPLE_BUILD, NODE_POST_BUILD_CONTROLS, ACCOUNT_ARCHIVE_ORACLE, ACCOUNT_EXECUTION_ORACLE)
 from check_ci_contract import (check_pq_release_authority_controls, PQ_RELEASE_WORKFLOW,
                                PQ_RELEASE_MANIFEST, PQ_RELEASE_GROUPS, PQ_ROOT_HARNESS_FILES)
 from check_ci_contract import (check_pq_system_required_controls, PQ_SYSTEM_REQUIRED_MANIFEST,
@@ -174,6 +175,32 @@ class EvaluationQuorumLaneTests(unittest.TestCase):
         self.script = (ROOT / 'scripts/ci/ci_job.sh').read_text()
         self.lanes = {'repository-truth', 'protocol-contract', 'fuzz-smoke',
                       'rust-baseline', 'external-evidence-contract'}
+
+    def test_control_domain_readers_cannot_be_omitted_duplicated_or_bypassed(self):
+        for command in RESEARCH_EVIDENCE_CONTROLS.splitlines(keepends=True):
+            for replacement in ('', command * 2,
+                                '    if false; then\n' + command + '    fi\n',
+                                '    true # ' + command.lstrip(),
+                                command.rstrip() + ' || true\n',
+                                command.replace('-v', '-k no_such_case -v')):
+                with self.subTest(command=command, replacement=replacement):
+                    with self.assertRaises(ValueError):
+                        check_independent_conformance(self.script.replace(command, replacement), self.lanes)
+
+    def test_control_domain_readers_cannot_move_to_a_different_lane(self):
+        changed = self.script.replace(RESEARCH_EVIDENCE_CONTROLS, '')
+        changed = changed.replace('  repository-truth)\n',
+                                  '  repository-truth)\n' + RESEARCH_EVIDENCE_CONTROLS)
+        with self.assertRaises(ValueError):
+            check_independent_conformance(changed, self.lanes)
+
+    def test_actual_control_commands_fail_when_the_test_file_is_missing(self):
+        with tempfile.TemporaryDirectory(prefix='trnm-control-command-') as directory:
+            for command in RESEARCH_EVIDENCE_CONTROLS.splitlines():
+                result = subprocess.run(command.split(), cwd=directory,
+                                        capture_output=True, text=True)
+                with self.subTest(command=command):
+                    self.assertNotEqual(result.returncode, 0)
 
     def test_actual_lane_preserves_quorum_reference_and_retained_vector_checks(self):
         check_independent_conformance(self.script, self.lanes)
@@ -1955,8 +1982,8 @@ class CiContractTests(unittest.TestCase):
             with self.subTest(replacement=replacement):
                 self.rejected('scripts/ci/ci_job.sh', ACCOUNT_ARCHIVE_ORACLE, replacement)
         self.rejected('scripts/ci/ci_job.sh', NODE_EXAMPLE_BUILD, '')
-        self.rejected('scripts/ci/ci_job.sh', NODE_EXAMPLE_BUILD + ACCOUNT_ARCHIVE_ORACLE,
-                      ACCOUNT_ARCHIVE_ORACLE + NODE_EXAMPLE_BUILD)
+        self.rejected('scripts/ci/ci_job.sh', NODE_EXAMPLE_BUILD + NODE_POST_BUILD_CONTROLS + ACCOUNT_ARCHIVE_ORACLE,
+                      ACCOUNT_ARCHIVE_ORACLE + NODE_EXAMPLE_BUILD + NODE_POST_BUILD_CONTROLS)
 
     def test_archive_oracle_and_negative_checks_cannot_move_to_another_lane(self):
         path = 'scripts/ci/ci_job.sh'
