@@ -50,7 +50,11 @@ def cases(count=N_CASES, seed=FIXTURE_SEED):
                "spacing": spacing, "half_life": half_life}
 
 
-def run(binary: Path, count=N_CASES, seed=FIXTURE_SEED):
+def run(binary: Path, count=N_CASES, seed=FIXTURE_SEED, *, expose_rows=False):
+    """Compare real Go process results; optional raw rows are test-only.
+
+    Default return schema/digest remains unchanged for frozen evidence.
+    """
     rows = []
     for i, x in enumerate(cases(count, seed)):
         args = [str(binary), "--anchor", f"{x['anchor_target']:064x}",
@@ -71,21 +75,47 @@ def run(binary: Path, count=N_CASES, seed=FIXTURE_SEED):
             actual = native.stdout.strip()
             match = native.returncode == 0 and actual == want
             kind = "target"
-        except ValueError:
+        except ValueError as error:
             want = None
             actual = native.stderr.strip()
-            match = native.returncode != 0 and actual == "ASERT_RESEARCH_RANGE"
-            kind = "rejected-range"
+            # A parameter refusal is not an i128 range overflow. In the Go
+            # reference these are distinct observable error domains; do not
+            # reclassify a bad anchor/height/zero half-life as a range event.
+            message = str(error)
+            if message in (
+                "anchor target", "pow limit", "ASERT anchor exceeds limit",
+                "ASERT heights/spacing/half-life",
+            ):
+                expected_error = "ASERT_RESEARCH_PARAMETERS"
+                kind = "rejected-parameters"
+            elif message in (
+                "ASERT ideal span overflows i128",
+                "ASERT deviation overflows i128",
+                "ASERT exponent overflows i128",
+            ):
+                expected_error = "ASERT_RESEARCH_RANGE"
+                kind = "rejected-range"
+            else:
+                # Go flags/hex codecs have different input grammars from Python
+                # scalar objects. Refuse ambiguous probes rather than credit a
+                # match under a guessed error kind.
+                raise ValueError("UNCOMPARABLE_ASERT_INPUT") from error
+            match = native.returncode != 0 and actual == expected_error
         if not match:
             raise RuntimeError(f"independent oracle mismatch case={i} input={x} go_rc={native.returncode} got={actual!r} expected={want!r}")
         rows.append({"case": i, "kind": kind, "go_result": actual})
-    return {"schema": "pon-asert-go-python-differential-v1",
-            "seed": seed, "cases": len(rows), "compared": sum(1 for x in rows if x['kind'] == 'target'),
-            "rejected": sum(1 for x in rows if x['kind'] != 'target'),
-            "all_equal": True,
-            "outputs_sha256": hashlib.sha256(json.dumps(rows, separators=(',', ':'), sort_keys=True).encode()).hexdigest(),
-            "observed_go_binary": str(binary), "consensus_activation": False,
-            "valid_w1_proofs": 0, "independent_operators": 0}
+    report = {"schema": "pon-asert-go-python-differential-v1",
+              "seed": seed, "cases": len(rows),
+              "compared": sum(1 for x in rows if x['kind'] == 'target'),
+              "rejected": sum(1 for x in rows if x['kind'] != 'target'),
+              "all_equal": True,
+              "outputs_sha256": hashlib.sha256(json.dumps(
+                  rows, separators=(',', ':'), sort_keys=True).encode()).hexdigest(),
+              "observed_go_binary": str(binary), "consensus_activation": False,
+              "valid_w1_proofs": 0, "independent_operators": 0}
+    if expose_rows:
+        report["rows"] = rows
+    return report
 
 
 def main():

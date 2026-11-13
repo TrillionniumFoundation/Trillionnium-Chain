@@ -17,6 +17,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 
 from daa_research_oracle import asert_target, legacy_retarget, mtp11, valid_time
+from daa_confirmation_risk import fork_risk
 
 SPACING = 10
 INITIAL = ((1 << 255) - 1) // 4096
@@ -94,6 +95,7 @@ class ForkSimulator:
         self.healed = False
         self.reorg_removed = 0
         self.reorg_confirmed_depth6 = 0
+        self.reorg_policy_confirmed = 0
         self.work_at_heal_a = self.work_at_heal_b = 0
         self.heal_preferred = "none"
         self.stopped = False
@@ -205,6 +207,15 @@ class ForkSimulator:
         losing_tip = self.blocks[loser]
         self.reorg_confirmed_depth6 = sum(
             1 for x in orphaned if losing_tip.height - x.height >= 6)
+        # The installed client requires BOTH depth and added branch work.
+        # This is an assumed-valid *simulation* graph, never native Node
+        # authority or a verified transaction membership receipt.
+        risk = fork_risk(self.blocks, winner, loser, depth=6, multiplier=6,
+                         max_reads=4096)
+        if (risk.depth_only_removed != self.reorg_confirmed_depth6
+                or risk.losing_blocks != self.reorg_removed):
+            raise AssertionError("synthetic orphan risk accounting mismatch")
+        self.reorg_policy_confirmed = risk.depth_and_work_confirmed_removed
         self.tip_a = self.tip_b = winner
         self.healed = True
 
@@ -246,6 +257,7 @@ class ForkSimulator:
             "partition_b_chainwork": str(self.work_at_heal_b),
             "losing_branch_blocks_removed": self.reorg_removed,
             "losing_branch_depth6_blocks_removed": self.reorg_confirmed_depth6,
+            "losing_branch_depth_work_confirmed_removed": self.reorg_policy_confirmed,
             "timestamp_unavailable_attempts": self.stale_time_attempts,
             "terminal_stopped": self.stopped,
             "stop_reason": self.stop_reason,
