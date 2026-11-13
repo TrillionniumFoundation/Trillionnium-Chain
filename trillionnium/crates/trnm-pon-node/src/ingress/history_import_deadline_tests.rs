@@ -411,14 +411,14 @@ fn history_owner_resource_expiry_never_invokes_exclusive_or_shared_action() {
         let active = node.read_active().unwrap();
         let resource_calls = AtomicUsize::new(0);
         let action_calls = AtomicUsize::new(0);
-        let expected_resource_calls = if shared { 2 } else { 1 };
+        let expected_resource_calls = 1;
         let deadline = Instant::now() + Duration::from_millis(100);
         let control = Control {
             deadline,
             resource: &|| {
                 let call = resource_calls.fetch_add(1, Ordering::SeqCst) + 1;
-                // Shared owners retain their existing initial check and the
-                // lock-loop check. Delay the last original check in each path.
+                // Both owners require one fresh observation before action.
+                // Delay that observation past the same original deadline.
                 if call == expected_resource_calls {
                     wait_until_expired(deadline);
                 }

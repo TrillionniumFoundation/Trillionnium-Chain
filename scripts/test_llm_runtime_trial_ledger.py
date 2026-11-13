@@ -39,6 +39,31 @@ class TrialLedgerTests(unittest.TestCase):
         self.init = trial.initialize(self.path, 2)
         self.owner = trial.TrialLedger(self.path, self.init['policy_id'])
 
+    def test_ledger_only_cli_uses_only_existing_ledger_modules(self):
+        isolated = self.root / 'ledger-only-scripts'
+        isolated.mkdir()
+        for module in (runtime, trial):
+            source = Path(module.__file__)
+            (isolated / source.name).write_bytes(source.read_bytes())
+        authority = self.root / 'ledger-only.sqlite3'
+
+        def command(*arguments):
+            result = subprocess.run(
+                [sys.executable, '-E', '-S',
+                 str(isolated / 'llm_runtime_pilot.py'), *arguments],
+                cwd=isolated, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                text=True, timeout=10, check=True)
+            return json.loads(result.stdout)
+
+        initialized = command('trial-ledger-init', '--ledger', str(authority),
+                              '--max-attempts', '1')
+        inspected = command('trial-ledger-inspect', '--ledger', str(authority),
+                            '--policy', initialized['policy_id'])
+        self.assertEqual(inspected['policy'], initialized['policy_id'])
+        self.assertEqual(inspected['checkpoint'], initialized['checkpoint'])
+        self.assertEqual(inspected['spent'], 0)
+        self.assertEqual(inspected['attempts'], {})
+
     def reserve(self, attempt='1' * 64, checkpoint=None, subject='first-key', **kwargs):
         return self.owner.reserve(plan(self.init['policy_id'], attempt, **kwargs), attempt,
             self.init['checkpoint'] if checkpoint is None else checkpoint, subject)

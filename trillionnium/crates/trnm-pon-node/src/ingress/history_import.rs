@@ -65,9 +65,11 @@ impl Owner<'_> {
         control: &Control<'_>,
         action: impl FnOnce(&mut Node) -> Result<T>,
     ) -> Result<T> {
-        control.check()?;
         match self {
-            Self::Exclusive(node) => action(node),
+            Self::Exclusive(node) => {
+                control.check()?;
+                action(node)
+            }
             Self::Shared(node) => loop {
                 control.check()?;
                 match node.try_lock() {

@@ -17,7 +17,7 @@ FIXTURES = Path(__file__).resolve().parents[1] / 'tests/fixtures/llm_material_ru
 PLAN_SHA = '01ec1a644f37b9fc7a4c6616f589768df97f8eed7a289b5de86afadaa7ce6165'
 TARGET_SHA = 'ebc8ac84999a91acb823d1bf8959a7dbc61fe20d7ba137f11affe426605d9852'
 CONTRACT = 'c9b06f9a029a3257801844f89acb59b5f59f6a39087335af323f274e9152992f'
-CURRENT = 'd2854289ae810115bccd3b7714c3d40b03cc6ec216747d6fca653aeac9299bd7'
+CURRENT = 'ac6b1d9058610907a7dd3486c663c1ee6ad40135a34c63770daa5f556e5879cc'
 
 
 def changed(value):
@@ -49,11 +49,11 @@ class MaterialRuntimeBridgeTests(unittest.TestCase):
         # Independently retained exact source/formula analysis, not values
         # obtained from the helper under test.
         self.current_target['tokenizer']['behavior_contract'] = (
-            '82104e1ad458fadd3e5fd3018f669641989a5421e23e9a98f2df4c4f1bb6b4c5')
+            '5bd0bfea568f544a784a11cc9f162cb401d1c23b44e5951ff38388ef9fca441a')
         self.current_target['numeric']['operator_contract'] = (
-            'c091193b7438b3039fde49eda8133fa8e2b4f5176e5932724b790b9d2dbf3c54')
+            '42707d81b3af6343388afe865307522c13e56edebf8ce4e6c7ec25ac4dbd73c8')
         self.current_target['registration']['target_admission'] = (
-            'e9506293ba9e70ef16889efcbeb23007c177806677b4fdf68104726c885054e4')
+            '5293fb3ad4d607c34089b6c2a1f14f6fa902db48df4501830bc36fc27630b6e8')
 
     def prepare(self, **changes):
         values = dict(profile=worker.MATERIAL_BRIDGE_PROFILE_V1,

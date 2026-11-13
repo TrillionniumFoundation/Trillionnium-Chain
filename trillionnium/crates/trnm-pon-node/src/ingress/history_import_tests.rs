@@ -1820,3 +1820,71 @@ fn shared_history_paid_deficit_refuses_without_waiting_under_original_writer() {
         "scope":"bounded full native W1 CPU control, not a network saturation attack"})
     );
 }
+
+// These owner controls open temporary native state without preparing a packet,
+// running W1, starting a service, or entering a History CPU epoch.
+fn history_owner_only_fixture() -> (tempfile::TempDir, Node) {
+    let clock = now().unwrap();
+    let settings = Settings::development(Some(clock - 100)).unwrap();
+    let directory = tempfile::tempdir().unwrap();
+    let node = Node::open(directory.path(), settings, 2).unwrap();
+    (directory, node)
+}
+
+#[test]
+fn history_shared_owner_checks_host_once_before_each_uncontended_action() {
+    let (_directory, node) = history_owner_only_fixture();
+    let shared = Mutex::new(node);
+    let calls = AtomicUsize::new(0);
+    let resource = || {
+        assert!(
+            shared.try_lock().is_ok(),
+            "Host observation is outside the writer"
+        );
+        calls.fetch_add(1, Ordering::SeqCst);
+        Ok(())
+    };
+    let control = Control {
+        deadline: Instant::now() + Duration::from_secs(10),
+        resource: &resource,
+    };
+    let mut owner = Owner::Shared(&shared);
+    for expected in 1..=2 {
+        owner
+            .with(&control, |node| {
+                assert_eq!(calls.load(Ordering::SeqCst), expected);
+                node.read_active().map(|_| ())
+            })
+            .unwrap();
+        assert_eq!(calls.load(Ordering::SeqCst), expected);
+    }
+}
+
+#[test]
+fn history_shared_owner_busy_retry_keeps_fresh_host_refusal() {
+    let (_directory, node) = history_owner_only_fixture();
+    let shared = Mutex::new(node);
+    let _writer = shared.lock().unwrap();
+    let calls = AtomicUsize::new(0);
+    let actions = AtomicUsize::new(0);
+    let control = Control {
+        deadline: Instant::now() + Duration::from_secs(10),
+        resource: &|| {
+            if calls.fetch_add(1, Ordering::SeqCst) == 0 {
+                Ok(())
+            } else {
+                Err("PUBLIC_HOST_KERNEL_LIMITS_CHANGED".into())
+            }
+        },
+    };
+    let result = Owner::Shared(&shared).with(&control, |_| {
+        actions.fetch_add(1, Ordering::SeqCst);
+        Ok(())
+    });
+    assert_eq!(
+        result.unwrap_err().to_string(),
+        "PUBLIC_HOST_KERNEL_LIMITS_CHANGED"
+    );
+    assert_eq!(calls.load(Ordering::SeqCst), 2);
+    assert_eq!(actions.load(Ordering::SeqCst), 0);
+}

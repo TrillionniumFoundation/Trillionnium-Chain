@@ -2168,8 +2168,12 @@ def main():
     worker.add_argument('--artifact')
     worker.add_argument('--parent-step-input')
     worker.add_argument('--expected-parent-step-input')
-    from llm_runtime_parent_step import add_parser, run as run_parent_step
-    add_parser(commands)
+    # Existing ledger-only commands need no parent-step or model module graph.
+    ledger_only = len(sys.argv) > 1 and sys.argv[1] in (
+        'trial-ledger-init', 'trial-ledger-inspect')
+    if not ledger_only:
+        from llm_runtime_parent_step import add_parser, run as run_parent_step
+        add_parser(commands)
     args = parser.parse_args()
     if args.command == 'trial-ledger-init':
         from llm_runtime_trial_ledger import initialize
