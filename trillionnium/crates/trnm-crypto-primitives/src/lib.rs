@@ -87,6 +87,18 @@ pub fn decode_signature(label: &str, value: &str) -> Result<Signature> {
     Ok(Signature::from_bytes(&out))
 }
 
+/// A distinct rejection reason from the existing strict public-key parser.
+#[derive(Debug)]
+pub struct WeakEd25519Key;
+
+impl std::fmt::Display for WeakEd25519Key {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter.write_str("public_key_hex is a weak Ed25519 key")
+    }
+}
+
+impl std::error::Error for WeakEd25519Key {}
+
 pub fn verifying_key_from_hex(value: &str) -> Result<VerifyingKey> {
     let bytes = decode_hash32("public_key_hex", value)?;
     ensure!(
@@ -95,7 +107,7 @@ pub fn verifying_key_from_hex(value: &str) -> Result<VerifyingKey> {
     );
     let key = VerifyingKey::from_bytes(&bytes)
         .map_err(|_| anyhow!("public_key_hex is not a valid Ed25519 key"))?;
-    ensure!(!key.is_weak(), "public_key_hex is a weak Ed25519 key");
+    ensure!(!key.is_weak(), WeakEd25519Key);
     Ok(key)
 }
 
@@ -251,6 +263,43 @@ mod tests {
     fn domain_hash_is_framed_and_domain_separated() {
         assert_ne!(hash_domain("a", &[b"bc"]), hash_domain("a", &[b"b", b"c"]));
         assert_ne!(hash_domain("a", &[b"x"]), hash_domain("b", &[b"x"]));
+    }
+
+    #[test]
+    fn verifying_key_errors_preserve_typed_weakness_and_canonical_order() {
+        let mut identity = [0_u8; 32];
+        identity[0] = 1;
+        let error = verifying_key_from_hex(&hex::encode(identity)).unwrap_err();
+        assert!(error.is::<WeakEd25519Key>());
+        assert_eq!(error.to_string(), "public_key_hex is a weak Ed25519 key");
+
+        let mut negative_zero = identity;
+        negative_zero[31] = 128;
+        let mut field_modulus = [255_u8; 32];
+        field_modulus[0] = 237;
+        field_modulus[31] = 127;
+        for value in [
+            String::new(),
+            "00".repeat(31),
+            "gg".repeat(32),
+            hex::encode(negative_zero),
+            hex::encode(field_modulus),
+        ] {
+            let error = verifying_key_from_hex(&value).unwrap_err();
+            assert!(!error.is::<WeakEd25519Key>(), "input: {value}");
+        }
+
+        let signing_key = SigningKey::from_bytes(&[7_u8; 32]);
+        let public = public_key_hex(&signing_key);
+        assert_eq!(
+            verifying_key_from_hex(&public).unwrap().to_bytes(),
+            signing_key.verifying_key().to_bytes()
+        );
+        let uppercase = public.to_ascii_uppercase();
+        assert_ne!(uppercase, public);
+        assert!(!verifying_key_from_hex(&uppercase)
+            .unwrap_err()
+            .is::<WeakEd25519Key>());
     }
 
     #[test]
