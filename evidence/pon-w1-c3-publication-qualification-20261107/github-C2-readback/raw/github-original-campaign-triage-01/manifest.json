@@ -1,0 +1,141 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "user",
+        "--jq",
+        ".login"
+      ],
+      "exit": 0,
+      "label": "00-user",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 10,
+      "stdout_sha256": "fb88b106e2b46b960c918f6e5607cb876d7978fb7bfe11eb0f401e44e8971981"
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42422952277"
+      ],
+      "exit": 0,
+      "label": "01-run",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 15528,
+      "stdout_sha256": "70e2904966e305a12f2f22fcc3d0b95abd3700c06b0802ca5aee080f0b46fb99"
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128555111595"
+      ],
+      "exit": 0,
+      "label": "02-job",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 3119,
+      "stdout_sha256": "1b6bb3acbc1ac9844185132d1b26c792f1e0865f1f0748cf8905fe165ecb416a"
+    },
+    {
+      "argv": [
+        "/usr/bin/gh",
+        "api",
+        "repos/TrillionniumFoundation/Trillionnium-Chain/actions/jobs/128555111595/logs"
+      ],
+      "exit": 0,
+      "label": "03-job-log",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 199263,
+      "stdout_sha256": "5b2d98263a3b9c996c783204b11c225a09285d7956dc16db852aebbaf74612e0"
+    }
+  ],
+  "focus_bytes": 35124,
+  "focus_path": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery/github-original-campaign-triage-01/log-focus.json",
+  "focus_sha256": "72a28bcf56563f6ced1bd5ef9d7d5d482f366c3b6863bccf62b53afc2182ff12",
+  "head_sha": "cc4dd8bdd89309c635831db30b508af2f89419d7",
+  "job_conclusion": "failure",
+  "job_id": 128555111595,
+  "job_name": "original native campaign (x64, head, release)",
+  "local_github_login": "ProfHepta",
+  "log_bytes": 199263,
+  "log_download_exit": 0,
+  "log_sha256": "5b2d98263a3b9c996c783204b11c225a09285d7956dc16db852aebbaf74612e0",
+  "observed_unix_ns": 1794093362629794591,
+  "read_only": true,
+  "run_id": 42422952277,
+  "schema": "TRNM-W1-PR782-ORIGINAL-CAMPAIGN-READONLY1",
+  "steps": [
+    {
+      "conclusion": "success",
+      "name": "Set up job",
+      "number": 1,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Reserve new output and isolated Cargo directories",
+      "number": 2,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Checkout the immutable candidate head",
+      "number": 3,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Verify actual tracked bytes and original source boundary",
+      "number": 4,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Install the source-pinned compiler and fetch locked dependencies",
+      "number": 5,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Prepare the exact original test runner without changing source",
+      "number": 6,
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "name": "Run three original campaigns under verified actual limits",
+      "number": 7,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Preserve final source verification and all partial artifact hashes",
+      "number": 8,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Upload successful, failed and partial observations",
+      "number": 9,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Post Checkout the immutable candidate head",
+      "number": 18,
+      "status": "completed"
+    },
+    {
+      "conclusion": "success",
+      "name": "Complete job",
+      "number": 19,
+      "status": "completed"
+    }
+  ]
+}

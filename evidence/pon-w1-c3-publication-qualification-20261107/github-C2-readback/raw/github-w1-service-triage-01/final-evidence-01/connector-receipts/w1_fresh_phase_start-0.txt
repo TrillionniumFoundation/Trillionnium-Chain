@@ -1,0 +1,35 @@
+{
+  "audit_recorded": true,
+  "job": {
+    "args": [
+      "-c",
+      "import pathlib,json,hashlib,subprocess,os\nroot=pathlib.Path(\"/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery\")\nbase=root/\"github-w1-service-triage-01/head-artifact-01\"\nout=base/\"source-and-phases-01\";out.mkdir(exist_ok=False)\ncommit=\"cc4dd8bdd89309c635831db30b508af2f89419d7\"\ndef save(name,raw):\n p=out/name;p.parent.mkdir(parents=True,exist_ok=True)\n with p.open(\"xb\") as f:f.write(raw);f.flush();os.fsync(f.fileno())\n return {\"path\":str(p),\"bytes\":len(raw),\"sha256\":hashlib.sha256(raw).hexdigest()}\nraw=(base/\"selected-text/fresh-service/fresh/report.json\").read_bytes()\nassert len(raw)==7607168 and hashlib.sha256(raw).hexdigest()==\"71e2eaa17dba3d3bdc0b70b41269b34f73ba58d28e50eca3ba007da9e08fcacb\"\nobj=json.loads(raw)\ndef projection(v,depth=3):\n if isinstance(v,dict):\n  if depth==0:return {\"_type\":\"dict\",\"_keys\":list(v)}\n  return {k:projection(x,depth-1) for k,x in v.items()}\n if isinstance(v,list):\n  if len(v)<=8 and all(not isinstance(x,(dict,list)) for x in v):return v\n  return {\"_type\":\"list\",\"_count\":len(v),\"_first\":projection(v[0],max(0,depth-1)) if v else None,\"_last\":projection(v[-1],max(0,depth-1)) if len(v)>1 else None}\n return v\nphases=projection(obj[\"phases\"],4)\n# Preserve every phase since there are exactly two.\nassert len(obj[\"phases\"])==2\nphases=[projection(p,3) for p in obj[\"phases\"]]\npr=save(\"phase-projection.json\",(json.dumps(phases,indent=2)+\"\\n\").encode())\nsources=[]\nfor name in [\"trillionnium/crates/trnm-pon-node/tests/public_v3_from_zero/fresh_challenge.rs\",\"scripts/ci/run_w1_fresh_service_v1.py\"]:\n cmd=[\"/usr/bin/git\",\"-C\",str(root/\"integration-repo\"),\"cat-file\",\"blob\",commit+\":\"+name]\n cp=subprocess.run(cmd,capture_output=True,timeout=20,env={**os.environ,\"GIT_NO_LAZY_FETCH\":\"1\"})\n assert cp.returncode==0,(name,cp.returncode,cp.stderr.decode())\n assert len(cp.stdout)<=131072\n pin=save(\"source/\"+name,cp.stdout)\n lines=cp.stdout.decode().splitlines()\n selected=[]\n needles=[\"finite_target\",\"CONFIRMATION_TARGET\",\"FRESH_NATIVE_PROCESS_REQUIRED\",\"PUBLIC_REQUEST_DEADLINE\",\"assert!\",\"run_named\",\"validate_report\",\"requested_window\",\"confirmation\"]\n indexes=set()\n for i,l in enumerate(lines):\n  if any(n in l for n in needles):\n   indexes.update(range(max(0,i-4),min(len(lines),i+8)))\n for i in sorted(indexes):selected.append({\"line\":i+1,\"text\":lines[i]})\n sources.append({\"source_commit\":commit,\"repository_path\":name,**pin,\"excerpts\":selected})\ndata={\"source_commit\":commit,\"fresh_report_sha256\":hashlib.sha256(raw).hexdigest(),\"phases\":phases,\"projection_file\":pr,\"sources\":sources,\"read_only\":True,\"repository_code_executed\":False}\npin=save(\"readback.json\",(json.dumps(data,indent=2)+\"\\n\").encode())\nprint(json.dumps({\"readback\":pin,\"data\":data}))\n"
+    ],
+    "created_unix_ms": 1794093377160,
+    "cwd": "/home/qian-qi/work/chain-w1-postwin-runtime-20261107-recovery",
+    "env_keys": [
+      "PYTHONDONTWRITEBYTECODE"
+    ],
+    "executable": "/usr/bin/python3",
+    "execution_mode": "operator",
+    "host": "desktop",
+    "id": "1a1b84c6688-12894-e21",
+    "idempotency_key": "w1-pr782-fresh-head-source-phase-readonly-01",
+    "launch_error": null,
+    "launch_state": "launched",
+    "remote_job_dir": "/home/qian-qi/.local/state/hepta-runtime-mac-worker/jobs/1a1b84c6688-12894-e21",
+    "request_digest": "8d36c71bf6a4e40d2aa8e7d0cacdac3c7add4a41786791de1ba5819c4465719f",
+    "request_fingerprint": 10175539331006260237,
+    "ssh_target": "desktop-ts",
+    "system_jobctl": false,
+    "unit": "hepta-runtime-job-1a1b84c6688-12894-e21"
+  },
+  "launch": {
+    "backend": "systemd",
+    "launcher_pid": null,
+    "ok": true,
+    "unit": "hepta-runtime-job-1a1b84c6688-12894-e21"
+  },
+  "local_record_pending": false,
+  "reused": false
+}
