@@ -1,0 +1,514 @@
+{
+  "archive_contents_executed": false,
+  "archive_count": 6,
+  "archives_extracted": false,
+  "finished_utc": "2026-11-09T03:32:17.791673+00:00",
+  "input_stability_rechecks": [
+    {
+      "bytes": 368,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/117-ai395-native-archive.json",
+      "sha256": "00e5cffbff8966a288dab26c045845037809d0b803fd56b9b270b1b59ba2d0e1",
+      "unchanged": true
+    },
+    {
+      "bytes": 104096,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/117-ai395-native-files.json",
+      "sha256": "3586aec5ad2a76ee8b40ea5a4b77ca9b735e873a25658d21cd4f7faf9831c357",
+      "unchanged": true
+    },
+    {
+      "bytes": 2787512,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/117-ai395-native.tar.gz",
+      "sha256": "178eae32c13c8fc4cd4cd14eadc45498094a2d07eb2ae206de2299eebe172293",
+      "unchanged": true
+    },
+    {
+      "bytes": 198,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/117-local-validation-archive.json",
+      "sha256": "bb28a3a1f3c5cb5e252d52d40d3f990bb6de6685409c08397aaccc72d73b2b7f",
+      "unchanged": true
+    },
+    {
+      "bytes": 18499,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/117-local-validation-files.json",
+      "sha256": "9afb019fb9f901a3e3952ef135d026aac627b0e6d8efbec69e5edaa14c5b0cba",
+      "unchanged": true
+    },
+    {
+      "bytes": 976596,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/117-local-validation.tar.xz",
+      "sha256": "eeaa11ad8a6f565f989edf035d6cb5f59d45ed2956276c824b4daac7064ea8f6",
+      "unchanged": true
+    },
+    {
+      "bytes": 192,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/fc5-validation-archive.json",
+      "sha256": "1883dd7410ab6e9000fc3363457796a008469024556a03d6fd3c9b8aaff73d2d",
+      "unchanged": true
+    },
+    {
+      "bytes": 17728,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/fc5-validation-files.json",
+      "sha256": "b07d84482fcffaab71e63692ae83cbbd1ab382335750803afb8a0d25a328898b",
+      "unchanged": true
+    },
+    {
+      "bytes": 607772,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/fc5-validation.tar.xz",
+      "sha256": "7d28c2424017998db6dd91637ebc612b13ea04db989c12148b5ff7566f30ae3e",
+      "unchanged": true
+    },
+    {
+      "bytes": 202,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/history-original-control-archive.json",
+      "sha256": "e45bacb728821988a10c335b75af98fef071918e1bacafc34b1b2495f2fe4260",
+      "unchanged": true
+    },
+    {
+      "bytes": 2912,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/history-original-control-files.json",
+      "sha256": "98e365eaf078a549f4f1ffa7387c4961c9a1861a066ba8184b1a43a9af97d465",
+      "unchanged": true
+    },
+    {
+      "bytes": 2850152,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/history-original-control.tar.xz",
+      "sha256": "58d76e8d058d5684a11327000b726947710c58766697bc9532df1daa770d7b14",
+      "unchanged": true
+    },
+    {
+      "bytes": 195,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/preliminary-ci-failure-archive.json",
+      "sha256": "28529186c931209f2b907e887b2c05e4ea9ae52b1cd9e6089f3e4dcaac07570d",
+      "unchanged": true
+    },
+    {
+      "bytes": 1296,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/preliminary-ci-failure-files.json",
+      "sha256": "579a96d849f12a91abe60b9915cc590e2f60d525b0fd10f16a8d6a33d8ec85c2",
+      "unchanged": true
+    },
+    {
+      "bytes": 49800,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/preliminary-ci-failure.tar.xz",
+      "sha256": "6629c99816d9a4dd5ec71cc44a255ac8bf8a009b52b891d727979d4b1103f666",
+      "unchanged": true
+    },
+    {
+      "bytes": 211,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/preparation-and-hosted-failures-archive.json",
+      "sha256": "4e1cd8609c0ec90d65e50b7e0e66d3e33d6036f1a9c48e93b29761a3ef15a101",
+      "unchanged": true
+    },
+    {
+      "bytes": 25305,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/preparation-and-hosted-failures-files.json",
+      "sha256": "537fda17279eb4b7649ac036b5682c938ceba65a631227d25490a2bc8c122b40",
+      "unchanged": true
+    },
+    {
+      "bytes": 28496340,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/preparation-and-hosted-failures.tar.xz",
+      "sha256": "a0fbaaa1a5992454f94b6694e08639f96bca3daa653d931f98d23a4f983463e9",
+      "unchanged": true
+    },
+    {
+      "bytes": 104096,
+      "path": "/workspace/scratch/pon-joint-58fd59-build/remote-native-117/extracted/manifest.json",
+      "sha256": "3586aec5ad2a76ee8b40ea5a4b77ca9b735e873a25658d21cd4f7faf9831c357",
+      "unchanged": true
+    }
+  ],
+  "output": "/workspace/scratch/pon-joint-58fd59-build/preparation-independent-archive-verification",
+  "passed": true,
+  "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "results": [
+    {
+      "actual_file_count": 478,
+      "all_member_sizes_and_sha256_match": true,
+      "archive": "117-ai395-native.tar.gz",
+      "archive_identity": {
+        "bytes": 2787512,
+        "ctime_ns": 1794194519233329373,
+        "device": 27,
+        "inode": 4100652,
+        "mode": 420,
+        "mtime_ns": 1794194519233329373,
+        "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/117-ai395-native.tar.gz",
+        "sha256": "178eae32c13c8fc4cd4cd14eadc45498094a2d07eb2ae206de2299eebe172293"
+      },
+      "archive_label": "117-ai395-native",
+      "archive_sidecar": {
+        "bytes": 368,
+        "ctime_ns": 1794194519236699913,
+        "device": 27,
+        "inode": 4100654,
+        "mode": 420,
+        "mtime_ns": 1794194519236699913,
+        "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/117-ai395-native-archive.json",
+        "sha256": "00e5cffbff8966a288dab26c045845037809d0b803fd56b9b270b1b59ba2d0e1"
+      },
+      "archive_stable": true,
+      "canonical_relative_paths": true,
+      "complete_member_set_matches": true,
+      "duplicate_paths": 0,
+      "errors": [],
+      "expected_file_count": 478,
+      "file_ancestor_collisions": 0,
+      "file_index": {
+        "bytes": 104096,
+        "ctime_ns": 1794194519233802873,
+        "device": 27,
+        "inode": 4100653,
+        "mode": 420,
+        "mtime_ns": 1794194519233802873,
+        "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/117-ai395-native-files.json",
+        "sha256": "3586aec5ad2a76ee8b40ea5a4b77ca9b735e873a25658d21cd4f7faf9831c357"
+      },
+      "indexed_file_count": 477,
+      "listed_payload_bytes": 16081768,
+      "native_manifest": {
+        "external_index_internal_bytes_equal": true,
+        "external_index_internal_semantics_equal": true,
+        "internal_manifest_sha256": "3586aec5ad2a76ee8b40ea5a4b77ca9b735e873a25658d21cd4f7faf9831c357",
+        "listed_files": 477,
+        "manifest_excluded_from_own_list": true,
+        "original_internal_bytes_equal": true,
+        "original_manifest": {
+          "bytes": 104096,
+          "ctime_ns": 1794194354932892807,
+          "device": 27,
+          "inode": 4100100,
+          "mode": 420,
+          "mtime_ns": 1794194354932892807,
+          "path": "/workspace/scratch/pon-joint-58fd59-build/remote-native-117/extracted/manifest.json",
+          "sha256": "3586aec5ad2a76ee8b40ea5a4b77ca9b735e873a25658d21cd4f7faf9831c357"
+        }
+      },
+      "observed_member_inventory": {
+        "bytes": 104788,
+        "ctime_ns": 1794195136716364342,
+        "device": 27,
+        "inode": 4100703,
+        "mode": 420,
+        "mtime_ns": 1794195136716364342,
+        "path": "/workspace/scratch/pon-joint-58fd59-build/preparation-independent-archive-verification/117-ai395-native-observed-files.json",
+        "sha256": "1352088a13c13e2055e38dbd95bacf3dc11bbf53428ae106e262fff7b322cab2"
+      },
+      "outer_size_and_sha256_match": true,
+      "passed": true,
+      "regular_files_only": true,
+      "total_payload_bytes": 16185864
+    },
+    {
+      "actual_file_count": 105,
+      "all_member_sizes_and_sha256_match": true,
+      "archive": "117-local-validation.tar.xz",
+      "archive_identity": {
+        "bytes": 976596,
+        "ctime_ns": 1794193586033851631,
+        "device": 27,
+        "inode": 4101153,
+        "mode": 420,
+        "mtime_ns": 1794193586033851631,
+        "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/117-local-validation.tar.xz",
+        "sha256": "eeaa11ad8a6f565f989edf035d6cb5f59d45ed2956276c824b4daac7064ea8f6"
+      },
+      "archive_label": "117-local-validation",
+      "archive_sidecar": {
+        "bytes": 198,
+        "ctime_ns": 1794193586043111743,
+        "device": 27,
+        "inode": 4099952,
+        "mode": 420,
+        "mtime_ns": 1794193586043111743,
+        "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/117-local-validation-archive.json",
+        "sha256": "bb28a3a1f3c5cb5e252d52d40d3f990bb6de6685409c08397aaccc72d73b2b7f"
+      },
+      "archive_stable": true,
+      "canonical_relative_paths": true,
+      "complete_member_set_matches": true,
+      "duplicate_paths": 0,
+      "errors": [],
+      "expected_file_count": 105,
+      "file_ancestor_collisions": 0,
+      "file_index": {
+        "bytes": 18499,
+        "ctime_ns": 1794193582876898953,
+        "device": 27,
+        "inode": 4101137,
+        "mode": 420,
+        "mtime_ns": 1794193582876898953,
+        "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/117-local-validation-files.json",
+        "sha256": "9afb019fb9f901a3e3952ef135d026aac627b0e6d8efbec69e5edaa14c5b0cba"
+      },
+      "indexed_file_count": 105,
+      "listed_payload_bytes": 43916967,
+      "native_manifest": null,
+      "observed_member_inventory": {
+        "bytes": 18477,
+        "ctime_ns": 1794195136805166563,
+        "device": 27,
+        "inode": 4100704,
+        "mode": 420,
+        "mtime_ns": 1794195136805166563,
+        "path": "/workspace/scratch/pon-joint-58fd59-build/preparation-independent-archive-verification/117-local-validation-observed-files.json",
+        "sha256": "f76c41290df8b08c3ca20a5d57f353c7394196eb0403e6dd6f68855620c7a274"
+      },
+      "outer_size_and_sha256_match": true,
+      "passed": true,
+      "regular_files_only": true,
+      "total_payload_bytes": 43916967
+    },
+    {
+      "actual_file_count": 102,
+      "all_member_sizes_and_sha256_match": true,
+      "archive": "fc5-validation.tar.xz",
+      "archive_identity": {
+        "bytes": 607772,
+        "ctime_ns": 1794193345104295220,
+        "device": 27,
+        "inode": 4117210,
+        "mode": 420,
+        "mtime_ns": 1794193345104295220,
+        "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/fc5-validation.tar.xz",
+        "sha256": "7d28c2424017998db6dd91637ebc612b13ea04db989c12148b5ff7566f30ae3e"
+      },
+      "archive_label": "fc5-validation",
+      "archive_sidecar": {
+        "bytes": 192,
+        "ctime_ns": 1794193345112577444,
+        "device": 27,
+        "inode": 4117211,
+        "mode": 420,
+        "mtime_ns": 1794193345112577444,
+        "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/fc5-validation-archive.json",
+        "sha256": "1883dd7410ab6e9000fc3363457796a008469024556a03d6fd3c9b8aaff73d2d"
+      },
+      "archive_stable": true,
+      "canonical_relative_paths": true,
+      "complete_member_set_matches": true,
+      "duplicate_paths": 0,
+      "errors": [],
+      "expected_file_count": 102,
+      "file_ancestor_collisions": 0,
+      "file_index": {
+        "bytes": 17728,
+        "ctime_ns": 1794193342078492022,
+        "device": 27,
+        "inode": 4117209,
+        "mode": 420,
+        "mtime_ns": 1794193342078492022,
+        "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/fc5-validation-files.json",
+        "sha256": "b07d84482fcffaab71e63692ae83cbbd1ab382335750803afb8a0d25a328898b"
+      },
+      "indexed_file_count": 102,
+      "listed_payload_bytes": 43778658,
+      "native_manifest": null,
+      "observed_member_inventory": {
+        "bytes": 17712,
+        "ctime_ns": 1794195136888379387,
+        "device": 27,
+        "inode": 4100706,
+        "mode": 420,
+        "mtime_ns": 1794195136888379387,
+        "path": "/workspace/scratch/pon-joint-58fd59-build/preparation-independent-archive-verification/fc5-validation-observed-files.json",
+        "sha256": "d3419cc0c7a33c0bae8605b79cb7962dfaedf521fe94c96d7c5ef22c4e237c7b"
+      },
+      "outer_size_and_sha256_match": true,
+      "passed": true,
+      "regular_files_only": true,
+      "total_payload_bytes": 43778658
+    },
+    {
+      "actual_file_count": 15,
+      "all_member_sizes_and_sha256_match": true,
+      "archive": "history-original-control.tar.xz",
+      "archive_identity": {
+        "bytes": 2850152,
+        "ctime_ns": 1794193341984327549,
+        "device": 27,
+        "inode": 4117205,
+        "mode": 420,
+        "mtime_ns": 1794193341984327549,
+        "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/history-original-control.tar.xz",
+        "sha256": "58d76e8d058d5684a11327000b726947710c58766697bc9532df1daa770d7b14"
+      },
+      "archive_label": "history-original-control",
+      "archive_sidecar": {
+        "bytes": 202,
+        "ctime_ns": 1794193341996879987,
+        "device": 27,
+        "inode": 4117208,
+        "mode": 420,
+        "mtime_ns": 1794193341996879987,
+        "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/history-original-control-archive.json",
+        "sha256": "e45bacb728821988a10c335b75af98fef071918e1bacafc34b1b2495f2fe4260"
+      },
+      "archive_stable": true,
+      "canonical_relative_paths": true,
+      "complete_member_set_matches": true,
+      "duplicate_paths": 0,
+      "errors": [],
+      "expected_file_count": 15,
+      "file_ancestor_collisions": 0,
+      "file_index": {
+        "bytes": 2912,
+        "ctime_ns": 1794193333129780576,
+        "device": 27,
+        "inode": 4117204,
+        "mode": 420,
+        "mtime_ns": 1794193333129780576,
+        "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/history-original-control-files.json",
+        "sha256": "98e365eaf078a549f4f1ffa7387c4961c9a1861a066ba8184b1a43a9af97d465"
+      },
+      "indexed_file_count": 15,
+      "listed_payload_bytes": 20299519,
+      "native_manifest": null,
+      "observed_member_inventory": {
+        "bytes": 2886,
+        "ctime_ns": 1794195137038045488,
+        "device": 27,
+        "inode": 4100707,
+        "mode": 420,
+        "mtime_ns": 1794195137038045488,
+        "path": "/workspace/scratch/pon-joint-58fd59-build/preparation-independent-archive-verification/history-original-control-observed-files.json",
+        "sha256": "7795bb9e13c107b74a52e2127d13db06cad8d65dbeedce281716293961f60e25"
+      },
+      "outer_size_and_sha256_match": true,
+      "passed": true,
+      "regular_files_only": true,
+      "total_payload_bytes": 20299519
+    },
+    {
+      "actual_file_count": 6,
+      "all_member_sizes_and_sha256_match": true,
+      "archive": "preliminary-ci-failure.tar.xz",
+      "archive_identity": {
+        "bytes": 49800,
+        "ctime_ns": 1794193345192294309,
+        "device": 27,
+        "inode": 4117213,
+        "mode": 420,
+        "mtime_ns": 1794193345192294309,
+        "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/preliminary-ci-failure.tar.xz",
+        "sha256": "6629c99816d9a4dd5ec71cc44a255ac8bf8a009b52b891d727979d4b1103f666"
+      },
+      "archive_label": "preliminary-ci-failure",
+      "archive_sidecar": {
+        "bytes": 195,
+        "ctime_ns": 1794193345198859884,
+        "device": 27,
+        "inode": 4117214,
+        "mode": 420,
+        "mtime_ns": 1794193345198859884,
+        "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/preliminary-ci-failure-archive.json",
+        "sha256": "28529186c931209f2b907e887b2c05e4ea9ae52b1cd9e6089f3e4dcaac07570d"
+      },
+      "archive_stable": true,
+      "canonical_relative_paths": true,
+      "complete_member_set_matches": true,
+      "duplicate_paths": 0,
+      "errors": [],
+      "expected_file_count": 6,
+      "file_ancestor_collisions": 0,
+      "file_index": {
+        "bytes": 1296,
+        "ctime_ns": 1794193345118448257,
+        "device": 27,
+        "inode": 4117212,
+        "mode": 420,
+        "mtime_ns": 1794193345118448257,
+        "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/preliminary-ci-failure-files.json",
+        "sha256": "579a96d849f12a91abe60b9915cc590e2f60d525b0fd10f16a8d6a33d8ec85c2"
+      },
+      "indexed_file_count": 6,
+      "listed_payload_bytes": 398639,
+      "native_manifest": null,
+      "observed_member_inventory": {
+        "bytes": 1272,
+        "ctime_ns": 1794195137043451124,
+        "device": 27,
+        "inode": 4100708,
+        "mode": 420,
+        "mtime_ns": 1794195137043451124,
+        "path": "/workspace/scratch/pon-joint-58fd59-build/preparation-independent-archive-verification/preliminary-ci-failure-observed-files.json",
+        "sha256": "bc8f9753c8e38b2c6dcce38aef8677eee4b3220ba6832c923493b967280a506b"
+      },
+      "outer_size_and_sha256_match": true,
+      "passed": true,
+      "regular_files_only": true,
+      "total_payload_bytes": 398639
+    },
+    {
+      "actual_file_count": 119,
+      "all_member_sizes_and_sha256_match": true,
+      "archive": "preparation-and-hosted-failures.tar.xz",
+      "archive_identity": {
+        "bytes": 28496340,
+        "ctime_ns": 1794194580867597638,
+        "device": 27,
+        "inode": 4100666,
+        "mode": 420,
+        "mtime_ns": 1794194580867597638,
+        "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/preparation-and-hosted-failures.tar.xz",
+        "sha256": "a0fbaaa1a5992454f94b6694e08639f96bca3daa653d931f98d23a4f983463e9"
+      },
+      "archive_label": "preparation-and-hosted-failures",
+      "archive_sidecar": {
+        "bytes": 211,
+        "ctime_ns": 1794194580904081394,
+        "device": 27,
+        "inode": 4100643,
+        "mode": 420,
+        "mtime_ns": 1794194580904081394,
+        "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/preparation-and-hosted-failures-archive.json",
+        "sha256": "4e1cd8609c0ec90d65e50b7e0e66d3e33d6036f1a9c48e93b29761a3ef15a101"
+      },
+      "archive_stable": true,
+      "canonical_relative_paths": true,
+      "complete_member_set_matches": true,
+      "duplicate_paths": 0,
+      "errors": [],
+      "expected_file_count": 119,
+      "file_ancestor_collisions": 0,
+      "file_index": {
+        "bytes": 25305,
+        "ctime_ns": 1794194566188680411,
+        "device": 27,
+        "inode": 4100665,
+        "mode": 420,
+        "mtime_ns": 1794194566188680411,
+        "path": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging/preparation-and-hosted-failures-files.json",
+        "sha256": "537fda17279eb4b7649ac036b5682c938ceba65a631227d25490a2bc8c122b40"
+      },
+      "indexed_file_count": 119,
+      "listed_payload_bytes": 35907213,
+      "native_manifest": null,
+      "observed_member_inventory": {
+        "bytes": 25272,
+        "ctime_ns": 1794195137748366883,
+        "device": 27,
+        "inode": 4100709,
+        "mode": 420,
+        "mtime_ns": 1794195137748366883,
+        "path": "/workspace/scratch/pon-joint-58fd59-build/preparation-independent-archive-verification/preparation-and-hosted-failures-observed-files.json",
+        "sha256": "620201aba40f21ef64b3d12a1dc15585d9fd78eea25a6b163cb399ded2264086"
+      },
+      "outer_size_and_sha256_match": true,
+      "passed": true,
+      "regular_files_only": true,
+      "total_payload_bytes": 35907213
+    }
+  ],
+  "schema": "pon-joint-independent-archive-verification-v1",
+  "scope": "archive/member integrity and safe path validation only",
+  "stage": "/workspace/scratch/pon-joint-58fd59-build/evidence-staging",
+  "stage_or_source_written": false,
+  "started_utc": "2026-11-09T03:32:16.600943+00:00",
+  "test_results_reexecuted": false,
+  "verified_archive_bytes": 35768172,
+  "verified_payload_bytes": 160486860,
+  "verified_regular_files": 825,
+  "verifier_sha256": "9ecb268bc0af6a6b313dcf81739a64b211bf4f220eca977533d4cc2d7a559f21"
+}

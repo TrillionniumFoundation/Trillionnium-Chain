@@ -1,0 +1,438 @@
+{
+  "actions": {
+    "ci_modified": false,
+    "native_tests_executed_for_review": false,
+    "only_saved_this_review_record": true,
+    "publication_performed": false,
+    "readme_modified_by_reviewer": false,
+    "source_modified_by_reviewer": false
+  },
+  "boundaries_confirmed": [
+    "HOLD / NO-GO and unqualified all-legal cost, quantum/time-credit and original public service claims retained.",
+    "Old PGH2 DAA report retains activation_observed_clock_api=false and growth_activation_clock_checked=false; not substituted for new public activation coverage.",
+    "All five native component execution receipts use release/locked/offline, one Cargo job and RUST_TEST_THREADS=1.",
+    "fc5 SIGKILL builds and 117 ENOSPC Clippy attempt stay separate from passing retries; cause of SIGKILL not uniquely established.",
+    "Serial-02 overall FAIL remains; remaining-03 broadens actual store roster to 79 names with 77 passed and two existing ignored.",
+    "V4 nonzero process CPU and unknown unfinished cost do not locate SIGTERM inside a proof instruction or qualify a resource lower bound."
+  ],
+  "full_source_bytes": 2485379627,
+  "full_source_entries": 26124,
+  "ignored_placeholders": [
+    "__HOSTED_RESULTS__",
+    "__ARCHIVE_TABLE__"
+  ],
+  "implementation": "11791e2da79b69322271be2cffe03725165151d1",
+  "other_required_corrections_found": [],
+  "packet_source_inventory": {
+    "backends": [
+      "pnh1-authenticated",
+      "pgh2-growth"
+    ],
+    "base": "remote-native-117/extracted/runs/remaining-03/joint-daa-originals",
+    "binding": "Each joint-daa.json records all 114 packet_file, packet_bytes and packet_sha256 values; every referenced original packet was independently checked in the review."
+  },
+  "prospective_merge": "b472c21f7b14ba27bb87d9d2f52d299365ed3145",
+  "recorded_utc": "2026-11-09T03:34:22.859458+00:00",
+  "retained_original_sources": [
+    {
+      "bytes": 14839,
+      "path": "evidence-staging/static-summary.json",
+      "sha256": "0110c31ce62c6dabeece18134e819c35de010c21cef6480c7d5f93f6cc181902"
+    },
+    {
+      "bytes": 2748,
+      "path": "evidence-staging/cost-native-summary.json",
+      "sha256": "805db20414980cb1e02145790e5f7bd2780ad368f1e56fe20ba41b36ae5dabfb"
+    },
+    {
+      "bytes": 34182,
+      "path": "evidence-staging/native-components-summary.json",
+      "sha256": "73090032efbb98d9e0cf8976e9a79ff0892d49bb3963c9d9c5827db2bef2dfab"
+    },
+    {
+      "bytes": 793,
+      "path": "evidence-staging/v4-semantic-preservation.json",
+      "sha256": "fb73ba4162d5adf254b5a32d27eb37549df58aceb69171985850bb85a12979bc"
+    },
+    {
+      "bytes": 3952,
+      "path": "final-native/run-actual-v4.py",
+      "sha256": "f6281ebe79ad4d92e5f3ce0fa8e5a17286bed44e44baa1818fcdf6e4c6195703"
+    },
+    {
+      "bytes": 423,
+      "path": "final-native/v4-observation/source-before.json",
+      "sha256": "4c753951d66399d4c89c8126852524ff16a5f8f8b7e7b7aa9fe0fc3adff6d086"
+    },
+    {
+      "bytes": 423,
+      "path": "final-native/v4-observation/source-after.json",
+      "sha256": "4c753951d66399d4c89c8126852524ff16a5f8f8b7e7b7aa9fe0fc3adff6d086"
+    },
+    {
+      "bytes": 2390,
+      "path": "final-native/v4-observation/complete-receipt.json",
+      "sha256": "066899eacdef00ee8326ecfbf7ade1e1997459f56b1570d8df5db3a137d43ace"
+    },
+    {
+      "bytes": 2505,
+      "path": "final-native/v4-observation/terminated-receipt.json",
+      "sha256": "232c1d19960b0a8eb13fa3babdc8f367e3003701f7583ee3dd9c8238d0ba96ad"
+    },
+    {
+      "bytes": 903,
+      "path": "final-native/v4-observation/complete-readback.json",
+      "sha256": "ee171af7e4d1cbb548c8ae9a36810d412722e5c552ed7043f1eeb4c009f4e0e6"
+    },
+    {
+      "bytes": 1459,
+      "path": "final-native/v4-observation/terminated-readback.json",
+      "sha256": "a2b39be706216e9e1a5b6fdf7fde33250e2aefc1bef1b0b90780b4f19e0c543a"
+    },
+    {
+      "bytes": 40704359,
+      "path": "final-native/v4-observation/complete.jsonl",
+      "sha256": "2ae1c73382b3d4bede8412c9ff725d6e51bf37ea50ff6810a84617c4c8ec6f04"
+    },
+    {
+      "bytes": 69094,
+      "path": "final-native/v4-observation/terminated.jsonl",
+      "sha256": "aa2bf4bddff47a234c36941091409a34013243555f2a254854695dea92430073"
+    },
+    {
+      "bytes": 373296,
+      "path": "final-native/v4-observation/pon_w1_lifecycle_cost_v4.bin.gz",
+      "sha256": "f283ca3e275052ea5352946a06c403325904ae911833f5a9f58d70ee8977d541"
+    },
+    {
+      "bytes": 40705511,
+      "path": "fc5-native/v4-observation/complete.jsonl",
+      "sha256": "f5bde4116b6fa39da9b4926a6b5421e605c32816c4300485cf3f192def409ed1"
+    },
+    {
+      "bytes": 2459,
+      "path": "final-native/example-tests.json",
+      "sha256": "5a2927a2f3841c7d385cd7f5d67157c4c57780c0b1dec3e6465f22950c077432"
+    },
+    {
+      "bytes": 2333,
+      "path": "final-native/clippy.json",
+      "sha256": "bbf3d0c87fbf2b29c97b8a6fb6901806fe4ae5f2cd8b44fde4599001228e9db4"
+    },
+    {
+      "bytes": 2346,
+      "path": "final-native/clippy-disk-retry.json",
+      "sha256": "3f9529033f07d31e53206044e168426521ab79446866c906bdd165057ab78dbb"
+    },
+    {
+      "bytes": 2530,
+      "path": "fc5-native/native-build.json",
+      "sha256": "5e52782489e61971a2e480dd975db75771dce27f55561be619111034972e169e"
+    },
+    {
+      "bytes": 2537,
+      "path": "fc5-native/native-build-serial.json",
+      "sha256": "37b957ecc1e04dd2833437ba21f4c0f8538294688fb3e1bfccd15250e0991899"
+    },
+    {
+      "bytes": 117161,
+      "path": "fc5-native/native-build.log",
+      "sha256": "dfb1e35cfae7fe03f0faccc7a1e2ea53132f351192847934531569ad8a58402d"
+    },
+    {
+      "bytes": 121388,
+      "path": "fc5-native/native-build-serial.log",
+      "sha256": "dfd62a97b072958f214ccb195c7f725ee692b6affe90dac8cd2e3b6e51ad0c46"
+    },
+    {
+      "bytes": 7484,
+      "path": "fc5-native/clippy.log",
+      "sha256": "894fe718b8c456ac3259a3ba5c881a14053898c6cc7b45e7c15861dc812f6966"
+    },
+    {
+      "bytes": 339,
+      "path": "history-deadline-evidence/red-summary.json",
+      "sha256": "b7a87ff7e27d9e3c08cb827dc2e2ae52ecbc78022894553a0a90e1ad2965ebb3"
+    },
+    {
+      "bytes": 904,
+      "path": "history-deadline-evidence/red-case-analysis.json",
+      "sha256": "21de78c04899072aaa0ba76f52fddf57cb17720dbec53d48541eceb5343391e4"
+    },
+    {
+      "bytes": 857,
+      "path": "preliminary-ci-failure/observation.json",
+      "sha256": "f72ce50d4dd1549e53120108cbb47a54b93e92afb5049b35fd4d532c8699f773"
+    },
+    {
+      "bytes": 1005,
+      "path": "remote-native-117/extracted/preparation/native117-serial-handoff-stop.json",
+      "sha256": "eac33c29bc4370d0a429166d060fb2f8b73368886f1a5d89315836c72590dece"
+    },
+    {
+      "bytes": 4056,
+      "path": "remote-native-117/extracted/preparation/native117-serial-handoff-complete.json",
+      "sha256": "e54d79d101c150b6e3304e82865195c4dc43d52a7664fa85eb6b6586e593cefc"
+    },
+    {
+      "bytes": 18069,
+      "path": "remote-native-117/extracted/preparation/store-growth-roster-correction.json",
+      "sha256": "158428cda0bc59bd10dc08b20204edd9d1e6a11a1226081f4d993de862cb8eac"
+    },
+    {
+      "bytes": 14712,
+      "path": "remote-native-117/extracted/runs/serial-02/summary.json",
+      "sha256": "4085ac8be20948789cceae417b32393c9d768ce366763eb8d10f06cb2b6c825a"
+    },
+    {
+      "bytes": 43621,
+      "path": "remote-native-117/extracted/runs/remaining-03/summary.json",
+      "sha256": "6033adcccbb6a94eb73583336804e74197bb692c56809b1bcc56293bb5935343"
+    },
+    {
+      "bytes": 272897,
+      "path": "remote-native-117/extracted/runs/remaining-03/joint-daa-originals/pnh1-authenticated/joint-daa.json",
+      "sha256": "664ef8549b32794aac16ea884860f1d447e59cae779c0f33dc370ffde13f175c"
+    },
+    {
+      "bytes": 281600,
+      "path": "remote-native-117/extracted/runs/remaining-03/joint-daa-originals/pgh2-growth/joint-daa.json",
+      "sha256": "d0e548d0a685a6da9e022a6d94576168d959a45c70e45d3c8590d71eca674dda"
+    },
+    {
+      "bytes": 2227,
+      "path": "remote-native-117/extracted/runs/initial-no-run/default-cargo-metadata.json",
+      "sha256": "0ebe69a06d28def78d06262ad38015fb0b2cfcc04895f2b5e2a5cc89f0495f64"
+    },
+    {
+      "bytes": 2284,
+      "path": "remote-native-117/extracted/runs/initial-no-run/native-lib-build.json",
+      "sha256": "6e6ca47dc7e80b8b16ce76fb88b13b12afad6426e86a219e5b87704cb2650d23"
+    },
+    {
+      "bytes": 2046,
+      "path": "remote-native-117/extracted/runs/initial-no-run/preflight.json",
+      "sha256": "e91b802633d6dbacdae876e5c129cc4a3c83fcabbe477478e25f146895e46a9e"
+    },
+    {
+      "bytes": 2226,
+      "path": "remote-native-117/extracted/runs/serial-02/default-cargo-metadata.json",
+      "sha256": "9bc1ce900ff4a5ddc3e0656f60e248828a7bb767d2f71d411b271f234d36bf47"
+    },
+    {
+      "bytes": 2354,
+      "path": "remote-native-117/extracted/runs/serial-02/history-deadline.json",
+      "sha256": "120af7612c4c546c18915930ce6a458ee4010c71fc9afca375679caf702ec18d"
+    },
+    {
+      "bytes": 2280,
+      "path": "remote-native-117/extracted/runs/serial-02/native-lib-build.json",
+      "sha256": "eab12ba9e000dc9f7d6bc5ddbd2e20127d54996190b1d6ecc2d77a70d01c33d8"
+    },
+    {
+      "bytes": 2321,
+      "path": "remote-native-117/extracted/runs/serial-02/native-lib-roster.json",
+      "sha256": "1a35f882a0431f131c1d07fde888787dd836fdc341780dd6acbcfa1c1fa63e11"
+    },
+    {
+      "bytes": 2045,
+      "path": "remote-native-117/extracted/runs/serial-02/preflight.json",
+      "sha256": "f806ff3e87a8085defd49c240d8b56b510156098aa248fd61f76fad3a6d9b361"
+    },
+    {
+      "bytes": 2334,
+      "path": "remote-native-117/extracted/runs/serial-02/public-growth.json",
+      "sha256": "cc7211d7aca4f4b004c5ca995b29dca40a1a7eb06c9f85a153b4c269f4ad0811"
+    },
+    {
+      "bytes": 2313,
+      "path": "remote-native-117/extracted/runs/remaining-03/consensus.json",
+      "sha256": "678ad2a5d628a8f13155d6af2f60387797b82f05b7987dc1dcf67efd9c03c233"
+    },
+    {
+      "bytes": 2329,
+      "path": "remote-native-117/extracted/runs/remaining-03/daa-joint-consensus.json",
+      "sha256": "29dc093d9480f8af0c6a01830c9b06b209262acce952153c6e0cb18d46da3e27"
+    },
+    {
+      "bytes": 2226,
+      "path": "remote-native-117/extracted/runs/remaining-03/default-cargo-metadata.json",
+      "sha256": "478005a32e3b2c79f5d7ac213e81d5d3831d41d98e8c709b2272a8b9a4b9b1e7"
+    },
+    {
+      "bytes": 2280,
+      "path": "remote-native-117/extracted/runs/remaining-03/native-lib-build.json",
+      "sha256": "6ac38a765ede953fb6f902ba162ba0ef4d9ed0de8cf09ce147ae05d68b2158b4"
+    },
+    {
+      "bytes": 2321,
+      "path": "remote-native-117/extracted/runs/remaining-03/native-lib-roster.json",
+      "sha256": "288c4da5c36ba923e27c3e443a704d1177d3c7de31925069f35a69f462e32a9b"
+    },
+    {
+      "bytes": 2045,
+      "path": "remote-native-117/extracted/runs/remaining-03/preflight.json",
+      "sha256": "920fe5c920b340912393aed7b972092d77276a86793a01a791d16510afe3d71b"
+    },
+    {
+      "bytes": 2314,
+      "path": "remote-native-117/extracted/runs/remaining-03/store-growth.json",
+      "sha256": "7f0c4b7eb2cfdd48cc96e0fb8ffc35f02b439f7e94c594480660edb09932e6c4"
+    },
+    {
+      "bytes": 1580,
+      "path": "remote-native-117/extracted/runs/serial-02/history-deadline.log",
+      "sha256": "0e5881ea74f6116118eba75bb164e1978ef8038641525a324111af62b19c3fd4"
+    },
+    {
+      "bytes": 1175,
+      "path": "remote-native-117/extracted/runs/serial-02/public-growth.log",
+      "sha256": "1e153f4a4afca7aac2a03c3b0f1818b73ebe22b4fa3cd6f5974f5df2f1ddadcc"
+    },
+    {
+      "bytes": 39089,
+      "path": "remote-native-117/extracted/runs/remaining-03/store-growth.log",
+      "sha256": "9edf4cbcd6369259306b4300734f32d55944240662744672ad5e82cd1f81d991"
+    },
+    {
+      "bytes": 1166,
+      "path": "remote-native-117/extracted/runs/remaining-03/consensus.log",
+      "sha256": "cd21ef333295a61e2e1d6e0599fa255c7339e05380940e87f9a98db368c56aec"
+    },
+    {
+      "bytes": 481362,
+      "path": "remote-native-117/extracted/runs/remaining-03/daa-joint-consensus.log",
+      "sha256": "59de63e34338a6f7ecfa00e08b9ec0bf6c5f020f9b71b93e940b6d62a5d710ae"
+    }
+  ],
+  "review_scope": "Read-only factual review of the existing draft, adjacent summaries and retained native receipts. Placeholder contents excluded.",
+  "reviewed_original_readme": {
+    "bytes": 7586,
+    "path": "evidence-staging/README-draft.md",
+    "sha256": "757ef9d8cd6bce0a48e8a96f5e3085de1c1c246a718d175d05719e442a9f387d"
+  },
+  "reviewer": "time_credit",
+  "schema": "pon-joint-readme-independent-review-v1",
+  "source_inventory_base": "/workspace/scratch/pon-joint-58fd59-build",
+  "tree": "162552848110fda532504b78865a16930bc6d9bb",
+  "unique_required_correction": {
+    "correction_reported_by_parent": true,
+    "evidence": "final-native/run-actual-v4.py performs source verify before run(complete), then run(terminated), then source verify after both. Preliminary capture gap is recorded in preliminary-ci-failure/observation.json.",
+    "location": "Source and implementation: universal per-command receipt sentence",
+    "original_text": "Each command retains its own complete source-before/source-after, full output, exit status and byte hashes.",
+    "problem": "The claim overstates receipt scope. V4 complete and SIGTERM children share one full-source before/after pair around the entire observation batch; each child has its own executable/output/process receipt. The preliminary CI-placement run also has an explicitly retained full-output capture gap.",
+    "recommended_text": "Fixed-source recorder commands retain individual source-before/source-after checks, full output, exit status and byte hashes. The V4 observation pair retains one full-source check before and after the pair, with separate executable, output and process receipts for each child. Earlier capture gaps are listed below."
+  },
+  "verified_denominators": {
+    "ai395_recorder_integrity": {
+      "receipts_checked": 16,
+      "source_or_log_mismatches": 0
+    },
+    "e798_history_controls": {
+      "failed": 2,
+      "historical_controls_passed": 5,
+      "passed": 8,
+      "shared_branch_reached_in_failing_owner_test": false
+    },
+    "joint_daa_packets": {
+      "cold_reopen_chainwork_hex": "0x319",
+      "cold_reopen_height": 64,
+      "effective_span_seconds": 38,
+      "packet_byte_or_hash_mismatches": 0,
+      "pgh2_checked": 114,
+      "pnh1_checked": 114,
+      "signed_spans_seconds": [
+        -42,
+        -199,
+        -356
+      ]
+    },
+    "locked_offline_graphs": {
+      "all_features": {
+        "members": 26,
+        "packages": 181
+      },
+      "default": {
+        "members": 26,
+        "packages": 176
+      },
+      "fuzz": {
+        "members": 1,
+        "packages": 149
+      }
+    },
+    "native_components": {
+      "consensus_passed": 10,
+      "daa_passed": 2,
+      "history_passed": 10,
+      "public_growth_passed": 7,
+      "store_growth_ignored": 2,
+      "store_growth_passed": 77,
+      "total_ignored": 2,
+      "total_passed": 106
+    },
+    "native_examples": {
+      "v2": 10,
+      "v3": 9,
+      "v4": 11
+    },
+    "preliminary_ci_placement": {
+      "complete_output_available": false,
+      "errors": 14,
+      "failures": 85,
+      "named_cases": 165
+    },
+    "python_named_cases": {
+      "boundary": 16,
+      "ci_contract": 165,
+      "corpus": 57,
+      "repository": 50,
+      "source_integrity": 43,
+      "total": 342,
+      "v4_reader": 11
+    },
+    "repository": {
+      "links": 5992,
+      "packages": 26,
+      "rust_files": 1390
+    },
+    "static_commands": {
+      "passed": 15,
+      "total": 15
+    },
+    "v4_binary": {
+      "before_loaded_after_and_decompressed_sha256": "bd74dea5a8b1ddc57e86f1d181c3cdb287321dc0b9651e03b6f21adfcfe2f45a",
+      "bytes": 903328
+    },
+    "v4_complete": {
+      "canonical_candidates": 288,
+      "cohorts": 936,
+      "completed_generation_attempts": 3848,
+      "native_exit": 0,
+      "reader_exit": 0,
+      "records": 23069,
+      "searches": 1888,
+      "verifier_calls": 3776
+    },
+    "v4_semantic_comparison": {
+      "all_other_records_equal": true,
+      "excluded_fields": [
+        "timing",
+        "total_with_observation_and_verification",
+        "total_before_terminal_record"
+      ],
+      "records_after": 23069,
+      "records_before": 23069
+    },
+    "v4_terminated": {
+      "completed_generation_attempts": 0,
+      "last_raw_record_kind": "attempt-start",
+      "native_exit": -15,
+      "reader_exit": 3,
+      "records": 9,
+      "status": "INCOMPLETE",
+      "unfinished_resource_cost": null,
+      "user_cpu_seconds": 0.002407000000000714
+    }
+  }
+}

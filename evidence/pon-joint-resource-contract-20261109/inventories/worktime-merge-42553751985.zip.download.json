@@ -1,0 +1,13 @@
+{
+  "provider": "GitHub read-only connector reusable file reference",
+  "expected_bytes": 1812824,
+  "expected_sha256": "5ac4c7720c6a2eb2786c8a2257d62cb19e5fc3131032bcf39d84d7c9567e1379",
+  "path": "/workspace/scratch/pon-joint-58fd59-build/preparation/ci-readback-117/main-hosted-42553751914-42553751985/worktime-merge-42553751985.zip",
+  "source_head": "11791e2da79b69322271be2cffe03725165151d1",
+  "started_unix_ns": 1794195345605203321,
+  "complete": true,
+  "reused": false,
+  "bytes": 1812824,
+  "sha256": "5ac4c7720c6a2eb2786c8a2257d62cb19e5fc3131032bcf39d84d7c9567e1379",
+  "finished_unix_ns": 1794195345997053491
+}

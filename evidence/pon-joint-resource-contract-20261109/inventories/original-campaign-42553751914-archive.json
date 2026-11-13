@@ -1,0 +1,10 @@
+{
+  "file": "original-campaign-42553751914.zip",
+  "bytes": 76217297,
+  "sha256": "4568b72cd9ab324e7d63eda766785efb61c754810267529ca3af82863064abed",
+  "file_count": 1766,
+  "uncompressed_bytes": 582864636,
+  "original_provider_zip_preserved": true,
+  "source_head": "11791e2da79b69322271be2cffe03725165151d1",
+  "download_receipt": "original-campaign-42553751914.zip.download.json"
+}
