@@ -1,10 +1,11 @@
 # Bounded Cell provider discovery, development v1
 
-The separate opt-in [PQ v3 continuation](CELL_PROVIDER_DISCOVERY_PQ_V3.md)
+The current [authenticated epoch PQ v3 continuation](CELL_PROVIDER_DISCOVERY_AUTH_PQ_V3.md)
 adds signed lease epochs, bounded quota reclamation and authenticated
-query-bound bootstrap replies. It uses a fresh codec/database and does not
-silently change the permanent-history or unauthenticated-bootstrap semantics
-documented below for v1 and the preceding PQ v2 profile.
+query-bound bootstrap replies. The [parallel #818 profile](CELL_PROVIDER_DISCOVERY_PQ_V3.md)
+is retained as historical evidence and is not an alternative current codec.
+The permanent-history and unauthenticated-bootstrap semantics documented below
+remain specific to v1 and the preceding PQ v2 profile.
 
 This is a finite rendezvous service in the independent
 `cell-provider-discovery-dev-v1` namespace. It supplies signed location hints for

@@ -672,15 +672,6 @@ CONVERGENCE_REQUIRED_PATHS |= frozenset((
 ))
 CONVERGENCE_REQUIRED_PATHS |= frozenset((
     "docs/development/specs/pon/CELL_PROVIDER_DISCOVERY_PQ_V3.md",
-    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3.rs",
-    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/auth.rs",
-    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/directory.rs",
-    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/directory_tests.rs",
-    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/transport.rs",
-    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/transport_tests.rs",
-    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/multisource_tests.rs",
-    "trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3/server_tests.rs",
-    "trillionnium/crates/trnm-data-availability/examples/cell_discovery_pq_v3.rs",
     "trillionnium/crates/trnm-data-availability/src/cell/residency/version.rs",
     "trillionnium/crates/trnm-data-availability/src/cell/residency/version_tests.rs",
 ))
@@ -1186,7 +1177,7 @@ CONSOLIDATION_CONTROL_REQUIRED_PATHS = frozenset((
 NATIVE_REQUIRED_PATHS |= CONSOLIDATION_CONTROL_REQUIRED_PATHS
 
 def is_pq_source(parts: tuple[str, ...]) -> bool:
-    """Recognize versioned pq3 modules, pq.rs, cell_pq and older prefixes."""
+    """Recognize versioned PQ modules, pq.rs, cell_pq and older prefixes."""
     return any(
         part.startswith(("pq_", "pqg_", "pql"))
         or re.search(r"(?:^|_)pq(?:[0-9]+)?(?:_|$)", Path(part).stem)

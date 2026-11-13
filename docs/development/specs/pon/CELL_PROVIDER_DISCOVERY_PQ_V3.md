@@ -1,11 +1,18 @@
 # Cell provider discovery PQ v3
 
-Status: explicit development component; **HOLD_NO_GO** for public independent
-storage, permissionless fairness, funded custody and production activation.
+Status: **historical parallel profile; superseded in the integrated candidate**.
+This document retains PR #818 at `43e10d4dded2404f2b6ae8851a68173d9d792be6`
+and its original **HOLD_NO_GO** observations. The integrated discovery owner is
+[the authenticated epoch profile from #823](CELL_PROVIDER_DISCOVERY_AUTH_PQ_V3.md).
+Only #818's complete-version residency joins that owner. Its parallel wire and
+SQLite schemas share version labels with #823 but have different layouts and
+signed domains; the current implementation explicitly refuses reinterpretation.
+The parallel module and example are retained in Git history and original
+evidence, rather than exposed as another current discovery entry point.
 
 This continues [PN5 in the sole development plan](../../TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md)
 and the [previous discovery contract](CELL_PROVIDER_DISCOVERY_DEV_V1.md).
-The implementation is [discovery/pq3](../../../../trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3.rs).
+The implementation is [discovery/pq3](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/43e10d4dded2404f2b6ae8851a68173d9d792be6/trillionnium/crates/trnm-data-availability/src/cell/discovery/pq3.rs).
 Its opt-in profile is `cell-provider-discovery-pq-v3`. CDP1/CDP2, their signed
 domains, their databases and the existing command-line profiles retain their
 original semantics. There is no automatic schema migration, namespace reset,
@@ -194,7 +201,7 @@ failure domains. Permanent retention of all uploaded history is not promised.
 
 ## Explicit native development example
 
-The [native example](../../../../trillionnium/crates/trnm-data-availability/examples/cell_discovery_pq_v3.rs)
+The [native example](https://github.com/TrillionniumFoundation/Trillionnium-Chain/blob/43e10d4dded2404f2b6ae8851a68173d9d792be6/trillionnium/crates/trnm-data-availability/examples/cell_discovery_pq_v3.rs)
 uses new local directories, public test fixture keys and two finite same-host
 loopback services. It performs signed announce/ACK, authenticated discovery,
 a genuinely cold payload fetch, full output-byte comparison, withdrawal and

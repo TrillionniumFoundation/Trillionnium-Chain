@@ -16,7 +16,6 @@ mod directory;
 mod directory_deadline_tests;
 mod directory_wait;
 pub mod pq;
-pub mod pq3;
 mod selection;
 mod transport;
 pub use directory::{CellProviderDirectoryUsageV1, CellProviderDirectoryV1};

@@ -14365,6 +14365,12 @@ qualify the other source changes on that historical branch.
 
 ### 2026-11-08 Cell storage continuation: reclaimable discovery and complete task bytes
 
+**Historical #818 branch record.** The convergence decision above remains
+authoritative: #823 owns current discovery, while #818 contributes complete
+version residency. Its incompatible parallel V3 codec/database and example are
+kept in original Git history and evidence, not registered as current components.
+The measurements below apply only to their named historical source.
+
 Continue the exact six-capability candidate #807 at
 `0dc13a92cc49e9a751a2b6cf7cc96524f1244a2a` on a separate stacked branch.
 The unified #812 candidate and other concurrent source heads are not silently
