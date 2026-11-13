@@ -41,6 +41,39 @@ REQUIRED = (
     "formal/pon-nakamoto-v1/pq_qtx1_verify.c",
     "formal/pon-nakamoto-v1/pq_pql5_native_verify.c",
 )
+# Independent literal roster from the reviewed 29-file scope.
+REVIEWED_CELL_PAGED_PATHS = (
+    "docs/development/specs/pon/CELL_SEALED_PAGED_RESEARCH_NEXT_USE_V1.md",
+    "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_next_use_v2.rs",
+    "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_paged_next_use_v1.rs",
+    "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/bep52.rs",
+    "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/paged.rs",
+    "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/paged/tests.rs",
+    "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/snapshot.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/release.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/release/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/bep52_storage.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/bep52_storage/peer.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/bep52_storage/peer/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/bep52_storage/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/codec.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/file.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/release_snapshot.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/release_snapshot/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/retention/reservation_preflight.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/version_retention/chunk_read.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/version_retention/tests/shard_plan_paged.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/paged.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/paged/recovery.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/paged/recovery/execute.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/paged/recovery/preflight.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_plan_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_recovery_tests.rs",
+)
+
 OVERWRITES = {
     "formal/pon-nakamoto-v1/pq_cell_custody.py": "cell",
     "formal/pon-nakamoto-v1/pq_account_migration.py": "migration",
@@ -173,6 +206,41 @@ class CorpusGateTests(unittest.TestCase):
             original = target.read_bytes()
             try:
                 target.write_bytes(original + b"changed consolidation control")
+                with self.subTest(path=path), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                target.write_bytes(original)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+    def test_reviewed_cell_paged_sources_require_each_path_and_pin(self):
+        original = copy.deepcopy(self.manifest)
+        for path in REVIEWED_CELL_PAGED_PATHS:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=path, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(path)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][path]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+    def test_reviewed_cell_paged_source_bytes_do_not_grant_acceptance(self):
+        for path in REVIEWED_CELL_PAGED_PATHS:
+            target = self.root / path
+            original = target.read_bytes()
+            try:
+                target.write_bytes(original + b"changed reviewed Cell source")
                 with self.subTest(path=path), self.assertRaisesRegex(IntegrityError, "changed source"):
                     check(self.root)
             finally:

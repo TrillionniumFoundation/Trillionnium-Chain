@@ -1170,6 +1170,40 @@ CONSOLIDATION_CONTROL_REQUIRED_PATHS = frozenset((
 ))
 NATIVE_REQUIRED_PATHS |= CONSOLIDATION_CONTROL_REQUIRED_PATHS
 
+# Exact reviewed Cell source coverage; no execution or acceptance is inferred.
+CELL_REVIEWED_PAGED_REQUIRED_PATHS = frozenset((
+    "docs/development/specs/pon/CELL_SEALED_PAGED_RESEARCH_NEXT_USE_V1.md",
+    "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_next_use_v2.rs",
+    "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_paged_next_use_v1.rs",
+    "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/bep52.rs",
+    "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/paged.rs",
+    "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/paged/tests.rs",
+    "trillionnium/crates/trnm-data-availability/examples/cell_sealed_research_v2/snapshot.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/release.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/bep52_peer/release/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/bep52_storage.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/bep52_storage/peer.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/bep52_storage/peer/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/bep52_storage/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/codec.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/file.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/erasure/retained_plan/paged/restore/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/release_snapshot.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/release_snapshot/tests.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/retention/reservation_preflight.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/version_retention/chunk_read.rs",
+    "trillionnium/crates/trnm-data-availability/src/cell/version_retention/tests/shard_plan_paged.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/paged.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/paged/recovery.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/paged/recovery/execute.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/shard/plan/paged/recovery/preflight.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_plan_tests.rs",
+    "trillionnium/crates/trnm-pon-node/src/store/storage_service/version_paged_shard_recovery_tests.rs",
+))
+NATIVE_REQUIRED_PATHS |= CELL_REVIEWED_PAGED_REQUIRED_PATHS
+
 def is_pq_source(parts: tuple[str, ...]) -> bool:
     """Recognize pq.rs, cell_pq and operator_pq_auth as well as older prefixes."""
     return any(

@@ -167,8 +167,17 @@ impl Lease {
                     && old.demand_id == new.demand_id
                     && old.requester == new.requester
                     && old.source == new.source
+                    && old.source_record == new.source_record
+                    && old.authorization_scope == new.authorization_scope
+                    && old.availability_manifest == new.availability_manifest
+                    && old.availability_root == new.availability_root
+                    && old.cost_class == new.cost_class
                     && old.generation == new.generation
                     && old.revision.checked_add(1) == Some(new.revision)
+                    // Early structure only; actual height and signatures stay with M06.
+                    && old.not_before <= new.not_before
+                    && new.not_before <= old.expires
+                    && new.expires > old.expires
             }
             (Self::Pq(old), Self::Pq(new)) => {
                 new.same_scope(old) && old.revision.checked_add(1) == Some(new.revision)
