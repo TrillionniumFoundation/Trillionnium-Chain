@@ -2249,7 +2249,7 @@
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_history_handoff_tests.rs": "5a5069903f6667239c47db1a1857c7ce6c8e4dbb",
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/scalar_cpu_native_completion_tests.rs": "45fea5275bfe9971fc095f0607db7fa72718e758",
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic.rs": "e7d0d9f5401eb9e33599c3c9b6f849bcf26808fe",
-    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic/tests.rs": "b78d2ab1d56de7d7f1c58740c24ed3536edff6a8",
+    "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_arithmetic/tests.rs": "9a06556168d0001f8d326181a342fc8bd666f3fe",
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_rejection.rs": "ba08da8368ad66301d277e5a9e755b4e50f7e824",
     "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/work_rejection/tests.rs": "7ca80b87f2c56ac98e30473e88aea1363314b1ef",
     "trillionnium/crates/trnm-pon-node/src/lib.rs": "aafd91425cbde49bbb368f47f5c4a17c3b2b85bf",
