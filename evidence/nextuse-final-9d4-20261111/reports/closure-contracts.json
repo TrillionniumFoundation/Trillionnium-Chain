@@ -1,0 +1,154 @@
+{
+  "ancestor_execution_transferred": false,
+  "archival_conversion": {
+    "change": "archive paths refer to checkpoint root; full job logs stored as reversible gzip with decoded-byte hashes; evidence values unchanged",
+    "original_readback_json_bytes": 4316,
+    "original_readback_json_sha256": "62066cabcaf3420864f8718ec65344161c001659a79a280ead80229cdd2ce7ec"
+  },
+  "authority": "DENY_ALL",
+  "checkpoint_path_base": "evidence/nextuse-final-9d4-20261111",
+  "head": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+  "hepta_final_use_integrated": false,
+  "independent_consumer_accepted": false,
+  "jobs": [
+    {
+      "conclusion": "success",
+      "job_id": 130262955190,
+      "name": "scope, head",
+      "raw_log": {
+        "bytes": 26871,
+        "decoded_bytes": 169528,
+        "decoded_path": "job-130262955190.log",
+        "decoded_sha256": "cea33f2cc33f4f30ea1be5acb400886b0ff40c1bb3a5868391b72483369c773b",
+        "encoding": "gzip",
+        "path": "logs/job-130262955190.log.gz",
+        "sha256": "4e0b5b51d07e8b80dbd329e72287c8c9ee24107a3065fdbda81a5eca3785ab17",
+        "source_id": "github-job-log-130262955190"
+      },
+      "test_results": [
+        "Ran 11 tests in 1.062s",
+        "Ran 17 tests in 0.453s"
+      ],
+      "tested_commit": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+      "tested_tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0",
+      "tracked_worktree_verified_before_after": true,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42941133488/job/130262955190"
+    },
+    {
+      "conclusion": "success",
+      "job_id": 130262955625,
+      "name": "scope, prospective-merge",
+      "raw_log": {
+        "bytes": 26833,
+        "decoded_bytes": 170336,
+        "decoded_path": "job-130262955625.log",
+        "decoded_sha256": "a844487c3040b7fbe06f004191cbc71ac73fcac83510c068b50382c2d87175c4",
+        "encoding": "gzip",
+        "path": "logs/job-130262955625.log.gz",
+        "sha256": "1a850ca2bec33da73794fa19be799f2eee98a2709819fa60c2682d7c6fce5d04",
+        "source_id": "github-job-log-130262955625"
+      },
+      "test_results": [
+        "Ran 11 tests in 1.011s",
+        "Ran 17 tests in 0.465s"
+      ],
+      "tested_commit": "a8a3bd2dd15d4ec06917ba3a0d1acd4681800cd6",
+      "tested_tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0",
+      "tracked_worktree_verified_before_after": true,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42941133488/job/130262955625"
+    },
+    {
+      "conclusion": "success",
+      "job_id": 130262955314,
+      "name": "proof-profile, head",
+      "raw_log": {
+        "bytes": 29779,
+        "decoded_bytes": 176385,
+        "decoded_path": "job-130262955314.log",
+        "decoded_sha256": "32393036721e0ccbe9a030b4cb3fcd560563b2efc35d64719e0a27cd58aff3ce",
+        "encoding": "gzip",
+        "path": "logs/job-130262955314.log.gz",
+        "sha256": "57431f4dcc56e7fd901eac23c0ef634738d6ed06f3d28c5aa7e2502b015078a2",
+        "source_id": "github-job-log-130262955314"
+      },
+      "test_results": [
+        "Ran 26 tests in 0.417s"
+      ],
+      "tested_commit": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+      "tested_tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0",
+      "tracked_worktree_verified_before_after": true,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42941133488/job/130262955314"
+    },
+    {
+      "conclusion": "success",
+      "job_id": 130262955013,
+      "name": "proof-profile, prospective-merge",
+      "raw_log": {
+        "bytes": 29918,
+        "decoded_bytes": 177391,
+        "decoded_path": "job-130262955013.log",
+        "decoded_sha256": "f5e424cd2562678c9325431416c81054ce366d6df644297f516086ac4f40f302",
+        "encoding": "gzip",
+        "path": "logs/job-130262955013.log.gz",
+        "sha256": "7e6ca885b1f104a3a22dbdc7b1d3b36f124976eeef15e455714caf081567be06",
+        "source_id": "github-job-log-130262955013"
+      },
+      "test_results": [
+        "Ran 26 tests in 0.306s"
+      ],
+      "tested_commit": "a8a3bd2dd15d4ec06917ba3a0d1acd4681800cd6",
+      "tested_tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0",
+      "tracked_worktree_verified_before_after": true,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42941133488/job/130262955013"
+    },
+    {
+      "conclusion": "success",
+      "job_id": 130262955291,
+      "name": "campaign-reader, head",
+      "raw_log": {
+        "bytes": 26303,
+        "decoded_bytes": 167543,
+        "decoded_path": "job-130262955291.log",
+        "decoded_sha256": "291bd0f553a7b1d691697d4343ac692e342373a9398236151845b9a6f06f568e",
+        "encoding": "gzip",
+        "path": "logs/job-130262955291.log.gz",
+        "sha256": "efcd2113f092b078114507480424084d123d70a1806ee63064f5171fd6ae560c",
+        "source_id": "github-job-log-130262955291"
+      },
+      "test_results": [
+        "Ran 23 tests in 0.012s"
+      ],
+      "tested_commit": "9d4a68191f4e30135b07d3f1e1bc9a1a2367773e",
+      "tested_tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0",
+      "tracked_worktree_verified_before_after": true,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42941133488/job/130262955291"
+    },
+    {
+      "conclusion": "success",
+      "job_id": 130262955397,
+      "name": "campaign-reader, prospective-merge",
+      "raw_log": {
+        "bytes": 26210,
+        "decoded_bytes": 168423,
+        "decoded_path": "job-130262955397.log",
+        "decoded_sha256": "a437db09a533c6eeae2f9cff82dcbf87f4c1981065cea031814a688078ceb35f",
+        "encoding": "gzip",
+        "path": "logs/job-130262955397.log.gz",
+        "sha256": "91c037613f2bf28f5885ff6bb80883a1770746912d6d5360891317c4b13e7033",
+        "source_id": "github-job-log-130262955397"
+      },
+      "test_results": [
+        "Ran 23 tests in 0.005s"
+      ],
+      "tested_commit": "a8a3bd2dd15d4ec06917ba3a0d1acd4681800cd6",
+      "tested_tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0",
+      "tracked_worktree_verified_before_after": true,
+      "url": "https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/42941133488/job/130262955397"
+    }
+  ],
+  "ordinary_native_execution_accepted": false,
+  "qualification": "HOLD_NO_GO",
+  "run_id": 42941133488,
+  "schema": "trnm-pr892-final-closure-controls-observation-v1",
+  "tree": "b5c5f5d35431c9408a77d4c30376be7427bcbdd0"
+}
