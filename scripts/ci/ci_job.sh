@@ -336,6 +336,7 @@ PY
     python3 formal/pon-nakamoto-v1/test_cell_lottery_cost_audit_v1.py -v
     python3 formal/pon-nakamoto-v1/test_service_work_settlement_v1.py -v
     python3 formal/pon-nakamoto-v1/test_work_backend.py
+    python3 formal/pon-nakamoto-v1/test_w1_structured_cost.py
     python3 formal/pon-nakamoto-v1/test_strict_signature.py
     TRNM_NATIVE_MODE=release python3 formal/pon-nakamoto-v1/test_native_execution.py
     TRNM_NATIVE_EXECUTOR="${CARGO_TARGET_DIR:-trillionnium/target}/release/examples/pon_execute" TRNM_EXECUTION_WORKERS=8 python3 formal/pon-nakamoto-v1/test_contracts.py
