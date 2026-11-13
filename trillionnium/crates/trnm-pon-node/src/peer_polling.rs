@@ -435,7 +435,7 @@ impl Engine {
         let retained = failure(&error.to_string());
         self.states[index].failures += 1;
         self.states[index].last_error = Some(retained.clone());
-        self.event(
+        let observation = self.event(
             index,
             EventDetail {
                 stage,
@@ -446,11 +446,11 @@ impl Engine {
                 active: None,
             },
             observe,
-        )?;
+        );
         if fatal {
             return Err(error);
         }
-        Ok(())
+        observation
     }
     fn step<F, R>(
         &mut self,
@@ -1391,6 +1391,8 @@ mod tests {
         let cfg = config(&settings);
         let stop = AtomicBool::new(false);
         let ctx = context(&node, &cfg, &settings, &stop);
+        let cpu = node.lock().unwrap().public_service_cpu_domain().unwrap();
+        let before_cpu = cpu.observe_actual_flow().unwrap().unwrap();
         let mut engine = Engine::new(&cfg, &settings);
         engine.states[0].target = Some(p.id().unwrap());
         let mut rpc = |_: usize, _: &Request| {
@@ -1408,6 +1410,11 @@ mod tests {
             engine.states[0].last_error.as_ref().unwrap().message,
             "ROOT"
         );
+        let after_cpu = cpu.observe_actual_flow().unwrap().unwrap();
+        assert!(after_cpu.balance_identity_verified);
+        assert_eq!(after_cpu.live_owners, 0);
+        assert!(after_cpu.settled_full_cpu_ns > before_cpu.settled_full_cpu_ns);
+        assert!(after_cpu.paid_cpu_debit_ns > before_cpu.paid_cpu_debit_ns);
         assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
     }
     #[test]
@@ -1687,6 +1694,77 @@ mod tests {
         assert!(report.peers[0].last_completed.is_none());
         assert!(!stop.load(Ordering::Acquire));
         assert_eq!(node.lock().unwrap().read_active().unwrap(), before);
+    }
+
+    #[test]
+    fn fatal_owner_error_survives_failed_observer_without_changing_cursor() {
+        let settings = Settings::development(Some(1)).unwrap();
+        let cfg = config(&settings);
+        for code in [
+            ErrorCode::PublicMutationCpuUnavailable,
+            ErrorCode::OwnerPublicServiceCpuDomain,
+            ErrorCode::OwnerPublicServiceDomainUnbound,
+            ErrorCode::OwnerPublicServiceUncleanEpoch,
+            ErrorCode::NamespaceChanged,
+        ] {
+            for observer_error in [None, Some("PEER_POLL_CANCELLED"), Some("OBSERVER_FULL")] {
+                let mut engine = Engine::new(&cfg, &settings);
+                let cursor = [19; 32];
+                let target = [20; 32];
+                engine.states[0].cursor = cursor;
+                engine.states[0].target = Some(target);
+                let primary = Error::new(code);
+                let message = primary.to_string();
+                let mut attempts = 0;
+                let actual = engine
+                    .reject(0, "activation", primary, 0, None, &mut |event| {
+                        attempts += 1;
+                        // Retain the original effect/error before attempting observation.
+                        assert_eq!(event.kind, "failure_cursor_retained");
+                        assert_eq!(event.error.as_ref().unwrap().message, message);
+                        match observer_error {
+                            Some(error) => Err(error.into()),
+                            None => Ok(()),
+                        }
+                    })
+                    .unwrap_err();
+                assert!(actual.is(code));
+                assert!(actual.requires_owner_stop());
+                assert_eq!(actual.to_string(), message);
+                assert_eq!(attempts, 1);
+                assert_eq!(
+                    engine.states[0].last_error.as_ref().unwrap().message,
+                    message
+                );
+                assert_eq!(engine.states[0].failures, 1);
+                assert_eq!(engine.states[0].cursor, cursor);
+                assert_eq!(engine.states[0].target, Some(target));
+                assert_eq!(engine.states[0].completed, 0);
+                assert_eq!(engine.states[0].last_completed, None);
+            }
+        }
+        // Nonfatal errors still propagate observer cancellation/error unchanged.
+        for remote in [false, true] {
+            for observer_error in ["PEER_POLL_CANCELLED", "OBSERVER_FULL"] {
+                let mut engine = Engine::new(&cfg, &settings);
+                let primary = if remote {
+                    Error::remote("PUBLIC_MUTATION_CPU_UNAVAILABLE")
+                } else {
+                    Error::new(ErrorCode::PublicMutationCpuBudget)
+                };
+                let mut attempts = 0;
+                let actual = engine
+                    .reject(0, "history", primary, 0, None, &mut |_| {
+                        attempts += 1;
+                        Err(observer_error.into())
+                    })
+                    .unwrap_err();
+                assert_eq!(actual.to_string(), observer_error);
+                assert!(!actual.requires_owner_stop());
+                assert_eq!(attempts, 1);
+                assert_eq!(engine.states[0].completed, 0);
+            }
+        }
     }
 
     #[test]
