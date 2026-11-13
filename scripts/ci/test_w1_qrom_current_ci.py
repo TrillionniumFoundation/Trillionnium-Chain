@@ -97,12 +97,41 @@ class CurrentCiTests(unittest.TestCase):
                              ('source-after.json', self.source()), ('implementation.json', self.mapping),
                              ('historical-drift.json', self.drift)]:
             ci.write_once(out / name, report)
+        # Isolated named cases create fixture receipts only; the real workflow
+        # executes the original eight historical and fourteen current controls.
+        supplemental_out = out / 'supplemental'
+        supplemental_out.mkdir()
+        manifest, retained = ci.supplemental.load_roster(ROOT)
+        (supplemental_out / ci.supplemental.RETAINED_ROSTER).write_bytes(retained)
+        by_module = {row['module']: row for row in manifest['suites']}
+        def isolated_discovery(loader, start_dir, pattern='test*.py', top_level_dir=None):
+            row = by_module[Path(pattern).stem]
+            return unittest.TestSuite(inert_case(name) for name in row['tests'])
+        with mock.patch.object(unittest.TestLoader, 'discover', isolated_discovery):
+            for row in manifest['suites']:
+                receipt = ci.supplemental.run_suite(ROOT, row['suite'], stream=io.StringIO())
+                self.assertIs(receipt['all_named_controls_passed'], True)
+                ci.write_once(supplemental_out / ci.supplemental.OUTPUTS[row['suite']], receipt)
         steps = {name: {'outcome': 'success', 'conclusion': 'success'} for name in ci.REQUIRED_STAGES}
         return out, steps
 
     def test_actual_current_mapping_and_original_refusal_are_separate(self):
         ci.validate_historical_job(
             (ROOT / '.github/workflows/pon-w1-qrom-implementation.yml').read_text())
+        workflow = (ROOT / '.github/workflows/pon-w1-qrom-implementation.yml').read_text()
+        historical_job, current_job = workflow.split('  qrom-historical-implementation:\n', 1)[1].split(
+            '  qrom-current-implementation:\n', 1)
+        self.assertNotIn('w1_qrom_historical_fixture.py', historical_job)
+        self.assertNotIn('w1_qrom_supplemental_controls.py', historical_job)
+        expected_supplemental = {
+            'supplemental_historical_controls', 'supplemental_historical_mapping',
+            'supplemental_current_mapping', 'supplemental_budget_unknown',
+            'supplemental_budget_hypothetical', 'supplemental_report_scopes',
+        }
+        self.assertTrue(expected_supplemental <= set(ci.REQUIRED_STAGES))
+        for stage in expected_supplemental:
+            self.assertEqual(current_job.count('        id: ' + stage + '\n'), 1)
+        self.assertIn('--output-dir "$W1_QROM_SUPPLEMENTAL_OUT"', current_job)
         ci.validate_mapping(self.mapping, self.current, self.audit, self.contract, self.raw, ROOT)
         ci.validate_drift(self.drift, self.contract, self.legacy)
         self.assertIs(self.mapping['historical_v1']['workflow_passed'], False)
@@ -232,15 +261,21 @@ class CurrentCiTests(unittest.TestCase):
                     self.assertIn(stage, result['failed_or_skipped_stages'])
 
     def test_final_gate_refuses_missing_completion_and_changed_original_output(self):
-        for mutation in ('completion', 'output', 'roster'):
+        for mutation in ('completion', 'output', 'roster',
+                         'supplemental_roster', 'supplemental_historical', 'supplemental_current'):
             with self.subTest(mutation=mutation):
                 out, steps = self.baseline()
                 if mutation == 'completion':
                     (out / 'named-tests.json').unlink()
                 elif mutation == 'output':
                     (out / 'historical-on-current.stderr.log').write_bytes(b'{}\n')
-                else:
+                elif mutation == 'roster':
                     (out / 'required-tests.json').write_bytes(b'{}\n')
+                elif mutation == 'supplemental_roster':
+                    (out / 'supplemental' / ci.supplemental.RETAINED_ROSTER).write_bytes(b'{}\n')
+                else:
+                    suite = mutation.removeprefix('supplemental_')
+                    (out / 'supplemental' / ci.supplemental.OUTPUTS[suite]).unlink()
                 with self.assertRaises(ci.ObservationError):
                     ci.verify(ROOT, out, 'head', HEAD, HEAD, BASE, steps)
                 result = json.loads((out / 'current-ci-status.json').read_bytes())

@@ -451,6 +451,8 @@ class CurrentClosureWorkflowCompletionTests(unittest.TestCase):
         self.assertIn('source: [head, prospective-merge]', current)
         self.assertIn('scripts/ci/w1_qrom_closure_current_controls.py run', current)
         self.assertIn('python3 scripts/w1_lifetime_current_observation.py --input', current)
+        self.assertIn('python3 tests/fixtures/w1-lifetime-historical-7150/ledger.py --root . --input', current)
+        self.assertNotIn('python3 scripts/w1_lifetime_ledger.py --input', current)
         self.assertNotIn('cmp evidence/pon-w1-lifetime-20261107/project-report.json', current)
         self.assertIn('test \"$code\" -eq 2', current)
         self.assertIn('source identity mismatch: ', current)

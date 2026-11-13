@@ -67,20 +67,32 @@ class CurrentLifetimeObservationTests(unittest.TestCase):
         self.assertFalse(report['historical_reader_or_pin_bytes_changed'])
 
     def test_only_the_reviewed_store_source_delta_is_present(self):
+        # Retain this frozen roster identity while checking the exact six reviewed deltas.
         changed = [row['path'] for row in self.contract['sources']
                    if row['historical_sha256'] != row['current_sha256']]
         self.assertEqual(changed, list(current.CHANGED))
+        self.assertEqual(changed, [
+            'trillionnium/crates/trnm-crypto-primitives/Cargo.toml',
+            'trillionnium/Cargo.lock',
+            'trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs',
+            'trillionnium/crates/trnm-pon-node/src/store.rs',
+            'trillionnium/crates/trnm-pon-node/src/consensus.rs',
+            'formal/pon-nakamoto-v1/quantum_oracle_resources.py',
+        ])
         self.assertEqual(len(self.sources), 20)
         lock = next(row for row in self.contract['sources'] if row['path'] == 'trillionnium/Cargo.lock')
-        self.assertEqual(lock['bytes'], 40564)
+        self.assertEqual(lock['bytes'], 42127)
         self.assertEqual(lock['historical_sha256'], '05cce83ab22c3085ff18ba8107b28bed70349fa56176784eab033897c282216c')
-        self.assertEqual(lock['current_sha256'], '9e553749f03f3a849af9562d1a62f20181c6ce3594c99283eaadecb918f4a25e')
+        self.assertEqual(lock['current_sha256'], '86aa87b12d7299990b368a0c07b1236bce99b1f43c5f58482c2adf0266f9a25e')
         self.assertEqual(self.contract['sources'][7]['current_sha256'],
-                         '108621f304255841ea2e1a7353858c3f0f5d8cb70a235f6a4aef6d57ebe0c554')
+                         'df2e303798678fe0b7437cf707bdc1d9cd6559ece47fcf2dd8c7ba8de0b29a17')
         self.assertEqual(self.contract['sources'][7]['historical_sha256'],
                          'b712a86b9997a098df5e8257f309d22445b2c749c9aa474457e958a0f65f5153')
 
     def test_historical_reader_and_contract_hashes_are_independently_frozen(self):
+        self.assertEqual(current.LEGACY, 'tests/fixtures/w1-lifetime-historical-7150/ledger.py')
+        self.assertEqual(current.LEGACY_SHA256,
+                         '7e494ba406c63442dfbd17147d006b967cb07d7f6c886ce5779a0f2f05fceef6')
         self.assertEqual(hashlib.sha256((ROOT / current.LEGACY).read_bytes()).hexdigest(),
                          current.LEGACY_SHA256)
         self.assertEqual(hashlib.sha256((ROOT / current.CONTRACT).read_bytes()).hexdigest(),
