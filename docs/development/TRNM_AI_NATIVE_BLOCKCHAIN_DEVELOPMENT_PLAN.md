@@ -14345,3 +14345,15 @@ The first Mac offline preparation lacked sqlite-wasm-rs. The subsequent locked
 build fetched the fixed dependencies but exposed the pre-existing Unix FIFO
 fixture using rustix::fs::mkfifoat, which rustix 1.1.6 excludes on Apple targets.
 That platform fixture requires a separate change, not a skipped negative test.
+
+
+### 2026-11-14 portability: Unix FIFO refusal fixture
+
+The locked rustix 1.1.6 API excludes Apple targets from mkfifoat and mknodat.
+The existing cfg(unix) snapshot-policy test now creates its private FIFO with
+the POSIX mkfifo utility through std::process::Command (no shell), checks the
+exit status and verifies is_fifo before exercising the unchanged refusal.
+This keeps the Unix negative test and crate-wide forbid(unsafe_code), adds no
+dependency, and changes no production storage behavior. The exact named FIFO
+test passed 1/1 on aarch64-apple-darwin; the restored five owner controls passed
+5/5 on the combined source. Linux and final integration gates remain separate.
