@@ -1508,6 +1508,15 @@ NPQ6_PARALLEL_ORIGINAL_CONTROL_REQUIRED_PATHS = frozenset((
 ))
 NATIVE_REQUIRED_PATHS |= NPQ6_PARALLEL_ORIGINAL_CONTROL_REQUIRED_PATHS
 
+# Selected read-only cost coverage includes its bounded, duplicate-refusing input reader.
+# Exact source identity provides no execution authority or throughput qualification.
+THROUGHPUT_COST_COVERAGE_REQUIRED_PATHS = frozenset((
+    "scripts/ci/throughput_cost_coverage.py",
+    "scripts/ci/test_throughput_cost_coverage.py",
+    "scripts/ci/read_native_cache_observation.py",
+))
+NATIVE_REQUIRED_PATHS |= THROUGHPUT_COST_COVERAGE_REQUIRED_PATHS
+
 class IntegrityError(ValueError):
     pass
 

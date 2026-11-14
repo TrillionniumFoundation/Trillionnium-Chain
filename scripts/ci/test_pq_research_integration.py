@@ -163,6 +163,48 @@ class CorpusGateTests(unittest.TestCase):
         q.parent.mkdir(parents=True, exist_ok=True)
         q.write_text(json.dumps(self.manifest))
 
+    def test_throughput_cost_coverage_requires_each_path_and_pin(self):
+        # This reviewed scope is deliberately independent of the reader roster.
+        paths = (
+            "scripts/ci/throughput_cost_coverage.py",
+            "scripts/ci/test_throughput_cost_coverage.py",
+            "scripts/ci/read_native_cache_observation.py",
+        )
+        original = copy.deepcopy(self.manifest)
+        for path in paths:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=path, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(path)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][path]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+
+    def test_throughput_cost_coverage_source_bytes_are_bound_without_qualification(self):
+        paths = (
+            "scripts/ci/throughput_cost_coverage.py",
+            "scripts/ci/test_throughput_cost_coverage.py",
+            "scripts/ci/read_native_cache_observation.py",
+        )
+        for path in paths:
+            target = self.root / path
+            original = target.read_bytes()
+            try:
+                target.write_bytes(original + b"changed selected read-only throughput cost source")
+                with self.subTest(path=path), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                target.write_bytes(original)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
     def test_npq6_parallel_original_sources_require_each_path_and_pin(self):
         # This reviewed scope is deliberately independent of the reader roster.
         paths = (

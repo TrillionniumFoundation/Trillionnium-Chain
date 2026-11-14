@@ -14733,3 +14733,32 @@ distributed source inventory. The existing workspace all-target/all-feature
 CI command discovers these non-ignored tests without another workload.
 Historical source identities and all qualification flags remain unchanged;
 the actual source-corpus reader still reports HOLD_NO_GO.
+
+## N11 retained read-only throughput and cost coverage (2026-11-14)
+
+The selected reader and its complete original control file come from
+e6549a193d60a6b0fefd2377432aee4e910c6bb2 (direct parent
+630cd5ee1dc3db345d0c85c5a41c427013451fb3). The 543-line production reader
+is retained byte for byte. It binds a fixed source receipt before and after
+the observation, deduplicates business identities, retains the original three
+rounds and 30-second phase window, accounts for failed and unknown observations,
+and keeps nested CPU scopes and point RSS observations separate. It does not
+turn ACKs, unknown costs, or local source consistency into completion or
+production qualification.
+
+The current strict phase reader remains unchanged. Of the original 26 test
+methods, 25 remain byte identical. One unknown/ACK-only method now directly
+exercises the same finite_business_observation helper that production
+analyze calls; all original assertions are retained. A new full-analyzer
+control requires rejection for the four incomplete claimed-confirmation
+variants. The initial original-suite failure is retained in the audit evidence:
+the old whole-reader successful-unknown expectation is not asserted against
+the stricter current V4 namespace. The resulting 27 controls pass.
+
+The repository-truth lane executes this control file exactly once. Its
+independent command inventory checks omission, duplication, stubbing, comments
+and lane movement. An independent literal source roster binds both selected
+files and the unchanged bounded JSON reader; omission and byte-mutation
+counterexamples preserve the current HOLD state. No native or operator
+authority, hardware observation, throughput capacity claim, approved profile,
+cryptographic acceptance, or node activation is added.
