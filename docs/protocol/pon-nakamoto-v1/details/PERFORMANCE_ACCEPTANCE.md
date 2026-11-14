@@ -246,8 +246,16 @@ or estimated from another stage. Report encoded bytes, key conflicts, proof gene
 verification, root/persistence cost, peak RSS, actual GPU/VRAM use or explicit nonuse,
 queue/Busy outcomes, state growth, active physical slots and recovery duration.
 
-The optional public request observer uses
-`public-v3-local-request-resource-observation-v4`. Its outer owner CPU covers the
+The default `PublicRequestObserver::new` constructor emits
+`public-v3-local-request-resource-observation-v4`. The explicit
+`new_with_authenticated_callers` constructor emits
+`public-v3-local-request-resource-observation-v5` and retains at most one authenticated
+caller binding per observed request. This mode grants no admission or consensus
+authority and does not select the signed scheduling revision.
+
+The [current signed resource profile](PUBLIC_POOL_INTAKE_V3.md#current-consolidated-resource-and-clock-boundaries)
+is specified separately. The r10/r11/r12/r13 vector references in this retained
+section describe those historical revisions. V4's outer owner CPU covers the
 r11 paid body decode, native dispatch and signed response envelope, also retained
 by r12/r13. This observation schema does not identify the scheduling revision: new
 original campaign reports bind their exact signed policy identifier in

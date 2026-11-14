@@ -216,7 +216,8 @@ The same two architecture jobs invoke `run_cross_arch_cost.py` with
 `--suite zero-locality --zero-version 2`. It builds and executes the separate
 `pon_zero_locality_cost` example under `pon-w1-zero-locality-v2`, retaining its
 own raw files and version2 execution/comparison manifests. The comparison job
-explicitly selects version2 too. The workflow still has thirteen jobs.
+explicitly selects version2 too. This suite reuses the existing two architecture
+jobs and their comparison job.
 
 Both fixed campaigns run for exactly zero material with five complete producers:
 prepared generic, structured zero reference, blocked zero, general paired product
@@ -245,8 +246,8 @@ failed output remains retained when a later separate suite succeeds.
 
 The same architecture jobs then invoke `--suite one-zero-locality`, including
 after either preceding suite failed. The comparison likewise runs in its own
-always-executed step and writes a separate result. The workflow still has thirteen
-jobs for a PR event. This suite owns `pon_one_zero_locality_cost`, raw schema
+always-executed step and writes a separate result. This suite adds no job beyond
+the existing two architecture jobs and their comparison job. This suite owns `pon_one_zero_locality_cost`, raw schema
 `pon-w1-one-zero-locality-v1`, artifact directory
 `cross-arch-one-zero-locality-cost` and separate execution/comparison schemas.
 The two preceding suites retain their original schemas and interpretation.
@@ -283,8 +284,8 @@ observations, and a native failure retains its own error and raw output.
 
 The same architecture jobs execute `--suite maintenance-paired` after the first three suites in a
 separate always-executed step; the comparison job checks its own retained artifact
-after the earlier comparisons even when one has failed. There are still thirteen
-jobs for a PR event. This fourth suite owns `pon_maintenance_cost`, current raw
+after the earlier comparisons even when one has failed. This suite reuses the
+existing two architecture jobs and their comparison job. This fourth suite owns `pon_maintenance_cost`, current raw
 schema `pon-w1-maintenance-limb-v4`, artifact directory
 `cross-arch-maintenance-cost`, and separate
 `trnm-cross-arch-maintenance-cost-execution-v4` and

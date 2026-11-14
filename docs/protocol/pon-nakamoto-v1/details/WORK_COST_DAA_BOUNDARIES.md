@@ -197,12 +197,13 @@ equal availability and no unmodeled network or hardware advantage. Neither
 integer ratios and labels these outputs as assumptions. It excludes invalid
 from-zero target hits from both valid-work numerators.
 
-### Current-source finite strategy sensitivity
+### Retained 2026-11-04 finite strategy sensitivity
 
 The [retained native projection](../../../../evidence/pon-full-integration-20261104/w1-fixed-strategy-sensitivity.json)
 records an actual release execution of the unchanged V3 grid on source
 `5ca846a887acbe1fe43e5cf9fc45ac90312a71a0`, with raw source bytes and the retained
-ELF unchanged before and after. All 70 artifact digests were checked. The fixed
+ELF unchanged before and after. This source-specific observation does not qualify
+later revisions. All 70 artifact digests were checked. The fixed
 five classes, two targets, three reuse horizons and four producer strategies
 completed 960 cohorts, 23,360 searches and 389,788 attempts. All failed attempts,
 actual per-cohort setup and producer proof materialization remain in their

@@ -2,10 +2,14 @@
 
 ## Current consolidated resource and clock boundaries
 
-The current signed resource revision is `r19-native-completion-refusal-v1`.
+The current signed resource revision is `r20-authenticated-caller-grants-v1`.
 Its exact current and historical vectors are retained in
 [`public-resource-profile-vectors-v1.json`](../../../../config/pon/public-resource-profile-vectors-v1.json).
-The r12 and r13 discussions below describe their historical scheduling rules.
+Historical r12, r13 and r19 vectors retain their original identities.
+The current r20 contract limits each authenticated caller to two mutation grants
+within the existing shared total of eight. A caller row is created only after a
+valid signed Solution and its spent reservation. The fixed 64-row caller map adds
+no durable guest identity or anonymous/Sybil fairness guarantee.
 The current completion priority requires the original native owner's full
 parent/task/M06/State/output relation, with the same 4,096-entry scheduling
 identity set and original CPU account. W1 verification alone does not grant
@@ -29,7 +33,9 @@ Production activation and same-version service qualification remain false /
 HOLD_NO_GO.
 
 
-The current source selects signed resource revision **r13**, described in
+## Retained historical V3 scheduling contracts
+
+The historical signed resource revision **r13** is described in
 [Bounded completion replay and controlled existing recovery](#bounded-completion-replay-and-controlled-existing-recovery).
 The r10 contracts, vectors and earlier observations below remain historical;
 they do not qualify r11's wider paid interval, r12's completion scheduling or r13's bounded replay/recovery changes.
@@ -479,7 +485,7 @@ has passed.
 retain the original r10/r11 contract bytes and the new r12 bytes. The Python
 policy reader independently recomputes their length-prefixed domain hashes;
 r12 source-integrity controls compared that Rust contract with the frozen r12
-bytes. The current r13 contract and its own vectors are described below. This does not authenticate a remote signature or establish execution.
+bytes. The historical r13 contract and its own vectors are described below. This does not authenticate a remote signature or establish execution.
 New campaign reports record the actual selected `PublicPolicy::id()` alongside
 their unchanged bits/lifetime parameters at both report and phase level. The
 current CI reader requires the configured exact profile. Both retained-artifact

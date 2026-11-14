@@ -15546,3 +15546,85 @@ CONFIRMATION_TARGET with PUBLIC_REQUEST_DEADLINE. The original 4,000,000,000 ns
 window and 16 workers are unchanged. The later 2a ARM and x64 cost jobs also
 report failure; their original artifacts are under separate inspection.
 No new committed-source gate or native target PASS is claimed by this entry.
+
+
+### 2026-11-14 reviewed historical ancestry completion and current acceptance HOLD
+
+The local composition
+`3565f2895c99ec54c3a71f31de347d300174b769` has the selected source
+`5df7ae6f482157c5f7fdcbcd52222117a965053f` as its first parent and final
+reviewed history `242f6345e584a2227f55ac752c91378eedbb5597` as its second.
+The final five historical heads entered through ordinary two-parent commits,
+each retaining the reviewed historical tree
+`f11a77d95b665207206282f691efc9d1225f26ea`. The ordinary source-first merge
+preview completed without conflicts or source changes, and the composed tree
+remains exactly `6be4940d38cc88782657f2684cbefe48866f8b9f`. Its incremental
+bundle contains the composition and all five new historical merge commits;
+the seven stated prerequisite commits remain necessary when importing it.
+
+The independent ancestry report covers all 908 recorded branch names and
+892 unique tips in the pinned 2026-11-14 21:23:37–21:23:44 UTC inventory.
+Every recorded tip is reachable from that single combined commit, with zero
+missing names or tips. The ten-page inventory is not atomic. This closes
+ancestry coverage for those exact name/tip pairs; obtain a fresh inventory
+and recheck concurrent changes before any remote reference cleanup.
+The [branch consolidation audit](BRANCH_CONSOLIDATION_AUDIT_20261114.md)
+retains the earlier frozen dispositions. Protected main integration and
+remote branch cleanup remain pending.
+
+Each retained review keeps its original coverage: complete source bodies,
+complete changes and named context, or byte identity, structure and custody.
+Older implementations and evidence remain in Git history under their
+original identities. Historical data preserved only as bytes is not promoted
+to complete semantic review or execution qualification. Original failed,
+unknown and not-run observations remain intact. No retired workload was
+executed to make these historical branch dispositions.
+
+The latest fixed hosted execution in this record is still source
+`5df7ae6f482157c5f7fdcbcd52222117a965053f`.
+[Required baseline 43621754143](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754143)
+finished with **failure** at 2026-11-14 19:52:21 UTC. Its
+[head runtime job](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754143/job/132528768970)
+retains the PQ witness deadline failure under the original 250 ms guard;
+the [prospective runtime job](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754143/job/132528768779)
+passed. Both protocol-contract roles and both x64/arm64 cost lanes retain
+their original confirmation failures. A successful native child process or
+another lane's pass does not satisfy the failed business confirmation gate.
+Keep the original four-second window, 16 pressure workers, fresh Host
+observations and all existing acceptance thresholds. These observations retain
+their actual executed source identities; the new composition has no new
+runtime or production qualification from this ancestry result.
+
+The separate
+[retained-pressure job](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753847/job/132528767357)
+failed while retrieving exact historical artifact `11531476198` from run
+`37730166589`, source `560d44ac28fee7b073d1740e372839ab52f057b6`.
+It reported `Found 0 artifact(s)` and did not reach the following diagnostic.
+The retained API response is HTTP 404 with an empty run-artifact collection.
+The recorded bounded search has not established a byte-identical original;
+expiry, deletion or another cause remains unproved.
+A separate passive supplement checked the eleven named nested members and
+their explicitly identified descendants without finding the target original.
+Its enumerated archive and search-literal bounds remain separate from the
+preserved earlier report; no exhaustive cross-host absence is asserted.
+This is an unavailable
+historical input, with no observed native replay result from that job.
+A later campaign, different artifact, changed identifier or skipped gate
+does not recover that original. The three separate old-control reports
+also retain `IDENTICAL_GROUP_TESTS_LOCK_AND_PROFILE_REQUIRED`, with no
+compiled executable or native control started. Preserve their preflight
+and driver self-test results under their own limited scopes.
+
+The accompanying five documentation corrections align the current signed
+resource description with `r20-authenticated-caller-grants-v1`, retain the
+historical revisions, distinguish default observer V4 from explicit
+authenticated-caller V5, and describe reuse of existing architecture jobs
+without an obsolete fixed workflow-job count. Signed resource bytes,
+scheduling limits, mathematical claims, historical measurements and all
+false/null qualification fields remain unchanged.
+
+Refresh only the reviewed changed-document pins, then require the original
+source and hosted head/prospective checks on the exact committed successor.
+The remaining acceptance failures, protected-main process, verified history
+preservation and fresh reference-cleanup checks stay explicit obligations.
+This file remains the sole development plan.

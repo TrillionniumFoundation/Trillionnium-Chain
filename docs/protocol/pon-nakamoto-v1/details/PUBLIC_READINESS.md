@@ -9,6 +9,13 @@ the CLI can still run an explicitly selected public-development listener with
 `--development` and `--public-development-network` at the operator's `--listen` address.
 This document adds no automatic firewall or acceptance-gate listener prohibition.
 
+The current public V3 signed resource revision is
+`r20-authenticated-caller-grants-v1`, as specified by the
+[current resource and clock boundaries](PUBLIC_POOL_INTAKE_V3.md#current-consolidated-resource-and-clock-boundaries)
+and the [exact profile vectors](../../../../config/pon/public-resource-profile-vectors-v1.json).
+The r9 descriptions retained below record that historical contract; they do not
+identify the current selector or qualify a later revision.
+
 ## Applicable profiles and exact interfaces
 
 | Interface | Explicit selection | Current behavior and limits |
@@ -33,7 +40,7 @@ This document adds no automatic firewall or acceptance-gate listener prohibition
 | manifest fixture generation | `task-fixture` plus model/input, demand index, purpose, source nonce and height window | reproducible public-key fixture; no genuine demand, exclusive custody, legal consent or production DA certificate |
 | historical ingress | `--admission-profile legacy-development` (default) | unchanged development listener; no admission-work claim |
 | public development ingress/client | `serve` / `push` / `head` / `history` / `sync --admission-profile public-protected-development-v2` | [separate versioned public intake](PUBLIC_INTAKE_V2.md); guest resource tickets for all operations, no allowlist or durable guest authority, independent full packet verification on sync; explicit `--public-development-network` required for serve |
-| public development pool ingress/client | `serve` / `pool-push` / `pool-status-remote --admission-profile public-protected-development-v3` | [V3 transport/resource r9](PUBLIC_POOL_INTAKE_V3.md) retains Submit/Head/History and adds paid `pool_context`-bound PNX1 bundles1..16 plus read-only scalar pool status; `serve` requires `--public-development-network`, `--auth-secret` and fixed `--pool-policy`; its signed domains and pinned resource digest remain separate from V2; queue reservation is not inclusion/confirmation |
+| public development pool ingress/client | `serve` / `pool-push` / `pool-status-remote --admission-profile public-protected-development-v3` | [current V3 transport/resource profile](PUBLIC_POOL_INTAKE_V3.md#current-consolidated-resource-and-clock-boundaries) retains Submit/Head/History and adds paid `pool_context`-bound PNX1 bundles1..16 plus read-only scalar pool status; `serve` requires `--public-development-network`, `--auth-secret` and fixed `--pool-policy`; its signed domains and pinned resource digest remain separate from V2; queue reservation is not inclusion/confirmation |
 | local persistent pool | `pool-submit --transactions --pool-policy` / `pool-status` | [existing Node queue owner](LOCAL_MEMPOOL_LIFECYCLE.md) applies M05 typed checks and M06 prefix preview; [cache V2](LOCAL_MEMPOOL_CACHE_V2.md) bounds logical retained resources and evicts wholly expired/sequence-consumed groups on admission need, preserving explicit-removal tombstones; physical archive/WAL growth remains separate |
 | finite continuous mining | `mine-loop --miner --pool-policy`, or public V3 `serve --mine --miner --pool-policy` | [wall-clock mining](CONTINUOUS_MINING_V1.md) selects exact queued groups and current parent task/source material under the same Node owner; attempts, runtime and block limits are finite; proof search releases the owner and rechecks parent/generation before native admission |
 | operator-pinned peer following | public V3 `serve --peers`, optional `--peer-poll-ms` / `--peer-pages` | [bounded pinned polling](PINNED_PEER_POLLING.md) verifies the configured peer/context/history under the same owner; operator pins addresses and server keys, with no open discovery or independent-operator claim |
@@ -78,7 +85,7 @@ read-only service test do not guarantee public service under arbitrary occupancy
 Untrusted protected parse/auth/preface refusals have at most128 Unicode characters
 and a100ms absolute response budget, also committed by the transport profile.
 
-[Public V3 resource revision r9](PUBLIC_POOL_INTAKE_V3.md) independently reserves
+The retained [historical V3 resource revision r9](PUBLIC_POOL_INTAKE_V3.md) independently reserves
 read body/output/challenge budgets within its existing totals, limits paid grants
 per operation lane, and cancels disconnected queued work between complete native
 stages. Complete Hello and validated Solution requests wait in separate bounded
@@ -106,12 +113,13 @@ complete prefix without treating it as a Blocked relation; uncommitted rows roll
 back and already committed reconciliation or native success remains true.
 No accounting mutex spans native math, joins or SQLite. The reserve/refill/capacity
 numbers are unchanged, and deep operations may overshoot before another checkpoint.
-Current r9 source still requires its own actual captures and complete qualification.
+These retained r9 source descriptions do not qualify the current signed resource
+revision. Each revision requires its own actual captures and complete qualification.
 
-Current r9 also observes the original deadline/cancellation during bounded M05
+The retained r9 contract also observes the original deadline/cancellation during bounded M05
 replay and M06 envelope/canonical-apply/precommit boundaries. Individual
 signatures, deep State/root/history and SQLite calls remain nonpreemptive;
-uncommitted changes roll back and committed native facts remain true. These are current source contracts, not a rerun or
+uncommitted changes roll back and committed native facts remain true. These are retained r9 source contracts, not a rerun or
 relabeling of historical r5/r6/r7/r8 measurements or a public fairness qualification.
 
 An already admitted local packet can use [bounded Submit recovery](PUBLIC_SUBMIT_RECOVERY_V1.md)

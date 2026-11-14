@@ -907,3 +907,183 @@ CONFIRMATION_TARGET with PUBLIC_REQUEST_DEADLINE. The original 4,000,000,000 ns
 window and 16 workers are unchanged. The later 2a ARM and x64 cost jobs also
 report failure; their original artifacts are under separate inspection.
 No new committed-source gate or native target PASS is claimed by this entry.
+
+## 2026-11-14: Completed local history inclusion at 3565
+
+This checkpoint records completed local history inclusion and the remote
+observation ending at 22:40:01 UTC. Earlier checkpoints above remain unchanged,
+including their then-pending work and original failures. The sole development
+plan remains
+[TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md](TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md);
+this section is an audit result.
+
+### Five final ordinary history merges
+
+Starting at history commit
+`0fc0feb9c532f42fda0e46ea5cc1a2b80936bbd9`, the five remaining maximal
+histories were included by ordinary two-parent merges. Each row's first parent
+is the preceding history commit and its second parent is the incoming tip
+shown below. All five retain the exact selected history tree
+`f11a77d95b665207206282f691efc9d1225f26ea`.
+
+| Incoming historical tip | Completed history merge |
+| --- | --- |
+| `002cd506c81e1dfac4a656bfcd03b5b233dbc923` | `d465c17b79da0956746e3511db9d23338b4242cf` |
+| `75600213d6b0e92af33043669063f6e0f08cf12e` | `cd7b939396bd95e8dc84fd31bbdcca693ba2ac5f` |
+| `9516d4a2bc0bfe8b5366c9cb45b23a3c2effb46f` | `627918355714726ae0395ae8398d98f84c6b91cc` |
+| `a9c2ef6971eb3783d4259d6594c2904ea274501f` | `062c4be0e81a541b2564249d6a05dd44a8ad7649` |
+| `ead1000360d24247f3c6159d50b2c8663ff4af4f` | `242f6345e584a2227f55ac752c91378eedbb5597` |
+
+The selected source and completed history were then composed in
+`3565f2895c99ec54c3a71f31de347d300174b769`, with first parent
+`5df7ae6f482157c5f7fdcbcd52222117a965053f` and second parent
+`242f6345e584a2227f55ac752c91378eedbb5597`. The ordinary merge preview
+returned exit 0 without conflicts or source changes. Its result is exactly
+the selected source tree
+`6be4940d38cc88782657f2684cbefe48866f8b9f`. The completed composition
+was verified and the local publication worktree was advanced by fast-forward.
+
+These operations retain reviewed alternatives in Git history while preserving
+the selected executable source. Their complete per-path dispositions still
+distinguish full-body review, complete changed-source/context review, exact
+reuse and raw evidence custody. Ancestry does not expand those scopes, make
+unselected historical implementations current, or turn preserved failures,
+unread raw samples or unexecuted test definitions into successful execution.
+
+The composition receipt is
+`root-selected-history-compose-commit-H257-v1/receipt.json`, SHA256
+`deacb58958a7d8124a802c6993dc675414b85b9d3cd0a67ef06f92d2b363bdcf`.
+The 3,160-byte incremental bundle has SHA256
+`65ec0be0c3449207bf9aa5c1cd8b5e52fb549e4616d771f17efb9c503a05d908`.
+It carries the composition and five new history commits against seven explicit
+prerequisites; it is not a standalone complete repository archive.
+
+### Pinned remote ancestry and independent Mac receipt
+
+An independent traversal of the composed commit found all **908 branch names
+and 892 distinct tips** in the snapshot collected from 21:23:37.457906 through
+21:23:44.713806 UTC. The result is `ALL_PINNED_TIPS_REACHABLE`, with zero
+missing tips and 16,504 reachable commits. The original snapshot has SHA256
+`5a69297af25c7d140e0900cab6ac291610453af9b2f03672e336b6fbc5101380`;
+the full ancestry report
+`root-final-remote-ancestry-3565-v1/verification/report.json` has SHA256
+`4ec36c743698f060c5239556ecd76732a0d0fc6e9774e7c364e9cb76eff17ba6`.
+
+A subsequent read-only remote observation from 22:39:53.962775 through
+22:40:01.387379 UTC returned the same 908 names and 892 tips. Every
+name-to-tip-and-protection mapping matched the earlier snapshot: zero changes.
+The later raw observation has SHA256
+`10ba60b4eb1a49cf9a5221b0b689f42869cdb92211f48e9865952f2297a8f057`;
+its independent readback summary has SHA256
+`c012af7ec676685bd66f992f226e090e3946a7f9c3a648479456e13ff75a1a45`.
+The first comparison's parser failure remains preserved; the successful
+readback examines the same original response without making another API call.
+
+Neither paginated observation is atomic. The ancestry verifier did not fetch
+a new remote inventory. The later equality check extends the observed mapping
+only to its stated time interval; it does not freeze future branch movement.
+Fresh complete inventory and concurrent-change checks remain required before
+remote deletion.
+
+The Mac independently received the exact incremental bundle, verified the six
+new commit objects and their seven prerequisites, and normally fast-forwarded
+its local publication branch to `3565f2895c99ec54c3a71f31de347d300174b769`.
+Its source tree remained exactly the selected tree above. The import summary
+`root-composed-3565-native-import-v1/summary.json` has SHA256
+`a9ac029a1076258b7a8cb988dddf82d766852622eb14225c719e2fb3340edce5`.
+That import did not write GitHub, change protection or grant runtime
+qualification; its receipt explicitly does not claim a new complete source-byte
+rehash.
+
+At the later remote observation, the published candidate remained
+`5df7ae6f482157c5f7fdcbcd52222117a965053f` and protected main remained
+`dd6e1c3cbeacbdc532b0679297835b3a0aac78f0`. Publication of this later
+local checkpoint, protected main integration and remote branch cleanup were
+therefore still pending. The 908-name remote set was still present.
+
+### Current hosted acceptance remains blocked
+
+The fixed V60 observation of
+[run 43621754143](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621754143)
+on selected source `5df7ae6f482157c5f7fdcbcd52222117a965053f` ended in
+failure at 19:52:21 UTC. Its head and prospective-merge results remain separate:
+
+| Exact job | Namespace | Preserved result |
+| --- | --- | --- |
+| `132528768970` | Head runtime | PQ witness deadline failure at the original 250 ms cap |
+| `132528768779` | Prospective-merge runtime | Success for that job and source namespace |
+| `132528769008` | Head protocol | Confirmation target failure |
+| `132528768966` | Prospective-merge protocol | Confirmation target failure |
+| `132528768933` | x86_64 cost | Confirmation target failure |
+| `132528769087` | ARM64 cost | Confirmation target failure |
+
+The successful prospective-merge runtime job and finite local controls do not
+erase the head runtime failure or the protocol/cost failures. No adjustment
+to the original four-second confirmation window, 16 pressure workers, fresh
+Host observations or witness deadline is made by this history composition.
+The V8 original-native ledger retains all qualification flags as false;
+HOLD_NO_GO / DENY_ALL and the existing acceptance criteria remain in force.
+
+The V60 summary has SHA256
+`843bf8693b485d44b03ed1d6d16cfd4a6985af647461e07fb3613d42675da518`.
+The complete retained original-native ledger
+`current-native-acceptance-findings-v8.json` has SHA256
+`2521e26424ab8037a665ff49ddd9aa13e33c1d9e12900f208ba0b9db4ade699e`.
+These are exact-source observations, not successful CI for the later
+documentation successor; that successor still requires its own current gates.
+
+### The requested historical artifact is still unavailable
+
+The retained-pressure diagnostic job `132528767357` in
+[run 43621753847](https://github.com/TrillionniumFoundation/Trillionnium-Chain/actions/runs/43621753847)
+requested artifact `11531476198` from original run `37730166589`, bound
+to source `560d44ac28fee7b073d1740e372839ab52f057b6`. Its original
+`Found 0` result and skipped diagnostic remain unchanged. The retained API
+observations include a 404 and an empty original-run artifact collection.
+They do not establish whether the original artifact expired or was deleted,
+and they contain no successful native replay.
+
+The earlier bounded search covered 181 candidate paths under four identified
+roots. Its scope and original failed archive remain preserved. A separate
+passive supplement then inspected all 11 fixed nested archives and their
+explicit descendants; it still found no requested original artifact. This
+does not establish that no copy exists anywhere on either host or outside
+those roots. No archived helper, oracle or workload was executed in that
+search.
+
+The original diagnosis has SHA256
+`a0dcd8cace7324dac0a38374fcddc309e113b91eee94fd2e79fbff9c90a55782`.
+The independent nested supplement
+`cell-missing-artifact-nested11-complete-v1/complete-reading.json` has
+SHA256 `dac07e7b57be10540a7d4c1048842c1091a644cf984e1aa6ce56ab129a3f2264`.
+Preserving other historical packages cannot substitute for the requested
+artifact or convert the skipped diagnostic to a pass.
+
+### Narrow Host type-query measurement
+
+One fixed x86_64 run compared `std` metadata type queries with `fstat`
+using the same already-held valid descriptor. Six file cases were measured:
+a private regular file, `cpu.max`, `cpu.max.burst`, `memory.max`,
+`memory.swap.max` and `pids.max`. Each case retained all 32 alternating
+pairs, with 512 queries per arm. The per-file median paired CPU difference
+`std - fstat` ranged from **28.22 to 39.93 ns per query**. This is a local
+screening observation on one machine and one run. The traced syscall
+observation was excluded from those timing statistics.
+
+Production fresh opens, complete reads and EOF, all current Host/context,
+identity, parent, CPU and deadline checks are outside these timings. The
+controls do not establish equivalence for invalid descriptors, close races,
+seccomp denial, syscall availability or permission-policy changes. The paired
+bootstrap is descriptive under its exchangeability assumption; it does not
+establish a system-wide latency bound. In particular, multiplying this local
+difference by 1,099 observations does not prove the 250 ms witness deadline
+or four-second confirmation target. No production patch or acceptance
+upgrade is authorized by this measurement.
+
+The full analysis
+`current5df-host-type-paired-analysis-v1/analysis.json` has SHA256
+`05ea4bffc02f4f64988c1e050b88129ede234f579ca56cf88f10ae9f6a47659e`;
+the prespecified protocol has SHA256
+`052e815b8acb5c57b4bff459d74084454d83334448e517ebfa73935d7aa03e12`.
+All original samples, limitations and the distinct original build-wrapper
+failure remain retained.
