@@ -677,12 +677,21 @@ fn periodic_snapshot_regular_policy_reopens_and_preexisting_fifo_is_refused() {
 
     let fifo_directory = directory.path().join("fifo");
     fs::create_dir(&fifo_directory).unwrap();
-    rustix::fs::mkfifoat(
-        rustix::fs::CWD,
-        fifo_directory.join(POLICY_FILE),
-        rustix::fs::Mode::RUSR | rustix::fs::Mode::WUSR,
-    )
-    .unwrap();
+    // rustix 1.1.6 excludes Apple targets from mkfifoat. The POSIX utility
+    // preserves this Unix fixture without weakening the crate's unsafe ban.
+    let fifo_path = fifo_directory.join(POLICY_FILE);
+    let status = std::process::Command::new("mkfifo")
+        .arg("-m")
+        .arg("600")
+        .arg(&fifo_path)
+        .status()
+        .expect("create the preexisting FIFO fixture");
+    assert!(status.success(), "mkfifo fixture creation failed: {status}");
+    use std::os::unix::fs::FileTypeExt;
+    assert!(fs::symlink_metadata(&fifo_path)
+        .unwrap()
+        .file_type()
+        .is_fifo());
     // An ordinary nonregular-file refusal, not a reproduction of a path swap.
     assert_invalid(
         CellPeriodicSnapshotOwnerV1::open(&fifo_directory, owner.commitment(), deadline()),
