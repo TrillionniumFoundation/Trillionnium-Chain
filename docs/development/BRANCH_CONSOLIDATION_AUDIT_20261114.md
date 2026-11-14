@@ -464,3 +464,85 @@ remote reference.
 The single-branch result can be asserted only from a fresh remote inventory after
 all authorized deletions. Any unresolved required CI result or explicit deletion
 protection remains visible in the final execution receipt.
+
+## Follow-up source bindings and preserved complete-lane failures
+
+The published dc42ce4d source failed its original complete Linux
+repository-truth run in the 58-method lifetime suite, with 57 passes and one
+source-lock error. The reviewed lifetime successor
+7d8d4c59fcd01480a12e1c64835b202079091800 passed all seven local source gates, but
+its complete original Linux lane then failed in the hash-use source binding:
+31 of the original 33 methods passed, one failed and one errored. That lane
+exited 1 after 30.922 seconds; its original limit remained 2700 seconds.
+Both failed complete runs and their original source readbacks are preserved.
+
+To identify the remaining causes, a separate diagnostic executed the 122
+remaining original command units from the unchanged lane, preserving each
+unit's body and arguments. All units ran; 116 exited zero and six exited nonzero
+(units 1, 6, 10, 22, 23 and 107). The original 58 repository mutation controls
+were among the successful units. The diagnostic continued between failed
+units and therefore cannot qualify as a complete original lane pass.
+The [complete diagnostic package and integration record](../../evidence/branch-consolidation-followup-20261114/source-binding-integration-v1/README.md)
+retain the original summary, all 266 original files in the indexed ZIP,
+and the exact source identity before and after.
+
+The four independently reviewed corrections are:
+
+| Component | Exact scope | Focused result |
+| --- | --- | --- |
+| Hash-use source map, e811c204 | Six changed and 25 unchanged inputs in the fixed 31-path map; original 19 uses and semantic digest retained | Original 33 methods and the existing CI registration control pass; actual reader remains HOLD_NO_GO |
+| Fixed-probability source map, 2d9baf31 | One changed and three unchanged inputs; original probability 1/16, research credit 16u, reader and all original methods retained | Original 16 methods pass; old map is refused; actual reader remains HOLD_NO_GO |
+| Joint-consensus source map, 6418023d | Four changed and 19 unchanged inputs, bound to the actual F1 source commit; no parameter or runtime change | Original 35 methods pass; one current-revision assertion is adapted and old-revision rejection is added; qualification request still exits 3 |
+| Historical collector binding, 341a8b5f | One fixed historical source/tree/producer tuple checked as bounded raw data; current collector and original native evidence remain unchanged | All original 25 methods plus six new boundary methods pass; one new corpus omission/tamper method passes |
+
+The [hash-use review](../../evidence/hash-use-current-source-review-20261114/README.md),
+[fixed and joint source review](../../evidence/pon-fixed-joint-source-binding-20261114/README.md)
+and [historical collector provenance](../../evidence/branch-consolidation-followup-20261114/native-collector-history-v1/README.md)
+state their exact coverage. The historical producer is never imported, compiled
+or executed. Its content-address proof does not authenticate a native build.
+The fixed source contexts identify reviewed inputs; they are not presented as
+the later commits which store the new mapping metadata.
+
+The original failed Mac temporary-path control and the two failed staged
+whitespace checks remain recorded. Canonical temporary-path selection and
+byte-preserving ZIP carriers corrected those execution/carrier issues without
+weakening readers, tests or the repository checker. The old joint Markdown
+document is retained byte-for-byte as .md.original because its thirteen original
+relative links do not describe its new archival location.
+
+No Rust runtime source, original service deadline, worker count, probability,
+cost parameter or qualification flag is changed by these four follow-ups.
+The next complete gate receipts must identify their actual committed successor.
+The current published C0 external-evidence failure is a separate unresolved
+observation at this checkpoint and is not claimed as fixed by these changes.
+
+## Later remote and dependency observations
+
+The original e40d workflow 43551533528 subsequently completed with 15 successful
+and six failed jobs. Its two protocol runs and two architecture-specific service
+runs retained real CONFIRMATION_TARGET failures under the original four-second,
+16-worker contract. The exact-head and prospective protocol receipts both
+recorded zero accepted confirmations out of one pressure request; all five
+native processes in each run exited normally. These business acceptance
+failures are preserved and are not inferred from an outer process exit.
+The later C0 workflow 43567821538 remains a separate source and observation;
+its ongoing or failed checks cannot be replaced by the predecessor's results.
+
+The seven then-open Dependabot alerts all concern the main branch's
+cryptography 41.0.7 requirement. The selected candidate uses cryptography 50.0.2,
+outside each of the seven reported vulnerable ranges. Four alerts were high,
+two medium and one low. Their original API responses and advisory records are
+retained in the later execution evidence; no alert was manually dismissed or
+closed. This narrow comparison is not a claim that every dependency, wheel or
+OpenSSL deployment is qualified. The 27 historical registry/yank-query timeouts
+and the unresolved macOS physical-retention result remain open observations.
+
+The original 908-name archive was confirmed remotely before any merge or branch
+cleanup. Its annotated tag is archive/branches-before-consolidation-20261114-dc42ce4df5cf-v2,
+tag object 9dafd9192e4040fab530958ef71598aaec9265b9, commit
+5f57c4e1e2b7ae95a7b0651d7674979d3f44b90b. That commit retains all 892 original
+tips plus the published C0 candidate as its 893 direct parents. A later execution
+archive may retain this archive and the reviewed successor as separate parents;
+an older tag is never represented as capturing source added afterward.
+At this source checkpoint, main integration and the single-branch remote result
+are still uncompleted actions.

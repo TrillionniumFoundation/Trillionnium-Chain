@@ -2689,5 +2689,37 @@ class CorpusGateTests(unittest.TestCase):
         self.assertIs(result["node_activated"], False)
 
 
+
+    def test_retained_native_collector_data_cannot_omit_or_mutate(self):
+        # Independent literal: the retained producer is a real reader dependency.
+        name = "formal/pon-nakamoto-v1/fixtures/native-collector-e4abb172.py.raw"
+        self.assertIn(name, NATIVE_REQUIRED_PATHS)
+        original = copy.deepcopy(self.manifest)
+        for omission in ("required", "pin", "required-and-pin"):
+            with self.subTest(omission=omission):
+                self.manifest = copy.deepcopy(original)
+                if omission in ("required", "required-and-pin"):
+                    self.manifest["required_paths"].remove(name)
+                if omission in ("pin", "required-and-pin"):
+                    del self.manifest["pinned_blobs"][name]
+                self.save()
+                with self.assertRaises(IntegrityError):
+                    check(self.root)
+        self.manifest = original
+        self.save()
+        source = self.root / name
+        before = source.read_bytes()
+        try:
+            source.write_bytes(before + b"changed retained collector data")
+            with self.assertRaisesRegex(IntegrityError, "changed source"):
+                check(self.root)
+        finally:
+            source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -12,6 +12,7 @@ import stat
 import subprocess
 import tempfile
 import unittest
+from unittest import mock
 import warnings
 import zipfile
 
@@ -316,6 +317,112 @@ class RetainedNativeDifferentialControls(unittest.TestCase):
         record["qualification"]["quantum_mining_qualified"] = True
         with self.assertRaisesRegex(ValueError, "BRIDGE_REPORT_REBUILD_MISMATCH"):
             bridge.verify(record, ARCHIVE, PINS)
+
+
+
+
+class HistoricalCollectorBindingControls(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        # Independent fixture identities; do not derive these pins from the reader.
+        cls.path = "formal/pon-nakamoto-v1/fixtures/native-collector-e4abb172.py.raw"
+        cls.sha256 = "f40c5d621454d0532141920724a3cfd57e240f4a3b061536162313daa676c254"
+        cls.raw = bridge.gate.Evidence(bridge.ROOT).read(cls.path, 23_639)
+        if len(cls.raw) != 23_639 or bridge.gate.sha256(cls.raw) != cls.sha256:
+            raise ValueError("TEST_ORIGINAL_COLLECTOR_BYTES")
+        if hashlib.sha1(b"blob 23639\0" + cls.raw).hexdigest() != "421b10241820580efcdabc692ccb1f6dd27b6586":
+            raise ValueError("TEST_ORIGINAL_COLLECTOR_BLOB")
+
+    def fixture(self, root, raw=None):
+        path = root / self.path
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(self.raw if raw is None else raw)
+        return path
+
+    def test_exact_historical_tuple_reads_data_without_executing_source(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.fixture(root)
+            with mock.patch.object(subprocess, "run", side_effect=AssertionError("no historical Git/native run")) as run, \
+                    mock.patch.object(subprocess, "Popen", side_effect=AssertionError("no historical child")) as child, \
+                    mock.patch("builtins.exec", side_effect=AssertionError("historical source is data")) as execute, \
+                    mock.patch("builtins.compile", side_effect=AssertionError("historical source is data")) as compile_source:
+                self.assertIsNone(bridge.validate_collector_source(PINS, self.sha256, root))
+                run.assert_not_called()
+                child.assert_not_called()
+                execute.assert_not_called()
+                compile_source.assert_not_called()
+
+    def test_missing_or_mislocated_producer_never_falls_back(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            with self.assertRaises(OSError):
+                bridge.validate_collector_source(PINS, self.sha256, root)
+            wrong = root / "formal/pon-native-fullpath-v1/collect_native.py"
+            wrong.parent.mkdir(parents=True)
+            wrong.write_bytes(self.raw)
+            with self.assertRaises(OSError):
+                bridge.validate_collector_source(PINS, self.sha256, root)
+
+    def test_tampered_short_extended_and_current_producer_cannot_replace_history(self):
+        changed = bytearray(self.raw)
+        changed[-1] ^= 1
+        current = (bridge.NATIVE / "collect_native.py").read_bytes()
+        cases = (bytes(changed), self.raw[:-1], self.raw + b"\n", current)
+        for raw in cases:
+            with self.subTest(bytes=len(raw)), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                self.fixture(root, raw)
+                with self.assertRaises(ValueError):
+                    bridge.validate_collector_source(PINS, self.sha256, root)
+
+    def test_symlink_fifo_and_parent_alias_are_rejected(self):
+        for kind in ("symlink", "fifo", "parent-alias"):
+            with self.subTest(kind=kind), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                target = root / "original.py.raw"
+                target.write_bytes(self.raw)
+                path = root / self.path
+                path.parent.mkdir(parents=True)
+                if kind == "symlink":
+                    path.symlink_to(target)
+                elif kind == "fifo":
+                    os.mkfifo(path)
+                else:
+                    directory = root / "aliased"
+                    directory.mkdir()
+                    (directory / path.name).write_bytes(self.raw)
+                    path.parent.rmdir()
+                    path.parent.symlink_to(directory, target_is_directory=True)
+                with self.assertRaises((OSError, ValueError)):
+                    bridge.validate_collector_source(PINS, self.sha256, root)
+
+    def test_wrong_source_tree_or_context_digest_cannot_borrow_history(self):
+        current_sha = bridge.gate.sha256((bridge.NATIVE / "collect_native.py").read_bytes())
+        cases = (
+            (replace(PINS, native_source="0" * 40), self.sha256),
+            (replace(PINS, native_tree="0" * 40), self.sha256),
+            (PINS, "0" * 64), (PINS, current_sha),
+            (PINS, self.sha256.upper()), (PINS, True),
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.fixture(root)
+            for pins, declared in cases:
+                with self.subTest(source=pins.native_source, tree=pins.native_tree, digest=declared):
+                    with self.assertRaisesRegex(ValueError, "COLLECTOR_SOURCE_BINDING"):
+                        bridge.validate_collector_source(pins, declared, root)
+
+    def test_other_source_keeps_the_current_collector_check(self):
+        # Binding-only synthetic pins do not represent another native execution.
+        pins = replace(PINS, native_source="f" * 40, native_tree="e" * 40)
+        current_sha = bridge.gate.sha256((bridge.NATIVE / "collect_native.py").read_bytes())
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.assertIsNone(bridge.validate_collector_source(pins, current_sha, root))
+            self.fixture(root)
+            with self.assertRaisesRegex(ValueError, "COLLECTOR_SOURCE_BINDING"):
+                bridge.validate_collector_source(pins, self.sha256, root)
 
 
 if __name__ == "__main__":

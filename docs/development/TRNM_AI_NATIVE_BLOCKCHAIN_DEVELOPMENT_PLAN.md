@@ -15161,3 +15161,45 @@ inspectors and the current CI/corpus contracts. The 79 selected inputs matched
 before/after and all 16 stale-binding negatives refused. The original first Mac
 composition failure (including its strict temporary-path refusal) remains
 separate evidence. No complete successor Linux lane or hosted result is claimed.
+
+### 2026-11-14 reviewed follow-up after the second full-lane failure
+
+The complete original Linux lane on source 7d8d4c59fcd01480a12e1c64835b202079091800
+failed in the hash-use source binding after 30.922 seconds of its unchanged
+2700-second limit. Preserve that failed receipt and both original streams.
+A separate diagnostic then executed all 122 remaining original command units:
+116 exited zero and six exited nonzero. Its outer continuation process completed,
+but it is not a successful full fail-fast lane. The six failures identify the
+hash-use map, fixed-probability map, joint-consensus map and historical collector
+binding. The complete original diagnostic package is retained in the
+[follow-up integration record](../../evidence/branch-consolidation-followup-20261114/source-binding-integration-v1/README.md).
+
+Integrate the reviewed component commits e811c204e039565c06f5bb2cba3543564f510f7b,
+2d9baf313e54e49a4507c5057578e89ddbe7a1b6, 6418023d7f60e6e0c42f08c8726085a2b983757b
+and 341a8b5f751342b51a4aaf9512534853c79d7b5b without rewriting their history.
+The hash-use map retains 31 inputs and 19 uses; the fixed-probability relation
+retains its four inputs, probability 1/16 and research credit 16u; the joint map
+retains exactly 23 inputs and names the actual committed fixed-probability child.
+The original 33 hash-use, 16 fixed-probability and 35 joint methods passed.
+Only the joint revision-identity method adapts its current checkpoint and adds
+the old revision to its refusals. Independent old-map refusals remain.
+
+For the retained native collector, require the one original e4abb172 source,
+016ebf3 tree, original context digest and exact 23,639-byte producer as data.
+Keep current collector improvements and all original ZIP/context/report bytes.
+The original 25 bridge methods remain unchanged and pass with six new boundary
+controls; the new corpus dependency-omission/tamper control also passes.
+No historical native producer is imported, compiled or executed. These results
+do not authenticate a native build or grant service or quantum qualification.
+
+Refresh only the twelve reviewed existing corpus pins and add the one required
+historical raw producer. Preserve the complete historical Markdown text while
+changing its evidence carrier to .md.original, so its thirteen old relative links
+are not misrepresented as links in the new current location. The repository
+link checker and all original test thresholds remain unchanged.
+
+The exact committed successor still needs the original complete source and
+Linux gates and required hosted checks. The newly observed C0 external-evidence
+failure is independently under review; these four fixes do not claim to repair
+that different gate. No protected main merge, branch deletion, production
+activation, deadline relaxation or one-branch completion is declared here.
