@@ -14867,3 +14867,29 @@ retaining the same measured value and all other initial fields. No production
 body, fixture cryptography, request bound, deadline or assertion is changed.
 The original lint failure is retained. Combined Linux all-target strict Clippy
 is a separate required validation after these source changes are integrated.
+
+## Frozen lifetime report reproduction fixture (2026-11-14)
+
+The historical lifetime ledger retains SOURCE_BASE
+1f2b0187d4522b5248294ddab318f34a63bdc5a3 and all twenty original SHA-256 pins.
+Its test setup now reads those exact existing Git objects, checks the unchanged
+source survey, and materializes an isolated temporary source root. The original
+report test passes that root to the unchanged make_report implementation instead
+of silently treating today's working files as historical reproduction. No Git
+fetch, replacement object, current-source fallback, old report rewrite, or
+historical pin refresh is introduced.
+
+All twenty source identities were independently checked against the frozen Git
+tree, and the original report was reproduced byte for byte before this test
+repair. The existing full-roster missing and changed-source controls, real
+earlier Git-input refusals, symlink refusal and historical report comparisons
+remain. The separate current lifetime observer still checks its own explicit
+current twenty-source contract and retains all security qualifications false.
+
+The separate seven-difference historical-report control now names its original
+cdd984808a088e6c2e13b1e1ae6630a94d500c89 Git report explicitly. Its original
+8ee20462 digest and the retained b050b861 successor digest remain unchanged.
+The working-tree report already used the different 622c402c source survey in
+332d7f72; this test repair does not overwrite that later evidence lineage.
+The initial full run's 19 passing controls and one report-namespace failure
+are retained rather than counted as a successful full run.
