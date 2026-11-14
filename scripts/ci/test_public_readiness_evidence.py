@@ -216,6 +216,76 @@ impl StateBackend {
 '''
 
 
+class JsonNumberBoundaryTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.path = Path(self.tmp.name) / 'numbers.json'
+
+    def test_finite_numbers_keep_existing_json_values(self):
+        self.path.write_text('{"values":[0,-1.5,1e308,1e-9999],"flag":false}')
+        self.assertEqual(check.load(self.path),
+                         {'values': [0, -1.5, 1e308, 0.0], 'flag': False})
+
+    def test_overflow_and_nonstandard_numbers_are_rejected(self):
+        for literal in ('1e9999', '-1e9999', 'NaN', 'Infinity', '-Infinity'):
+            with self.subTest(literal=literal):
+                self.path.write_text('{"nested":[{"value":' + literal + '}]}')
+                with self.assertRaises(ValueError):
+                    check.load(self.path)
+
+    def test_duplicate_keys_still_reject_with_finite_number_parser(self):
+        self.path.write_text('{"value":1.25,"value":2.5}')
+        with self.assertRaisesRegex(ValueError, 'duplicate JSON key'):
+            check.load(self.path)
+
+
+class ArtifactAuthorityBoundaryTests(unittest.TestCase):
+    FLAGS = (
+        'public_network_ready', 'production_activation', 'independent_accepted',
+        'future_window_accepted', 'work_profile_qualified', 'physical_power_loss',
+        'native_execution_authenticated', 'pq128_qualified',
+        'pq_128_security_qualified', 'public_ingress_qualified',
+        'consensus_activation', 'consensus_authority',
+        'production_consensus_activation', 'physical_quantum_oracle_measured',
+        'quantum_cost_bound',
+    )
+
+    def test_optional_statements_require_literal_false_recursively(self):
+        check.scope_flags({'unrelated_observation': True, 'items': [{}]})
+        for flag in self.FLAGS:
+            check.scope_flags({'items': [{flag: False}]})
+            for value in (True, 0, 1, None, 'false', [], {}):
+                with self.subTest(flag=flag, value=value):
+                    with self.assertRaisesRegex(ValueError, 'unsupported authority'):
+                        check.scope_flags({'items': [{flag: value}]})
+
+    def test_manifest_and_rehashed_artifact_cannot_add_authority(self):
+        with tempfile.TemporaryDirectory() as name:
+            root = Path(name)
+            folder = root / 'evidence'
+            folder.mkdir()
+            path = folder / 'qualification.json'
+            path.write_text(json.dumps({'native_execution_authenticated': False}))
+            manifest = {'files': {'qualification.json': check.sha(path.read_bytes())}}
+            check.validate_artifacts(root, folder, manifest, tracked=False)
+            manifest['optional'] = [{'pq128_qualified': False}]
+            check.validate_artifacts(root, folder, manifest, tracked=False)
+            manifest['optional'][0]['pq128_qualified'] = True
+            with self.assertRaisesRegex(ValueError, 'unsupported authority'):
+                check.validate_artifacts(root, folder, manifest, tracked=False)
+            manifest['optional'][0]['pq128_qualified'] = False
+            path.write_text(json.dumps({'nested': [{'consensus_authority': True}],
+                                        'native_execution_authenticated': False}))
+            manifest['files']['qualification.json'] = check.sha(path.read_bytes())
+            with self.assertRaisesRegex(ValueError, 'unsupported authority'):
+                check.validate_artifacts(root, folder, manifest, tracked=False)
+            path.write_text(json.dumps({'nested': [{'consensus_authority': False}],
+                                        'native_execution_authenticated': False}))
+            manifest['files']['qualification.json'] = check.sha(path.read_bytes())
+            check.validate_artifacts(root, folder, manifest, tracked=False)
+
+
 class SourceAndArtifactTests(unittest.TestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
