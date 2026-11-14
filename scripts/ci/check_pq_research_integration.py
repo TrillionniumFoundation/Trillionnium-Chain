@@ -1317,6 +1317,26 @@ SP27_RESEARCH_REQUIRED_PATHS = frozenset((
 NATIVE_REQUIRED_PATHS |= SP27_RESEARCH_REQUIRED_PATHS
 
 
+
+# Exact reviewed immutable-key and independent legal-producer source scope.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    'trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3.rs',
+    'trillionnium/crates/trnm-crypto-primitives/src/pq_root_v3/tests.rs',
+    'trillionnium/crates/trnm-crypto-primitives/tests/pq_root_v3_native.rs',
+    'trillionnium/crates/trnm-crypto-primitives/examples/pq_root_v3_cost_observation.rs',
+    'docs/security/PQ_ROOT_SIGNATURE_COST_V1.md',
+    'trillionnium/crates/trnm-crypto-primitives/Cargo.toml',
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/low_rank_prefix.rs',
+    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs',
+    'trillionnium/crates/trnm-crypto-primitives/examples/pon_w1_rank_batch_v5.rs',
+    'scripts/ci/run_pq_root_native_v3.py',
+    'scripts/ci/test_run_pq_root_native_v3.py',
+    'scripts/ci/pq_root_dependency_register.py',
+    'docs/security/PQ_ROOT_DEPENDENCY_REGISTER_V3.md',
+    'docs/security/PQ_ROOT_RECOVERY_NATIVE_V3.md',
+))
+
 class IntegrityError(ValueError):
     pass
 

@@ -474,3 +474,7 @@ from a world where later actions never occurred. The complete-local-rollback
 counterexample in the V2 gap analysis therefore remains applicable. A passing
 same-host native fixture, a fresh request nonce or a differently named anchor
 key does not establish an independently administered surviving authority.
+
+## Consolidation of immutable key expansion
+
+The [signature cost component](PQ_ROOT_SIGNATURE_COST_V1.md) retains exactly three successful ML-DSA-87 public-key expansions inside each immutable roster. All signature verification, complete statements and original budget charges remain per operation. The declared source scope includes its bounded observation example. The final consolidation snapshot is reviewed separately from the historical register; no runtime regeneration, new domain bound or qualification is authorized by this source addition.
