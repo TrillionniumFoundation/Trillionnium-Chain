@@ -4,7 +4,7 @@
 
 The [register](../../config/pon/pq-authority-effects-v1.json) binds seven reviewed
 routes to the current listed source checkpoint
-`57b069ae1e7ed32ff95e4f2a18a74d5eadcda550`. The
+`332d7f723d71707d88a2cffa52b3754579a46926`. The
 [checker](../../scripts/ci/pq_authority_effect_register.py) enforces their exact
 effect scopes and source sets, and compares 44 actual regular files with a fixed
 reviewed SHA-256 lock. Successful checking reports `source_consistency: PASS`
@@ -18,7 +18,30 @@ a signature, context comparison, downloaded artifact or certificate observation
 must not be recorded as a different downstream permission. That original source
 inventory did not itself establish a classical bypass of a PQ owner.
 
-## Current typed weak-key source continuation, 2026-11-13
+## Current combined-source binding, 2026-11-13
+
+The reviewed source checkpoint is `332d7f723d71707d88a2cffa52b3754579a46926`, tree
+`c93086b354d75827ca96a42c7eaa3f8be8954311`. All 44 selected regular Git
+blobs were read from that checkpoint and matched to the isolated checkout.
+The canonical revision-plus-file lock is
+`a4a74df247995dcfe7aa48bc0d7c8ff9969088c8acb665d0d8041310cce5dac4`.
+
+Only `trillionnium/crates/trnm-data-availability/src/cell/discovery/tests.rs`
+changes within this selected set from the preceding `57b069ae1e7ed32ff95e4f2a18a74d5eadcda550`
+mapping: SHA-256 `e01a83b518933310f16f19b4dae63f00813e4244975e4a4805a918bc87145554` becomes
+`db0152dc1bfd730fcb4e43e2b9e28456917fbd0dc5c69007ad84e0e2d46b54c3`. The fixture waits for the actual rendezvous
+accept-loop readiness signal within its original finite setup allowance,
+and its new control holds real initialization before starting a request.
+It does not add a TCP probe, signature, retained record or relaxed request budget.
+
+The other 43 pins, all seven routes, exact effect scopes, original negative
+controls and every false qualification field remain unchanged. The preceding
+revision and discovery-source digest are explicit refusal controls. Before
+this rebind, the original reader refused these actual bytes; that outcome
+remains a failure of the previous mapping. This source consistency repair
+does not execute native tests or establish whole-chain PQ qualification.
+
+## Retained typed weak-key source continuation, 2026-11-13
 
 The reviewed source checkpoint is `57b069ae1e7ed32ff95e4f2a18a74d5eadcda550`, tree
 `887f402546a4d1449919915a82f122acf3d0d49d`. All 44 declared regular Git blobs were

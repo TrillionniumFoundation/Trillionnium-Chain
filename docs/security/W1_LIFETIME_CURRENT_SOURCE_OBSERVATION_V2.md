@@ -21,11 +21,42 @@ The historical job now checks out the known original positive closure source
 to that source. Current jobs must separately retain the real historical V1
 refusal; raising a byte limit or silently replacing its pin is not a repair.
 
-## Explicit current-source observation
+## Current combined-source binding, 2026-11-13
 
-The [current contract](../../config/pon/w1-lifetime-current-source-v2.json)
-retains the same 20 selected paths under a new namespace. Comparison with V1
-finds exactly one changed path:
+The current contract selects `332d7f723d71707d88a2cffa52b3754579a46926`, tree
+`c93086b354d75827ca96a42c7eaa3f8be8954311`. Its 20 regular-file inputs
+were read from the immutable Git revision and matched to the isolated checkout.
+Compared with the previous current checkpoint `975ab0937243949b73cdbea9f13902802bbd7d00`,
+only `formal/pon-nakamoto-v1/quantum_oracle_resources.py` changes:
+28,132 bytes / `23a2f810685e5f352b3cc4b7b9e8b8ab76d6208122d7e2379ee9c9d51edf849a` become
+29,812 bytes / `3768567c5e2905c90ef766a9ff4e1ff625e14fd7614aede108ae81df000a6049`.
+The source now rejects inconsistent gate counts, depths and live-wire widths
+for both circuit stages and serial totals. These are necessary arithmetic
+conditions for one declared schedule, not circuit verification or a physical
+resource lower bound. The current contract SHA-256 is
+`66aaee2e08e666f32a106832274703d8c9c9fa6be9882ddc45017882c66be96b`.
+
+Exactly six of the 20 selected paths differ from the original historical V1
+pins; the roster and historical pins themselves remain unchanged:
+
+- `trillionnium/crates/trnm-crypto-primitives/Cargo.toml`
+- `trillionnium/Cargo.lock`
+- `trillionnium/crates/trnm-pon-node/src/pq_application_v6.rs`
+- `trillionnium/crates/trnm-pon-node/src/store.rs`
+- `trillionnium/crates/trnm-pon-node/src/consensus.rs`
+- `formal/pon-nakamoto-v1/quantum_oracle_resources.py`
+
+The historical reader bytes, historical source identity, arithmetic evaluator,
+all qualification flags and the null lifetime failure bound are unchanged.
+The old current mapping actually refused the 29,812-byte source before this
+repair. The update fixes its exact byte count and digest; it does not enlarge
+the general reader cap or relax source identity checks.
+
+## Retained initial current-source observation
+
+The initial V2 contract retained the same 20 selected paths under a new
+namespace. At that initial checkpoint, comparison with V1 found one changed
+path; the current six-path comparison is recorded above:
 
 | Path | Historical SHA-256 | Current SHA-256 |
 |---|---|---|

@@ -89,6 +89,14 @@ class CurrentLifetimeObservationTests(unittest.TestCase):
         self.assertEqual(self.contract['sources'][7]['historical_sha256'],
                          'b712a86b9997a098df5e8257f309d22445b2c749c9aa474457e958a0f65f5153')
 
+        oracle = next(row for row in self.contract['sources']
+                      if row['path'] == 'formal/pon-nakamoto-v1/quantum_oracle_resources.py')
+        self.assertEqual(oracle['bytes'], 29812)
+        self.assertEqual(oracle['current_sha256'],
+                         '3768567c5e2905c90ef766a9ff4e1ff625e14fd7614aede108ae81df000a6049')
+        self.assertEqual(self.contract['source_base_commit'],
+                         '332d7f723d71707d88a2cffa52b3754579a46926')
+
     def test_historical_reader_and_contract_hashes_are_independently_frozen(self):
         self.assertEqual(current.LEGACY, 'tests/fixtures/w1-lifetime-historical-7150/ledger.py')
         self.assertEqual(current.LEGACY_SHA256,
