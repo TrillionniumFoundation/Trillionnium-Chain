@@ -14493,3 +14493,14 @@ profile contracts, and all HOLD/false qualification state remain unchanged.
 ### 2026-11-14 root review: checked-config
 
 Integrated reviewed commit 757b8829fb5477c133326aac4f93a34897ce6a2e. Immutable per-call M06 checked configuration; original eleven macOS controls and strict M06 Clippy passed. No cross-call verdict cache or Classic-W1 pressure claim. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.
+
+
+### 2026-11-14 BBDB durable outbound compatibility preservation
+
+Preserve the independently selected Linux loopback durable outbound library from `bbdb1af203674fec3923c522a49b3dcc6bbca6bc`, adapted on fixed current `11bdc4cce16fc7d550d361f5cc863b061204f61b`. The current verifier and TLS endpoint/deadline owner remain authoritative. The original two SQLite namespaces retain signed wire, boot deadline, cancellation and spent attempts; only a sealed verified terminal can advance a sequence. No automatic recovery, CLI/default startup, physical rollback claim or activation is added.
+
+The [outbound contract](../security/PQ_DURABLE_OUTBOUND_V1.md) preserves original failed observations and records exact component validation: original nine Linux native controls, one sealed-response compile-fail doctest and Node library/CLI strict Clippy passed on the hash-bound four-file port. Current source inclusion and these finite results leave all existing research/HOLD and qualification flags unchanged.
+
+### 2026-11-14 root review: durable-outbound
+
+Integrated reviewed commit f66df9b7324daaf7171d6e9f940f562c1a244633. Exact signed-request durable loopback outbound owner; original nine Linux controls, sealed-reply type refusal and strict Node library/CLI Clippy passed. Original budgets, retained cancellation, unknown outcome and rollback limitations remain. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.

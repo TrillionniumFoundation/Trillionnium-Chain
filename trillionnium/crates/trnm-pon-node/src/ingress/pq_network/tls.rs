@@ -79,6 +79,30 @@ impl PqTlsClient {
             .finish_response_until(&wire, prepared, deadline)?;
         Ok(PqResponseEvidence { response, wire })
     }
+    /// Preserve the exact request binding for the independent outbound journal.
+    pub fn send_verified(
+        &self,
+        address: SocketAddr,
+        prepared: &PreparedPqRequest,
+        budget: Duration,
+    ) -> Result<VerifiedPqReply> {
+        self.inner.policy.tls_pins()?;
+        self.inner.check_send(address, prepared, budget)?;
+        let deadline = Instant::now() + budget;
+        self.send_verified_until(address, prepared, deadline)
+    }
+    pub(super) fn send_verified_until(
+        &self,
+        address: SocketAddr,
+        prepared: &PreparedPqRequest,
+        deadline: Instant,
+    ) -> Result<VerifiedPqReply> {
+        self.inner.policy.tls_pins()?;
+        self.inner.check_send_until(address, prepared, deadline)?;
+        let wire = self.exchange(address, prepared.wire(), deadline)?;
+        self.inner
+            .finish_verified_response(&wire, prepared, deadline)
+    }
     fn exchange(&self, address: SocketAddr, wire: &[u8], deadline: Instant) -> Result<Vec<u8>> {
         let budget = deadline
             .checked_duration_since(Instant::now())
