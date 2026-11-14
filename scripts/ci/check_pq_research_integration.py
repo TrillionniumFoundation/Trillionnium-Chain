@@ -1362,6 +1362,16 @@ NATIVE_REQUIRED_PATHS |= frozenset((
     'trillionnium/crates/trnm-service-settlement/src/native_budget/task_operation_v2/tests.rs',
 ))
 
+# Explicit final artifact, sealed descriptor and Q4 source controls.
+NATIVE_REQUIRED_PATHS |= frozenset((
+    'trillionnium/crates/trnm-worker-agent/src/audit.rs',
+    'trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs',
+    'trillionnium/crates/trnm-pon-node/src/release_owner/sealed.rs',
+    'trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs',
+    'trillionnium/crates/trnm-mvcc-fee/tests/qualified_task_lifecycle_v4.rs',
+    'trillionnium/crates/trnm-pon-node/src/continuity_tests.rs',
+))
+
 class IntegrityError(ValueError):
     pass
 

@@ -1490,5 +1490,45 @@ class CorpusGateTests(unittest.TestCase):
         self.assertIs(result["node_activated"], False)
 
 
+    def test_final_artifact_seal_and_q4_sources_cannot_omit_or_mutate(self):
+        # Independent literal review scope, not derived from the checker roster.
+        dependencies = (
+            'trillionnium/crates/trnm-worker-agent/src/audit.rs',
+            'trillionnium/crates/trnm-worker-agent/src/audit/artifact.rs',
+            'trillionnium/crates/trnm-pon-node/src/release_owner/sealed.rs',
+            'trillionnium/crates/trnm-pon-node/src/release_owner/sealed_tests.rs',
+            'trillionnium/crates/trnm-mvcc-fee/tests/qualified_task_lifecycle_v4.rs',
+            'trillionnium/crates/trnm-pon-node/src/continuity_tests.rs',
+        )
+        self.assertTrue(set(dependencies).issubset(NATIVE_REQUIRED_PATHS))
+        original = copy.deepcopy(self.manifest)
+        for name in dependencies:
+            for omission in ("required", "pin", "required-and-pin"):
+                with self.subTest(path=name, omission=omission):
+                    self.manifest = copy.deepcopy(original)
+                    if omission in ("required", "required-and-pin"):
+                        self.manifest["required_paths"].remove(name)
+                    if omission in ("pin", "required-and-pin"):
+                        del self.manifest["pinned_blobs"][name]
+                    self.save()
+                    with self.assertRaises(IntegrityError):
+                        check(self.root)
+        self.manifest = original
+        self.save()
+        for name in dependencies:
+            source = self.root / name
+            before = source.read_bytes()
+            try:
+                source.write_bytes(before + b"changed reviewed library source")
+                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
+                    check(self.root)
+            finally:
+                source.write_bytes(before)
+        result = check(self.root)
+        self.assertEqual(result["status"], "HOLD_NO_GO")
+        self.assertIs(result["cryptographic_acceptance"], False)
+        self.assertIs(result["node_activated"], False)
+
+
 if __name__ == "__main__":
     unittest.main()
