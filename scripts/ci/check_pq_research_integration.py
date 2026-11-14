@@ -1158,6 +1158,7 @@ NATIVE_REQUIRED_PATHS |= frozenset(('config/pon/pq128-lifetime-composition-v2.js
  'formal/pon-nakamoto-v1/w1_public_stark_research/security_model_audit/vendor_primary/p3-fri-0.8.0.crate',
  'formal/pon-nakamoto-v1/w1_quantum_evidence_scope.py',
  'formal/pon-nakamoto-v1/w1_quantum_native_bridge.py',
+ 'formal/pon-nakamoto-v1/fixtures/native-collector-e4abb172.py.raw',
  'scripts/ci/pq_content_chain_review.py',
  'scripts/ci/pq_lifetime_composition.py',
  'scripts/ci/test_pq_content_chain_review.py',

@@ -92,6 +92,35 @@ recorded local block has depth zero and zero timely accepted progress under the
 original service contract. The native test's 16 newly sealed wrong-context cases
 also remain one native test method, not 16 independent safety proofs.
 
+### Retained collector identity after current-source improvements
+
+The retained cohort names source
+`e4abb172147e941b62483652b0ceabaae4317624` and tree
+`016ebf3deeac88d6d7a782edf563f2291ebe17f5`. Its context commits to
+collector SHA256
+`f40c5d621454d0532141920724a3cfd57e240f4a3b061536162313daa676c254`.
+The current collector has since acquired exact-source verification. Replacing
+that historical context digest with the current collector would change the
+meaning of the retained observation.
+
+For this one source, the reader requires the exact historical tree and context
+digest, then reads the original 23,639-byte
+[collector as data](../../formal/pon-nakamoto-v1/fixtures/native-collector-e4abb172.py.raw)
+through the existing bounded regular-file reader. It verifies the independent
+SHA256, byte count and Git blob identity. Missing data, a changed tree, a different
+producer, symlinks and nonregular files are refused; the historical source does
+not fall back to the current collector. Other sources retain the existing
+current-collector comparison. The raw historical producer is included in the
+reader's source commitment and is never imported, compiled or executed.
+
+The [fixed Git provenance](../../evidence/branch-consolidation-followup-20261114/native-collector-history-v1/README.md)
+retains the original commit and three tree objects linking that source to the
+collector blob. Their content addresses were checked independently during this
+correction. This is a source-content binding, not an independent authentication
+of the external pins or proof that a native binary was built or executed from
+that source. The original ZIP, context and saved reports keep their original
+bytes; no new native execution, service acceptance or qualification is claimed.
+
 ## Acceptance boundary and remaining work
 
 The engineering exit for this continuation is a reproducible separation of

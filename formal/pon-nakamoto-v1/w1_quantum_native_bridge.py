@@ -37,6 +37,17 @@ SCHEMA = "trnm-w1-native-oracle-bridge-v1"
 MAX_ARCHIVE = 8 * 1024 * 1024
 MAX_MEMBER = 4 * 1024 * 1024
 MAX_EXPANDED = 32 * 1024 * 1024
+# One independently approved retained producer, kept only as non-executable data.
+# The raw Git commit/tree/blob provenance is archived with the correction review.
+HISTORICAL_COLLECTOR_SOURCE = "e4abb172147e941b62483652b0ceabaae4317624"
+HISTORICAL_COLLECTOR_TREE = "016ebf3deeac88d6d7a782edf563f2291ebe17f5"
+HISTORICAL_COLLECTOR_SHA256 = "f40c5d621454d0532141920724a3cfd57e240f4a3b061536162313daa676c254"
+HISTORICAL_COLLECTOR_BLOB = "421b10241820580efcdabc692ccb1f6dd27b6586"
+HISTORICAL_COLLECTOR_BYTES = 23_639
+HISTORICAL_COLLECTOR_PATH = (
+    "formal/pon-nakamoto-v1/fixtures/native-collector-e4abb172.py.raw"
+)
+
 PROCESS_IDS = (
     "produce", "receive", "observe", "duplicate", "duplicate-observe",
     "late-product", "late-product-observe", "cancelled", "cancelled-observe",
@@ -47,6 +58,7 @@ READER_SOURCES = tuple(dict.fromkeys(SOURCE_FILES + (
     "formal/pon-native-fullpath-v1/adapt_native.py",
     "formal/pon-native-fullpath-v1/fullpath_gate.py",
     "formal/pon-native-fullpath-v1/collect_native.py",
+    HISTORICAL_COLLECTOR_PATH,
     "config/pon/ledger-v1.json", "config/pon/work-profile-v1.json",
     "config/pon/model-family-v1.json", "config/pon/devnet-v1.json",
     "config/pon/evaluation-round-v1.json",
@@ -174,6 +186,33 @@ def extract_archive(raw, root):
     return members
 
 
+
+def validate_collector_source(pins, collector_sha256, root=ROOT):
+    """Bind the one retained producer as data; preserve the current-source path.
+
+    The historical source is never imported, compiled or executed. Its fixed
+    tuple and raw bytes were independently verified against the original Git
+    commit/tree/blob. This check does not authenticate the external pins or
+    attest that a native binary was built or executed from those sources.
+    """
+    pins.validate()
+    if pins.native_source == HISTORICAL_COLLECTOR_SOURCE:
+        gate.require(pins.native_tree == HISTORICAL_COLLECTOR_TREE
+                     and collector_sha256 == HISTORICAL_COLLECTOR_SHA256,
+                     "COLLECTOR_SOURCE_BINDING")
+        raw = gate.Evidence(root).read(HISTORICAL_COLLECTOR_PATH, HISTORICAL_COLLECTOR_BYTES)
+        blob = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
+        gate.require(len(raw) == HISTORICAL_COLLECTOR_BYTES
+                     and gate.sha256(raw) == HISTORICAL_COLLECTOR_SHA256
+                     and blob == HISTORICAL_COLLECTOR_BLOB,
+                     "COLLECTOR_SOURCE_BINDING")
+        return
+    # An unrelated source cannot borrow the retained producer's fixed identity.
+    gate.require(collector_sha256 == gate.sha256((NATIVE / "collect_native.py").read_bytes()),
+                 "COLLECTOR_SOURCE_BINDING")
+
+
+
 def validate_native(root, pins):
     """Recheck original source guards, process bytes and the unchanged native gate."""
     pins.validate()
@@ -205,8 +244,7 @@ def validate_native(root, pins):
     gate.require(context["source_commit"] == pins.native_source
                  and context["source_tree"] == pins.native_tree
                  and context["binary_sha256"] == pins.binary_sha256, "NATIVE_SOURCE_OR_BINARY_BINDING")
-    gate.require(context["collector_sha256"] == gate.sha256((NATIVE / "collect_native.py").read_bytes()),
-                 "COLLECTOR_SOURCE_BINDING")
+    validate_collector_source(pins, context["collector_sha256"])
     native_context = context["native_context"]
     gate.require(context["production_activation"] is False
                  and native_context.get("development") is True
