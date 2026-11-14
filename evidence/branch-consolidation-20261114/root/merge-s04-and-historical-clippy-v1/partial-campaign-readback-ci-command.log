@@ -1,0 +1,6 @@
+test_partial_campaign_reader_cannot_skip_duplicate_move_or_swallow_failure (__main__.MergedQualificationLaneTests.test_partial_campaign_reader_cannot_skip_duplicate_move_or_swallow_failure) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.255s
+
+OK

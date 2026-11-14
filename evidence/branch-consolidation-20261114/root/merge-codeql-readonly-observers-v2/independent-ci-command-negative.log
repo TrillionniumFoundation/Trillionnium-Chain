@@ -1,0 +1,6 @@
+test_current_readers_and_runtime_controls_cannot_be_missing_duplicated_stubbed_or_moved (__main__.EvaluationQuorumLaneTests.test_current_readers_and_runtime_controls_cannot_be_missing_duplicated_stubbed_or_moved) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.269s
+
+OK

@@ -1,0 +1,8 @@
+{
+  "zip": "/private/tmp/chain-t03-typed-pending-port-evidence-20261114/final-custody-v1/t03-original-execution-evidence.zip",
+  "sha256": "b2082f28c92af18d73624cfc67abfd01f39e98ffee1caa8935b52c6cd533b5a5",
+  "bytes": 335800,
+  "exact_original_members_verified": 44,
+  "manifest_member": "custody-manifest.json",
+  "all_entry_hashes_verified": true
+}

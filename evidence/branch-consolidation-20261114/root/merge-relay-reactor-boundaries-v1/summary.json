@@ -1,0 +1,220 @@
+{
+  "prior": "b8ca952d6bf2e86b05a3039cbc683ad17be01eb7",
+  "head": "20225691ec9f0cffd84884f6f21cd15db3cbe401",
+  "tree": "5cda0c9cbe4449d63820189e06c4d33dd38ed9ff",
+  "merges": [
+    {
+      "head": "10b64dca5afa09db2ca826383407648c53b79522",
+      "tree": "7a1dff44973bf1244571fd092fc7e44d807bab14",
+      "target": "3a0f3c6da82890be8bf134d688fc41f387fee75d",
+      "base": "6e06401819a40ffb8a6cb21f1a1bfd40d9018fcc",
+      "exact_source_blobs": {
+        "trillionnium/crates/trnm-types/src/relay.rs": "e090f7807a8f039fecc05fa98446a20263b830ab"
+      },
+      "source_guard_methods": [
+        "test_relay_preflight_source_bytes_are_bound_without_qualification",
+        "test_relay_preflight_sources_require_each_path_and_pin"
+      ],
+      "resolved_metadata": [
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+      ],
+      "changed_paths": [
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "scripts/ci/check_pq_research_integration.py",
+        "scripts/ci/test_pq_research_integration.py",
+        "trillionnium/crates/trnm-types/src/relay.rs"
+      ]
+    },
+    {
+      "head": "20225691ec9f0cffd84884f6f21cd15db3cbe401",
+      "tree": "5cda0c9cbe4449d63820189e06c4d33dd38ed9ff",
+      "target": "a06fab1ec850e103ead9fee7ed7bc42cb4267165",
+      "base": "692f2454620faad648850f9421f2f11467ba046e",
+      "exact_source_blobs": {
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "90c0f3fadaa6fefaefe991254990f7b56cfaaa77",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/input_decode_tests.rs": "142262940ec1e564919037d61aa6bc1e40ae60e4",
+        "scripts/ci/pq_chain_claim_guard.py": "89d2b42488f11e7cef44b59453fb6aad8962bff6",
+        "scripts/ci/test_pq_chain_claim_guard.py": "72682391155dd65d0f54606324ec5a01465bb653"
+      },
+      "source_guard_methods": [
+        "test_public_v3_reactor_sources_cannot_omit_or_mutate"
+      ],
+      "resolved_metadata": [
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "scripts/ci/check_pq_research_integration.py",
+        "scripts/ci/test_pq_research_integration.py"
+      ],
+      "changed_paths": [
+        "config/pon/pq-cross-branch-corpus-v1.json",
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "scripts/ci/check_pq_research_integration.py",
+        "scripts/ci/pq_chain_claim_guard.py",
+        "scripts/ci/test_pq_chain_claim_guard.py",
+        "scripts/ci/test_pq_research_integration.py",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs",
+        "trillionnium/crates/trnm-pon-node/src/ingress/public_v3/input_decode_tests.rs"
+      ]
+    }
+  ],
+  "steps": [
+    {
+      "label": "python-preflight",
+      "exit": 0,
+      "seconds": 0.056,
+      "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+    },
+    {
+      "label": "python-ff",
+      "exit": 0,
+      "seconds": 0.08,
+      "sha256": "689ce833eb33edce416da590b0209ed573000abd70adcb611e3f264a0d015105"
+    },
+    {
+      "label": "01-relay-fresh-time-preflight",
+      "exit": 0,
+      "seconds": 0.048,
+      "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+    },
+    {
+      "label": "01-relay-fresh-time-merge",
+      "exit": 1,
+      "seconds": 0.171,
+      "sha256": "09b397241ff8c12520ba1eb3ccef1de78db0034cc97985400118eff464da9ca7"
+    },
+    {
+      "label": "01-relay-fresh-time-inventory",
+      "exit": 0,
+      "seconds": 0.054,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "label": "01-relay-fresh-time-stage-resolved",
+      "exit": 0,
+      "seconds": 0.04,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "01-relay-fresh-time-source-guards",
+      "exit": 0,
+      "seconds": 1.873,
+      "sha256": "e9669f7dd37bf74de46815980dc4eeb519f37d0d63befa2aedf2352dc40cd58d"
+    },
+    {
+      "label": "01-relay-fresh-time-corpus",
+      "exit": 0,
+      "seconds": 0.778,
+      "sha256": "434c77c358cb81ce3f70ed310813d280db122b659188716663f11465bbe33752"
+    },
+    {
+      "label": "01-relay-fresh-time-ci-contract",
+      "exit": 0,
+      "seconds": 0.074,
+      "sha256": "d1490790908dab724ab473f615ff7440375869323608112fd5364b2c9d58cd4d"
+    },
+    {
+      "label": "01-relay-fresh-time-fmt",
+      "exit": 0,
+      "seconds": 5.414,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "01-relay-fresh-time-diff",
+      "exit": 0,
+      "seconds": 0.043,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "01-relay-fresh-time-precommit",
+      "exit": 0,
+      "seconds": 0.049,
+      "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+    },
+    {
+      "label": "01-relay-fresh-time-stage",
+      "exit": 0,
+      "seconds": 0.012,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "01-relay-fresh-time-commit",
+      "exit": 0,
+      "seconds": 0.058,
+      "sha256": "6c5e1a1ae5c10fbc40a16fd8a11d44361ed62312ce504f4c4b22ea9bb5cbb09e"
+    },
+    {
+      "label": "02-public-v3-reactor-json-preflight",
+      "exit": 0,
+      "seconds": 0.044,
+      "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+    },
+    {
+      "label": "02-public-v3-reactor-json-merge",
+      "exit": 1,
+      "seconds": 0.234,
+      "sha256": "a74e78b9eba66ce4f6fb40448ba6048bd59193a4065c2b7039ca6b917c6941de"
+    },
+    {
+      "label": "02-public-v3-reactor-json-inventory",
+      "exit": 0,
+      "seconds": 0.047,
+      "sha256": "8bd8670851048e151182dd0f0bc26834d54e151f39ca53f06c98e06c4479c51a"
+    },
+    {
+      "label": "02-public-v3-reactor-json-stage-resolved",
+      "exit": 0,
+      "seconds": 0.045,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "02-public-v3-reactor-json-source-guards",
+      "exit": 0,
+      "seconds": 0.867,
+      "sha256": "395055ac2ded13a314f0a997c6873c53d65f4f37750b9dcefe2926cc71e2a34e"
+    },
+    {
+      "label": "02-public-v3-reactor-json-corpus",
+      "exit": 0,
+      "seconds": 0.384,
+      "sha256": "434c77c358cb81ce3f70ed310813d280db122b659188716663f11465bbe33752"
+    },
+    {
+      "label": "02-public-v3-reactor-json-ci-contract",
+      "exit": 0,
+      "seconds": 0.066,
+      "sha256": "d1490790908dab724ab473f615ff7440375869323608112fd5364b2c9d58cd4d"
+    },
+    {
+      "label": "02-public-v3-reactor-json-fmt",
+      "exit": 0,
+      "seconds": 5.323,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "02-public-v3-reactor-json-diff",
+      "exit": 0,
+      "seconds": 0.049,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "02-public-v3-reactor-json-precommit",
+      "exit": 0,
+      "seconds": 0.047,
+      "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+    },
+    {
+      "label": "02-public-v3-reactor-json-stage",
+      "exit": 0,
+      "seconds": 0.027,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "02-public-v3-reactor-json-commit",
+      "exit": 0,
+      "seconds": 0.058,
+      "sha256": "90f535424c8b54128102c677165df54db6ce5cf7a25a2a411a66229f19caf5bf"
+    }
+  ]
+}

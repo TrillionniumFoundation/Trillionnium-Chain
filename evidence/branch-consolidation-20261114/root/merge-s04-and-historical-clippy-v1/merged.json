@@ -1,0 +1,55 @@
+[
+  {
+    "label": "partial-campaign-readback",
+    "prior": "2d87fa0307d1b7b0a758ac893dfa0615fee54b51",
+    "target": "1c038785ddfe0a4ea174de2f1fac55f7c3dd60be",
+    "base": "687141e74aca9249ac8bec79d2b4116999683cae",
+    "head": "468ccba92859fedf5964ad1efdc1a497418c5c27",
+    "tree": "def2b924e1ca8045c0285675e2525b630c94c6f3",
+    "source_blobs": {
+      "scripts/ci/read_native_campaign_attempt.py": "5bc0a8368bf02993496a60abdd2236585b20d6db",
+      "scripts/ci/test_read_native_campaign_attempt.py": "1e70e4b050a521f0fb4c7694caa0a2ee333ce5ff"
+    },
+    "paths": [
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "scripts/ci/check_ci_contract.py",
+      "scripts/ci/check_pq_research_integration.py",
+      "scripts/ci/ci_job.sh",
+      "scripts/ci/read_native_campaign_attempt.py",
+      "scripts/ci/test_ci_contract.py",
+      "scripts/ci/test_pq_research_integration.py",
+      "scripts/ci/test_read_native_campaign_attempt.py"
+    ],
+    "resolved": [
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "scripts/ci/test_pq_research_integration.py"
+    ]
+  },
+  {
+    "label": "test-fixture-identity-and-clippy",
+    "prior": "468ccba92859fedf5964ad1efdc1a497418c5c27",
+    "target": "33cca982f4e729a3016b0d9052248c96a6dc88ec",
+    "base": "63f3704a26ce2181b66f075a27d5478e18b388e9",
+    "head": "a660e5f5edfa0839a78d287895b75f4cc2cf7493",
+    "tree": "08c86c0cadcb3f02b3f2d6fc9b935e5da2b7dc82",
+    "source_blobs": {
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs": "dfad36b1032617e1ec9b95486bc8a0b0015639fc",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls.rs": "0f4ae1887c2f1158cfd4f4035a6013fbe7ad20b3",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs": "edf5a9c4267a78327bf433bb611822d824323a3c",
+      "scripts/ci/test_w1_lifetime_ledger.py": "0ee624e18c8e5e698b2f6bb10507e805e509a2da"
+    },
+    "paths": [
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "scripts/ci/test_w1_lifetime_ledger.py",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/pq_network/tls.rs",
+      "trillionnium/crates/trnm-pon-node/src/ingress/public_v3.rs"
+    ],
+    "resolved": [
+      "config/pon/pq-cross-branch-corpus-v1.json",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+    ]
+  }
+]

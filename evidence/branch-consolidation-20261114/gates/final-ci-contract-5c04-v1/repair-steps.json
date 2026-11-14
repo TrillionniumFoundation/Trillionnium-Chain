@@ -1,0 +1,38 @@
+[
+  {
+    "name": "pre-edit-preflight",
+    "argv": [
+      "bash",
+      "scripts/project-preflight.sh"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.09,
+    "bytes": 167,
+    "sha256": "5a50395959c308d79c47de79377045e1510e1d8a249c78273a1abf20c7eb005c"
+  },
+  {
+    "name": "repair-diff-check",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.057,
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "test-ci-contract-full-after",
+    "argv": [
+      "/opt/homebrew/bin/python3",
+      "-B",
+      "scripts/ci/test_ci_contract.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 62.082,
+    "bytes": 39141,
+    "sha256": "ed7d72b33b8cda2433d0028ef55db58eaf1b24b9cd6f8095861701939ad4fd0a"
+  }
+]

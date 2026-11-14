@@ -1,0 +1,6 @@
+test_cell_peer_failure_order_cannot_omit_or_mutate (__main__.CorpusGateTests.test_cell_peer_failure_order_cannot_omit_or_mutate) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.494s
+
+OK

@@ -1,0 +1,32 @@
+[
+  {
+    "label": "repository-check-correct-path",
+    "exit": 0,
+    "seconds": 8.929,
+    "sha256": "577f6b7417ad5b50ef9a7acfcb261b574170b0bfa7cb68713e32a116c3e936a2"
+  },
+  {
+    "label": "fmt",
+    "exit": 0,
+    "seconds": 5.438,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "diff-check",
+    "exit": 0,
+    "seconds": 0.017,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "precommit-preflight",
+    "exit": 0,
+    "seconds": 0.054,
+    "sha256": "2e0930e3e5b93d19ab63db0fe013c910ee3255283942eeab771e4db4aec002ec"
+  },
+  {
+    "label": "commit",
+    "exit": 0,
+    "seconds": 0.067,
+    "sha256": "5a85e025c473c18d7c4db6a6d11c4d37b8f882bc77238e06e7fdf11096dcbdfd"
+  }
+]

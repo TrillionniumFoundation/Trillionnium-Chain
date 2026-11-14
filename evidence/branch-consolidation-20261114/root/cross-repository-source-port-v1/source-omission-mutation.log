@@ -1,0 +1,6 @@
+test_cross_repository_inspection_sources_cannot_omit_or_mutate (test_pq_research_integration.CorpusGateTests.test_cross_repository_inspection_sources_cannot_omit_or_mutate) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.854s
+
+OK

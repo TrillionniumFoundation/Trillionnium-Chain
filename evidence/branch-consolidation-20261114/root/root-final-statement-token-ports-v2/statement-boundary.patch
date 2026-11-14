@@ -1,0 +1,328 @@
+diff --git a/config/pon/pq-cross-branch-corpus-v1.json b/config/pon/pq-cross-branch-corpus-v1.json
+index e03712daedaa6e653624d417f43ead63c69753f5..35363bee90292f9754c375b730c555276409c248 100644
+--- a/config/pon/pq-cross-branch-corpus-v1.json
++++ b/config/pon/pq-cross-branch-corpus-v1.json
+@@ -211,7 +211,7 @@
+     "config/systemd/trnmponpublic.slice": "8981b6aeed4c08c21679664940366b36a991444a",
+     "docs/development/INCENTIVE_LIABILITY_BOUNDARIES_20261112.md": "f35458d00efc7e373a395a0daadcd43fbee5394d",
+     "docs/development/SOURCE_INCENTIVE_RESEARCH_CONTRACT_20261112.md": "402c845c07991a5111fc714c4491da9211279e50",
+-    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "3491282a2c3a3954f65853b7f248b78bb7c1cf40",
++    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "29a00a198f7ee71ebebd69a5e9e59c936be53ba1",
+     "docs/development/TRNM_PUBLIC_CALLER_GRANTS_R20_20261114.md": "eed255c9a0160788699087c4ddb92c67dd1d55f4",
+     "docs/development/specs/pon/CELL_BEP52_PEER_V1.md": "b83e92b8b31b217337ff3685668290a9e03d3a3b",
+     "docs/development/specs/pon/CELL_BRANCH_COMPOSITION_20261113.md": "7713e91ebd6613059fe5c768c3511fdf15611447",
+@@ -1715,7 +1715,7 @@
+     "scripts/ci/check_cross_repo_candidate.py": "aa0e0e9e1575e60fc9f5aa5e876a7832c6a68b3e",
+     "scripts/ci/check_growth_scale_observation.py": "0a239b85ffd00bc3ce5609f7dd190fc2562c00b8",
+     "scripts/ci/check_native_constants_roster.py": "22921da3bac06cde78319b5b9492a56751f4c6ae",
+-    "scripts/ci/check_pq_research_integration.py": "175e9a319dde2abb92a6b3edba875576434bff68",
++    "scripts/ci/check_pq_research_integration.py": "dba5bbdcaf150f704c9c643985ec4deeb9cf14c7",
+     "scripts/ci/check_public_readiness_evidence.py": "d5919849d69b0d4adc89615b1005c1279140f79d",
+     "scripts/ci/check_sqlite_build_requalification.py": "568f4b9a00235a69f48d63a517a0fb2910fe9653",
+     "scripts/ci/check_w1_native_roster.py": "3dbbb1cd5475ef2f776848882eb069ea488d89d2",
+@@ -1809,7 +1809,7 @@
+     "scripts/ci/test_pq_lifetime_budget.py": "fde7fa3f388db9ab9f9760b9229f928a7b2f2767",
+     "scripts/ci/test_pq_lifetime_composition.py": "5350c9232e030d0de6d6e0102d9f9b5b64604f50",
+     "scripts/ci/test_pq_proof_profile_binding.py": "2a3992af77a06302b6beb8959cffe9fdc694245e",
+-    "scripts/ci/test_pq_research_integration.py": "4f0be940d23f1eb113cccf2011d9cc3b2848fe97",
++    "scripts/ci/test_pq_research_integration.py": "9d70298c3afaa8280d934e7fc37e3bf9e37a157e",
+     "scripts/ci/test_pq_root_campaign_readback.py": "0531ba2435fe03dd384f50cb97a8614653d1f274",
+     "scripts/ci/test_pq_root_custody_review_v1.py": "63d1dd99c10daa80705c4a1aa74f72b7e37294c9",
+     "scripts/ci/test_pq_root_custody_review_v2.py": "0c08ba2bd1c849f76bf8ca27260af63dc232d8e3",
+@@ -2009,13 +2009,14 @@
+     "trillionnium/crates/trnm-crypto-primitives/examples/pq_root_v3_cost_observation.rs": "486619758f82d6560fe871cec8d88386c6fe9ec3",
+     "trillionnium/crates/trnm-crypto-primitives/src/lib.rs": "dcfe1aa548438a836743bc60b4375a922a87ff33",
+     "trillionnium/crates/trnm-crypto-primitives/src/owned_ed25519.rs": "d8276ef060cc609e86ed768ed07fb360af140cf3",
+-    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "ba517e639b2140fcd5615c4eb62fd29b7338c865",
++    "trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs": "b89112abb32b692c83cf94a3e85fce58c5798628",
+     "trillionnium/crates/trnm-crypto-primitives/src/pon_work/blocked_zero_paired.rs": "11dd4cdfe1abb8f9bfb0565e08de4277a2d56a4c",
+     "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt.rs": "28fcb2723f377c910557924c6f15638c6cb63ab0",
+     "trillionnium/crates/trnm-crypto-primitives/src/pon_work/legal_attempt/low_rank.rs": "c50b2d32099f9ddb1d193199c19555a05a09f504",
+     "trillionnium/crates/trnm-crypto-primitives/src/pon_work/low_rank_prefix.rs": "c359642f95dc5f2fa6981fd52c775785d223effa",
+     "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs": "f42757c83c1135da285f54c65efa3c0078ea0354",
+     "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache_tests.rs": "d71d6cfaab47da1702c030e10734dbcb6b47728c",
++    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs": "afbbfda1cc2b58df4ff3f382af73141a74684f57",
+     "trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts.rs": "1f9b65dc67775243c5a9122ee411718079b38323",
+     "trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts/tests.rs": "8d9bcc405eeae63d20b3f668c09d3a5f0439781e",
+     "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs": "3a38da1061df615b98e46b0d2fd56133f493b4cd",
+@@ -2288,7 +2289,7 @@
+     "trillionnium/crates/trnm-pon-node/examples/pon_w1_lifecycle_cost_v4.rs": "e1870e82a3ddfb9e117d6c0e232acb23ca9c4008",
+     "trillionnium/crates/trnm-pon-node/examples/pon_w1_preparation_strategy_v4.rs": "10236458a1fabf587e2aace247a43edbfabda7a9",
+     "trillionnium/crates/trnm-pon-node/examples/pon_w1_reused_cost_v3.rs": "92f1e2a9e971af5abe9e43b1ddfb976c41da9be4",
+-    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": "1d83f4dcbee7edc3c02c6c7feb7a004112af99c6",
++    "trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs": "cd6c755ccc809ebaf4f9d6c4848caddac3a47a20",
+     "trillionnium/crates/trnm-pon-node/examples/support/w1_cost_producers.rs": "7109064c900422e23f3ad2c2769e6d3a7386e8c8",
+     "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness.rs": "0f611459c4c1c37488861ba36c82ba8302e40c4c",
+     "trillionnium/crates/trnm-pon-node/src/account_archive_execution/state_witness/native_growth/account_prefix_tests.rs": "10cccefbab932cc22569eb4a8c035f6de7defc05",
+@@ -4538,6 +4539,7 @@
+     "trillionnium/crates/trnm-crypto-primitives/src/pon_work/low_rank_prefix.rs",
+     "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache.rs",
+     "trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache_tests.rs",
++    "trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs",
+     "trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts.rs",
+     "trillionnium/crates/trnm-crypto-primitives/src/pon_work/task_product_facts/tests.rs",
+     "trillionnium/crates/trnm-crypto-primitives/src/pq_auth.rs",
+diff --git a/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md b/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
+index 3491282a2c3a3954f65853b7f248b78bb7c1cf40..29a00a198f7ee71ebebd69a5e9e59c936be53ba1 100644
+--- a/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
++++ b/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
+@@ -14984,3 +14984,7 @@ are retained rather than counted as a successful full run.
+ ### 2026-11-14 root composition: test-fixture-identity-and-clippy
+ 
+ The two equivalent metric structure initializers and single unchanged TLS fixture module retain every production and assertion body; no warning allowance was added. Historical lifetime reproduction now reads its exact existing SOURCE_BASE Git objects and the original cdd98480 report lineage, with replacement refs and lazy fetch disabled. All twenty historical source pins, seven explicit report differences and both expected report hashes are unchanged. The later working-tree report and current twenty-source observer remain separate. Initial failed fixture and strict-Clippy records remain retained; combined Linux all-target strict Clippy is still a distinct pending check.
++
++### 2026-11-14 retained original statement-boundary controls
++
++Selected the three independent 1d11f875 statement-boundary controls. They exercise original scalar error priority before cache callbacks, complete false-transcript replay for each fresh challenge, and the sixty-fifth exact challenge evicting a 64-entry fact without turning eviction into a rejection fact. They call the current original arithmetic/cache APIs and retain every original assertion and progress observation. Only the test module and its registration are introduced; production arithmetic, signed namespaces, work profile, cache capacity and native budgets remain the current owners. Both module and registration are independently source-bound. Linux native execution is recorded separately from format/source checks and is pending at this commit.
+diff --git a/scripts/ci/check_pq_research_integration.py b/scripts/ci/check_pq_research_integration.py
+index 175e9a319dde2abb92a6b3edba875576434bff68..dba5bbdcaf150f704c9c643985ec4deeb9cf14c7 100644
+--- a/scripts/ci/check_pq_research_integration.py
++++ b/scripts/ci/check_pq_research_integration.py
+@@ -1624,6 +1624,13 @@ CELL_ACQUISITION_API_REQUIRED_PATHS = frozenset((
+ NATIVE_REQUIRED_PATHS |= CELL_ACQUISITION_API_REQUIRED_PATHS
+ 
+ 
++# Independently selected original controls remain source-bound without qualification.
++ORIGINAL_STATEMENT_BOUNDARY_REQUIRED_PATHS = frozenset((
++    'trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs',
++    'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
++))
++NATIVE_REQUIRED_PATHS |= ORIGINAL_STATEMENT_BOUNDARY_REQUIRED_PATHS
++
+ class IntegrityError(ValueError):
+     pass
+ 
+diff --git a/scripts/ci/test_pq_research_integration.py b/scripts/ci/test_pq_research_integration.py
+index 4f0be940d23f1eb113cccf2011d9cc3b2848fe97..9d70298c3afaa8280d934e7fc37e3bf9e37a157e 100644
+--- a/scripts/ci/test_pq_research_integration.py
++++ b/scripts/ci/test_pq_research_integration.py
+@@ -2385,5 +2385,39 @@ class CorpusGateTests(unittest.TestCase):
+         self.assertIs(result['node_activated'], False)
+ 
+ 
++    def test_original_statement_boundary_sources_cannot_omit_or_mutate(self):
++        # Literal paths are independent of the implementation's required roster.
++        dependencies = (
++            'trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs',
++            'trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs',
++        )
++        original = copy.deepcopy(self.manifest)
++        for name in dependencies:
++            for omission in ("required", "pin", "required-and-pin"):
++                self.manifest = copy.deepcopy(original)
++                if omission in ("required", "required-and-pin"):
++                    self.manifest["required_paths"].remove(name)
++                if omission in ("pin", "required-and-pin"):
++                    del self.manifest["pinned_blobs"][name]
++                self.save()
++                with self.subTest(path=name, omission=omission), self.assertRaises(IntegrityError):
++                    check(self.root)
++        self.manifest = original
++        self.save()
++        for name in dependencies:
++            path = self.root / name
++            before = path.read_bytes()
++            try:
++                path.write_bytes(before + b"changed selected original control source")
++                with self.subTest(path=name), self.assertRaisesRegex(IntegrityError, "changed source"):
++                    check(self.root)
++            finally:
++                path.write_bytes(before)
++        result = check(self.root)
++        self.assertEqual(result["status"], "HOLD_NO_GO")
++        self.assertIs(result["cryptographic_acceptance"], False)
++        self.assertIs(result["node_activated"], False)
++
++
+ if __name__ == "__main__":
+     unittest.main()
+diff --git a/trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs b/trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs
+index ba517e639b2140fcd5615c4eb62fd29b7338c865..b89112abb32b692c83cf94a3e85fce58c5798628 100644
+--- a/trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs
++++ b/trillionnium/crates/trnm-crypto-primitives/src/pon_work.rs
+@@ -16,6 +16,8 @@ pub mod maintenance_periodic;
+ pub mod maintenance_prefix;
+ pub mod paired_product;
+ pub mod rejection_cache;
++#[cfg(test)]
++mod statement_boundaries;
+ pub mod structured;
+ pub mod task_product_facts;
+ 
+diff --git a/trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs b/trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs
+new file mode 100644
+index 0000000000000000000000000000000000000000..afbbfda1cc2b58df4ff3f382af73141a74684f57
+--- /dev/null
++++ b/trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs
+@@ -0,0 +1,153 @@
++//! Original-API controls: admission success is never complete work, and cached
++//! arithmetic does not cover a new challenge or an evicted exact input.
++use super::arithmetic_facts::{ArithmeticFactCache, ArithmeticObservation, FactError};
++use super::*;
++
++fn fixture(challenge: Hash) -> (Hash, Vec<u8>) {
++    let a: Vec<u32> = (0..CELLS).map(|i| ((13 * i + 17) % 257) as u32).collect();
++    let b: Vec<u32> = (0..CELLS).map(|i| ((29 * i + 31) % 263) as u32).collect();
++    (task_id(&a, &b).unwrap(), prove(challenge, &a, &b).unwrap())
++}
++
++#[test]
++fn original_scalar_error_order_precedes_all_arithmetic_cache_access() {
++    let challenge = [73; 32];
++    let (task, proof) = fixture(challenge);
++    let mut bad_version = proof.clone();
++    bad_version[0] ^= 1;
++    let mut bad_field = proof.clone();
++    bad_field[4..8].copy_from_slice(&(Q as u32).to_le_bytes());
++    let mut bad_product_field = proof.clone();
++    let at = 4 + 2 * CELLS * 4;
++    bad_product_field[at..at + 4].copy_from_slice(&(Q as u32).to_le_bytes());
++    let mut wrong_task = task;
++    wrong_task[0] ^= 1;
++    let mut low_target = [0; 32];
++    low_target[31] = 1;
++    let cases = [
++        (&proof[..4], wrong_task, [0; 32], WorkError::Length),
++        (&bad_version[..], wrong_task, [0; 32], WorkError::Version),
++        (&bad_field[..], wrong_task, [0; 32], WorkError::Target),
++        (
++            &bad_product_field[..],
++            wrong_task,
++            [0; 32],
++            WorkError::Target,
++        ),
++        (&bad_field[..], wrong_task, [255; 32], WorkError::Field),
++        (
++            &bad_product_field[..],
++            wrong_task,
++            [255; 32],
++            WorkError::Field,
++        ),
++        (&proof[..], wrong_task, low_target, WorkError::Task),
++        (&proof[..], task, low_target, WorkError::Target),
++    ];
++    let cache = ArithmeticFactCache::new(64).unwrap();
++    for (bytes, expected_task, target, expected) in cases {
++        assert_eq!(
++            verify_reference(challenge, expected_task, target, bytes).unwrap_err(),
++            expected
++        );
++        assert_eq!(
++            verify(challenge, expected_task, target, bytes).unwrap_err(),
++            expected
++        );
++        assert_eq!(
++            verify_limb(challenge, expected_task, target, bytes).unwrap_err(),
++            expected
++        );
++        let mut observation = ArithmeticObservation::default();
++        let mut checkpoints = 0;
++        let result = cache.verify_with_observation(
++            challenge,
++            expected_task,
++            target,
++            bytes,
++            &mut |_| {
++                checkpoints += 1;
++                Ok::<(), ()>(())
++            },
++            &mut observation,
++        );
++        assert_eq!(result.unwrap_err(), FactError::Relation(expected));
++        assert_eq!(checkpoints, 0);
++        assert_eq!(observation, ArithmeticObservation::default());
++    }
++}
++
++fn refuse(
++    cache: &ArithmeticFactCache,
++    challenge: Hash,
++    task: Hash,
++    proof: &[u8],
++) -> (ArithmeticObservation, usize) {
++    assert_eq!(
++        precheck_proof_statement(challenge, task, [255; 32], proof),
++        Ok(())
++    );
++    let mut observation = ArithmeticObservation::default();
++    let mut tiles = 0;
++    let mut reached_verified = false;
++    let result = cache.verify_with_observation(
++        challenge,
++        task,
++        [255; 32],
++        proof,
++        &mut |point| {
++            tiles += usize::from(matches!(point, VerificationProgress::TranscriptTile { .. }));
++            reached_verified |= matches!(point, VerificationProgress::BeforeVerifiedWork);
++            Ok::<(), ()>(())
++        },
++        &mut observation,
++    );
++    assert_eq!(
++        result.unwrap_err(),
++        FactError::Relation(WorkError::Transcript)
++    );
++    assert!(!reached_verified);
++    (observation, tiles)
++}
++
++#[test]
++fn correct_product_false_trace_requires_full_replay_for_each_new_challenge() {
++    let cache = ArithmeticFactCache::new(64).unwrap();
++    for byte in [74, 75, 76] {
++        let challenge = [byte; 32];
++        let (task, mut proof) = fixture(challenge);
++        // Keep the correct final product; only the claimed fresh trace is false.
++        proof[PROOF_BYTES - 1] ^= 1;
++        let (cold, tiles) = refuse(&cache, challenge, task, &proof);
++        assert!(!cold.exact_fact_found);
++        assert!(cold.transcript_entered && cold.transcript_completed);
++        assert!(!cold.product_entered);
++        assert_eq!(tiles, (N / R).pow(3));
++        let (warm, tiles) = refuse(&cache, challenge, task, &proof);
++        assert!(warm.exact_fact_found && warm.trace_reused);
++        assert!(!warm.transcript_entered);
++        assert_eq!(tiles, 0);
++    }
++}
++
++#[test]
++fn sixty_fifth_exact_challenge_does_not_turn_eviction_into_a_rejection_fact() {
++    let cache = ArithmeticFactCache::new(64).unwrap();
++    let mut first = None;
++    for byte in 1..=65 {
++        let challenge = [byte; 32];
++        let (task, mut proof) = fixture(challenge);
++        proof[PROOF_BYTES - 1] ^= 1;
++        let (observation, tiles) = refuse(&cache, challenge, task, &proof);
++        assert!(!observation.exact_fact_found);
++        assert_eq!(tiles, (N / R).pow(3));
++        if first.is_none() {
++            first = Some((challenge, task, proof));
++        }
++    }
++    let (challenge, task, proof) = first.unwrap();
++    let (observation, tiles) = refuse(&cache, challenge, task, &proof);
++    assert!(!observation.exact_fact_found);
++    assert!(observation.transcript_completed);
++    assert_eq!(tiles, (N / R).pow(3));
++}
+diff --git a/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs b/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
+index 1d83f4dcbee7edc3c02c6c7feb7a004112af99c6..cd6c755ccc809ebaf4f9d6c4848caddac3a47a20 100644
+--- a/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
++++ b/trillionnium/crates/trnm-pon-node/examples/support/distributed_source_inventory.rs
+@@ -1106,6 +1106,13 @@ pub const FILES: &[(&str, &[u8])] = &[
+             "/../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/rejection_cache_tests.rs"
+         )),
+     ),
++    (
++        "trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs",
++        include_bytes!(concat!(
++            env!("CARGO_MANIFEST_DIR"),
++            "/../../../trillionnium/crates/trnm-crypto-primitives/src/pon_work/statement_boundaries.rs"
++        )),
++    ),
+     (
+         "trillionnium/crates/trnm-crypto-primitives/src/pon_work/structured.rs",
+         include_bytes!(concat!(

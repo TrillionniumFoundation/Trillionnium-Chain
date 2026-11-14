@@ -15127,3 +15127,7 @@ T03's original Linux 59-control run also has a separate post-merge readback:
 all 67 actually observed absolute project inputs match this checkpoint, with
 60 modules loaded before and 61 afterward. This selected-input comparison
 does not claim a complete checkout or resolve the 7,331 relative open events.
+
+### 2026-11-14 complete branch-disposition audit and integration record
+
+The [branch consolidation audit](BRANCH_CONSOLIDATION_AUDIT_20261114.md) records all 908 frozen branch names, 892 distinct tips, 296 terminal dispositions and the selected current implementation. Its evidence index preserves original successful and failed controls, source identities, dependency findings and unselected historical alternatives. The original hosted four-second confirmation gate, protected main requirements and legacy deletion protection remain independent conditions. This audit does not activate a production profile or declare the one-branch remote result before a verified protected merge and reference cleanup. This file remains the sole development plan.

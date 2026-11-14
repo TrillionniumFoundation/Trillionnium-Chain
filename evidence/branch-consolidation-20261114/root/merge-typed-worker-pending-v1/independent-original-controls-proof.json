@@ -1,0 +1,26 @@
+[
+  {
+    "path": "scripts/test_llm_runtime_exit_initial_pending.py",
+    "methods": 14,
+    "original_blob": "88351ad43977dc2245c6aab146f139a6856a6088",
+    "selected_blob": "d8b193743c0505e3d894eb0d8af617b5f257226b",
+    "only_executable_adapter": "reviewed current whole-pilot digest",
+    "added_explanatory_comments": true
+  },
+  {
+    "path": "scripts/test_llm_runtime_exit_binding_pending.py",
+    "methods": 10,
+    "original_blob": "a61732258b4e2b914f4cd6e9afbe2297e36e0824",
+    "selected_blob": "797fecc6919fadf594bca8a271b595e2dbc10d41",
+    "only_executable_adapter": "reviewed current whole-pilot digest",
+    "added_explanatory_comments": true
+  },
+  {
+    "path": "scripts/test_llm_runtime_exit_post_binding_retirement.py",
+    "methods": 12,
+    "original_blob": "46f46cb0f00f1bf8c2c3b61f40e90e804015402b",
+    "selected_blob": "46f46cb0f00f1bf8c2c3b61f40e90e804015402b",
+    "only_executable_adapter": null,
+    "added_explanatory_comments": false
+  }
+]

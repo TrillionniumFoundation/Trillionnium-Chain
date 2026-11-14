@@ -1,0 +1,9 @@
+{
+  "schema": "root-s04-composed-phase-count-v1",
+  "path": "/private/tmp/chain-consolidation-20261114-root/merge-s04-and-historical-clippy-v1/partial-campaign-readback-current-phase.log",
+  "sha256": "b1d40010924918cbe3e3bad89cd0344e33b169658119a7018f5bfac7508e5056",
+  "tests": 95,
+  "passed": true,
+  "skips": 0,
+  "scope": "root composed S04 integration; separate from component checkout 93 and later T01 96"
+}
