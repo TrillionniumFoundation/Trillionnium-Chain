@@ -14560,3 +14560,36 @@ Original patch-context and driver-print failures are retained. The first Linux d
 ### 2026-11-14 root review: final-file-and-q4-controls
 
 Integrated reviewed commit a0fa27a8160a339fbcf9315beabc5e4f6d2c17d8. The bounded artifact reader, readonly sealed handoff and original Q4/32-slot native controls passed all23 selected Linux controls, strict worker/Node Clippy and original format gate. Eight applicable macOS controls passed. Two original ignored long campaigns were not run or counted. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.
+
+
+## 2026-11-14 Q4 renewal advice and authenticated reentry controls
+
+The selected port retains the original Q4RenewalPhase/Q4RenewalForecast
+time-window advice and forecast_q4_renewal_window from 0f062607, plus the
+actual-parent forecast_q4_renewal_from_active wrapper from 84a0c697/beca4408.
+The advice checks immutable lease context, exactly one revision, signed
+overlap, bounds and original expiry. The wrapper reads the current owner and
+checks the actual parent/generation again. Existing typed Classical/Pq lease
+edges and current storage owners remain intact. Advice neither signs nor
+dispatches a renewal and cannot revive an expired or revoked lease.
+
+The complete beca4408 maintenance reentry integration control is retained:
+actual owner-signed revoke/open/register transactions, real new-task W1 work,
+authenticated/native agreement, independent packet replay, the installed
+depth/work confirmation checks and cold reopen. The original fixture failed
+TASK_WINDOW because it opened a lease with not_before=1 in height 2. The old
+and current open guards are identical. Only that fixture's fresh lease
+not_before is changed to 2, with its ID and signatures recomputed through the
+same original owners; production admission checks and every original control
+assertion remain unchanged. The initial failure and exact source are retained.
+
+Linux passed all six lease controls and both authenticated continuity
+integration controls, plus strict release native Node library/CLI Clippy.
+Mac Node compilation remains blocked by the separately recorded pre-existing
+growth_reservation_io dev/mode type mismatch; no Mac Node pass is claimed.
+These are bounded local controls. Consensus, independent operation, physical
+capacity, public WAN, production and cryptographic qualification remain false.
+
+### 2026-11-14 root review: q4-advisory
+
+Integrated reviewed commit 83612992abd90de344be699e8cf1a90e609480f5. The original pure Q4 renewal forecast and actual-parent wrapper retain current lease/generation authority. Six lease controls and both original signed native maintenance integrations passed on Linux; the old illegal height2/not_before1 fixture failure is retained and corrected only to not_before2. Original Node strict native library/CLI Clippy passed. These component receipts do not substitute for final exact-source protected-branch checks. The fixed-budget CONFIRMATION_TARGET failure remains retained and unresolved.
